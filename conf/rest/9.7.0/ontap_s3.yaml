@@ -4,18 +4,30 @@ object:           ontaps3
 
 counters:
   - ^^uuid
-  - ^svm.name           => svm
-  - ^volume.name        => volume
-  - ^name               => bucket
-  - ^encryption.enabled => encryption_enabled
+  - ^svm.name                                    => svm
+  - ^volume.name                                 => volume
+  - ^name                                        => bucket
+  - ^encryption.enabled                          => encryption_enabled
   - logical_used_size
   - size
+  - ^policy.statements.0.effect                  => permission_type
+  - ^policy.statements.0.actions                 => permissions
+  - ^policy.statements.0.principals              => user
+  - ^policy.statements.0.resources               => allowed_resources
+  - ^protection_status.is_protected              => is_protected
+  - ^protection_status.destination.is_ontap      => protected_in_ontap
+  - ^protection_status.destination.is_cloud      => protected_in_cloud
 
 endpoints:
   - query: api/private/cli/vserver/object-store-server/bucket
     counters:
       - ^^uuid
       - object_count
+
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - used_percent PERCENT logical_used_size size
 
 export_options:
   instance_keys:
@@ -24,3 +36,10 @@ export_options:
   instance_labels:
     - volume
     - encryption_enabled
+    - permission_type
+    - permissions
+    - user
+    - allowed_resources
+    - is_protected
+    - protected_in_ontap
+    - protected_in_cloud

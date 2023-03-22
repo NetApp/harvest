@@ -73,6 +73,17 @@
   ],
   "panels": [
     {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 16,
+      "title": "Bucket Drilldown",
+      "type": "row"
+    },
+    {
       "datasource": "${DS_PROMETHEUS}",
       "description": "You must enable the Rest collector in your harvest.yml config.",
       "fieldConfig": {
@@ -94,42 +105,31 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "bytes"
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "Actual Size"
+              "options": "Available Size"
             },
             "properties": [
               {
-                "id": "unit",
-                "value": "bytes"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "basic"
-              },
-              {
-                "id": "max",
-                "value": 70368744177664
-              },
-              {
-                "id": "min",
-                "value": 83886080
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Logical Used Size"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "bytes"
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": -10000000000000000,
+                      "result": {
+                        "index": 0,
+                        "text": "0 B"
+                      },
+                      "to": 0
+                    },
+                    "type": "range"
+                  }
+                ]
               }
             ]
           },
@@ -144,14 +144,58 @@
                 "value": "locale"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "basic"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": 100,
+                      "result": {
+                        "index": 0,
+                        "text": "100%"
+                      },
+                      "to": 999999
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 21,
+        "h": 8,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 5,
       "options": {
@@ -188,7 +232,7 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_size - ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -198,13 +242,33 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_object_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
+        },
+        {
+          "exemplar": false,
+          "expr": "ontaps3_object_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "F"
         }
       ],
       "title": "ONTAP S3 report",
@@ -221,7 +285,9 @@
                 "Value #C",
                 "Value #D",
                 "volume",
-                "encryption_enabled"
+                "encryption_enabled",
+                "Value #E",
+                "Value #F"
               ]
             }
           }
@@ -251,14 +317,342 @@
             },
             "renameByName": {
               "Value #A": "",
-              "Value #B": "Actual Size",
-              "Value #C": "Logical Used Size",
-              "Value #D": "Object Count",
+              "Value #B": "Size",
+              "Value #C": "Available Size",
+              "Value #D": "Used Size",
+              "Value #E": "Used %",
+              "Value #F": "Object Count",
               "bucket": "Bucket",
               "cluster": "Cluster",
+              "encryption_enabled": "Encrypted",
               "svm": "SVM",
-              "volume": "Volume",
-              "encryption_enabled": "Encrypted"
+              "volume": "Volume"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "You must enable the Rest collector in your harvest.yml config.\nIsProtected, ProtectedInCloud and ProtectedInOntap field would be available 9.9+",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "User"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "index": 0,
+                        "text": "All users of this storage VM"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 6,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\",permission_type!=\"\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Bucket Permission",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "allowed_resources",
+                "bucket",
+                "cluster",
+                "permission_type",
+                "permissions",
+                "svm",
+                "volume",
+                "is_protected",
+                "protected_in_cloud",
+                "protected_in_ontap",
+                "user"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "allowed_resources": 7,
+              "bucket": 3,
+              "cluster": 0,
+              "is_protected": 8,
+              "permission_type": 5,
+              "permissions": 6,
+              "protected_in_cloud": 9,
+              "protected_in_ontap": 10,
+              "svm": 1,
+              "user": 4,
+              "volume": 2
+            },
+            "renameByName": {
+              "allowed_resources": "Allowed Resources",
+              "bucket": "Bucket",
+              "cluster": "Cluster",
+              "encryption_enabled": "",
+              "is_protected": "IsProtected",
+              "permission_type": "Type",
+              "permissions": "Permissions",
+              "protected_in_cloud": "ProtectedInCloud",
+              "protected_in_ontap": "ProtectedInOntap",
+              "svm": "SVM",
+              "user": "User",
+              "volume": "Volume"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 19,
+      "title": "SVM Drilldown",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "You must enable the Rest collector in your harvest.yml config.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 17,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.11",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(ontaps3_connections{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(ontaps3_connected_connections{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(ontaps3_max_connected_connections{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(ontaps3_requests_outstanding{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(ontaps3_max_requests_outstanding{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(ontaps3_requests{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "G"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(ontaps3_root_user_access{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "H"
+        }
+      ],
+      "title": "Performance Detail",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cluster",
+                "svm",
+                "Value #B",
+                "Value #C",
+                "Value #D",
+                "Value #E",
+                "Value #F",
+                "Value #G",
+                "Value #H"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "cluster": 0,
+              "svm": 1
+            },
+            "renameByName": {
+              "Value #B": "Connections",
+              "Value #C": "Connected Connections",
+              "Value #D": "Max Connected Connections",
+              "Value #E": "Outstanding Requests",
+              "Value #F": "Max Outstanding Requests",
+              "Value #G": "Requests",
+              "Value #H": "Root User Access",
+              "cluster": "Cluster",
+              "svm": "SVM"
             }
           }
         }
