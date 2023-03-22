@@ -11,6 +11,8 @@ func Test_zapiXputToRest(t *testing.T) {
 		want  MaxXput
 		isErr bool
 	}{
+		{zapi: "6144IOPS/TB", want: MaxXput{IOPS: "6144", Mbps: "0"}},
+
 		{zapi: "100IOPS", want: MaxXput{IOPS: "100", Mbps: "0"}},
 		{zapi: "100iops", want: MaxXput{IOPS: "100", Mbps: "0"}},
 		{zapi: "111111IOPS", want: MaxXput{IOPS: "111111", Mbps: "0"}},

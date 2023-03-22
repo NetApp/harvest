@@ -7,6 +7,7 @@ package zapi
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/security"
@@ -153,6 +154,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return security.New(abc)
 	case "QosPolicyFixed":
 		return qospolicyfixed.New(abc)
+	case "QosPolicyAdaptive":
+		return qospolicyadaptive.New(abc)
 
 	default:
 		z.Logger.Info().Msgf("no zapi plugin found for %s", kind)

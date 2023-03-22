@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/netroute"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
@@ -387,6 +388,9 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return securityaccount.New(abc)
 	case "QosPolicyFixed":
 		return qospolicyfixed.New(abc)
+	case "QosPolicyAdaptive":
+		return qospolicyadaptive.New(abc)
+
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

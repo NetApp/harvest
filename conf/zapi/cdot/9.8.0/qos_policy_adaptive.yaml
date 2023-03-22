@@ -1,0 +1,33 @@
+
+name:             QosPolicyAdaptive
+query:            qos-adaptive-policy-group-get-iter
+object:           qos_policy_adaptive
+
+counters:
+  qos-adaptive-policy-group-info:
+    - ^^uuid                     => uuid
+    - ^policy-group              => name
+    - ^vserver                   => svm
+    - ^absolute-min-iops         => absolute_min_iops
+    - ^expected-iops             => expected_iops
+    - ^expected-iops-allocation  => expected_iops_allocation
+    - ^num-workloads             => object_count
+    - ^peak-iops                 => peak_iops
+    - ^peak-iops-allocation      => peak_iops_allocation
+
+collect_only_labels: true
+
+plugins:
+  - QosPolicyAdaptive
+
+export_options:
+  instance_keys:
+    - svm
+  instance_labels:
+    - name
+    - absolute_min_iops
+    - expected_iops
+    - expected_iops_allocation
+    - object_count
+    - peak_iops
+    - peak_iops_allocation
