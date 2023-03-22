@@ -4,7 +4,7 @@ object:                   namespace
 
 counters:
   - ^^id
-  - ^name
+  - ^name                     => path
   - ^svm.name                 => svm
   - read_data
   - write_data
@@ -17,17 +17,16 @@ counters:
   - remote.read_data          => remote_bytes
   - remote.read_ops           => remote_ops
 
-override:
-
 plugins:
   LabelAgent:
     split:
-      - name `/` ,,volume,namespace
+      - path `/` ,,volume,namespace
 
 export_options:
   instance_keys:
     - svm
     - volume
     - namespace
+    - path
 
 

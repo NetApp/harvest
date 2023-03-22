@@ -1,0 +1,43 @@
+name:                       Namespace
+query:                      nvme-namespace-get-iter
+object:                     namespace
+
+counters:
+  nvme-namespace-info:
+    - ^^uuid                     => uuid
+    - ^nsid                      => nsid
+    - ^path                      => path
+    - ^node                      => node
+    - ^ostype                    => os_type
+    - ^is-read-only              => is_read_only
+    - ^state                     => state
+    - ^subsystem                 => subsystem
+    - ^volume                    => volume
+    - ^vserver                   => svm
+    - size                       => size
+    - size-used                  => size_used
+    - block-size                 => block_size
+
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - size_available SUBTRACT size size_used
+        - size_available_percent PERCENT size_available size
+
+
+export_options:
+  instance_keys:
+    - uuid
+    - svm
+    - volume
+    - path
+  instance_labels:
+    - nsid
+    - path
+    - node
+    - os_type
+    - is_read_only
+    - state
+    - subsystem
+    - volume
+    - svm

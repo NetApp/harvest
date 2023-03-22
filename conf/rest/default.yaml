@@ -14,6 +14,7 @@ objects:
   Disk:                        disk.yaml
 #  ExportRule:                  exports.yaml
   Lun:                         lun.yaml
+  Namespace:                   namespace.yaml
   NetConnections:              netConnections.yaml
 #  NetPort:                     netPort.yaml
   NetRoute:                    netRoute.yaml
