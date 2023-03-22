@@ -582,10 +582,10 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
-		"cmode/shelf.json":        2,
-		"cmode/security.json":     3,
-		"cmode/fsa.json":          2,
-		"cmode/delay_center.json": 2,
+		"cmode/shelf.json":    2,
+		"cmode/security.json": 3,
+		"cmode/fsa.json":      2,
+		"cmode/workload.json": 2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(
