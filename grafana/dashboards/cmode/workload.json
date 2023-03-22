@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1678947394838,
+  "iteration": 1679498880018,
   "links": [
     {
       "asDropdown": true,
@@ -114,11 +114,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 123,
       "panels": [],
-      "title": "Delay Center",
+      "title": "Latency",
       "type": "row"
     },
     {
@@ -180,7 +180,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 6
       },
       "id": 103,
       "options": {
@@ -209,7 +209,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Latency by Delay center",
+      "title": "Latency by Resources",
       "type": "timeseries"
     },
     {
@@ -279,107 +279,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 17
-      },
-      "id": 105,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads for CPU N-blade (frontend)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 17
+        "y": 16
       },
       "id": 104,
       "options": {
@@ -468,6 +368,107 @@
               {
                 "color": "green",
                 "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 105,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads for CPU N-blade (frontend)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents the cables and adapters with which clustered nodes are physically connected. If the cluster interconnect component is in contention, it means high wait time for I/O requests at the cluster interconnect is impacting the latency of one or more workloads.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -483,7 +484,320 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 27
+        "y": 26
+      },
+      "id": 110,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads for Cluster Interconnect (cluster)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 26
+      },
+      "id": 111,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads for WAFL Susp CP (cp)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 36
+      },
+      "id": 114,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads for Disk IO (disk)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents the wait time of I/O requests by the external networking protocols on the cluster. The wait time is time spent waiting for transfer ready transactions to finish before the cluster can respond to an I/O request. If the network component is in contention, it means high wait time at the protocol layer is impacting the latency of one or more workloads.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 36
       },
       "id": 108,
       "options": {
@@ -586,10 +900,10 @@
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 12,
-        "y": 27
+        "x": 0,
+        "y": 46
       },
-      "id": 110,
+      "id": 116,
       "options": {
         "legend": {
           "calcs": [
@@ -608,7 +922,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"})",
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "{{workload}}",
@@ -617,11 +931,116 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Cluster Interconnect",
+      "title": "Top $TopResources Workloads for NVLog Transfer (nvlog)",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 46
+      },
+      "id": 112,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads for WAFL Susp Other (suspend)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents the throughput maximum (peak) setting of the storage Quality of Service (QoS) policy group assigned to the workload. If the policy group component is in contention, it means all workloads in the policy group are being throttled by the set throughput limit, which is impacting the latency of one or more of those workloads.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -691,7 +1110,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 37
+        "y": 56
       },
       "id": 109,
       "options": {
@@ -726,6 +1145,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents the latency to a workload that is being caused by QoS throughput minimum (expected) setting assigned to other workloads. If the QoS minimum set on certain workloads use the majority of the bandwidth to guarantee the promised throughput, other workloads will be throttled and see more latency.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -795,7 +1215,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 37
+        "y": 56
       },
       "id": 113,
       "options": {
@@ -899,631 +1319,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 47
-      },
-      "id": 111,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads for WAFL Susp CP",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 47
-      },
-      "id": 112,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads for WAFL Susp Other",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 57
-      },
-      "id": 114,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads for Disk IO",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 57
-      },
-      "id": 115,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads for Cloud IO",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 67
-      },
-      "id": 116,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads for NVLog Transfer",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 67
-      },
-      "id": 117,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads for FlexCache RAL",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 77
+        "y": 66
       },
       "id": 118,
       "options": {
@@ -1553,11 +1349,12 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for FlexCache Spinhi",
+      "title": "Top $TopResources Workloads for FlexCache Spinhi (flexcache_spinhi)",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents the software component in the cluster involved with I/O processing between the cluster and the cloud tier on which user data is stored. If the cloud latency component is in contention, it means that a large amount of reads from volumes that are hosted on the cloud tier are impacting the latency of one or more workloads.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1627,9 +1424,9 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 77
+        "y": 66
       },
-      "id": 119,
+      "id": 115,
       "options": {
         "legend": {
           "calcs": [
@@ -1648,7 +1445,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"})",
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "{{workload}}",
@@ -1657,7 +1454,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Sync Repl",
+      "title": "Top $TopResources Workloads for Cloud IO (cloud)",
       "type": "timeseries"
     },
     {
@@ -1731,7 +1528,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 87
+        "y": 76
       },
       "id": 120,
       "options": {
@@ -1835,7 +1632,215 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 87
+        "y": 76
+      },
+      "id": 117,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads for FlexCache RAL (flexcache_ral)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 86
+      },
+      "id": 119,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads for Sync Repl (sync_repl)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 86
       },
       "id": 121,
       "options": {
@@ -1865,7 +1870,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for WAFL Admission",
+      "title": "Top $TopResources Workloads for WAFL Admission (admission)",
       "type": "timeseries"
     }
   ],
@@ -2482,7 +2487,7 @@
     ]
   },
   "timezone": "",
-  "title": "ONTAP: Delay Center",
+  "title": "ONTAP: Workload",
   "uid": "",
   "version": 1
 }
