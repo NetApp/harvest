@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1679501540216,
+  "iteration": 1679501540219,
   "links": [
     {
       "asDropdown": true,
@@ -514,7 +514,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Cluster",
+      "title": "Top $TopResources Workloads for cluster",
       "type": "timeseries"
     },
     {
@@ -618,7 +618,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for WAFL CP",
+      "title": "Top $TopResources Workloads for cp",
       "type": "timeseries"
     },
     {
@@ -722,7 +722,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Disk",
+      "title": "Top $TopResources Workloads for disk",
       "type": "timeseries"
     },
     {
@@ -827,7 +827,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Network",
+      "title": "Top $TopResources Workloads for network",
       "type": "timeseries"
     },
     {
@@ -931,7 +931,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for NVLog",
+      "title": "Top $TopResources Workloads for nvlog",
       "type": "timeseries"
     },
     {
@@ -1035,7 +1035,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for WAFL Suspend",
+      "title": "Top $TopResources Workloads for WAFL suspend",
       "type": "timeseries"
     },
     {
@@ -1140,7 +1140,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Qos Throttle",
+      "title": "Top $TopResources Workloads for Qos throttle",
       "type": "timeseries"
     },
     {
@@ -1245,7 +1245,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Qos Min",
+      "title": "Top $TopResources Workloads for qos_min",
       "type": "timeseries"
     },
     {
@@ -1349,7 +1349,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for FlexCache Spinhi",
+      "title": "Top $TopResources Workloads for flexcache_spinhi",
       "type": "timeseries"
     },
     {
@@ -1454,7 +1454,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Cloud",
+      "title": "Top $TopResources Workloads for cloud",
       "type": "timeseries"
     },
     {
@@ -1558,7 +1558,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for COP",
+      "title": "Top $TopResources Workloads for cop",
       "type": "timeseries"
     },
     {
@@ -1662,7 +1662,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for FlexCache RAL",
+      "title": "Top $TopResources Workloads for flexcache_ral",
       "type": "timeseries"
     },
     {
@@ -1766,7 +1766,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for Sync Repl",
+      "title": "Top $TopResources Workloads for sync_repl",
       "type": "timeseries"
     },
     {
@@ -1870,7 +1870,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads for WAFL Admission",
+      "title": "Top $TopResources Workloads for admission",
       "type": "timeseries"
     }
   ],
