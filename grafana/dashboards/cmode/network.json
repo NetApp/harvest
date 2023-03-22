@@ -36,6 +36,12 @@
     },
     {
       "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
       "version": ""
@@ -65,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1679400659206,
+  "iteration": 1679463827503,
   "links": [
     {
       "asDropdown": true,
@@ -3028,6 +3034,23 @@
       "panels": [
         {
           "datasource": null,
+          "description": "",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 15
+          },
+          "id": 114,
+          "options": {
+            "content": "This panel requires a cluster with ONTAP 9.6+ and the Harvest REST collector",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": null,
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3059,7 +3082,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 15
+            "y": 17
           },
           "id": 112,
           "options": {
@@ -3190,7 +3213,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+        "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3200,7 +3223,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+          "query": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3216,7 +3239,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
+        "definition": "label_values(node_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3226,7 +3249,7 @@
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
+          "query": "label_values(node_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
