@@ -25,6 +25,7 @@ var instanceLabels = []string{
 	"gateway",
 	"destination",
 	"family",
+	"uuid",
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -49,6 +50,7 @@ func (n *NetRoute) Init() error {
 			iLabels.NewChildS("", label)
 		}
 		iKeys.NewChildS("", "index")
+		iKeys.NewChildS("", "route_uuid")
 	}
 	n.data.SetExportOptions(exportOptions)
 	return nil
@@ -66,10 +68,10 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 	count := 0
 	for key, instance := range data.GetInstances() {
 		cluster := data.GetGlobalLabels().Get("cluster")
+		routeID := instance.GetLabel("uuid")
 		interfaceName := instance.GetLabel("interface_name")
 		interfaceAddress := instance.GetLabel("interface_address")
 		if interfaceName != "" && interfaceAddress != "" {
-
 			names := strings.Split(interfaceName, ",")
 			address := strings.Split(interfaceAddress, ",")
 			if len(names) == len(address) {
@@ -87,6 +89,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 					interfaceInstance.SetLabel("index", index)
 					interfaceInstance.SetLabel("address", address[i])
 					interfaceInstance.SetLabel("name", name)
+					interfaceInstance.SetLabel("route_uuid", routeID)
 					count++
 				}
 			}

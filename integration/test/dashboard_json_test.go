@@ -29,7 +29,16 @@ var restDataCollectors = []string{"Rest"}
 
 var fileSet []string
 
+// counter map consists of counters which needs to be excluded for both Zapi/Rest in CI test
 var counterMap = data.GetCounterMap()
+
+// zapiCounterMap consists of counters which needs to be excluded for Zapi only in addition to counters present in counterMap
+var zapiCounterMap = map[string]struct{}{
+	"net_route_labels": {},
+}
+
+// restCounters  consists of counters which needs to be excluded for Rest only in addition to counters present in counterMap
+var restCounterMap map[string]struct{}
 
 type ResultInfo struct {
 	expression  string
@@ -113,6 +122,9 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				query := counter + "{datacenter=~\"" + strings.Join(restDataCollectors, "|") + "\"}"
 
 				if !HasDataInDB(query) {
+					if _, ok := restCounterMap[counter]; ok {
+						continue ExpressionFor
+					}
 					errorInfo := ResultInfo{
 						expression,
 						counter,
@@ -125,6 +137,9 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				//Test for Zapi
 				query = counter + "{datacenter!~\"" + strings.Join(restDataCollectors, "|") + "\"}"
 				if !HasDataInDB(query) {
+					if _, ok := zapiCounterMap[counter]; ok {
+						continue ExpressionFor
+					}
 					errorInfo := ResultInfo{
 						expression,
 						counter,
