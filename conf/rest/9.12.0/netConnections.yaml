@@ -12,8 +12,8 @@ counters:
   - ^node                        => node
   - ^proto                       => proto
   - ^remote_ip                   => remote_ip
-  - ^remote_host                 => remote_host
-  - ^service                     => service
+#  - ^remote_host                 => remote_host  # ONTAP will try to resolve all ip addresses from every active connection
+  - ^service                     => service      # see issue #1353
   - ^vserver                     => svm
 
 export_options:
