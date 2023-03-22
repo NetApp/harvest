@@ -2003,7 +2003,7 @@
       "type": "row"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
