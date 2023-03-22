@@ -839,3 +839,21 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 		}
 	})
 }
+
+func TestRefreshIsOff(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkDashboardRefresh(t, shortPath(path), data)
+		},
+	)
+}
+
+func checkDashboardRefresh(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "refresh").ForEach(func(key, value gjson.Result) bool {
+		if value.String() != "" {
+			t.Errorf(`dashboard=%s, got refresh=%s, want refresh="" (off)`, path, value.String())
+		}
+		return true
+	})
+}
