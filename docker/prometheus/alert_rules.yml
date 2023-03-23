@@ -58,7 +58,7 @@ groups:
 
     # Alert for node nfs latency
   - alert: Node nfs latency is high
-    expr: node_nfs_latency > 50000
+    expr: node_nfs_latency > 5000
     for: 5m
     labels:
       severity: "critical"

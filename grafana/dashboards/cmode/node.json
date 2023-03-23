@@ -2333,15 +2333,15 @@
                   },
                   {
                     "color": "semi-dark-yellow",
-                    "value": 10000
+                    "value": 1000
                   },
                   {
                     "color": "semi-dark-orange",
-                    "value": 25000
+                    "value": 2500
                   },
                   {
                     "color": "semi-dark-red",
-                    "value": 50000
+                    "value": 5000
                   }
                 ]
               },
@@ -2402,15 +2402,15 @@
                   },
                   {
                     "color": "semi-dark-yellow",
-                    "value": 10000
+                    "value": 1000
                   },
                   {
                     "color": "semi-dark-orange",
-                    "value": 25000
+                    "value": 2500
                   },
                   {
                     "color": "semi-dark-red",
-                    "value": 50000
+                    "value": 5000
                   }
                 ]
               },
@@ -2470,15 +2470,15 @@
                   },
                   {
                     "color": "semi-dark-yellow",
-                    "value": 10000
+                    "value": 1000
                   },
                   {
                     "color": "semi-dark-orange",
-                    "value": 25000
+                    "value": 2500
                   },
                   {
                     "color": "semi-dark-red",
-                    "value": 50000
+                    "value": 5000
                   }
                 ]
               },
