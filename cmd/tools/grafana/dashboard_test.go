@@ -582,10 +582,10 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
-		"cmode/shelf.json":        2,
-		"cmode/security.json":     3,
-		"cmode/fsa.json":          2,
-		"cmode/delay_center.json": 2,
+		"cmode/shelf.json":    2,
+		"cmode/security.json": 3,
+		"cmode/fsa.json":      2,
+		"cmode/workload.json": 2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(
@@ -837,5 +837,23 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 1 got=%s`,
 				dashPath, path, value.Get("title").String(), defaultUnit, max)
 		}
+	})
+}
+
+func TestRefreshIsOff(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkDashboardRefresh(t, shortPath(path), data)
+		},
+	)
+}
+
+func checkDashboardRefresh(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "refresh").ForEach(func(key, value gjson.Result) bool {
+		if value.String() != "" {
+			t.Errorf(`dashboard=%s, got refresh=%s, want refresh="" (off)`, path, value.String())
+		}
+		return true
 	})
 }
