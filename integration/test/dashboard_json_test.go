@@ -207,7 +207,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		log.Info().Msg("Rest Validation looks good!!")
 	}
 
-	// Fail only for Zapi Collector
+	// Fail if either Rest or Zapi collectors have failures
 	if isZapiFailed {
 		assert.Fail(suite.T(), "Zapi Test validation is failed. Pls check logs above. Count of Missing Zapi counters %d", len(zapiErrorInfoList))
 	} else {
