@@ -19,7 +19,7 @@ To get started, follow our quickstart guide or install Harvest.
 # Community
 
 There is a vibrant community of Harvest users
-on [Discord](https://discord.com/channels/855068651522490400/1062050414146625536)
+on [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help)
 and GitHub [discussions](https://github.com/NetApp/harvest/discussions). Come join! :wave:
 
 # Documentation

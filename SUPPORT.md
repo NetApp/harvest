@@ -22,8 +22,14 @@ We use GitHub for tracking bugs and feature requests.
 
 # Getting Help
 
-There is a vibrant community of Harvest users on the [#harvest](https://discord.com/channels/855068651522490400/1062050414146625536) channel on [NetApp's Discord](https://discord.gg/ZmmWPHTBHw) server.
-Discord is a great place to ask general questions about the project and discuss related topics with like-minded peers.
+The fastest way to ask a question or discuss Harvest related topics is via NetApp's Discord server or 
+[GitHub discussions](https://github.com/NetApp/harvest/discussions).
+
+## Discord
+
+1. [Join and review the community guidelines](https://discord.gg/NetApp)
+2. After you've joined the server, ask your question in the 
+   [#harvest](https://discord.com/channels/855068651522490400/1062050414146625536) channel.
 
 ## Documentation
 
