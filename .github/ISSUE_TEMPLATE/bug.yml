@@ -61,7 +61,7 @@ body:
         
         If you're using nabox, open the WebUI, click Settings > Maintenance and copy paste the `System Information` 
 
-        If you are not running the latest version of Harvest, please try upgrading
+        If you are not running the [latest version of Harvest](https://github.com/NetApp/harvest/releases), please try upgrading
         because your issue may have already been fixed.
     validations:
       required: true
