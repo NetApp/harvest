@@ -13,5 +13,5 @@ datacenter [metrics](https://netapp.github.io/harvest/latest/ontap-metrics/).
 
 !!! note
 
-    Hop onto our [Discord](https://discord.com/channels/855068651522490400/1062050414146625536) 
+    Hop onto our [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help) 
     or GitHub [discussions](https://github.com/NetApp/harvest/discussions) and say hi. 👋🏽

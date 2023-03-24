@@ -75,7 +75,7 @@ extra:
     provider: mike
   social:
     - icon: fontawesome/brands/discord
-      link: https://discord.com/channels/855068651522490400/1062050414146625536
+      link: https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help
     - icon: fontawesome/brands/github
       link: https://github.com/NetApp/harvest/discussions
 
