@@ -61,7 +61,6 @@ bin/harvest generate metrics
 - [ ] Open the `CHANGELOG.md` file, copy the single $RELEASE section at the top, and paste into the release notes text area. 
 - [ ] Ensure the `Set as the latest release` checkbox is selected
 - [ ] Ensure the `Create a discussion for this release ` checkbox is selected
-- [ ] Ensure the `Create a discussion for this release ` checkbox is selected
 - [ ] Upload the artifacts from the Jenkins build above and attach to the release
 - [ ] Click `Publish release` button
 - [ ] Announce on Discord 

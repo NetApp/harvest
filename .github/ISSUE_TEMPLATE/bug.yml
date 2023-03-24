@@ -44,11 +44,22 @@ body:
       render: text
 
   - type: input
+    id: poller
+    attributes:
+      label: Poller
+      description: |
+        Please paste the name(s) of your poller that are experiencing problems.
+    validations:
+      required: true
+
+  - type: input
     id: version
     attributes:
       label: Version
       description: |
         Please paste the output of running `bin/harvest version`.
+        
+        If you're using nabox, open the WebUI, click Settings > Maintenance and copy paste the `System Information` 
 
         If you are not running the latest version of Harvest, please try upgrading
         because your issue may have already been fixed.
@@ -61,6 +72,8 @@ body:
       label: Poller logs
       description: |
         Please provide the logs of the poller that ran into the problem.
+        
+        If you're using nabox, see [log collection](https://nabox.org/documentation/troubleshooting/#collecting-logs).
 
         Email them to [ng-harvest-files@netapp.com](mailto:ng-harvest-files@netapp.com) This mail address is accessible to NetApp Harvest employees only.
   
