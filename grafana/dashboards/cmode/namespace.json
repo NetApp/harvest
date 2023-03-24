@@ -141,7 +141,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "us"
         },
         "overrides": []
       },
@@ -415,7 +415,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "us"
         },
         "overrides": []
       },
@@ -1314,5 +1314,5 @@
   "timezone": "",
   "title": "ONTAP: NVMe Namespaces",
   "uid": "",
-  "version": 1
+  "version": 2
 }
