@@ -38,7 +38,9 @@ var zapiCounterMap = map[string]struct{}{
 }
 
 // restCounters  consists of counters which needs to be excluded for Rest only in addition to counters present in counterMap
-var restCounterMap map[string]struct{}
+var restCounterMap = map[string]struct{}{
+	"aggr_snapshot_inode_used_percent": {},
+}
 
 type ResultInfo struct {
 	expression  string
@@ -200,14 +202,14 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	}
 
 	if isRestFailed {
-		log.Warn().Msgf("Rest Test validation is failed. Pls check logs above. Total Missing Rest counters %d", len(perfErrorInfoList))
+		assert.Fail(suite.T(), "Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(perfErrorInfoList))
 	} else {
 		log.Info().Msg("Rest Validation looks good!!")
 	}
 
-	// Fail only for Zapi Collector
+	// Fail if either Rest or Zapi collectors have failures
 	if isZapiFailed {
-		assert.Fail(suite.T(), "Zapi Test validation is failed. Pls check logs above")
+		assert.Fail(suite.T(), "Zapi Test validation is failed. Pls check logs above. Count of Missing Zapi counters %d", len(zapiErrorInfoList))
 	} else {
 		log.Info().Msg("Zapi Validation looks good!!")
 	}
