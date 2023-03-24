@@ -1,0 +1,128 @@
+---
+name: Bug
+description: 🐛 Let us know about an unexpected error, crash, or incorrect behavior
+labels: status/needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for opening a 🐛 bug report!
+
+  - type: textarea
+    attributes:
+      label: A note for the community
+      value: |
+        <!-- Please keep this note for the community -->
+        * Please vote on this issue by adding a 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) to the original issue to help the community and maintainers prioritize this request
+        * If you are interested in working on this issue or have submitted a pull request, please let us know in a comment
+        <!-- Thank you for keeping this note for the community -->
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: >
+        Please provide a clear and concise description of what the bug is,
+        including what currently happens and what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: |
+        Paste the relevant parts of your Harvest configuration file, `harvest.yml`.
+
+        Check that your `harvest.yml` is valid by running
+
+        ```
+        bin/harvest doctor
+        ```
+
+        !! Paste a redacted copy of your harvest.yml file by running `bin/harvest doctor --print` !!
+      render: text
+
+  - type: input
+    id: poller
+    attributes:
+      label: Poller
+      description: |
+        Please paste the name(s) of your poller that are experiencing problems.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: |
+        Please paste the output of running `bin/harvest version`.
+        
+        If you're using nabox, open the WebUI, click Settings > Maintenance and copy paste the `System Information` 
+
+        If you are not running the latest version of Harvest, please try upgrading
+        because your issue may have already been fixed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: debug
+    attributes:
+      label: Poller logs
+      description: |
+        Please provide the logs of the poller that ran into the problem.
+        
+        If you're using nabox, see [log collection](https://nabox.org/documentation/troubleshooting/#collecting-logs).
+
+        Email them to [ng-harvest-files@netapp.com](mailto:ng-harvest-files@netapp.com) This mail address is accessible to NetApp Harvest employees only.
+  
+      render: text
+
+  - type: input
+    id: os
+    attributes:
+      label: OS and platform
+      description: |
+        Please let us know what OS you're using and how you installed Harvest.
+        
+        Example: RHEL 7.6, Ubuntu 21.04, Docker 19.03.1-CE
+        Install method: debian, rhel, native, docker, Nabox        
+      
+    validations:
+      required: true
+
+  - type: input
+    id: ontap
+    attributes:
+      label: ONTAP or StorageGRID version
+      description: |
+        Please let us know what version of ONTAP/StorageGRID you're using.
+
+        Harvest can be used to gather that information.
+        
+        ```
+        bin/zapi -p u2 show system
+        connected to umeng-aff300-05-06 (NetApp Release 9.9.1P9X3: Tue Apr 19 19:05:24 UTC 2022)
+        ```
+    validations:
+      required: true
+
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: |
+        Is there anything atypical about your environment that we should know? For
+        example: is Harvest running in Kubernetes? Are you passing any unusual command
+        line options or environment variables to opt-in to non-default behavior?
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: |
+        Are there any other GitHub issues (open or closed) or pull requests that should be linked here? For example:
+
+        - #1772

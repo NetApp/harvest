@@ -1,0 +1,10 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Help
+    url: https://discord.gg/ZmmWPHTBHw
+    about: Get help! Ask questions and share ideas.
+
+  - name: Discussions
+    url: https://github.com/NetApp/harvest/discussions
+    about: Talk with the Harvest team and other community members on GitHub discussions
