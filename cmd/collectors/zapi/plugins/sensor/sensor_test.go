@@ -14,7 +14,7 @@ import (
 
 var testxml = "../../../../../cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml"
 var mat *matrix.Matrix
-var sensor = &Sensor{AbstractPlugin: plugin.New("sensor", nil, nil, nil, "sensor")}
+var sensor = &Sensor{AbstractPlugin: plugin.New("sensor", nil, nil, nil, "sensor", nil)}
 
 func init() {
 	//setup matrix data

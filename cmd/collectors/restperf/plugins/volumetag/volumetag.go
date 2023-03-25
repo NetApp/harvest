@@ -24,7 +24,7 @@ func (v *VolumeTag) Init() error {
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout); err != nil {
+	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
 		v.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

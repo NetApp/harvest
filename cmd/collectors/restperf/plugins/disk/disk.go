@@ -155,7 +155,7 @@ func (d *Disk) Init() error {
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if d.client, err = rest.New(conf.ZapiPoller(d.ParentParams), timeout); err != nil {
+	if d.client, err = rest.New(conf.ZapiPoller(d.ParentParams), timeout, d.Auth); err != nil {
 		d.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

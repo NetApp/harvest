@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/spf13/cobra"
 	"io"
 	"os"
@@ -359,7 +361,8 @@ func generateMetrics(path string) {
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if restClient, err = rest.New(poller, timeout); err != nil {
+	credentials := auth.NewCredentials(poller, logging.Get())
+	if restClient, err = rest.New(poller, timeout, credentials); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
@@ -368,7 +371,7 @@ func generateMetrics(path string) {
 		os.Exit(1)
 	}
 
-	if zapiClient, err = zapi.New(poller); err != nil {
+	if zapiClient, err = zapi.New(poller, credentials); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}

@@ -34,7 +34,7 @@ func (my *Security) Init() error {
 		return err
 	}
 
-	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams)); err != nil {
+	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

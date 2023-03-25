@@ -36,7 +36,7 @@ func (my *Certificate) Init() error {
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout); err != nil {
+	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout, my.Auth); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

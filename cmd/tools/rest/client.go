@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -25,6 +26,8 @@ import (
 const (
 	// DefaultTimeout should be > than ONTAP's default REST timeout, which is 15 seconds for GET requests
 	DefaultTimeout = "30s"
+	// DefaultDialerTimeout limits the time spent establishing a TCP connection
+	DefaultDialerTimeout = 10 * time.Second
 )
 
 type Client struct {
@@ -37,7 +40,7 @@ type Client struct {
 	username string
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
-
+	auth     *auth.Credentials
 }
 
 type Cluster struct {
@@ -47,7 +50,7 @@ type Cluster struct {
 	Version [3]int
 }
 
-func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
+func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -59,7 +62,9 @@ func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 		err            error
 	)
 
-	client = Client{}
+	client = Client{
+		auth: c,
+	}
 	client.Logger = logging.Get().SubLogger("REST", "Client")
 
 	if addr = poller.Addr; addr == "" {
@@ -133,7 +138,7 @@ func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 		}
 	} else {
 		username := poller.Username
-		password := auth.Get().Password()
+		password := c.Password()
 		client.username = username
 		if username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
@@ -146,7 +151,7 @@ func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	}
-
+	transport.DialContext = (&net.Dialer{Timeout: DefaultDialerTimeout}).DialContext
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient
 
@@ -194,7 +199,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	}
 	c.request.Header.Set("accept", "application/json")
 	if c.username != "" {
-		c.request.SetBasicAuth(c.username, auth.Get().Password())
+		c.request.SetBasicAuth(c.username, c.auth.Password())
 	}
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
@@ -272,13 +277,13 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
-	if restClient, err = New(poller, timeout); err != nil {
+	if restClient, err = New(poller, timeout, auth.NewCredentials(poller, logging.Get())); err != nil {
 		return 0, fmt.Errorf("error creating new client %w", err)
 	}
 
 	downClient := &http.Client{Transport: restClient.client.Transport, Timeout: restClient.client.Timeout}
 	if restClient.username != "" {
-		request.SetBasicAuth(restClient.username, auth.Get().Password())
+		request.SetBasicAuth(restClient.username, restClient.auth.Password())
 	}
 	if verbose {
 		requestOut, _ := httputil.DumpRequestOut(request, false)

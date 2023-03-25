@@ -70,7 +70,7 @@ func TestInitPlugin(t *testing.T) {
 	// exclude instance if label "volstatus" has value which starts with "stopped_"
 	params.NewChildS("exclude_contains", "").NewChildS("", "volstatus `stop`")
 
-	abc := plugin.New("Test", nil, params, nil, "")
+	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p = &LabelAgent{AbstractPlugin: abc}
 
 	if err := p.Init(); err != nil {

@@ -40,7 +40,7 @@ func (s *SecurityAccount) Init() error {
 	} else {
 		s.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
-	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout); err != nil {
+	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
 		s.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

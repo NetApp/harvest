@@ -131,6 +131,7 @@ type Poller struct {
 	status          *matrix.Matrix
 	certPool        *x509.CertPool
 	client          *http.Client
+	auth            *auth.Credentials
 	hasPromExporter bool
 }
 
@@ -272,7 +273,7 @@ func (p *Poller) Init() error {
 	}
 
 	// create a shared auth service that all collectors will use
-	auth.NewCredentials(p.params, logger)
+	p.auth = auth.NewCredentials(p.params, logger)
 
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
@@ -844,7 +845,7 @@ func (p *Poller) newCollector(class string, object string, template *node.Node) 
 	if !ok {
 		return nil, errs.New(errs.ErrNoCollector, "no collectors")
 	}
-	delegate := collector.New(class, object, p.options, template.Copy())
+	delegate := collector.New(class, object, p.options, template.Copy(), p.auth)
 	err = col.Init(delegate)
 	return col, err
 }
@@ -1147,7 +1148,7 @@ func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
 	}
 	verWithDots := r.Client.Cluster().GetVersion()
 
-	return p.negotiateAPI(c, verWithDots, doZAPIsExist)
+	return p.negotiateAPI(c, verWithDots, p.doZAPIsExist)
 }
 
 // clusterVersion should be of the form 9.12.1
@@ -1210,18 +1211,18 @@ func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string, checkZAPI
 	return c
 }
 
-func doZAPIsExist() error {
+func (p *Poller) doZAPIsExist() error {
 	var (
 		poller     *conf.Poller
 		connection *zapi.Client
 		err        error
 	)
 
-	// connect to cluster and retrieve system version
+	// connect to the cluster and retrieve the system version
 	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		return err
 	}
-	if connection, err = zapi.New(poller); err != nil {
+	if connection, err = zapi.New(poller, p.auth); err != nil {
 		return err
 
 	}
@@ -1236,7 +1237,7 @@ func (p *Poller) newRestClient() (*rest.Rest, error) {
 	// Set client_timeout to suppress logging a msg about the default client_timeout during Rest client creation
 	params.NewChildS("client_timeout", rest2.DefaultTimeout)
 	Union2(params, p.params)
-	delegate := collector.New("Rest", "", p.options, params)
+	delegate := collector.New("Rest", "", p.options, params, p.auth)
 	r := &rest.Rest{
 		AbstractCollector: delegate,
 	}
