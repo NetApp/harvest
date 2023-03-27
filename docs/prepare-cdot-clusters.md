@@ -76,6 +76,7 @@ those should be entered under the *Command* column, *Query* should be left blank
 *readonly*.
 
 * cluster
+* qos
 * lun
 * snapmirror
 * statistics
@@ -136,6 +137,11 @@ security login role create -role harvest2-role -access readonly -cmddirname "net
 security login role create -role harvest2-role -access readonly -cmddirname "security"
 security login role create -role harvest2-role -access readonly -cmddirname "storage encryption disk"
 security login role create -role harvest2-role -access readonly -cmddirname "vserver"
+
+# Permissions required for Harvest 23.05+ QoS policies
+security login role create -role harvest2-role -access readonly -cmddirname "qos adaptive-policy-group"
+security login role create -role harvest2-role -access readonly -cmddirname "qos policy-group"
+
 ```
 
 #### All APIs read-only approach
