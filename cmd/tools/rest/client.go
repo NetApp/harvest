@@ -50,7 +50,7 @@ type Cluster struct {
 	Version [3]int
 }
 
-func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Client, error) {
+func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -63,7 +63,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 	)
 
 	client = Client{
-		auth: c,
+		auth: auth,
 	}
 	client.Logger = logging.Get().SubLogger("REST", "Client")
 
@@ -138,7 +138,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 		}
 	} else {
 		username := poller.Username
-		password := c.Password()
+		password := auth.Password()
 		client.username = username
 		if username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
