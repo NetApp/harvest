@@ -25,7 +25,7 @@ func (v *VolumeTag) Init() error {
 		return err
 	}
 
-	if v.client, err = zapi.New(conf.ZapiPoller(v.ParentParams)); err != nil {
+	if v.client, err = zapi.New(conf.ZapiPoller(v.ParentParams), v.Auth); err != nil {
 		v.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

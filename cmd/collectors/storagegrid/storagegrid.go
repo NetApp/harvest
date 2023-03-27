@@ -398,7 +398,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 func (s *StorageGrid) initClient() error {
 	var err error
 
-	if s.client, err = srest.NewClient(s.Options.Poller, s.Params.GetChildContentS("client_timeout")); err != nil {
+	if s.client, err = srest.NewClient(s.Options.Poller, s.Params.GetChildContentS("client_timeout"), s.Auth); err != nil {
 		return err
 	}
 

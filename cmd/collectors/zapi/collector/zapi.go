@@ -87,7 +87,7 @@ func (z *Zapi) InitVars() error {
 
 	var err error
 
-	if z.Client, err = client.New(conf.ZapiPoller(z.Params)); err != nil { // convert to connection error, so poller aborts
+	if z.Client, err = client.New(conf.ZapiPoller(z.Params), z.Auth); err != nil { // convert to connection error, so poller aborts
 		return errs.New(errs.ErrConnection, err.Error())
 	}
 	z.Client.TraceLogSet(z.Name, z.Params)

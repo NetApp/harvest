@@ -65,7 +65,7 @@ func (my *Qtree) Init() error {
 	} else {
 		my.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
-	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout); err != nil {
+	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout, my.Auth); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

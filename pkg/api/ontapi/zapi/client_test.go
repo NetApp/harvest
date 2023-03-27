@@ -54,8 +54,7 @@ func TestNew(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			poller := conf.ZapiPoller(tt.config)
-			auth.TestNewCredentials(poller, logging.Get())
-			_, err := New(poller)
+			_, err := New(poller, auth.NewCredentials(poller, logging.Get()))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
 				return

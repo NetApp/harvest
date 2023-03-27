@@ -37,6 +37,7 @@ type Client struct {
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
 	APIPath  string
+	auth     *auth.Credentials
 }
 
 type Cluster struct {
@@ -46,7 +47,7 @@ type Cluster struct {
 	Version [3]int
 }
 
-func NewClient(pollerName string, clientTimeout string) (*Client, error) {
+func NewClient(pollerName string, clientTimeout string, c *auth.Credentials) (*Client, error) {
 	var (
 		poller  *conf.Poller
 		err     error
@@ -65,14 +66,14 @@ func NewClient(pollerName string, clientTimeout string) (*Client, error) {
 	if err != nil {
 		timeout, _ = time.ParseDuration(DefaultTimeout)
 	}
-	if client, err = New(poller, timeout); err != nil {
+	if client, err = New(poller, timeout, c); err != nil {
 		return nil, fmt.Errorf("uanble to create poller [%s]. err: %w", pollerName, err)
 	}
 
 	return client, err
 }
 
-func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
+func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -84,7 +85,9 @@ func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 		err            error
 	)
 
-	client = Client{}
+	client = Client{
+		auth: c,
+	}
 	client.Logger = logging.Get().SubLogger("StorageGrid", "Client")
 
 	if addr = poller.Addr; addr == "" {
@@ -135,7 +138,7 @@ func New(poller *conf.Poller, timeout time.Duration) (*Client, error) {
 		}
 	} else {
 		username := poller.Username
-		password := auth.Get().Password()
+		password := c.Password()
 		client.username = username
 		if username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
@@ -386,7 +389,7 @@ func (c *Client) fetchToken() error {
 	}
 	authB := authBody{
 		Username: c.username,
-		Password: auth.Get().Password(),
+		Password: c.auth.Password(),
 	}
 	postBody, err := json.Marshal(authB)
 	if err != nil {

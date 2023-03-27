@@ -155,7 +155,7 @@ func (t *JoinRest) updateCache(model join, bytes *[]byte) {
 func (t *JoinRest) initClient() error {
 	var err error
 
-	if t.client, err = rest.NewClient(t.Options.Poller, t.Params.GetChildContentS("client_timeout")); err != nil {
+	if t.client, err = rest.NewClient(t.Options.Poller, t.Params.GetChildContentS("client_timeout"), t.Auth); err != nil {
 		return err
 	}
 

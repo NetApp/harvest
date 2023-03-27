@@ -32,7 +32,7 @@ func TestInitPlugin(t *testing.T) {
 	// create metric "transmission_rate", which is division of the metric value of transfer.bytes_transferred by transfer.total_duration
 	params.NewChildS("compute_metric", "").NewChildS("", "transmission_rate DIVIDE transfer.bytes_transferred transfer.total_duration")
 
-	abc := plugin.New("Test", nil, params, nil, "")
+	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p = &MetricAgent{AbstractPlugin: abc}
 
 	if err := p.Init(); err != nil {

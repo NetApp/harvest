@@ -18,6 +18,7 @@ package collector
 
 import (
 	"errors"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"golang.org/x/text/cases"
@@ -85,7 +86,7 @@ type AbstractCollector struct {
 	Object  string           // object of the collector, describes what that collector is collecting
 	Logger  *logging.Logger  // logger used for logging
 	Status  uint8            // current state of th
-	Message string           // reason if collector is in failed state
+	Message string           // reason if a collector is in failed state
 	Options *options.Options // poller options
 	Params  *node.Node       // collector parameters
 	// note that this is a merge of poller parameters, collector conf and object conf ("subtemplate")
@@ -97,27 +98,23 @@ type AbstractCollector struct {
 	collectCount uint64                     // count of collected data points
 	// this is different from what the collector will have in its metadata, since this variable
 	// holds count independent of the poll interval of the collector, used to give stats to Poller
-	countMux    *sync.Mutex // used for atomic access to collectCount
+	countMux    *sync.Mutex       // used for atomic access to collectCount
+	Auth        *auth.Credentials // used for authing the collector
 	HostVersion string
 	HostModel   string
 	HostUUID    string
 }
 
-// New creates an AbstractCollector with the given arguments:
-// @name	- name of the collector
-// @object	- object of the collector (something that best describes the data)
-// @options	- poller options
-// @params	- collector parameters
-func New(name, object string, options *options.Options, params *node.Node) *AbstractCollector {
-	c := AbstractCollector{
+func New(name, object string, options *options.Options, params *node.Node, credentials *auth.Credentials) *AbstractCollector {
+	return &AbstractCollector{
 		Name:     name,
 		Object:   object,
 		Options:  options,
 		Logger:   logging.Get().SubLogger("collector", name+":"+object),
 		Params:   params,
 		countMux: &sync.Mutex{},
+		Auth:     credentials,
 	}
-	return &c
 }
 
 // Init initializes a collector and does the trick of "inheritance",
@@ -583,7 +580,7 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, 
 			x.SetNameS(name)
 		}
 
-		abc = plugin.New(c.Name, c.Options, x, c.Params, c.Object)
+		abc = plugin.New(c.Name, c.Options, x, c.Params, c.Object, c.Auth)
 
 		// case 1: available as built-in plugin
 		if p = GetBuiltinPlugin(name, abc); p != nil {

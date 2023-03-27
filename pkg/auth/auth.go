@@ -17,23 +17,12 @@ const (
 	defaultTimeout  = "10s"
 )
 
-var once sync.Once
-var auth *Credentials
-
-func Get() *Credentials {
-	return auth
-}
-
-func NewCredentials(p *conf.Poller, logger *logging.Logger) {
-	once.Do(func() {
-		if auth == nil {
-			auth = &Credentials{
-				poller: p,
-				logger: logger,
-				authMu: &sync.Mutex{},
-			}
-		}
-	})
+func NewCredentials(p *conf.Poller, logger *logging.Logger) *Credentials {
+	return &Credentials{
+		poller: p,
+		logger: logger,
+		authMu: &sync.Mutex{},
+	}
 }
 
 type Credentials struct {
@@ -130,14 +119,4 @@ func (c *Credentials) setNextUpdate() {
 		duration, _ = time.ParseDuration(defaultSchedule)
 	}
 	c.nextUpdate = time.Now().Add(duration)
-}
-
-// TestNewCredentials is used by testing code to reload auth
-func TestNewCredentials(p *conf.Poller, logger *logging.Logger) *Credentials {
-	auth = &Credentials{
-		poller: p,
-		logger: logger,
-		authMu: &sync.Mutex{},
-	}
-	return auth
 }
