@@ -12,13 +12,7 @@ import (
 	//"github.com/netapp/harvest/v2/share/logger"
 )
 
-var p *LabelAgent
-
-func TestInitPlugin(t *testing.T) {
-
-	// uncomment for debugging
-	//logger.SetLevel(0)
-
+func newLabelAgent() *LabelAgent {
 	// define plugin rules
 	params := node.NewS("LabelAgent")
 	// split value of "X" into 4 and take last 2 as new labels
@@ -71,15 +65,17 @@ func TestInitPlugin(t *testing.T) {
 	params.NewChildS("exclude_contains", "").NewChildS("", "volstatus `stop`")
 
 	abc := plugin.New("Test", nil, params, nil, "", nil)
-	p = &LabelAgent{AbstractPlugin: abc}
+	p := &LabelAgent{AbstractPlugin: abc}
 
 	if err := p.Init(); err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
+	return p
 }
 
 func TestSplitSimpleRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "a/b/c/d")
 
@@ -96,6 +92,8 @@ func TestSplitSimpleRule(t *testing.T) {
 
 func TestSplitRegexRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "xxxA22_B333")
 
@@ -112,6 +110,8 @@ func TestSplitRegexRule(t *testing.T) {
 
 func TestSplitPairsRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "owner:jack contact:some@email")
 
@@ -128,6 +128,8 @@ func TestSplitPairsRule(t *testing.T) {
 
 func TestJoinSimpleRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa")
 	instance.SetLabel("B", "bbb")
@@ -145,6 +147,8 @@ func TestJoinSimpleRule(t *testing.T) {
 
 func TestReplaceSimpleRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa_X")
 
@@ -161,6 +165,8 @@ func TestReplaceSimpleRule(t *testing.T) {
 
 func TestReplaceRegexRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa_12345_abcDEF")
 
@@ -177,6 +183,8 @@ func TestReplaceRegexRule(t *testing.T) {
 
 func TestExcludeEqualsRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	// should match
 	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa bbb ccc")
@@ -199,6 +207,8 @@ func TestExcludeEqualsRule(t *testing.T) {
 
 func TestExcludeContainsRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	// should match
 	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "xxx_aaa_xxx")
@@ -220,6 +230,8 @@ func TestExcludeContainsRule(t *testing.T) {
 
 func TestExcludeRegexRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	// should match
 	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa_123")
@@ -241,6 +253,8 @@ func TestExcludeRegexRule(t *testing.T) {
 
 func TestIncludeEqualsRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	// should match
 	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa bbb ccc")
@@ -263,6 +277,8 @@ func TestIncludeEqualsRule(t *testing.T) {
 
 func TestIncludeContainsRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	// should match
 	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "xxx_aaa_xxx")
@@ -284,6 +300,8 @@ func TestIncludeContainsRule(t *testing.T) {
 
 func TestIncludeRegexRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
 	// should match
 	instanceYes, _ := m.NewInstance("0")
 	instanceYes.SetLabel("A", "aaa_123")
@@ -314,6 +332,7 @@ func TestValueToNumRule(t *testing.T) {
 	)
 	// should match
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
 
 	if instanceA, err = m.NewInstance("A"); err != nil {
 		t.Fatal(err)
@@ -414,6 +433,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 	)
 
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
 
 	if instanceA, err = m.NewInstance("A"); err != nil {
 		t.Fatal(err)
@@ -508,6 +528,7 @@ func TestValueToNumRegexRule(t *testing.T) {
 
 func TestExcludeEqualIncludeEqualRuleOrder(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
 
 	instanceOne, _ := m.NewInstance("1")
 	instanceOne.SetLabel("volstate", "offline")
@@ -540,6 +561,7 @@ func TestExcludeEqualIncludeEqualRuleOrder(t *testing.T) {
 
 func TestIncludeContainExcludeContainRuleOrder(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
 
 	instanceFour, _ := m.NewInstance("4")
 	instanceFour.SetLabel("volstyle", "flexvol")
