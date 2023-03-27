@@ -11,19 +11,17 @@ import (
 	"testing"
 )
 
-var p *Aggregator
-
-func TestMain(m *testing.M) {
+func newAggregator() *Aggregator {
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "node")
 
 	abc := plugin.New("Test", nil, params, nil, "", nil)
-	p = &Aggregator{AbstractPlugin: abc}
+	p := &Aggregator{AbstractPlugin: abc}
 
 	if err := p.Init(); err != nil {
 		panic(err)
 	}
-	m.Run()
+	return p
 }
 
 func TestRuleSimpleAggregation(t *testing.T) {
@@ -33,6 +31,7 @@ func TestRuleSimpleAggregation(t *testing.T) {
 		metricA, metricB *matrix.Metric
 	)
 	m := newArtificialData()
+	p := newAggregator()
 
 	// run the plugin
 	dataMap := map[string]*matrix.Matrix{
@@ -86,6 +85,8 @@ func TestRuleSimpleAggregation(t *testing.T) {
 
 func TestRuleIncludeAllLabels(t *testing.T) {
 	m := newArtificialData()
+	p := newAggregator()
+
 	var n *matrix.Matrix
 
 	params := node.NewS("Aggregator")
@@ -150,6 +151,7 @@ func TestComplexRuleRegex(t *testing.T) {
 
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "volume<`_\\d{4}$`>flexgroup aggr,svm")
+	p := newAggregator()
 
 	p.Params = params
 	m := newArtificialData()
@@ -307,6 +309,7 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "node")
+	p := newAggregator()
 
 	p.Params = params
 
@@ -414,6 +417,7 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 
 	params := node.NewS("Aggregator")
 	params.NewChildS("", "node")
+	p := newAggregator()
 
 	p.Params = params
 
