@@ -410,13 +410,11 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		return true
 	})
 
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		// name of variable
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		d := value.Get("description").String()
 		if d != "" {
 			description = append(description, value.Get("description").String())
 		}
-		return true
 	})
 
 	expressions := allExpressions(data)
