@@ -1,7 +1,6 @@
 package conf
 
 import (
-	"fmt"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"reflect"
 	"sort"
@@ -16,29 +15,28 @@ func TestGetPrometheusExporterPorts(t *testing.T) {
 	// Test without checking
 	ValidatePortInUse = true
 	type args struct {
-		pollerName string
+		pollerNames []string
 	}
 
 	type test struct {
 		name    string
 		args    args
-		wantErr bool
+		wantErr []bool
 	}
 	tests := []test{
-		{"success", args{pollerName: "unix-01"}, false},
-		{"failure_no_free_port", args{pollerName: "cluster-02"}, true},
-		{"failure_poller_name_does_not_exist", args{pollerName: "test1"}, true},
+		{"test", args{pollerNames: []string{"unix-01", "cluster-02", "test1"}}, []bool{false, true, true}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetPrometheusExporterPorts(tt.args.pollerName)
-			fmt.Println(got)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetPrometheusExporterPorts() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if err == nil && got == 0 {
-				t.Errorf("GetPrometheusExporterPorts() got = %v, want %s", got, "non zero value")
+			for i, v := range tt.args.pollerNames {
+				got, err := GetPrometheusExporterPorts(v)
+				if (err != nil) != tt.wantErr[i] {
+					t.Errorf("GetPrometheusExporterPorts() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if err == nil && got == 0 {
+					t.Errorf("GetPrometheusExporterPorts() got = %v, want %s", got, "non zero value")
+				}
 			}
 		})
 	}
