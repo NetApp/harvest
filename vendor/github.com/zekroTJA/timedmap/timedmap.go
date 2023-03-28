@@ -1,6 +1,7 @@
 package timedmap
 
 import (
+	"reflect"
 	"sync"
 	"time"
 )
@@ -38,30 +39,60 @@ type element struct {
 
 // New creates and returns a new instance of TimedMap.
 // The passed cleanupTickTime will be passed to the
-// cleanup Timer, which iterates through the map and
+// cleanup ticker, which iterates through the map and
 // deletes expired key-value pairs.
 //
 // Optionally, you can also pass a custom <-chan time.Time
 // which controls the cleanup cycle if you want to use
-// a single syncronyzed timer or something like that.
+// a single syncronyzed timer or if you want to have more
+// control over the cleanup loop.
+//
+// When passing 0 as cleanupTickTime and no tickerChan,
+// the cleanup loop will not be started. You can call
+// StartCleanerInternal or StartCleanerExternal to
+// manually start the cleanup loop. These both methods
+// can also be used to re-define the specification of
+// the cleanup loop when already running if you want to.
 func New(cleanupTickTime time.Duration, tickerChan ...<-chan time.Time) *TimedMap {
-	tm := &TimedMap{
-		container:       make(map[keyWrap]*element),
-		cleanerStopChan: make(chan bool),
-		elementPool: &sync.Pool{
-			New: func() interface{} {
-				return new(element)
-			},
-		},
+	return newTimedMap(make(map[keyWrap]*element), cleanupTickTime, tickerChan)
+}
+
+// FromMap creates a new TimedMap containing the given
+// keys and values from the passed map m. All key-value
+// pairs will be assigned the given expiration.
+//
+// Returns ErrValueNoMap if the given value for m is
+// not of type map.
+func FromMap(
+	m interface{},
+	expiration time.Duration,
+	cleanupTickTime time.Duration,
+	tickerChan ...<-chan time.Time,
+) (*TimedMap, error) {
+	mv := reflect.ValueOf(m)
+	if mv.Kind() != reflect.Map {
+		return nil, ErrValueNoMap
 	}
 
-	if len(tickerChan) > 0 {
-		tm.StartCleanerExternal(tickerChan[0])
-	} else if cleanupTickTime > 0 {
-		tm.StartCleanerInternal(cleanupTickTime)
+	exp := time.Now().Add(expiration)
+	container := make(map[keyWrap]*element)
+
+	iter := mv.MapRange()
+	for iter.Next() {
+		key := iter.Key()
+		val := iter.Value()
+		kw := keyWrap{
+			sec: 0,
+			key: key.Interface(),
+		}
+		el := &element{
+			value:   val.Interface(),
+			expires: exp,
+		}
+		container[kw] = el
 	}
 
-	return tm
+	return newTimedMap(container, cleanupTickTime, tickerChan), nil
 }
 
 // Section returns a sectioned subset of
@@ -374,4 +405,28 @@ func (tm *TimedMap) getSnapshot(sec int) (m map[interface{}]interface{}) {
 	}
 
 	return
+}
+
+func newTimedMap(
+	container map[keyWrap]*element,
+	cleanupTickTime time.Duration,
+	tickerChan []<-chan time.Time,
+) *TimedMap {
+	tm := &TimedMap{
+		container:       container,
+		cleanerStopChan: make(chan bool),
+		elementPool: &sync.Pool{
+			New: func() interface{} {
+				return new(element)
+			},
+		},
+	}
+
+	if len(tickerChan) > 0 {
+		tm.StartCleanerExternal(tickerChan[0])
+	} else if cleanupTickTime > 0 {
+		tm.StartCleanerInternal(cleanupTickTime)
+	}
+
+	return tm
 }
