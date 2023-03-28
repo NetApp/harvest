@@ -5,7 +5,7 @@ Tools:
 Exporters:
   prometheusrange:
     exporter: Prometheus
-    port_range: 2000-2000
+    port_range: 20000-20000
   prometheus:
     exporter: Prometheus
     local_http_addr: 0.0.0.0
