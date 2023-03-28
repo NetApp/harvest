@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1676473456527,
+  "iteration": 1679986383434,
   "links": [
     {
       "asDropdown": true,
@@ -497,6 +497,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Average processor utilization across all processors in the system",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -566,7 +567,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Nodes by CPU Utilization",
+      "title": "Top $TopResources Nodes by Average CPU Utilization",
       "transformations": [
         {
           "id": "organize",
@@ -595,6 +596,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -639,7 +641,7 @@
         "x": 16,
         "y": 7
       },
-      "id": 237,
+      "id": 239,
       "options": {
         "footer": {
           "fields": "",
@@ -656,7 +658,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum by (node)(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "expr": "topk($TopResources, sum by (node)(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -664,7 +666,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Nodes by Disk Utilization",
+      "title": "Top $TopResources Nodes by CPU busy",
       "transformations": [
         {
           "id": "organize",
@@ -965,13 +967,111 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 21
+      },
+      "id": 237,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "topk($TopResources, sum by (node)(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Nodes by Disk Utilization",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Avg",
+              "node": "Node"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Avg",
+                "Node"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 27
       },
       "id": 79,
       "panels": [
@@ -1101,7 +1201,7 @@
             "h": 7,
             "w": 18,
             "x": 0,
-            "y": 16
+            "y": 28
           },
           "id": 52,
           "interval": "",
@@ -1116,7 +1216,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -1280,7 +1380,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 16
+            "y": 28
           },
           "id": 156,
           "links": [],
@@ -1299,7 +1399,7 @@
             "text": {},
             "textMode": "value"
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -1325,7 +1425,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1366,7 +1466,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 19
+            "y": 31
           },
           "id": 181,
           "links": [],
@@ -1383,7 +1483,7 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -1399,7 +1499,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average processor utilization across all processors in the system",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1440,9 +1540,9 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 22
+            "y": 34
           },
-          "id": 157,
+          "id": 240,
           "links": [],
           "options": {
             "displayMode": "gradient",
@@ -1457,18 +1557,18 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(node_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "avg(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "title": "Max Disk Utilization by Cluster",
+          "title": "Average CPU Utilization",
           "type": "bargauge"
         },
         {
@@ -1641,7 +1741,7 @@
             "h": 8,
             "w": 18,
             "x": 0,
-            "y": 23
+            "y": 35
           },
           "id": 177,
           "interval": "",
@@ -1656,7 +1756,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -1768,7 +1868,81 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 25
+            "y": 37
+          },
+          "id": 157,
+          "links": [],
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max(node_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Max Disk Utilization by Cluster",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "semi-dark-purple",
+                    "value": null
+                  },
+                  {
+                    "color": "dark-blue",
+                    "value": 75
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 6,
+            "x": 18,
+            "y": 40
           },
           "id": 220,
           "links": [],
@@ -1785,7 +1959,7 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "repeatDirection": "h",
           "targets": [
             {
@@ -1843,7 +2017,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 28
+            "y": 43
           },
           "id": 158,
           "links": [],
@@ -1860,7 +2034,7 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -1910,6 +2084,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1919,9 +2095,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -1929,7 +2103,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 46
           },
           "id": 222,
           "options": {
@@ -1971,7 +2145,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 28
       },
       "id": 97,
       "panels": [
@@ -2034,7 +2208,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 41
+            "y": 29
           },
           "id": 106,
           "options": {
@@ -2125,7 +2299,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 41
+            "y": 29
           },
           "id": 107,
           "options": {
@@ -2215,7 +2389,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 41
+            "y": 29
           },
           "id": 108,
           "options": {
@@ -2284,6 +2458,8 @@
               },
               "links": [],
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2297,9 +2473,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2307,7 +2481,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 49
+            "y": 37
           },
           "id": 136,
           "options": {
@@ -2377,6 +2551,8 @@
               },
               "links": [],
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2390,9 +2566,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2400,7 +2574,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 49
+            "y": 37
           },
           "id": 180,
           "options": {
@@ -2434,7 +2608,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average processor utilization across all processors in the system",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2470,6 +2644,8 @@
               },
               "links": [],
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2483,9 +2659,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2493,9 +2667,102 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 49
+            "y": 37
           },
           "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, node)",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{node}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Average CPU Utilization",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 46
+          },
+          "id": 241,
           "options": {
             "legend": {
               "calcs": [
@@ -2522,7 +2789,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Average CPU Utilization",
+          "title": "CPU Busy",
           "type": "timeseries"
         }
       ],
@@ -2536,7 +2803,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 29
       },
       "id": 184,
       "panels": [
@@ -3210,7 +3477,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 30
       },
       "id": 214,
       "panels": [
@@ -3813,5 +4080,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 16
+  "version": 17
 }

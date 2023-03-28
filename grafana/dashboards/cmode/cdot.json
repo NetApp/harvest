@@ -11,12 +11,6 @@
   ],
   "__requires": [
     {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
@@ -27,12 +21,6 @@
       "id": "prometheus",
       "name": "Prometheus",
       "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
     },
     {
       "type": "panel",
@@ -69,10 +57,9 @@
   "description": "",
   "editable": true,
   "gnetId": null,
-  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1665388048905,
+  "iteration": 1679987235885,
   "links": [
     {
       "asDropdown": true,
@@ -89,10 +76,10 @@
       "url": ""
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -373,7 +360,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -409,6 +396,8 @@
               },
               "links": [],
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -422,19 +411,111 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
           "gridPos": {
             "h": 10,
-            "w": 12,
+            "w": 8,
             "x": 0,
             "y": 9
           },
           "id": 247,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "topk($TopResources, avg by (cluster) (node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$TopAvgCpuUtilization\"}))",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Clusters by Average CPU Utilization",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 9
+          },
+          "id": 271,
           "options": {
             "legend": {
               "calcs": [
@@ -462,7 +543,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Clusters by Average CPU Utilization",
+          "title": "Top $TopResources Clusters by CPU busy",
           "type": "timeseries"
         },
         {
@@ -522,8 +603,8 @@
           },
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 16,
             "y": 9
           },
           "id": 234,
@@ -561,6 +642,7 @@
     },
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -583,6 +665,8 @@
               },
               "decimals": 0,
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -599,9 +683,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": [
               {
@@ -713,6 +795,8 @@
               },
               "decimals": 0,
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -729,9 +813,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": [
               {
@@ -843,6 +925,8 @@
               },
               "decimals": 0,
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -859,9 +943,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": [
               {
@@ -1006,6 +1088,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1014,9 +1098,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -1095,6 +1177,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1103,9 +1187,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -1184,6 +1266,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1192,9 +1276,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -1240,11 +1322,12 @@
     },
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 2
       },
       "id": 256,
       "panels": [
@@ -1518,11 +1601,12 @@
     },
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 3
       },
       "id": 264,
       "panels": [
@@ -1802,7 +1886,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 35,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [
     "harvest",
@@ -1817,6 +1901,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -1830,8 +1916,12 @@
         "type": "datasource"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(node_labels{system_type!=\"7mode\"},datacenter)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "",
@@ -1852,8 +1942,12 @@
         "useTags": false
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "",
@@ -1874,8 +1968,12 @@
         "useTags": false
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "",
@@ -1896,8 +1994,12 @@
         "useTags": false
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"},volume)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "",
@@ -1918,10 +2020,15 @@
         "useTags": false
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg by (cluster) (avg_over_time(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopCpuUtilization",
         "options": [],
@@ -1936,10 +2043,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg by (cluster) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopAvgLatency",
         "options": [],
@@ -1960,8 +2072,11 @@
           "text": "5",
           "value": "5"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
@@ -1971,7 +2086,7 @@
             "value": "1"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "2",
             "value": "2"
           },
@@ -1986,7 +2101,7 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
@@ -2042,12 +2157,14 @@
         "type": "custom"
       },
       {
+        "allValue": null,
         "current": {
           "selected": true,
           "text": "No",
           "value": "No"
         },
         "description": "",
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "",
@@ -2071,8 +2188,12 @@
         "type": "custom"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (cluster) (avg_over_time(node_cifs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "",
@@ -2090,8 +2211,12 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (cluster) (avg_over_time(node_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "",
@@ -2109,8 +2234,12 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (cluster) (avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
         "label": "",
@@ -2128,10 +2257,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}]) * on(cluster,svm,volume) (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"})))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopVolumeAvgLatency",
         "options": [],
@@ -2146,10 +2280,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, (avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])) * on(cluster,svm,volume) (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"})))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopVolumeAvgThroughput",
         "options": [],
@@ -2164,10 +2303,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}]) * on(cluster,svm,volume) (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"})))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopVolumeTotalIops",
         "options": [],
@@ -2182,10 +2326,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on(cluster,svm) (svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",root_svm=~\"No|$IncludeRoot\"})))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopSVMAvgLatency",
         "options": [],
@@ -2200,10 +2349,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, (avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])) * on(cluster,svm) (svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",root_svm=~\"No|$IncludeRoot\"})))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopSVMTotalThroughput",
         "options": [],
@@ -2218,10 +2372,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on(cluster,svm) (svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",root_svm=~\"No|$IncludeRoot\"})))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopSVMTotalIops",
         "options": [],
@@ -2236,10 +2395,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources,((100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})) * on(cluster,svm) (svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",root_svm=~\"No|$IncludeRoot\"}))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopSVMUsed",
         "options": [],
@@ -2254,10 +2418,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, ((100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}) * on(cluster,svm,volume) (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"}))))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopVolumeUsed",
         "options": [],
@@ -2272,10 +2441,15 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {},
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, (100 * aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} / aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "TopAggrUsed",
         "options": [],
@@ -2285,6 +2459,29 @@
         },
         "refresh": 1,
         "regex": ".*aggr=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg by (cluster) (avg_over_time(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopAvgCpuUtilization",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg by (cluster) (avg_over_time(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*cluster=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
@@ -2311,5 +2508,5 @@
   "timezone": "",
   "title": "ONTAP: cDOT",
   "uid": "",
-  "version": 1
+  "version": 2
 }
