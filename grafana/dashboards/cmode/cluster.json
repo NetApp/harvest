@@ -7,6 +7,13 @@
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
+    },
+    {
+      "name": "VAR_CPU_BUSY",
+      "type": "constant",
+      "label": "CPU_BUSY",
+      "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+      "description": ""
     }
   ],
   "__requires": [
@@ -71,7 +78,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1679987631965,
+  "iteration": 1680011140355,
   "links": [
     {
       "asDropdown": true,
@@ -596,7 +603,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
+      "description": "$CPU_BUSY",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1425,7 +1432,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
+          "description": "$CPU_BUSY",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2050,7 +2057,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
+          "description": "$CPU_BUSY",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2295,7 +2302,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 29
+            "y": 57
           },
           "id": 106,
           "options": {
@@ -2386,7 +2393,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 29
+            "y": 57
           },
           "id": 107,
           "options": {
@@ -2476,7 +2483,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 29
+            "y": 57
           },
           "id": 108,
           "options": {
@@ -2568,7 +2575,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 37
+            "y": 65
           },
           "id": 136,
           "options": {
@@ -2661,7 +2668,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 37
+            "y": 65
           },
           "id": 180,
           "options": {
@@ -2754,7 +2761,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 37
+            "y": 65
           },
           "id": 2,
           "options": {
@@ -2788,7 +2795,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
+          "description": "$CPU_BUSY",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2847,7 +2854,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 46
+            "y": 74
           },
           "id": 241,
           "options": {
@@ -3919,7 +3926,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "5",
           "value": "5"
         },
@@ -4144,6 +4151,28 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "description": "",
+        "error": null,
+        "hide": 2,
+        "label": null,
+        "name": "CPU_BUSY",
+        "query": "${VAR_CPU_BUSY}",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_CPU_BUSY}",
+          "text": "${VAR_CPU_BUSY}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_CPU_BUSY}",
+            "text": "${VAR_CPU_BUSY}",
+            "selected": false
+          }
+        ]
       }
     ]
   },
