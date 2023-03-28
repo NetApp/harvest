@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1679986383434,
+  "iteration": 1679987631965,
   "links": [
     {
       "asDropdown": true,
@@ -1738,7 +1738,7 @@
             ]
           },
           "gridPos": {
-            "h": 8,
+            "h": 11,
             "w": 18,
             "x": 0,
             "y": 35
@@ -2050,6 +2050,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2100,8 +2101,8 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
-            "w": 24,
+            "h": 10,
+            "w": 12,
             "x": 0,
             "y": 46
           },
@@ -2131,6 +2132,92 @@
             }
           ],
           "title": "Node CPU Busy",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average processor utilization across all processors in the system",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 46
+          },
+          "id": 242,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "interval": "",
+              "legendFormat": "{{node}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Node Average CPU Utilization",
           "type": "timeseries"
         }
       ],

@@ -2657,7 +2657,7 @@
           "text": "5",
           "value": "5"
         },
-        "datasource": "Prometheus",
+        "datasource": "${DS_PROMETHEUS}",
         "description": null,
         "error": null,
         "hide": 0,
