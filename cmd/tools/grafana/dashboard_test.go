@@ -413,7 +413,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		d := value.Get("description").String()
 		if d != "" {
-			description = append(description, value.Get("description").String())
+			description = append(description, d)
 		}
 	})
 
