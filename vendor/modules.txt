@@ -97,7 +97,7 @@ github.com/tklauser/numcpus
 # github.com/yusufpapurcu/wmi v1.2.2
 ## explicit; go 1.16
 github.com/yusufpapurcu/wmi
-# github.com/zekroTJA/timedmap v1.4.0
+# github.com/zekroTJA/timedmap v1.5.1
 ## explicit; go 1.13
 github.com/zekroTJA/timedmap
 # golang.org/x/sys v0.6.0
