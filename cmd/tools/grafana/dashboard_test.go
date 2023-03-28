@@ -397,6 +397,7 @@ func TestNoUnusedVariables(t *testing.T) {
 func checkUnusedVariables(t *testing.T, path string, data []byte) {
 	// collect are variable names, expressions except data source
 	vars := make([]string, 0)
+	description := make([]string, 0)
 	varExpression := make([]string, 0)
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		if value.Get("type").String() == "datasource" {
@@ -406,6 +407,15 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		vars = append(vars, value.Get("name").String())
 		// query expression of variable
 		varExpression = append(varExpression, value.Get("definition").String())
+		return true
+	})
+
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		// name of variable
+		d := value.Get("description").String()
+		if d != "" {
+			description = append(description, value.Get("description").String())
+		}
 		return true
 	})
 
@@ -421,6 +431,12 @@ varLoop:
 		}
 		for _, varExpr := range varExpression {
 			if strings.Contains(varExpr, variable) {
+				continue varLoop
+			}
+		}
+
+		for _, desc := range description {
+			if strings.Contains(desc, "$"+variable) {
 				continue varLoop
 			}
 		}
