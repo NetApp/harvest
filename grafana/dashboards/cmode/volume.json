@@ -5176,7 +5176,7 @@
       "type": "row"
     }
   ],
-  "refresh": "1m",
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [

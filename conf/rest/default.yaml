@@ -14,6 +14,8 @@ objects:
   Disk:                        disk.yaml
 #  ExportRule:                  exports.yaml
   Lun:                         lun.yaml
+  Namespace:                   namespace.yaml
+#  NetConnections:              netConnections.yaml
 #  NetConnections:              netConnections.yaml
 #  NetPort:                     netPort.yaml
   NetRoute:                    netRoute.yaml
@@ -22,6 +24,7 @@ objects:
   NtpServer:                   ntpserver.yaml
   OntapS3:                     ontap_s3.yaml
   Port:                        port.yaml
+  QosPolicyAdaptive:           qos_policy_adaptive.yaml
   QosPolicyFixed:              qos_policy_fixed.yaml
   Qtree:                       qtree.yaml
   Security:                    security.yaml

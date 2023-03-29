@@ -38,9 +38,10 @@ type Client struct {
 	vfiler     string
 	Logger     *logging.Logger // logger used for logging
 	logZapi    bool            // used to log ZAPI request/response
+	auth       *auth.Credentials
 }
 
-func New(poller *conf.Poller) (*Client, error) {
+func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	var (
 		client         Client
 		httpclient     *http.Client
@@ -53,7 +54,9 @@ func New(poller *conf.Poller) (*Client, error) {
 		err            error
 	)
 
-	client = Client{}
+	client = Client{
+		auth: c,
+	}
 	client.Logger = logging.Get().SubLogger("Zapi", "Client")
 
 	// check required & optional parameters
@@ -99,7 +102,6 @@ func New(poller *conf.Poller) (*Client, error) {
 		useInsecureTLS = *poller.UseInsecureTLS
 	}
 
-	// check if a credentials file is being used and if so, parse and use the values from it
 	if poller.CredentialsFile != "" {
 		err := conf.ReadCredentialsFile(poller.CredentialsFile, poller)
 		if err != nil {
@@ -152,7 +154,7 @@ func New(poller *conf.Poller) (*Client, error) {
 			},
 		}
 	} else {
-		password := auth.Get().Password()
+		password := c.Password()
 		if poller.Username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {

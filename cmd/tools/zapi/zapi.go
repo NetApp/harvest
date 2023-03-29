@@ -133,12 +133,11 @@ func doCmd(cmd string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// connect to cluster and retrieve system version
+	// connect to a cluster and retrieve the system version
 	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		log.Fatal(err)
 	}
-	auth.NewCredentials(poller, logging.Get())
-	if connection, err = client.New(poller); err != nil {
+	if connection, err = client.New(poller, auth.NewCredentials(poller, logging.Get())); err != nil {
 		log.Fatal(err)
 	}
 

@@ -6,14 +6,14 @@ require (
 	github.com/bbrks/wrap/v2 v2.5.0
 	github.com/go-openapi/spec v0.20.8
 	github.com/hashicorp/go-version v1.6.0
-	github.com/imdario/mergo v0.3.14
+	github.com/imdario/mergo v0.3.15
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/rs/zerolog v1.29.0
 	github.com/shirou/gopsutil/v3 v3.23.2
 	github.com/spf13/cobra v1.6.1
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5
-	github.com/zekroTJA/timedmap v1.4.0
+	github.com/zekroTJA/timedmap v1.5.1
 	golang.org/x/sys v0.6.0
 	golang.org/x/term v0.6.0
 	golang.org/x/text v0.8.0

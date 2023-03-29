@@ -124,7 +124,7 @@
       },
       "id": 99,
       "options": {
-        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Two actions are required to use this dashboard:\\n1. On Harvest, enable the REST collector in your `harvest.yml` config\\n2. On your ONTAP cluster, enable File System Analytics for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details",
+        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Two actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On your ONTAP cluster, enable File System Analytics for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details",
         "mode": "markdown"
       },
       "pluginVersion": "8.4.11",

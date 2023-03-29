@@ -30,6 +30,7 @@ package plugin
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -101,25 +102,27 @@ type ModuleInfo struct {
 
 // AbstractPlugin implements methods of the Plugin interface, except Run()
 type AbstractPlugin struct {
-	Parent               string
-	Name                 string
-	Object               string          // object of the collector, describes what that collector is collecting
-	Logger               *logging.Logger // logger used for logging
-	Options              *options.Options
-	Params               *node.Node
-	ParentParams         *node.Node
+	Parent               string           // name of the collector that owns this plugin
+	Name                 string           // name of the plugin
+	Object               string           // object of the collector, describes what that collector is collecting
+	Logger               *logging.Logger  // logger used for logging
+	Options              *options.Options // poller options
+	Params               *node.Node       // plugin parameters
+	ParentParams         *node.Node       // parent collector parameters
 	PluginInvocationRate int
+	Auth                 *auth.Credentials
 }
 
-// New creates an AbstractPlugin with arguments:
-// @parent	- name of the collector that owns this plugin
-// @o		- poller options
-// @p		- plugin parameters
-// @pp		- parent collector parameters
-// @object	- object name
-func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object string) *AbstractPlugin {
-	pl := AbstractPlugin{Parent: parent, Options: o, Params: p, ParentParams: pp, Object: object}
-	return &pl
+// New creates an AbstractPlugin
+func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object string, auth *auth.Credentials) *AbstractPlugin {
+	return &AbstractPlugin{
+		Parent:       parent,
+		Options:      o,
+		Params:       p,
+		ParentParams: pp,
+		Object:       object,
+		Auth:         auth,
+	}
 }
 
 // GetName returns the name of the plugin

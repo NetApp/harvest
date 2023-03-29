@@ -114,7 +114,7 @@ func (d *Disk) Init() error {
 		return err
 	}
 
-	if d.client, err = zapi.New(conf.ZapiPoller(d.ParentParams)); err != nil {
+	if d.client, err = zapi.New(conf.ZapiPoller(d.ParentParams), d.Auth); err != nil {
 		d.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}

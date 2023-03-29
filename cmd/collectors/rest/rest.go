@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/netroute"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
@@ -16,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -147,7 +149,7 @@ func (r *Rest) InitClient() error {
 
 	var err error
 	a := r.AbstractCollector
-	if r.Client, err = r.getClient(a); err != nil {
+	if r.Client, err = r.getClient(a, r.Auth); err != nil {
 		return err
 	}
 
@@ -175,7 +177,7 @@ func (r *Rest) InitMatrix() error {
 	return nil
 }
 
-func (r *Rest) getClient(a *collector.AbstractCollector) (*rest.Client, error) {
+func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*rest.Client, error) {
 	var (
 		poller *conf.Poller
 		err    error
@@ -192,7 +194,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector) (*rest.Client, error) {
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if client, err = rest.New(poller, timeout); err != nil {
+	if client, err = rest.New(poller, timeout, c); err != nil {
 		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)
 	}
@@ -387,6 +389,9 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return securityaccount.New(abc)
 	case "QosPolicyFixed":
 		return qospolicyfixed.New(abc)
+	case "QosPolicyAdaptive":
+		return qospolicyadaptive.New(abc)
+
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

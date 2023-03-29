@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1674825410278,
+  "iteration": 1679986832818,
   "links": [
     {
       "asDropdown": true,
@@ -420,10 +420,12 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -433,9 +435,7 @@
               }
             ]
           },
-          "unit": "percent",
-          "min": 0,
-          "max": 100
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -471,7 +471,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "CPU Utilization",
+      "title": "CPU Busy",
       "type": "bargauge"
     },
     {
@@ -529,7 +529,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 6,
         "x": 6,
         "y": 5
@@ -620,7 +620,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 6,
         "x": 12,
         "y": 5
@@ -711,7 +711,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 6,
         "x": 18,
         "y": 5
@@ -749,10 +749,12 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average processor utilization across all processors in the system",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -762,9 +764,7 @@
               }
             ]
           },
-          "unit": "percent",
-          "min": 0,
-          "max": 100
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -773,6 +773,62 @@
         "w": 6,
         "x": 0,
         "y": 9
+      },
+      "id": 129,
+      "options": {
+        "displayMode": "lcd",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "avg(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Average CPU Utilization",
+      "type": "bargauge"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(106, 212, 22)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 13
       },
       "id": 40,
       "options": {
@@ -829,7 +885,7 @@
         "h": 4,
         "w": 8,
         "x": 0,
-        "y": 13
+        "y": 17
       },
       "id": 105,
       "options": {
@@ -911,7 +967,7 @@
         "h": 4,
         "w": 8,
         "x": 8,
-        "y": 13
+        "y": 17
       },
       "id": 115,
       "options": {
@@ -993,7 +1049,7 @@
         "h": 4,
         "w": 8,
         "x": 16,
-        "y": 13
+        "y": 17
       },
       "id": 116,
       "options": {
@@ -1033,7 +1089,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 21
       },
       "id": 57,
       "panels": [
@@ -1074,6 +1130,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1091,9 +1149,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -1172,6 +1228,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1185,9 +1243,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -1240,7 +1296,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 22
       },
       "id": 107,
       "panels": [
@@ -1281,6 +1337,8 @@
                 }
               },
               "mappings": [],
+              "max": 1,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1294,9 +1352,7 @@
                   }
                 ]
               },
-              "unit": "percentunit",
-              "min": 0,
-              "max": 1
+              "unit": "percentunit"
             },
             "overrides": []
           },
@@ -1373,6 +1429,8 @@
                 }
               },
               "mappings": [],
+              "max": 1,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1386,9 +1444,7 @@
                   }
                 ]
               },
-              "unit": "percentunit",
-              "min": 0,
-              "max": 1
+              "unit": "percentunit"
             },
             "overrides": []
           },
@@ -1619,7 +1675,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 23
       },
       "id": 28,
       "panels": [
@@ -1966,6 +2022,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1983,9 +2041,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2088,6 +2144,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2101,9 +2159,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2312,7 +2368,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 24
       },
       "id": 88,
       "panels": [
@@ -2333,15 +2389,15 @@
                   },
                   {
                     "color": "semi-dark-yellow",
-                    "value": 10000
+                    "value": 1000
                   },
                   {
                     "color": "semi-dark-orange",
-                    "value": 25000
+                    "value": 2500
                   },
                   {
                     "color": "semi-dark-red",
-                    "value": 50000
+                    "value": 5000
                   }
                 ]
               },
@@ -2402,15 +2458,15 @@
                   },
                   {
                     "color": "semi-dark-yellow",
-                    "value": 10000
+                    "value": 1000
                   },
                   {
                     "color": "semi-dark-orange",
-                    "value": 25000
+                    "value": 2500
                   },
                   {
                     "color": "semi-dark-red",
-                    "value": 50000
+                    "value": 5000
                   }
                 ]
               },
@@ -2470,15 +2526,15 @@
                   },
                   {
                     "color": "semi-dark-yellow",
-                    "value": 10000
+                    "value": 1000
                   },
                   {
                     "color": "semi-dark-orange",
-                    "value": 25000
+                    "value": 2500
                   },
                   {
                     "color": "semi-dark-red",
-                    "value": 50000
+                    "value": 5000
                   }
                 ]
               },
@@ -3068,7 +3124,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 25
       },
       "id": 59,
       "panels": [
@@ -3404,7 +3460,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 26
       },
       "id": 67,
       "panels": [
@@ -3810,7 +3866,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 27
       },
       "id": 118,
       "panels": [
@@ -4218,7 +4274,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 28
       },
       "id": 76,
       "panels": [
@@ -4618,7 +4674,7 @@
       "type": "row"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
@@ -4931,5 +4987,5 @@
   "timezone": "",
   "title": "ONTAP: Node",
   "uid": "",
-  "version": 5
+  "version": 6
 }

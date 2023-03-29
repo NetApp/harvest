@@ -58,13 +58,13 @@ groups:
 
     # Alert for node nfs latency
   - alert: Node nfs latency is high
-    expr: node_nfs_latency > 1000
+    expr: node_nfs_latency > 5000
     for: 5m
     labels:
       severity: "critical"
     annotations:
-      summary: "Node [{{ $labels.node }}] has [{{$value}}] nfs latency"
-      description: "Node [{{ $labels.node }}] has [{{$value}}] nfs latency"
+      summary: "Node [{{ $labels.node }}] has [{{$value}}] nfs latency (microsec)"
+      description: "Node [{{ $labels.node }}] has [{{$value}}] nfs latency (microsec)"
 
     # Snapmirror lag time is high
   - alert: Snapmirror lag time is high

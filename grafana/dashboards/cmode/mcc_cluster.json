@@ -72,7 +72,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1664175665573,
+  "iteration": 1679987107775,
   "links": [
     {
       "asDropdown": true,
@@ -419,6 +419,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Average processor utilization across all processors in the system",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -491,7 +492,7 @@
           "refId": "A"
         }
       ],
-      "title": "CPU Utilization",
+      "title": "Average CPU Utilization",
       "type": "gauge"
     },
     {
@@ -1188,6 +1189,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1205,9 +1208,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2928,5 +2929,5 @@
   "timezone": "browser",
   "title": "ONTAP: MetroCluster",
   "uid": "",
-  "version": 6
+  "version": 7
 }

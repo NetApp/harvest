@@ -11,14 +11,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"time"
 )
 
 type SecurityAccount struct {
 	*plugin.AbstractPlugin
-	data   *matrix.Matrix
 	client *rest.Client
 	query  string
 }
@@ -42,7 +40,7 @@ func (s *SecurityAccount) Init() error {
 	} else {
 		s.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
-	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout); err != nil {
+	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
 		s.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
@@ -52,25 +50,6 @@ func (s *SecurityAccount) Init() error {
 	}
 
 	s.query = "api/security/accounts"
-	s.data = matrix.New(s.Parent+".SecurityAccount", "security_account", "security_account")
-
-	exportOptions := node.NewS("export_options")
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-
-	if exportOption := s.ParentParams.GetChildS("export_options"); exportOption != nil {
-		if exportedLabels := exportOption.GetChildS("instance_labels"); exportedLabels != nil {
-			for _, label := range exportedLabels.GetAllChildContentS() {
-				instanceLabels.NewChildS("", label)
-			}
-		}
-		if exportedKeys := exportOption.GetChildS("instance_keys"); exportedKeys != nil {
-			for _, key := range exportedKeys.GetAllChildContentS() {
-				instanceKeys.NewChildS("", key)
-			}
-		}
-	}
-	s.data.SetExportOptions(exportOptions)
 	return nil
 }
 
@@ -82,12 +61,6 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	)
 
 	data := dataMap[s.Object]
-	// Purge and reset data
-	s.data.PurgeInstances()
-	s.data.Reset()
-
-	// Set all global labels from Rest.go if already not exist
-	s.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	href := rest.BuildHref("", "applications", nil, "", "", "", "", s.query)
 
@@ -126,7 +99,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 				for _, method := range methods {
 					var securityAccountNewInstance *matrix.Instance
 					securityAccountNewKey := securityAccountKey + application + method
-					if securityAccountNewInstance, err = s.data.NewInstance(securityAccountNewKey); err != nil {
+					if securityAccountNewInstance, err = data.NewInstance(securityAccountNewKey); err != nil {
 						s.Logger.Error().Err(err).Str("add instance failed for instance key", securityAccountNewKey).Msg("")
 						return nil, err
 					}
@@ -141,5 +114,5 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		}
 	}
 
-	return []*matrix.Matrix{s.data}, nil
+	return []*matrix.Matrix{data}, nil
 }

@@ -4,16 +4,20 @@ package rest
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"log"
+	"net/url"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -45,6 +49,7 @@ type Args struct {
 	MaxRecords    string
 	ForceDownload bool
 	Verbose       bool
+	Timeout       string
 }
 
 var Cmd = &cobra.Command{
@@ -90,13 +95,13 @@ func ReadOrDownloadSwagger(pName string) (string, error) {
 		}
 	}
 	if shouldDownload {
-		url := "https://" + addr + "/docs/api/swagger.yaml"
-		bytesDownloaded, err := downloadSwagger(poller, swaggerPath, url, args.Verbose)
+		swaggerURL := "https://" + addr + "/docs/api/swagger.yaml"
+		bytesDownloaded, err := downloadSwagger(poller, swaggerPath, swaggerURL, args.Verbose)
 		if err != nil {
 			fmt.Printf("error downloading swagger %s\n", err)
 			return "", err
 		}
-		fmt.Printf("downloaded %d bytes from %s\n", bytesDownloaded, url)
+		fmt.Printf("downloaded %d bytes from %s\n", bytesDownloaded, swaggerURL)
 	}
 	fmt.Printf("Using downloaded file %s with timestamp %s\n", swaggerPath, swagTime)
 	return swaggerPath, nil
@@ -152,6 +157,68 @@ func doCmd() {
 	}
 }
 
+func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
+	var (
+		err    error
+		client *Client
+	)
+
+	if client, err = New(poller, timeout, auth.NewCredentials(poller, logging.Get())); err != nil {
+		return nil, fmt.Errorf("poller=%s %w", poller.Name, err)
+	}
+
+	// Init is called to get the cluster version
+	err = client.Init(1)
+	if err != nil {
+		var re *errs.RestError
+		if errors.As(err, &re) {
+			return nil, fmt.Errorf("poller=%s statusCode=%d", poller.Name, re.StatusCode)
+		}
+		return nil, fmt.Errorf("poller=%s %w", poller.Name, err)
+	}
+
+	// strip leading slash
+	args.API = strings.TrimPrefix(args.API, "/")
+
+	now := time.Now()
+	var records []any
+	var curls []string
+	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
+
+	err = FetchForCli(client, href, &records, args.DownloadAll, &curls)
+	if err != nil {
+		return nil, fmt.Errorf("poller=%s %w", poller.Name, err)
+	}
+	for _, curl := range curls {
+		stderr("%s # %s\n", curl, poller.Name)
+	}
+	results := &Results{
+		Poller:         poller.Name,
+		Addr:           poller.Addr,
+		API:            args.API,
+		Version:        client.Cluster().GetVersion(),
+		ClusterName:    client.cluster.Name,
+		Records:        records,
+		NumRecords:     len(records),
+		PollDurationMs: time.Since(now).Milliseconds(),
+	}
+	if len(records) == 0 {
+		results.Records = []any{}
+	}
+	return results, nil
+}
+
+type Results struct {
+	Poller         string `json:"poller,omitempty"`
+	Addr           string `json:"addr,omitempty"`
+	API            string `json:"api,omitempty"`
+	Version        string `json:"version,omitempty"`
+	ClusterName    string `json:"cluster_name,omitempty"`
+	Records        []any  `json:"records"`
+	NumRecords     int    `json:"num_records"`
+	PollDurationMs int64  `json:"poll_ms"`
+}
+
 type Pagination struct {
 	Records    []any `json:"records"`
 	NumRecords int   `json:"num_records"`
@@ -169,38 +236,60 @@ type PerfRecord struct {
 
 func doData() {
 	var (
-		poller *conf.Poller
-		err    error
-		client *Client
+		err     error
+		results []*Results
+		timeout time.Duration
 	)
 
-	if poller, _, err = GetPollerAndAddr(args.Poller); err != nil {
-		return
-	}
-
-	timeout, _ := time.ParseDuration(DefaultTimeout)
-	if client, err = New(poller, timeout); err != nil {
-		fmt.Printf("error creating new client %+v\n", err)
-		os.Exit(1)
-	}
-
-	// strip leading slash
-	args.API = strings.TrimPrefix(args.API, "/")
-
-	var records []any
-	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
-	stderr("fetching href=[%s]\n", href)
-
-	err = FetchForCli(client, href, &records, args.DownloadAll)
+	timeout, err = time.ParseDuration(args.Timeout)
 	if err != nil {
-		stderr("error %+v\n", err)
-		return
+		stderr("Unable to parse timeout=%s using default %s\n", args.Timeout, DefaultTimeout)
+		timeout, _ = time.ParseDuration(DefaultTimeout)
 	}
-	all := Pagination{
-		Records:    records,
-		NumRecords: len(records),
+
+	resultChan := make(chan *Results)
+	errChan := make(chan error)
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+
+	pollers := make([]string, 0)
+	if args.Poller == "*" {
+		pollers = append(pollers, conf.Config.PollersOrdered...)
+	} else {
+		pollers = append(pollers, args.Poller)
 	}
-	pretty, err := json.MarshalIndent(all, "", " ")
+
+	for _, pollerName := range pollers {
+		go func(pollerName string) {
+			var (
+				poller *conf.Poller
+			)
+			if poller, _, err = GetPollerAndAddr(pollerName); err != nil {
+				errChan <- err
+				return
+			}
+			data, err := fetchData(poller, timeout)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			resultChan <- data
+		}(pollerName)
+	}
+
+outer:
+	for range pollers {
+		select {
+		case r := <-resultChan:
+			results = append(results, r)
+		case err := <-errChan:
+			stderr("failed to fetch data err: %+v\n", err)
+		case <-sigChan:
+			break outer
+		}
+	}
+
+	pretty, err := json.MarshalIndent(results, "", " ")
 	if err != nil {
 		stderr("error marshalling json %+v\n", err)
 		return
@@ -214,23 +303,22 @@ func GetPollerAndAddr(pName string) (*conf.Poller, string, error) {
 		err    error
 	)
 	if poller, err = conf.PollerNamed(pName); err != nil {
-		fmt.Printf("Poller named [%s] does not exist\n", pName)
-		return nil, "", err
+		return nil, "", fmt.Errorf("poller=%s does not exist, err: %w", pName, err)
 	}
 	if poller.Addr == "" {
-		fmt.Printf("Poller named [%s] does not have a valid addr=[]\n", pName)
-		return nil, "", err
+		return nil, "", fmt.Errorf("poller=%s has blank addr", pName)
 	}
-	auth.NewCredentials(poller, logging.Get())
 	return poller, poller.Addr, nil
 }
 
 // FetchForCli used for CLI only
-func FetchForCli(client *Client, href string, records *[]any, downloadAll bool) error {
+func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, curls *[]string) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
 	}
+
+	*curls = append(*curls, fmt.Sprintf("curl --user %s --insecure '%s%s'", client.username, client.baseURL, href))
 
 	isNonIterRestCall := false
 	value := gjson.GetBytes(getRest, "records")
@@ -262,13 +350,15 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool) 
 
 		// If all results are desired and there is a next link, follow it
 		if downloadAll && page.Links != nil {
-			nextLink := page.Links.Next.Href
+			nextLink, _ := url.QueryUnescape(page.Links.Next.Href)
 			if nextLink != "" {
+				// strip leading slash
+				nextLink = strings.TrimPrefix(nextLink, "/")
 				if nextLink == href {
-					// nextLink is same as previous link, no progress is being made, exit
+					// if nextLink is the same as the previous link, no progress is being made, exit
 					return nil
 				}
-				err := FetchForCli(client, nextLink, records, downloadAll)
+				err := FetchForCli(client, nextLink, records, downloadAll, curls)
 				if err != nil {
 					return err
 				}
@@ -488,9 +578,10 @@ func init() {
 
 	Cmd.AddCommand(showCmd)
 	flags := Cmd.PersistentFlags()
-	flags.StringVarP(&args.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
-	flags.StringVarP(&args.SwaggerPath, "swagger", "s", "", "path to Swagger (OpenAPI) file to read from")
-	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
+	flags.StringVarP(&args.Poller, "poller", "p", "", "Name of poller (cluster), as defined in your harvest config. * for all pollers")
+	flags.StringVarP(&args.SwaggerPath, "swagger", "s", "", "Path to Swagger (OpenAPI) file to read from")
+	flags.StringVar(&args.Config, "config", configPath, "Harvest config file path")
+	flags.StringVarP(&args.Timeout, "timeout", "t", DefaultTimeout, "Duration to wait before giving up")
 
 	showFlags := showCmd.Flags()
 	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
@@ -515,19 +606,25 @@ func init() {
 
 	Cmd.SetUsageTemplate(Cmd.UsageTemplate() + `
 Examples:
-  harvest rest -p infinity show apis                                        Query cluster infinity for available APIs
-  harvest rest -p infinity show params --api svm/svms                       Query cluster infinity for svm parameters. These query parameters are used
-                                                                            to filter requests.
-  harvest rest -p infinity show models --api svm/svms                       Query cluster infinity for svm models. These describe the REST response
-                                                                            received when sending the svm/svms GET request.
-  harvest rest -p infinity show data --api svm/svms --field "state=stopped" Query cluster infinity for stopped svms.
+  # Query cluster infinity for available APIs
+  bin/harvest rest -p infinity show apis
+  
+  # Query cluster infinity for svm parameters. These query parameters are used to filter requests.
+  bin/harvest rest -p infinity show params --api svm/svms
 
-  harvest rest -p infinity show data --api storage/volumes \                Query cluster infinity for all volumes where  
-      --field "space.physical_used_percent=>70" \                               physical_used_percent is > 70% and 
-      --field "space.total_footprint=>400G" \                                   total_footprint is > 400G 
-      --fields "name,svm,space"                                             The response should contain name, svm, and space attributes of matching volumes.
+  # Query cluster infinity for svm models. These describe the REST response of sending the svm/svms GET request.
+  bin/harvest rest -p infinity show models --api svm/svms
 
-  harvest rest -p infinity show data --api storage/volumes \                Query cluster infinity for all volumes where the name of any volume or child
-      --query-field "name" --query-value "io_load|scale"                         resource matches io_load or scale.
+  # Query cluster infinity for stopped svms.
+  bin/harvest rest -p infinity show data --api svm/svms --field "state=stopped"
+
+  # Query cluster infinity for all volumes where physical_used_percent is > 70% and total_footprint is >= 400G. The response should contain name, svm, and space attributes of matching volumes.  	
+  bin/harvest rest -p infinity show data --api storage/volumes --field "space.physical_used_percent=>70" --field "space.total_footprint=>=400G" --fields "name,svm,space"
+
+  # Query cluster infinity for all volumes where the name of any volume or child resource matches io_load or scale.
+  bin/harvest rest -p infinity show data --api storage/volumes --query-field "name" --query-value "io_load|scale"
+
+  # Query all clusters, in your harvest.yml file, for all qos policies. Pipe the results to jq, and print as CSV.	
+  bin/harvest rest -p '*' show data --api storage/qos/policies | jq -r '.[] | [.poller, .addr, .num_records, .version, .cluster_name, .poll_ms, .api] |  @csv' | column -ts,
 `)
 }

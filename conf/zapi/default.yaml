@@ -12,9 +12,11 @@ objects:
   Disk:                        disk.yaml
   Lun:                         lun.yaml
 #  NetPort:                     netPort.yaml
+  Namepsace:                   namespace.yaml
   Node:                        node.yaml
   NtpServer:                   ntpserver.yaml
-  QosPolicy:                   qos_policy_fixed.yaml
+  QosPolicyAdaptive:           qos_policy_adaptive.yaml
+  QosPolicyFixed:              qos_policy_fixed.yaml
   Qtree:                       qtree.yaml
   Security:                    security.yaml
   SecurityAccount:             security_account.yaml

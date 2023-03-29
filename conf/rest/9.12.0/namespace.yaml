@@ -1,0 +1,41 @@
+name:                       Namespace
+query:                      api/storage/namespaces
+object:                     namespace
+
+counters:
+  - ^^uuid                     => uuid
+  - ^subsystem_map.nsid        => nsid
+  - ^name                      => path
+  - ^location.node.name        => node
+  - ^os_type                   => os_type
+  - ^status.read_only          => is_read_only
+  - ^status.state              => state
+  - ^subsystem                 => subsystem
+  - ^location.volume.name      => volume
+  - ^svm.name                  => svm
+  - space.size                 => size
+  - space.used                 => size_used
+  - space.block_size           => block_size
+
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - size_available SUBTRACT size size_used
+        - size_available_percent PERCENT size_available size
+
+export_options:
+  instance_keys:
+    - uuid
+    - svm
+    - volume
+    - path
+  instance_labels:
+    - nsid
+    - path
+    - node
+    - os_type
+    - is_read_only
+    - state
+    - subsystem
+    - volume
+    - svm
