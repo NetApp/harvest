@@ -17,6 +17,7 @@ counters:
   - ^protection_status.is_protected              => is_protected
   - ^protection_status.destination.is_ontap      => protected_in_ontap
   - ^protection_status.destination.is_cloud      => protected_in_cloud
+  - ^qos_policy.name                             => qos_policy_group
 
 endpoints:
   - query: api/private/cli/vserver/object-store-server/bucket
@@ -25,6 +26,7 @@ endpoints:
       - object_count
 
 plugins:
+  - OntapS3Service
   - MetricAgent:
       compute_metric:
         - used_percent PERCENT logical_used_size size
@@ -43,3 +45,5 @@ export_options:
     - is_protected
     - protected_in_ontap
     - protected_in_cloud
+    - qos_policy_group
+    - url

@@ -212,7 +212,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"} * on (volume,svm,cluster,datacenter) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -278,6 +278,7 @@
           "options": {
             "include": {
               "names": [
+                "aggr",
                 "bucket",
                 "cluster",
                 "svm",
@@ -287,7 +288,8 @@
                 "volume",
                 "encryption_enabled",
                 "Value #E",
-                "Value #F"
+                "Value #F",
+                "url"
               ]
             }
           }
@@ -306,14 +308,19 @@
               "job": true
             },
             "indexByName": {
-              "Value #B": 5,
-              "Value #C": 6,
-              "Value #D": 7,
-              "bucket": 3,
               "cluster": 0,
               "svm": 1,
               "volume": 2,
-              "encryption_enabled": 4
+              "bucket": 3,
+              "aggr": 4,
+              "url": 5,
+              "encryption_enabled": 6,
+              "Value #B": 7,
+              "Value #C": 8,
+              "Value #D": 9,
+              "Value #E": 10,
+              "Value #F": 11,
+              "qos_policy_group": 12
             },
             "renameByName": {
               "Value #A": "",
@@ -322,11 +329,14 @@
               "Value #D": "Used Size",
               "Value #E": "Used %",
               "Value #F": "Object Count",
+              "aggr": "Local Tiers",
               "bucket": "Bucket",
               "cluster": "Cluster",
               "encryption_enabled": "Encrypted",
+              "qos_policy_group": "QoS Policy Group",
               "svm": "SVM",
-              "volume": "Volume"
+              "volume": "Volume",
+              "url": "Url"
             }
           }
         }
