@@ -59,11 +59,11 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		result      []gjson.Result
 		url         string
 		err         error
-		svmToUrlMap map[string]string
+		svmToURLMap map[string]string
 	)
 
 	// reset svmToS3serverMap map
-	svmToUrlMap = make(map[string]string)
+	svmToURLMap = make(map[string]string)
 	data := dataMap[o.Object]
 
 	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port"}
@@ -80,17 +80,17 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		}
 		s3ServerName := ontaps3Service.Get("name").String()
 		svm := ontaps3Service.Get("svm.name").String()
-		isHttpEnabled := ontaps3Service.Get("is_http_enabled").Bool()
-		isHttpsEnabled := ontaps3Service.Get("is_https_enabled").Bool()
+		isHTTPEnabled := ontaps3Service.Get("is_http_enabled").Bool()
+		isHTTPSEnabled := ontaps3Service.Get("is_https_enabled").Bool()
 		securePort := ontaps3Service.Get("secure_port").String()
 		port := ontaps3Service.Get("port").String()
 
-		if isHttpsEnabled {
+		if isHTTPSEnabled {
 			url = "https://" + s3ServerName
 			if securePort != "443" {
 				url += ":" + securePort
 			}
-		} else if isHttpEnabled {
+		} else if isHTTPEnabled {
 			url = "http://" + s3ServerName
 			if port != "80" {
 				url += ":" + port
@@ -99,12 +99,12 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		url += "/"
 
 		// cache url and svm detail
-		svmToUrlMap[svm] = url
+		svmToURLMap[svm] = url
 	}
 
 	for _, ontapS3 := range data.GetInstances() {
 		// Example: http://s3server/bucket1
-		ontapS3.SetLabel("url", svmToUrlMap[ontapS3.GetLabel("svm")]+ontapS3.GetLabel("bucket"))
+		ontapS3.SetLabel("url", svmToURLMap[ontapS3.GetLabel("svm")]+ontapS3.GetLabel("bucket"))
 	}
 
 	return nil, nil

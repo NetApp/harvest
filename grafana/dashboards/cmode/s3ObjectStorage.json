@@ -232,7 +232,7 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_size - ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_size-ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
           "format": "table",
           "hide": false,
           "instant": true,

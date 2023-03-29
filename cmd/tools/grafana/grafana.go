@@ -656,20 +656,26 @@ func addPrefixToMetricNames(expr, prefix string) string {
 			return expr
 		}
 	}
-
 	// everything else is for graph queries
-	regex = regexp.MustCompile(`([a-zA-Z_+]+)\s?{.+?}`)
+	regex = regexp.MustCompile(`([a-zA-Z0-9_+-]+)\s?{.+?}`)
 	match = regex.FindAllStringSubmatch(expr, -1)
 	visitedMap = make(map[string]bool)
 	for _, m := range match {
 		if _, has := visitedMap[m[1]]; !has {
-			// multiple metrics used to summarize
+			// multiple metrics used with `+`
 			if strings.Contains(m[1], "+") {
 				submatch = strings.Split(m[1], "+")
 				for i := range submatch {
 					submatch[i] = prefix + submatch[i]
 				}
 				expr = strings.Replace(expr, m[1], strings.Join(submatch, "+"), -1)
+				// multiple metrics used with `-`
+			} else if strings.Contains(m[1], "-") {
+				submatch = strings.Split(m[1], "-")
+				for i := range submatch {
+					submatch[i] = prefix + submatch[i]
+				}
+				expr = strings.Replace(expr, m[1], strings.Join(submatch, "-"), -1)
 				// single metric
 			} else {
 				expr = strings.Replace(expr, m[1], prefix+m[1], -1)
