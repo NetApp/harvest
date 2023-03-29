@@ -148,7 +148,8 @@ func doCmd() {
 	case "apis", "params", "models":
 		swaggerPath, err := ReadOrDownloadSwagger(args.Poller)
 		if err != nil {
-			return // everything logged earlier
+			fmt.Printf("error %+v\n", err)
+			return
 		}
 		args.SwaggerPath = swaggerPath
 		doSwagger(*args)
