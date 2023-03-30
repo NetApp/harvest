@@ -188,6 +188,32 @@
                 "value": "percent"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Encrypted"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "false": {
+                        "text": "No",
+                        "index": 0
+                      },
+                      "true": {
+                        "text": "Yes",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -289,7 +315,8 @@
                 "encryption_enabled",
                 "Value #E",
                 "Value #F",
-                "url"
+                "url",
+                "qos_policy_group"
               ]
             }
           }
@@ -313,12 +340,12 @@
               "volume": 2,
               "bucket": 3,
               "aggr": 4,
-              "url": 5,
-              "encryption_enabled": 6,
-              "Value #B": 7,
-              "Value #C": 8,
-              "Value #D": 9,
-              "Value #E": 10,
+              "url": 9,
+              "encryption_enabled": 10,
+              "Value #B": 5,
+              "Value #C": 6,
+              "Value #D": 7,
+              "Value #E": 8,
               "Value #F": 11,
               "qos_policy_group": 12
             },
@@ -386,6 +413,84 @@
                       }
                     },
                     "type": "special"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IsProtected"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "false": {
+                        "text": "No",
+                        "index": 0
+                      },
+                      "true": {
+                        "text": "Yes",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ProtectedInCloud"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "false": {
+                        "text": "No",
+                        "index": 0
+                      },
+                      "true": {
+                        "text": "Yes",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ProtectedInOntap"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "false": {
+                        "text": "No",
+                        "index": 0
+                      },
+                      "true": {
+                        "text": "Yes",
+                        "index": 1
+                      }
+                    }
                   }
                 ]
               }
