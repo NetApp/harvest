@@ -1,6 +1,6 @@
 This document contains details about Harvest metrics and their relevant ONTAP ZAPI and REST API mappings.
 
-Details about which Harvest metrics each dashboard uses can be generated on demand by running `bin/grafana metrics`. See
+Details about which Harvest metrics each dashboard uses can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
