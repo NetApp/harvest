@@ -13,6 +13,7 @@ objects:
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
 #  ExportRule:                  exports.yaml
+  Health:                      health.yaml
   Lun:                         lun.yaml
   Namespace:                   namespace.yaml
 #  NetConnections:              netConnections.yaml
