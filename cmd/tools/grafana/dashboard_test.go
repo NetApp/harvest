@@ -871,3 +871,36 @@ func checkDashboardRefresh(t *testing.T, path string, data []byte) {
 		return true
 	})
 }
+
+func TestHeatmapSettings(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkHeatmapSettings(t, shortPath(path), data)
+		},
+	)
+}
+
+func checkHeatmapSettings(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+	const (
+		wantColorScheme = "interpolateRdYlGn"
+		wantColorMode   = "spectrum"
+	)
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType != "heatmap" {
+			return
+		}
+		colorScheme := value.Get("color.colorScheme").String()
+		colorMode := value.Get("color.mode").String()
+		if colorScheme != wantColorScheme {
+			t.Errorf(`dashboard=%s path=%s panel="%s" got color.scheme=%s, want=%s`,
+				dashPath, path, value.Get("title").String(), colorScheme, wantColorScheme)
+		}
+		if colorMode != wantColorMode {
+			t.Errorf(`dashboard=%s path=%s panel="%s" got color.mode=%s, want=%s`,
+				dashPath, path, value.Get("title").String(), colorMode, wantColorMode)
+		}
+	})
+}
