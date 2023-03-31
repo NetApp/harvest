@@ -191,10 +191,7 @@ func TestFlowStyle(t *testing.T) {
 
 func TestUniqueExportersByType(t *testing.T) {
 	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
-	err := LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
-	}
+	TestLoadHarvestConfig(path)
 	poller2, _ := PollerNamed("overlapping")
 	t.Run("Exporters are unique by type", func(t *testing.T) {
 		exporters := GetUniqueExporters(poller2.Exporters)
