@@ -4,14 +4,15 @@ query:              api/storage/aggregates
 object:             aggr
 
 counters:
-  - ^^uuid                                                         => uuid
   - ^name                                                          => aggr
+  - ^^uuid                                                         => uuid
   - ^home_node.name                                                => node
   - ^state                                                         => state
   - ^block_storage.primary.disk_type                               => type
   - ^block_storage.primary.raid_type                               => raid_type
   - ^data_encryption.software_encryption_enabled                   => is_encrypted
   - block_storage.primary.raid_size                                => raid_size
+  - ^cloud_storage.stores.#.cloud_store.name                       => cloud_stores
   - space.cloud_storage.used                                       => space_capacity_tier_used
   - space.block_storage.data_compacted_count                       => space_data_compacted_count
   - space.block_storage.data_compaction_space_saved                => space_data_compaction_saved
@@ -81,3 +82,4 @@ export_options:
     - type
     - state
     - is_encrypted
+    - cloud_stores

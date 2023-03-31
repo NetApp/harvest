@@ -8,7 +8,7 @@ schedule:
 # for details on how Harvest handles the ONTAP transition from ZAPI to REST.
 
 objects:
-  Aggr:                        aggr.yaml
+  Aggregate:                   aggr.yaml
   CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
