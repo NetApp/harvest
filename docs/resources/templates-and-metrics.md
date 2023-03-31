@@ -34,11 +34,11 @@ At a high-level, Harvest templates describe what ZAPIs to send to ONTAP and how 
 
 ## ONTAP ZAPI disk example
 
-We'll use the `bin/zapi` tool to interrogate the cluster and gather information about the counters. This is one way you
+We'll use the `bin/harvest zapi` tool to interrogate the cluster and gather information about the counters. This is one way you
 can send ZAPIs to ONTAP and explore the return types and values.
 
 ```
-bin/zapi -p u2 show attrs --api storage-disk-get-iter
+bin/harvest zapi -p u2 show attrs --api storage-disk-get-iter
 ```
 
 > Output edited for brevity and line numbers added on left
@@ -195,7 +195,7 @@ objects:
  7	    - ^^disk-uid
  8	    - ^^disk-name               => disk
  9	    - disk-inventory-info:
-10	      - bytes-per-sector        => bytes_per_sector        # notice this has the same hierarchical path we saw from bin/zapi
+10	      - bytes-per-sector        => bytes_per_sector        # notice this has the same hierarchical path we saw from bin/harvest zapi
 11	      - capacity-sectors        => sectors
 12	      - ^disk-type              => type
 13	      - ^is-shared              => shared

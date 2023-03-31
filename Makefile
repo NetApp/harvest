@@ -21,6 +21,7 @@ BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-X 'github.com/netapp/harvest/v2/cmd/harvest/version.VERSION=$(VERSION)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Release=$(RELEASE)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Commit=$(COMMIT)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
 GOARCH ?= amd64
 GOOS ?= linux
+FLAGS ?= CGO_ENABLED=0
 HARVEST_PACKAGE := harvest-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}
 DIST := dist
 TMP := /tmp/${HARVEST_PACKAGE}
@@ -123,27 +124,15 @@ all: package ## Build, Test, Package
 harvest: deps
 	@# Build the harvest cli
 	@echo "Building harvest"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
 
 	@# Build the harvest poller
 	@echo "Building poller"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
 
 	@# Build the daemonize for the pollers
 	@echo "Building daemonize"
 	@cd cmd/tools/daemonize; gcc daemonize.c -o ../../../bin/daemonize
-
-	@# Build the zapi tool
-	@echo "Building zapi tool"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/zapi -ldflags=$(LD_FLAGS) cmd/tools/zapi/main/main.go
-
-	@# Build the grafana tool
-	@echo "Building grafana tool"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/grafana -ldflags=$(LD_FLAGS) cmd/tools/grafana/main/main.go
-
-	@# Build the rest tool
-	@echo "Building rest tool"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -trimpath -o bin/rest -ldflags=$(LD_FLAGS) cmd/tools/rest/main/main.go
 
 ###############################################################################
 # Build tar gz distribution
@@ -171,7 +160,7 @@ asup:
 	else\
 		git clone -b ${BRANCH} https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP};\
 	fi
-	@cd ${ASUP_TMP}/harvest-asup && make ${ASUP_MAKE_TARGET} VERSION=${VERSION} RELEASE=${RELEASE}
+	@cd ${ASUP_TMP}/harvest-asup && CGO_ENABLED=0 make ${ASUP_MAKE_TARGET} VERSION=${VERSION} RELEASE=${RELEASE}
 	@mkdir -p ${CURRENT_DIR}/autosupport
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
 
