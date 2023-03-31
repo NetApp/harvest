@@ -5930,9 +5930,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": null,
@@ -5999,9 +5999,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": null,
@@ -6068,9 +6068,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": null,
@@ -14518,5 +14518,5 @@
   "timezone": "",
   "title": "ONTAP: SVM",
   "uid": "",
-  "version": 20
+  "version": 21
 }
