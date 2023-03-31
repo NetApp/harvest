@@ -622,9 +622,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -691,9 +691,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -760,9 +760,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -829,9 +829,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -898,9 +898,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -967,9 +967,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -1036,9 +1036,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -1105,9 +1105,9 @@
           "color": {
             "cardColor": "#b4ff00",
             "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
+            "colorScheme": "interpolateRdYlGn",
             "exponent": 0.5,
-            "mode": "opacity"
+            "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
@@ -1301,5 +1301,5 @@
   "timezone": "",
   "title": "ONTAP: SMB2",
   "uid": "",
-  "version": 2
+  "version": 3
 }
