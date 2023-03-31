@@ -11,11 +11,11 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `addr`                 | required by some collectors                    | IPv4 or FQDN of the target system                                                                                                                                                                                                                                                                                                                                         |                    |
 | `collectors`           | **required**                                   | List of collectors to run for this poller                                                                                                                                                                                                                                                                                                                                 |                    |
 | `exporters`            | **required**                                   | List of exporter names from the `Exporters` section. Note: this should be the name of the exporter (e.g. `prometheus1`), not the value of the `exporter` key (e.g. `Prometheus`)                                                                                                                                                                                          |                    |
-| `auth_style`           | required by Zapi* collectors                   | Either `basic_auth` or `certificate_auth`                                                                                                                                                                                                                                                                                                                                 | `basic_auth`       |
+| `auth_style`           | required by Zapi* collectors                   | Either `basic_auth` or `certificate_auth` See [authentication](#authentication) for details                                                                                                                                                                                                                                                                               | `basic_auth`       |
 | `username`, `password` | required if `auth_style` is `basic_auth`       |                                                                                                                                                                                                                                                                                                                                                                           |                    |
 | `ssl_cert`, `ssl_key`  | optional if `auth_style` is `certificate_auth` | Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for `<hostname>.key` and `<hostname>.pem` in `$HARVEST_HOME/cert/`.<br/><br/>To create certificates for ONTAP systems, see [using certificate authentication](prepare-cdot-clusters.md#using-certificate-authentication) |                    |
 | `use_insecure_tls`     | optional, bool                                 | If true, disable TLS verification when connecting to ONTAP cluster                                                                                                                                                                                                                                                                                                        | false              |
-| `credentials_file`     | optional, string                               | Path to a yaml file that contains cluster credentials. The file should have the same shape as `harvest.yml`. See [here](configure-harvest-basic.md#credentials-file) for examples. Path can be relative to `harvest.yml` or absolute                                                                                                                                      |                    |          
+| `credentials_file`     | optional, string                               | Path to a yaml file that contains cluster credentials. The file should have the same shape as `harvest.yml`. See [here](configure-harvest-basic.md#credentials-file) for examples. Path can be relative to `harvest.yml` or absolute.                                                                                                                                     |                    |          
 | `credentials_script`   | optional, section                              | Section that defines how Harvest should fetch credentials via external script. See [here](configure-harvest-basic.md#credentials-script) for details.                                                                                                                                                                                                                     |                    |          
 | `tls_min_version`      | optional, string                               | Minimum TLS version to use when connecting to ONTAP cluster: One of tls10, tls11, tls12 or tls13                                                                                                                                                                                                                                                                          | Platform decides   | 
 | `labels`               | optional, list of key-value pairs              | Each of the key-value pairs will be added to a poller's metrics. Details [below](configure-harvest-basic.md#labels)                                                                                                                                                                                                                                                       |                    |
@@ -130,6 +130,40 @@ node_vol_cifs_write_data{org="meg",ns="rtp",datacenter="DC-01",cluster="cluster-
 
 Keep in mind that each unique combination of key-value pairs increases the amount of stored data. Use them sparingly.
 See [PrometheusNaming](https://prometheus.io/docs/practices/naming/#labels) for details.
+
+# Authentication
+
+When authenticating with ONTAP and StorageGRID clusters,
+Harvest supports both client certificates and basic authentication.
+
+These methods of authentication are defined in the `Pollers` or `Defaults` section of your `harvest.yml` using one or more
+of the following parameters.
+
+| parameter            | description                                                                | default      | Link                        |
+|----------------------|----------------------------------------------------------------------------|--------------|-----------------------------|
+| `auth_sytle`         | One of `basic_auth` or `certificate_auth`                                  | `basic_auth` | [link](#Pollers)            |
+| `username`           | Username used for authenticating to the remote system                      |              | [link](#Pollers)            |
+| `password`           | Password used for authenticating to the remote system                      |              | [link](#Pollers)            |
+| `credentials_file`   | Relative or absolute path to a yaml file that contains cluster credentials |              | [link](#credentials-file)   |
+| `credentials_script` | External script Harvest executes to retrieve credentials                   |              | [link](#credentials-script) |
+
+When multiple authentication parameters are defined at the same time,
+Harvest tries each method listed below, in the following order, to resolve authentication requests. 
+The first method that returns a non-empty password stops the search. 
+
+When these parameters exist in both the `Pollers` and `Defaults` section,
+the `Pollers` section will be consulted before the `Defaults`.
+
+| section    | parameter                                           |
+|------------|-----------------------------------------------------|
+| `Pollers`  | auth_style: `certificate_auth`                      |
+| `Pollers`  | auth_style: `basic_auth` with username and password |
+| `Pollers`  | `credentials_script`                                |
+| `Pollers`  | `credentials_script`                                |
+| `Defaults` | auth_style: `certificate_auth`                      |
+| `Defaults` | auth_style: `basic_auth` with username and password |
+| `Defaults` | `credentials_script`                                |
+| `Defaults` | `credentials_script`                                |
 
 ## Credentials File
 
