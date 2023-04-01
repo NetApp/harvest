@@ -6,11 +6,11 @@ object:                   fabricpool
 instance_key:             uuid
 
 counters:
+  - average_latency
+  - get_throughput_bytes
   - instance_name
   - instance_uuid
   - node_name              => node
-  - average_latency
-  - get_throughput_bytes
   - put_throughput_bytes
   - stats
   - throughput_ops

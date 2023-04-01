@@ -7,61 +7,61 @@ global_labels:
   - nfsv: v3
 
 counters:
+  - access_avg_latency
+  - access_total
+  - commit_avg_latency
+  - commit_total
+  - create_avg_latency
+  - create_total
+  - fsinfo_avg_latency
+  - fsinfo_total
+  - fsstat_avg_latency
+  - fsstat_total
+  - getattr_avg_latency
+  - getattr_total
   - instance_name            => svm
+  - latency
+  - link_avg_latency
+  - link_total
+  - lookup_avg_latency
+  - lookup_total
+  - mkdir_avg_latency
+  - mkdir_total
+  - mknod_avg_latency
+  - mknod_total
+  - nfsv3_latency_hist       => latency_hist
   - nfsv3_ops                => ops
   - nfsv3_read_ops           => read_ops
-  - nfsv3_write_ops          => write_ops
-  - nfsv3_throughput         => throughput
   - nfsv3_read_throughput    => read_throughput
+  - nfsv3_throughput         => throughput
+  - nfsv3_write_ops          => write_ops
   - nfsv3_write_throughput   => write_throughput
-  - nfsv3_latency_hist       => latency_hist
-  - read_latency_hist
-  - write_latency_hist
-  - read_avg_latency
-  - write_avg_latency
-  - latency
-  - access_total
-  - commit_total
-  - create_total
-  - fsinfo_total
-  - fsstat_total
-  - getattr_total
-  - link_total
-  - lookup_total
-  - mkdir_total
-  - mknod_total
+  - null_avg_latency
   - null_total
+  - pathconf_avg_latency
   - pathconf_total
+  - read_avg_latency
+  - read_latency_hist
+  - read_symlink_avg_latency
   - read_symlink_total
   - read_total
-  - readdir_total
-  - readdirplus_total
-  - remove_total
-  - rename_total
-  - rmdir_total
-  - setattr_total
-  - symlink_total
-  - write_total
-  - access_avg_latency
-  - commit_avg_latency
-  - create_avg_latency
-  - fsinfo_avg_latency
-  - fsstat_avg_latency
-  - getattr_avg_latency
-  - link_avg_latency
-  - lookup_avg_latency
-  - mkdir_avg_latency
-  - mknod_avg_latency
-  - null_avg_latency
-  - pathconf_avg_latency
-  - read_symlink_avg_latency
   - readdir_avg_latency
+  - readdir_total
   - readdirplus_avg_latency
+  - readdirplus_total
   - remove_avg_latency
+  - remove_total
   - rename_avg_latency
+  - rename_total
   - rmdir_avg_latency
+  - rmdir_total
   - setattr_avg_latency
+  - setattr_total
   - symlink_avg_latency
+  - symlink_total
+  - write_avg_latency
+  - write_latency_hist
+  - write_total
 
 override:
   - access_total: rate

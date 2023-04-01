@@ -5,61 +5,60 @@ object:                   fcp
 instance_key:             uuid
 
 counters:
-  - instance_name          => port
-  - instance_uuid
-  - node_name              => node
   - avg_other_latency
   - avg_read_latency
   - avg_write_latency
-  - read_data
-  - write_data
-  - total_data
-  - read_ops
-  - write_ops
-  - other_ops
-  - total_ops
-  - link_speed             => speed
+  - discarded_frames_count
+  - instance_name          => port
+  - instance_uuid
+  - int_count
+  - invalid_crc
+  - invalid_transmission_word
+  - isr_count
   - link_down
   - link_failure
+  - link_speed             => speed
   - loss_of_signal
   - loss_of_sync
+  - node_name              => node
+  - nvmf_avg_other_latency
+  - nvmf_avg_read_latency
+  - nvmf_avg_remote_other_latency
+  - nvmf_avg_remote_read_latency
+  - nvmf_avg_remote_write_latency
+  - nvmf_avg_write_latency
+  - nvmf_caw_data
+  - nvmf_caw_ops
+  - nvmf_command_slots
+  - nvmf_other_ops
+  - nvmf_read_data
+  - nvmf_read_ops
+  - nvmf_remote_caw_data
+  - nvmf_remote_caw_ops
+  - nvmf_remote_other_ops
+  - nvmf_remote_read_data
+  - nvmf_remote_read_ops
+  - nvmf_remote_total_data
+  - nvmf_remote_total_ops
+  - nvmf_remote_write_data
+  - nvmf_remote_write_ops
+  - nvmf_total_data
+  - nvmf_total_ops
+  - nvmf_write_data
+  - nvmf_write_ops
+  - other_ops
   - prim_seq_err
   - queue_full
+  - read_data
+  - read_ops
   - reset_count
   - shared_int_count
   - spurious_int_count
   - threshold_full
-  - discarded_frames_count
-  - int_count
-  - invalid_transmission_word
-  - isr_count
-  - invalid_crc
-  - nvmf_avg_other_latency                         
-  - nvmf_avg_read_latency       
-  - nvmf_avg_remote_other_latency
-  - nvmf_avg_remote_read_latency
-  - nvmf_avg_remote_write_latency
-  - nvmf_avg_write_latency      
-  - nvmf_caw_data
-  - nvmf_caw_ops
-  - nvmf_command_slots          
-  - nvmf_other_ops              
-  - nvmf_read_data              
-  - nvmf_read_ops               
-  - nvmf_remote_caw_data        
-  - nvmf_remote_caw_ops         
-  - nvmf_remote_other_ops       
-  - nvmf_remote_read_data       
-  - nvmf_remote_read_ops        
-  - nvmf_remote_total_data      
-  - nvmf_remote_total_ops       
-  - nvmf_remote_write_data      
-  - nvmf_remote_write_ops       
-  - nvmf_total_data             
-  - nvmf_total_ops              
-  - nvmf_write_data             
-  - nvmf_write_ops              
-
+  - total_data
+  - total_ops
+  - write_data
+  - write_ops
 
 override:
   - link_speed: string

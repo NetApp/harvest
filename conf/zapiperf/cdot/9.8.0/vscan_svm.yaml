@@ -6,13 +6,13 @@ object:                   svm_vscan
 instance_key:             uuid
 
 counters:
+  - connections_active
+  - dispatch_latency
   - instance_name                  => svm
   - instance_uuid
-  - dispatch_latency
   - scan_latency
   - scan_noti_received_rate
   - scan_request_dispatched_rate
-  - connections_active
 
 export_options:
   instance_keys:

@@ -9,9 +9,9 @@ global_labels:
   - system_type: 7mode
 
 counters:
-  - node_name             => node
-  - instance_name
   - domain_busy
+  - instance_name
+  - node_name             => node
   - processor_busy
 
 plugins:
@@ -21,8 +21,3 @@ plugins:
 # only export node-level averages from plugin
 # set this true or comment, to get data for each cpu
 export_data: false
-
-export_options:
-  instance_keys:
-    - cpus
-

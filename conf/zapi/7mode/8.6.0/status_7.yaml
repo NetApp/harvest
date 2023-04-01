@@ -9,8 +9,8 @@ global_labels:
 
 counters:
   diagnosis-config-info:
-    - ^health                       => health
     - ^^monitor                     => monitor
+    - ^health                       => health
 
 collect_only_labels: true
 

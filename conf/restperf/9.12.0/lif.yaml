@@ -4,16 +4,16 @@ object:                   lif
 
 counters:
   - ^^id
+  - ^current_port            => port
   - ^name                    => lif
   - ^node.name               => node
   - ^svm.name                => svm
-  - ^current_port            => port
   - received_data            => recv_data
-  - received_packets         => recv_packet
   - received_errors          => recv_errors
+  - received_packets         => recv_packet
   - sent_data
-  - sent_packets             => sent_packet
   - sent_errors
+  - sent_packets             => sent_packet
 
 export_options:
   instance_keys:

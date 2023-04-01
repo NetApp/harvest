@@ -5,8 +5,8 @@ object:           cluster_peer
 
 counters:
   - ^^uuid
-  - ^name                => name
   - ^encryption.state    => encryption_state
+  - ^name                => name
 
 plugins:
   - LabelAgent:

@@ -5,23 +5,23 @@ object:                   flashcache
 counters:
   - ^^id
   - ^node.name               => node
-  - disk_reads_replaced
   - accesses
-  - hit.percent              => hit_percent
-  - inserts
+  - disk_reads_replaced
   - evicts
-  - invalidates
-  - usage
-  - hit.total                => hit
-  - hit.normal_level_zero    => hit_normal_lev0
-  - hit.metadata_file        => hit_metadata_file
   - hit.directory            => hit_directory
   - hit.indirect             => hit_indirect
-  - miss.total               => miss
-  - miss.normal_level_zero   => miss_normal_lev0
-  - miss.metadata_file       => miss_metadata_file
+  - hit.metadata_file        => hit_metadata_file
+  - hit.normal_level_zero    => hit_normal_lev0
+  - hit.percent              => hit_percent
+  - hit.total                => hit
+  - inserts
+  - invalidates
   - miss.directory           => miss_directory
   - miss.indirect            => miss_indirect
+  - miss.metadata_file       => miss_metadata_file
+  - miss.normal_level_zero   => miss_normal_lev0
+  - miss.total               => miss
+  - usage
 
 override:
   - hit.percent: average

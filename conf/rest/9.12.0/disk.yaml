@@ -5,17 +5,17 @@ object:           disk
 
 counters:
   - ^^uid
-  - ^name                       => disk
-  - ^state
-  - ^node.uuid
-  - ^node.name                  => node
-  - ^home_node.name             => owner_node
+  - ^bay                        => shelf_bay
   - ^container_type
+  - ^home_node.name             => owner_node
   - ^model
+  - ^name                       => disk
+  - ^node.name                  => node
+  - ^node.uuid
+  - ^outage.reason              => outage
   - ^serial_number
   - ^shelf.uid                  => shelf
-  - ^bay                        => shelf_bay
-  - ^outage.reason              => outage
+  - ^state
   - bytes_per_sector            => bytes_per_sector
   - sector_count                => sectors
   - stats.average_latency       => stats_average_latency
@@ -26,10 +26,10 @@ endpoints:
   - query: api/private/cli/disk
     counters:
       - ^^uid                   => uid
+      - ^type
+      - disk_io_kbps_total      => stats_io_kbps
       - sectors_read            => stats_sectors_read
       - sectors_written         => stats_sectors_written
-      - disk_io_kbps_total      => stats_io_kbps
-      - ^type
 
 plugins:
   - Disk

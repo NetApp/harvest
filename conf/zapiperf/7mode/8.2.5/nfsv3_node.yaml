@@ -10,12 +10,12 @@ global_labels:
 
 counters:
   - instance_name          => node
-  - nfsv3_ops              => total_ops
-  - nfsv3_read_ops         => read_ops
-  - nfsv3_write_ops        => write_ops
-  - nfsv3_read_latency     => read_avg_latency
-  - nfsv3_write_latency    => write_avg_latency
   - nfsv3_avg_op_latency   => latency
+  - nfsv3_ops              => total_ops
+  - nfsv3_read_latency     => read_avg_latency
+  - nfsv3_read_ops         => read_ops
+  - nfsv3_write_latency    => write_avg_latency
+  - nfsv3_write_ops        => write_ops
 
 export_options:
   require_instance_keys: false

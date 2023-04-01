@@ -266,6 +266,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		z.Logger.Trace().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 
 		if value := node.GetContentS(); value != "" {
+			if key == "model" {
+				fmt.Println()
+			}
 			if label, has := z.instanceLabelPaths[key]; has {
 				// Handling array with comma separated values
 				previousValue := instance.GetLabel(label)

@@ -4,11 +4,11 @@ object:                                 vscan
 
 counters:
   - ^^id
+  - scan.latency                       => scan_latency
+  - scan.request_dispatched_rate       => scan_request_dispatched_rate
   - scanner.stats_percent_cpu_used     => scanner_stats_pct_cpu_used
   - scanner.stats_percent_mem_used     => scanner_stats_pct_mem_used
   - scanner.stats_percent_network_used => scanner_stats_pct_network_used
-  - scan.latency                       => scan_latency
-  - scan.request_dispatched_rate       => scan_request_dispatched_rate
 
 plugins:
   - Vscan:

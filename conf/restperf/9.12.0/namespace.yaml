@@ -6,16 +6,16 @@ counters:
   - ^^id
   - ^name                     => path
   - ^svm.name                 => svm
-  - read_data
-  - write_data
-  - read_ops
-  - write_ops
-  - other_ops
+  - average_other_latency     => avg_other_latency
   - average_read_latency      => avg_read_latency
   - average_write_latency     => avg_write_latency
-  - average_other_latency     => avg_other_latency
+  - other_ops
+  - read_data
+  - read_ops
   - remote.read_data          => remote_bytes
   - remote.read_ops           => remote_ops
+  - write_data
+  - write_ops
 
 plugins:
   LabelAgent:

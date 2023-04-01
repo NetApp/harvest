@@ -5,10 +5,9 @@ object:           security_login
 
 counters:
   - ^^uuid        => uuid
-  - ^svm.name     => svm
-  - ^scope        => scope
   - ^banner       => banner
-
+  - ^scope        => scope
+  - ^svm.name     => svm
 
 export_options:
   instance_keys:

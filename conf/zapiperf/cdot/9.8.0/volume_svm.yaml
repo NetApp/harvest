@@ -5,17 +5,17 @@ object:                   svm_vol
 instance_key:             uuid
 
 counters:
-  - instance_name         => svm
-  - read_data
-  - write_data
-  - read_ops
-  - write_ops
-  - other_ops
-  - total_ops
-  - read_latency
-  - write_latency
-  - other_latency
   - avg_latency
+  - instance_name         => svm
+  - other_latency
+  - other_ops
+  - read_data
+  - read_latency
+  - read_ops
+  - total_ops
+  - write_data
+  - write_latency
+  - write_ops
 
 export_options:
   instance_keys:

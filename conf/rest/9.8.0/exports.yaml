@@ -3,11 +3,11 @@ query:                    api/private/cli/export-policy/rule
 object:                   export_rule
 
 counters:
-  - ^^vserver          => svm
   - ^^policyname       => policy
   - ^^ruleindex        => index
-  - ^protocol          => protocol
+  - ^^vserver          => svm
   - ^clientmatch       => clientmatch
+  - ^protocol          => protocol
   - ^rorule            => rorule
   - ^rwrule            => rwrule
   - ^superuser         => superuser

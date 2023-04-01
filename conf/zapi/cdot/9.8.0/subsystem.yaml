@@ -5,8 +5,8 @@ object:     cluster_subsystem
 
 counters:
   diagnosis-subsystem-config-info:
-    - ^health                       => health
     - ^^subsystem                   => subsystem
+    - ^health                       => health
     - outstanding-alert-count       => outstanding_alerts
     - suppressed-alert-count        => suppressed_alerts
 

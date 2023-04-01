@@ -8,19 +8,19 @@ global_labels:
 
 counters:
   volume-info:
-    - ^name                                  => volume
-    - ^type                                  => style
     - ^^uuid
+    - ^containing-aggregate       => aggr
+    - ^name                       => volume
+    - ^owning-vfiler              => svm
     - ^state
-    - ^containing-aggregate                  => aggr
-    - ^owning-vfiler                         => svm
+    - ^type                       => style
     - files-total
     - files-used
     - filesystem-size
+    - percentage-used             => size_used_percent
     - size-available
     - size-total
     - size-used
-    - percentage-used                       => size_used_percent
     - autosize:
       - grow-threshold-percent
       - maximum-size

@@ -3,8 +3,6 @@ query:                    object_store_server
 object:                   ontaps3
 
 counters:
-  - node_name                                           => node
-  - vserver_name                                        => svm
   - abort_multipart_upload_failed
   - abort_multipart_upload_failed_client_close
   - abort_multipart_upload_latency
@@ -104,6 +102,7 @@ counters:
   - max_connected_connections
   - max_requests_outstanding
   - multi_delete_reqs
+  - node_name                                           => node
   - output_flow_control_entry
   - output_flow_control_exit
   - presigned_url_reqs
@@ -133,6 +132,7 @@ counters:
   - upload_part_latency
   - upload_part_rate
   - upload_part_total
+  - vserver_name                                        => svm
 
 export_options:
   instance_keys:

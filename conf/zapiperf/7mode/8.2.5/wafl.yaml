@@ -9,23 +9,19 @@ global_labels:
   - system_type: 7mode
 
 counters:
-  - instance_uuid
-  # latency
-  - avg_wafl_msg_latency  => avg_msg_latency
   - avg_non_wafl_msg_latency
+  - avg_wafl_msg_latency  => avg_msg_latency     # latency
   - avg_wafl_repl_msg_latency
-  # iops
-  - wafl_msg_total        => msg_total
-  - wafl_repl_msg_total
-  - non_wafl_msg_total
-  # consistency point
-  - cp_count
+  - cp_count                                     # consistency point
   - cp_phase_times
+  - instance_uuid
+  - non_wafl_msg_total
   - read_io_type
   - total_cp_msecs
-  # memory
-  - wafl_memory_used
   - wafl_memory_free
+  - wafl_memory_used                             # memory
+  - wafl_msg_total        => msg_total           # iops
+  - wafl_repl_msg_total
 
 override:
   - read_io_type_base: delta

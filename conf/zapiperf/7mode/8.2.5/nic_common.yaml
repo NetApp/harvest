@@ -11,18 +11,18 @@ global_labels:
 counters:
   - instance_name
   - instance_uuid
-  - node_name              => node
-  - rx_bytes
-  - tx_bytes
-  - link_speed             => speed
   - link_current_state     => state
+  - link_speed             => speed
   - link_up_to_downs
   - nic_type               => type
+  - node_name              => node
   - rx_alignment_errors
+  - rx_bytes
   - rx_crc_errors
+  - rx_errors
   - rx_length_errors
   - rx_total_errors
-  - rx_errors
+  - tx_bytes
   - tx_errors
   - tx_hw_errors
   - tx_total_errors

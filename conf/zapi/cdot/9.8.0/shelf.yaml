@@ -1,20 +1,20 @@
 
-name:                       StorageShelf
+name:                       Shelf
 query:                      storage-shelf-info-get-iter
 object:                     shelf
 
 
 counters:
   storage-shelf-info:
-    - disk-count
+    - ^^shelf-uid
     - ^module-type
+    - ^op-status
     - ^serial-number
     - ^shelf => shelf
     - ^shelf-model
-    - ^^shelf-uid
     - ^state
     - ^vendor-name
-    - ^op-status
+    - disk-count
 
 plugins:
   LabelAgent:

@@ -6,21 +6,21 @@ object:                   volume
 instance_key:             uuid
 
 counters:
-  - instance_uuid
+  - avg_latency
   - instance_name
-  - vserver_name          => svm
+  - instance_uuid
   - node_name             => node
+  - other_latency
+  - other_ops
   - parent_aggr           => aggr
   - read_data
-  - write_data
-  - read_ops
-  - write_ops
-  - other_ops
-  - total_ops
   - read_latency
+  - read_ops
+  - total_ops
+  - vserver_name          => svm
+  - write_data
   - write_latency
-  - other_latency
-  - avg_latency
+  - write_ops
 
 plugins:
   - Aggregator:

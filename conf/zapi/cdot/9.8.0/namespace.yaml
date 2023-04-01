@@ -5,18 +5,18 @@ object:                     namespace
 counters:
   nvme-namespace-info:
     - ^^uuid                     => uuid
-    - ^nsid                      => nsid
-    - ^path                      => path
-    - ^node                      => node
-    - ^ostype                    => os_type
     - ^is-read-only              => is_read_only
+    - ^node                      => node
+    - ^nsid                      => nsid
+    - ^ostype                    => os_type
+    - ^path                      => path
     - ^state                     => state
     - ^subsystem                 => subsystem
     - ^volume                    => volume
     - ^vserver                   => svm
+    - block-size                 => block_size
     - size                       => size
     - size-used                  => size_used
-    - block-size                 => block_size
 
 plugins:
   - MetricAgent:

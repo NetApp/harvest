@@ -5,16 +5,16 @@ object:           environment_sensor
 counters:
   - ^^index
   - ^^node.name                => node
-  - ^name                      => sensor
-  - ^type                      => type
-  - ^warning_high_threshold    => warning_high
-  - ^warning_low_threshold     => warning_low
   - ^critical_high_threshold   => critical_high
   - ^critical_low_threshold    => critical_low
   - ^discrete_state            => discrete_state
   - ^discrete_value            => discrete_value
+  - ^name                      => sensor
   - ^threshold_state           => threshold_state
+  - ^type                      => type
   - ^value_units               => unit
+  - ^warning_high_threshold    => warning_high
+  - ^warning_low_threshold     => warning_low
   - value                      => threshold_value
 
 plugins:

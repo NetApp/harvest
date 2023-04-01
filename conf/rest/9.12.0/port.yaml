@@ -1,41 +1,39 @@
-name:   NetPort
+name:   Port
 query:  api/network/ethernet/ports
 object: net_port
 
 counters:
-    - ^^node.name                 => node
     - ^^name                      => port
+    - ^^node.name                 => node
     - ^broadcast_domain.name      => broadcast_domain
     - ^lag.distribution_policy    => ifgrp_distribution_policy
     - ^lag.mode                   => ifgrp_mode
-    - ^state                      => state
     - ^speed                      => speed
+    - ^state                      => state
     - ^type                       => port_type
-    - ^vlan.tag                   => vlan_id
-    - ^vlan.base_port.node.name   => vlan_node
     - ^vlan.base_port.name        => vlan_port
+    - ^vlan.base_port.node.name   => vlan_node
+    - ^vlan.tag                   => vlan_id
 
 endpoints:
   - query: api/private/cli/network/port
     counters:
       - ^^node                    => node
       - ^^port                    => port
-      - ^role                     => role
       - ^duplex_admin             => admin_duplex
-      - ^flowcontrol_admin        => admin_flowcontrol
-      - ^speed_admin              => admin_speed
       - ^duplex_oper              => op_duplex
+      - ^flowcontrol_admin        => admin_flowcontrol
+      - ^role                     => role
+      - ^speed_admin              => admin_speed
   - query: api/private/cli/network/port/ifgrp
     counters:
-      - ^^node                    => node
       - ^^ifgrp                   => port
+      - ^^node                    => node
       - ^activeports              => activeports
+      - ^distr_func               => ifgrp_func
+      - ^down_ports               => down_ports
       - ^ports                    => ports
       - ^up_ports                 => up_ports
-      - ^down_ports               => down_ports
-      - ^distr_func               => ifgrp_func
-
-
 
 plugins:
   LabelAgent:

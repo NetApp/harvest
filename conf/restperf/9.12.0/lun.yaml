@@ -5,27 +5,27 @@ object:                   lun
 counters:
   - ^^id                        => lunfull
   - ^svm.name                   => svm
-  - read_data
-  - write_data
-  - read_ops
-  - write_ops
-  - xcopy_requests              => xcopy_reqs
-  - writesame_requests          => writesame_reqs
-  - writesame_unmap_requests    => writesame_unmap_reqs
-  - caw_requests                => caw_reqs
   - average_read_latency        => avg_read_latency
   - average_write_latency       => avg_write_latency
   - average_xcopy_latency       => avg_xcopy_latency
-  - unmap_requests              => unmap_reqs
-  - writesame_unmap_requests    => writesame_unmap_reqs
+  - caw_requests                => caw_reqs
   - enospc
   - queue_full
+  - read_align_histogram        => read_align_histo
+  - read_data
+  - read_ops
+  - read_partial_blocks
   - remote_bytes
   - remote_ops
-  - read_partial_blocks
-  - write_partial_blocks
+  - unmap_requests              => unmap_reqs
   - write_align_histogram       => write_align_histo
-  - read_align_histogram        => read_align_histo
+  - write_data
+  - write_ops
+  - write_partial_blocks
+  - writesame_requests          => writesame_reqs
+  - writesame_unmap_requests    => writesame_unmap_reqs
+  - writesame_unmap_requests    => writesame_unmap_reqs
+  - xcopy_requests              => xcopy_reqs
 
 override:
   - writesame_requests: rate

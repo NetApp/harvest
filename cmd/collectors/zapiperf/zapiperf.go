@@ -852,7 +852,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			if renamed := strings.Split(cnt, "=>"); len(renamed) == 2 {
 				wanted.Set(strings.TrimSpace(renamed[0]), strings.TrimSpace(renamed[1]))
 			} else if cnt == "instance_name" {
-				wanted.Set(cnt, z.object)
+				wanted.Set("instance_name", z.object)
 			} else {
 				display := strings.ReplaceAll(cnt, "-", "_")
 				if strings.HasPrefix(display, z.object) {

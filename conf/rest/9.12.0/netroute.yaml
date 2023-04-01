@@ -4,15 +4,15 @@ object:                   net_route
 
 counters:
   - ^^uuid                                   => uuid
-  - ^svm.name                                => svm
-  - ^scope                                   => scope
-  - ^ipspace.name                            => ipspace
-  - ^gateway                                 => gateway
-  - ^destination.netmask                     => netmask_length
   - ^destination.address                     => destination
   - ^destination.family                      => family
-  - ^interfaces.#.name                       => interface_name          # Added in Ontap 9.9
+  - ^destination.netmask                     => netmask_length
+  - ^gateway                                 => gateway
   - ^interfaces.#.ip.address                 => interface_address       # Added in Ontap 9.9
+  - ^interfaces.#.name                       => interface_name          # Added in Ontap 9.9
+  - ^ipspace.name                            => ipspace
+  - ^scope                                   => scope
+  - ^svm.name                                => svm
   - hidden_fields:
       - interfaces
 

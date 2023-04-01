@@ -7,7 +7,7 @@ object:                   qos_detail
 
 instance_key:             name
 
-# recommended to use large interval, since workload objects are expensive
+# recommended to use a large interval, since workload objects are expensive
 client_timeout:           1m30s
 schedule:
   - counter: 1200s
@@ -18,8 +18,8 @@ counters:
   - instance_name
   - instance_uuid
   - service_time
-  - wait_time
   - visits
+  - wait_time
 
 resource_map:
   CPU_dblade: backend

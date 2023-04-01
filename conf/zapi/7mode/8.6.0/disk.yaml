@@ -7,20 +7,16 @@ global_labels:
 
 counters:
   disk-detail-info:
-    - bytes-per-sector          => bytes_per_sector
+    - ^^disk-uid
     - ^disk-model               => model
     - ^disk-type                => type
-    - ^^disk-uid
     - ^is-offline               => offline
     - ^name                     => disk
-#    - physical-blocks:
-#    - physical-space:
-    - poweron-hours             => uptime
-    - raw-disk-sectors          => sectors
     - ^serial-number            => serial_number
     - ^shelf                    => shelf
-#    - used-blocks:
-#    - used-space:
+    - bytes-per-sector          => bytes_per_sector
+    - poweron-hours             => uptime
+    - raw-disk-sectors          => sectors
 
 plugins:
   - LabelAgent:
@@ -36,7 +32,6 @@ export_options:
     - model
     - serial_number
     - shelf
-    - shelf_bay
     - offline
 
 
