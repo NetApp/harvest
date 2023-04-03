@@ -311,7 +311,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 	numExpressions := len(expressions)
 	for _, e := range expressions {
 		// Ignore labels and _status
-		if strings.HasSuffix(e.metric, "_labels") || strings.HasSuffix(e.metric, "_status") {
+		if strings.HasSuffix(e.metric, "_labels") || strings.HasSuffix(e.metric, "_status") || strings.HasSuffix(e.metric, "_events") || strings.HasSuffix(e.metric, "_alerts") {
 			continue
 		}
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
