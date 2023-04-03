@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680529197372,
+  "iteration": 1680543874481,
   "links": [
     {
       "asDropdown": true,
@@ -174,7 +174,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
+          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -302,6 +302,128 @@
         "x": 0,
         "y": 10
       },
+      "id": 251,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "No"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 11
+          },
+          "id": 253,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(cluster,node,datacenter) group_left(severity) health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Node",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "instance": true,
+                  "job": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 10,
+                  "cluster": 1,
+                  "datacenter": 2,
+                  "healthy": 4,
+                  "instance": 8,
+                  "job": 9,
+                  "node": 3,
+                  "severity": 6,
+                  "state": 5,
+                  "version": 7
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "healthy": "Healthy",
+                  "node": "Node",
+                  "severity": "Severity",
+                  "state": "State",
+                  "version": "Version"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Node (Not healthy)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
       "id": 230,
       "panels": [
         {
@@ -350,7 +472,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 12
           },
           "id": 248,
           "options": {
@@ -422,7 +544,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 12
       },
       "id": 245,
       "panels": [
@@ -448,8 +570,7 @@
                     "value": null
                   }
                 ]
-              },
-              "unit": "none"
+              }
             },
             "overrides": [
               {
@@ -840,7 +961,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 13
           },
           "id": 243,
           "interval": "1m",
@@ -869,7 +990,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -879,7 +1000,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -889,7 +1010,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -899,7 +1020,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -909,7 +1030,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -919,7 +1040,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -929,7 +1050,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -939,7 +1060,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -949,7 +1070,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -959,7 +1080,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -969,7 +1090,7 @@
             },
             {
               "exemplar": true,
-              "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1069,7 +1190,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "id": 235,
       "panels": [
@@ -1105,7 +1226,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 22
           },
           "id": 237,
           "options": {
@@ -1167,7 +1288,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 247,
       "panels": [
@@ -1198,15 +1319,28 @@
                 ]
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "string"
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
-            "h": 6,
+            "h": 8,
             "w": 24,
             "x": 0,
-            "y": 14
+            "y": 15
           },
-          "id": 232,
+          "id": 249,
           "options": {
             "showHeader": true
           },
@@ -1231,6 +1365,7 @@
                   "Time": true,
                   "Value": true,
                   "__name__": true,
+                  "index": true,
                   "instance": true,
                   "job": true,
                   "node": true,
@@ -1238,18 +1373,18 @@
                 },
                 "indexByName": {
                   "Time": 0,
-                  "Value": 11,
-                  "__name__": 12,
+                  "Value": 6,
+                  "__name__": 7,
                   "cluster": 2,
-                  "correctiveAction": 8,
+                  "correctiveAction": 12,
                   "datacenter": 1,
-                  "instance": 9,
-                  "job": 10,
-                  "monitor": 5,
-                  "name": 4,
+                  "instance": 4,
+                  "job": 5,
+                  "monitor": 9,
+                  "name": 8,
                   "node": 13,
-                  "reason": 7,
-                  "resource": 6,
+                  "reason": 11,
+                  "resource": 10,
                   "severity": 3
                 },
                 "renameByName": {

@@ -24,6 +24,7 @@ const (
 	diskHealthMatrix                      = "health_disk"
 	shelfHealthMatrix                     = "health_shelf"
 	supportHealthMatrix                   = "health_support"
+	nodeHealthMatrix                      = "health_node"
 	severityLabel                         = "severity"
 	defaultDataPollDuration               = 3 * time.Minute
 )
@@ -70,7 +71,7 @@ func (v *Health) Init() error {
 
 func (v *Health) initAllMatrix() error {
 	v.data = make(map[string]*matrix.Matrix)
-	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix}
+	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix}
 	for _, m := range mats {
 		if err := v.initMatrix(m); err != nil {
 			return err
@@ -132,6 +133,7 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	v.collectDiskAlerts()
 	v.collectShelfAlerts()
 	v.collectSupportAlerts()
+	v.collectNodeAlerts()
 
 	result := make([]*matrix.Matrix, 0, len(v.data))
 
@@ -139,6 +141,47 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		result = append(result, value)
 	}
 	return result, nil
+}
+
+func (v *Health) collectNodeAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+	records, err := v.getNodes()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			v.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := v.data[nodeHealthMatrix]
+	for _, record := range records {
+		nodeName := record.Get("node").String()
+
+		//errorSeverity possible values are unknown|notice|warning|error|critical
+		instance, err = mat.NewInstance(nodeName)
+		if err != nil {
+			v.Logger.Warn().Str("key", nodeName).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("node", nodeName)
+		instance.SetLabel("healthy", "false")
+		instance.SetLabel(severityLabel, string(errr))
+
+		m := mat.GetMetric("alerts")
+		if m == nil {
+			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
+				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+				continue
+			}
+		}
+		if err = m.SetValueFloat64(instance, 1); err != nil {
+			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		}
+
+	}
 }
 
 func (v *Health) collectShelfAlerts() {
@@ -318,6 +361,22 @@ func (v *Health) getShelves() ([]gjson.Result, error) {
 	fields := []string{"error_type", "error_severity", "error_text"}
 	query := "api/private/cli/storage/shelf"
 	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (v *Health) getNodes() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	fields := []string{"health"}
+	query := "api/private/cli/node"
+	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"health=false"}, "", "", "", "", query)
 
 	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
 		return nil, err
