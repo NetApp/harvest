@@ -52,8 +52,9 @@
   "description": "",
   "editable": true,
   "fiscalYearStartMonth": 0,
+  "gnetId": null,
   "graphTooltip": 1,
-  "id": 1221,
+  "id": "",
   "iteration": 1679321054447,
   "links": [
     {
