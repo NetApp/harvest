@@ -57,7 +57,7 @@ All Harvest commits should follow this form - a GitHub action will reject commit
 * `build`
 * `chore` - bump version of dependencies
 * `ci`
-* `docs`
+* `doc`
 * `feat` - new feature, big or small
 * `fix`
 * `perf`

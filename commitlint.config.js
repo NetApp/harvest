@@ -19,6 +19,23 @@ module.exports = {
                 'poller',
                 'prometheus',
             ]
+        ],
+        'type-enum': [
+            2,
+            'always',
+            [
+                'build',
+                'chore',
+                'ci',
+                'doc',
+                'feat',
+                'fix',
+                'perf',
+                'refactor',
+                'revert',
+                'style',
+                'test'
+            ]
         ]
     }
 };
