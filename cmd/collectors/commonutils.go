@@ -2,6 +2,7 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
@@ -23,6 +24,42 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	}
 
 	return result, nil
+}
+
+func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.Logger) (time.Time, error) {
+	var (
+		err         error
+		records     []gjson.Result
+		clusterTime time.Time
+	)
+
+	query := "private/cli/cluster/date"
+	fields := []string{"date"}
+
+	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", returnTimeOut, "")
+
+	if records, err = rest.Fetch(client, href); err != nil {
+		return clusterTime, err
+	}
+	if len(records) == 0 {
+		return clusterTime, errs.New(errs.ErrConfig, " date not found on cluster")
+	}
+
+	for _, instanceData := range records {
+		currentClusterDate := instanceData.Get("date")
+		if currentClusterDate.Exists() {
+			t, err := time.Parse(time.RFC3339, currentClusterDate.String())
+			if err != nil {
+				logger.Error().Str("date", currentClusterDate.String()).Err(err).Msg("Failed to load cluster date")
+				continue
+			}
+			clusterTime = t
+			break
+		}
+	}
+
+	logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
+	return clusterTime, nil
 }
 
 func UpdateProtectedFields(instance *matrix.Instance) {

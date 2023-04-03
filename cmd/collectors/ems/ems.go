@@ -247,42 +247,6 @@ func (e *Ems) InitCache() error {
 	return nil
 }
 
-func (e *Ems) getClusterTime() (time.Time, error) {
-	var (
-		err         error
-		records     []gjson.Result
-		clusterTime time.Time
-	)
-
-	query := "private/cli/cluster/date"
-	fields := []string{"date"}
-
-	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", e.ReturnTimeOut, "")
-
-	if records, err = e.GetRestData(href); err != nil {
-		return clusterTime, err
-	}
-	if len(records) == 0 {
-		return clusterTime, errs.New(errs.ErrConfig, e.Object+" date not found on cluster")
-	}
-
-	for _, instanceData := range records {
-		currentClusterDate := instanceData.Get("date")
-		if currentClusterDate.Exists() {
-			t, err := time.Parse(time.RFC3339, currentClusterDate.String())
-			if err != nil {
-				e.Logger.Error().Str("date", currentClusterDate.String()).Err(err).Msg("Failed to load cluster date")
-				continue
-			}
-			clusterTime = t
-			break
-		}
-	}
-
-	e.Logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
-	return clusterTime, nil
-}
-
 // returns time filter (clustertime - polldata duration)
 func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 	fromTime := e.lastFilterTime
@@ -411,7 +375,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 
 	// add time filter
-	clusterTime, err := e.getClusterTime()
+	clusterTime, err := collectors.GetClusterTime(e.Client, e.ReturnTimeOut, e.Logger)
 	if err != nil {
 		return nil, err
 	}

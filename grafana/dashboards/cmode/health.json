@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680265441768,
+  "iteration": 1680528432320,
   "links": [
     {
       "asDropdown": true,
@@ -107,7 +107,7 @@
       },
       "id": 241,
       "options": {
-        "content": "This dashboard requires ONTAP 9.6+ and the APIs are only available via REST. Two actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On Harvest, enable the EMS collector in your `harvest.yml` config for EMS events<br>",
+        "content": "This dashboard requires ONTAP 9.6+ and the REST collector. Two actions are required to use this dashboard: <br>1. Enable the REST collector in your harvest.yml config<br>2. Enable the EMS collector in your harvest.yml config for EMS events<br>",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -129,6 +129,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -173,7 +174,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
+          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -234,7 +235,7 @@
           "refId": "A"
         }
       ],
-      "title": "Emergency EMS",
+      "title": "Active Emergency EMS (last 24h)",
       "type": "stat"
     },
     {
@@ -283,7 +284,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))",
+          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}[24h]) == 1) or vector(0))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -349,9 +350,9 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 24
           },
-          "id": 232,
+          "id": 248,
           "options": {
             "showHeader": true
           },
@@ -359,7 +360,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(disk,cluster,datacenter) group_left(serial_number,model,shelf) disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(disk,cluster,datacenter) group_left(severity) health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -410,7 +411,7 @@
           "type": "table"
         }
       ],
-      "title": "Disk Problems",
+      "title": "Disks (Broken or Unassigned)",
       "type": "row"
     },
     {
@@ -421,6 +422,653 @@
         "w": 24,
         "x": 0,
         "y": 11
+      },
+      "id": 245,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "disk_count"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "locale"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "shelf"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "json-view"
+                  },
+                  {
+                    "id": "custom.width"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "state"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "rgb(224, 47, 47)",
+                          "value": null
+                        },
+                        {
+                          "color": "rgb(118, 204, 49)",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "1": {
+                            "text": "ONLINE"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "from": 0,
+                          "result": {
+                            "text": "OFFLINE"
+                          },
+                          "to": 0.999
+                        },
+                        "type": "range"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg Ambient Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 75
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 75
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 75
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Fan Speed (rpm)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "rotrpm"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg Fan Speed (rpm)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "rotrpm"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min Fan Speed (rpm)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "rotrpm"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Power"
+                },
+                "properties": [
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "watt"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min Ambient Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "#eab839",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 75
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min Temp (C)"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 45
+                        },
+                        {
+                          "color": "orange",
+                          "value": 65
+                        },
+                        {
+                          "color": "red",
+                          "value": 75
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "right"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "celsius"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 12
+          },
+          "id": 243,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity,error_type,error_text) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "shelf_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "K"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "F"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "G"
+            },
+            {
+              "exemplar": false,
+              "expr": "shelf_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "L"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "H"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "I"
+            },
+            {
+              "exemplar": true,
+              "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "J"
+            }
+          ],
+          "title": "Storage Shelves",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "model",
+                    "module_type",
+                    "op_status",
+                    "serial_number",
+                    "shelf",
+                    "state",
+                    "vendor_name",
+                    "Value #A",
+                    "Value #B",
+                    "Value #C",
+                    "error_text",
+                    "error_type",
+                    "severity"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Value #A": true,
+                  "shelf_id": true,
+                  "state": true
+                },
+                "indexByName": {
+                  "Value #A": 13,
+                  "Value #B": 10,
+                  "Value #C": 14,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "error_text": 3,
+                  "error_type": 4,
+                  "model": 6,
+                  "module_type": 9,
+                  "op_status": 11,
+                  "serial_number": 7,
+                  "severity": 5,
+                  "shelf": 2,
+                  "state": 12,
+                  "vendor_name": 8
+                },
+                "renameByName": {
+                  "Value #A": "",
+                  "Value #B": "disk_count",
+                  "Value #C": "state",
+                  "Value #D": "Power",
+                  "Value #E": "Avg Ambient Temp (C)",
+                  "Value #F": "Max Temp (C)",
+                  "Value #G": "Avg Temp (C)",
+                  "Value #H": "Max Fan Speed (rpm)",
+                  "Value #I": "Avg Fan Speed (rpm)",
+                  "Value #J": "Min Fan Speed (rpm)",
+                  "Value #K": "Min Ambient Temp (C)",
+                  "Value #L": "Min Temp (C)",
+                  "error_text": "Error",
+                  "error_type": "Error Type",
+                  "module_type": "",
+                  "op_status": "",
+                  "severity": "Severity",
+                  "shelf_id": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Shelves (Errors or Warning)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
       },
       "id": 235,
       "panels": [
@@ -456,7 +1104,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 8
+            "y": 13
           },
           "id": 237,
           "options": {
@@ -508,7 +1156,123 @@
           "type": "table"
         }
       ],
-      "title": "Emergency EMS",
+      "title": "Emergency EMS (last 24h)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 247,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "id": 232,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[24h]) == 1",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "System Alerts",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true,
+                  "node": true,
+                  "owner_node": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 11,
+                  "__name__": 12,
+                  "cluster": 2,
+                  "correctiveAction": 8,
+                  "datacenter": 1,
+                  "instance": 9,
+                  "job": 10,
+                  "monitor": 5,
+                  "name": 4,
+                  "node": 13,
+                  "reason": 7,
+                  "resource": 6,
+                  "severity": 3
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "container_type": "Container Type",
+                  "correctiveAction": "Corrective Action",
+                  "datacenter": "Datacenter",
+                  "disk": "Disk",
+                  "model": "Model",
+                  "monitor": "Monitor",
+                  "name": "Name",
+                  "reason": "Reason",
+                  "resource": "Resource",
+                  "serial_number": "Serial Number",
+                  "severity": "Severity",
+                  "shelf": "Shelf"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "System Health Alerts (last 24h)",
       "type": "row"
     }
   ],

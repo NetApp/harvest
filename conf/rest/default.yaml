@@ -17,7 +17,6 @@ objects:
   Lun:                         lun.yaml
   Namespace:                   namespace.yaml
 #  NetConnections:              netConnections.yaml
-#  NetConnections:              netConnections.yaml
 #  NetPort:                     netPort.yaml
   NetRoute:                    netRoute.yaml
   NFSClients:                  nfs_clients.yaml
