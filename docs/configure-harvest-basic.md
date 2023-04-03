@@ -159,11 +159,11 @@ the `Pollers` section will be consulted before the `Defaults`.
 | `Pollers`  | auth_style: `certificate_auth`                      |
 | `Pollers`  | auth_style: `basic_auth` with username and password |
 | `Pollers`  | `credentials_script`                                |
-| `Pollers`  | `credentials_script`                                |
+| `Pollers`  | `credentials_file`                                  |
 | `Defaults` | auth_style: `certificate_auth`                      |
 | `Defaults` | auth_style: `basic_auth` with username and password |
 | `Defaults` | `credentials_script`                                |
-| `Defaults` | `credentials_script`                                |
+| `Defaults` | `credentials_file`                                  |
 
 ## Credentials File
 

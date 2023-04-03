@@ -21,7 +21,7 @@ func TestCredentials_GetPollerAuth(t *testing.T) {
 			name:           "no default, poller credentials_file",
 			pollerName:     "test",
 			want:           PollerAuth{Username: "username", Password: "from-secrets-file"},
-			defaultDefined: true,
+			defaultDefined: false,
 			yaml: `
 Pollers:
 	test:
