@@ -21,7 +21,6 @@ import (
 
 var Config = HarvestConfig{}
 var configRead = false
-var ValidatePortInUse = false
 
 const (
 	DefaultAPIVersion = "1.3"
@@ -32,6 +31,7 @@ const (
 // TestLoadHarvestConfig is used by testing code to reload a new config
 func TestLoadHarvestConfig(configPath string) {
 	configRead = false
+	promPortRangeMapping = make(map[string]PortMap)
 	err := LoadHarvestConfig(configPath)
 	if err != nil {
 		log.Fatalf("Failed to load config at=[%s] err=%+v\n", configPath, err)
@@ -179,12 +179,12 @@ func GetHarvestLogPath() string {
 }
 
 // GetPrometheusExporterPorts returns the Prometheus port for the given poller
-func GetPrometheusExporterPorts(pollerName string) (int, error) {
+func GetPrometheusExporterPorts(pollerName string, validatePortInUse bool) (int, error) {
 	var port int
 	var isPrometheusExporterConfigured bool
 
 	if len(promPortRangeMapping) == 0 {
-		loadPrometheusExporterPortRangeMapping()
+		loadPrometheusExporterPortRangeMapping(validatePortInUse)
 	}
 	poller := Config.Pollers[pollerName]
 	if poller == nil {
@@ -229,18 +229,18 @@ type PortMap struct {
 	freePorts map[int]struct{}
 }
 
-func PortMapFromRange(address string, portRange *IntRange) PortMap {
+func PortMapFromRange(address string, portRange *IntRange, validatePortInUse bool) PortMap {
 	portMap := PortMap{}
 	portMap.freePorts = make(map[int]struct{})
 	start := portRange.Min
 	end := portRange.Max
 	for i := start; i <= end; i++ {
 		portMap.portSet = append(portMap.portSet, i)
-		if ValidatePortInUse {
+		if validatePortInUse {
 			portMap.freePorts[i] = struct{}{}
 		}
 	}
-	if !ValidatePortInUse {
+	if !validatePortInUse {
 		portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
 	}
 	return portMap
@@ -248,12 +248,12 @@ func PortMapFromRange(address string, portRange *IntRange) PortMap {
 
 var promPortRangeMapping = make(map[string]PortMap)
 
-func loadPrometheusExporterPortRangeMapping() {
+func loadPrometheusExporterPortRangeMapping(validatePortInUse bool) {
 	for k, v := range Config.Exporters {
 		if v.Type == "Prometheus" {
 			if v.PortRange != nil {
 				// we only care about free ports on the localhost
-				promPortRangeMapping[k] = PortMapFromRange("localhost", v.PortRange)
+				promPortRangeMapping[k] = PortMapFromRange("localhost", v.PortRange, validatePortInUse)
 			}
 		}
 	}
