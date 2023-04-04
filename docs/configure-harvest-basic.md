@@ -139,13 +139,13 @@ Harvest supports both client certificates and basic authentication.
 These methods of authentication are defined in the `Pollers` or `Defaults` section of your `harvest.yml` using one or more
 of the following parameters.
 
-| parameter            | description                                                                | default      | Link                        |
-|----------------------|----------------------------------------------------------------------------|--------------|-----------------------------|
-| `auth_sytle`         | One of `basic_auth` or `certificate_auth`                                  | `basic_auth` | [link](#Pollers)            |
-| `username`           | Username used for authenticating to the remote system                      |              | [link](#Pollers)            |
-| `password`           | Password used for authenticating to the remote system                      |              | [link](#Pollers)            |
-| `credentials_file`   | Relative or absolute path to a yaml file that contains cluster credentials |              | [link](#credentials-file)   |
-| `credentials_script` | External script Harvest executes to retrieve credentials                   |              | [link](#credentials-script) |
+| parameter            | description                                                                                              | default      | Link                        |
+|----------------------|----------------------------------------------------------------------------------------------------------|--------------|-----------------------------|
+| `auth_sytle`         | One of `basic_auth` or `certificate_auth` Optional when using `credentials_file` or `credentials_script` | `basic_auth` | [link](#Pollers)            |
+| `username`           | Username used for authenticating to the remote system                                                    |              | [link](#Pollers)            |
+| `password`           | Password used for authenticating to the remote system                                                    |              | [link](#Pollers)            |
+| `credentials_file`   | Relative or absolute path to a yaml file that contains cluster credentials                               |              | [link](#credentials-file)   |
+| `credentials_script` | External script Harvest executes to retrieve credentials                                                 |              | [link](#credentials-script) |
 
 When multiple authentication parameters are defined at the same time,
 Harvest tries each method listed below, in the following order, to resolve authentication requests. 
