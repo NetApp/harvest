@@ -1,4 +1,4 @@
-name: Prune Untagged Images
+name: Prune untagged images
 
 on:
   workflow_dispatch:
@@ -10,10 +10,9 @@ jobs:
     name: Prune untagged images
     runs-on: ubuntu-latest
     steps:
-      - name: Prune all untagged images
-        uses: actions/delete-package-versions@v4
+      - name: Delete all containers from repository without tags
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v2
         with:
-          package-name: 'harvest'
-          package-type: 'container'
-          min-versions-to-keep: 1
-          delete-only-untagged-versions: 'true'
+          token: ${{ secrets.PAT_TOKEN }}
+          untagged_only: true
+          owner_type: user
