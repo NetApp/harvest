@@ -17,16 +17,16 @@
       "version": "8.1.8"
     },
     {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
       "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
       "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
     },
     {
       "type": "panel",
@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680543874481,
+  "iteration": 1680608445389,
   "links": [
     {
       "asDropdown": true,
@@ -133,165 +133,313 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              }
-            ]
-          }
+          "unit": "locale"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 11,
         "w": 8,
         "x": 0,
         "y": 5
       },
-      "id": 227,
+      "id": 268,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
         },
-        "text": {},
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single"
+        }
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": true,
-          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
+          "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+          "instant": true,
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "Broken Disk",
           "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Shelf Error",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Node Down",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Network Port Down",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Volume Ransomware (9.10+)",
+          "refId": "F"
         }
       ],
       "title": "Errors",
-      "type": "stat"
+      "transformations": [],
+      "type": "piechart"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes protected"
+            },
+            "properties": [
               {
-                "color": "red",
-                "value": null
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes not protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
               }
             ]
           }
-        },
-        "overrides": []
+        ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 11,
         "w": 8,
         "x": 8,
         "y": 5
       },
-      "id": 233,
+      "id": 270,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
         },
-        "text": {},
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single"
+        }
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": true,
           "expr": "(count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[24h]) == 1) or vector(0))",
+          "instant": true,
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "Emergency EMS",
           "refId": "A"
         }
       ],
       "title": "Active Emergency EMS (last 24h)",
-      "type": "stat"
+      "transformations": [],
+      "type": "piechart"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes protected"
+            },
+            "properties": [
               {
-                "color": "yellow",
-                "value": null
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes not protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
               }
             ]
           }
-        },
-        "overrides": []
+        ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 11,
         "w": 8,
         "x": 16,
         "y": 5
       },
-      "id": 228,
+      "id": 269,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
         },
-        "text": {},
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single"
+        }
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "8.1.2",
       "targets": [
         {
           "exemplar": true,
-          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}[24h]) == 1) or vector(0))",
+          "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+          "instant": true,
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "Unassigned Disk",
           "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Shelf Warning",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}[24h]) == 1) or vector(0))",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Health Monitor Alerts (last 24h)",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "count(health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Network Interface not at home port",
+          "refId": "D"
         }
       ],
-      "title": "Warnings",
-      "type": "stat"
+      "title": "Warning",
+      "transformations": [],
+      "type": "piechart"
     },
     {
       "collapsed": true,
@@ -300,7 +448,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 16
       },
       "id": 251,
       "panels": [
@@ -412,7 +560,7 @@
           "type": "table"
         }
       ],
-      "title": "Node (Not healthy)",
+      "title": "Node",
       "type": "row"
     },
     {
@@ -422,7 +570,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 17
       },
       "id": 230,
       "panels": [
@@ -469,10 +617,10 @@
             ]
           },
           "gridPos": {
-            "h": 12,
+            "h": 9,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 21
           },
           "id": 248,
           "options": {
@@ -534,7 +682,7 @@
           "type": "table"
         }
       ],
-      "title": "Disks (Broken or Unassigned)",
+      "title": "Disks",
       "type": "row"
     },
     {
@@ -544,7 +692,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 18
       },
       "id": 245,
       "panels": [
@@ -570,7 +718,8 @@
                     "value": null
                   }
                 ]
-              }
+              },
+              "unit": "none"
             },
             "overrides": [
               {
@@ -961,7 +1110,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 22
           },
           "id": 243,
           "interval": "1m",
@@ -1180,7 +1329,7 @@
           "type": "table"
         }
       ],
-      "title": "Shelves (Errors or Warning)",
+      "title": "Shelves",
       "type": "row"
     },
     {
@@ -1190,7 +1339,724 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 19
+      },
+      "id": 266,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "1": {
+                            "text": "online"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "from": 0,
+                          "result": {
+                            "text": "offline"
+                          },
+                          "to": 0.99
+                        },
+                        "type": "range"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "rgb(83, 179, 59)",
+                          "value": null
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 5
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background-solid"
+                  },
+                  {
+                    "id": "custom.width"
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "status"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "space used"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Size"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Dedupe Space Saved"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width"
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Dedupe Space Saved"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Compression Space Saved"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Space Saved"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Logical Space Used"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Physical Space Used"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 12
+          },
+          "id": 264,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "space used"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity,anti_ransomware_attack_probability) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": true,
+              "expr": "volume_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": true,
+              "expr": "volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": true,
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_sis_dedup_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_sis_compress_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "F"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_sis_dedup_saved+volume_sis_compress_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "G"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "H"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "I"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Volumes with Ransomware Issues (9.10+ Only)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "aggr",
+                    "node",
+                    "svm",
+                    "volume",
+                    "Value #A",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "Value #F",
+                    "Value #H",
+                    "Value #I",
+                    "antiRansomwareState",
+                    "anti_ransomware_attack_probability"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "Value #C": false,
+                  "__name__": true,
+                  "cluster": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "state": true
+                },
+                "indexByName": {
+                  "Value #A": 6,
+                  "Value #C": 7,
+                  "Value #D": 8,
+                  "Value #E": 11,
+                  "Value #F": 12,
+                  "Value #H": 9,
+                  "Value #I": 10,
+                  "aggr": 3,
+                  "antiRansomwareState": 4,
+                  "anti_ransomware_attack_probability": 5,
+                  "node": 2,
+                  "svm": 0,
+                  "volume": 1
+                },
+                "renameByName": {
+                  "Value #C": "Size",
+                  "Value #D": "",
+                  "Value #E": "Dedupe Space Saved",
+                  "Value #F": "Compression Space Saved",
+                  "Value #G": "Total Space Saved",
+                  "Value #H": "Logical Space Used",
+                  "Value #I": "Physical Space Used",
+                  "antiRansomwareState": "Ransomware State",
+                  "anti_ransomware_attack_probability": "Ransomware Attack Probability"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Volume",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 255,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Home?"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "No"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 257,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Interface",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 9,
+                  "__name__": 1,
+                  "cluster": 3,
+                  "datacenter": 2,
+                  "instance": 7,
+                  "isHome": 5,
+                  "job": 8,
+                  "lif": 4,
+                  "severity": 6
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "instance": "",
+                  "isHome": "Home?",
+                  "lif": "Lif",
+                  "severity": "Severity"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Network Interface",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 259,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "id": 261,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Ethernet Port",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 10,
+                  "__name__": 1,
+                  "cluster": 3,
+                  "datacenter": 2,
+                  "instance": 4,
+                  "job": 5,
+                  "node": 6,
+                  "port": 7,
+                  "severity": 9,
+                  "state": 8
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "node": "Node",
+                  "port": "Port",
+                  "severity": "Severity",
+                  "state": "State"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 9
+          },
+          "id": 262,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "FC Port",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 10,
+                  "__name__": 1,
+                  "cluster": 2,
+                  "datacenter": 3,
+                  "instance": 4,
+                  "job": 5,
+                  "node": 6,
+                  "port": 7,
+                  "severity": 9,
+                  "state": 8
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "node": "Node",
+                  "port": "Port",
+                  "severity": "Severity",
+                  "state": "State"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Network Port",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
       },
       "id": 235,
       "panels": [
@@ -1226,7 +2092,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 14
           },
           "id": 237,
           "options": {
@@ -1288,7 +2154,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 23
       },
       "id": 247,
       "panels": [
