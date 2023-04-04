@@ -125,6 +125,11 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 				if err != nil {
 					t.Errorf("failed to parse template file=%s from %s/default.yaml", template, shortPath(kindDir))
 				}
+				err = open.Close()
+				if err != nil {
+					t.Errorf("failed to close template file=%s from %s/default.yaml", template, shortPath(kindDir))
+					return
+				}
 			}
 		}
 	}
