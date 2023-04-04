@@ -249,9 +249,17 @@ func (p *Poller) Init() error {
 	} else {
 		p.target = p.params.Addr
 	}
+
+	// create a shared auth service that all collectors will use
+	p.auth = auth.NewCredentials(p.params, logger)
+	pollerAuth, err := p.auth.GetPollerAuth()
+	if err != nil {
+		return err
+	}
+
 	// check optional parameter auth_style
 	// if certificates are missing use default paths
-	if p.params.AuthStyle == "certificate_auth" {
+	if pollerAuth.IsCert {
 		if p.params.SslCert == "" {
 			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".pem")
 			p.params.SslCert = fp
@@ -271,9 +279,6 @@ func (p *Poller) Init() error {
 			}
 		}
 	}
-
-	// create a shared auth service that all collectors will use
-	p.auth = auth.NewCredentials(p.params, logger)
 
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
