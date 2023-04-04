@@ -19,14 +19,18 @@ import (
 type AlertSeverity string
 
 const (
-	errr                    AlertSeverity = "error"
-	warning                 AlertSeverity = "warning"
-	diskHealthMatrix                      = "health_disk"
-	shelfHealthMatrix                     = "health_shelf"
-	supportHealthMatrix                   = "health_support"
-	nodeHealthMatrix                      = "health_node"
-	severityLabel                         = "severity"
-	defaultDataPollDuration               = 3 * time.Minute
+	errr                            AlertSeverity = "error"
+	warning                         AlertSeverity = "warning"
+	diskHealthMatrix                              = "health_disk"
+	shelfHealthMatrix                             = "health_shelf"
+	supportHealthMatrix                           = "health_support"
+	nodeHealthMatrix                              = "health_node"
+	networkEthernetPortHealthMatrix               = "health_network_ethernet_port"
+	networkFCPortHealthMatrix                     = "health_network_fc_port"
+	networkInterfaceHealthMatrix                  = "health_network_interface"
+	volumeRansomwareHealthMatrix                  = "health_volume_ransomware"
+	severityLabel                                 = "severity"
+	defaultDataPollDuration                       = 3 * time.Minute
 )
 
 type Health struct {
@@ -71,7 +75,8 @@ func (v *Health) Init() error {
 
 func (v *Health) initAllMatrix() error {
 	v.data = make(map[string]*matrix.Matrix)
-	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix}
+	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
+		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, networkInterfaceHealthMatrix, volumeRansomwareHealthMatrix}
 	for _, m := range mats {
 		if err := v.initMatrix(m); err != nil {
 			return err
@@ -134,6 +139,10 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	v.collectShelfAlerts()
 	v.collectSupportAlerts()
 	v.collectNodeAlerts()
+	v.collectNetworkEthernetPortAlerts()
+	v.collectNetworkFCPortAlerts()
+	v.collectNetworkInterfacesAlerts()
+	v.collectVolumeRansomwareAlerts()
 
 	result := make([]*matrix.Matrix, 0, len(v.data))
 
@@ -141,6 +150,196 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		result = append(result, value)
 	}
 	return result, nil
+}
+
+func (v *Health) collectVolumeRansomwareAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+	clusterVersion := v.client.Cluster().GetVersion()
+	ontapVersion, err := goversion.NewVersion(clusterVersion)
+	if err != nil {
+		v.Logger.Error().Err(err).
+			Str("version", clusterVersion).
+			Msg("Failed to parse version")
+		return
+	}
+	version910 := "9.10"
+	version910After, err := goversion.NewVersion(version910)
+	if err != nil {
+		v.Logger.Error().Err(err).
+			Str("version", version910).
+			Msg("Failed to parse version")
+		return
+	}
+
+	if ontapVersion.LessThan(version910After) {
+		return
+	}
+	records, err := v.getRansomwareVolumes()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			v.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := v.data[volumeRansomwareHealthMatrix]
+	for _, record := range records {
+		uuid := record.Get("uuid").String()
+		volume := record.Get("name").String()
+		antiRansomwareAttackProbability := record.Get("anti_ransomware.attack_probability").String()
+		instance, err = mat.NewInstance(uuid)
+		if err != nil {
+			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("anti_ransomware_attack_probability", antiRansomwareAttackProbability)
+
+		instance.SetLabel("volume", volume)
+		instance.SetLabel(severityLabel, string(errr))
+
+		m := mat.GetMetric("alerts")
+		if m == nil {
+			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
+				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+				continue
+			}
+		}
+		if err = m.SetValueFloat64(instance, 1); err != nil {
+			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		}
+
+	}
+}
+
+func (v *Health) collectNetworkInterfacesAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+	records, err := v.getLIFs()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			v.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := v.data[networkInterfaceHealthMatrix]
+	for _, record := range records {
+		uuid := record.Get("uuid").String()
+		lif := record.Get("name").String()
+		isHome := record.Get("location.is_home").String()
+		instance, err = mat.NewInstance(uuid)
+		if err != nil {
+			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("isHome", isHome)
+		instance.SetLabel("lif", lif)
+		instance.SetLabel(severityLabel, string(warning))
+
+		m := mat.GetMetric("alerts")
+		if m == nil {
+			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
+				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+				continue
+			}
+		}
+		if err = m.SetValueFloat64(instance, 1); err != nil {
+			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		}
+	}
+}
+
+func (v *Health) collectNetworkFCPortAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+	records, err := v.getFCPorts()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			v.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := v.data[networkFCPortHealthMatrix]
+	for _, record := range records {
+		uuid := record.Get("uuid").String()
+		nodeName := record.Get("node.name").String()
+		port := record.Get("name").String()
+		state := record.Get("state").String()
+		instance, err = mat.NewInstance(uuid)
+		if err != nil {
+			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("node", nodeName)
+		instance.SetLabel("state", state)
+		instance.SetLabel("port", port)
+		instance.SetLabel(severityLabel, string(errr))
+
+		m := mat.GetMetric("alerts")
+		if m == nil {
+			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
+				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+				continue
+			}
+		}
+		if err = m.SetValueFloat64(instance, 1); err != nil {
+			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		}
+
+	}
+}
+
+func (v *Health) collectNetworkEthernetPortAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+	records, err := v.getEthernetPorts()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			v.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := v.data[networkEthernetPortHealthMatrix]
+	for _, record := range records {
+		uuid := record.Get("uuid").String()
+		port := record.Get("name").String()
+		nodeName := record.Get("node.name").String()
+		portType := record.Get("type").String()
+		state := record.Get("state").String()
+		instance, err = mat.NewInstance(uuid)
+		if err != nil {
+			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("node", nodeName)
+		instance.SetLabel("state", state)
+		instance.SetLabel("port", port)
+		instance.SetLabel("type", portType)
+		instance.SetLabel(severityLabel, string(errr))
+
+		m := mat.GetMetric("alerts")
+		if m == nil {
+			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
+				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+				continue
+			}
+		}
+		if err = m.SetValueFloat64(instance, 1); err != nil {
+			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		}
+
+	}
 }
 
 func (v *Health) collectNodeAlerts() {
@@ -160,7 +359,6 @@ func (v *Health) collectNodeAlerts() {
 	for _, record := range records {
 		nodeName := record.Get("node").String()
 
-		//errorSeverity possible values are unknown|notice|warning|error|critical
 		instance, err = mat.NewInstance(nodeName)
 		if err != nil {
 			v.Logger.Warn().Str("key", nodeName).Msg("error while creating instance")
@@ -377,6 +575,68 @@ func (v *Health) getNodes() ([]gjson.Result, error) {
 	fields := []string{"health"}
 	query := "api/private/cli/node"
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"health=false"}, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (v *Health) getRansomwareVolumes() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	query := "api/storage/volumes"
+	href := rest.BuildHref(query, "", []string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low,moderate,high"}, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (v *Health) getLIFs() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	query := "api/network/ip/interfaces"
+	href := rest.BuildHref(query, "", []string{"location.is_home=false"}, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (v *Health) getFCPorts() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	fields := []string{"name,node"}
+	query := "api/network/fc/ports"
+	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"enabled=true", "state=offlined_by_system"}, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (v *Health) getEthernetPorts() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	fields := []string{"name,node"}
+	query := "api/network/ethernet/ports"
+	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"enabled=true", "state=down"}, "", "", "", "", query)
 
 	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
 		return nil, err
