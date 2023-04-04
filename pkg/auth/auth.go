@@ -33,25 +33,29 @@ type Credentials struct {
 }
 
 func (c *Credentials) Password() string {
-	if c.poller.CredentialsScript.Path == "" {
-		return c.poller.Password
+	return c.password(c.poller)
+}
+
+func (c *Credentials) password(poller *conf.Poller) string {
+	if poller.CredentialsScript.Path == "" {
+		return poller.Password
 	}
 	c.authMu.Lock()
 	defer c.authMu.Unlock()
 	if time.Now().After(c.nextUpdate) {
-		c.poller.Password = c.fetchPassword()
+		poller.Password = c.fetchPassword(poller)
 		c.setNextUpdate()
 	}
-	return c.poller.Password
+	return poller.Password
 }
 
-func (c *Credentials) fetchPassword() string {
-	path, err := exec.LookPath(c.poller.CredentialsScript.Path)
+func (c *Credentials) fetchPassword(p *conf.Poller) string {
+	path, err := exec.LookPath(p.CredentialsScript.Path)
 	if err != nil {
-		c.logger.Error().Err(err).Str("path", c.poller.CredentialsScript.Path).Msg("Credentials script lookup failed")
+		c.logger.Error().Err(err).Str("path", p.CredentialsScript.Path).Msg("Credentials script lookup failed")
 		return ""
 	}
-	timeout := c.poller.CredentialsScript.Timeout
+	timeout := p.CredentialsScript.Timeout
 	if timeout == "" {
 		timeout = defaultTimeout
 	}
@@ -65,7 +69,7 @@ func (c *Credentials) fetchPassword() string {
 	}
 	ctx, cancelFunc := context.WithTimeout(context.Background(), duration)
 	defer cancelFunc()
-	cmd := exec.CommandContext(ctx, path, c.poller.Addr, c.poller.Username)
+	cmd := exec.CommandContext(ctx, path, p.Addr, p.Username)
 
 	// Create process group - so we can kill any forked processes
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
@@ -119,4 +123,59 @@ func (c *Credentials) setNextUpdate() {
 		duration, _ = time.ParseDuration(defaultSchedule)
 	}
 	c.nextUpdate = time.Now().Add(duration)
+}
+
+type PollerAuth struct {
+	Username string
+	Password string
+	IsCert   bool
+}
+
+func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
+	auth, err := getPollerAuth(c, c.poller)
+	if err != nil {
+		return PollerAuth{}, err
+	}
+	if auth.Password != "" {
+		c.poller.Username = auth.Username
+		c.poller.Password = auth.Password
+		return auth, nil
+	}
+
+	if conf.Config.Defaults == nil {
+		return auth, nil
+	}
+
+	copyDefault := *conf.Config.Defaults
+	copyDefault.Name = c.poller.Name
+	defaultAuth, err := getPollerAuth(c, &copyDefault)
+	if err != nil {
+		return PollerAuth{}, err
+	}
+	if auth.Username != "" {
+		defaultAuth.Username = auth.Username
+	}
+	c.poller.Username = defaultAuth.Username
+	c.poller.Password = defaultAuth.Password
+	return defaultAuth, nil
+}
+
+func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
+	if poller.AuthStyle == conf.CertificateAuth {
+		return PollerAuth{IsCert: true}, nil
+	}
+	if poller.Password != "" {
+		return PollerAuth{Username: poller.Username, Password: poller.Password}, nil
+	}
+	if poller.CredentialsScript.Path != "" {
+		return PollerAuth{Username: poller.Username, Password: c.password(poller)}, nil
+	}
+	if poller.CredentialsFile != "" {
+		err := conf.ReadCredentialFile(poller.CredentialsFile, poller)
+		if err != nil {
+			return PollerAuth{}, err
+		}
+		return PollerAuth{Username: poller.Username, Password: poller.Password}, nil
+	}
+	return PollerAuth{Username: poller.Username}, nil
 }

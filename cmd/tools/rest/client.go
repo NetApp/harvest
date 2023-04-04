@@ -86,20 +86,12 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 		useInsecureTLS = false
 	}
 
-	// check if a credentials file is being used and if so, parse and use the values from it
-	if poller.CredentialsFile != "" {
-		err := conf.ReadCredentialsFile(poller.CredentialsFile, poller)
-		if err != nil {
-			client.Logger.Error().
-				Err(err).
-				Str("credPath", poller.CredentialsFile).
-				Str("poller", poller.Name).
-				Msg("Unable to read credentials file")
-			return nil, err
-		}
+	pollerAuth, err := auth.GetPollerAuth()
+	if err != nil {
+		return nil, err
 	}
-	// set authentication method
-	if poller.AuthStyle == "certificate_auth" {
+
+	if pollerAuth.IsCert {
 		sslCertPath := poller.SslCert
 		keyPath := poller.SslKey
 		caCertPath := poller.CaCertPath
@@ -137,20 +129,19 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	} else {
-		username := poller.Username
-		password := auth.Password()
-		client.username = username
-		if username == "" {
+		if pollerAuth.Username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
-		} else if password == "" {
+		} else if pollerAuth.Password == "" {
 			return nil, errs.New(errs.ErrMissingParam, "password")
 		}
+		client.username = pollerAuth.Username
 
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	}
+
 	transport.DialContext = (&net.Dialer{Timeout: DefaultDialerTimeout}).DialContext
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient

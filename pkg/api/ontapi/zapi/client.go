@@ -102,20 +102,11 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		useInsecureTLS = *poller.UseInsecureTLS
 	}
 
-	if poller.CredentialsFile != "" {
-		err := conf.ReadCredentialsFile(poller.CredentialsFile, poller)
-		if err != nil {
-			client.Logger.Error().
-				Err(err).
-				Str("credPath", poller.CredentialsFile).
-				Str("poller", poller.Name).
-				Msg("Unable to read credentials file")
-			return nil, err
-		}
+	pollerAuth, err := c.GetPollerAuth()
+	if err != nil {
+		return nil, err
 	}
-	// set authentication method
-	if poller.AuthStyle == "certificate_auth" {
-
+	if pollerAuth.IsCert {
 		sslCertPath := poller.SslCert
 		keyPath := poller.SslKey
 		caCertPath := poller.CaCertPath
@@ -154,7 +145,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 			},
 		}
 	} else {
-		password := c.Password()
+		password := pollerAuth.Password
 		if poller.Username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {
