@@ -16,7 +16,6 @@ counters:
   - msg_total
   - non_wafl_msg_total
   - read_io_type
-  - read_io_type
   - reads_from_cache
   - reads_from_cloud
   - reads_from_cloud_s2c_bin

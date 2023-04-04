@@ -310,14 +310,17 @@ type metric struct {
 	parents      []string
 }
 
+func (m metric) pathString() string {
+	return strings.Join(m.parents, "/") + "/" + m.left
+}
+
 // Tests that keys and metrics are sorted in the following order:
 // - double hats (alphabetically)
 // - single hats (alphabetically)
 // - metrics (alphabetically)
 // ZAPI parent attributes are sorted alphabetically
-func TestMetricsAreSorted(t *testing.T) {
+func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 	visitTemplates(t, func(path string, model TemplateModel) {
-
 		sortedCounters := checkSortedCounters(model.metrics)
 		if sortedCounters.got != sortedCounters.want {
 			t.Errorf("counters should be sorted path=[%s]", shortPath(path))
@@ -333,17 +336,45 @@ func TestMetricsAreSorted(t *testing.T) {
 				t.Errorf("\n%s", sortedCounters.want)
 			}
 		}
+
+		checkForDuplicateMetrics(t, model, path)
+
 	}, allTemplatesButEms...)
 }
 
+func checkForDuplicateMetrics(t *testing.T, model TemplateModel, path string) {
+	dupSet := make(map[string]bool)
+	for _, m := range model.metrics {
+		p := m.pathString()
+		_, ok := dupSet[p]
+		if ok {
+			t.Errorf("duplicate metric=%s in %s", p, shortPath(path))
+		}
+		dupSet[p] = true
+	}
+
+	for _, endpoint := range model.Endpoints {
+		// endpoints are independent metrics
+		dupSet = make(map[string]bool)
+		for _, m := range endpoint.metrics {
+			p := m.pathString()
+			_, ok := dupSet[p]
+			if ok {
+				t.Errorf("duplicate endpoint metric=%s in %s", p, shortPath(path))
+			}
+			dupSet[p] = true
+		}
+	}
+}
+
 func checkSortedCounters(counters []metric) sorted {
-	got := zapiCountersStr(counters)
+	got := countersStr(counters)
 	sortZapiCounters(counters)
-	want := zapiCountersStr(counters)
+	want := countersStr(counters)
 	return sorted{got: got, want: want}
 }
 
-func zapiCountersStr(counters []metric) string {
+func countersStr(counters []metric) string {
 	builder := strings.Builder{}
 	parentSeen := make(map[string]bool)
 	for _, counter := range counters {

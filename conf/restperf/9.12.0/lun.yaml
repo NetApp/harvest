@@ -24,7 +24,6 @@ counters:
   - write_partial_blocks
   - writesame_requests          => writesame_reqs
   - writesame_unmap_requests    => writesame_unmap_reqs
-  - writesame_unmap_requests    => writesame_unmap_reqs
   - xcopy_requests              => xcopy_reqs
 
 override:
