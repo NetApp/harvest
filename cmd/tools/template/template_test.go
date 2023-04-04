@@ -61,7 +61,9 @@ func TestTemplateFileNames(t *testing.T) {
 
 type objectMap map[string]string
 
-// TestTemplateNamesMatchDefault checks that the name used in default.yaml matches the `name:` field in the template
+// TestTemplateNamesMatchDefault checks that:
+//   - the name used in default.yaml matches the `name:` field in the template
+//   - all files listed in the default.yaml exist and are parseable
 func TestTemplateNamesMatchDefault(t *testing.T) {
 	modelsByTemplate := make(map[string]objectMap)
 	defaults, err := readDefaults(allTemplatesButEms)
@@ -81,13 +83,48 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 		modelsByTemplate[sp] = o
 	}, allTemplatesButEms...)
 
-	for p, om := range defaults {
-		templates := modelsByTemplate[p]
+	for kind, om := range defaults {
+		templates := modelsByTemplate[kind]
 		for name, templatePath := range om {
 			_, ok := templates[name]
 			if !ok {
 				t.Errorf("template %s/default.yaml defines object=[%s] but %s does not include that name",
-					p, name, templatePath)
+					kind, name, templatePath)
+			}
+		}
+	}
+
+	// Ensure files contained in default.yaml exist and are parseable
+	for kind, om := range defaults {
+		for _, fileRef := range om {
+			kindDir := filepath.Join(toConf, kind)
+			// find all templates named fileRef
+			var matchingTemplates []string
+			err := filepath.WalkDir(kindDir, func(path string, d fs.DirEntry, err error) error {
+				if strings.Contains(path, fileRef) {
+					matchingTemplates = append(matchingTemplates, path)
+				}
+				return nil
+			})
+			if err != nil {
+				t.Errorf("failed to walk dir=%s err=%v", shortPath(kindDir), err)
+				continue
+			}
+			if len(matchingTemplates) == 0 {
+				t.Errorf("no templates matching file ref=%s from %s/default.yaml", fileRef, shortPath(kindDir))
+				continue
+			}
+			for _, template := range matchingTemplates {
+				open, err := os.Open(template)
+				if err != nil {
+					t.Errorf("failed to read template file=%s from %s/default.yaml", template, shortPath(kindDir))
+				}
+				decoder := y3.NewDecoder(open)
+				root := &y3.Node{}
+				err = decoder.Decode(root)
+				if err != nil {
+					t.Errorf("failed to parse template file=%s from %s/default.yaml", template, shortPath(kindDir))
+				}
 			}
 		}
 	}
