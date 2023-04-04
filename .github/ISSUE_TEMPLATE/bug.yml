@@ -40,7 +40,9 @@ body:
         bin/harvest doctor
         ```
 
-        !! Paste a redacted copy of your harvest.yml file by running `bin/harvest doctor --print` !!
+        Paste a redacted copy of your harvest.yml file by running `bin/harvest doctor --print`
+        
+        If you're using nabox see https://nabox.org/documentation/troubleshooting/#collecting-harvest-configuration
       render: text
 
   - type: input
