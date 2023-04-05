@@ -11,6 +11,7 @@ counters:
   - ^location
   - ^model
   - ^serial_number                                    => serial
+  - ^state
   - ^version.full                                     => version
   - controller.failed_fan.count                       => failed_fan
   - controller.failed_power_supply.count              => failed_power
@@ -47,5 +48,6 @@ export_options:
     - model
     - serial
     - uptime
+    - state
     - vendor
     - version
