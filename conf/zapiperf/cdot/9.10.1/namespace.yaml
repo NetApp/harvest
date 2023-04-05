@@ -5,18 +5,18 @@ object:                   namespace
 instance_key:             name
 
 counters:
-  - instance_name         => path
-  - vserver_name          => svm
-  - read_data
-  - write_data
-  - read_ops
-  - write_ops
-  - other_ops
+  - avg_other_latency
   - avg_read_latency
   - avg_write_latency
-  - avg_other_latency
+  - instance_name         => path
+  - other_ops
+  - read_data
+  - read_ops
   - remote_bytes
   - remote_ops
+  - vserver_name          => svm
+  - write_data
+  - write_ops
 
 plugins:
   LabelAgent:

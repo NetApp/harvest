@@ -4,10 +4,10 @@ object:           ontaps3
 
 counters:
   - ^^uuid
-  - ^svm.name                                    => svm
-  - ^volume.name                                 => volume
-  - ^name                                        => bucket
   - ^encryption.enabled                          => encryption_enabled
+  - ^name               => bucket
+  - ^svm.name           => svm
+  - ^volume.name        => volume
   - logical_used_size
   - size
   - ^policy.statements.0.effect                  => permission_type

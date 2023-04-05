@@ -9,9 +9,9 @@ counters:
   - instance_name
   - instance_uuid
   - node_name               => node
-  - rdma_write_throughput
-  - rdma_write_ops
   - rdma_write_avg_latency
+  - rdma_write_ops
+  - rdma_write_throughput
 
 export_options:
   instance_keys:

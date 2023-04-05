@@ -12,7 +12,6 @@ counters:
   - ^home_node.name                                                => node
   - ^name                                                          => aggr
   - ^state                                                         => state
-  - block_storage.hybrid_cache.disk_count                          => hybrid_disk_count
   - block_storage.hybrid_cache.size                                => hybrid_cache_size_total
   - block_storage.plexes.#                                         => raid_plex_count
   - block_storage.primary.disk_count                               => primary_disk_count

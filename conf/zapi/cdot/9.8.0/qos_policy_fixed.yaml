@@ -6,13 +6,13 @@ object:           qos_policy_fixed
 counters:
   qos-policy-group-info:
     - ^^uuid               => uuid
-    - ^policy-group        => name
-    - ^vserver             => svm
     - ^is-shared           => capacity_shared
     - ^max-throughput      => max_xput
     - ^min-throughput      => min_xput
     - ^num-workloads       => object_count
+    - ^policy-group        => name
     - ^policy-group-class  => class
+    - ^vserver             => svm
 
 collect_only_labels: true
 

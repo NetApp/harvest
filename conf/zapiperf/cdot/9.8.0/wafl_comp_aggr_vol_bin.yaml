@@ -5,11 +5,11 @@ object:                   fabricpool
 instance_key:             uuid
 
 counters:
-  - instance_name
-  - vserver_name            => svm
-  - vol_name                => volume
-  - cloud_bin_operation
   - cloud_bin_op_latency_average
+  - cloud_bin_operation
+  - instance_name
+  - vol_name                => volume
+  - vserver_name            => svm
 
 export_options:
   instance_keys:

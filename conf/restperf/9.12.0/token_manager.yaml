@@ -5,15 +5,15 @@ object:                   token
 counters:
   - ^^id                   => token
   - ^node.name             => node
-  - token_copy.successes   => copy_success
-  - token_create.successes => create_success
-  - token_zero.successes   => zero_success
+  - token_copy.bytes       => copy_bytes
   - token_copy.failures    => copy_failure
+  - token_copy.successes   => copy_success
+  - token_create.bytes     => create_bytes
   - token_create.failures  => create_failure
+  - token_create.successes => create_success
+  - token_zero.bytes       => zero_bytes
   - token_zero.failures    => zero_failure
-  - token_copy.bytes	   => copy_bytes
-  - token_create.bytes	   => create_bytes
-  - token_zero.bytes	   => zero_bytes
+  - token_zero.successes   => zero_success
 
 override:
   - token_copy.bytes: rate

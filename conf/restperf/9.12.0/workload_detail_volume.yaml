@@ -15,8 +15,8 @@ counters:
   - ^^id
   - ^resource_name  => resource
   - service_time
-  - wait_time
   - visits
+  - wait_time
 
 resource_map:
   CPU_dblade : backend

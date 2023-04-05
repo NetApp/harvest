@@ -7,13 +7,13 @@ instance_key:             uuid
 counters:
   - ^^id
   - ^node.name             => node
-  - read_iops
   - read_data
-  - write_data
-  - write_iops
+  - read_iops
+  - read_latency
   - total_data
   - total_iops
-  - read_latency
+  - write_data
+  - write_iops
   - write_latency
 
 plugins:

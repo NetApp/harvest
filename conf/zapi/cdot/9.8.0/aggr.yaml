@@ -5,60 +5,60 @@ object:             aggr
 
 counters:
   aggr-attributes:
-    - ^aggregate-name                          => aggr
     - ^^aggregate-uuid
-    - aggr-ownership-attributes:
-      - ^home-name                             => node
-    - aggr-raid-attributes:
-      - ^aggregate-type                        => type
-      - disk-count
-      - plex-count
-      - raid-size
-      - ^state                                 => state
-      - ^is-root-aggregate                     => root_aggr
-      - ^encrypt-with-aggr-key                 => is_encrypted
+    - ^aggregate-name                            => aggr
     - aggr-inode-attributes:
-      - files-private-used
-      - files-total
-      - files-used
-      - inodefile-private-capacity
-      - inodefile-public-capacity
-      - maxfiles-available
-      - maxfiles-possible
-      - maxfiles-used
-      - percent-inode-used-capacity             => inode_used_percent
-    - aggr-space-attributes:
-      - capacity-tier-used
-      - data-compacted-count
-      - data-compaction-space-saved
-      - data-compaction-space-saved-percent
-      - hybrid-cache-size-total                 => hybrid_cache_size_total
-      - percent-used-capacity                   => space_used_percent
-      - performance-tier-inactive-user-data
-      - performance-tier-inactive-user-data-percent
-      - physical-used
-      - physical-used-percent
-      - sis-shared-count
-      - sis-space-saved
-      - sis-space-saved-percent
-      - size-available                          => space_available
-      - size-total                              => space_total
-      - size-used                               => space_used
-      - total-reserved-space                    => space_reserved
-    - aggr-volume-count-attributes:
-      - flexvol-count
+        - files-private-used
+        - files-total
+        - files-used
+        - inodefile-private-capacity
+        - inodefile-public-capacity
+        - maxfiles-available
+        - maxfiles-possible
+        - maxfiles-used
+        - percent-inode-used-capacity            => inode_used_percent
+    - aggr-ownership-attributes:
+        - ^home-name                             => node
+    - aggr-raid-attributes:
+        - ^aggregate-type                        => type
+        - ^encrypt-with-aggr-key                 => is_encrypted
+        - ^is-root-aggregate                     => root_aggr
+        - ^state                                 => state
+        - disk-count
+        - plex-count
+        - raid-size
     - aggr-snapshot-attributes:
-      - files-total
-      - files-used
-      - maxfiles-available
-      - maxfiles-possible
-      - maxfiles-used
-      - percent-inode-used-capacity             => snapshot_inode_used_percent
-      - percent-used-capacity                   => snapshot_used_percent
-      - size-available
-      - size-total
-      - size-used
-      - snapshot-reserve-percent
+        - files-total
+        - files-used
+        - maxfiles-available
+        - maxfiles-possible
+        - maxfiles-used
+        - percent-inode-used-capacity            => snapshot_inode_used_percent
+        - percent-used-capacity                  => snapshot_used_percent
+        - size-available
+        - size-total
+        - size-used
+        - snapshot-reserve-percent
+    - aggr-space-attributes:
+        - capacity-tier-used
+        - data-compacted-count
+        - data-compaction-space-saved
+        - data-compaction-space-saved-percent
+        - hybrid-cache-size-total                => hybrid_cache_size_total
+        - percent-used-capacity                  => space_used_percent
+        - performance-tier-inactive-user-data
+        - performance-tier-inactive-user-data-percent
+        - physical-used
+        - physical-used-percent
+        - sis-shared-count
+        - sis-space-saved
+        - sis-space-saved-percent
+        - size-available                         => space_available
+        - size-total                             => space_total
+        - size-used                              => space_used
+        - total-reserved-space                   => space_reserved
+    - aggr-volume-count-attributes:
+        - flexvol-count
 
 plugins:
   LabelAgent:

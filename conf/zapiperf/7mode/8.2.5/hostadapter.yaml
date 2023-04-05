@@ -9,10 +9,10 @@ global_labels:
   - system_type: 7mode
 
 counters:
-  - instance_name
-  - node_name             => node
   - bytes_read
   - bytes_written
+  - instance_name
+  - node_name             => node
 
 export_options:
   instance_keys:

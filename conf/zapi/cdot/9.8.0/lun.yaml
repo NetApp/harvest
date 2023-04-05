@@ -5,15 +5,15 @@ object:                     lun
 
 counters:
   lun-info:
+    - ^^uuid
     - ^node
     - ^path
     - ^qtree
-    - size
-    - size-used
     - ^state
-    - ^^uuid
     - ^volume
     - ^vserver => svm
+    - size
+    - size-used
 
 plugins:
   - MetricAgent:

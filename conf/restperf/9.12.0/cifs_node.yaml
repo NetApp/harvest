@@ -6,16 +6,16 @@ object:                   node_cifs
 counters:
   - ^^id
   - ^node.name                    => node
-  - op_count
-  - total_ops
-  - total_read_ops                => read_ops
-  - total_write_ops               => write_ops
-  - latency
   - average_read_latency          => read_latency
   - average_write_latency         => write_latency
   - connections
   - established_sessions
+  - latency
+  - op_count
   - open_files
+  - total_ops
+  - total_read_ops                => read_ops
+  - total_write_ops               => write_ops
 
 export_options:
   instance_keys:

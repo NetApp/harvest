@@ -15,6 +15,7 @@ import (
 type LabelAgent struct {
 	*plugin.AbstractPlugin
 	actions              []func(*matrix.Matrix) error
+	newLabelNames        []string
 	splitSimpleRules     []splitSimpleRule
 	splitRegexRules      []splitRegexRule
 	splitPairsRules      []splitPairsRule
@@ -31,7 +32,7 @@ type LabelAgent struct {
 	valueToNumRegexRules []valueToNumRegexRule
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
+func New(p *plugin.AbstractPlugin) *LabelAgent {
 	return &LabelAgent{AbstractPlugin: p}
 }
 
@@ -358,4 +359,9 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 		}
 	}
 	return nil
+}
+
+// NewLabels returns the new labels the receiver creates
+func (a *LabelAgent) NewLabels() []string {
+	return a.newLabelNames
 }

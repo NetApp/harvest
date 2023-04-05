@@ -7,8 +7,8 @@ counters:
   autosupport-config-info:
     - ^^node-name                  => node
     - ^is-enabled                  => asup_enabled
-    - ^transport                   => asup_https_configured
     - ^is-private-data-removed     => asup_private_dataremoved
+    - ^transport                   => asup_https_configured
 
 collect_only_labels: true
 # at node level, As all the fields are same for both the nodes, we will only pick one node and ignore others

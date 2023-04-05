@@ -15,10 +15,9 @@ objects:
 #  ExportRule:                  exports.yaml
   Lun:                         lun.yaml
   Namespace:                   namespace.yaml
-#  NetConnections:              netConnections.yaml
-#  NetConnections:              netConnections.yaml
-#  NetPort:                     netPort.yaml
-  NetRoute:                    netRoute.yaml
+  NetConnections:              netconnections.yaml
+#  NetPort:                     netport.yaml
+  NetRoute:                    netroute.yaml
   NFSClients:                  nfs_clients.yaml
   Node:                        node.yaml
   NtpServer:                   ntpserver.yaml
@@ -36,7 +35,7 @@ objects:
   Sensor:                      sensor.yaml
   Shelf:                       shelf.yaml
   SnapMirror:                  snapmirror.yaml
-  SnapshotPolicy:              snapshotPolicy.yaml
+  SnapshotPolicy:              snapshotpolicy.yaml
   Status:                      status.yaml
   Subsystem:                   subsystem.yaml
   Support:                     support.yaml

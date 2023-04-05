@@ -4,13 +4,13 @@ object:                   net_route
 
 counters:
   - ^^uuid                                   => uuid
-  - ^svm.name                                => svm
-  - ^scope                                   => scope
-  - ^ipspace.name                            => ipspace
-  - ^gateway                                 => gateway
-  - ^destination.netmask                     => netmask_length
   - ^destination.address                     => destination
   - ^destination.family                      => family
+  - ^destination.netmask                     => netmask_length
+  - ^gateway                                 => gateway
+  - ^ipspace.name                            => ipspace
+  - ^scope                                   => scope
+  - ^svm.name                                => svm
 
 export_options:
   instance_keys:

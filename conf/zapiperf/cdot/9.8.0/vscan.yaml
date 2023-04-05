@@ -8,11 +8,11 @@ instance_key: uuid
 counters:
   - instance_name
   - instance_uuid
+  - scan_latency
+  - scan_request_dispatched_rate
   - scanner_stats_pct_cpu_used
   - scanner_stats_pct_mem_used
   - scanner_stats_pct_network_used
-  - scan_latency
-  - scan_request_dispatched_rate
 
 plugins:
   - Vscan:
