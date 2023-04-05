@@ -1,6 +1,6 @@
-name:                     OntapS3
+name:                     OntapS3_SVM
 query:                    object_store_server
-object:                   ontaps3
+object:                   ontaps3_svm
 
 counters:
   - abort_multipart_upload_failed
