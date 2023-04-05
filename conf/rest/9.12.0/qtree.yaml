@@ -5,9 +5,9 @@ object:                     qtree
 client_timeout: 2m
 
 counters:
+  - ^^name                => qtree
   - ^^svm.name            => svm
   - ^^volume.name         => volume
-  - ^^name                => qtree
   - ^export_policy.name   => export_policy
   - ^security_style       => security_style
   - id                    => id
@@ -18,11 +18,11 @@ counters:
 endpoints:
   - query: api/private/cli/qtree
     counters:
-      - ^^vserver         => svm
-      - ^^volume          => volume
       - ^^qtree           => qtree
-      - ^status           => status
+      - ^^volume          => volume
+      - ^^vserver         => svm
       - ^oplock_mode      => oplocks
+      - ^status           => status
       - filter:
           - qtree=!""
 plugins:

@@ -5,43 +5,43 @@ query:                        api/private/cli/snapmirror
 object:                       snapmirror
 
 counters:
-  - ^^relationship_id                        => relationship_id
   - ^^destination_path                       => destination_location
+  - ^^relationship_id                        => relationship_id
+  - ^cg_item_mappings                        => cg_item_mappings
+  - ^destination_volume                      => destination_volume
   - ^destination_volume_node                 => destination_node
   - ^destination_vserver                     => destination_vserver
-  - ^destination_volume                      => destination_volume
-  - ^source_vserver                          => source_vserver
-  - ^source_volume                           => source_volume
-  - ^relationship_type                       => relationship_type
-  - ^status                                  => relationship_status
-  - ^policy_type                             => policy_type
-  - ^relationship_group_type                 => group_type
-  - ^schedule                                => schedule
   - ^healthy                                 => healthy
   - ^last_transfer_type                      => last_transfer_type
+  - ^policy_type                             => policy_type
+  - ^relationship_group_type                 => group_type
+  - ^relationship_type                       => relationship_type
+  - ^schedule                                => schedule
+  - ^source_volume                           => source_volume
+  - ^source_vserver                          => source_vserver
+  - ^status                                  => relationship_status
   - ^unhealthy_reason                        => unhealthy_reason
+  - break_failed_count                       => break_failed_count
+  - break_successful_count                   => break_successful_count
   - lag_time(duration)                       => lag_time
   - last_transfer_duration(duration)         => last_transfer_duration
   - last_transfer_end_timestamp(timestamp)   => last_transfer_end_timestamp
   - last_transfer_size                       => last_transfer_size
-  - total_transfer_time_secs                 => total_transfer_time_secs
-  - total_transfer_bytes                     => total_transfer_bytes
   - newest_snapshot_timestamp(timestamp)     => newest_snapshot_timestamp
-  - resync_successful_count                  => resync_successful_count
-  - update_successful_count                  => update_successful_count
   - resync_failed_count                      => resync_failed_count
+  - resync_successful_count                  => resync_successful_count
+  - total_transfer_bytes                     => total_transfer_bytes
+  - total_transfer_time_secs                 => total_transfer_time_secs
   - update_failed_count                      => update_failed_count
-  - break_successful_count                   => break_successful_count
-  - break_failed_count                       => break_failed_count
-  - ^cg_item_mappings                        => cg_item_mappings
+  - update_successful_count                  => update_successful_count
   - filter:
       - expand=true
 
 endpoints:
   - query: api/snapmirror/relationships
     counters:
-      - ^^uuid                               => relationship_id
       - ^^destination.path                   => destination_location
+      - ^^uuid                               => relationship_id
       - ^source.cluster.name                 => source_cluster
 
 plugins:
@@ -55,7 +55,7 @@ export_options:
     - destination_vserver
     - source_volume
     - source_vserver
-    - source_node
+#    - source_node
     - source_cluster
     - destination_location
   instance_labels:

@@ -10,16 +10,16 @@ global_labels:
   - system_type: 7mode
 
 counters:
+  - fcp_ops                 => total_ops
+  - fcp_read_data           => read_data
+  - fcp_read_latency        => avg_read_latency
+  - fcp_read_ops            => read_ops
+  - fcp_write_data          => write_data
+  - fcp_write_latency       => avg_write_latency
+  - fcp_write_ops           => write_ops
   - instance_name           => port
   - instance_uuid
   - node_name               => node
-  - fcp_read_latency        => avg_read_latency
-  - fcp_write_latency       => avg_write_latency
-  - fcp_read_data           => read_data
-  - fcp_write_data          => write_data
-  - fcp_read_ops            => read_ops
-  - fcp_write_ops           => write_ops
-  - fcp_ops                 => total_ops
 
 plugins:
   - Fcp
@@ -27,4 +27,3 @@ plugins:
 export_options:
   instance_keys:
     - port
-    - speed

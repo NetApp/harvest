@@ -17,7 +17,7 @@ type Aggregator struct {
 	rules []*rule
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
+func New(p *plugin.AbstractPlugin) *Aggregator {
 	return &Aggregator{AbstractPlugin: p}
 }
 
@@ -290,4 +290,14 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 	}
 
 	return matrices, nil
+}
+
+// NewLabels returns the new labels the receiver creates
+func (a *Aggregator) NewLabels() []string {
+	var newLabelNames []string
+	for _, r := range a.rules {
+		newLabelNames = append(newLabelNames, r.includeLabels...)
+	}
+
+	return newLabelNames
 }

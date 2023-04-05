@@ -5,17 +5,17 @@ object:                   net_port
 counters:
   - ^^name                                   => port
   - ^^node.name                              => node
+  - ^broadcast_domain.ipspace.name           => ipspace
   - ^broadcast_domain.name                   => broadcast
+  - ^enabled                                 => admin_up
+  - ^lag.active_ports.name                   => lag_port
   - ^lag.distribution_policy                 => lag_distribution_policy
   - ^lag.mode                                => lag_mode
-  - ^lag.active_ports.name                   => lag_port
-  - ^broadcast_domain.ipspace.name           => ipspace
-  - ^enabled                                 => admin_up
+  - ^operational_speed                       => op_speed
   - ^state                                   => status
-  - ^vlan.tag                                => vlan_id
-  - ^vlan.base_port.node.name                => vlan_node
   - ^vlan.base_port.name                     => vlan_port
-  - ^operational-speed                       => op_speed
+  - ^vlan.base_port.node.name                => vlan_node
+  - ^vlan.tag                                => vlan_id
   - mtu                                      => mtu
 
 plugins:

@@ -1,4 +1,4 @@
-name:                         NetConnection
+name:                         NetConnections
 query:                        api/private/cli/network/connections/active
 object:                       net_connection
 
@@ -26,7 +26,7 @@ export_options:
     - local_address
     - local_port
     - remote_ip
-    - remote_host
+#    - remote_host
     - proto
     - service
     - lru

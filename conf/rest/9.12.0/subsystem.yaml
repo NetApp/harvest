@@ -4,8 +4,8 @@ query:      api/private/cli/system/health/subsystem
 object:     cluster_subsystem
 
 counters:
-  - ^health                         => health
   - ^^subsystem                     => subsystem
+  - ^health                         => health
   - outstanding_alert_count         => outstanding_alerts
   - suppressed_alert_count          => suppressed_alerts
 

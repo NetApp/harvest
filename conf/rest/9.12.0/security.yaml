@@ -4,9 +4,9 @@ query:            api/security
 object:           security
 
 counters:
-  - ^management_protocols.telnet_enabled     => telnet_enabled
-  - ^management_protocols.rsh_enabled        => rsh_enabled
   - ^fips.enabled                            => fips_enabled
+  - ^management_protocols.rsh_enabled        => rsh_enabled
+  - ^management_protocols.telnet_enabled     => telnet_enabled
 
 export_options:
   instance_keys:

@@ -8,19 +8,19 @@ global_labels:
   - system_type: 7mode
 
 counters:
-  - display_name   => lun
-  - read_data
-  - write_data
-  - read_ops
-  - write_ops
   - avg_read_latency
   - avg_write_latency
   - avg_xcopy_latency
+  - display_name           => lun
   - queue_full
-  - read_partial_blocks
-  - write_partial_blocks
-  - write_align_histo
   - read_align_histo
+  - read_data
+  - read_ops
+  - read_partial_blocks
+  - write_align_histo
+  - write_data
+  - write_ops
+  - write_partial_blocks
 
 plugins:
   - LabelAgent:
@@ -31,4 +31,3 @@ export_options:
   instance_keys:
     - lun # edited by plugin
     - volume # added by plugin
-    - svm # mimic cdot metrics

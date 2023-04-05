@@ -6,28 +6,28 @@ counters:
   - ^^id
   - ^name                    => partition
   - ^node.name               => node
-  - ^raid_group              => raid_group
-  - ^raid.type               => raid_type
-  - ^speed                   => speed
-  - ^physical_disk_name      => disk
   - ^physical_disk_id        => disk_uuid
-  - cp_read_chain
-  - cp_read_latency
-  - cp_read_count            => cp_reads
-  - disk_busy_percent        => busy
+  - ^physical_disk_name      => disk
+  - ^raid.type               => raid_type
+  - ^raid_group              => raid_group
+  - ^speed                   => speed
   - capacity                 => capacity
+  - cp_read_chain
+  - cp_read_count            => cp_reads
+  - cp_read_latency
+  - disk_busy_percent        => busy
   - io_pending
   - io_queued
-  - total_transfer_count     => total_transfers
-  - user_read_chain
-  - user_read_block_count    => user_read_blocks
-  - user_read_latency
-  - user_read_count          => user_reads
-  - user_write_chain
-  - user_write_block_count   => user_write_blocks
-  - user_write_latency
-  - user_write_count         => user_writes
   - total_data
+  - total_transfer_count     => total_transfers
+  - user_read_block_count    => user_read_blocks
+  - user_read_chain
+  - user_read_count          => user_reads
+  - user_read_latency
+  - user_write_block_count   => user_write_blocks
+  - user_write_chain
+  - user_write_count         => user_writes
+  - user_write_latency
 
 plugins:
   - LabelAgent:
@@ -45,7 +45,6 @@ plugins:
   - Max:
       - node<>node_disk_max
       - aggr<>aggr_disk_max ...
-
   - Disk
 
 # only export node/aggr aggregations from plugin

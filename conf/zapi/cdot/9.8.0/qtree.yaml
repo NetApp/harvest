@@ -7,13 +7,13 @@ client_timeout: 2m
 
 counters:
   qtree-info:
+    - ^^qtree   => qtree
+    - ^^volume
+    - ^^vserver => svm
     - ^export-policy
     - ^oplocks
     - ^security-style
     - ^status
-    - ^^volume
-    - ^^vserver => svm
-    - ^^qtree   => qtree
 
 collect_only_labels: true
 

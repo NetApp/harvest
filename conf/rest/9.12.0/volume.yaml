@@ -6,43 +6,43 @@ object:                   volume
 
 counters:
   - ^^uuid                                        => instance_uuid
-  - ^name                                         => volume
-  - ^svm.name                                     => svm
-  - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
   - ^aggregates.#.name                            => aggr
-  - ^style                                        => style
-  - ^type                                         => type
+  - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
+  - ^anti_ransomware.state                        => antiRansomwareState
+  - ^encryption.enabled                           => isEncrypted
+  - ^is_svm_root                                  => svm_root
+  - ^name                                         => volume
+  - ^snaplock.type                                => snaplock_type
   - ^snapshot_policy.name                         => snapshot_policy
   - ^state                                        => state
-  - ^is_svm_root                                  => svm_root
-  - ^encryption.enabled                           => isEncrypted
-  - ^anti_ransomware.state                        => antiRansomwareState
-  - ^snaplock.type                                => snaplock_type
-  - autosize.maximum                              => autosize_maximum_size
+  - ^style                                        => style
+  - ^svm.name                                     => svm
+  - ^type                                         => type
   - autosize.grow_threshold                       => autosize_grow_threshold_percent
+  - autosize.maximum                              => autosize_maximum_size
+  - snapshot_count
+  - space.afs_total                               => size_total
+  - space.available                               => size_available
   - space.expected_available                      => space_expected_available
   - space.filesystem_size                         => filesystem_size
-  - space.logical_space.available                 => space_logical_available  #not found in infinity cluster
+  - space.logical_space.available                 => space_logical_available
   - space.logical_space.used                      => space_logical_used
   - space.logical_space.used_by_afs               => space_logical_used_by_afs
   - space.logical_space.used_by_snapshots         => space_logical_used_by_snapshots
   - space.logical_space.used_percent              => space_logical_used_percent
+  - space.overwrite_reserve                       => overwrite_reserve_total
+  - space.overwrite_reserve_used                  => overwrite_reserve_used
+  - space.percent_used                            => size_used_percent
   - space.physical_used                           => space_physical_used
   - space.physical_used_percent                   => space_physical_used_percent
   - space.size                                    => size
-  - space.available                               => size_available
-  - space.afs_total                               => size_total
-  - space.used                                    => size_used
-  - space.percent_used                            => size_used_percent
-  - space.snapshot.used                           => snapshots_size_used
   - space.size_available_for_snapshots            => snapshots_size_available
   - space.snapshot.reserve_available              => snapshot_reserve_available
-  - space.snapshot.reserve_size                   => snapshot_reserve_size
   - space.snapshot.reserve_percent                => snapshot_reserve_percent
+  - space.snapshot.reserve_size                   => snapshot_reserve_size
   - space.snapshot.space_used_percent             => snapshot_reserve_used_percent
-  - space.overwrite_reserve_used                  => overwrite_reserve_used
-  - space.overwrite_reserve                       => overwrite_reserve_total
-  - snapshot_count
+  - space.snapshot.used                           => snapshots_size_used
+  - space.used                                    => size_used
   - hidden_fields:
     - space
     - autosize
@@ -55,16 +55,16 @@ endpoints:
   - query: api/private/cli/volume
     counters:
       - ^^instance_uuid                           => instance_uuid
-      - ^nodes                                    => node
       - ^is_sis_volume                            => is_sis_volume
-      - compression_space_saved_percent           => sis_compress_saved_percent
-      - dedupe_space_saved_percent                => sis_dedup_saved_percent
+      - ^nodes                                    => node
       - compression_space_saved                   => sis_compress_saved
+      - compression_space_saved_percent           => sis_compress_saved_percent
       - dedupe_space_saved                        => sis_dedup_saved
-      - sis_space_saved                           => sis_total_saved
-      - sis_space_saved_percent                   => sis_total_saved_percent
+      - dedupe_space_saved_percent                => sis_dedup_saved_percent
       - files                                     => inode_files_total
       - files_used                                => inode_files_used
+      - sis_space_saved                           => sis_total_saved
+      - sis_space_saved_percent                   => sis_total_saved_percent
 
 plugins:
   - Volume:

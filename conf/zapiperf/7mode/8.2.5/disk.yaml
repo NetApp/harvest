@@ -7,25 +7,25 @@ global_labels:
   - system_type: 7mode
 
 counters:
-  - instance_name
   - cp_read_chain
   - cp_read_latency
   - cp_reads
   - disk_busy
   - disk_capacity
   - disk_speed
+  - instance_name
   - io_pending
   - io_queued
   - physical_disk_name
   - raid_group
   - raid_type
   - total_transfers
-  - user_read_chain
   - user_read_blocks
+  - user_read_chain
   - user_read_latency
   - user_reads
-  - user_write_chain
   - user_write_blocks
+  - user_write_chain
   - user_write_latency
   - user_writes
 

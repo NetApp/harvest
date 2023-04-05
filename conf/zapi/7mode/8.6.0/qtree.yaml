@@ -8,14 +8,14 @@ global_labels:
 
 counters:
   qtree-info:
+    - ^^qtree         => qtree
+    - ^^volume
     - ^export-policy
-    - id
     - ^oplocks
+    - ^owning-vfiler  => svm
     - ^security-style
     - ^status
-    - ^^volume
-    - ^owning-vfiler  => svm
-    - ^^qtree         => qtree
+    - id
 
 plugins:
   Qtree:

@@ -6,17 +6,17 @@ object:                   svm_cifs
 instance_key:               uuid
 
 counters:
-  - instance_uuid
-  - instance_name           => svm
+  - cifs_latency            => latency
   - cifs_op_count           => op_count
   - cifs_ops                => ops
-  - cifs_read_ops           => read_ops
-  - cifs_write_ops          => write_ops
-  - cifs_latency            => latency
   - cifs_read_latency       => read_latency
+  - cifs_read_ops           => read_ops
   - cifs_write_latency      => write_latency
+  - cifs_write_ops          => write_ops
   - connections
   - established_sessions
+  - instance_name           => svm
+  - instance_uuid
   - open_files
   - signed_sessions
 

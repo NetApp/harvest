@@ -19,8 +19,8 @@ counters:
         - sas-specific-info:
           - ^serial-no                  => serial_number
         - ses-generic-info:
-          - ^ses-vendor-id              => vendor_name
           - ^ses-product-id             => model
+          - ^ses-vendor-id              => vendor_name
 
 plugins:
   Shelf:

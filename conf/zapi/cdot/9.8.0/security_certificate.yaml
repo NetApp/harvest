@@ -6,10 +6,10 @@ object:     security_certificate
 counters:
   certificate-info:
     - ^^cert-name              => name
-    - ^^vserver                => svm
     - ^^serial-number          => serial_number
-    - ^type                    => type
+    - ^^vserver                => svm
     - ^public-certificate      => certificatePEM
+    - ^type                    => type
     - expiration-date          => expiry_time
 
 plugins:

@@ -8,11 +8,11 @@ instance_key:             uuid
 counters:
   - ^^id
   - ^svm.name                        => svm
+  - connections_active
   - dispatch.latency                 => dispatch_latency
   - scan.latency                     => scan_latency
   - scan.notification_received_rate  => scan_noti_received_rate
   - scan.request_dispatched_rate     => scan_request_dispatched_rate
-  - connections_active
 
 export_options:
   instance_keys:

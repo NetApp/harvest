@@ -9,20 +9,20 @@ global_labels:
   - system_type: 7mode
 
 counters:
+  - avg_latency
+  - avg_other_latency
+  - avg_read_latency
+  - avg_write_latency
+  - cmd_transfered
   - instance_name         => lif
   - instance_uuid
-  - vserver_name          => svm
+  - iscsi_other_ops
+  - iscsi_read_ops
+  - iscsi_write_ops
   - protocol_errors
   - read_data
+  - vserver_name          => svm
   - write_data
-  - iscsi_read_ops
-  - avg_read_latency
-  - iscsi_write_ops
-  - avg_write_latency
-  - iscsi_other_ops
-  - avg_other_latency
-  - cmd_transfered
-  - avg_latency
 
 override:
   - cmd_transfered: rate
