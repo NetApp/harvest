@@ -5,19 +5,19 @@ object:                   iscsi_lif
 counters:
   - ^^id
   - ^name                  => lif
-  - ^svm.name              => svm
   - ^node.name             => node
+  - ^svm.name              => svm
+  - average_latency        => avg_latency
+  - average_other_latency  => avg_other_latency
+  - average_read_latency   => avg_read_latency
+  - average_write_latency  => avg_write_latency
+  - cmd_transferred
+  - iscsi_other_ops
+  - iscsi_read_ops
+  - iscsi_write_ops
   - protocol_errors
   - read_data
   - write_data
-  - iscsi_read_ops
-  - average_read_latency   => avg_read_latency
-  - average_write_latency  => avg_write_latency
-  - average_other_latency  => avg_other_latency
-  - iscsi_write_ops
-  - iscsi_other_ops
-  - cmd_transferred
-  - average_latency        => avg_latency
 
 override:
   - cmd_transferred: rate

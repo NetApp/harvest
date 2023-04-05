@@ -3,15 +3,16 @@ query:                    qtree
 object:                   qtree
 instance_key:             uuid
 counters:
-  - instance_uuid
+  - cifs_ops
   - instance_name         => qtreefull
-  - vserver_name          => svm
+  - instance_uuid
+  - internal_ops
+  - nfs_ops
   - node_name             => node
   - parent_vol            => volume
-  - cifs_ops
-  - nfs_ops
-  - internal_ops
   - total_ops
+  - vserver_name          => svm
+
 plugins:
   - LabelAgent:
       split:

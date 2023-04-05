@@ -1,0 +1,19 @@
+name: Prune untagged images
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 6' # every Saturday at midnight
+
+jobs:
+  purge-image:
+    name: Prune untagged images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete all containers from repository without tags
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v2
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          package_name: 'harvest'
+          untagged_only: true
+          owner_type: user

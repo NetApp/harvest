@@ -7,15 +7,15 @@ global_labels:
 
 counters:
   system-info:
-    - memory-size
+    - ^^system-name                         => node
     - ^maximum-aggregate-size               => max_aggr_size
     - ^maximum-flexible-volume-count        => max_vol_num
     - ^maximum-flexible-volume-size         => max_vol_size
-    - ^^system-name                         => node
+    - ^product-version                      => version
     - ^system-model                         => model
     - ^system-serial-number                 => serial
     - ^vendor-id                            => vendor
-    - ^product-version                      => version
+    - memory-size
 
 export_options:
   require_instance_keys: false
@@ -23,12 +23,8 @@ export_options:
     - max_aggr_size
     - max_vol_size
     - max_vol_num
-    - warnings
-    - healthy
-    - location
     - model
     - serial
-    - uptime
     - vendor
     - version
 

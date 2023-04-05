@@ -4,18 +4,18 @@ object:                   nic
 
 counters:
   - ^^id
-  - ^node.name                => node
-  - ^link_speed               => speed
   - ^link_current_state       => state
+  - ^link_speed               => speed
+  - ^node.name                => node
   - ^type
   - link_up_to_down           => link_up_to_downs
-  - receive_bytes             => rx_bytes
-  - transmit_bytes            => tx_bytes
   - receive_alignment_errors  => rx_alignment_errors
+  - receive_bytes             => rx_bytes
   - receive_crc_errors        => rx_crc_errors
+  - receive_errors            => rx_errors
   - receive_length_errors     => rx_length_errors
   - receive_total_errors      => rx_total_errors
-  - receive_errors            => rx_errors
+  - transmit_bytes            => tx_bytes
   - transmit_errors           => tx_errors
   - transmit_hw_errors        => tx_hw_errors
   - transmit_total_errors     => tx_total_errors

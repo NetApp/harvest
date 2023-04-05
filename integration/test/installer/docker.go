@@ -48,7 +48,7 @@ func (d *Docker) Install() bool {
 	log.Println("Docker image name " + dockerImageName)
 	path, _ := os.Getwd()
 	for _, pollerName := range conf.Config.PollersOrdered {
-		port, _ := conf.GetPrometheusExporterPorts(pollerName)
+		port, _ := conf.GetPrometheusExporterPorts(pollerName, true)
 		portString := strconv.Itoa(port)
 		ipAddress := utils.GetOutboundIP()
 		cmd := exec.Command("docker", "run", "--rm", "-p", portString+":"+portString,

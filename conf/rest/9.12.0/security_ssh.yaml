@@ -1,5 +1,5 @@
 
-name:             SecuritySSsh
+name:             SecuritySsh
 query:            api/security/ssh
 object:           security_ssh
 

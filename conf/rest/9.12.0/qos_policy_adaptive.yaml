@@ -5,14 +5,14 @@ object:             qos_policy_adaptive
 
 counters:
   - ^^uuid                     => uuid
-  - ^policy_group              => name
-  - ^vserver                   => svm
   - ^absolute_min_iops         => absolute_min_iops
   - ^expected_iops             => expected_iops
   - ^expected_iops_allocation  => expected_iops_allocation
   - ^num_workloads             => object_count
   - ^peak_iops                 => peak_iops
   - ^peak_iops_allocation      => peak_iops_allocation
+  - ^policy_group              => name
+  - ^vserver                   => svm
 
 plugins:
   - QosPolicyAdaptive

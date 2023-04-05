@@ -8,13 +8,13 @@ global_labels:
 
 counters:
   lun-info:
+    - ^^uuid
     - ^node
+    - ^online
     - ^path
     - ^qtree
     - size
     - size-used
-    - ^online
-    - ^^uuid
 
 plugins:
   - LabelAgent:

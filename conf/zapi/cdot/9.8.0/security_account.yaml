@@ -5,14 +5,14 @@ object:     security_account
 
 counters:
   security-login-account-info:
-    - ^^user-name                                 => user_name
     - ^^application                               => applications
-    - ^^vserver                                   => svm
     - ^^authentication-method                     => methods
     - ^^remote-switch-ipaddress                   => remote_switch_ipaddress
-    - ^role-name                                  => role_name
-    - ^password-hash-algorithm                    => hash_algorithm
+    - ^^user-name                                 => user_name
+    - ^^vserver                                   => svm
     - ^is-locked                                  => locked
+    - ^password-hash-algorithm                    => hash_algorithm
+    - ^role-name                                  => role_name
 
 collect_only_labels: true
 

@@ -162,10 +162,9 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		panic(err)
 	}
-	conf.ValidatePortInUse = true
 	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
-		port, _ := conf.GetPrometheusExporterPorts(v)
+		port, _ := conf.GetPrometheusExporterPorts(v, true)
 		pollerInfo := PollerInfo{
 			ServiceName:   normalizeContainerNames(v),
 			PollerName:    v,

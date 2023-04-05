@@ -4,29 +4,28 @@ query:                    lun
 object:                   lun
 
 counters:
-  - instance_name
-  - vserver_name        => svm
-  - read_data
-  - write_data
-  - read_ops
-  - write_ops
-  - xcopy_reqs
-  - writesame_reqs
-  - writesame_unmap_reqs
-  - caw_reqs
   - avg_read_latency
   - avg_write_latency
   - avg_xcopy_latency
-  - unmap_reqs
-  - writesame_unmap_reqs
+  - caw_reqs
   - enospc
+  - instance_name
   - queue_full
+  - read_align_histo
+  - read_data
+  - read_ops
+  - read_partial_blocks
   - remote_bytes
   - remote_ops
-  - read_partial_blocks
-  - write_partial_blocks
+  - unmap_reqs
+  - vserver_name        => svm
   - write_align_histo
-  - read_align_histo
+  - write_data
+  - write_ops
+  - write_partial_blocks
+  - writesame_reqs
+  - writesame_unmap_reqs
+  - xcopy_reqs
 
 override:
   - writesame_reqs: rate

@@ -1,15 +1,15 @@
 
-name:               StorageShelf
+name:               Shelf
 query:              api/storage/shelves
 object:             shelf
 
 counters:
   - ^^serial_number       => serial_number
+  - ^manufacturer.name    => vendor_name
+  - ^model                => model
   - ^module_type          => module_type
   - ^name                 => shelf
-  - ^model                => model
   - ^state                => state
-  - ^manufacturer.name    => vendor_name
   - disk_count            => disk_count
 
 endpoints:

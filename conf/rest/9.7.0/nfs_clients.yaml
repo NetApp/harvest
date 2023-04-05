@@ -3,12 +3,12 @@ query:            api/protocols/nfs/connected-clients
 object:           nfs_clients
 
 counters:
+  - ^^client_ip                    => client_ip
+  - ^^node.name                    => node
+  - ^^protocol                     => protocol
+  - ^^server_ip                    => server_ip
   - ^^svm.name                     => svm
   - ^^volume.name                  => volume
-  - ^^node.name                    => node
-  - ^^client_ip                    => client_ip
-  - ^^server_ip                    => server_ip
-  - ^^protocol                     => protocol
   - idle_duration(duration)        => idle_duration   #in seconds
 
 export_options:

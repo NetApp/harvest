@@ -12,8 +12,6 @@ var testYml = "../../cmd/tools/doctor/testdata/testConfig.yml"
 
 func TestGetPrometheusExporterPorts(t *testing.T) {
 	TestLoadHarvestConfig(testYml)
-	// Test without checking
-	ValidatePortInUse = true
 	type args struct {
 		pollerNames []string
 	}
@@ -29,7 +27,7 @@ func TestGetPrometheusExporterPorts(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for i, v := range tt.args.pollerNames {
-				got, err := GetPrometheusExporterPorts(v)
+				got, err := GetPrometheusExporterPorts(v, true)
 				if (err != nil) != tt.wantErr[i] {
 					t.Errorf("GetPrometheusExporterPorts() error = %v, wantErr %v", err, tt.wantErr)
 					return
@@ -44,8 +42,8 @@ func TestGetPrometheusExporterPorts(t *testing.T) {
 
 func TestGetPrometheusExporterPortsIssue284(t *testing.T) {
 	TestLoadHarvestConfig("../../cmd/tools/doctor/testdata/issue-284.yml")
-	loadPrometheusExporterPortRangeMapping()
-	got, _ := GetPrometheusExporterPorts("issue-284")
+	loadPrometheusExporterPortRangeMapping(false)
+	got, _ := GetPrometheusExporterPorts("issue-284", false)
 	if got != 0 {
 		t.Fatalf("expected port to be 0 but was %d", got)
 	}
@@ -191,10 +189,7 @@ func TestFlowStyle(t *testing.T) {
 
 func TestUniqueExportersByType(t *testing.T) {
 	path := "../../cmd/tools/doctor/testdata/testConfig.yml"
-	err := LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
-	}
+	TestLoadHarvestConfig(path)
 	poller2, _ := PollerNamed("overlapping")
 	t.Run("Exporters are unique by type", func(t *testing.T) {
 		exporters := GetUniqueExporters(poller2.Exporters)

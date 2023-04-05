@@ -5,11 +5,11 @@ object:                   copy_manager
 counters:
   - ^^id
   - ^name                                                => svm
+  - KB_copied                                            => kb_copied
   - block_copy_engine_current_copy_count                 => bce_copy_count_curr
   - ontap_copy_subsystem_current_copy_count              => ocs_copy_count_curr
-  - system_continuous_engineering_current_copy_count     => sce_copy_count_curr
   - spince_current_copy_count                            => spince_copy_count_curr
-  - KB_copied                                            => kb_copied
+  - system_continuous_engineering_current_copy_count     => sce_copy_count_curr
 
 override:
   - kb_copied: delta

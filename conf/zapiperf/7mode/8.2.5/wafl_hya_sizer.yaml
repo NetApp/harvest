@@ -9,9 +9,9 @@ global_labels:
   - system_type: 7mode
 
 counters:
+  - cache_stats
   - instance_name
   - node_name              => node
-  - cache_stats
 
 export_options:
   require_instance_keys: false

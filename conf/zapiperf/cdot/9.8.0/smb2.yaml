@@ -3,41 +3,41 @@ query:                    smb2
 object:                   smb2
 
 counters:
-  - instance_uuid
-  - node_name          => node
-  - vserver_name       => svm
-  - read_ops
-  - write_ops
-  - read_latency
-  - write_latency
-  - negotiate_ops
-  - session_setup_ops
-  - tree_connect_ops
-  - create_ops
-  - close_ops
-  - lock_ops
-  - query_directory_ops
-  - query_info_ops
-  - set_info_ops
-  - oplock_break_ops
-  - negotiate_latency
-  - session_setup_latency
-  - tree_connect_latency
-  - create_latency
   - close_latency
-  - lock_latency
-  - query_directory_latency
-  - query_info_latency
-  - set_info_latency
-  - oplock_break_latency
-  - session_setup_latency_histogram
-  - create_latency_histogram
   - close_latency_histogram
+  - close_ops
+  - create_latency
+  - create_latency_histogram
+  - create_ops
+  - instance_uuid
+  - lock_latency
   - lock_latency_histogram
-  - query_directory_latency_histogram
-  - query_info_latency_histogram
-  - set_info_latency_histogram
+  - lock_ops
+  - negotiate_latency
+  - negotiate_ops
+  - node_name          => node
+  - oplock_break_latency
   - oplock_break_latency_histogram
+  - oplock_break_ops
+  - query_directory_latency
+  - query_directory_latency_histogram
+  - query_directory_ops
+  - query_info_latency
+  - query_info_latency_histogram
+  - query_info_ops
+  - read_latency
+  - read_ops
+  - session_setup_latency
+  - session_setup_latency_histogram
+  - session_setup_ops
+  - set_info_latency
+  - set_info_latency_histogram
+  - set_info_ops
+  - tree_connect_latency
+  - tree_connect_ops
+  - vserver_name       => svm
+  - write_latency
+  - write_ops
 
 plugins:
   LabelAgent:

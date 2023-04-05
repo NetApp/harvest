@@ -4,8 +4,8 @@ object:                   net_port
 
 counters:
   net-port-info:
-    - ^^port                                   => port
     - ^^node                                   => node
+    - ^^port                                   => port
     - ^broadcast-domain                        => broadcast
     - ^ifgrp-distribution-function             => lag_distribution_policy
     - ^ifgrp-mode                              => lag_mode
@@ -13,10 +13,10 @@ counters:
     - ^ipspace                                 => ipspace
     - ^is-administrative-up                    => admin_up
     - ^link-status                             => status
+    - ^operational-speed                       => op_speed
     - ^vlan-id                                 => vlan_id
     - ^vlan-node                               => vlan_node
     - ^vlan-port                               => vlan_port
-    - ^operational-speed                       => op_speed
     - mtu                                      => mtu
 
 plugins:

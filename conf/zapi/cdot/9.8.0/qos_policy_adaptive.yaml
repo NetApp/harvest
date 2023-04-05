@@ -6,14 +6,14 @@ object:           qos_policy_adaptive
 counters:
   qos-adaptive-policy-group-info:
     - ^^uuid                     => uuid
-    - ^policy-group              => name
-    - ^vserver                   => svm
     - ^absolute-min-iops         => absolute_min_iops
     - ^expected-iops             => expected_iops
     - ^expected-iops-allocation  => expected_iops_allocation
     - ^num-workloads             => object_count
     - ^peak-iops                 => peak_iops
     - ^peak-iops-allocation      => peak_iops_allocation
+    - ^policy-group              => name
+    - ^vserver                   => svm
 
 collect_only_labels: true
 

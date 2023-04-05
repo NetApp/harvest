@@ -6,10 +6,10 @@ object:                     lun
 counters:
   - ^^uuid
   - ^location.node.name     => node
-  - ^name                   => path
   - ^location.qtree.name    => qtree
-  - ^status.state           => state
   - ^location.volume.name   => volume
+  - ^name                   => path
+  - ^status.state           => state
   - ^svm.name               => svm
   - space.size              => size
   - space.used              => size_used

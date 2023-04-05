@@ -6,11 +6,11 @@ object:           security_certificate
 counters:
   - ^^uuid
   - ^name
-  - ^scope                   => scope
-  - ^type                    => type
-  - ^svm.name                => svm
   - ^public_certificate      => certificatePEM
+  - ^scope                   => scope
   - ^serial_number           => serial_number
+  - ^svm.name                => svm
+  - ^type                    => type
   - expiry_time(timestamp)   => expiry_time
   - filter:
       - scope=!"svm"

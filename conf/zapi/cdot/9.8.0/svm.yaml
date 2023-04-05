@@ -6,10 +6,10 @@ object:     svm
 counters:
   vserver-info:
     - ^^uuid                                  => svm_uuid
-    - ^vserver-name                           => svm
-    - ^state                                  => state
-    - ^vserver-type                           => type
     - ^anti-ransomware-default-volume-state   => anti_ransomware_state
+    - ^state                                  => state
+    - ^vserver-name                           => svm
+    - ^vserver-type                           => type
     - name-server-switch:
         - ^nsswitch                           => nameservice_switch
 

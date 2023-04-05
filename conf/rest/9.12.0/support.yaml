@@ -5,8 +5,8 @@ object:           support
 
 counters:
   - ^enabled      => asup_enabled
-  - ^transport    => asup_https_configured
   - ^is_minimal   => asup_private_dataremoved
+  - ^transport    => asup_https_configured
 
 export_options:
   instance_keys:

@@ -5,32 +5,32 @@ object:           disk
 
 counters:
   storage-disk-info:
+    - ^^disk-name                 => disk
     - ^^disk-uid
-    - ^^disk-name               => disk
     - disk-inventory-info:
-      - bytes-per-sector        => bytes_per_sector
-      - capacity-sectors        => sectors
-      - ^disk-type              => type
-      - ^is-shared              => shared
-      - ^model                  => model
-      - ^serial-number          => serial_number
-      - ^shelf-uid              => shelf
-      - ^shelf-bay              => shelf_bay
+        - ^disk-type              => type
+        - ^is-shared              => shared
+        - ^model                  => model
+        - ^serial-number          => serial_number
+        - ^shelf-bay              => shelf_bay
+        - ^shelf-uid              => shelf
+        - bytes-per-sector        => bytes_per_sector
+        - capacity-sectors        => sectors
     - disk-ownership-info:
-      - ^home-node-name         => node
-      - ^owner-node-name        => owner_node
-      - ^is-failed              => failed
-    - disk-stats-info:
-      - average-latency
-      - disk-io-kbps
-    #  - disk-iops
-      - power-on-time-interval  => uptime
-      - sectors-read
-      - sectors-written
+        - ^home-node-name         => node
+        - ^is-failed              => failed
+        - ^owner-node-name        => owner_node
     - disk-raid-info:
-      - ^container-type         => container_type
-      - disk-outage-info:
-        - ^reason               => outage
+        - ^container-type         => container_type
+        - disk-outage-info:
+            - ^reason             => outage
+    - disk-stats-info:
+        - average-latency
+#        - disk-iops
+        - disk-io-kbps
+        - power-on-time-interval  => uptime
+        - sectors-read
+        - sectors-written
 
 plugins:
   - LabelAgent:

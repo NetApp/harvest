@@ -8,13 +8,13 @@ global_labels:
   - system_type: 7mode
 
 counters:
-  - vserver_name            => svm
-  - instance_uuid
   - BCE_copy_count_curr     => bce_copy_count_curr
+  - KB_copied               => kb_copied
   - OSC_copy_count_curr     => osc_copy_count_curr
   - SCE_copy_count_curr     => sce_copy_count_curr
   - SpinCE_copy_count_curr  => spince_copy_count_curr
-  - KB_copied               => kb_copied
+  - instance_uuid
+  - vserver_name            => svm
 
 override:
   - KB_copied: delta

@@ -5,11 +5,10 @@ object:                   snapshot_policy
 
 counters:
   snapshot-policy-info:
-    - ^^vserver-name     =>  svm
     - ^^policy           =>  snapshot_policy
+    - ^^vserver-name     =>  svm
     - ^comment           =>  comment
     - total-schedules    =>  total_schedules
-
 
 export_options:
   instance_keys:

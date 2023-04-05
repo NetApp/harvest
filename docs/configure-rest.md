@@ -83,7 +83,7 @@ The template should define objects in the `objects` section. Example:
 
 ```yaml
 objects:
-  Aggr: aggr.yaml
+  Aggregate: aggr.yaml
 ```
 
 For each object, we define the filename of the object configuration file. The object configuration files

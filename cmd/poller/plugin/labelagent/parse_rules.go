@@ -180,12 +180,21 @@ func (a *LabelAgent) parseSplitSimpleRule(rule string) {
 			r.sep = fields[0]
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
 				a.splitSimpleRules = append(a.splitSimpleRules, r)
+				a.addNewLabels(r.targets)
 				a.Logger.Debug().Msgf("(split) parsed rule [%v]", r)
 				return
 			}
 		}
 	}
 	a.Logger.Warn().Msgf("(split) rule has invalid format [%s]", rule)
+}
+
+func (a *LabelAgent) addNewLabels(targets []string) {
+	for _, target := range targets {
+		if len(target) > 0 {
+			a.newLabelNames = append(a.newLabelNames, target)
+		}
+	}
 }
 
 type splitPairsRule struct {
@@ -233,6 +242,7 @@ func (a *LabelAgent) parseSplitRegexRule(rule string) {
 			a.Logger.Trace().Msgf("(split_regex) compule regex [%s]", r.reg.String())
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
 				a.splitRegexRules = append(a.splitRegexRules, r)
+				a.addNewLabels(r.targets)
 				a.Logger.Debug().Msgf("(split_regex) parsed rule [%v]", r)
 				return
 			}
@@ -255,6 +265,7 @@ type joinSimpleRule struct {
 func (a *LabelAgent) parseJoinSimpleRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 2); len(fields) == 2 {
 		r := joinSimpleRule{target: strings.TrimSpace(fields[0])}
+		a.newLabelNames = append(a.newLabelNames, r.target)
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
 			r.sep = fields[0]
 			if r.sources = strings.Split(fields[1], ","); len(r.sources) != 0 {
@@ -286,6 +297,7 @@ func (a *LabelAgent) parseReplaceSimpleRule(rule string) {
 			r.old = strings.TrimSuffix(fields[1], "`")
 			r.new = strings.TrimSuffix(fields[2], "`")
 			a.replaceSimpleRules = append(a.replaceSimpleRules, r)
+			a.newLabelNames = append(a.newLabelNames, r.target)
 			a.Logger.Debug().Msgf("(replace) parsed rule [%v]", r)
 			return
 		}

@@ -16,7 +16,7 @@ func TestPollerMetrics(t *testing.T) {
 	utils.SetupLogging()
 	conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	for _, pollerName := range conf.Config.PollersOrdered {
-		port, _ := conf.GetPrometheusExporterPorts(pollerName)
+		port, _ := conf.GetPrometheusExporterPorts(pollerName, true)
 		portString := strconv.Itoa(port)
 		var validCounters = 0
 		sb, error := utils.GetResponse("http://localhost:" + strings.TrimSpace(portString) + "/metrics")

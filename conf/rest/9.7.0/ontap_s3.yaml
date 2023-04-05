@@ -4,9 +4,9 @@ object:           ontaps3
 
 counters:
   - ^^uuid
+  - ^name               => bucket
   - ^svm.name           => svm
   - ^volume.name        => volume
-  - ^name               => bucket
   - logical_used_size
   - size
 

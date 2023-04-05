@@ -9,9 +9,9 @@ schedule:
 counters:
   - ^^name                                      => user_name
   - ^^owner.name                                => svm
-  - ^role.name                                  => role_name
-  - ^password_hash_algorithm                    => hash_algorithm
   - ^locked                                     => locked
+  - ^password_hash_algorithm                    => hash_algorithm
+  - ^role.name                                  => role_name
 
 
 plugins:

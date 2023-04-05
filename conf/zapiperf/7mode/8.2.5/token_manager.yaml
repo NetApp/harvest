@@ -9,15 +9,15 @@ global_labels:
 
 counters:
   - instance_name
-  - token_copy_success
-  - token_create_success
-  - token_zero_success
-  - token_copy_failure
-  - token_create_failure
-  - token_zero_failure
   - token_copy_bytes
+  - token_copy_failure
+  - token_copy_success
   - token_create_bytes
+  - token_create_failure
+  - token_create_success
   - token_zero_bytes
+  - token_zero_failure
+  - token_zero_success
 
 override:
   - token_copy_bytes: rate

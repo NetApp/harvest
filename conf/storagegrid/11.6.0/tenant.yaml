@@ -7,8 +7,8 @@ api:                        v3
 counters:
   - ^^id                    => id
   - ^name                   => tenant
-  - objectCount             => objects
   - dataBytes               => logical_used
+  - objectCount             => objects
   - policy.quotaObjectBytes => logical_quota
 
 plugins:

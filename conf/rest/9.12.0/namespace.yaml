@@ -4,18 +4,18 @@ object:                     namespace
 
 counters:
   - ^^uuid                     => uuid
-  - ^subsystem_map.nsid        => nsid
-  - ^name                      => path
   - ^location.node.name        => node
+  - ^location.volume.name      => volume
+  - ^name                      => path
   - ^os_type                   => os_type
   - ^status.read_only          => is_read_only
   - ^status.state              => state
   - ^subsystem                 => subsystem
-  - ^location.volume.name      => volume
+  - ^subsystem_map.nsid        => nsid
   - ^svm.name                  => svm
+  - space.block_size           => block_size
   - space.size                 => size
   - space.used                 => size_used
-  - space.block_size           => block_size
 
 plugins:
   - MetricAgent:
