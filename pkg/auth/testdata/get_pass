@@ -1,0 +1,3 @@
+#!/bin/bash
+# Used by pkg/auth/auth_test.go
+echo pass-from-script

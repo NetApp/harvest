@@ -14,6 +14,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -21,17 +22,19 @@ import (
 
 var Config = HarvestConfig{}
 var configRead = false
-var ValidatePortInUse = false
 
 const (
 	DefaultAPIVersion = "1.3"
 	DefaultTimeout    = "30s"
 	HarvestYML        = "harvest.yml"
+	BasicAuth         = "basic_auth"
+	CertificateAuth   = "certificate_auth"
 )
 
 // TestLoadHarvestConfig is used by testing code to reload a new config
 func TestLoadHarvestConfig(configPath string) {
 	configRead = false
+	promPortRangeMapping = make(map[string]PortMap)
 	err := LoadHarvestConfig(configPath)
 	if err != nil {
 		log.Fatalf("Failed to load config at=[%s] err=%+v\n", configPath, err)
@@ -65,11 +68,19 @@ func LoadHarvestConfig(configPath string) error {
 		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
 		return err
 	}
-	err = yaml.Unmarshal(contents, &Config)
-	configRead = true
+	err = DecodeConfig(contents)
 	if err != nil {
 		fmt.Printf("error unmarshalling config file=[%s] %+v\n", configPath, err)
 		return err
+	}
+	return nil
+}
+
+func DecodeConfig(contents []byte) error {
+	err := yaml.Unmarshal(contents, &Config)
+	configRead = true
+	if err != nil {
+		return fmt.Errorf("error unmarshalling config err: %w", err)
 	}
 	// Until https://github.com/go-yaml/yaml/issues/717 is fixed
 	// read the yaml again to determine poller order
@@ -89,7 +100,8 @@ func LoadHarvestConfig(configPath string) error {
 
 	if pollers == nil {
 		return errs.New(errs.ErrConfig, "[Pollers] section not found")
-	} else if defaults != nil {
+	}
+	if defaults != nil {
 		for _, p := range pollers {
 			p.Union(defaults)
 		}
@@ -97,14 +109,17 @@ func LoadHarvestConfig(configPath string) error {
 	return nil
 }
 
-func ReadCredentialsFile(credPath string, p *Poller) error {
+func ReadCredentialFile(credPath string, p *Poller) error {
 	contents, err := os.ReadFile(credPath)
-
+	if err != nil {
+		abs, err2 := filepath.Abs(credPath)
+		if err2 != nil {
+			abs = credPath
+		}
+		return fmt.Errorf("failed to read file=%s error: %w", abs, err)
+	}
 	if p == nil {
 		return nil
-	}
-	if err != nil {
-		return err
 	}
 	var credConfig HarvestConfig
 	err = yaml.Unmarshal(contents, &credConfig)
@@ -179,12 +194,12 @@ func GetHarvestLogPath() string {
 }
 
 // GetPrometheusExporterPorts returns the Prometheus port for the given poller
-func GetPrometheusExporterPorts(pollerName string) (int, error) {
+func GetPrometheusExporterPorts(pollerName string, validatePortInUse bool) (int, error) {
 	var port int
 	var isPrometheusExporterConfigured bool
 
 	if len(promPortRangeMapping) == 0 {
-		loadPrometheusExporterPortRangeMapping()
+		loadPrometheusExporterPortRangeMapping(validatePortInUse)
 	}
 	poller := Config.Pollers[pollerName]
 	if poller == nil {
@@ -229,18 +244,18 @@ type PortMap struct {
 	freePorts map[int]struct{}
 }
 
-func PortMapFromRange(address string, portRange *IntRange) PortMap {
+func PortMapFromRange(address string, portRange *IntRange, validatePortInUse bool) PortMap {
 	portMap := PortMap{}
 	portMap.freePorts = make(map[int]struct{})
 	start := portRange.Min
 	end := portRange.Max
 	for i := start; i <= end; i++ {
 		portMap.portSet = append(portMap.portSet, i)
-		if ValidatePortInUse {
+		if validatePortInUse {
 			portMap.freePorts[i] = struct{}{}
 		}
 	}
-	if !ValidatePortInUse {
+	if !validatePortInUse {
 		portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
 	}
 	return portMap
@@ -248,12 +263,12 @@ func PortMapFromRange(address string, portRange *IntRange) PortMap {
 
 var promPortRangeMapping = make(map[string]PortMap)
 
-func loadPrometheusExporterPortRangeMapping() {
+func loadPrometheusExporterPortRangeMapping(validatePortInUse bool) {
 	for k, v := range Config.Exporters {
 		if v.Type == "Prometheus" {
 			if v.PortRange != nil {
 				// we only care about free ports on the localhost
-				promPortRangeMapping[k] = PortMapFromRange("localhost", v.PortRange)
+				promPortRangeMapping[k] = PortMapFromRange("localhost", v.PortRange, validatePortInUse)
 			}
 		}
 	}
@@ -369,6 +384,8 @@ type Poller struct {
 	Name              string
 }
 
+// Union merges a poller's config with the defaults.
+// For all keys in default, copy them to the poller if the poller does not already include them
 func (p *Poller) Union(defaults *Poller) {
 	// this is needed because of how mergo handles boolean zero values
 	isInsecureNil := true
@@ -378,11 +395,21 @@ func (p *Poller) Union(defaults *Poller) {
 		isInsecureNil = false
 		pUseInsecureTLS = *p.UseInsecureTLS
 	}
+	// Don't copy auth related fields from defaults to poller, even when the poller is missing those fields.
+	// Save a copy of the poller's auth fields and restore after merge
+	pPassword := p.Password
+	pAuthStyle := p.AuthStyle
+	pCredentialsFile := p.CredentialsFile
+	pCredentialsScript := p.CredentialsScript.Path
 	_ = mergo.Merge(p, defaults)
 	if !isInsecureNil {
 		p.UseInsecureTLS = &pUseInsecureTLS
 	}
 	p.IsKfs = pIsKfs
+	p.Password = pPassword
+	p.AuthStyle = pAuthStyle
+	p.CredentialsFile = pCredentialsFile
+	p.CredentialsScript.Path = pCredentialsScript
 }
 
 // ZapiPoller creates a poller out of a node, this is a bridge between the node and struct-based code
