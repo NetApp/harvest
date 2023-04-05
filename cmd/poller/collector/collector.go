@@ -280,7 +280,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		// We can't reset metadata here because autosupport metadata is reset
 		// https://github.com/NetApp/harvest-private/issues/114 for details
-		//c.Metadata.Reset()
 
 		results := make([]*matrix.Matrix, 0)
 
@@ -349,7 +348,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Str("task", task.Name).
 						Str("object", c.Object).
 						Msg("no metrics of object on system, entering standby mode")
-				// not an error we are expecting, so enter failed state and terminate
+				// not an error we are expecting, so enter failed or standby state
 				default:
 					var herr errs.HarvestError
 					errMsg := err.Error()
@@ -359,7 +358,11 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 					// API was rejected, this happens when a resource is not available or does not exist
 					if errors.Is(err, errs.ErrAPIRequestRejected) {
-						c.Logger.Info().Str("task", task.Name).Msg(err.Error())
+						c.Schedule.SetStandByMode(task, 24*time.Hour)
+						c.Logger.Info().
+							Err(err).
+							Str("task", task.Name).
+							Msg("API rejected, entering standby mode")
 					} else {
 						c.Logger.Error().Err(err).Str("task", task.Name).Msg("")
 					}
