@@ -202,14 +202,14 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	}
 
 	if isRestFailed {
-		assert.Fail(suite.T(), "Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(perfErrorInfoList))
+		assert.Fail(suite.T(), fmt.Sprintf("Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(perfErrorInfoList)))
 	} else {
 		log.Info().Msg("Rest Validation looks good!!")
 	}
 
 	// Fail if either Rest or Zapi collectors have failures
 	if isZapiFailed {
-		assert.Fail(suite.T(), "Zapi Test validation is failed. Pls check logs above. Count of Missing Zapi counters %d", len(zapiErrorInfoList))
+		assert.Fail(suite.T(), fmt.Sprintf("Zapi Test validation is failed. Pls check logs above. Count of Missing Zapi counters %d", len(zapiErrorInfoList)))
 	} else {
 		log.Info().Msg("Zapi Validation looks good!!")
 	}
