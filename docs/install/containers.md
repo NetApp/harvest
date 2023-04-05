@@ -5,7 +5,7 @@ Harvest is container-ready and supports several deployment options:
 - [Stand-up Prometheus, Grafana, and Harvest via Docker Compose](#docker-compose). Choose this if
   you want to hit the ground running. Install, volume and network mounts automatically handled.
 
-- [Poller-per-container model](https://github.com/NetApp/harvest/tree/main/docker/onePollerPerContainer) that offers
+- [Poller-per-container model](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer) that offers
   more flexibility in configuration. This deployment enables a broad range of orchestrators (Nomad, Mesosphere, Swarm,
   K8, etc.) since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is
   recommended.
@@ -15,10 +15,10 @@ Harvest is container-ready and supports several deployment options:
   stands up Harvest, Grafana, and Prometheus.
 
 - Want to run Harvest on a Mac
-  via [containerd and Racher Desktop](https://github.com/NetApp/harvest/tree/main/docker/containerd)? We got you
+  via [containerd and Racher Desktop](https://github.com/NetApp/harvest/tree/main/container/containerd)? We got you
   covered.
 
-- [Local K8 Deployment](https://github.com/NetApp/harvest/blob/main/docker/k8/README.md) via Kompose
+- [Local K8 Deployment](https://github.com/NetApp/harvest/blob/main/container/k8/README.md) via Kompose
 
 ## Docker Compose
 
@@ -80,7 +80,7 @@ bin/harvest generate docker full --output harvest-compose.yml
 
 1. Creates a Docker compose file with a container for each Harvest poller defined in your `harvest.yml`
 2. Creates a matching Prometheus service discovery file for each Harvest poller (located
-   in `docker/prometheus/harvest_targets.yml`). Prometheus uses this file to scrape the Harvest pollers.
+   in `container/prometheus/harvest_targets.yml`). Prometheus uses this file to scrape the Harvest pollers.
 
 ### Start everything
 

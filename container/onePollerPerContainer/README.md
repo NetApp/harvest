@@ -55,7 +55,7 @@ You only need to build a Harvest Docker image if you want a custom image. If ins
 Build Docker Image
 
 ```
-docker build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
+docker build -f container/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
 or
-nerdctl build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
+nerdctl build -f container/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
 ```
