@@ -1,4 +1,4 @@
-name:                     OntapS3_SVM
+name:                     OntapS3SVM
 query:                    object_store_server
 object:                   ontaps3_svm
 
