@@ -74,11 +74,40 @@
   ],
   "panels": [
     {
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 125,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 107,
+      "options": {
+        "content": "This dashboard requires ONTAP 9.7+. Two actions are required to use this dashboard: <br>1. On Harvest, enable the Rest collector for OntapS3 template in your `harvest.yml` config for configuration metrics<br>2. On Harvest, enable the ZapiPerf collector for OntapS3 template in your `harvest.yml` config for performance metrics",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.11",
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
       },
       "id": 16,
       "title": "Bucket Drilldown",
@@ -222,7 +251,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 5
       },
       "id": 5,
       "options": {
@@ -373,6 +402,220 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Used",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
+      "id": 127,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "EO6UabnVz"
+          },
+          "exemplar": false,
+          "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{svm}} - {{bucket}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Bucket Used Size",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Used Percent %",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": 100,
+                      "result": {
+                        "index": 0,
+                        "text": "100%"
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
+      "id": 128,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "EO6UabnVz"
+          },
+          "exemplar": false,
+          "expr": "ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{svm}} - {{bucket}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Bucket Used Size Percent",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
       "description": "You must enable the Rest collector in your harvest.yml config.\nIsProtected, ProtectedInCloud and ProtectedInOntap field would be available 9.9+",
       "fieldConfig": {
         "defaults": {
@@ -503,7 +746,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 24
       },
       "id": 6,
       "options": {
@@ -589,19 +832,8 @@
       "type": "table"
     },
     {
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 17
-      },
-      "id": 19,
-      "title": "SVM Drilldown",
-      "type": "row"
-    },
-    {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "You must enable the Rest collector in your harvest.yml config.",
+      "description": "You must enable the ZapiPerf collector in your harvest.yml config.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -630,7 +862,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 32
       },
       "id": 17,
       "options": {

@@ -26,10 +26,10 @@ endpoints:
       - object_count
 
 plugins:
-  - OntapS3Service
   - MetricAgent:
       compute_metric:
         - used_percent PERCENT logical_used_size size
+  - OntapS3Service
 
 export_options:
   instance_keys:
