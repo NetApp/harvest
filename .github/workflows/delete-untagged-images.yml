@@ -14,5 +14,6 @@ jobs:
         uses: Chizkiyahu/delete-untagged-ghcr-action@v2
         with:
           token: ${{ secrets.PAT_TOKEN }}
+          package_name: 'harvest'
           untagged_only: true
           owner_type: user
