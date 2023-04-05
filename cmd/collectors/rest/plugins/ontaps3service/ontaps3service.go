@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -56,17 +57,18 @@ func (o *OntapS3Service) Init() error {
 
 func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
-		result      []gjson.Result
-		url         string
-		err         error
-		svmToURLMap map[string]string
+		result            []gjson.Result
+		url               string
+		err               error
+		svmToURLMap       map[string]string
+		bucketToPolicyMap map[string]map[string]string
 	)
 
 	// reset svmToS3serverMap map
 	svmToURLMap = make(map[string]string)
 	data := dataMap[o.Object]
 
-	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port"}
+	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port", "buckets"}
 	href := rest.BuildHref("", strings.Join(fields, ","), nil, "", "", "", "", o.query)
 
 	if result, err = collectors.InvokeRestCall(o.client, href, o.Logger); err != nil {
@@ -100,6 +102,50 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 
 		// cache url and svm detail
 		svmToURLMap[svm] = url
+
+		// Handle policy/permissions details
+		if buckets := ontaps3Service.Get("buckets"); buckets.Exists() {
+			for _, bucket := range buckets.Array() {
+				// reset bucketToPolicyMap map
+				bucketToPolicyMap = make(map[string]map[string]string)
+				bucketUUID := bucket.Get("uuid").String()
+				if policy := bucket.Get("policy"); policy.Exists() {
+					if statements := policy.Get("statements"); statements.Exists() {
+						for i, statement := range statements.Array() {
+							policyMap := make(map[string]string)
+							policyMap["permission_type"] = statement.Get("effect").String()
+							policyMap["permissions"] = convertToString(statement.Get("actions").Array())
+							policyMap["user"] = convertToString(statement.Get("principals").Array())
+							policyMap["allowed_resources"] = convertToString(statement.Get("resources").Array())
+							bucketToPolicyMap[bucketUUID+"-"+strconv.Itoa(i)] = policyMap
+						}
+					}
+				}
+
+				if ontapS3Instance := data.GetInstance(bucketUUID); ontapS3Instance != nil && len(bucketToPolicyMap) > 0 {
+					ontapS3Instance.SetExportable(false)
+					var ontapS3NewInstance *matrix.Instance
+					for bucketKey, policyMap := range bucketToPolicyMap {
+						ontapS3NewKey := bucketKey
+						if ontapS3NewInstance, err = data.NewInstance(ontapS3NewKey); err != nil {
+							o.Logger.Error().Err(err).Str("add instance failed for instance key", ontapS3NewKey).Msg("")
+							return nil, err
+						}
+
+						// Add existing labels
+						for k, v := range ontapS3Instance.GetLabels().Map() {
+							ontapS3NewInstance.SetLabel(k, v)
+						}
+
+						// Add policy/permission details
+						ontapS3NewInstance.SetLabel("permission_type", policyMap["permission_type"])
+						ontapS3NewInstance.SetLabel("permissions", policyMap["permissions"])
+						ontapS3NewInstance.SetLabel("user", policyMap["user"])
+						ontapS3NewInstance.SetLabel("allowed_resources", policyMap["allowed_resources"])
+					}
+				}
+			}
+		}
 	}
 
 	for _, ontapS3 := range data.GetInstances() {
@@ -107,5 +153,13 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		ontapS3.SetLabel("url", svmToURLMap[ontapS3.GetLabel("svm")]+ontapS3.GetLabel("bucket"))
 	}
 
-	return nil, nil
+	return []*matrix.Matrix{data}, nil
+}
+
+func convertToString(array []gjson.Result) string {
+	var stringArray []string
+	for _, value := range array {
+		stringArray = append(stringArray, value.String())
+	}
+	return strings.Join(stringArray, ",")
 }
