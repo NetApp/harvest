@@ -6,18 +6,18 @@ counters:
   - ^^uuid
   - ^encryption.enabled                          => encryption_enabled
   - ^name               => bucket
+  - ^policy.statements.0.actions                 => permissions
+  - ^policy.statements.0.effect                  => permission_type
+  - ^policy.statements.0.principals              => user
+  - ^policy.statements.0.resources               => allowed_resources
+  - ^protection_status.destination.is_cloud      => protected_in_cloud
+  - ^protection_status.destination.is_ontap      => protected_in_ontap
+  - ^protection_status.is_protected              => is_protected
+  - ^qos_policy.name                             => qos_policy_group
   - ^svm.name           => svm
   - ^volume.name        => volume
   - logical_used_size
   - size
-  - ^policy.statements.0.effect                  => permission_type
-  - ^policy.statements.0.actions                 => permissions
-  - ^policy.statements.0.principals              => user
-  - ^policy.statements.0.resources               => allowed_resources
-  - ^protection_status.is_protected              => is_protected
-  - ^protection_status.destination.is_ontap      => protected_in_ontap
-  - ^protection_status.destination.is_cloud      => protected_in_cloud
-  - ^qos_policy.name                             => qos_policy_group
 
 endpoints:
   - query: api/private/cli/vserver/object-store-server/bucket
