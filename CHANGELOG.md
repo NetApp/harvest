@@ -742,7 +742,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - New `include_contains` plugin allows you to select a subset of objects. e.g. selecting only volumes with custom-defined ONTAP metadata
 
-- We've included more out-of-the-box [Prometheus alerts](https://github.com/NetApp/harvest/blob/main/docker/prometheus/alert_rules.yml). Keep sharing your most useful alerts!
+- We've included more out-of-the-box [Prometheus alerts](https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml). Keep sharing your most useful alerts!
 
 - 7mode workflows continue to be improved :heart: Harvest now collects Qtree and Quotas counters from 7mode filers (these are already collected in cDOT)
     
@@ -775,7 +775,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Harvest should provide a `include_contains` label agent plugin for filtering #735 Thanks to @chadpruden for reporting
 
-- Improve Harvest's container compatibility with K8s via kompose. [#655](https://github.com/NetApp/harvest/pull/655) See [also](https://github.com/NetApp/harvest/tree/main/docker/k8) and [discussion](https://github.com/NetApp/harvest/discussions/827)
+- Improve Harvest's container compatibility with K8s via kompose. [#655](https://github.com/NetApp/harvest/pull/655) See [also](https://github.com/NetApp/harvest/tree/main/container/k8) and [discussion](https://github.com/NetApp/harvest/discussions/827)
 
 - The ZAPI cli tool should include counter types when querying ZAPIs #663
 
@@ -786,13 +786,13 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 
 - Harvest should collect Antivirus counters when ONTAP offbox vscan is configured [#346](https://github.com/NetApp/harvest/issues/346) Thanks to @burkl and @Falcon667 for reporting
 
-- [Document](https://github.com/NetApp/harvest/tree/main/docker/containerd) how to run Harvest with `containerd` and `Rancher`
+- [Document](https://github.com/NetApp/harvest/tree/main/container/containerd) how to run Harvest with `containerd` and `Rancher`
      
 - Qtree counters should be collected for 7-mode filers #766 Thanks to @jmg011 for raising this issue and iterating with us on a solution
 
 - Harvest admin node should work with pollers running in Docker compose [#678](https://github.com/NetApp/harvest/pull/678)
 
-- [Document](https://github.com/NetApp/harvest/tree/main/docker/podman) how to run Harvest with Podman. Several RHEL customers asked about this since Podman ships as the default container runtime on RHEL8+.
+- [Document](https://github.com/NetApp/harvest/tree/main/container/podman) how to run Harvest with Podman. Several RHEL customers asked about this since Podman ships as the default container runtime on RHEL8+.
 
 - Harvest should include a Systemd service file for the HTTP service discovery admin node [#656](https://github.com/NetApp/harvest/pull/656)
 
@@ -1150,7 +1150,7 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 
 - Improve client certificate authentication [documentation](https://github.com/NetApp/harvest/issues/314#issuecomment-882120238)
 
-- Improve Docker deployment documentation [4019308](https://github.com/NetApp/harvest/tree/main/docker/onePollerPerContainer)
+- Improve Docker deployment documentation [4019308](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer)
 
 ### Fixes
 
