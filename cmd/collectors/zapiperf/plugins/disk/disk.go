@@ -335,8 +335,6 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 					totaliops[shelfID] = totaliops[shelfID] + v
 					aggrPower := a.power + diskPower
 					a.power = aggrPower
-				} else {
-					d.Logger.Warn().Str("shelfID", shelfID).Msg("Missing shelf info")
 				}
 			} else {
 				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
@@ -424,8 +422,6 @@ func (d *Disk) populateShelfIOPS(data *matrix.Matrix) error {
 				sh, ok := d.ShelfMap[shelfID]
 				if ok {
 					sh.iops += v
-				} else {
-					d.Logger.Warn().Str("shelfID", shelfID).Msg("Missing shelf info")
 				}
 			} else {
 				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
