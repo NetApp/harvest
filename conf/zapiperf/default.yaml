@@ -26,7 +26,6 @@ objects:
   Namespace:              namespace.yaml
   NicCommon:              nic_common.yaml
   ObjectStoreClient:      object_store_client_op.yaml
-  OntapS3:                ontap_s3.yaml
   Path:                   path.yaml
   Qtree:                  qtree.yaml
   SystemNode:             system_node.yaml
@@ -48,7 +47,8 @@ objects:
   NFSv41:                 nfsv4_1.yaml
   NFSv42:                 nfsv4_2.yaml
   NFSv4:                  nfsv4.yaml
-#  SMB2:                   smb2.yaml
+  OntapS3_SVM:            ontap_s3_svm.yaml
+  #  SMB2:                   smb2.yaml
   Volume:                 volume.yaml
   VolumeSvm:              volume_svm.yaml
   WAFLCompBin:            wafl_comp_aggr_vol_bin.yaml
