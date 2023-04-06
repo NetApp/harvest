@@ -112,13 +112,15 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					if v != 0 {
 						result /= v
 					} else {
-						a.Logger.Error().Str("operation", r.operation).Msg("Division by zero operation")
+						// don't divide by zero
+						result = 0
 					}
 				case "PERCENT":
 					if v != 0 {
 						result = (result / v) * 100
 					} else {
-						a.Logger.Error().Str("operation", r.operation).Msg("Division by zero operation")
+						// don't divide by zero
+						result = 0
 					}
 				default:
 					a.Logger.Warn().Str("operation", r.operation).Msg("Unknown operation")
