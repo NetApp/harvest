@@ -40,6 +40,7 @@ var zapiCounterMap = map[string]struct{}{
 	"ontaps3_size":              {},
 	"ontaps3_object_count":      {},
 	"ontaps3_used_percent":      {},
+	"ontaps3_services_labels":   {},
 }
 
 // restCounters  consists of counters which needs to be excluded for Rest only in addition to counters present in counterMap
