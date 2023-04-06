@@ -29,6 +29,7 @@ const (
 	networkFCPortHealthMatrix                     = "health_network_fc_port"
 	networkInterfaceHealthMatrix                  = "health_network_interface"
 	volumeRansomwareHealthMatrix                  = "health_volume_ransomware"
+	volumeMoveHealthMatrix                        = "health_volume_move"
 	severityLabel                                 = "severity"
 	defaultDataPollDuration                       = 3 * time.Minute
 )
@@ -76,7 +77,8 @@ func (v *Health) Init() error {
 func (v *Health) initAllMatrix() error {
 	v.data = make(map[string]*matrix.Matrix)
 	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
-		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, networkInterfaceHealthMatrix, volumeRansomwareHealthMatrix}
+		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, networkInterfaceHealthMatrix,
+		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix}
 	for _, m := range mats {
 		if err := v.initMatrix(m); err != nil {
 			return err
@@ -143,6 +145,7 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	v.collectNetworkFCPortAlerts()
 	v.collectNetworkInterfacesAlerts()
 	v.collectVolumeRansomwareAlerts()
+	v.collectVolumeMoveAlerts()
 
 	result := make([]*matrix.Matrix, 0, len(v.data))
 
@@ -150,6 +153,40 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		result = append(result, value)
 	}
 	return result, nil
+}
+
+func (v *Health) collectVolumeMoveAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+
+	records, err := v.getMoveFailedVolumes()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			v.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := v.data[volumeMoveHealthMatrix]
+	for _, record := range records {
+		uuid := record.Get("uuid").String()
+		volume := record.Get("name").String()
+		svm := record.Get("svm.name").String()
+		movementState := record.Get("movement.state").String()
+		instance, err = mat.NewInstance(uuid)
+		if err != nil {
+			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("movement_state", movementState)
+		instance.SetLabel("svm", svm)
+		instance.SetLabel("volume", volume)
+		instance.SetLabel(severityLabel, string(warning))
+
+		v.setAlertMetric(mat, instance)
+	}
 }
 
 func (v *Health) collectVolumeRansomwareAlerts() {
@@ -200,17 +237,7 @@ func (v *Health) collectVolumeRansomwareAlerts() {
 		instance.SetLabel("volume", volume)
 		instance.SetLabel(severityLabel, string(errr))
 
-		m := mat.GetMetric("alerts")
-		if m == nil {
-			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-				continue
-			}
-		}
-		if err = m.SetValueFloat64(instance, 1); err != nil {
-			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-		}
-
+		v.setAlertMetric(mat, instance)
 	}
 }
 
@@ -241,16 +268,7 @@ func (v *Health) collectNetworkInterfacesAlerts() {
 		instance.SetLabel("lif", lif)
 		instance.SetLabel(severityLabel, string(warning))
 
-		m := mat.GetMetric("alerts")
-		if m == nil {
-			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-				continue
-			}
-		}
-		if err = m.SetValueFloat64(instance, 1); err != nil {
-			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-		}
+		v.setAlertMetric(mat, instance)
 	}
 }
 
@@ -283,17 +301,7 @@ func (v *Health) collectNetworkFCPortAlerts() {
 		instance.SetLabel("port", port)
 		instance.SetLabel(severityLabel, string(errr))
 
-		m := mat.GetMetric("alerts")
-		if m == nil {
-			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-				continue
-			}
-		}
-		if err = m.SetValueFloat64(instance, 1); err != nil {
-			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-		}
-
+		v.setAlertMetric(mat, instance)
 	}
 }
 
@@ -328,17 +336,7 @@ func (v *Health) collectNetworkEthernetPortAlerts() {
 		instance.SetLabel("type", portType)
 		instance.SetLabel(severityLabel, string(errr))
 
-		m := mat.GetMetric("alerts")
-		if m == nil {
-			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-				continue
-			}
-		}
-		if err = m.SetValueFloat64(instance, 1); err != nil {
-			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-		}
-
+		v.setAlertMetric(mat, instance)
 	}
 }
 
@@ -368,17 +366,7 @@ func (v *Health) collectNodeAlerts() {
 		instance.SetLabel("healthy", "false")
 		instance.SetLabel(severityLabel, string(errr))
 
-		m := mat.GetMetric("alerts")
-		if m == nil {
-			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-				continue
-			}
-		}
-		if err = m.SetValueFloat64(instance, 1); err != nil {
-			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-		}
-
+		v.setAlertMetric(mat, instance)
 	}
 }
 
@@ -418,16 +406,7 @@ func (v *Health) collectShelfAlerts() {
 				instance.SetLabel(severityLabel, string(warning))
 			}
 
-			m := mat.GetMetric("alerts")
-			if m == nil {
-				if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-					v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-					continue
-				}
-			}
-			if err = m.SetValueFloat64(instance, 1); err != nil {
-				v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-			}
+			v.setAlertMetric(mat, instance)
 		}
 	}
 }
@@ -476,17 +455,7 @@ func (v *Health) collectSupportAlerts() {
 		instance.SetLabel("correctiveAction", correctiveAction)
 		instance.SetLabel(severityLabel, string(warning))
 
-		m := mat.GetMetric("alerts")
-		if m == nil {
-			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-				continue
-			}
-		}
-		if err = m.SetValueFloat64(instance, 1); err != nil {
-			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-		}
-
+		v.setAlertMetric(mat, instance)
 	}
 	// update lastFilterTime to current cluster time
 	v.lastFilterTime = toTime
@@ -521,16 +490,8 @@ func (v *Health) collectDiskAlerts() {
 		} else if containerType == "unassigned" {
 			instance.SetLabel(severityLabel, string(warning))
 		}
-		m := mat.GetMetric("alerts")
-		if m == nil {
-			if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-				v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
-				continue
-			}
-		}
-		if err = m.SetValueFloat64(instance, 1); err != nil {
-			v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-		}
+
+		v.setAlertMetric(mat, instance)
 	}
 }
 
@@ -590,6 +551,22 @@ func (v *Health) getRansomwareVolumes() ([]gjson.Result, error) {
 
 	query := "api/storage/volumes"
 	href := rest.BuildHref(query, "", []string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low,moderate,high"}, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (v *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	query := "api/storage/volumes"
+	fields := []string{"uuid,name,movement.state,svm"}
+	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"movement.state=cutover_wait|failed|cutover_pending"}, "", "", "", "", query)
 
 	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
 		return nil, err
@@ -693,4 +670,18 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Dura
 		}
 	}
 	return defaultInterval, nil
+}
+
+func (v *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) {
+	var err error
+	m := mat.GetMetric("alerts")
+	if m == nil {
+		if m, err = mat.NewMetricFloat64("alerts"); err != nil {
+			v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+			return
+		}
+	}
+	if err = m.SetValueFloat64(instance, 1); err != nil {
+		v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+	}
 }
