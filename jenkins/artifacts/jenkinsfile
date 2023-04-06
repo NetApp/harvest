@@ -56,7 +56,7 @@ pipeline {
         stage('Setup GO') {
             steps {
                 sh '''
-                wget -q -O go.tar.gz "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
+                wget -q -O go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
             }
