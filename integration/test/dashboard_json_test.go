@@ -44,14 +44,7 @@ var zapiCounterMap = map[string]struct{}{
 
 // restCounters  consists of counters which needs to be excluded for Rest only in addition to counters present in counterMap
 var restCounterMap = map[string]struct{}{
-	"aggr_snapshot_inode_used_percent":  {},
-	"ontaps3_connections":               {},
-	"ontaps3_connected_connections":     {},
-	"ontaps3_max_connected_connections": {},
-	"ontaps3_requests_outstanding":      {},
-	"ontaps3_max_requests_outstanding":  {},
-	"ontaps3_requests":                  {},
-	"ontaps3_root_user_access":          {},
+	"aggr_snapshot_inode_used_percent": {},
 }
 
 type ResultInfo struct {
