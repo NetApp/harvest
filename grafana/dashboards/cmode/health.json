@@ -30,6 +30,12 @@
     },
     {
       "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "table",
       "name": "Table",
       "version": ""
@@ -65,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680797853843,
+  "iteration": 1680804852071,
   "links": [
     {
       "asDropdown": true,
@@ -284,100 +290,6 @@
         "x": 8,
         "y": 5
       },
-      "id": 270,
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "(count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[24h]) == 1) or vector(0))",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Emergency EMS",
-          "refId": "A"
-        }
-      ],
-      "title": "Active Emergency EMS (last 24h)",
-      "transformations": [],
-      "type": "piechart"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "unit": "locale"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Volumes protected"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Volumes not protected"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 13,
-        "w": 8,
-        "x": 16,
-        "y": 5
-      },
       "id": 269,
       "options": {
         "legend": {
@@ -449,6 +361,203 @@
       "title": "Warning",
       "transformations": [],
       "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes not protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 5
+      },
+      "id": 270,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "(count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[24h]) == 1) or vector(0))",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Active Emergency EMS (last 24h)",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Volumes not protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 11
+      },
+      "id": 272,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[24h]) == 1) by (message)",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Active Emergency EMS (last 24h)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Count",
+              "message": "EMS"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "collapsed": true,
