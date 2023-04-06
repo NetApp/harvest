@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"strings"
@@ -19,6 +20,7 @@ import (
 
 type OntapS3Service struct {
 	*plugin.AbstractPlugin
+	data   *matrix.Matrix
 	client *rest.Client
 	query  string
 }
@@ -40,7 +42,7 @@ func (o *OntapS3Service) Init() error {
 	if err == nil {
 		timeout = duration
 	} else {
-		o.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
+		o.Logger.Debug().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
 	if o.client, err = rest.New(conf.ZapiPoller(o.ParentParams), timeout, o.Auth); err != nil {
 		o.Logger.Error().Stack().Err(err).Msg("connecting")
@@ -52,6 +54,37 @@ func (o *OntapS3Service) Init() error {
 	}
 
 	o.query = "api/protocols/s3/services"
+	// new metric would be ontaps3_services_labels
+	metricName := "labels"
+	o.data = matrix.New(".OntapS3", "ontaps3_services", "ontaps3_services")
+
+	metric, err := o.data.NewMetricFloat64(metricName)
+	if err != nil {
+		o.Logger.Error().Err(err).Msg("add metric")
+		return err
+	}
+	o.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
+
+	exportOptions := node.NewS("export_options")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+
+	// apply all instance keys from parent (ontap_s3.yaml) to all ontaps3_services metrics
+	if exportOption := o.ParentParams.GetChildS("export_options"); exportOption != nil {
+		//parent instancekeys would be added in plugin metrics
+		if parentKeys := exportOption.GetChildS("instance_keys"); parentKeys != nil {
+			for _, parentKey := range parentKeys.GetAllChildContentS() {
+				instanceKeys.NewChildS("", parentKey)
+			}
+		}
+	}
+
+	instanceKeys.NewChildS("", "permission_type")
+	instanceKeys.NewChildS("", "permissions")
+	instanceKeys.NewChildS("", "user")
+	instanceKeys.NewChildS("", "allowed_resources")
+
+	o.data.SetExportOptions(exportOptions)
+
 	return nil
 }
 
@@ -67,6 +100,12 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	// reset svmToS3serverMap map
 	svmToURLMap = make(map[string]string)
 	data := dataMap[o.Object]
+	// Purge and reset data
+	o.data.PurgeInstances()
+	o.data.Reset()
+
+	// Set all global labels from Rest.go if already not exist
+	o.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port", "buckets"}
 	href := rest.BuildHref("", strings.Join(fields, ","), nil, "", "", "", "", o.query)
@@ -75,6 +114,7 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		return nil, err
 	}
 
+	// Iterate over services API response
 	for _, ontaps3Service := range result {
 		if !ontaps3Service.IsObject() {
 			o.Logger.Error().Str("type", ontaps3Service.Type.String()).Msg("Ontap S3 Service is not an object, skipping")
@@ -122,12 +162,11 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 					}
 				}
 
-				if ontapS3Instance := data.GetInstance(bucketUUID); ontapS3Instance != nil && len(bucketToPolicyMap) > 0 {
-					ontapS3Instance.SetExportable(false)
+				if ontapS3Instance := data.GetInstance(bucketUUID); ontapS3Instance != nil {
 					var ontapS3NewInstance *matrix.Instance
 					for bucketKey, policyMap := range bucketToPolicyMap {
 						ontapS3NewKey := bucketKey
-						if ontapS3NewInstance, err = data.NewInstance(ontapS3NewKey); err != nil {
+						if ontapS3NewInstance, err = o.data.NewInstance(ontapS3NewKey); err != nil {
 							o.Logger.Error().Err(err).Str("add instance failed for instance key", ontapS3NewKey).Msg("")
 							return nil, err
 						}
@@ -138,10 +177,16 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 						}
 
 						// Add policy/permission details
-						ontapS3NewInstance.SetLabel("permission_type", policyMap["permission_type"])
-						ontapS3NewInstance.SetLabel("permissions", policyMap["permissions"])
-						ontapS3NewInstance.SetLabel("user", policyMap["user"])
-						ontapS3NewInstance.SetLabel("allowed_resources", policyMap["allowed_resources"])
+						for key, value := range policyMap {
+							ontapS3NewInstance.SetLabel(key, value)
+						}
+
+						// Set metric value for instances. For now, only one metric is available
+						for metricName, metric := range o.data.GetMetrics() {
+							if err = metric.SetValueFloat64(ontapS3NewInstance, 1); err != nil {
+								o.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+							}
+						}
 					}
 				}
 			}
@@ -149,11 +194,11 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	}
 
 	for _, ontapS3 := range data.GetInstances() {
-		// Example: http://s3server/bucket1
+		// Update url label in ontaps3_labels, Example: http://s3server/bucket1
 		ontapS3.SetLabel("url", svmToURLMap[ontapS3.GetLabel("svm")]+ontapS3.GetLabel("bucket"))
 	}
 
-	return []*matrix.Matrix{data}, nil
+	return []*matrix.Matrix{o.data}, nil
 }
 
 func convertToString(array []gjson.Result) string {

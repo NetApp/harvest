@@ -89,14 +89,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 3,
+        "h": 2,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 107,
       "options": {
-        "content": "This dashboard requires ONTAP 9.7+. Two actions are required to use this dashboard: <br>1. On Harvest, enable the Rest collector for OntapS3 template in your `harvest.yml` config for configuration metrics<br>2. On Harvest, enable the ZapiPerf collector for OntapS3 template in your `harvest.yml` config for performance metrics",
+        "content": "This dashboard requires ONTAP 9.7+. One action is required to use this dashboard: <br>1. On Harvest, enable the Rest collector for OntapS3 template in your `harvest.yml` config for configuration metrics",
         "mode": "markdown"
       },
       "pluginVersion": "8.4.11",
@@ -107,7 +107,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 3
       },
       "id": 16,
       "title": "Bucket Drilldown",
@@ -251,7 +251,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 4
       },
       "id": 5,
       "options": {
@@ -327,7 +327,7 @@
           "refId": "F"
         }
       ],
-      "title": "ONTAP S3 report",
+      "title": "Bucket Overview",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -346,7 +346,10 @@
                 "Value #E",
                 "Value #F",
                 "url",
-                "qos_policy_group"
+                "qos_policy_group",
+                "is_protected",
+                "protected_in_cloud",
+                "protected_in_ontap"
               ]
             }
           }
@@ -393,7 +396,10 @@
               "qos_policy_group": "QoS Policy Group",
               "svm": "SVM",
               "volume": "Volume",
-              "url": "Url"
+              "url": "Url",
+              "is_protected": "IsProtected",
+              "protected_in_cloud": "IsProtectedInCloud",
+              "protected_in_ontap": "IsProtectedInOntap"
             }
           }
         }
@@ -454,7 +460,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 13
+        "y": 12
       },
       "id": 127,
       "options": {
@@ -575,7 +581,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 12
       },
       "id": 128,
       "options": {
@@ -746,7 +752,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 23
       },
       "id": 6,
       "options": {
@@ -764,7 +770,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\",permission_type!=\"\"}",
+          "expr": "ontaps3_services_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\",permission_type!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -825,182 +831,6 @@
               "svm": "SVM",
               "user": "User",
               "volume": "Volume"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "You must enable the ZapiPerf collector in your harvest.yml config.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto",
-            "filterable": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "locale"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 32
-      },
-      "id": 17,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.4.11",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "exemplar": false,
-          "expr": "sum(ontaps3_connections{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
-          "exemplar": false,
-          "expr": "sum(ontaps3_connected_connections{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "C"
-        },
-        {
-          "exemplar": false,
-          "expr": "sum(ontaps3_max_connected_connections{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "D"
-        },
-        {
-          "exemplar": false,
-          "expr": "sum(ontaps3_requests_outstanding{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "E"
-        },
-        {
-          "exemplar": false,
-          "expr": "sum(ontaps3_max_requests_outstanding{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "F"
-        },
-        {
-          "exemplar": false,
-          "expr": "sum(ontaps3_requests{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "G"
-        },
-        {
-          "exemplar": false,
-          "expr": "sum(ontaps3_root_user_access{cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (svm)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "H"
-        }
-      ],
-      "title": "Performance Detail",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "cluster",
-                "svm",
-                "Value #B",
-                "Value #C",
-                "Value #D",
-                "Value #E",
-                "Value #F",
-                "Value #G",
-                "Value #H"
-              ]
-            }
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {
-              "cluster": 0,
-              "svm": 1
-            },
-            "renameByName": {
-              "Value #B": "Connections",
-              "Value #C": "Connected Connections",
-              "Value #D": "Max Connected Connections",
-              "Value #E": "Outstanding Requests",
-              "Value #F": "Max Outstanding Requests",
-              "Value #G": "Requests",
-              "Value #H": "Root User Access",
-              "cluster": "Cluster",
-              "svm": "SVM"
             }
           }
         }

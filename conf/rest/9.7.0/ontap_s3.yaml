@@ -31,13 +31,9 @@ export_options:
   instance_keys:
     - bucket
     - svm
-  instance_labels:
     - volume
+  instance_labels:
     - encryption_enabled
-    - permission_type
-    - permissions
-    - user
-    - allowed_resources
     - is_protected
     - protected_in_ontap
     - protected_in_cloud
