@@ -138,6 +138,21 @@ Pollers:
 		addr: a.b.c
 		credentials_file: testdata/secrets.yaml`,
 		},
+
+		{
+			name:       "with cred",
+			pollerName: "test",
+			want:       PollerAuth{Username: "", Password: "", IsCert: true},
+			yaml: `
+Defaults:
+	use_insecure_tls: true
+	prefer_zapi: true
+Pollers:
+	test:
+		addr: a.b.c
+		auth_style: certificate_auth
+`,
+		},
 	}
 
 	for _, tt := range tests {
@@ -173,6 +188,9 @@ Pollers:
 			}
 			if tt.want.Password != poller.Password {
 				t.Errorf("poller got password=[%s], want password=[%s]", poller.Password, tt.want.Password)
+			}
+			if tt.want.IsCert != got.IsCert {
+				t.Errorf("got IsCert=[%t], want IsCert=[%t]", got.IsCert, tt.want.IsCert)
 			}
 		})
 	}
