@@ -74,7 +74,7 @@ func (suite *DashboardJsonTestSuite) SetupSuite() {
 func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	var isZapiFailed = false
 	var isRestFailed = false
-	var perfErrorInfoList []ResultInfo
+	var restErrorInfoList []ResultInfo
 	var zapiErrorInfoList []ResultInfo
 	for _, filePath := range fileSet {
 		if IsValidFile(filePath) {
@@ -133,7 +133,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 						false,
 						"No data found in the database",
 					}
-					perfErrorInfoList = append(perfErrorInfoList, errorInfo)
+					restErrorInfoList = append(restErrorInfoList, errorInfo)
 				}
 
 				//Test for Zapi
@@ -193,7 +193,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		}
 	}
 
-	for _, resultInfo := range perfErrorInfoList {
+	for _, resultInfo := range restErrorInfoList {
 		if !resultInfo.result {
 			isRestFailed = true
 			fmt.Println(usg.Get.Cross, fmt.Sprintf(" Rest Collector ERROR: %s for expr [%s]", resultInfo.reason,
@@ -202,7 +202,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	}
 
 	if isRestFailed {
-		assert.Fail(suite.T(), fmt.Sprintf("Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(perfErrorInfoList)))
+		assert.Fail(suite.T(), fmt.Sprintf("Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(restErrorInfoList)))
 	} else {
 		log.Info().Msg("Rest Validation looks good!!")
 	}
