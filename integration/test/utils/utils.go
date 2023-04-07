@@ -111,7 +111,31 @@ func FileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func UseCertFile() {
+func RemoveDir(dir string) error {
+	d, err := os.Open(dir)
+	if err != nil {
+		return err
+	}
+	defer func(d *os.File) {
+		err := d.Close()
+		if err != nil {
+
+		}
+	}(d)
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		err = os.RemoveAll(filepath.Join(dir, name))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func UseCertFile(harvestHome string) {
 	harvestFile := "harvest.yml"
 	harvestCertFile := "harvest_cert.yml"
 	RemoveSafely(harvestFile)
@@ -119,17 +143,16 @@ func UseCertFile() {
 	if err != nil {
 		PanicIfNotNil(err)
 	}
-	Run("certer")
-	Run(
-		"curl",
-		"-vv",
-		"--insecure",
-		"--cert",
-		"/opt/harvest/cert/u2.crt",
-		"--key",
-		"/opt/harvest/cert/u2.key",
-		"'https://10.193.48.11/api/cluster?fields=version'",
-	)
+	Run("certer", "-ip", "10.193.48.11")
+
+	path := harvestHome + "/cert"
+	log.Info().Str("path", path).Msg("Copy certificate files")
+	if FileExists(path) {
+		err = RemoveDir(path)
+		PanicIfNotNil(err)
+	}
+	Run("mkdir", "-p", path)
+	Run("cp", "-R", GetConfigDir()+"/cert", harvestHome)
 }
 
 func RemoveSafely(filename string) bool {
