@@ -253,7 +253,7 @@ func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 	// check if this is the first request
 	if e.lastFilterTime == 0 {
 		// if first request fetch cluster time
-		dataDuration, err := GetDataInterval(e.GetParams(), defaultDataPollDuration)
+		dataDuration, err := collectors.GetDataInterval(e.GetParams(), defaultDataPollDuration)
 		if err != nil {
 			e.Logger.Warn().Err(err).
 				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
@@ -459,25 +459,6 @@ func (e *Ems) getHref(names []string, filter []string) string {
 
 	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
 	return href
-}
-
-// GetDataInterval fetch pollData interval
-func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
-	var dataIntervalStr string
-	var durationVal time.Duration
-	var err error
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err = time.ParseDuration(dataIntervalStr); err == nil {
-				return durationVal, nil
-			}
-			return defaultInterval, err
-		}
-	}
-	return defaultInterval, nil
 }
 
 func parseProperties(instanceData gjson.Result, property string) gjson.Result {

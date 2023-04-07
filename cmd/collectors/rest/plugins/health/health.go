@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"strings"
@@ -693,7 +692,7 @@ func (h *Health) getTimeStampFilter(clusterTime time.Time) string {
 	// check if this is the first request
 	if h.lastFilterTime == 0 {
 		// if first request fetch cluster time
-		dataDuration, err := GetDataInterval(h.ParentParams, defaultDataPollDuration)
+		dataDuration, err := collectors.GetDataInterval(h.ParentParams, defaultDataPollDuration)
 		if err != nil {
 			h.Logger.Warn().Err(err).
 				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
@@ -702,25 +701,6 @@ func (h *Health) getTimeStampFilter(clusterTime time.Time) string {
 		fromTime = clusterTime.Add(-dataDuration).Unix()
 	}
 	return fmt.Sprintf("time=>=%d", fromTime)
-}
-
-// GetDataInterval fetch pollData interval
-func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
-	var dataIntervalStr string
-	var durationVal time.Duration
-	var err error
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err = time.ParseDuration(dataIntervalStr); err == nil {
-				return durationVal, nil
-			}
-			return defaultInterval, err
-		}
-	}
-	return defaultInterval, nil
 }
 
 func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) {

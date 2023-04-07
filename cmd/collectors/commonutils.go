@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strings"
 	"time"
@@ -60,6 +61,25 @@ func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.L
 
 	logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
 	return clusterTime, nil
+}
+
+// GetDataInterval fetch pollData interval
+func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
+	var dataIntervalStr string
+	var durationVal time.Duration
+	var err error
+	schedule := param.GetChildS("schedule")
+	if schedule != nil {
+		dataInterval := schedule.GetChildS("data")
+		if dataInterval != nil {
+			dataIntervalStr = dataInterval.GetContentS()
+			if durationVal, err = time.ParseDuration(dataIntervalStr); err == nil {
+				return durationVal, nil
+			}
+			return defaultInterval, err
+		}
+	}
+	return defaultInterval, nil
 }
 
 func UpdateProtectedFields(instance *matrix.Instance) {
