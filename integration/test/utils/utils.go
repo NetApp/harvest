@@ -111,30 +111,6 @@ func FileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func RemoveDir(dir string) error {
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer func(d *os.File) {
-		err := d.Close()
-		if err != nil {
-
-		}
-	}(d)
-	names, err := d.Readdirnames(-1)
-	if err != nil {
-		return err
-	}
-	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dir, name))
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func UseCertFile() {
 	harvestFile := "harvest.yml"
 	harvestCertFile := "harvest_cert.yml"
@@ -144,6 +120,15 @@ func UseCertFile() {
 		PanicIfNotNil(err)
 	}
 	Run("certer")
+	Run(
+		"curl",
+		"--insecure",
+		"--cert",
+		"/opt/harvest/cert/u2.crt",
+		"--key",
+		"/opt/harvest/cert/u2.key",
+		"'https://10.193.48.11/api/cluster?fields=version'",
+	)
 }
 
 func RemoveSafely(filename string) bool {
