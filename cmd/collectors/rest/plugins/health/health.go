@@ -279,7 +279,7 @@ func (h *Health) collectNetworkInterfacesAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	records, err := h.getLIFs()
+	records, err := h.getNonHomeLIFs()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.Logger.Debug().Err(err).Msg("API not found")
@@ -624,7 +624,7 @@ func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 	return result, nil
 }
 
-func (h *Health) getLIFs() ([]gjson.Result, error) {
+func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
