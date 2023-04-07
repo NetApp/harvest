@@ -139,7 +139,7 @@ func UseCertFile(harvestHome string) {
 	// Copy harvest_cert_2023.yml from /u/ to local
 	harvestCertFile := "harvest_cert_2023.yml"
 	harvestFile := "harvest.yml"
-	Run("cp", "-p", GetConfigDir()+"/"+harvestCertFile, harvestHome, harvestFile)
+	Run("cp", "-p", GetConfigDir()+"/"+harvestCertFile, harvestHome+"/"+harvestFile)
 	Run("certer", "-ip", "10.193.48.11")
 
 	path := harvestHome + "/cert"
