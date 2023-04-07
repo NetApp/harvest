@@ -1,5 +1,7 @@
 FROM golang:latest as builder
 
+SHELL ["/bin/bash", "-c"]
+
 ARG INSTALL_DIR=/opt/harvest
 ARG BUILD_DIR=/opt/home
 ARG VERSION=2.0
