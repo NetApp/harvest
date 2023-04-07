@@ -136,19 +136,16 @@ func RemoveDir(dir string) error {
 }
 
 func UseCertFile(harvestHome string) {
-	harvestFile := "harvest.yml"
+	// Copy harvest_cert_2023.yml from /u/ to local
 	harvestCertFile := "harvest_cert_2023.yml"
-	RemoveSafely(harvestFile)
-	err := CopyFile(harvestCertFile, harvestFile)
-	if err != nil {
-		PanicIfNotNil(err)
-	}
+	harvestFile := "harvest.yml"
+	Run("cp", "-p", GetConfigDir()+"/"+harvestCertFile, harvestHome, harvestFile)
 	Run("certer", "-ip", "10.193.48.11")
 
 	path := harvestHome + "/cert"
 	log.Info().Str("path", path).Msg("Copy certificate files")
 	if FileExists(path) {
-		err = RemoveDir(path)
+		err := RemoveDir(path)
 		PanicIfNotNil(err)
 	}
 	Run("mkdir", "-p", path)
