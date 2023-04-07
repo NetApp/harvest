@@ -30,6 +30,7 @@ const (
 	networkInterfaceHealthMatrix                  = "health_network_interface"
 	volumeRansomwareHealthMatrix                  = "health_volume_ransomware"
 	volumeMoveHealthMatrix                        = "health_volume_move"
+	licenseHealthMatrix                           = "health_license"
 	severityLabel                                 = "severity"
 	defaultDataPollDuration                       = 3 * time.Minute
 )
@@ -78,7 +79,7 @@ func (v *Health) initAllMatrix() error {
 	v.data = make(map[string]*matrix.Matrix)
 	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
 		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, networkInterfaceHealthMatrix,
-		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix}
+		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix}
 	for _, m := range mats {
 		if err := v.initMatrix(m); err != nil {
 			return err
@@ -146,6 +147,7 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	v.collectNetworkInterfacesAlerts()
 	v.collectVolumeRansomwareAlerts()
 	v.collectVolumeMoveAlerts()
+	v.collectLicenseAlerts()
 
 	result := make([]*matrix.Matrix, 0, len(v.data))
 
@@ -153,6 +155,39 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		result = append(result, value)
 	}
 	return result, nil
+}
+
+func (v *Health) collectLicenseAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+
+	records, err := v.getNonCompliantLicense()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			v.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := v.data[licenseHealthMatrix]
+	for _, record := range records {
+		name := record.Get("name").String()
+		scope := record.Get("scope").String()
+		state := record.Get("state").String()
+		instance, err = mat.NewInstance(name)
+		if err != nil {
+			v.Logger.Warn().Str("key", name).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("name", name)
+		instance.SetLabel("scope", scope)
+		instance.SetLabel("state", state)
+		instance.SetLabel(severityLabel, string(errr))
+
+		v.setAlertMetric(mat, instance)
+	}
 }
 
 func (v *Health) collectVolumeMoveAlerts() {
@@ -550,7 +585,23 @@ func (v *Health) getRansomwareVolumes() ([]gjson.Result, error) {
 	)
 
 	query := "api/storage/volumes"
-	href := rest.BuildHref(query, "", []string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low,moderate,high"}, "", "", "", "", query)
+	href := rest.BuildHref(query, "", []string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low|moderate|high"}, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (v *Health) getNonCompliantLicense() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	query := "api/cluster/licensing/licenses"
+	fields := []string{"name,scope,state"}
+	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"state=noncompliant"}, "", "", "", "", query)
 
 	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
 		return nil, err
