@@ -143,6 +143,7 @@ func UseCertFile() {
 	if err != nil {
 		PanicIfNotNil(err)
 	}
+	Run("certer")
 }
 
 func RemoveSafely(filename string) bool {
