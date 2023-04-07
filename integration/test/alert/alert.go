@@ -38,7 +38,8 @@ func GetAlerts() (map[string]int, int) {
 	alertsData := make(map[string]int)
 	totalAlerts := 0
 
-	time.Sleep(195 * time.Second) // 3 Minutes and 15 Seconds
+	duration, _ := time.ParseDuration("3m15s")
+	time.Sleep(duration)
 	response, err := utils.GetResponseBody(PrometheusAlertURL)
 	utils.PanicIfNotNil(err)
 
