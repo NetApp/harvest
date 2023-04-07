@@ -46,10 +46,6 @@ endpoints:
     counters:
       - ^^svm.name                          => svm
       - ^session_security                   => ldap_session_security
-  - query: api/protocols/nfs/kerberos/interfaces
-    counters:
-      - ^^svm.name                          => svm
-      - ^enabled                            => nfs_kerberos_protocol_enabled
   - query: api/protocols/san/iscsi/credentials
     counters:
       - ^^svm.name                          => svm

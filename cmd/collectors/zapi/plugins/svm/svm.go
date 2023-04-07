@@ -655,7 +655,15 @@ func (my *SVM) GetKerberosConfig() (map[string]string, error) {
 	for _, kerberosConfig := range result {
 		enable := kerberosConfig.GetChildContentS("is-kerberos-enabled")
 		svmName := kerberosConfig.GetChildContentS("vserver")
-		vserverKerberosMap[svmName] = enable
+		if _, ok := vserverKerberosMap[svmName]; !ok {
+			vserverKerberosMap[svmName] = enable
+		} else {
+			// If any interface on the svm has kerberos on, then only set to true
+			if enable == "true" {
+				vserverKerberosMap[svmName] = enable
+			}
+		}
+
 	}
 	return vserverKerberosMap, nil
 }
