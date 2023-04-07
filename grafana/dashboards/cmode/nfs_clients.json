@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680597124692,
+  "iteration": 1680864207753,
   "links": [
     {
       "asDropdown": true,
@@ -228,7 +228,7 @@
       "options": {
         "legend": {
           "displayMode": "table",
-          "placement": "right",
+          "placement": "bottom",
           "values": [
             "value"
           ]
