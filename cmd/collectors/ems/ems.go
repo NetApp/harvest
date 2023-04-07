@@ -24,6 +24,7 @@ const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
 const Hyphen = "-"
+const MaxAllowedTimeDrift = 10 * time.Second
 
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -249,10 +250,10 @@ func (e *Ems) InitCache() error {
 
 func (e *Ems) getClusterTime() (time.Time, error) {
 	var (
-		err            error
-		records        []gjson.Result
-		clusterTime    time.Time
-		dateOfEachNode []string
+		err         error
+		records     []gjson.Result
+		clusterTime time.Time
+		timeOfNodes []int64
 	)
 
 	query := "private/cli/cluster/date"
@@ -276,12 +277,16 @@ func (e *Ems) getClusterTime() (time.Time, error) {
 				continue
 			}
 			clusterTime = t
-			dateOfEachNode = append(dateOfEachNode, currentClusterDate.String())
+			timeOfNodes = append(timeOfNodes, t.UnixNano())
 		}
 	}
 
-	if strings.Count(strings.Join(dateOfEachNode, ","), dateOfEachNode[0]) != len(dateOfEachNode) {
-		e.Logger.Warn().Msg("Time drift exist among the nodes")
+	for _, timeOfEachNode := range timeOfNodes {
+		timeDrift := time.Duration(timeOfEachNode - timeOfNodes[0]).Abs()
+		if timeDrift >= MaxAllowedTimeDrift {
+			e.Logger.Warn().Float64("timedrift(in sec)", timeDrift.Seconds()).Msg("Time drift exist among the nodes")
+			break
+		}
 	}
 
 	e.Logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
