@@ -122,6 +122,7 @@ func UseCertFile() {
 	Run("certer")
 	Run(
 		"curl",
+		"-vv",
 		"--insecure",
 		"--cert",
 		"/opt/harvest/cert/u2.crt",

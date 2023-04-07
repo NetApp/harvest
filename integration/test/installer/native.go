@@ -38,6 +38,8 @@ func (n *Native) Install() bool {
 		panic(err)
 	}
 	harvestObj.Start()
+	log.Println("Run again for certificate priming")
+	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	return status
 }
