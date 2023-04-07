@@ -37,7 +37,7 @@ pipeline {
         jfrogImagePrefix = "netappdownloads.jfrog.io/oss-docker-harvest-production/harvest"
         jfrogRepo = "netappdownloads.jfrog.io"
         COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
-        GO_VERSION = 1.20
+        GO_VERSION = "1.20.3"
     }
 
     stages {
@@ -56,7 +56,7 @@ pipeline {
         stage('Setup GO') {
             steps {
                 sh '''
-                wget -q -O go.tar.gz "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
+                wget -q -O go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
             }
@@ -132,7 +132,7 @@ pipeline {
                     sh '''
                     targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                     docker login
-                    docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
+                    docker build -f container/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
                     docker save -o ${targetLocation}/docker_harvest.tar ${imageName}:latest
                     '''
                   }
@@ -221,7 +221,7 @@ pipeline {
                git push https://$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
            fi
            /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
-           docker build -f docker/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:nightly -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
+           docker build -f container/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:nightly -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
            echo $GIT_TOKEN | docker login ghcr.io -u $GIT_USERNAME --password-stdin
            docker push ${ghcrImage}:nightly
             '''

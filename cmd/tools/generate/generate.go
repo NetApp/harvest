@@ -182,7 +182,7 @@ func generateDocker(path string, kind int) {
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
 	}
 
-	t, err := template.New("docker-compose.tmpl").ParseFiles("docker/onePollerPerContainer/docker-compose.tmpl")
+	t, err := template.New("docker-compose.tmpl").ParseFiles("container/onePollerPerContainer/docker-compose.tmpl")
 	if err != nil {
 		panic(err)
 	}
@@ -404,7 +404,7 @@ func init() {
 
 	dFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
-	fFlags.StringVar(&opts.filesdPath, "filesdpath", "docker/prometheus/harvest_targets.yml",
+	fFlags.StringVar(&opts.filesdPath, "filesdpath", "container/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")
 	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
 	fFlags.IntVar(&opts.grafanaPort, "grafanaPort", 3000, "Grafana Port")

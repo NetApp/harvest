@@ -511,7 +511,7 @@
           "custom": {
             "align": "left",
             "displayMode": "auto",
-            "filterable": false
+            "filterable": true
           },
           "mappings": [],
           "thresholds": {
@@ -529,13 +529,9 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value #A"
+              "options": "Status"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "status"
-              },
               {
                 "id": "mappings",
                 "value": [
@@ -584,13 +580,9 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value #B"
+              "options": "Volumes"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "volumes"
-              },
               {
                 "id": "unit",
                 "value": "locale"
@@ -600,13 +592,9 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value #C"
+              "options": "Disks"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "disks"
-              },
               {
                 "id": "unit",
                 "value": "short"
@@ -616,13 +604,9 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value #D"
+              "options": "Space"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "space"
-              },
               {
                 "id": "unit",
                 "value": "bytes"
@@ -632,13 +616,9 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value #E"
+              "options": "Used"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "used"
-              },
               {
                 "id": "unit",
                 "value": "bytes"
@@ -648,13 +628,9 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value #F"
+              "options": "Used %"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "used %"
-              },
               {
                 "id": "unit",
                 "value": "percent"
@@ -700,7 +676,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "datacenter"
+              "options": "Datacenter"
             },
             "properties": [
               {
@@ -712,7 +688,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "node"
+              "options": "Node"
             },
             "properties": [
               {
@@ -724,7 +700,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "cluster"
+              "options": "Cluster"
             },
             "properties": [
               {
@@ -736,7 +712,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "volumes"
+              "options": "Volumes"
             },
             "properties": [
               {
@@ -748,7 +724,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "disks"
+              "options": "Disks"
             },
             "properties": [
               {
@@ -760,7 +736,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "space"
+              "options": "Space"
             },
             "properties": [
               {
@@ -772,7 +748,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "used"
+              "options": "Used"
             },
             "properties": [
               {
@@ -784,7 +760,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "used %"
+              "options": "Used %"
             },
             "properties": [
               {
@@ -816,6 +792,18 @@
                     "type": "value"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Available"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
               }
             ]
           }
@@ -897,7 +885,18 @@
           "hide": false,
           "interval": "",
           "legendFormat": "",
-          "refId": "G"
+          "refId": "G",
+          "instant": true
+        },
+        {
+          "expr": "aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "legendFormat": "",
+          "interval": "",
+          "exemplar": false,
+          "refId": "H",
+          "hide": false,
+          "format": "table",
+          "instant": true
         }
       ],
       "timeFrom": null,
@@ -937,7 +936,8 @@
             "excludeByName": {
               "Value #G": true,
               "state": true,
-              "type": true
+              "type": true,
+              "cloud_stores": true
             },
             "indexByName": {
               "Value #A": 4,
@@ -945,18 +945,30 @@
               "Value #C": 7,
               "Value #D": 8,
               "Value #E": 9,
-              "Value #F": 10,
-              "Value #G": 13,
+              "Value #H": 10,
+              "Value #F": 11,
+              "Value #G": 14,
               "aggr": 3,
               "cluster": 1,
               "datacenter": 0,
               "is_encrypted": 5,
               "node": 2,
-              "state": 11,
-              "type": 12
+              "state": 12,
+              "type": 13
             },
             "renameByName": {
-              "is_encrypted": "Encrypted"
+              "is_encrypted": "Encrypted",
+              "datacenter": "Datacenter",
+              "cluster": "Cluster",
+              "node": "Node",
+              "aggr": "Aggregate",
+              "Value #A": "Status",
+              "Value #B": "Volumes",
+              "Value #C": "Disks",
+              "Value #D": "Space",
+              "Value #E": "Used",
+              "Value #H": "Available",
+              "Value #F": "Used %"
             }
           }
         }

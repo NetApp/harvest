@@ -30,12 +30,12 @@ After Rancher Desktop installs, start it `Cmd + Space` type: Rancher and wait fo
 
 ## Create Harvest Docker image
 
-You only need to [create a new image](https://github.com/NetApp/harvest/tree/main/docker/onePollerPerContainer#building-harvest-docker-image) if you've made changes to Harvest. If you just want to use the latest version of Harvest, skip this step.
+You only need to [create a new image](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer#building-harvest-docker-image) if you've made changes to Harvest. If you just want to use the latest version of Harvest, skip this step.
 
-These are the same steps outline on [Building Harvest Docker Image](https://github.com/NetApp/harvest/tree/main/docker/onePollerPerContainer#building-harvest-docker-image) except we replace `docker build` with `nerdctl` like so:
+These are the same steps outline on [Building Harvest Docker Image](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer#building-harvest-docker-image) except we replace `docker build` with `nerdctl` like so:
 
 ```sh
-nerdctl build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache 
+nerdctl build -f container/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache 
 ```
 
 ## Generate a Harvest compose file
