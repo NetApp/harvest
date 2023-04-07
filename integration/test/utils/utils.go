@@ -137,7 +137,7 @@ func RemoveDir(dir string) error {
 
 func UseCertFile(harvestHome string) {
 	harvestFile := "harvest.yml"
-	harvestCertFile := "harvest_cert.yml"
+	harvestCertFile := "harvest_cert_2023.yml"
 	RemoveSafely(harvestFile)
 	err := CopyFile(harvestCertFile, harvestFile)
 	if err != nil {
