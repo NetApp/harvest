@@ -50,65 +50,65 @@ var metrics = []string{
 	"alerts",
 }
 
-func (v *Health) Init() error {
+func (h *Health) Init() error {
 
 	var err error
 
-	if err = v.InitAbc(); err != nil {
+	if err = h.InitAbc(); err != nil {
 		return err
 	}
 
-	if err = v.initAllMatrix(); err != nil {
+	if err = h.initAllMatrix(); err != nil {
 		return err
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
-		v.Logger.Error().Stack().Err(err).Msg("connecting")
+	if h.client, err = rest.New(conf.ZapiPoller(h.ParentParams), timeout, h.Auth); err != nil {
+		h.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
-	if err = v.client.Init(5); err != nil {
+	if err = h.client.Init(5); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (v *Health) initAllMatrix() error {
-	v.data = make(map[string]*matrix.Matrix)
+func (h *Health) initAllMatrix() error {
+	h.data = make(map[string]*matrix.Matrix)
 	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
 		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, networkInterfaceHealthMatrix,
 		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix}
 	for _, m := range mats {
-		if err := v.initMatrix(m); err != nil {
+		if err := h.initMatrix(m); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (v *Health) initMatrix(name string) error {
-	v.data[name] = matrix.New(v.Parent+name, name, name)
-	for _, v1 := range v.data {
+func (h *Health) initMatrix(name string) error {
+	h.data[name] = matrix.New(h.Parent+name, name, name)
+	for _, v1 := range h.data {
 		v1.SetExportOptions(matrix.DefaultExportOptions())
 	}
 	for _, k := range metrics {
-		err := matrix.CreateMetric(k, v.data[name])
+		err := matrix.CreateMetric(k, h.data[name])
 		if err != nil {
-			v.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+			h.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
 			return err
 		}
 	}
 	return nil
 }
 
-func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
-	data := dataMap[v.Object]
-	clusterVersion := v.client.Cluster().GetVersion()
+func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[h.Object]
+	clusterVersion := h.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
-		v.Logger.Error().Err(err).
+		h.Logger.Error().Err(err).
 			Str("version", clusterVersion).
 			Msg("Failed to parse version")
 		return nil, nil
@@ -116,7 +116,7 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	version96 := "9.6"
 	version96After, err := goversion.NewVersion(version96)
 	if err != nil {
-		v.Logger.Error().Err(err).
+		h.Logger.Error().Err(err).
 			Str("version", version96).
 			Msg("Failed to parse version")
 		return nil, nil
@@ -128,57 +128,57 @@ func (v *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	// Purge and reset data
 	// remove all metrics as analytics label may change over time
-	err = v.initAllMatrix()
+	err = h.initAllMatrix()
 	if err != nil {
-		v.Logger.Warn().Err(err).Msg("error while init matrix")
+		h.Logger.Warn().Err(err).Msg("error while init matrix")
 		return nil, err
 	}
-	for k := range v.data {
+	for k := range h.data {
 		// Set all global labels if already not exist
-		v.data[k].SetGlobalLabels(data.GetGlobalLabels())
+		h.data[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
-	v.collectDiskAlerts()
-	v.collectShelfAlerts()
-	v.collectSupportAlerts()
-	v.collectNodeAlerts()
-	v.collectNetworkEthernetPortAlerts()
-	v.collectNetworkFCPortAlerts()
-	v.collectNetworkInterfacesAlerts()
-	v.collectVolumeRansomwareAlerts()
-	v.collectVolumeMoveAlerts()
-	v.collectLicenseAlerts()
+	h.collectDiskAlerts()
+	h.collectShelfAlerts()
+	h.collectSupportAlerts()
+	h.collectNodeAlerts()
+	h.collectNetworkEthernetPortAlerts()
+	h.collectNetworkFCPortAlerts()
+	h.collectNetworkInterfacesAlerts()
+	h.collectVolumeRansomwareAlerts()
+	h.collectVolumeMoveAlerts()
+	h.collectLicenseAlerts()
 
-	result := make([]*matrix.Matrix, 0, len(v.data))
+	result := make([]*matrix.Matrix, 0, len(h.data))
 
-	for _, value := range v.data {
+	for _, value := range h.data {
 		result = append(result, value)
 	}
 	return result, nil
 }
 
-func (v *Health) collectLicenseAlerts() {
+func (h *Health) collectLicenseAlerts() {
 	var (
 		instance *matrix.Instance
 	)
 
-	records, err := v.getNonCompliantLicense()
+	records, err := h.getNonCompliantLicense()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[licenseHealthMatrix]
+	mat := h.data[licenseHealthMatrix]
 	for _, record := range records {
 		name := record.Get("name").String()
 		scope := record.Get("scope").String()
 		state := record.Get("state").String()
 		instance, err = mat.NewInstance(name)
 		if err != nil {
-			v.Logger.Warn().Str("key", name).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", name).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("name", name)
@@ -186,25 +186,25 @@ func (v *Health) collectLicenseAlerts() {
 		instance.SetLabel("state", state)
 		instance.SetLabel(severityLabel, string(errr))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) collectVolumeMoveAlerts() {
+func (h *Health) collectVolumeMoveAlerts() {
 	var (
 		instance *matrix.Instance
 	)
 
-	records, err := v.getMoveFailedVolumes()
+	records, err := h.getMoveFailedVolumes()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[volumeMoveHealthMatrix]
+	mat := h.data[volumeMoveHealthMatrix]
 	for _, record := range records {
 		uuid := record.Get("uuid").String()
 		volume := record.Get("name").String()
@@ -212,7 +212,7 @@ func (v *Health) collectVolumeMoveAlerts() {
 		movementState := record.Get("movement.state").String()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
-			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("movement_state", movementState)
@@ -220,18 +220,18 @@ func (v *Health) collectVolumeMoveAlerts() {
 		instance.SetLabel("volume", volume)
 		instance.SetLabel(severityLabel, string(warning))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) collectVolumeRansomwareAlerts() {
+func (h *Health) collectVolumeRansomwareAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	clusterVersion := v.client.Cluster().GetVersion()
+	clusterVersion := h.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
-		v.Logger.Error().Err(err).
+		h.Logger.Error().Err(err).
 			Str("version", clusterVersion).
 			Msg("Failed to parse version")
 		return
@@ -239,7 +239,7 @@ func (v *Health) collectVolumeRansomwareAlerts() {
 	version910 := "9.10"
 	version910After, err := goversion.NewVersion(version910)
 	if err != nil {
-		v.Logger.Error().Err(err).
+		h.Logger.Error().Err(err).
 			Str("version", version910).
 			Msg("Failed to parse version")
 		return
@@ -248,23 +248,23 @@ func (v *Health) collectVolumeRansomwareAlerts() {
 	if ontapVersion.LessThan(version910After) {
 		return
 	}
-	records, err := v.getRansomwareVolumes()
+	records, err := h.getRansomwareVolumes()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[volumeRansomwareHealthMatrix]
+	mat := h.data[volumeRansomwareHealthMatrix]
 	for _, record := range records {
 		uuid := record.Get("uuid").String()
 		volume := record.Get("name").String()
 		antiRansomwareAttackProbability := record.Get("anti_ransomware.attack_probability").String()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
-			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("anti_ransomware_attack_probability", antiRansomwareAttackProbability)
@@ -272,55 +272,55 @@ func (v *Health) collectVolumeRansomwareAlerts() {
 		instance.SetLabel("volume", volume)
 		instance.SetLabel(severityLabel, string(errr))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) collectNetworkInterfacesAlerts() {
+func (h *Health) collectNetworkInterfacesAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	records, err := v.getLIFs()
+	records, err := h.getLIFs()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[networkInterfaceHealthMatrix]
+	mat := h.data[networkInterfaceHealthMatrix]
 	for _, record := range records {
 		uuid := record.Get("uuid").String()
 		lif := record.Get("name").String()
 		isHome := record.Get("location.is_home").String()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
-			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("isHome", isHome)
 		instance.SetLabel("lif", lif)
 		instance.SetLabel(severityLabel, string(warning))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) collectNetworkFCPortAlerts() {
+func (h *Health) collectNetworkFCPortAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	records, err := v.getFCPorts()
+	records, err := h.getFCPorts()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[networkFCPortHealthMatrix]
+	mat := h.data[networkFCPortHealthMatrix]
 	for _, record := range records {
 		uuid := record.Get("uuid").String()
 		nodeName := record.Get("node.name").String()
@@ -328,7 +328,7 @@ func (v *Health) collectNetworkFCPortAlerts() {
 		state := record.Get("state").String()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
-			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("node", nodeName)
@@ -336,24 +336,24 @@ func (v *Health) collectNetworkFCPortAlerts() {
 		instance.SetLabel("port", port)
 		instance.SetLabel(severityLabel, string(errr))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) collectNetworkEthernetPortAlerts() {
+func (h *Health) collectNetworkEthernetPortAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	records, err := v.getEthernetPorts()
+	records, err := h.getEthernetPorts()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[networkEthernetPortHealthMatrix]
+	mat := h.data[networkEthernetPortHealthMatrix]
 	for _, record := range records {
 		uuid := record.Get("uuid").String()
 		port := record.Get("name").String()
@@ -362,7 +362,7 @@ func (v *Health) collectNetworkEthernetPortAlerts() {
 		state := record.Get("state").String()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
-			v.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("node", nodeName)
@@ -371,54 +371,54 @@ func (v *Health) collectNetworkEthernetPortAlerts() {
 		instance.SetLabel("type", portType)
 		instance.SetLabel(severityLabel, string(errr))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) collectNodeAlerts() {
+func (h *Health) collectNodeAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	records, err := v.getNodes()
+	records, err := h.getNodes()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[nodeHealthMatrix]
+	mat := h.data[nodeHealthMatrix]
 	for _, record := range records {
 		nodeName := record.Get("node").String()
 
 		instance, err = mat.NewInstance(nodeName)
 		if err != nil {
-			v.Logger.Warn().Str("key", nodeName).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", nodeName).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("node", nodeName)
 		instance.SetLabel("healthy", "false")
 		instance.SetLabel(severityLabel, string(errr))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) collectShelfAlerts() {
+func (h *Health) collectShelfAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	records, err := v.getShelves()
+	records, err := h.getShelves()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[shelfHealthMatrix]
+	mat := h.data[shelfHealthMatrix]
 	for _, record := range records {
 		shelf := record.Get("shelf").String()
 		errorType := record.Get("error_type").String()
@@ -429,7 +429,7 @@ func (v *Health) collectShelfAlerts() {
 		if errorSeverity == "error" || errorSeverity == "critical" || errorSeverity == "warning" {
 			instance, err = mat.NewInstance(shelf)
 			if err != nil {
-				v.Logger.Warn().Str("key", shelf).Msg("error while creating instance")
+				h.Logger.Warn().Str("key", shelf).Msg("error while creating instance")
 				continue
 			}
 			instance.SetLabel("shelf", shelf)
@@ -441,35 +441,35 @@ func (v *Health) collectShelfAlerts() {
 				instance.SetLabel(severityLabel, string(warning))
 			}
 
-			v.setAlertMetric(mat, instance)
+			h.setAlertMetric(mat, instance)
 		}
 	}
 }
 
-func (v *Health) collectSupportAlerts() {
+func (h *Health) collectSupportAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	clusterTime, err := collectors.GetClusterTime(v.client, "", v.Logger)
+	clusterTime, err := collectors.GetClusterTime(h.client, "", h.Logger)
 	if err != nil {
-		v.Logger.Error().Err(err).Msg("Failed to collect cluster time")
+		h.Logger.Error().Err(err).Msg("Failed to collect cluster time")
 		return
 	}
 	toTime := clusterTime.Unix()
-	timeFilter := v.getTimeStampFilter(clusterTime)
+	timeFilter := h.getTimeStampFilter(clusterTime)
 	addFilter := []string{"suppress=false"}
 	filter := append(addFilter, timeFilter)
 
-	records, err := v.getSupportAlerts(filter)
+	records, err := h.getSupportAlerts(filter)
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[supportHealthMatrix]
+	mat := h.data[supportHealthMatrix]
 	for index, record := range records {
 		nodeName := record.Get("node.name").String()
 		monitor := record.Get("monitor").String()
@@ -479,7 +479,7 @@ func (v *Health) collectSupportAlerts() {
 		correctiveAction := record.Get("corrective_action.message").String()
 		instance, err = mat.NewInstance(strconv.Itoa(index))
 		if err != nil {
-			v.Logger.Warn().Int("key", index).Msg("error while creating instance")
+			h.Logger.Warn().Int("key", index).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("node", nodeName)
@@ -490,32 +490,32 @@ func (v *Health) collectSupportAlerts() {
 		instance.SetLabel("correctiveAction", correctiveAction)
 		instance.SetLabel(severityLabel, string(warning))
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 	// update lastFilterTime to current cluster time
-	v.lastFilterTime = toTime
+	h.lastFilterTime = toTime
 }
 
-func (v *Health) collectDiskAlerts() {
+func (h *Health) collectDiskAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	records, err := v.getDisks()
+	records, err := h.getDisks()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			v.Logger.Debug().Err(err).Msg("API not found")
+			h.Logger.Debug().Err(err).Msg("API not found")
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
 		return
 	}
-	mat := v.data[diskHealthMatrix]
+	mat := h.data[diskHealthMatrix]
 	for _, record := range records {
 		name := record.Get("name").String()
 		containerType := record.Get("container_type").String()
 		instance, err = mat.NewInstance(name)
 		if err != nil {
-			v.Logger.Warn().Str("key", name).Msg("error while creating instance")
+			h.Logger.Warn().Str("key", name).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("disk", name)
@@ -526,11 +526,11 @@ func (v *Health) collectDiskAlerts() {
 			instance.SetLabel(severityLabel, string(warning))
 		}
 
-		v.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance)
 	}
 }
 
-func (v *Health) getDisks() ([]gjson.Result, error) {
+func (h *Health) getDisks() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -540,13 +540,13 @@ func (v *Health) getDisks() ([]gjson.Result, error) {
 	query := "api/storage/disks"
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"container_type=broken|unassigned"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getShelves() ([]gjson.Result, error) {
+func (h *Health) getShelves() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -556,13 +556,13 @@ func (v *Health) getShelves() ([]gjson.Result, error) {
 	query := "api/private/cli/storage/shelf"
 	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getNodes() ([]gjson.Result, error) {
+func (h *Health) getNodes() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -572,13 +572,13 @@ func (v *Health) getNodes() ([]gjson.Result, error) {
 	query := "api/private/cli/node"
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"health=false"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getRansomwareVolumes() ([]gjson.Result, error) {
+func (h *Health) getRansomwareVolumes() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -587,13 +587,13 @@ func (v *Health) getRansomwareVolumes() ([]gjson.Result, error) {
 	query := "api/storage/volumes"
 	href := rest.BuildHref(query, "", []string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low|moderate|high"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getNonCompliantLicense() ([]gjson.Result, error) {
+func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -603,13 +603,13 @@ func (v *Health) getNonCompliantLicense() ([]gjson.Result, error) {
 	fields := []string{"name,scope,state"}
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"state=noncompliant"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
+func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -619,13 +619,13 @@ func (v *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 	fields := []string{"uuid,name,movement.state,svm"}
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"movement.state=cutover_wait|failed|cutover_pending"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getLIFs() ([]gjson.Result, error) {
+func (h *Health) getLIFs() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -634,13 +634,13 @@ func (v *Health) getLIFs() ([]gjson.Result, error) {
 	query := "api/network/ip/interfaces"
 	href := rest.BuildHref(query, "", []string{"location.is_home=false"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getFCPorts() ([]gjson.Result, error) {
+func (h *Health) getFCPorts() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -650,13 +650,13 @@ func (v *Health) getFCPorts() ([]gjson.Result, error) {
 	query := "api/network/fc/ports"
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"enabled=true", "state=offlined_by_system"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getEthernetPorts() ([]gjson.Result, error) {
+func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -666,13 +666,13 @@ func (v *Health) getEthernetPorts() ([]gjson.Result, error) {
 	query := "api/network/ethernet/ports"
 	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"enabled=true", "state=down"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (v *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
+func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -680,7 +680,7 @@ func (v *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 	query := "api/private/support/alerts"
 	href := rest.BuildHref(query, "", filter, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
 	}
 
@@ -688,14 +688,14 @@ func (v *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 }
 
 // returns time filter (clustertime - polldata duration)
-func (v *Health) getTimeStampFilter(clusterTime time.Time) string {
-	fromTime := v.lastFilterTime
+func (h *Health) getTimeStampFilter(clusterTime time.Time) string {
+	fromTime := h.lastFilterTime
 	// check if this is the first request
-	if v.lastFilterTime == 0 {
+	if h.lastFilterTime == 0 {
 		// if first request fetch cluster time
-		dataDuration, err := GetDataInterval(v.ParentParams, defaultDataPollDuration)
+		dataDuration, err := GetDataInterval(h.ParentParams, defaultDataPollDuration)
 		if err != nil {
-			v.Logger.Warn().Err(err).
+			h.Logger.Warn().Err(err).
 				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
 				Msg("Failed to parse duration. using default")
 		}
@@ -723,16 +723,16 @@ func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Dura
 	return defaultInterval, nil
 }
 
-func (v *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) {
+func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) {
 	var err error
 	m := mat.GetMetric("alerts")
 	if m == nil {
 		if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-			v.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+			h.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
 			return
 		}
 	}
 	if err = m.SetValueFloat64(instance, 1); err != nil {
-		v.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		h.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
 	}
 }
