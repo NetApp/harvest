@@ -249,9 +249,10 @@ func (e *Ems) InitCache() error {
 
 func (e *Ems) getClusterTime() (time.Time, error) {
 	var (
-		err         error
-		records     []gjson.Result
-		clusterTime time.Time
+		err            error
+		records        []gjson.Result
+		clusterTime    time.Time
+		dateOfEachNode []string
 	)
 
 	query := "private/cli/cluster/date"
@@ -275,8 +276,12 @@ func (e *Ems) getClusterTime() (time.Time, error) {
 				continue
 			}
 			clusterTime = t
-			break
+			dateOfEachNode = append(dateOfEachNode, currentClusterDate.String())
 		}
+	}
+
+	if strings.Count(strings.Join(dateOfEachNode, ","), dateOfEachNode[0]) != len(dateOfEachNode) {
+		e.Logger.Warn().Msg("Time drift exist among the nodes")
 	}
 
 	e.Logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
