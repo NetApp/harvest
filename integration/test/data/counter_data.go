@@ -43,6 +43,7 @@ func GetCounterMap() map[string][]string {
 		"svm_nfs_write_latency_hist_bucket",
 		"smb2_",
 		"health_",
+		"ems_events",
 	}
 	//if docker.IsDockerBasedPoller() || setup.IsMac {
 	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller", "metadata_exporter_count")
