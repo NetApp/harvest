@@ -30,15 +30,7 @@ func (n *Native) Install() bool {
 	unTarOutput := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
 	log.Println(unTarOutput)
 	utils.RemoveSafely(HarvestHome + "/" + harvestFile)
-	log.Println("Copy certificates files into harvest directory")
-	path := HarvestHome + "/certificates"
-	if utils.FileExists(path) {
-		err = utils.RemoveDir(path)
-		utils.PanicIfNotNil(err)
-	}
-
-	utils.Run("mkdir", "-p", path)
-	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
+	utils.UseCertFile(HarvestHome)
 	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
 	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+setup.RestPerfDefaultFile)
 	err = utils.CopyFile(harvestFile, HarvestHome+"/"+harvestFile)

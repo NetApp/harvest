@@ -1,5 +1,4 @@
 //go:build install_native
-// +build install_native
 
 package main
 
@@ -17,7 +16,6 @@ func TestNativeInstall(t *testing.T) {
 	if len(path) == 0 {
 		panic("BUILD_PATH variable is not set.")
 	}
-	utils.UseCertFile()
 	installObject, err := installer.GetInstaller(installer.GRAFANA, "grafana/grafana")
 	if err != nil {
 		log.Println("Unable to initialize installer object for " + installer.GRAFANA)
@@ -29,10 +27,10 @@ func TestNativeInstall(t *testing.T) {
 	token := utils.CreateGrafanaToken()
 	utils.WriteToken(token)
 
-	installObject, error := installer.GetInstaller(installer.NATIVE, path)
-	if error != nil {
+	installObject, err2 := installer.GetInstaller(installer.NATIVE, path)
+	if err2 != nil {
 		log.Println("Unable to initialize installer object")
-		panic(error)
+		panic(err2)
 	}
 	if installObject.Install() {
 		log.Println("Installation is successful..")
