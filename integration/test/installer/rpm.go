@@ -30,15 +30,8 @@ func (r *RPM) Install() bool {
 	log.Println("Installing " + rpmFileName)
 	installOutput := utils.Run("yum", "install", "-y", rpmFileName)
 	log.Println(installOutput)
-	log.Println("Stopping harvest before copying ONTAP certificates")
+	log.Println("Stopping harvest")
 	harvestObj.Stop()
-	log.Println("Copy certificates files into harvest directory")
-	path := HarvestHome + "/certificates"
-	if utils.FileExists(path) {
-		err = utils.RemoveDir(path)
-		utils.PanicIfNotNil(err)
-	}
-	utils.Run("mkdir", "-p", path)
 	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
 	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
 	if copyErr != nil {
