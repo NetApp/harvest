@@ -135,6 +135,23 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 	}
 }
 
+// TestTotals prints the number of unique objects and counters that Harvest collects, excluding EMS.
+func TestTotals(t *testing.T) {
+	totalObject := make(objectMap)
+	var totalCounters int
+
+	visitTemplates(t, func(path string, model TemplateModel) {
+		totalObject[model.Name] = path
+		totalCounters += len(model.metrics)
+
+		for _, ep := range model.Endpoints {
+			totalCounters += len(ep.metrics)
+		}
+	}, allTemplatesButEms...)
+
+	fmt.Printf("%d objects, %d counters\n", len(totalObject), totalCounters)
+}
+
 func readDefaults(dirs []string) (map[string]objectMap, error) {
 	defaults := make(map[string]objectMap)
 
