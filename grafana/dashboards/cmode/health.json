@@ -380,7 +380,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "(count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__interval]) == 1) or vector(0))",
+          "expr": "(count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1) or vector(0))",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -711,7 +711,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__interval]) == 1) by (message)",
+          "expr": "count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1) by (message)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -2912,7 +2912,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__interval]) == 1",
+              "expr": "last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3025,7 +3025,7 @@
           "targets": [
             {
               "exemplar": true,
-              "expr": "last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__interval]) == 1",
+              "expr": "last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range]) == 1",
               "format": "table",
               "instant": true,
               "interval": "",
