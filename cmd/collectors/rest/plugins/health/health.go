@@ -63,7 +63,6 @@ func (h *Health) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if h.client, err = rest.New(conf.ZapiPoller(h.ParentParams), timeout, h.Auth); err != nil {
-		h.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 

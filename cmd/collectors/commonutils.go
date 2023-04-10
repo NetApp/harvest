@@ -11,7 +11,10 @@ import (
 	"time"
 )
 
-const DefaultBatchSize = "500"
+const (
+	DefaultBatchSize    = "500"
+	MaxAllowedTimeDrift = 10 * time.Second
+)
 
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
 	result, err := rest.Fetch(client, href)
@@ -32,6 +35,7 @@ func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.L
 		err         error
 		records     []gjson.Result
 		clusterTime time.Time
+		timeOfNodes []int64
 	)
 
 	query := "private/cli/cluster/date"
@@ -55,6 +59,14 @@ func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.L
 				continue
 			}
 			clusterTime = t
+			timeOfNodes = append(timeOfNodes, t.UnixNano())
+		}
+	}
+
+	for _, timeOfEachNode := range timeOfNodes {
+		timeDrift := time.Duration(timeOfEachNode - timeOfNodes[0]).Abs()
+		if timeDrift >= MaxAllowedTimeDrift {
+			logger.Warn().Float64("timedrift(in sec)", timeDrift.Seconds()).Msg("Time drift exist among the nodes")
 			break
 		}
 	}
