@@ -69,7 +69,7 @@ pipeline {
                         stage('Evaluating Alert Rules') {
                             steps {
                                 sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh allemstest
+                                bash $WORKSPACE/harvest/integration/test/test.sh nonbookendemstest
                                 bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
                                 """
                             }
