@@ -142,7 +142,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Available Size"
+              "options": "Free Size"
             },
             "properties": [
               {
@@ -385,7 +385,7 @@
             "renameByName": {
               "Value #A": "",
               "Value #B": "Size",
-              "Value #C": "Available Size",
+              "Value #C": "Free Size",
               "Value #D": "Used Size",
               "Value #E": "Used %",
               "Value #F": "Object Count",
