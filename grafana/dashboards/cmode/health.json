@@ -212,7 +212,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
           "instant": true,
           "interval": "",
@@ -303,7 +303,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}[24h]) == 1) or vector(0))\n+\n(count(health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
           "instant": true,
           "interval": "",
@@ -379,7 +379,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "(count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1) or vector(0))",
           "instant": true,
           "interval": "",
@@ -445,7 +445,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
           "instant": true,
           "interval": "",
@@ -453,7 +453,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
           "hide": false,
           "instant": true,
@@ -462,7 +462,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
           "hide": false,
           "instant": true,
@@ -471,7 +471,7 @@
           "refId": "D"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
           "hide": false,
           "instant": true,
@@ -480,7 +480,7 @@
           "refId": "E"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
           "hide": false,
           "instant": true,
@@ -578,7 +578,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
           "instant": true,
           "interval": "",
@@ -586,7 +586,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
           "hide": false,
           "instant": true,
@@ -595,7 +595,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}[24h]) == 1) or vector(0))",
           "hide": false,
           "instant": true,
@@ -604,7 +604,7 @@
           "refId": "C"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
           "hide": false,
           "instant": true,
@@ -613,7 +613,7 @@
           "refId": "D"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
           "hide": false,
           "instant": true,
@@ -622,7 +622,7 @@
           "refId": "E"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
           "hide": false,
           "instant": true,
@@ -710,7 +710,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1) by (message)",
           "format": "table",
           "instant": true,
@@ -808,7 +808,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(cluster,node,datacenter) group_left(severity) health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -938,7 +938,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(disk,cluster,datacenter) group_left(severity) health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -1439,7 +1439,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity,error_type,error_text) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -1448,7 +1448,7 @@
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1458,7 +1458,7 @@
               "refId": "B"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1468,7 +1468,7 @@
               "refId": "C"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1478,7 +1478,7 @@
               "refId": "D"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1498,7 +1498,7 @@
               "refId": "K"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1508,7 +1508,7 @@
               "refId": "F"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1528,7 +1528,7 @@
               "refId": "L"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1538,7 +1538,7 @@
               "refId": "H"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1548,7 +1548,7 @@
               "refId": "I"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(shelf,cluster,datacenter) group_left(severity) health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1866,7 +1866,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity,anti_ransomware_attack_probability) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -1876,7 +1876,7 @@
               "refId": "B"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1887,7 +1887,7 @@
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1898,7 +1898,7 @@
               "refId": "C"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter) group_left(severity) health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -2252,7 +2252,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter,svm) group_left(severity,movement_state) health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -2262,7 +2262,7 @@
               "refId": "B"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter,svm) group_left(severity) health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -2273,7 +2273,7 @@
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter,svm) group_left(severity) health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -2284,7 +2284,7 @@
               "refId": "C"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(volume,cluster,datacenter,svm) group_left(severity) health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -2494,7 +2494,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -2617,7 +2617,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -2719,7 +2719,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -2807,7 +2807,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -2911,7 +2911,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1",
               "format": "table",
               "instant": true,
@@ -3024,7 +3024,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range]) == 1",
               "format": "table",
               "instant": true,
