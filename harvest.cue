@@ -16,16 +16,23 @@ label: [string]: string
 	port_range?:      string
 	allow_addrs_regex?: [...string]
 	add_meta_tags?: bool
+	sort_labels?: bool
 }
 
 #Influx: {
 	addr?:    string // one of addr|url
 	url?:     string
 	exporter: "InfluxDB"
-	bucket:   string
-	org:      string
+	bucket?:   string
+	org?:      string
 	token?:   string
 	allow_addrs_regex: [...string]
+}
+
+#CredentialsScript: {
+    path: string
+    schedule?: string
+    timeout?: string
 }
 
 #CollectorDef: {
@@ -35,20 +42,22 @@ label: [string]: string
 Pollers: [Name=_]: #Poller
 
 #Poller: {
-	datacenter?:       string
-	auth_style?:       "basic_auth" | "certificate_auth"
-	ssl_cert?:         string
-	ssl_key?:          string
-	username?:         string
-	password?:         string
-	use_insecure_tls?: bool
-	is_kfs?:           bool
-	addr?:             string
-	log_max_bytes?:    int
-	log_max_files?:    int
-	client_timeout?:   string
-	collectors?:       [...#CollectorDef] | [...string]
+	datacenter?:         string
+	auth_style?:         "basic_auth" | "certificate_auth"
+	ssl_cert?:           string
+	ssl_key?:            string
+	username?:           string
+	password?:           string
+	use_insecure_tls?:   bool
+	is_kfs?:             bool
+	addr?:               string
+	log_max_bytes?:      int
+	log_max_files?:      int
+	client_timeout?:     string
+	collectors?:         [...#CollectorDef] | [...string]
 	exporters: [...string]
 	log: [...string]
 	labels?: [...label]
+	credentials_script?: #CredentialsScript
+	prefer_zapi?:        bool
 }
