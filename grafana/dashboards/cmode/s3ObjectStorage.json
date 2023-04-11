@@ -622,7 +622,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "You must enable the Rest collector in your harvest.yml config.\nIsProtected, ProtectedInCloud and ProtectedInOntap field would be available 9.9+",
+      "description": "You must enable the Rest collector in your harvest.yml config",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -667,84 +667,6 @@
                 ]
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "IsProtected"
-            },
-            "properties": [
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "type": "value",
-                    "options": {
-                      "false": {
-                        "text": "No",
-                        "index": 0
-                      },
-                      "true": {
-                        "text": "Yes",
-                        "index": 1
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ProtectedInCloud"
-            },
-            "properties": [
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "type": "value",
-                    "options": {
-                      "false": {
-                        "text": "No",
-                        "index": 0
-                      },
-                      "true": {
-                        "text": "Yes",
-                        "index": 1
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ProtectedInOntap"
-            },
-            "properties": [
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "type": "value",
-                    "options": {
-                      "false": {
-                        "text": "No",
-                        "index": 0
-                      },
-                      "true": {
-                        "text": "Yes",
-                        "index": 1
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
           }
         ]
       },
@@ -770,7 +692,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "ontaps3_services_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\",permission_type!=\"\"}",
+          "expr": "ontaps3_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\",permission_type!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -786,16 +708,12 @@
           "options": {
             "include": {
               "names": [
-                "allowed_resources",
+                "allowed_resource",
                 "bucket",
                 "cluster",
                 "permission_type",
-                "permissions",
+                "permission",
                 "svm",
-                "volume",
-                "is_protected",
-                "protected_in_cloud",
-                "protected_in_ontap",
                 "user"
               ]
             }
@@ -806,31 +724,23 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
-              "allowed_resources": 7,
-              "bucket": 3,
+              "allowed_resource": 6,
+              "bucket": 2,
               "cluster": 0,
-              "is_protected": 8,
-              "permission_type": 5,
-              "permissions": 6,
-              "protected_in_cloud": 9,
-              "protected_in_ontap": 10,
+              "permission_type": 4,
+              "permission": 5,
               "svm": 1,
-              "user": 4,
-              "volume": 2
+              "user": 3
             },
             "renameByName": {
-              "allowed_resources": "Allowed Resources",
+              "allowed_resource": "Allowed Resource",
               "bucket": "Bucket",
               "cluster": "Cluster",
               "encryption_enabled": "",
-              "is_protected": "IsProtected",
               "permission_type": "Type",
-              "permissions": "Permissions",
-              "protected_in_cloud": "ProtectedInCloud",
-              "protected_in_ontap": "ProtectedInOntap",
+              "permission": "Permission",
               "svm": "SVM",
-              "user": "User",
-              "volume": "Volume"
+              "user": "User"
             }
           }
         }
