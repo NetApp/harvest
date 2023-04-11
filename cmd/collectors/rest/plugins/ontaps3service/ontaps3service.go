@@ -11,17 +11,13 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"strconv"
 	"strings"
 	"time"
 )
 
 type OntapS3Service struct {
 	*plugin.AbstractPlugin
-	data   *matrix.Matrix
 	client *rest.Client
 	query  string
 }
@@ -55,60 +51,22 @@ func (o *OntapS3Service) Init() error {
 	}
 
 	o.query = "api/protocols/s3/services"
-	// new metric would be ontaps3_services_labels
-	metricName := "labels"
-	o.data = matrix.New(".OntapS3", "ontaps3_services", "ontaps3_services")
-
-	metric, err := o.data.NewMetricFloat64(metricName)
-	if err != nil {
-		o.Logger.Error().Err(err).Msg("add metric")
-		return err
-	}
-	o.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
-
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-
-	// apply all instance keys from parent (ontap_s3.yaml) to all ontaps3_services metrics
-	if exportOption := o.ParentParams.GetChildS("export_options"); exportOption != nil {
-		//parent instancekeys would be added in plugin metrics
-		if parentKeys := exportOption.GetChildS("instance_keys"); parentKeys != nil {
-			for _, parentKey := range parentKeys.GetAllChildContentS() {
-				instanceKeys.NewChildS("", parentKey)
-			}
-		}
-	}
-
-	instanceKeys.NewChildS("", "permission_type")
-	instanceKeys.NewChildS("", "permissions")
-	instanceKeys.NewChildS("", "user")
-	instanceKeys.NewChildS("", "allowed_resources")
-
-	o.data.SetExportOptions(exportOptions)
-
 	return nil
 }
 
 func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
-		result            []gjson.Result
-		url               string
-		err               error
-		svmToURLMap       map[string]string
-		bucketToPolicyMap map[string]map[string]string
+		result      []gjson.Result
+		err         error
+		svmToURLMap map[string][]string
+		urlValue    []string
 	)
 
 	// reset svmToS3serverMap map
-	svmToURLMap = make(map[string]string)
+	svmToURLMap = make(map[string][]string)
 	data := dataMap[o.Object]
-	// Purge and reset data
-	o.data.PurgeInstances()
-	o.data.Reset()
 
-	// Set all global labels from Rest.go if already not exist
-	o.data.SetGlobalLabels(data.GetGlobalLabels())
-
-	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port", "buckets"}
+	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port"}
 	href := rest.BuildHref("", strings.Join(fields, ","), nil, "", "", "", "", o.query)
 
 	if result, err = collectors.InvokeRestCall(o.client, href, o.Logger); err != nil {
@@ -128,76 +86,38 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		securePort := ontaps3Service.Get("secure_port").String()
 		port := ontaps3Service.Get("port").String()
 
+		httpsURL := ""
+		httpURL := ""
 		if isHTTPSEnabled {
-			url = "https://" + s3ServerName
+			httpsURL = "https://" + s3ServerName
 			if securePort != "443" {
-				url += ":" + securePort
+				httpsURL += ":" + securePort
 			}
-		} else if isHTTPEnabled {
-			url = "http://" + s3ServerName
-			if port != "80" {
-				url += ":" + port
-			}
+			httpsURL += "/"
 		}
-		url += "/"
+		if isHTTPEnabled {
+			httpURL = "http://" + s3ServerName
+			if port != "80" {
+				httpURL += ":" + port
+			}
+			httpURL += "/"
+		}
 
 		// cache url and svm detail
-		svmToURLMap[svm] = url
-
-		// Handle policy/permissions details
-		if buckets := ontaps3Service.Get("buckets"); buckets.Exists() {
-			for _, bucket := range buckets.Array() {
-				// reset bucketToPolicyMap map
-				bucketToPolicyMap = make(map[string]map[string]string)
-				bucketUUID := bucket.Get("uuid").String()
-				if policy := bucket.Get("policy"); policy.Exists() {
-					if statements := policy.Get("statements"); statements.Exists() {
-						for i, statement := range statements.Array() {
-							policyMap := make(map[string]string)
-							policyMap["permission_type"] = statement.Get("effect").String()
-							policyMap["permissions"] = util.ConvertToString(statement.Get("actions").Array())
-							policyMap["user"] = util.ConvertToString(statement.Get("principals").Array())
-							policyMap["allowed_resources"] = util.ConvertToString(statement.Get("resources").Array())
-							bucketToPolicyMap[bucketUUID+"-"+strconv.Itoa(i)] = policyMap
-						}
-					}
-				}
-
-				if ontapS3Instance := data.GetInstance(bucketUUID); ontapS3Instance != nil {
-					var ontapS3NewInstance *matrix.Instance
-					for bucketKey, policyMap := range bucketToPolicyMap {
-						ontapS3NewKey := bucketKey
-						if ontapS3NewInstance, err = o.data.NewInstance(ontapS3NewKey); err != nil {
-							o.Logger.Error().Err(err).Str("add instance failed for instance key", ontapS3NewKey).Msg("")
-							return nil, err
-						}
-
-						// Add existing labels
-						for k, v := range ontapS3Instance.GetLabels().Map() {
-							ontapS3NewInstance.SetLabel(k, v)
-						}
-
-						// Add policy/permission details
-						for key, value := range policyMap {
-							ontapS3NewInstance.SetLabel(key, value)
-						}
-
-						// Set metric value for instances. For now, only one metric is available
-						for metricName, metric := range o.data.GetMetrics() {
-							if err = metric.SetValueFloat64(ontapS3NewInstance, 1); err != nil {
-								o.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
-							}
-						}
-					}
-				}
-			}
-		}
+		svmToURLMap[svm] = []string{httpsURL, httpURL}
 	}
 
 	for _, ontapS3 := range data.GetInstances() {
+		urlValue = make([]string, 0)
+		for _, url := range svmToURLMap[ontapS3.GetLabel("svm")] {
+			if url != "" {
+				urlValue = append(urlValue, url+ontapS3.GetLabel("bucket"))
+			}
+		}
 		// Update url label in ontaps3_labels, Example: http://s3server/bucket1
-		ontapS3.SetLabel("url", svmToURLMap[ontapS3.GetLabel("svm")]+ontapS3.GetLabel("bucket"))
+		// If http and https both are enabled, then url label in ontaps3_labels, https://s3server/bucket1, http://s3server/bucket1
+		ontapS3.SetLabel("url", strings.Join(urlValue, ","))
 	}
 
-	return []*matrix.Matrix{o.data}, nil
+	return nil, nil
 }

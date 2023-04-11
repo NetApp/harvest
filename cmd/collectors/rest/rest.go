@@ -394,7 +394,6 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return qospolicyadaptive.New(abc)
 	case "OntapS3Service":
 		return ontaps3service.New(abc)
-
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
