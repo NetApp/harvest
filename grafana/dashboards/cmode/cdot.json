@@ -167,7 +167,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, sum by (cluster) (node_cifs_ops{datacenter=~\"$Datacenter\",cluster=~\"$TopCifsOps\"}))",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -257,7 +257,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, sum by (cluster) (node_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$TopNfsOps\"}))",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -347,7 +347,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, sum by (cluster) (volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$TopTotalOps\"}))",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -440,7 +440,7 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, avg by (cluster) (node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$TopAvgCpuUtilization\"}))",
               "format": "time_series",
               "instant": false,
@@ -534,7 +534,7 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, avg by (cluster) (node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$TopCpuUtilization\"}))",
               "format": "time_series",
               "instant": false,
@@ -626,7 +626,7 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, avg(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$TopAvgLatency\"}) by (cluster))",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -1128,7 +1128,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, (100 * sum by (cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"}) /   sum by (cluster, svm) (volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMUsed\"})))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
@@ -1217,7 +1217,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, (100 * volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"} / volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeUsed\"}))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{volume}}",
@@ -1306,7 +1306,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, (100 * aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"} / aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrUsed\"}))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{aggr}}",
@@ -1409,7 +1409,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$TopSVMAvgLatency\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
@@ -1497,7 +1497,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$TopSVMTotalThroughput\"}+svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopSVMTotalThroughput\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
@@ -1585,7 +1585,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$TopSVMTotalIops\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
@@ -1779,7 +1779,7 @@
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})+topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
@@ -1869,7 +1869,7 @@
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeTotalIops\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",

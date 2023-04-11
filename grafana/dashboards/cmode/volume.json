@@ -449,7 +449,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})+topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
@@ -540,7 +540,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources, volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeTotalIOPS\"})",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
@@ -4986,7 +4986,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, volume_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeInodeFilesUsed\"})",
               "hide": false,
               "interval": "",
@@ -5073,7 +5073,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, volume_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeInodeFiles\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5161,7 +5161,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, volume_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeInodeUsedPercent\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",

@@ -188,7 +188,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "hide": false,
           "instant": false,
@@ -377,7 +377,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "(sum(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}) * 100) / sum(volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "interval": "",
           "legendFormat": "",
@@ -434,7 +434,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_analytics_dir_subdir_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=\".\"})",
           "instant": true,
           "interval": "",
@@ -521,7 +521,7 @@
       },
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources,volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "interval": "",
           "legendFormat": "{{svm}}-{{volume}}-{{dir_name}}",
@@ -578,7 +578,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(volume_analytics_dir_file_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=\".\"})",
           "instant": true,
           "interval": "",
@@ -665,7 +665,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources,volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "format": "table",
           "instant": true,
@@ -674,7 +674,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources,volume_analytics_dir_file_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "format": "table",
           "hide": false,
@@ -684,7 +684,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources,volume_analytics_dir_subdir_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
           "format": "table",
           "hide": false,

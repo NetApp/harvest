@@ -2629,7 +2629,7 @@
               "refId": "B"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(svm_cifs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
@@ -2909,14 +2909,14 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vscan_dispatch_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - dispatch latency",
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vscan_scan_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "hide": false,
               "interval": "",
@@ -3004,14 +3004,14 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vscan_scan_noti_received_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "hide": false,
               "interval": "",
@@ -3100,7 +3100,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vscan_connections_active{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
@@ -5955,7 +5955,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(svm_nfs_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3Latency\",nfsv=\"v3\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -6024,7 +6024,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(svm_nfs_read_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadAvgLatency\",nfsv=\"v3\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -6093,7 +6093,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(svm_nfs_write_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteAvgLatency\",nfsv=\"v3\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,

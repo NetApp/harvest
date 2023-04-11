@@ -1409,7 +1409,7 @@
               "refId": "C"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "label_join(disk_labels{datacenter=~\"$Datacenter\",node=~\"$Node\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"offline\")",
               "format": "table",
               "hide": false,

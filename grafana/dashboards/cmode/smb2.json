@@ -677,7 +677,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -746,7 +746,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_create_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -815,7 +815,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_close_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -884,7 +884,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_lock_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -953,7 +953,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_query_directory_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -1022,7 +1022,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_query_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -1091,7 +1091,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_set_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
@@ -1160,7 +1160,7 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(increase(smb2_oplock_break_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
