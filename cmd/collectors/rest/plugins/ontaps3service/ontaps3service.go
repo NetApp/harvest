@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"strings"
@@ -154,9 +155,9 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 						for i, statement := range statements.Array() {
 							policyMap := make(map[string]string)
 							policyMap["permission_type"] = statement.Get("effect").String()
-							policyMap["permissions"] = convertToString(statement.Get("actions").Array())
-							policyMap["user"] = convertToString(statement.Get("principals").Array())
-							policyMap["allowed_resources"] = convertToString(statement.Get("resources").Array())
+							policyMap["permissions"] = util.ConvertToString(statement.Get("actions").Array())
+							policyMap["user"] = util.ConvertToString(statement.Get("principals").Array())
+							policyMap["allowed_resources"] = util.ConvertToString(statement.Get("resources").Array())
 							bucketToPolicyMap[bucketUUID+"-"+strconv.Itoa(i)] = policyMap
 						}
 					}
@@ -199,12 +200,4 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	}
 
 	return []*matrix.Matrix{o.data}, nil
-}
-
-func convertToString(array []gjson.Result) string {
-	var stringArray []string
-	for _, value := range array {
-		stringArray = append(stringArray, value.String())
-	}
-	return strings.Join(stringArray, ",")
 }
