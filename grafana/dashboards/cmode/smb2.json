@@ -101,7 +101,7 @@
       },
       "id": 92,
       "options": {
-        "content": "This dashboard requires ZapiPerf collector. It is currently unavailable for RestPerf Collector. Refer https://github.com/NetApp/harvest/issues/1756",
+        "content": "This dashboard requires the ZapiPerf collector. SMB2 is currently unavailable via REST. Refer https://github.com/NetApp/harvest/issues/1756",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
