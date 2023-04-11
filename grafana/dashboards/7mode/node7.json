@@ -853,7 +853,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "node_uptime{datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "time_series",
           "instant": false,
@@ -1732,7 +1732,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, nic_util_percent{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
@@ -1822,7 +1822,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, fcp_util_percent{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}} -{{port}}",
@@ -1912,7 +1912,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, nic_rx_bytes+nic_tx_bytes{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
@@ -2002,7 +2002,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, fcp_read_data+fcp_write_data{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2319,7 +2319,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_read_avg_latency{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "interval": "",
               "legendFormat": "",
@@ -2388,7 +2388,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_latency{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "interval": "",
               "legendFormat": "",
@@ -2456,7 +2456,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_write_avg_latency{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "interval": "",
               "legendFormat": "",
@@ -2531,7 +2531,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "format": "table",
               "instant": true,
@@ -2540,7 +2540,7 @@
               "refId": "Total Ops"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"}) - avg(node_nfs_read_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"}) - avg(node_nfs_write_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "format": "table",
               "hide": false,
@@ -2550,7 +2550,7 @@
               "refId": "Other Ops"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_write_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "format": "table",
               "hide": false,
@@ -2560,7 +2560,7 @@
               "refId": "Write Ops"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_read_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "format": "table",
               "hide": false,
@@ -2670,7 +2670,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_read_avg_latency{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
@@ -2678,7 +2678,7 @@
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_write_avg_latency{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
@@ -2766,7 +2766,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_read_ops{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
@@ -2774,7 +2774,7 @@
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_write_ops{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
@@ -2782,7 +2782,7 @@
               "refId": "B"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg(node_nfs_total_ops{datacenter=~\"$Datacenter\",node=~\"$Node\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
@@ -3005,7 +3005,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg by(node, lif) (iscsi_lif_avg_latency{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
@@ -3097,7 +3097,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "avg by(node, lif) (iscsi_lif_iscsi_read_ops+iscsi_lif_iscsi_write_ops+iscsi_lif_iscsi_other_ops{datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
