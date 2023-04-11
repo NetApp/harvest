@@ -20,7 +20,6 @@ func (h *Harvest) Start() {
 	fmt.Println(status)
 	time.Sleep(30 * time.Second)
 	h.AllRunning()
-
 }
 
 func (h *Harvest) StartByHarvestUser() {

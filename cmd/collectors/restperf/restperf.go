@@ -1,6 +1,7 @@
 package restperf
 
 import (
+	"fmt"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fabricpool"
@@ -1225,10 +1226,9 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 }
 
 func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matrix, error) {
-	if errs.IsRestErr(err, errs.TableNotFound) {
-		// the table does not exist, log as info and return no instances so the task goes to stand-by
-		r.Logger.Info().Str("href", href).Msg(err.Error())
-		return nil, errs.New(errs.ErrNoInstance, err.Error())
+	if errs.IsRestErr(err, errs.TableNotFound) || errs.IsRestErr(err, errs.APINotFound) {
+		// the table or API does not exist. return ErrAPIRequestRejected so the task goes to stand-by
+		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrAPIRequestRejected, err.Error()))
 	}
 	r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 	return nil, err
