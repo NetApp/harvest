@@ -1218,7 +1218,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources, max by (node, aggr) (aggr_disk_max_user_read_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserReadChain\"})) * 4",
           "format": "time_series",
           "instant": false,
@@ -1313,7 +1313,7 @@
       "pluginVersion": "8.4.11",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources, max by (node, aggr)(aggr_disk_max_user_write_chain{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskUserWriteChain\"})) * 4",
           "format": "time_series",
           "instant": false,
@@ -1596,7 +1596,7 @@
               "refId": "B"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "disk_stats_io_kbps{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "hide": false,
@@ -1627,7 +1627,7 @@
               "refId": "C"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "label_join(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, \"diskStatus\", \" \",\"NonSupportedField\", \"outage\")",
               "format": "table",
               "hide": false,

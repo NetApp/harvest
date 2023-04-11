@@ -153,7 +153,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
           "instant": true,
           "interval": "",
@@ -248,7 +248,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs\"})",
           "instant": true,
           "interval": "",
@@ -256,7 +256,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs3\"})",
           "hide": false,
           "instant": true,
@@ -265,7 +265,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4\"})",
           "hide": false,
           "instant": true,
@@ -274,7 +274,7 @@
           "refId": "C"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.1\"})",
           "hide": false,
           "instant": true,
@@ -283,7 +283,7 @@
           "refId": "D"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.2\"})",
           "hide": false,
           "instant": true,

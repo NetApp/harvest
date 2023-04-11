@@ -781,7 +781,7 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources, sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeAvgLatency\"}) by (node))",
           "interval": "",
           "legendFormat": "{{node}}",
@@ -872,7 +872,7 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by(node))",
           "interval": "",
           "legendFormat": "{{node}}",
@@ -963,7 +963,7 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "exemplar": true,
+          "exemplar": false,
           "expr": "topk($TopResources, sum by (node)(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalOps\"}))",
           "interval": "",
           "legendFormat": "{{node}}",
@@ -2131,7 +2131,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "interval": "",
               "legendFormat": "{{node}}",
@@ -2217,7 +2217,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "interval": "",
               "legendFormat": "{{node}}",
@@ -2322,7 +2322,7 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "max(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -2946,7 +2946,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "",
@@ -3001,7 +3001,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "",
@@ -3056,7 +3056,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum(aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "",
@@ -3139,7 +3139,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum by (node) (aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -3221,7 +3221,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum by (node) (aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -3303,7 +3303,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum by (node) (aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -3385,7 +3385,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum by (node) (aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -3468,7 +3468,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum by (node) (aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -3550,7 +3550,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "sum by (node) (aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
@@ -3650,7 +3650,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vol_avg_latency{cluster=~\"$Cluster\", svm=~\"$TopSVMLatency\"}",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
@@ -3736,7 +3736,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vol_read_data{cluster=~\"$Cluster\", svm=~\"$TopSVMs\"}+svm_vol_write_data{cluster=~\"$Cluster\",svm=~\"$TopSVMs\"}",
               "format": "time_series",
               "instant": false,
@@ -3824,7 +3824,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "svm_vol_total_ops{cluster=~\"$Cluster\", svm=~\"$TopSVMIOPs\"}",
               "format": "time_series",
               "instant": false,
