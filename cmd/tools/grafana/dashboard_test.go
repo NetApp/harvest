@@ -487,22 +487,18 @@ func TestIDIsBlank(t *testing.T) {
 		})
 }
 
-func TestExemplarTrue(t *testing.T) {
+func TestExemplarIsFalse(t *testing.T) {
 	visitDashboards(
 		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
-			checkExemplarTrue(t, path, data)
+			checkExemplarIsFalse(t, path, data)
 		})
 }
 
-func checkExemplarTrue(t *testing.T, path string, data []byte) {
-
-	gjson.ForEachLine(string(data), func(line gjson.Result) bool {
-		if strings.Contains(line.String(), "\"exemplar\": true") {
-			t.Errorf(`dashboard=%s exemplar should be "false" but is "true"`, shortPath(path))
-		}
-		return true
-	})
+func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
+	if strings.Contains(string(data), "\"exemplar\": true") {
+		t.Errorf(`dashboard=%s exemplar should be "false" but is "true"`, shortPath(path))
+	}
 }
 
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
