@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1665135798398,
+  "iteration": 1680864207753,
   "links": [
     {
       "asDropdown": true,
@@ -227,8 +227,8 @@
       "id": 27,
       "options": {
         "legend": {
-          "displayMode": "hidden",
-          "placement": "right",
+          "displayMode": "table",
+          "placement": "bottom",
           "values": [
             "value"
           ]
@@ -577,5 +577,5 @@
   "timezone": "",
   "title": "ONTAP: NFS Clients",
   "uid": "",
-  "version": 2
+  "version": 3
 }

@@ -24,7 +24,6 @@ const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
 const Hyphen = "-"
-const MaxAllowedTimeDrift = 10 * time.Second
 
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -248,58 +247,13 @@ func (e *Ems) InitCache() error {
 	return nil
 }
 
-func (e *Ems) getClusterTime() (time.Time, error) {
-	var (
-		err         error
-		records     []gjson.Result
-		clusterTime time.Time
-		timeOfNodes []int64
-	)
-
-	query := "private/cli/cluster/date"
-	fields := []string{"date"}
-
-	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", e.ReturnTimeOut, "")
-
-	if records, err = e.GetRestData(href); err != nil {
-		return clusterTime, err
-	}
-	if len(records) == 0 {
-		return clusterTime, errs.New(errs.ErrConfig, e.Object+" date not found on cluster")
-	}
-
-	for _, instanceData := range records {
-		currentClusterDate := instanceData.Get("date")
-		if currentClusterDate.Exists() {
-			t, err := time.Parse(time.RFC3339, currentClusterDate.String())
-			if err != nil {
-				e.Logger.Error().Str("date", currentClusterDate.String()).Err(err).Msg("Failed to load cluster date")
-				continue
-			}
-			clusterTime = t
-			timeOfNodes = append(timeOfNodes, t.UnixNano())
-		}
-	}
-
-	for _, timeOfEachNode := range timeOfNodes {
-		timeDrift := time.Duration(timeOfEachNode - timeOfNodes[0]).Abs()
-		if timeDrift >= MaxAllowedTimeDrift {
-			e.Logger.Warn().Float64("timedrift(in sec)", timeDrift.Seconds()).Msg("Time drift exist among the nodes")
-			break
-		}
-	}
-
-	e.Logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
-	return clusterTime, nil
-}
-
 // returns time filter (clustertime - polldata duration)
 func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 	fromTime := e.lastFilterTime
 	// check if this is the first request
 	if e.lastFilterTime == 0 {
 		// if first request fetch cluster time
-		dataDuration, err := GetDataInterval(e.GetParams(), defaultDataPollDuration)
+		dataDuration, err := collectors.GetDataInterval(e.GetParams(), defaultDataPollDuration)
 		if err != nil {
 			e.Logger.Warn().Err(err).
 				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
@@ -421,7 +375,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 
 	// add time filter
-	clusterTime, err := e.getClusterTime()
+	clusterTime, err := collectors.GetClusterTime(e.Client, e.ReturnTimeOut, e.Logger)
 	if err != nil {
 		return nil, err
 	}
@@ -505,25 +459,6 @@ func (e *Ems) getHref(names []string, filter []string) string {
 
 	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
 	return href
-}
-
-// GetDataInterval fetch pollData interval
-func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
-	var dataIntervalStr string
-	var durationVal time.Duration
-	var err error
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildS("data")
-		if dataInterval != nil {
-			dataIntervalStr = dataInterval.GetContentS()
-			if durationVal, err = time.ParseDuration(dataIntervalStr); err == nil {
-				return durationVal, nil
-			}
-			return defaultInterval, err
-		}
-	}
-	return defaultInterval, nil
 }
 
 func parseProperties(instanceData gjson.Result, property string) gjson.Result {

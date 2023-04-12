@@ -2,14 +2,19 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strings"
 	"time"
 )
 
-const DefaultBatchSize = "500"
+const (
+	DefaultBatchSize    = "500"
+	MaxAllowedTimeDrift = 10 * time.Second
+)
 
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
 	result, err := rest.Fetch(client, href)
@@ -23,6 +28,70 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	}
 
 	return result, nil
+}
+
+func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.Logger) (time.Time, error) {
+	var (
+		err         error
+		records     []gjson.Result
+		clusterTime time.Time
+		timeOfNodes []int64
+	)
+
+	query := "private/cli/cluster/date"
+	fields := []string{"date"}
+
+	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", returnTimeOut, "")
+
+	if records, err = rest.Fetch(client, href); err != nil {
+		return clusterTime, err
+	}
+	if len(records) == 0 {
+		return clusterTime, errs.New(errs.ErrConfig, " date not found on cluster")
+	}
+
+	for _, instanceData := range records {
+		currentClusterDate := instanceData.Get("date")
+		if currentClusterDate.Exists() {
+			t, err := time.Parse(time.RFC3339, currentClusterDate.String())
+			if err != nil {
+				logger.Error().Str("date", currentClusterDate.String()).Err(err).Msg("Failed to load cluster date")
+				continue
+			}
+			clusterTime = t
+			timeOfNodes = append(timeOfNodes, t.UnixNano())
+		}
+	}
+
+	for _, timeOfEachNode := range timeOfNodes {
+		timeDrift := time.Duration(timeOfEachNode - timeOfNodes[0]).Abs()
+		if timeDrift >= MaxAllowedTimeDrift {
+			logger.Warn().Float64("timedrift(in sec)", timeDrift.Seconds()).Msg("Time drift exist among the nodes")
+			break
+		}
+	}
+
+	logger.Debug().Str("cluster time", clusterTime.String()).Msg("")
+	return clusterTime, nil
+}
+
+// GetDataInterval fetch pollData interval
+func GetDataInterval(param *node.Node, defaultInterval time.Duration) (time.Duration, error) {
+	var dataIntervalStr string
+	var durationVal time.Duration
+	var err error
+	schedule := param.GetChildS("schedule")
+	if schedule != nil {
+		dataInterval := schedule.GetChildS("data")
+		if dataInterval != nil {
+			dataIntervalStr = dataInterval.GetContentS()
+			if durationVal, err = time.ParseDuration(dataIntervalStr); err == nil {
+				return durationVal, nil
+			}
+			return defaultInterval, err
+		}
+	}
+	return defaultInterval, nil
 }
 
 func UpdateProtectedFields(instance *matrix.Instance) {
