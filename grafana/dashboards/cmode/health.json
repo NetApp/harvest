@@ -3174,8 +3174,8 @@
       {
         "current": {
           "selected": false,
-          "text": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range.",
-          "value": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range."
+          "text": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range.",
+          "value": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range."
         },
         "description": null,
         "error": null,
@@ -3185,11 +3185,11 @@
         "options": [
           {
             "selected": true,
-            "text": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range.",
-            "value": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range."
+            "text": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range.",
+            "value": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range."
           }
         ],
-        "query": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range.",
+        "query": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range.",
         "skipUrlSync": false,
         "type": "textbox"
       }
