@@ -9,24 +9,24 @@ label: [string]: string
 }
 
 #Prom: {
-	local_http_addr?: "0.0.0.0" | "localhost" | "127.0.0.1"
+	add_meta_tags?: bool
 	addr?:            string // deprecated
+	allow_addrs_regex?: [...string]
 	exporter:         "Prometheus"
+	local_http_addr?: "0.0.0.0" | "localhost" | "127.0.0.1"
 	port?:            int
 	port_range?:      string
-	allow_addrs_regex?: [...string]
-	add_meta_tags?: bool
 	sort_labels?: bool
 }
 
 #Influx: {
 	addr?:    string // one of addr|url
-	url?:     string
-	exporter: "InfluxDB"
+	allow_addrs_regex: [...string]
 	bucket?:   string
+	exporter: "InfluxDB"
 	org?:      string
 	token?:   string
-	allow_addrs_regex: [...string]
+	url?:     string
 }
 
 #CredentialsScript: {
@@ -42,22 +42,24 @@ label: [string]: string
 Pollers: [Name=_]: #Poller
 
 #Poller: {
-	datacenter?:         string
-	auth_style?:         "basic_auth" | "certificate_auth"
-	ssl_cert?:           string
-	ssl_key?:            string
-	username?:           string
-	password?:           string
-	use_insecure_tls?:   bool
-	is_kfs?:             bool
 	addr?:               string
-	log_max_bytes?:      int
-	log_max_files?:      int
+	auth_style?:         "basic_auth" | "certificate_auth"
 	client_timeout?:     string
 	collectors?:         [...#CollectorDef] | [...string]
-	exporters: [...string]
-	log: [...string]
-	labels?: [...label]
+    credentials_file?:   string
 	credentials_script?: #CredentialsScript
+	datacenter?:         string
+	exporters: [...string]
+	is_kfs?:             bool
+	labels?: [...label]
+	log: [...string]
+	log_max_bytes?:      int
+	log_max_files?:      int
+	password?:           string
 	prefer_zapi?:        bool
+	ssl_cert?:           string
+	ssl_key?:            string
+	tls_min_version?:    string
+	use_insecure_tls?:   bool
+	username?:           string
 }
