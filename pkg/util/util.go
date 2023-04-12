@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
-	"github.com/tidwall/gjson"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 	"net"
@@ -405,13 +404,4 @@ func HasDuplicates(slice []string) bool {
 	}
 
 	return false
-}
-
-// ConvertToString converts gjson string array to string slice and then return it as comma separated string.
-func ConvertToString(array []gjson.Result) string {
-	var stringArray []string
-	for _, value := range array {
-		stringArray = append(stringArray, value.String())
-	}
-	return strings.Join(stringArray, ",")
 }
