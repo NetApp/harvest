@@ -532,7 +532,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, quota_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeDiskUsed\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
@@ -619,7 +619,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, quota_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeFileUsed\"})",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
@@ -707,7 +707,7 @@
           },
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "rate(quota_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$TopQtreeDiskUsedGrowth\"}[5m])",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",

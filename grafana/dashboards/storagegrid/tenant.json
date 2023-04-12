@@ -195,7 +195,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "tenant_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "instant": true,
@@ -204,7 +204,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "tenant_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
@@ -214,7 +214,7 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "tenant_logical_quota{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
@@ -224,7 +224,7 @@
           "refId": "C"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "tenant_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
@@ -234,7 +234,7 @@
           "refId": "D"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "tenant_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
@@ -378,7 +378,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "bucket_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}",
           "format": "table",
           "instant": true,
@@ -387,7 +387,7 @@
           "refId": "A"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "bucket_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}",
           "format": "table",
           "hide": false,

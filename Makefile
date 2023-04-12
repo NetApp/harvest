@@ -36,6 +36,7 @@ BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 LINT_EXISTS := $(shell which golangci-lint)
 GOVULNCHECK_EXISTS := $(shell which govulncheck)
 MKDOCS_EXISTS := $(shell which mkdocs)
+FETCH_ASUP_EXISTS := $(shell which ./.github/fetch-asup)
 
 
 help:  ## Display this help
@@ -169,7 +170,9 @@ dev: build lint govulncheck
 	@rm -rf autosupport/asup
 
 fetch-asup:
+ifneq (${FETCH_ASUP_EXISTS}, )
 	@./.github/fetch-asup ${ASUP_BIN} ${ASUP_BIN_VERSION} ${BIN_PLATFORM} 2>/dev/null   #Suppress Error in case of internet connectivity
+endif
 
 docs: mkdocs ## Serve docs for local dev
 

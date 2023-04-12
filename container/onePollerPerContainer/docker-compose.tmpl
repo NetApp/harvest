@@ -29,6 +29,9 @@ services:
       - {{ .TemplateDir }}:/opt/harvest/conf
       - {{ .CertDir }}:/opt/harvest/cert
       - {{ .ConfigFile }}:/opt/harvest.yml
+    {{- range .Mounts}}
+      - {{.}}
+    {{- end}}
     {{- if .IsFull}}
     networks:
       - backend

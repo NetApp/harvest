@@ -31,12 +31,12 @@ This is a quick way to install and get started with Harvest. Follow the four ste
 
 ### Download and untar
 
-1. Download the latest version of [Harvest](https://netapp.github.io/harvest/latest/install/native/), untar, and
+- Download the latest version of [Harvest](https://netapp.github.io/harvest/latest/install/native/), untar, and
    cd into the harvest directory.
 
 ### Setup harvest.yml
 
-2. Create a `harvest.yml` file with your cluster details, below is an example with annotated comments. Modify as needed
+- Create a `harvest.yml` file with your cluster details, below is an example with annotated comments. Modify as needed
    for your scenario.
 
 This config is using the Prometheus
@@ -70,10 +70,10 @@ Pollers:
 
 ### Generate a Docker compose for your Pollers
 
-3. Generate a Docker compose file from your `harvest.yml`
+- Generate a Docker compose file from your `harvest.yml`
 
 ```
-bin/harvest generate docker full --output harvest-compose.yml
+bin/harvest generate docker full --port --output harvest-compose.yml
 ```
 
 `generate docker full` does two things:
@@ -94,13 +94,8 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 
 The `prom-stack.yml` compose file creates a `frontend` and `backend` network. Prometheus and Grafana publish their admin
 ports on the front-end network and are routable to the local machine. By default, the Harvest pollers are part of the
-backend network and do not expose their Prometheus web end-points. If you want their end-points exposed, pass
-the `--port` flag to the `generate` sub-command in the [previous step](#generate-a-docker-compose-for-your-pollers),
-like so:
-
-```
-bin/harvest generate docker full --port --output harvest-compose.yml
-```
+backend network and also expose their Prometheus web end-points. 
+If you do not want their end-points exposed, remove the `--port` option from the `generate` sub-command in the [previous step](#generate-a-docker-compose-for-your-pollers).
 
 ### Prometheus
 
@@ -111,7 +106,7 @@ at `http://IP_OF_PROMETHEUS:9090/targets`.
 
 After bringing up the `prom-stack.yml` compose file, you can access Grafana at `http://IP_OF_GRAFANA:3000`.
 
-Default credentials - you'll be prompted to create a new password the first time you log in
+You will be prompted to create a new password the first time you log in. Grafana's default credentials are
 
 ```
 username: admin

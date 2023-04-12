@@ -31,6 +31,7 @@ type PollerInfo struct {
 	IsFull        bool
 	TemplateDir   string
 	CertDir       string
+	Mounts        []string
 }
 
 type AdminInfo struct {
@@ -64,6 +65,7 @@ type options struct {
 	certDir     string
 	promPort    int
 	grafanaPort int
+	mounts      []string
 }
 
 var opts = &options{
@@ -177,6 +179,7 @@ func generateDocker(path string, kind int) {
 			IsFull:        kind == full,
 			TemplateDir:   templateDirPath,
 			CertDir:       certDirPath,
+			Mounts:        opts.mounts,
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
@@ -401,9 +404,10 @@ func init() {
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
-
 	dFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
+	dFlags.StringSliceVar(&opts.mounts, "volume", []string{}, "Additional volume mounts to include in compose file")
+
 	fFlags.StringVar(&opts.filesdPath, "filesdpath", "container/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")
 	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
