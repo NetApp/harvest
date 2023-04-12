@@ -2970,7 +2970,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Health monitor events occurred in selected time range",
+          "description": "These are the health monitor events that have occurred within the selected time range",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3174,8 +3174,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Provides EMS events selected Time Range configured in ems.yaml for EMS collector",
-          "value": "Provides EMS events selected Time Range configured in ems.yaml for EMS collector"
+          "text": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range.",
+          "value": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range."
         },
         "description": null,
         "error": null,
@@ -3185,11 +3185,11 @@
         "options": [
           {
             "selected": true,
-            "text": "Provides EMS events selected Time Range configured in ems.yaml for EMS collector",
-            "value": "Provides EMS events selected Time Range configured in ems.yaml for EMS collector"
+            "text": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range.",
+            "value": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range."
           }
         ],
-        "query": "Provides EMS events selected Time Range configured in ems.yaml for EMS collector",
+        "query": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel specifically displays events with emergency severity that occurred within a selected time range.",
         "skipUrlSync": false,
         "type": "textbox"
       }
