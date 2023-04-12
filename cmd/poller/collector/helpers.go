@@ -126,7 +126,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 
 		if selectedVersion == "" {
 			// workaround for 7mode template that will always be missing in cdot
-			if filename == "status_7.yaml" && model == "cdot" {
+			if c.Object == "Status_7mode" && model == "cdot" {
 				return nil, "", errs.New(errs.ErrWrongTemplate, "unable to load status_7.yaml on cdot")
 			}
 			return nil, "", errors.New("no best-fit template found")
