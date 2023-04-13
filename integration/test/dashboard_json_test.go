@@ -34,7 +34,14 @@ var counterMap = data.GetCounterMap()
 
 // zapiCounterMap consists of counters which needs to be excluded for Zapi only in addition to counters present in counterMap
 var zapiCounterMap = map[string]struct{}{
-	"net_route_labels": {},
+	"net_route_labels":          {},
+	"ontaps3_labels":            {},
+	"ontaps3_logical_used_size": {},
+	"ontaps3_size":              {},
+	"ontaps3_object_count":      {},
+	"ontaps3_used_percent":      {},
+	"ontaps3_services_labels":   {},
+	"ontaps3_policy_labels":     {},
 }
 
 // restCounters  consists of counters which needs to be excluded for Rest only in addition to counters present in counterMap

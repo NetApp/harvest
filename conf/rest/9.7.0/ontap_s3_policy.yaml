@@ -1,0 +1,23 @@
+name:             OntapS3Policy
+query:            api/private/cli/vserver/object-store-server/bucket/policy
+object:           ontaps3_policy
+
+counters:
+  - ^^bucket                                     => bucket
+  - ^^effect                                     => permission_type
+  - ^^index                                      => index
+  - ^^vserver                                    => svm
+  - ^action                                      => permission
+  - ^principal                                   => user
+  - ^resource                                    => allowed_resource
+
+export_options:
+  instance_keys:
+    - bucket
+    - index
+    - permission_type
+    - svm
+  instance_labels:
+    - allowed_resource
+    - permission
+    - user
