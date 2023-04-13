@@ -228,14 +228,7 @@ func startAllPollers(pollersFiltered []string, statusesByName map[string][]*util
 				if ss.Status == util.StatusRunning || ss.Status == util.StatusStoppingFailed {
 					continue
 				}
-				// if this poller was just stopped, it can use its same prometheus port
-				var promPort int
-				pp, err := strconv.Atoi(ss.PromPort)
-				if err == nil {
-					promPort = pp
-				} else {
-					promPort = getPollerPrometheusPort(name, opts)
-				}
+				promPort := getPollerPrometheusPort(name, opts)
 				startPoller(name, promPort, opts)
 			}
 		} else {
