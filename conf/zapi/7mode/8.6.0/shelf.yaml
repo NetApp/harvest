@@ -83,12 +83,12 @@ plugins:
 
 export_options:
   instance_keys:
+    - channel
     - shelf
     - shelf_id
-    - channel
   instance_labels:
+    - model
     - module_type
     - serial_number
-    - model
     - state
     - vendor_name

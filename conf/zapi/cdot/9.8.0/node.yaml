@@ -51,14 +51,14 @@ export_options:
   instance_keys:
     - node
   instance_labels:
-    - max_aggr_size
-    - max_vol_size
-    - max_vol_num
-    - warnings
     - healthy
     - location
+    - max_aggr_size
+    - max_vol_num
+    - max_vol_size
     - model
     - serial
     - uptime
     - vendor
     - version
+    - warnings

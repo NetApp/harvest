@@ -23,9 +23,9 @@ plugins:
 export_options:
   instance_keys:
     - name
-    - svm
     - serial_number
+    - svm
   instance_labels:
-    - type
-    - certificateIssuerType
     - certificateExpiryStatus
+    - certificateIssuerType
+    - type

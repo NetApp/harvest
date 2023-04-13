@@ -311,7 +311,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 	numExpressions := len(expressions)
 	for _, e := range expressions {
 		// Ignore labels and _status
-		if strings.HasSuffix(e.metric, "_labels") || strings.HasSuffix(e.metric, "_status") {
+		if strings.HasSuffix(e.metric, "_labels") || strings.HasSuffix(e.metric, "_status") || strings.HasSuffix(e.metric, "_events") || strings.HasSuffix(e.metric, "_alerts") {
 			continue
 		}
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
@@ -487,6 +487,20 @@ func TestIDIsBlank(t *testing.T) {
 		})
 }
 
+func TestExemplarIsFalse(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkExemplarIsFalse(t, path, data)
+		})
+}
+
+func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
+	if strings.Contains(string(data), "\"exemplar\": true") {
+		t.Errorf(`dashboard=%s exemplar should be "false" but is "true"`, shortPath(path))
+	}
+}
+
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
 	uid := gjson.GetBytes(data, "uid").String()
 	if uid != "" {
@@ -600,6 +614,8 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/security.json": 3,
 		"cmode/fsa.json":      2,
 		"cmode/workload.json": 2,
+		"cmode/smb2.json":     2,
+		"cmode/health.json":   2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(

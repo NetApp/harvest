@@ -4,9 +4,14 @@ object:           ontaps3
 
 counters:
   - ^^uuid
-  - ^name               => bucket
-  - ^svm.name           => svm
-  - ^volume.name        => volume
+  - ^encryption.enabled                          => encryption_enabled
+  - ^name                                        => bucket
+  - ^protection_status.destination.is_cloud      => protected_in_cloud
+  - ^protection_status.destination.is_ontap      => protected_in_ontap
+  - ^protection_status.is_protected              => is_protected
+  - ^qos_policy.name                             => qos_policy_group
+  - ^svm.name                                    => svm
+  - ^volume.name                                 => volume
   - logical_used_size
   - size
 
@@ -16,9 +21,21 @@ endpoints:
       - ^^uuid
       - object_count
 
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - used_percent PERCENT logical_used_size size
+  - OntapS3Service
+
 export_options:
   instance_keys:
     - bucket
     - svm
-  instance_labels:
     - volume
+  instance_labels:
+    - encryption_enabled
+    - is_protected
+    - protected_in_cloud
+    - protected_in_ontap
+    - qos_policy_group
+    - url

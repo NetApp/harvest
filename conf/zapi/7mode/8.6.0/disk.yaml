@@ -28,10 +28,10 @@ export_options:
   instance_keys:
     - disk
   instance_labels:
-    - type
     - model
+    - offline
     - serial_number
     - shelf
-    - offline
+    - type
 
 

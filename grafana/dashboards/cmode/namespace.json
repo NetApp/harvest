@@ -745,7 +745,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "namespace_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}",
               "format": "table",
               "instant": true,
@@ -754,7 +754,7 @@
               "refId": "A"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "namespace_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}",
               "format": "table",
               "hide": false,
@@ -764,7 +764,7 @@
               "refId": "B"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "namespace_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}",
               "format": "table",
               "hide": false,
@@ -774,7 +774,7 @@
               "refId": "C"
             },
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "namespace_size_available_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}",
               "format": "table",
               "hide": false,

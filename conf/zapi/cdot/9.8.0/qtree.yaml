@@ -43,9 +43,8 @@ plugins:
 export_options:
   instance_keys:
     - qtree
-    - volume
     - svm
-
+    - volume
   instance_labels:
     - export_policy
     - oplocks

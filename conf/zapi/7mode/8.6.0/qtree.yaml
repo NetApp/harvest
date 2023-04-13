@@ -34,8 +34,8 @@ export_options:
     - volume
 
   instance_labels:
-    - svm
     - export_policy
     - oplocks
     - security_style
     - status
+    - svm

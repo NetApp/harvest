@@ -1,0 +1,12 @@
+name:               Health
+query:              api/cluster
+object:             health
+
+counters:
+  - ^^uuid
+  - ^name
+
+plugins:
+  - Health
+
+export_data: false

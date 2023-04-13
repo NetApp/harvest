@@ -42,17 +42,17 @@ plugins:
 
 export_options:
   instance_keys:
-    - node
     - disk
     - index
+    - node
   instance_labels:
-    - type
+    - container_type
+    - failed
     - model
     - outage
     - owner_node
+    - serial_number
     - shared
     - shelf
     - shelf_bay
-    - serial_number
-    - failed
-    - container_type
+    - type

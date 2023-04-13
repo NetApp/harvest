@@ -158,7 +158,7 @@
       },
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "headroom_aggr_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"} - headroom_aggr_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
@@ -241,7 +241,7 @@
       },
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"} - headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"}",
           "interval": "",
           "legendFormat": "{{node}}",

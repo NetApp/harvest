@@ -42,8 +42,8 @@ export_options:
   instance_keys:
     - aggr
     - disk
-    - raid
     - plex
+    - raid
   instance_labels:
     - disk_speed
     - raid_type

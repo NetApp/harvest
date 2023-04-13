@@ -2,6 +2,7 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
 	"time"
 )
@@ -255,4 +256,44 @@ func testNewerTimestampThanDuration(t *testing.T) {
 	} else {
 		t.Errorf("timestamp= %f is newer than duration %s", timestamp, duration.String())
 	}
+}
+
+func TestGetDataInterval(t *testing.T) {
+	defaultDataPollDuration := 3 * time.Minute
+	type args struct {
+		param           *node.Node
+		defaultInterval time.Duration
+	}
+
+	type test struct {
+		name    string
+		args    args
+		want    float64
+		wantErr bool
+	}
+	tests := []test{
+		{"success_return_poller_schedule", args{param: generateScheduleParam("4m"), defaultInterval: defaultDataPollDuration}, 240, false},
+		{"error_return_default_schedule", args{param: generateScheduleParam("4ma"), defaultInterval: defaultDataPollDuration}, 180, true},
+		{"return_default_schedule", args{param: generateScheduleParam(""), defaultInterval: defaultDataPollDuration}, 180, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetDataInterval(tt.args.param, tt.args.defaultInterval)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetDataInterval() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got.Seconds() != tt.want {
+				t.Errorf("GetDataInterval() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func generateScheduleParam(duration string) *node.Node {
+	root := node.NewS("root")
+	param := root.NewChildS("schedule", "")
+	param.NewChildS("data", duration)
+	return root
 }

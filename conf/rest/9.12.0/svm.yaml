@@ -76,25 +76,25 @@ export_options:
   instance_keys:
     - svm
   instance_labels:
-    - state
     - anti_ransomware_state
-    - ciphers
-    - cifs_protocol_enabled
-    - smb_encryption_required
-    - smb_signing_required
-    - cifs_ntlm_enabled
-    - nfs_protocol_enabled
     - audit_protocol_enabled
+    - cifs_ntlm_enabled
+    - cifs_protocol_enabled
+    - ciphers
     - fpolicy_enabled
     - fpolicy_name
-    - nis_domain
-    - ldap_session_security
-    - nfs_kerberos_protocol_enabled
     - iscsi_authentication_type
     - iscsi_service_enabled
+    - ldap_session_security
+    - nfs_kerberos_protocol_enabled
+    - nfs_protocol_enabled
     - nis_authentication_enabled
-    - ns_source
+    - nis_domain
     - ns_db
-    - type
+    - ns_source
     - root_svm
+    - smb_encryption_required
+    - smb_signing_required
+    - state
+    - type
 

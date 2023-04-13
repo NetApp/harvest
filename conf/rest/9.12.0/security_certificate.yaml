@@ -25,11 +25,10 @@ export_options:
   instance_keys:
     - uuid
   instance_labels:
+    - certificateExpiryStatus
+    - certificateIssuerType
     - name
-    #- certificatePEM   // Need to decide certificatePEM would be exposed or not in prometheus
     - scope
+    - serial_number
     - svm
     - type
-    - certificateIssuerType
-    - serial_number
-    - certificateExpiryStatus

@@ -62,5 +62,5 @@ export_options:
   instance_keys:
     - aggr
   instance_labels:
-    - type
     - state
+    - type

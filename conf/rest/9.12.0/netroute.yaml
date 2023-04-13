@@ -23,10 +23,10 @@ export_options:
   instance_keys:
     - uuid
   instance_labels:
-    - svm
-    - scope
-    - ipspace
-    - gateway
-    - netmask_length
     - destination
     - family
+    - gateway
+    - ipspace
+    - netmask_length
+    - scope
+    - svm

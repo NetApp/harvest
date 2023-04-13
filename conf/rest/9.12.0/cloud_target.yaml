@@ -21,16 +21,16 @@ counters:
 
 export_options:
   instance_keys:
-    - name
     - container
+    - name
     - server
   instance_labels:
+    - access_key
+    - authentication_type
+    - certificate_validation_enabled
     - ipspace
     - owner
     - port
     - provider_type
-    - authentication_type
-    - access_key
-    - certificate_validation_enabled
-    - ssl_enabled
     - scope
+    - ssl_enabled

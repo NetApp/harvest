@@ -135,6 +135,23 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 	}
 }
 
+// TestTotals prints the number of unique objects and counters that Harvest collects, excluding EMS.
+func TestTotals(t *testing.T) {
+	totalObject := make(objectMap)
+	var totalCounters int
+
+	visitTemplates(t, func(path string, model TemplateModel) {
+		totalObject[model.Name] = path
+		totalCounters += len(model.metrics)
+
+		for _, ep := range model.Endpoints {
+			totalCounters += len(ep.metrics)
+		}
+	}, allTemplatesButEms...)
+
+	fmt.Printf("%d objects, %d counters\n", len(totalObject), totalCounters)
+}
+
 func readDefaults(dirs []string) (map[string]objectMap, error) {
 	defaults := make(map[string]objectMap)
 
@@ -319,6 +336,7 @@ func (m metric) pathString() string {
 // - single hats (alphabetically)
 // - metrics (alphabetically)
 // ZAPI parent attributes are sorted alphabetically
+// Tests that exported keys and labels are in sorted order
 func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 	visitTemplates(t, func(path string, model TemplateModel) {
 		sortedCounters := checkSortedCounters(model.metrics)
@@ -338,6 +356,22 @@ func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 		}
 
 		checkForDuplicateMetrics(t, model, path)
+
+		// check sorted exported instance keys
+		sortedKeys := checkSortedKeyLabels(model.ExportOptions.InstanceKeys)
+		if sortedKeys.got != sortedKeys.want {
+			t.Errorf("keys should be sorted path=[%s]", shortPath(path))
+			t.Errorf("use this instead")
+			t.Errorf("%s", sortedKeys.want)
+		}
+
+		// check sorted exported instance labels
+		sortedLabels := checkSortedKeyLabels(model.ExportOptions.InstanceLabels)
+		if sortedLabels.got != sortedLabels.want {
+			t.Errorf("labels should be sorted path=[%s]", shortPath(path))
+			t.Errorf("use this instead")
+			t.Errorf("%s", sortedLabels.want)
+		}
 
 	}, allTemplatesButEms...)
 }
@@ -433,6 +467,13 @@ func sortZapiCounters(counters []metric) {
 		}
 		return a.left < b.left
 	})
+}
+
+func checkSortedKeyLabels(keyLabels []string) sorted {
+	got := strings.Join(keyLabels, ",")
+	sort.Strings(keyLabels)
+	want := strings.Join(keyLabels, ",")
+	return sorted{got: got, want: want}
 }
 
 var sigilReplacer = strings.NewReplacer("^", "", "- ", "")

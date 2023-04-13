@@ -815,7 +815,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "instant": true,
@@ -995,7 +995,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetSendXput\"})",
               "instant": false,
               "interval": "",
@@ -1088,7 +1088,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetReceiveXput\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
@@ -2352,7 +2352,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkDown\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2444,7 +2444,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkFailure\"})",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2726,7 +2726,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendXPut\"})",
               "instant": false,
               "interval": "",
@@ -2911,7 +2911,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendLatency\"})",
               "instant": false,
               "interval": "",
@@ -3004,7 +3004,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "topk($TopResources, fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveLatency\"})",
               "instant": false,
               "interval": "",
@@ -3091,7 +3091,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "exemplar": true,
+              "exemplar": false,
               "expr": "net_route_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
