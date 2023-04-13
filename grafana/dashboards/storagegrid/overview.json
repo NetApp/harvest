@@ -179,7 +179,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100*sum by(site_name,cluster)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -193,7 +193,15 @@
         {
           "id": "filterFieldsByName",
           "options": {
-            "include": {}
+            "include": {
+              "names": [
+                "cluster",
+                "site_name",
+                "Value #A",
+                "Value #B",
+                "Value #C"
+              ]
+            }
           }
         },
         {
@@ -324,7 +332,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100*sum by(site_name,cluster)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -340,9 +348,11 @@
           "options": {
             "include": {
               "names": [
+                "cluster",
                 "site_name",
+                "Value #A",
                 "Value #B",
-                "cluster"
+                "Value #C"
               ]
             }
           }
@@ -356,7 +366,9 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
-              "Value #B": 2,
+              "Value #A": 4,
+              "Value #B": 3,
+              "Value #C": 2,
               "cluster": 1,
               "site_name": 0
             },
@@ -2506,5 +2518,5 @@
   "timezone": "",
   "title": "StorageGrid: Overview",
   "uid": "",
-  "version": 2
+  "version": 3
 }
