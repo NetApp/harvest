@@ -3,9 +3,9 @@
 The following steps are provided for reference purposes only. Depending on the specifics of your k8 configuration, you may need to make modifications to the steps or files as necessary.
 
 ### Requirements
-- Kompose: `v1.25` or higher https://github.com/kubernetes/kompose/
+- [Kompose](https://github.com/kubernetes/kompose/): `v1.25` or higher
 
-### Download and untar
+### Download and untar Harvest
 
 - Download the latest version of [Harvest](https://netapp.github.io/harvest/latest/install/native/), untar, and
   cd into the harvest directory.
@@ -19,13 +19,13 @@ The following steps are provided for reference purposes only. Depending on the s
 
 To run Harvest resources in Kubernetes, please execute the following commands:
 
-1. After configuring the clusters in `harvest.yml`, generate `harvest-compose.yml` and `prom-stack.yml`.
+1. After adding your clusters to `harvest.yml`, generate `harvest-compose.yml` and `prom-stack.yml`.
 
 ```
 bin/harvest generate docker full --port --output harvest-compose.yml
 ```
 
-<details><summary>harvest.yml</summary>
+<details><summary>example harvest.yml</summary>
 <p>
 
 ```yaml
@@ -34,20 +34,19 @@ Exporters:
     prometheus1:
         exporter: Prometheus
         port_range: 12990-14000
-        add_meta_tags: false
 Defaults:
     use_insecure_tls: true
-    prefer_zapi: true
+    collectors:
+      - Zapi
+      - ZapiPerf
+    exporters:
+      - prometheus1
 Pollers:
     u2:
         datacenter: u2
         addr: ADDRESS
         username: USER
         password: PASS
-        collectors:
-            - Rest
-        exporters:
-            - prometheus1
 ```
 </p>
 </details>
@@ -65,8 +64,8 @@ services:
     container_name: poller-u2
     restart: unless-stopped
     ports:
-      - 14999:14999
-    command: '--poller u2 --promPort 14999 --config /opt/harvest.yml'
+      - 12990:12990
+    command: '--poller u2 --promPort 12990 --config /opt/harvest.yml'
     volumes:
       - /Users/harvest/conf:/opt/harvest/conf
       - /Users/harvest/cert:/opt/harvest/cert
@@ -147,9 +146,9 @@ metadata:
   name: u2
 spec:
   ports:
-    - name: "14999"
-      port: 14999
-      targetPort: 14999
+    - name: "12990"
+      port: 12990
+      targetPort: 12990
   selector:
     io.kompose.service: u2
 status:
@@ -328,13 +327,13 @@ spec:
             - --poller
             - u2
             - --promPort
-            - "14999"
+            - "12990"
             - --config
             - /opt/harvest.yml
           image: ghcr.io/netapp/harvest:latest
           name: poller-u2
           ports:
-            - containerPort: 14999
+            - containerPort: 12990
           resources: {}
           volumeMounts:
             - mountPath: /opt/harvest/conf
@@ -397,12 +396,13 @@ kompose convert --file harvest-compose.yml --file prom-stack.yml --chart --volum
 
 ## Cloud Deployment
 
-We will utilize `configMap` to generate Kubernetes resources for deploying Harvest pollers in a cloud environment. Please note the following assumptions for the steps below:
+We will use `configMap` to generate Kubernetes resources for deploying Harvest pollers in a cloud environment.
+Please note the following assumptions for the steps below:
 
-- The steps provided are solely for the deployment of Harvest pollers pods. Separate configurations will be necessary for setting up Prometheus and Grafana.
+- The steps provided are solely for the deployment of Harvest poller pods. Separate configurations are required to set up Prometheus and Grafana.
 - Networking between Harvest and Prometheus must be configured, and this can be accomplished by adding the network configuration in `harvest-compose.yaml`.
 
-1. After configuring the clusters in `harvest.yml`, generate `harvest-compose.yml`.
+1. After configuring the clusters in `harvest.yml`, generate `harvest-compose.yml`. We also want to remove the `conf` directory from the `harvest-compose.yml` file, otherwise `kompose` will create an empty configMap for it. We'll remove the `conf` directory by commenting out that line using `sed`.  
 
 ```
 bin/harvest generate docker --port --output harvest-compose.yml
