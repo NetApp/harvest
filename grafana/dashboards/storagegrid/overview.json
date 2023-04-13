@@ -160,7 +160,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -169,7 +169,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -179,7 +179,7 @@
         },
         {
           "exemplar": false,
-          "expr": "100*sum by(site_name,cluster)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100*sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -313,7 +313,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -322,7 +322,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -332,7 +332,7 @@
         },
         {
           "exemplar": false,
-          "expr": "100*sum by(site_name,cluster)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100*sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1109,7 +1109,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, avg by(cluster,tenant)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsageBytes\"}))",
+              "expr": "topk($TopResources, avg by(cluster,tenant,datacenter)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsageBytes\"}))",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -1197,7 +1197,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, avg by(cluster,tenant)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsedPercent\"}/storagegrid_tenant_usage_quota_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsedPercent\"}))",
+              "expr": "topk($TopResources, avg by(cluster,tenant,datacenter)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsedPercent\"}/storagegrid_tenant_usage_quota_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$TopTenantUsedPercent\"}))",
               "format": "time_series",
               "interval": "",
               "legendFormat": "{{cluster}} - {{tenant}}",
@@ -2328,7 +2328,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2338,7 +2338,7 @@
         "name": "TopTenantUsageBytes",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -2397,7 +2397,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2407,7 +2407,7 @@
         "name": "TopTenantUsedPercent",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg by(tenant)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
