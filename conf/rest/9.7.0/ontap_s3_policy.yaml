@@ -13,11 +13,11 @@ counters:
 
 export_options:
   instance_keys:
-    - svm
     - bucket
     - index
-  instance_labels:
     - permission_type
-    - permission
+    - svm
+  instance_labels:
     - allowed_resource
+    - permission
     - user

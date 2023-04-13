@@ -35,7 +35,7 @@ export_options:
   instance_labels:
     - encryption_enabled
     - is_protected
-    - protected_in_ontap
     - protected_in_cloud
+    - protected_in_ontap
     - qos_policy_group
     - url
