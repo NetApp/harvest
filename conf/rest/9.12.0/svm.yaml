@@ -33,11 +33,6 @@ endpoints:
     counters:
       - ^^svm.name                          => svm
       - ^enabled                            => audit_protocol_enabled
-  - query: api/protocols/fpolicy     # need to test
-    counters:
-      - ^^svm.name                          => svm
-      - ^policies.enabled                   => fpolicy_enabled
-      - ^policies.name                      => fpolicy_name
   - query: api/name-services/nis
     counters:
       - ^^svm.name                          => svm
@@ -46,14 +41,6 @@ endpoints:
     counters:
       - ^^svm.name                          => svm
       - ^session_security                   => ldap_session_security
-  - query: api/protocols/san/iscsi/credentials
-    counters:
-      - ^^svm.name                          => svm
-      - ^authentication_type                => iscsi_authentication_type
-  - query: api/protocols/san/iscsi/services
-    counters:
-      - ^^svm.name                          => svm
-      - ^enabled                            => iscsi_service_enabled
   - query: api/private/cli/vserver/cifs/server/security
     counters:
       - ^^vserver                           => svm

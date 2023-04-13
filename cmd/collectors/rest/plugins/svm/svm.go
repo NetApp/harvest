@@ -19,14 +19,22 @@ import (
 
 type SVM struct {
 	*plugin.AbstractPlugin
-	nsswitchInfo   map[string]nsswitch
-	kerberosConfig map[string]string
-	client         *rest.Client
+	nsswitchInfo        map[string]nsswitch
+	kerberosInfo        map[string]string
+	fpolicyInfo         map[string]fpolicy
+	iscsiServiceInfo    map[string]string
+	iscsiCredentialInfo map[string]string
+	client              *rest.Client
 }
 
 type nsswitch struct {
 	nsdb     []string
 	nssource []string
+}
+
+type fpolicy struct {
+	name   string
+	enable string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -51,7 +59,10 @@ func (my *SVM) Init() error {
 		return err
 	}
 	my.nsswitchInfo = make(map[string]nsswitch)
-	my.kerberosConfig = make(map[string]string)
+	my.kerberosInfo = make(map[string]string)
+	my.fpolicyInfo = make(map[string]fpolicy)
+	my.iscsiServiceInfo = make(map[string]string)
+	my.iscsiCredentialInfo = make(map[string]string)
 
 	return nil
 }
@@ -72,11 +83,38 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	}
 
 	// invoke api/protocols/nfs/kerberos/interfaces rest and get nfs_kerberos_protocol_enabled
-	if my.kerberosConfig, err = my.GetKerberosConfig(); err != nil {
+	if my.kerberosInfo, err = my.GetKerberosConfig(); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			my.Logger.Debug().Err(err).Msg("Failed to collect kerberos config")
 		} else {
 			my.Logger.Error().Err(err).Msg("Failed to collect kerberos config")
+		}
+	}
+
+	// invoke api/protocols/fpolicy rest and get fpolicy_enabled, fpolicy_name
+	if my.fpolicyInfo, err = my.GetFpolicy(); err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			my.Logger.Debug().Err(err).Msg("Failed to collect fpolicy info")
+		} else {
+			my.Logger.Error().Err(err).Msg("Failed to collect fpolicy info")
+		}
+	}
+
+	// invoke api/protocols/san/iscsi/services rest and get iscsi_service_enabled
+	if my.iscsiServiceInfo, err = my.GetIscsiServices(); err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			my.Logger.Debug().Err(err).Msg("Failed to collect fpolicy info")
+		} else {
+			my.Logger.Error().Err(err).Msg("Failed to collect fpolicy info")
+		}
+	}
+
+	// invoke api/protocols/san/iscsi/credentials rest and get iscsi_authentication_type
+	if my.iscsiCredentialInfo, err = my.GetIscsiCredentials(); err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			my.Logger.Debug().Err(err).Msg("Failed to collect fpolicy info")
+		} else {
+			my.Logger.Error().Err(err).Msg("Failed to collect fpolicy info")
 		}
 	}
 
@@ -97,8 +135,24 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		}
 
 		// Update nfs_kerberos_protocol_enabled label in svm
-		if kerberosEnabled, ok := my.kerberosConfig[svmName]; ok {
+		if kerberosEnabled, ok := my.kerberosInfo[svmName]; ok {
 			svmInstance.SetLabel("nfs_kerberos_protocol_enabled", kerberosEnabled)
+		}
+
+		// Update fpolicy_enabled, fpolicy_name label in svm
+		if fpolicyInfo, ok := my.fpolicyInfo[svmName]; ok {
+			svmInstance.SetLabel("fpolicy_enabled", fpolicyInfo.enable)
+			svmInstance.SetLabel("fpolicy_name", fpolicyInfo.name)
+		}
+
+		// Update iscsi_service_enabled label in svm
+		if iscsiServiceEnabled, ok := my.iscsiServiceInfo[svmName]; ok {
+			svmInstance.SetLabel("iscsi_service_enabled", iscsiServiceEnabled)
+		}
+
+		// Update iscsi_authentication_type label in svm
+		if iscsiAuthenticationType, ok := my.iscsiCredentialInfo[svmName]; ok {
+			svmInstance.SetLabel("iscsi_authentication_type", iscsiAuthenticationType)
 		}
 	}
 	return nil, nil
@@ -166,4 +220,99 @@ func (my *SVM) GetKerberosConfig() (map[string]string, error) {
 	}
 
 	return svmKerberosMap, nil
+}
+
+func (my *SVM) GetFpolicy() (map[string]fpolicy, error) {
+	var (
+		result        []gjson.Result
+		svmFpolicyMap map[string]fpolicy
+		err           error
+	)
+
+	svmFpolicyMap = make(map[string]fpolicy)
+	query := "api/protocols/fpolicy"
+	fpolicyFields := []string{"svm.name", "policies.enabled", "policies.name"}
+	href := rest.BuildHref("", strings.Join(fpolicyFields, ","), nil, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
+		return nil, err
+	}
+
+	for _, fpolicyData := range result {
+		fpolicyEnable := fpolicyData.Get("policies.enabled").String()
+		fpolicyName := fpolicyData.Get("policies.name").String()
+		svmName := fpolicyData.Get("svm.name").String()
+		if _, ok := svmFpolicyMap[svmName]; !ok {
+			svmFpolicyMap[svmName] = fpolicy{name: fpolicyName, enable: fpolicyEnable}
+		} else {
+			// If svm is already present, update the status value only if it is false
+			if svmFpolicyMap[svmName].enable == "false" {
+				svmFpolicyMap[svmName] = fpolicy{name: fpolicyName, enable: fpolicyEnable}
+			}
+		}
+	}
+
+	return svmFpolicyMap, nil
+}
+
+func (my *SVM) GetIscsiServices() (map[string]string, error) {
+	var (
+		result             []gjson.Result
+		svmIscsiServiceMap map[string]string
+		err                error
+	)
+
+	svmIscsiServiceMap = make(map[string]string)
+	query := "api/protocols/san/iscsi/services"
+	iscsiServiceFields := []string{"svm.name", "enabled"}
+	href := rest.BuildHref("", strings.Join(iscsiServiceFields, ","), nil, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
+		return nil, err
+	}
+
+	for _, iscsiData := range result {
+		iscsiServiceEnable := iscsiData.Get("enabled").String()
+		svmName := iscsiData.Get("svm.name").String()
+		if _, ok := svmIscsiServiceMap[svmName]; !ok {
+			svmIscsiServiceMap[svmName] = iscsiServiceEnable
+		} else {
+			// If svm is already present, update the map value only if previous value is false
+			if svmIscsiServiceMap[svmName] == "false" {
+				svmIscsiServiceMap[svmName] = iscsiServiceEnable
+			}
+		}
+	}
+
+	return svmIscsiServiceMap, nil
+}
+
+func (my *SVM) GetIscsiCredentials() (map[string]string, error) {
+	var (
+		result                []gjson.Result
+		svmIscsiCredentialMap map[string]string
+		err                   error
+	)
+
+	svmIscsiCredentialMap = make(map[string]string)
+	query := "api/protocols/san/iscsi/credentials"
+	iscsiCredentialFields := []string{"svm.name", "authentication_type"}
+	href := rest.BuildHref("", strings.Join(iscsiCredentialFields, ","), nil, "", "", "", "", query)
+
+	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
+		return nil, err
+	}
+
+	for _, iscsiData := range result {
+		authenticationType := iscsiData.Get("authentication_type").String()
+		svmName := iscsiData.Get("svm.name").String()
+		if _, ok := svmIscsiCredentialMap[svmName]; !ok {
+			svmIscsiCredentialMap[svmName] = authenticationType
+		} else {
+			// If svm is already present, update the map value with append this authenticationType to previous value
+			svmIscsiCredentialMap[svmName] = svmIscsiCredentialMap[svmName] + "," + authenticationType
+		}
+	}
+
+	return svmIscsiCredentialMap, nil
 }
