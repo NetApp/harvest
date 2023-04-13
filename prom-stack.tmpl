@@ -28,6 +28,8 @@ services:
         networks:
             - backend
         restart: unless-stopped
+        labels:
+            kompose.service.type: nodeport
 
     grafana:
         container_name: grafana
