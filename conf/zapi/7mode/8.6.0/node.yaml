@@ -21,8 +21,8 @@ export_options:
   require_instance_keys: false
   instance_labels:
     - max_aggr_size
-    - max_vol_size
     - max_vol_num
+    - max_vol_size
     - model
     - serial
     - vendor

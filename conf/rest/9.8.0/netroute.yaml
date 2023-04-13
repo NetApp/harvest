@@ -16,10 +16,9 @@ export_options:
   instance_keys:
     - uuid
   instance_labels:
-    - svm
-    - gateway
     - destination
-    - ipspace
-    - gateway
     - family
+    - gateway
+    - ipspace
     - netmask_length
+    - svm

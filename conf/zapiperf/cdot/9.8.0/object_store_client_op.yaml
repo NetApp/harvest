@@ -17,5 +17,5 @@ counters:
 
 export_options:
   instance_keys:
-    - node
     - fabricpool
+    - node

@@ -30,9 +30,9 @@ export_options:
   instance_keys:
     - shelf
   instance_labels:
-    - module_type
-    - serial_number
     - model
-    - state
+    - module_type
     - op_status
+    - serial_number
+    - state
     - vendor_name

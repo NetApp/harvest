@@ -13,5 +13,5 @@ counters:
 
 export_options:
   instance_keys:
-    - node
     - hostadapter
+    - node

@@ -20,5 +20,5 @@ export_options:
   instance_keys:
     - lif
     - node
-    - svm
     - port
+    - svm

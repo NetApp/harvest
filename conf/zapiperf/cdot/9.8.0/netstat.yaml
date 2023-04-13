@@ -33,6 +33,6 @@ plugins:
 
 export_options:
   instance_keys:
-    - node
     - faddr
     - laddr
+    - node

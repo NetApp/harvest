@@ -103,19 +103,20 @@ plugins:
 
 export_options:
   instance_keys:
-    - volume
-    - node
-    - svm
     - aggr
+    - node
     - style
+    - svm
+    - volume
   instance_labels:
-    - state
-    - is_sis_volume
-    - snapshot_policy
-    - type
-    - svm_root
-    - isEncrypted
-    - snaplock_type
     - antiRansomwareState
+    - isEncrypted
     - isHardwareEncrypted
+    - is_sis_volume
     - root_volume
+    - snaplock_type
+    - snapshot_policy
+    - state
+    - svm_root
+    - type
+

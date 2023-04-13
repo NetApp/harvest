@@ -52,10 +52,10 @@ plugins:
 
 export_options:
   instance_keys:
-    - volume
-    - svm
     - aggr
     - style
+    - svm
+    - volume
   instance_labels:
     - state
 

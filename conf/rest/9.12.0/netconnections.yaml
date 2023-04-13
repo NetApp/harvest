@@ -20,14 +20,13 @@ export_options:
   instance_keys:
     - cid
   instance_labels:
-    - node
-    - svm
+    - blocks_lb
     - lif
     - local_address
     - local_port
-    - remote_ip
-#    - remote_host
-    - proto
-    - service
     - lru
-    - blocks_lb
+    - node
+    - proto
+    - remote_ip
+    - service
+    - svm

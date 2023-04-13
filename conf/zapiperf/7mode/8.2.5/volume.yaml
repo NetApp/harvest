@@ -43,7 +43,7 @@ plugins:
 
 export_options:
   instance_keys:
-    - volume
     - aggr
     - style
     - svm
+    - volume

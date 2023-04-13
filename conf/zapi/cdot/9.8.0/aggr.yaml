@@ -73,6 +73,6 @@ export_options:
     - aggr
     - node
   instance_labels:
-    - type
-    - state
     - is_encrypted
+    - state
+    - type
