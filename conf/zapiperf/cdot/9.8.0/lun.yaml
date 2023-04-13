@@ -43,5 +43,5 @@ plugins:
 export_options:
   instance_keys:
     - lun # edited by plugin
-    - volume # added by plugin
     - svm
+    - volume # added by plugin

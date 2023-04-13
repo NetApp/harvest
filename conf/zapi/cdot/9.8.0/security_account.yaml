@@ -27,12 +27,12 @@ plugins:
 
 export_options:
   instance_keys:
-    - user_name
     - applications
-    - svm
     - methods
     - remote_switch_ipaddress
+    - svm
+    - user_name
   instance_labels:
-    - role_name
     - hash_algorithm
     - locked
+    - role_name

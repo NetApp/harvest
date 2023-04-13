@@ -24,6 +24,6 @@ plugins:
 
 export_options:
   instance_keys:
-    - node
     - aggr
     - disk_type
+    - node

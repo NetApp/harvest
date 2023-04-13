@@ -25,9 +25,9 @@ plugins:
 
 export_options:
   instance_keys:
-    - svm
-    - volume
     - namespace
     - path
+    - svm
+    - volume
 
 

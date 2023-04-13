@@ -27,17 +27,17 @@ plugins:
 
 export_options:
   instance_keys:
-    - uuid
+    - path
     - svm
+    - uuid
     - volume
-    - path
   instance_labels:
-    - nsid
-    - path
-    - node
-    - os_type
     - is_read_only
+    - node
+    - nsid
+    - os_type
+    - path
     - state
     - subsystem
-    - volume
     - svm
+    - volume

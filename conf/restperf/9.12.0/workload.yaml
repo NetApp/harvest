@@ -43,11 +43,11 @@ qos_labels:
 
 export_options:
   instance_keys:
-    - wid
+    - file
+    - lun
+    - policy_group
+    - qtree
     - svm
     - volume
-    - qtree
-    - lun
-    - file
-    - policy_group
+    - wid
     - workload

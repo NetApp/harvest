@@ -22,5 +22,5 @@ plugins:
 export_options:
   instance_keys:
     - qtree
-    - volume
     - svm
+    - volume

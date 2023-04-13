@@ -26,8 +26,8 @@ plugins:
 
 export_options:
   instance_keys:
-    - qtree
     - lun
+    - qtree
     - volume
   instance_labels:
     - online

@@ -13,6 +13,6 @@ export_options:
   instance_keys:
     - uuid
   instance_labels:
-    - svm
-    - scope
     - banner
+    - scope
+    - svm

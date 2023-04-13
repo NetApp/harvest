@@ -20,5 +20,5 @@ counters:
 
 export_options:
   instance_keys:
-    - node
     - headroom
+    - node

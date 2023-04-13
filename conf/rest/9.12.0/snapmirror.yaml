@@ -49,25 +49,24 @@ plugins:
 
 export_options:
   instance_keys:
-    - relationship_id
-    - destination_volume
+    - destination_location
     - destination_node
+    - destination_volume
     - destination_vserver
+    - relationship_id
+    - source_cluster
     - source_volume
     - source_vserver
-#    - source_node
-    - source_cluster
-    - destination_location
   instance_labels:
+    - derived_relationship_type
+    - group_type
     - healthy
-    - unhealthy_reason
     - last_transfer_type
+    - local
+    - policy_type
+    - protectedBy
+    - protectionSourceType
     - relationship_status
     - relationship_type
     - schedule
-    - group_type
-    - protectedBy
-    - protectionSourceType
-    - policy_type
-    - derived_relationship_type
-    - local
+    - unhealthy_reason

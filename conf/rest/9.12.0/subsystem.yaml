@@ -16,5 +16,5 @@ plugins:
 
 export_options:
   instance_keys:
-    - subsystem
     - health
+    - subsystem

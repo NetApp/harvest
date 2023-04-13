@@ -14,12 +14,12 @@ counters:
 
 export_options:
   instance_keys:
-    - svm
-    - policy
     - index
+    - policy
+    - svm
   instance_labels:
-    - protocol
     - clientmatch
+    - protocol
     - rorule
     - rwrule
     - superuser

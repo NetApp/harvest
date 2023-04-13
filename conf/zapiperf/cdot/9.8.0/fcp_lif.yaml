@@ -26,6 +26,6 @@ counters:
 export_options:
   instance_keys:
     - lif
-    - svm
     - node
     - port
+    - svm

@@ -26,11 +26,11 @@ plugins:
 
 export_options:
   instance_keys:
-    - user_name
-    - svm
     - applications
     - methods
+    - svm
+    - user_name
   instance_labels:
-    - role_name
     - hash_algorithm
     - locked
+    - role_name

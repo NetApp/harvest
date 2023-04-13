@@ -36,8 +36,8 @@ plugins:
 
 export_options:
   instance_keys:
-    - node
     - nic
+    - node
   instance_labels:
     - speed
     - state

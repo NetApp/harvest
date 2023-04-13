@@ -12,8 +12,8 @@ counters:
 
 export_options:
   instance_keys:
-    - svm
-    - snapshot_policy
     - comment
+    - snapshot_policy
+    - svm
 
 

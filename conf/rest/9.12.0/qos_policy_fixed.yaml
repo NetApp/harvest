@@ -21,11 +21,11 @@ export_options:
   instance_keys:
     - svm
   instance_labels:
-    - name
     - capacity_shared
+    - class
     - max_throughput_iops
     - max_throughput_mbps
     - min_throughput_iops
     - min_throughput_mbps
+    - name
     - object_count
-    - class

@@ -46,8 +46,8 @@ plugins:
 
 export_options:
   instance_keys:
-    - volume
-    - node
-    - svm
     - aggr
+    - node
     - style
+    - svm
+    - volume
