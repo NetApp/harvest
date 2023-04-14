@@ -39,6 +39,7 @@ objects:
   # SVM-level metrics
   CIFSvserver:            cifs_vserver.yaml
   CopyManager:            copy_manager.yaml
+  #ExternalServiceOp:      external_service_op.yaml
   FcpLif:                 fcp_lif.yaml
   ISCSI:                  iscsi_lif.yaml
   LIF:                    lif.yaml

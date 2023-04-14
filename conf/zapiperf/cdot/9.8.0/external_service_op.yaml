@@ -1,0 +1,36 @@
+
+name:                     ExternalServiceOp
+query:                    external_service_op
+object:                   external_service_op
+
+instance_key:             uuid
+
+counters:
+  - last_modified_timestamp
+  - num_not_found_responses
+  - num_request_failures
+  - num_requests_sent
+  - num_responses_received
+  - num_successful_responses
+  - num_timeouts
+  - operation
+  - process_name
+  - request_latency
+  - request_latency_hist
+  - server_ip_address
+  - server_name
+  - service_name
+  - instance_name
+  - instance_uuid
+  - node_name              => node
+  - vserver_name           => svm
+
+export_options:
+  instance_keys:
+    - node
+    - svm
+    - operation
+    - process_name
+    - server_ip_address
+    - server_name
+    - service_name
