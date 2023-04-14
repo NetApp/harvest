@@ -39,7 +39,7 @@ func (n *Native) Install() bool {
 	}
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
-	asupExecPath := HarvestHome + "/" + "autosupport/asup"
+	asupExecPath := HarvestHome + "/autosupport/asup"
 	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
 	return status && isValidAsup
 }
