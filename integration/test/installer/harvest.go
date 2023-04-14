@@ -93,6 +93,6 @@ func (d *Harvest) IsValidAsup(asupExecPath string) bool {
 		fmt.Printf("asup endpoint is not stable %s\n", out)
 		return false
 	}
-	fmt.Printf("asup validation successfull %s\n", out)
+	fmt.Printf("asup validation successful %s\n", out)
 	return true
 }
