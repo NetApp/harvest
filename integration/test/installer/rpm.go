@@ -32,7 +32,6 @@ func (r *RPM) Install() bool {
 	log.Println(installOutput)
 	log.Println("Stopping harvest")
 	harvestObj.Stop()
-	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
 	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
 	if copyErr != nil {
 		return false
