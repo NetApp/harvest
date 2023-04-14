@@ -38,7 +38,11 @@ func (d *Docker) Install() bool {
 			log.Println("Unable to download " + d.path)
 			panic(err)
 		}
-		imageInfo, _ := utils.Run("docker", "load", "-i", tarFileName)
+		imageInfo, err := utils.Run("docker", "load", "-i", tarFileName)
+		if err != nil {
+			log.Printf("error %s", err)
+			panic(err)
+		}
 		imageInfoArray := strings.Split(imageInfo, ":")
 		if len(imageInfoArray) != 3 {
 			panic("docker loaded image has invalid output format")

@@ -28,7 +28,11 @@ func (r *RPM) Install() bool {
 	Uninstall()
 	harvestObj := new(Harvest)
 	log.Println("Installing " + rpmFileName)
-	installOutput, _ := utils.Run("yum", "install", "-y", rpmFileName)
+	installOutput, err := utils.Run("yum", "install", "-y", rpmFileName)
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
+	}
 	log.Println(installOutput)
 	log.Println("Stopping harvest")
 	harvestObj.Stop()
@@ -53,9 +57,13 @@ func (r *RPM) Upgrade() bool {
 		utils.PanicIfNotNil(fmt.Errorf("pollers are not in a running state before upgrade"))
 	}
 	versionCmd := []string{"-qa", "harvest"}
-	out, _ := utils.Run("rpm", versionCmd...)
+	out, err := utils.Run("rpm", versionCmd...)
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
+	}
 	previousVersion := strings.TrimSpace(out)
-	err := utils.DownloadFile(rpmFileName, r.path)
+	err = utils.DownloadFile(rpmFileName, r.path)
 	utils.PanicIfNotNil(err)
 	log.Println("Downloaded: " + r.path)
 	log.Println("Updating " + rpmFileName)

@@ -27,7 +27,11 @@ func (n *Native) Install() bool {
 	log.Println("Downloaded: " + n.path)
 	Uninstall()
 	log.Println("Installing " + tarFileName)
-	unTarOutput, _ := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
+	unTarOutput, err := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
+	}
 	log.Println(unTarOutput)
 	utils.RemoveSafely(HarvestHome + "/" + harvestFile)
 	utils.UseCertFile(HarvestHome)
