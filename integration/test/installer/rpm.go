@@ -79,5 +79,7 @@ func (r *RPM) Upgrade() bool {
 	harvestObj.Stop()
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
-	return status
+	asupExecPath := HarvestHome + "/autosupport/asup"
+	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
+	return status && isValidAsup
 }
