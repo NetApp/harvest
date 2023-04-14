@@ -1400,7 +1400,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster, secured)(label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\"))",
+              "expr": "count by (datacenter, cluster, secured)(label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc.*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\"))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2609,7 +2609,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\")",
+              "expr": "label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc.*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\")",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2862,7 +2862,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+        "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",root_svm=\"No\"},svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -2872,7 +2872,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
+          "query": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",root_svm=\"No\"},svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
