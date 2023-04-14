@@ -82,3 +82,17 @@ func (h *Harvest) GetPollerInfo() []core.Poller {
 	}
 	return pollerArray
 }
+
+func (d *Harvest) IsValidAsup(asupExecPath string) bool {
+	out, err := utils.Execute(asupExecPath, "--version")
+	if err != nil {
+		fmt.Printf("error %s\n", err)
+		return false
+	}
+	if !strings.Contains(out, "endpoint:stable") {
+		fmt.Printf("asup endpoint is not stable %s\n", out)
+		return false
+	}
+	fmt.Printf("asup validation successfull %s\n", out)
+	return true
+}

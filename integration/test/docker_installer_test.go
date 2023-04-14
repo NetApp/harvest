@@ -8,6 +8,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/setup"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"strings"
 	"testing"
 )
 
@@ -27,4 +28,23 @@ func TestDockerInstall(t *testing.T) {
 		docker.CopyFile(containerId, fileRestName, installer.HarvestHome+"/"+setup.RestPerfDefaultFile)
 	}
 	docker.ReStartContainers("poller")
+	ids := docker.GetContainerID("poller")
+	id := ids[0]
+	if !isValidAsup(id) {
+		panic("Asup validation failed")
+	}
+}
+
+func isValidAsup(containerName string) bool {
+	out, err := utils.Execute("docker", "container", "exec", containerName, "autosupport/asup", "--version")
+	if err != nil {
+		fmt.Printf("error %s\n", err)
+		return false
+	}
+	if !strings.Contains(out, "endpoint:stable") {
+		fmt.Printf("asup endpoint is not stable %s\n", out)
+		return false
+	}
+	fmt.Printf("asup validation successful %s\n", out)
+	return true
 }

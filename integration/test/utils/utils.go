@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -387,4 +388,14 @@ func MarshalStack(err error) interface{} {
 		n *= 2
 	}
 	return string(trace)
+}
+
+func Execute(command string, args ...string) (out string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var outb []byte
+	cmd := exec.CommandContext(ctx, command, args...)
+	outb, err = cmd.Output()
+	return string(outb), err
 }

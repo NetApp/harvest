@@ -39,6 +39,9 @@ func (r *RPM) Install() bool {
 	} //use file directly from the repo
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
+	asupExecPath := HarvestHome + "/" + "autosupport/asup"
+	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
+	return status && isValidAsup
 	return status
 }
 
