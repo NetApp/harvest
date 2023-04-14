@@ -13,12 +13,11 @@ counters:
 
 export_options:
   instance_keys:
-    - identifier
-    - node
-    - svm
-  instance_labels:
     - client_ip
     - client_port
+    - identifier
     - network_context_id
+    - node
     - server_ip
-
+  instance_labels:
+    - svm
