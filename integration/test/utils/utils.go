@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -45,15 +44,12 @@ func GetConfigDir() string {
 }
 
 func Exec(dir string, command string, env []string, arg ...string) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	cmdString := command + " "
 	for _, param := range arg {
 		cmdString = cmdString + param + " "
 	}
 	fmt.Println("CMD : " + cmdString)
-	cmd := exec.CommandContext(ctx, command, arg...)
+	cmd := exec.Command(command, arg...)
 	cmd.Env = os.Environ()
 	for _, v := range env {
 		cmd.Env = append(cmd.Env, v)
