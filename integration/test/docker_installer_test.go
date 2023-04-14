@@ -41,7 +41,7 @@ func TestDockerInstall(t *testing.T) {
 }
 
 func isValidAsup(containerName string) bool {
-	out, err := utils.Execute("docker", "container", "exec", containerName, "autosupport/asup", "--version")
+	out, err := utils.Exec("", docker, nil, "container", "exec", containerName, "autosupport/asup", "--version")
 	if err != nil {
 		fmt.Printf("error %s\n", err)
 		return false
