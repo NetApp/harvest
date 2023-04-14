@@ -29,10 +29,15 @@ func TestDockerInstall(t *testing.T) {
 	}
 	docker.ReStartContainers("poller")
 	ids := docker.GetContainerID("poller")
-	id := ids[0]
-	if !isValidAsup(id) {
-		panic("Asup validation failed")
+	if len(ids) > 0 {
+		id := ids[0]
+		if !isValidAsup(id) {
+			panic("Asup validation failed")
+		}
+	} else {
+		panic("No pollers running")
 	}
+
 }
 
 func isValidAsup(containerName string) bool {
