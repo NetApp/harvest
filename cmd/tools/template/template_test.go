@@ -360,17 +360,17 @@ func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 		// check sorted exported instance keys
 		sortedKeys := checkSortedKeyLabels(model.ExportOptions.InstanceKeys)
 		if sortedKeys.got != sortedKeys.want {
-			t.Errorf("keys should be sorted path=[%s]", shortPath(path))
-			t.Errorf("use this instead")
-			t.Errorf("%s", sortedKeys.want)
+			t.Errorf("instance_keys should be sorted path=[%s]", shortPath(path))
+			t.Errorf("use this instead\n")
+			t.Errorf("\n%s", sortedKeys.want)
 		}
 
 		// check sorted exported instance labels
 		sortedLabels := checkSortedKeyLabels(model.ExportOptions.InstanceLabels)
 		if sortedLabels.got != sortedLabels.want {
-			t.Errorf("labels should be sorted path=[%s]", shortPath(path))
-			t.Errorf("use this instead")
-			t.Errorf("%s", sortedLabels.want)
+			t.Errorf("instance_labels should be sorted path=[%s]", shortPath(path))
+			t.Errorf("use this instead\n")
+			t.Errorf("\n%s", sortedLabels.want)
 		}
 
 	}, allTemplatesButEms...)
@@ -470,10 +470,20 @@ func sortZapiCounters(counters []metric) {
 }
 
 func checkSortedKeyLabels(keyLabels []string) sorted {
-	got := strings.Join(keyLabels, ",")
+	got := labelsToString(keyLabels)
 	sort.Strings(keyLabels)
-	want := strings.Join(keyLabels, ",")
+	want := labelsToString(keyLabels)
 	return sorted{got: got, want: want}
+}
+
+func labelsToString(labels []string) string {
+	b := strings.Builder{}
+	for _, label := range labels {
+		b.WriteString("  - ")
+		b.WriteString(label)
+		b.WriteString("\n")
+	}
+	return b.String()
 }
 
 var sigilReplacer = strings.NewReplacer("^", "", "- ", "")
