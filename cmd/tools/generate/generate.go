@@ -150,19 +150,19 @@ func generateDocker(path string, kind int) {
 	}
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
-		panic(err)
+		return
 	}
 	configFilePath, err := filepath.Abs(path)
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 	templateDirPath, err := filepath.Abs(opts.templateDir)
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 	certDirPath, err := filepath.Abs(opts.certDir)
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
@@ -187,14 +187,14 @@ func generateDocker(path string, kind int) {
 
 	t, err := template.New("docker-compose.tmpl").ParseFiles("container/onePollerPerContainer/docker-compose.tmpl")
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 
 	var out *os.File
 	color.DetectConsole("")
 	out, err = os.Create(opts.outputPath)
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 
 	if kind == harvest {
@@ -206,10 +206,10 @@ func generateDocker(path string, kind int) {
 			if s := strings.Split(httpsd, ":"); len(s) == 2 {
 				adminPort, err = strconv.Atoi(s[1])
 				if err != nil {
-					panic("Invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT")
+					logErrAndExit(fmt.Errorf("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 				}
 			} else {
-				panic("Invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT")
+				logErrAndExit(fmt.Errorf("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 			}
 
 			pollerTemplate.Admin = AdminInfo{
@@ -225,27 +225,27 @@ func generateDocker(path string, kind int) {
 	} else {
 		pt, err := template.New("prom-stack.tmpl").ParseFiles("prom-stack.tmpl")
 		if err != nil {
-			panic(err)
+			logErrAndExit(err)
 		}
 
 		promStackOut, err := os.Create("prom-stack.yml")
 		if err != nil {
-			panic(err)
+			logErrAndExit(err)
 		}
 		err = pt.Execute(promStackOut, promTemplate)
 		if err != nil {
-			panic(err)
+			logErrAndExit(err)
 		}
 	}
 
 	err = t.Execute(out, pollerTemplate)
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 
 	f, err := os.Create(opts.filesdPath)
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 	defer silentClose(f)
 	for _, line := range filesd {
@@ -265,6 +265,11 @@ func generateDocker(path string, kind int) {
 	}
 }
 
+func logErrAndExit(err error) {
+	fmt.Printf("%v\n", err)
+	os.Exit(1)
+}
+
 func silentClose(body io.ReadCloser) {
 	_ = body.Close()
 }
@@ -280,7 +285,7 @@ func generateSystemd(path string) {
 	}
 	t, err := template.New("target.tmpl").ParseFiles("service/contrib/target.tmpl")
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 	color.DetectConsole("")
 	println("Save the following to " + color.Colorize("/etc/systemd/system/harvest.target", color.Green) +
@@ -320,7 +325,7 @@ func generateSystemd(path string) {
 		PollersOrdered: pollers,
 	})
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 }
 
@@ -330,11 +335,11 @@ func writeAdminSystemd(configFp string) {
 	}
 	t, err := template.New("httpsd.tmpl").ParseFiles("service/contrib/httpsd.tmpl")
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 	f, err := os.Create(harvestAdminService)
 	if err != nil {
-		panic(err)
+		logErrAndExit(err)
 	}
 	defer silentClose(f)
 	configAbsPath, err := filepath.Abs(configFp)
@@ -355,7 +360,7 @@ func generateMetrics(path string) {
 
 	err = conf.LoadHarvestConfig(path)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	if poller, _, err = rest.GetPollerAndAddr(opts.Poller); err != nil {
