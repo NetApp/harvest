@@ -1189,7 +1189,8 @@
               }
             ]
           },
-          "unit": "kbytes"
+          "unit": "kbytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1284,7 +1285,8 @@
               }
             ]
           },
-          "unit": "kbytes"
+          "unit": "kbytes",
+          "decimals": 2
         },
         "overrides": []
       },

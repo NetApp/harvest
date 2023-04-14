@@ -12627,7 +12627,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -12806,7 +12807,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -12895,7 +12897,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
