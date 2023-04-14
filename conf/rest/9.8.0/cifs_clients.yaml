@@ -19,5 +19,6 @@ export_options:
     - network_context_id
     - node
     - server_ip
+    - svm
   instance_labels:
     - svm
