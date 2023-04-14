@@ -18,7 +18,7 @@ Harvest is container-ready and supports several deployment options:
   via [containerd and Racher Desktop](https://github.com/NetApp/harvest/tree/main/container/containerd)? We got you
   covered.
 
-- [Local K8 Deployment](https://github.com/NetApp/harvest/blob/main/container/k8/README.md) via Kompose
+- [K8 Deployment](https://github.com/NetApp/harvest/blob/main/container/k8/README.md) via Kompose
 
 ## Docker Compose
 
