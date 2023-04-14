@@ -1,0 +1,27 @@
+
+name:               CIFSClients
+query:              cifs-connection-get-iter
+object:             cifs_clients
+
+counters:
+  cifs-connection:
+    - ^^connection-id         => identifier
+    - ^lif-ip                 => server_ip
+    - ^network-context-id     => network_context_id
+    - ^node                   => node
+    - ^vserver                => svm
+    - ^workstation-ip         => client_ip
+    - ^workstation-port       => client_port
+
+collect_only_labels: true
+
+export_options:
+  instance_keys:
+    - identifier
+    - node
+    - svm
+  instance_labels:
+    - client_ip
+    - client_port
+    - network_context_id
+    - server_ip
