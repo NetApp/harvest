@@ -24,8 +24,10 @@ func UninstallNativePkg() {
 	log.Println("Uninstalling  native pkg if any")
 	if utils.FileExists(HarvestHome) {
 		harvestObj := new(Harvest)
-		if harvestObj.AllRunning() {
-			harvestObj.Stop()
+		if utils.FileExists(HarvestHome + "bin/harvest") {
+			if harvestObj.AllRunning() {
+				harvestObj.Stop()
+			}
 		}
 		utils.Run("rm", "-rf", HarvestHome)
 	} else {
