@@ -25,7 +25,7 @@ const (
 	GrafanaTokeKey = "grafana_api_token"
 )
 
-func Run(command string, arg ...string) string {
+func Run(command string, arg ...string) (string, error) {
 	return Exec("", command, nil, arg...)
 }
 
@@ -44,13 +44,16 @@ func GetConfigDir() string {
 	return "/u/mpeg/harvest"
 }
 
-func Exec(dir string, command string, env []string, arg ...string) string {
+func Exec(dir string, command string, env []string, arg ...string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	cmdString := command + " "
 	for _, param := range arg {
 		cmdString = cmdString + param + " "
 	}
 	fmt.Println("CMD : " + cmdString)
-	cmd := exec.Command(command, arg...)
+	cmd := exec.CommandContext(ctx, command, arg...)
 	cmd.Env = os.Environ()
 	for _, v := range env {
 		cmd.Env = append(cmd.Env, v)
@@ -71,7 +74,7 @@ func Exec(dir string, command string, env []string, arg ...string) string {
 		fmt.Println(err)
 	}
 	fmt.Println("-------------------------")
-	return out.String()
+	return out.String(), err
 }
 
 // DownloadFile will download a url to a local file. It's efficient because it will
@@ -388,14 +391,4 @@ func MarshalStack(err error) interface{} {
 		n *= 2
 	}
 	return string(trace)
-}
-
-func Execute(command string, args ...string) (out string, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	var outb []byte
-	cmd := exec.CommandContext(ctx, command, args...)
-	outb, err = cmd.Output()
-	return string(outb), err
 }
