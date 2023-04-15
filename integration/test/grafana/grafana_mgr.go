@@ -16,6 +16,7 @@ func (g *GrafanaMgr) Import(jsonDir string) (bool, string) {
 	var (
 		importOutput string
 		status       bool
+		err          error
 	)
 	log.Println("Verify Grafana and Prometheus are configured")
 	var re = regexp.MustCompile(`404|not-found|error`)
@@ -34,10 +35,18 @@ func (g *GrafanaMgr) Import(jsonDir string) (bool, string) {
 	if !docker.IsDockerBasedPoller() {
 		//assuming non docker based harvest grafana
 		log.Println("It is non docker based harvest")
-		importOutput = utils.Exec(installer.HarvestHome, "bin/harvest", nil, "grafana", "import", "--addr", utils.GetGrafanaURL(), directoryOption, jsonDir)
+		importOutput, err = utils.Exec(installer.HarvestHome, "bin/harvest", nil, "grafana", "import", "--addr", utils.GetGrafanaURL(), directoryOption, jsonDir)
+		if err != nil {
+			log.Printf("error %s", err)
+			panic(err)
+		}
 	} else {
 		params := []string{"exec", containerIDs[0], "bin/harvest", "grafana", "import", "--addr", "grafana:3000", directoryOption, jsonDir}
-		importOutput = utils.Run("docker", params...)
+		importOutput, err = utils.Run("docker", params...)
+		if err != nil {
+			log.Printf("error %s", err)
+			panic(err)
+		}
 	}
 	if re.MatchString(importOutput) {
 		status = false

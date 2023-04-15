@@ -28,7 +28,11 @@ func (r *RPM) Install() bool {
 	Uninstall()
 	harvestObj := new(Harvest)
 	log.Println("Installing " + rpmFileName)
-	installOutput := utils.Run("yum", "install", "-y", rpmFileName)
+	installOutput, err := utils.Run("yum", "install", "-y", rpmFileName)
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
+	}
 	log.Println(installOutput)
 	log.Println("Stopping harvest")
 	harvestObj.Stop()
@@ -38,6 +42,9 @@ func (r *RPM) Install() bool {
 	} //use file directly from the repo
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
+	asupExecPath := HarvestHome + "/autosupport/asup"
+	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
+	return status && isValidAsup
 	return status
 }
 
@@ -49,14 +56,20 @@ func (r *RPM) Upgrade() bool {
 		utils.PanicIfNotNil(fmt.Errorf("pollers are not in a running state before upgrade"))
 	}
 	versionCmd := []string{"-qa", "harvest"}
-	previousVersion := strings.TrimSpace(utils.Run("rpm", versionCmd...))
-	err := utils.DownloadFile(rpmFileName, r.path)
+	out, err := utils.Run("rpm", versionCmd...)
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
+	}
+	previousVersion := strings.TrimSpace(out)
+	err = utils.DownloadFile(rpmFileName, r.path)
 	utils.PanicIfNotNil(err)
 	log.Println("Downloaded: " + r.path)
 	log.Println("Updating " + rpmFileName)
-	installOutput := utils.Run("yum", "upgrade", "-y", rpmFileName)
+	installOutput, _ := utils.Run("yum", "upgrade", "-y", rpmFileName)
 	log.Println(installOutput)
-	installedVersion := strings.TrimSpace(utils.Run("rpm", versionCmd...))
+	out, _ = utils.Run("rpm", versionCmd...)
+	installedVersion := strings.TrimSpace(out)
 	if previousVersion == installedVersion {
 		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
 	}
@@ -65,5 +78,7 @@ func (r *RPM) Upgrade() bool {
 	harvestObj.Stop()
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
-	return status
+	asupExecPath := HarvestHome + "/autosupport/asup"
+	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
+	return status && isValidAsup
 }
