@@ -2,7 +2,6 @@ package installer
 
 import (
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/setup"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 	"strings"
@@ -36,8 +35,8 @@ func (r *RPM) Install() bool {
 	log.Println(installOutput)
 	log.Println("Stopping harvest")
 	harvestObj.Stop()
-	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
-	if copyErr != nil {
+	_, err = utils.Run("cp", harvestFile, HarvestHome+"/"+harvestFile)
+	if err != nil {
 		return false
 	} //use file directly from the repo
 	harvestObj.Start()
@@ -73,8 +72,8 @@ func (r *RPM) Upgrade() bool {
 	if previousVersion == installedVersion {
 		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
 	}
-	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
-	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+setup.RestPerfDefaultFile)
+	_, _ = utils.Run("cp", GetPerfFileWithQosCounters(ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+ZapiPerfDefaultFile)
+	_, _ = utils.Run("cp", GetPerfFileWithQosCounters(RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+RestPerfDefaultFile)
 	harvestObj.Stop()
 	harvestObj.Start()
 	status := harvestObj.AllRunning()

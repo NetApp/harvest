@@ -9,9 +9,14 @@ import (
 
 const PrometheusURL string = "http://localhost:9090"
 
+const (
+	NoDataExact    = "NO_DATA_EXACT"
+	NoDataContains = "NO_DATA_CONTAINS"
+)
+
 func GetCounterMap() map[string][]string {
 	counterMap := make(map[string][]string)
-	counterMap["NO_DATA_EXACT"] = []string{
+	counterMap[NoDataExact] = []string{
 		"fcp_util_percent",
 		"metadata_target_ping",
 		"nic_new_status",
@@ -22,45 +27,45 @@ func GetCounterMap() map[string][]string {
 		"svm_read_total",
 		"svm_write_total",
 	}
-	counterMap["NO_DATA_CONTAINS"] = []string{
-		"logical_used",
-		"efficiency_savings",
+	counterMap[NoDataContains] = []string{
 		"aggr_physical_",
+		"efficiency_savings",
+		"ems_events",
 		"fcp",
 		"fcvi",
 		"flashcache_",
 		"flashpool",
+		"health_",
+		"logical_used",
 		"nic_",
 		"node_cifs_",
 		"node_nfs",
 		"node_nvmf_ops",
 		"nvme_lif",
 		"path_",
+		"smb2_",
 		"snapmirror_",
 		"svm_cifs_",
 		"svm_nfs_latency_hist_bucket",
 		"svm_nfs_read_latency_hist_bucket",
 		"svm_nfs_write_latency_hist_bucket",
-		"smb2_",
-		"health_",
-		"ems_events",
 	}
 	//if docker.IsDockerBasedPoller() || setup.IsMac {
-	counterMap["NO_DATA_CONTAINS"] = append(counterMap["NO_DATA_CONTAINS"], "poller", "metadata_exporter_count")
+	counterMap[NoDataContains] = append(counterMap[NoDataContains], "poller", "metadata_exporter_count")
 	//}
 
 	// CI clusters don't have cluster peer and svm ldap/vscan metrics, security_login metrics, fabricpool metrics
-	counterMap["NO_DATA_CONTAINS"] = append(
-		counterMap["NO_DATA_CONTAINS"],
+	counterMap[NoDataContains] = append(
+		counterMap[NoDataContains],
 		"cluster_peer",
+		"fabricpool_cloud_bin_op_latency_average",
+		"fabricpool_cloud_bin_operation",
+		"nfs_clients_idle_duration",
+		"quota_disk_used_pct_disk_limit",
+		"quota_files_used_pct_file_limit",
+		"security_login",
 		"svm_ldap",
 		"svm_vscan",
-		"security_login",
-		"quota_files_used_pct_file_limit",
-		"quota_disk_used_pct_disk_limit",
-		"nfs_clients_idle_duration",
-		"fabricpool_cloud_bin_operation",
-		"fabricpool_cloud_bin_op_latency_average",
 	)
 	return counterMap
 }
@@ -78,7 +83,6 @@ func GetCounterMapByQuery(query string) map[string]string {
 			for counterKey, counterValue := range metricValue.Map() {
 				dataMap[counterKey] = counterValue.String()
 			}
-
 		}
 	}
 	return dataMap

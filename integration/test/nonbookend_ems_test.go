@@ -1,14 +1,9 @@
-//go:build nonbookendemstest
-
 package main
 
 import (
-	"fmt"
 	promAlerts "github.com/Netapp/harvest-automation/test/alert"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
@@ -16,7 +11,7 @@ var nonBookendEmsNames []string
 var supportedNonBookendEms []string
 var alertsData map[string]int
 
-// These few ems are node scoped and They won't be raised always from ONTAP even if we simulate via POST call.
+// These EMS events are node scoped, and are not always raised from ONTAP, even when simulated via POST call.
 var skippedEmsList = []string{
 	"callhome.hainterconnect.down",
 	"fabricpool.full",
@@ -30,11 +25,7 @@ var skippedEmsList = []string{
 	"scsitarget.fct.port.full",
 }
 
-type AlertRulesTestSuite struct {
-	suite.Suite
-}
-
-func (suite *AlertRulesTestSuite) SetupSuite() {
+func setup() {
 	totalAlerts := 0
 	emsConfigDir := utils.GetHarvestRootDir() + "/conf/ems/9.6.0"
 	log.Info().Str("EmsConfigDir", emsConfigDir).Msg("Directory path")
@@ -54,8 +45,11 @@ func (suite *AlertRulesTestSuite) SetupSuite() {
 	log.Info().Msgf("Total firing alerts %d", totalAlerts)
 }
 
-// Evaluate all active ems events
-func (suite *AlertRulesTestSuite) TestEmsAlerts() {
+func TestAlertRules(t *testing.T) {
+	utils.SkipIfMissing(t, utils.NonBookendEms)
+	setup()
+
+	// Evaluate all active ems events
 	notFoundNonBookendEms := make([]string, 0)
 
 	for _, nonBookendEms := range supportedNonBookendEms {
@@ -64,12 +58,7 @@ func (suite *AlertRulesTestSuite) TestEmsAlerts() {
 		}
 	}
 	if len(notFoundNonBookendEms) > 0 {
-		log.Error().Msg("The following ems alerts have not found.")
-		assert.Fail(suite.T(), fmt.Sprintf("One or more ems alerts %s have not been raised", notFoundNonBookendEms))
+		log.Error().Strs("notFoundNonBookendEms", notFoundNonBookendEms).Msg("Expected all to be found")
+		t.Errorf("One or more ems alerts %s have not been raised", notFoundNonBookendEms)
 	}
-}
-
-func TestAlertRulesTestSuite(t *testing.T) {
-	utils.SetupLogging()
-	suite.Run(t, new(AlertRulesTestSuite))
 }

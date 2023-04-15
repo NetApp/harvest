@@ -1,5 +1,3 @@
-//go:build regression || dashboard_json
-
 package main
 
 import (
@@ -8,8 +6,6 @@ import (
 	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"github.com/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -31,10 +27,10 @@ var restDataCollectors = []string{"Rest"}
 
 var fileSet []string
 
-// counter map consists of counters which needs to be excluded for both Zapi/Rest in CI test
+// counterMap consists of counters which need to be excluded from both Zapi/Rest in CI test
 var counterMap = data.GetCounterMap()
 
-// zapiCounterMap consists of counters which needs to be excluded for Zapi only in addition to counters present in counterMap
+// zapiCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Zapi
 var zapiCounterMap = map[string]struct{}{
 	"net_route_labels":          {},
 	"ontaps3_labels":            {},
@@ -46,7 +42,7 @@ var zapiCounterMap = map[string]struct{}{
 	"ontaps3_policy_labels":     {},
 }
 
-// restCounters  consists of counters which needs to be excluded for Rest only in addition to counters present in counterMap
+// restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
 var restCounterMap = map[string]struct{}{
 	"aggr_snapshot_inode_used_percent": {},
 }
@@ -58,51 +54,49 @@ type ResultInfo struct {
 	reason      string
 }
 
-type DashboardJsonTestSuite struct {
-	suite.Suite
+func TestMain(m *testing.M) {
+	utils.SetupLogging()
+	os.Exit(m.Run())
 }
 
-func (suite *DashboardJsonTestSuite) SetupSuite() {
+func TestDashboardsLoad(t *testing.T) {
+	utils.SkipIfMissing(t, utils.Regression)
 	jsonDir := utils.GetHarvestRootDir() + "/grafana/dashboards"
 	log.Info().Str("jsonDir", jsonDir).Msg("Dashboard directory path")
 	fileSet = GetAllJsons(jsonDir)
 	if len(fileSet) == 0 {
-		assert.Fail(suite.T(), "No json file found @ "+jsonDir)
+		t.Fatalf("No json file found @ %s", jsonDir)
 	}
 	log.Info().Int("fileSet", len(fileSet)).Msg("Json files")
-
-	log.Info().Msg("Exclude map info")
-	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
-	log.Info().Msg("Wait until qos data is available")
-	countersToCheck := []string{"qos_read_latency", "svm_nfs_throughput", "copy_manager_kb_copied"}
-	for _, counterData := range countersToCheck {
-		dashboard.AssertIfNotPresent(counterData)
-	}
 }
 
-func (suite *DashboardJsonTestSuite) TestJsonExpression() {
+func TestJsonExpression(t *testing.T) {
+	utils.SkipIfMissing(t, utils.Regression)
+	waitForCollectors(t)
 	var isZapiFailed = false
 	var isRestFailed = false
 	var restErrorInfoList []ResultInfo
 	var zapiErrorInfoList []ResultInfo
 	for _, filePath := range fileSet {
-		if IsValidFile(filePath) {
+		if isValidFile(filePath) {
 			continue
 		}
-		if ShouldSkipDashboard(filePath) {
-			log.Info().Str("dashboard", filePath).Msg("Skipping dashboard")
+		if shouldSkipDashboard(filePath) {
+			log.Info().Str("path", filePath).Msg("Skip")
 			continue
 		}
-		log.Info().Str("dashboard", filePath).Msg("Started")
+		now := time.Now()
 		jsonFile, err := os.Open(filePath)
-		utils.PanicIfNotNil(err)
+		if err != nil {
+			log.Panic().Err(err).Str("dashboard", filePath).Msg("Failed to open dashboard")
+		}
 		byteValue, _ := io.ReadAll(jsonFile)
 		_ = jsonFile.Close()
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
 		if value.IsArray() {
 			for _, record := range value.Array() {
-				allExpr = append(allExpr, GetAllExpr(record)...)
+				allExpr = append(allExpr, getAllExpr(record)...)
 				for _, targets := range record.Map()["targets"].Array() {
 					allExpr = append(allExpr, targets.Map()["expr"].Str)
 				}
@@ -111,19 +105,19 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 		allExpr = utils.RemoveDuplicateStr(allExpr)
 	ExpressionFor:
 		for _, expression := range allExpr {
-			counters := GetAllCounters(expression)
+			counters := getAllCounters(expression)
 			for _, counter := range counters {
 				if len(counter) == 0 {
 					continue
 				}
 				// find exact counter which has no data
-				for _, noDataCounter := range counterMap["NO_DATA_EXACT"] {
+				for _, noDataCounter := range counterMap[data.NoDataExact] {
 					if noDataCounter == counter {
 						continue ExpressionFor
 					}
 				}
 				// find exact counter which has no data
-				for _, noDataCounter := range counterMap["NO_DATA_CONTAINS"] {
+				for _, noDataCounter := range counterMap[data.NoDataContains] {
 					if strings.Contains(counter, noDataCounter) {
 						continue ExpressionFor
 					}
@@ -132,7 +126,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				//Test for Rest
 				query := counter + "{datacenter=~\"" + strings.Join(restDataCollectors, "|") + "\"}"
 
-				if !HasDataInDB(query) {
+				if !hasDataInDB(query) {
 					if _, ok := restCounterMap[counter]; ok {
 						continue ExpressionFor
 					}
@@ -147,7 +141,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 
 				//Test for Zapi
 				query = counter + "{datacenter!~\"" + strings.Join(restDataCollectors, "|") + "\"}"
-				if !HasDataInDB(query) {
+				if !hasDataInDB(query) {
 					if _, ok := zapiCounterMap[counter]; ok {
 						continue ExpressionFor
 					}
@@ -172,7 +166,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				strings.Contains(expression, `group_type=\"vol\"`) {
 				continue
 			}
-			queryStatus, actualExpression := ValidateExpr(expression)
+			queryStatus, actualExpression := validateExpr(expression)
 			if queryStatus {
 				errorInfo := ResultInfo{
 					actualExpression,
@@ -191,7 +185,10 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 				zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
 			}
 		}
-		log.Info().Msg("Completed.")
+		log.Info().
+			Str("path", filePath).
+			Str("dur", time.Since(now).Round(time.Millisecond).String()).
+			Msg("Dashboard validation completed")
 	}
 
 	for _, resultInfo := range zapiErrorInfoList {
@@ -211,20 +208,50 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	}
 
 	if isRestFailed {
-		assert.Fail(suite.T(), fmt.Sprintf("Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(restErrorInfoList)))
+		t.Errorf("Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(restErrorInfoList))
 	} else {
 		log.Info().Msg("Rest Validation looks good!!")
 	}
 
 	// Fail if either Rest or Zapi collectors have failures
 	if isZapiFailed {
-		assert.Fail(suite.T(), fmt.Sprintf("Zapi Test validation is failed. Pls check logs above. Count of Missing Zapi counters %d", len(zapiErrorInfoList)))
+		t.Errorf("Zapi Test validation is failed. Pls check logs above. Count of Missing Zapi counters %d", len(zapiErrorInfoList))
 	} else {
 		log.Info().Msg("Zapi Validation looks good!!")
 	}
 }
 
-func ShouldSkipDashboard(path string) bool {
+func waitForCollectors(t *testing.T) {
+	log.Info().Msg("Exclude map info")
+	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
+	log.Info().Msg("Wait for data to be collected")
+	countersToCheck := []string{
+		"copy_manager_kb_copied",
+		"qos_read_latency",
+		"qos_volume_read_data",
+		"qos_volume_read_data",
+		"qos_volume_read_latency",
+		"qos_volume_read_latency",
+		"qos_volume_read_ops",
+		"qos_volume_read_ops",
+		"qos_volume_sequential_reads",
+		"qos_volume_sequential_reads",
+		"qos_volume_sequential_writes",
+		"qos_volume_sequential_writes",
+		"qos_volume_write_data",
+		"qos_volume_write_data",
+		"qos_volume_write_latency",
+		"qos_volume_write_latency",
+		"qos_volume_write_ops",
+		"qos_volume_write_ops",
+		"svm_nfs_throughput",
+	}
+	for _, counterData := range countersToCheck {
+		dashboard.TestIfCounterExists(t, restDataCollectors[0], counterData)
+	}
+}
+
+func shouldSkipDashboard(path string) bool {
 	// Ignore dashboards that use dynamic expr variables
 	skip := []string{"nfs4storePool", "headroom", "tenant", "fsa", "overview"}
 	for _, s := range skip {
@@ -235,7 +262,7 @@ func ShouldSkipDashboard(path string) bool {
 	return false
 }
 
-func IsValidFile(filePath string) bool {
+func isValidFile(filePath string) bool {
 	ignoreList := []string{"influxdb", "7mode"}
 	for _, ignoreFilePath := range ignoreList {
 		if strings.Contains(filePath, ignoreFilePath) {
@@ -245,7 +272,7 @@ func IsValidFile(filePath string) bool {
 	return false
 }
 
-func GetAllExpr(record gjson.Result) []string {
+func getAllExpr(record gjson.Result) []string {
 	var expressionArray []string
 	panelInfo := record.Map()["panels"]
 	if panelInfo.Exists() {
@@ -263,17 +290,17 @@ func GetAllExpr(record gjson.Result) []string {
 	return expressionArray
 }
 
-func GetAllCounters(expression string) []string {
+func getAllCounters(expression string) []string {
 	return FindStringBetweenTwoChar(expression, "{", "(")
 }
 
-func ValidateExpr(expression string) (bool, string) {
+func validateExpr(expression string) (bool, string) {
 	if len(expression) > 0 {
 		counters := FindStringBetweenTwoChar(expression, "{", "(")
 		newExpression := expression
 		if len(counters) > 0 {
 			for _, counter := range counters {
-				newExpression = GenerateQueryWithValue(counter, newExpression)
+				newExpression = generateQueryWithValue(counter, newExpression)
 			}
 		}
 		return dashboard.HasValidData(newExpression), newExpression
@@ -326,7 +353,7 @@ func FindStringBetweenTwoChar(stringValue string, startChar string, endChar stri
 	return counters
 }
 
-func HasDataInDB(query string) bool {
+func hasDataInDB(query string) bool {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusURL, query, timeNow)
@@ -335,7 +362,7 @@ func HasDataInDB(query string) bool {
 	return value.Exists() && value.IsArray() && (len(value.Array()) > 0)
 }
 
-func GenerateQueryWithValue(query string, expression string) string {
+func generateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
 	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
 		data.PrometheusURL, query, timeNow)
@@ -368,10 +395,4 @@ func GenerateQueryWithValue(query string, expression string) string {
 		return newExpression
 	}
 	return ""
-
-}
-
-func TestDashboardJsonSuite(t *testing.T) {
-	utils.SetupLogging()
-	suite.Run(t, new(DashboardJsonTestSuite))
 }
