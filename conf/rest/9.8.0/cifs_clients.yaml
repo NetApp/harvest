@@ -1,0 +1,24 @@
+name:             CIFSClients
+query:            api/private/cli/vserver/cifs/connection
+object:           cifs_clients
+
+counters:
+  - ^^connection_id       => identifier
+  - ^^lif_ip              => server_ip
+  - ^^network_context_id  => network_context_id
+  - ^^node                => node
+  - ^^vserver             => svm
+  - ^^workstation_ip      => client_ip
+  - ^^workstation_port    => client_port
+
+export_options:
+  instance_keys:
+    - client_ip
+    - client_port
+    - identifier
+    - network_context_id
+    - node
+    - server_ip
+    - svm
+  instance_labels:
+    - svm

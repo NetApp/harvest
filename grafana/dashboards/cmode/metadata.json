@@ -2367,7 +2367,8 @@
                   }
                 ]
               },
-              "unit": "deckbytes"
+              "unit": "deckbytes",
+              "decimals": 2
             },
             "overrides": [
               {
@@ -2493,7 +2494,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -2815,7 +2817,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },

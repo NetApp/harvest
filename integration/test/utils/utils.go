@@ -24,7 +24,7 @@ const (
 	GrafanaTokeKey = "grafana_api_token"
 )
 
-func Run(command string, arg ...string) string {
+func Run(command string, arg ...string) (string, error) {
 	return Exec("", command, nil, arg...)
 }
 
@@ -43,7 +43,7 @@ func GetConfigDir() string {
 	return "/u/mpeg/harvest"
 }
 
-func Exec(dir string, command string, env []string, arg ...string) string {
+func Exec(dir string, command string, env []string, arg ...string) (string, error) {
 	cmdString := command + " "
 	for _, param := range arg {
 		cmdString = cmdString + param + " "
@@ -70,7 +70,7 @@ func Exec(dir string, command string, env []string, arg ...string) string {
 		fmt.Println(err)
 	}
 	fmt.Println("-------------------------")
-	return out.String()
+	return out.String(), err
 }
 
 // DownloadFile will download a url to a local file. It's efficient because it will
@@ -136,8 +136,7 @@ func RemoveDir(dir string) error {
 }
 
 func UseCertFile(harvestHome string) {
-	// Copy harvest_cert_2023.yml from /u/ to local
-	harvestCertFile := "harvest_cert_2023.yml"
+	harvestCertFile := "harvest_cert.yml"
 	harvestFile := "harvest.yml"
 	Run("cp", "-p", GetConfigDir()+"/"+harvestCertFile, harvestHome+"/"+harvestFile)
 	Run("certer", "-ip", "10.193.48.11")

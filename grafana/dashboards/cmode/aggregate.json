@@ -1025,7 +1025,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1115,7 +1116,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1206,7 +1208,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1296,7 +1299,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1386,7 +1390,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1857,7 +1862,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -2599,7 +2605,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -2682,7 +2689,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -2765,7 +2773,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -2848,7 +2857,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -2932,7 +2942,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -3015,7 +3026,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -3581,7 +3593,6 @@
                   "mode": "off"
                 }
               },
-              "decimals": 0,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -3593,7 +3604,8 @@
                   }
                 ]
               },
-              "unit": "kbytes"
+              "unit": "kbytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -3936,7 +3948,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -4124,7 +4137,8 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "bytes",
+              "decimals": 2
             },
             "overrides": []
           },

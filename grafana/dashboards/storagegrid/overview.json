@@ -437,7 +437,8 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "decbytes",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1081,7 +1082,8 @@
                   }
                 ]
               },
-              "unit": "decbytes"
+              "unit": "decbytes",
+              "decimals": 2
             },
             "overrides": []
           },
@@ -1169,7 +1171,8 @@
                   }
                 ]
               },
-              "unit": "decbytes"
+              "unit": "decbytes",
+              "decimals": 2
             },
             "overrides": []
           },

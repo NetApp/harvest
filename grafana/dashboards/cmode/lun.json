@@ -4423,7 +4423,8 @@
                   }
                 ]
               },
-              "unit": "deckbytes"
+              "unit": "deckbytes",
+              "decimals": 2
             },
             "overrides": []
           },

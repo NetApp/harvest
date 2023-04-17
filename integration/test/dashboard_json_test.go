@@ -3,12 +3,10 @@
 package main
 
 import (
-	//"encoding/json"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/julienroland/usg"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -23,6 +21,10 @@ import (
 	"strings"
 	"testing"
 	"time"
+)
+
+const (
+	cross = "✖"
 )
 
 var restDataCollectors = []string{"Rest"}
@@ -195,7 +197,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	for _, resultInfo := range zapiErrorInfoList {
 		if !resultInfo.result {
 			isZapiFailed = true
-			fmt.Println(usg.Get.Cross, fmt.Sprintf(" Zapi Collector ERROR: %s for expr [%s]", resultInfo.reason,
+			fmt.Println(cross, fmt.Sprintf(" Zapi Collector ERROR: %s for expr [%s]", resultInfo.reason,
 				resultInfo.expression))
 		}
 	}
@@ -203,7 +205,7 @@ func (suite *DashboardJsonTestSuite) TestJsonExpression() {
 	for _, resultInfo := range restErrorInfoList {
 		if !resultInfo.result {
 			isRestFailed = true
-			fmt.Println(usg.Get.Cross, fmt.Sprintf(" Rest Collector ERROR: %s for expr [%s]", resultInfo.reason,
+			fmt.Println(cross, fmt.Sprintf(" Rest Collector ERROR: %s for expr [%s]", resultInfo.reason,
 				resultInfo.expression))
 		}
 	}
@@ -299,7 +301,7 @@ func GetAllJsons(dir string) []string {
 }
 
 func FindStringBetweenTwoChar(stringValue string, startChar string, endChar string) []string {
-	var counters []string = make([]string, 0)
+	var counters = make([]string, 0)
 	var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
 	firstSet := strings.Split(stringValue, startChar)
 	for _, actualString := range firstSet {
