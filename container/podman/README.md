@@ -2,7 +2,7 @@
 
 RHEL 8 ships with [Podman](https://github.com/containers/podman) instead of Docker. There are two ways to run containers with Podman: rootless or with root. Both setups are outlined below. The Podman ecosystem is changing rapidly so the shelf life of these instructions may be short. Make sure you have at least the same [versions](#versions) of the tools listed below. 
 
-If you don't want to bother with Podman, you can also install Docker on RHEL 8 and use it to run [Harvest per normal](https://github.com/NetApp/harvest/tree/main/docker).
+If you don't want to bother with Podman, you can also install Docker on RHEL 8 and use it to run [Harvest per normal](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer).
 
 ## Setup
 
