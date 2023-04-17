@@ -37,7 +37,6 @@ LINT_EXISTS := $(shell which golangci-lint)
 GOVULNCHECK_EXISTS := $(shell which govulncheck)
 MKDOCS_EXISTS := $(shell which mkdocs)
 FETCH_ASUP_EXISTS := $(shell which ./.github/fetch-asup)
-CIVAR_EXISTS := $(shell which govulncheck)
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -176,17 +175,7 @@ endif
 
 docs: mkdocs ## Serve docs for local dev
 
-cicheck: ## check that the ci variable exists
-ifeq (${GOVULNCHECK_EXISTS}, )
-	@echo
-	@echo "govulncheck task requires that you have https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck installed. Run"
-	@echo "go install golang.org/x/vuln/cmd/govulncheck@latest"
-	@echo
-	@exit 1
-endif
-	govulncheck ./...
-
-ci-local:
+ci-local: ## Run CI locally
 ifeq ($(origin ci),undefined)
 	@echo ci-local requires a path to the CI harvest.yml like so:
 	@echo make ci=/path/to/harvest.yml ci-local
