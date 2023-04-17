@@ -1,5 +1,3 @@
-//go:build upgrade_rpm
-
 package main
 
 import (
@@ -11,13 +9,13 @@ import (
 )
 
 func TestRHELUpgrade(t *testing.T) {
-	utils.SetupLogging()
+	utils.SkipIfMissing(t, utils.UpgradeRPM)
 	var path = os.Getenv("BUILD_PATH")
 	if len(path) == 0 {
 		panic("BUILD_PATH variable is not set.")
 	}
-	installObject, error := installer.GetInstaller(installer.RHEL, path)
-	utils.PanicIfNotNil(error)
+	installObject, err := installer.GetInstaller(installer.RHEL, path)
+	utils.PanicIfNotNil(err)
 	if installObject.Upgrade() {
 		log.Println("Upgrade is successful..")
 	} else {

@@ -54,7 +54,7 @@ pipeline {
                                 export BUILD_PATH=$NATIVE
                                 export VERSION=$VERSION
                                 cp /u/mpeg/harvest/harvest_targets.yml $WORKSPACE/harvest/container/prometheus/
-                                bash $WORKSPACE/harvest/integration/test/test.sh install_native
+                                INSTALL_NATIVE=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
                             }
                         }
@@ -62,15 +62,15 @@ pipeline {
                             steps {
                                 sh """
                                 export VERSION=$VERSION
-                                bash $WORKSPACE/harvest/integration/test/test.sh regression
+                                REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 """
                             }
                         }
                         stage('Evaluating Alert Rules') {
                             steps {
                                 sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh nonbookendemstest
-                                bash $WORKSPACE/harvest/integration/test/test.sh bookendemstest
+                                NON_BOOKEND_EMS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                BOOKEND_EMS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 """
                             }
                             post {
@@ -84,7 +84,6 @@ pipeline {
                             }
                         }
                     }
-
                 }
                 stage('RPM') {
                     agent {
@@ -106,7 +105,7 @@ pipeline {
                                 export BUILD_PATH=http://harvest-jenkins.rtp.openenglab.netapp.com:8080/job/harvest2_0/job/artifcats/lastSuccessfulBuild/artifact/harvest-21.11.0-1.x86_64.rpm
                                 export VERSION=$VERSION
                                 cp /u/mpeg/harvest/harvest_targets.yml $WORKSPACE/harvest/container/prometheus/
-                                bash $WORKSPACE/harvest/integration/test/test.sh install_rpm
+                                INSTALL_RPM=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
                             }
                         }
@@ -116,7 +115,7 @@ pipeline {
                                 echo "Upgrading"
                                 export BUILD_PATH=$RPM
                                 export VERSION=$VERSION
-                                bash $WORKSPACE/harvest/integration/test/test.sh upgrade_rpm
+                                UPGRADE_RPM=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 sleep 1m
                                 '''
                             }
@@ -124,7 +123,7 @@ pipeline {
                         stage('Running Test') {
                             steps {
                                 sh """
-                                bash $WORKSPACE/harvest/integration/test/test.sh regression
+                                REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 """
                             }
                             post {
@@ -169,7 +168,7 @@ pipeline {
                                 docker build -f container/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest -t cr.netapp.io/harvest:latest -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg VERSION=$VERSION
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 sleep 1m
-                                bash $WORKSPACE/harvest/integration/test/test.sh install_docker
+                                INSTALL_DOCKER=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
                             }
                         }
@@ -177,14 +176,14 @@ pipeline {
                             steps {
                                 sh """
                                 export VERSION=$VERSION
-                                bash $WORKSPACE/harvest/integration/test/test.sh regression
+                                REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 """
 
                             }
                             post {
                                 always {
                                     sh """
-                                        bash $WORKSPACE/harvest/integration/test/test.sh copy_docker_logs
+                                        COPY_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                         rm -f docker_logs.zip
                                         zip -r docker_logs.zip /var/log/harvest
                                     """

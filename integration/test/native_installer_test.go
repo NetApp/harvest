@@ -1,5 +1,3 @@
-//go:build install_native
-
 package main
 
 import (
@@ -11,7 +9,7 @@ import (
 )
 
 func TestNativeInstall(t *testing.T) {
-	utils.SetupLogging()
+	utils.SkipIfMissing(t, utils.InstallNative)
 	var path = os.Getenv("BUILD_PATH")
 	if len(path) == 0 {
 		panic("BUILD_PATH variable is not set.")

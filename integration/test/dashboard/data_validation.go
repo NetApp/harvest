@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"net/url"
+	"testing"
 	"time"
 )
 
@@ -38,11 +39,15 @@ func HasMinRecord(query string, limit int) bool {
 	return false
 }
 
-func AssertIfNotPresent(query string) {
+func TestIfCounterExists(t *testing.T, restCollector string, query string) {
+	checkCounter(t, fmt.Sprintf(`count(%s{datacenter="%s"})`, query, restCollector))
+	checkCounter(t, fmt.Sprintf(`count(%s{datacenter!="%s"})`, query, restCollector))
+}
+
+func checkCounter(t *testing.T, query string) {
 	maxCount := 10
 	startCount := 1
-	query = fmt.Sprintf("count(%s)", query)
-	log.Info().Msg("Checking whether data is present or not for counter " + query)
+	now := time.Now()
 	for startCount < maxCount {
 		queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusURL,
 			url.QueryEscape(query))
@@ -51,12 +56,14 @@ func AssertIfNotPresent(query string) {
 			value := gjson.Get(resp, "data.result")
 			if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 				metricArray := gjson.Get(value.Array()[0].String(), "value").Array()
-				fmt.Println(metricArray)
 				if len(metricArray) > 1 {
 					totalRecord := metricArray[1].Int()
-					log.Info().Int64("Total Record", totalRecord).Msg("")
 					if totalRecord >= 5 {
-						time.Sleep(2 * time.Minute)
+						log.Info().
+							Int64("numRecs", totalRecord).
+							Str("query", query).
+							Str("dur", time.Since(now).Round(time.Millisecond).String()).
+							Msg("Data is present")
 						return
 					}
 				}
@@ -65,5 +72,9 @@ func AssertIfNotPresent(query string) {
 		startCount++
 		time.Sleep(30 * time.Second)
 	}
-	panic("Data for counter " + query + " not found after 8 min. Check Workload counters are uncommented from conf/zapiperf/default.yml")
+	log.Info().
+		Str("query", query).
+		Str("took", time.Since(now).String()).
+		Msg("Data is NOT present")
+	t.Errorf("Data for counter %s not found. Check Workload counters are uncommented", query)
 }

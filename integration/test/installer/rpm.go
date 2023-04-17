@@ -2,7 +2,6 @@ package installer
 
 import (
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/setup"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 	"strings"
@@ -28,17 +27,23 @@ func (r *RPM) Install() bool {
 	Uninstall()
 	harvestObj := new(Harvest)
 	log.Println("Installing " + rpmFileName)
-	installOutput := utils.Run("yum", "install", "-y", rpmFileName)
+	installOutput, err := utils.Run("yum", "install", "-y", rpmFileName)
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
+	}
 	log.Println(installOutput)
 	log.Println("Stopping harvest")
 	harvestObj.Stop()
-	utils.Run("cp", "-R", utils.GetConfigDir()+"/certificates", HarvestHome)
-	copyErr := utils.CopyFile(harvestFile, HarvestHome+"/harvest.yml")
-	if copyErr != nil {
+	_, err = utils.Run("cp", harvestFile, HarvestHome+"/"+harvestFile)
+	if err != nil {
 		return false
 	} //use file directly from the repo
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
+	asupExecPath := HarvestHome + "/autosupport/asup"
+	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
+	return status && isValidAsup
 	return status
 }
 
@@ -50,21 +55,29 @@ func (r *RPM) Upgrade() bool {
 		utils.PanicIfNotNil(fmt.Errorf("pollers are not in a running state before upgrade"))
 	}
 	versionCmd := []string{"-qa", "harvest"}
-	previousVersion := strings.TrimSpace(utils.Run("rpm", versionCmd...))
-	err := utils.DownloadFile(rpmFileName, r.path)
+	out, err := utils.Run("rpm", versionCmd...)
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
+	}
+	previousVersion := strings.TrimSpace(out)
+	err = utils.DownloadFile(rpmFileName, r.path)
 	utils.PanicIfNotNil(err)
 	log.Println("Downloaded: " + r.path)
 	log.Println("Updating " + rpmFileName)
-	installOutput := utils.Run("yum", "upgrade", "-y", rpmFileName)
+	installOutput, _ := utils.Run("yum", "upgrade", "-y", rpmFileName)
 	log.Println(installOutput)
-	installedVersion := strings.TrimSpace(utils.Run("rpm", versionCmd...))
+	out, _ = utils.Run("rpm", versionCmd...)
+	installedVersion := strings.TrimSpace(out)
 	if previousVersion == installedVersion {
 		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
 	}
-	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+setup.ZapiPerfDefaultFile)
-	utils.Run("cp", setup.GetPerfFileWithQosCounters(setup.RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+setup.RestPerfDefaultFile)
+	_, _ = utils.Run("cp", GetPerfFileWithQosCounters(ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+ZapiPerfDefaultFile)
+	_, _ = utils.Run("cp", GetPerfFileWithQosCounters(RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+RestPerfDefaultFile)
 	harvestObj.Stop()
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
-	return status
+	asupExecPath := HarvestHome + "/autosupport/asup"
+	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
+	return status && isValidAsup
 }

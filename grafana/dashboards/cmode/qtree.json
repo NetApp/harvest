@@ -504,7 +504,8 @@
                   }
                 ]
               },
-              "unit": "kbytes"
+              "unit": "kbytes",
+              "decimals": 2
             },
             "overrides": []
           },

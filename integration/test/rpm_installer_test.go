@@ -1,5 +1,3 @@
-//go:build install_rpm
-
 package main
 
 import (
@@ -11,7 +9,7 @@ import (
 )
 
 func TestRHELInstall(t *testing.T) {
-	utils.SetupLogging()
+	utils.SkipIfMissing(t, utils.InstallRPM)
 	var path = os.Getenv("BUILD_PATH")
 	if len(path) == 0 {
 		panic("BUILD_PATH variable is not set.")

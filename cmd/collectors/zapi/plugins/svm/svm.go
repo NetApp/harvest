@@ -221,77 +221,76 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 				my.Logger.Error().Err(err).Msg("Failed to collect kerberos config")
 			}
 		}
+	}
 
-		// update svm instance based on the above zapi response
-		for _, svmInstance := range data.GetInstances() {
-			svmName := svmInstance.GetLabel("svm")
+	// update svm instance based on the above zapi response
+	for _, svmInstance := range data.GetInstances() {
+		svmName := svmInstance.GetLabel("svm")
 
-			// Update audit_protocol_enabled label in svm
-			svmInstance.SetLabel("audit_protocol_enabled", my.auditProtocols[svmName])
+		// Update audit_protocol_enabled label in svm
+		svmInstance.SetLabel("audit_protocol_enabled", my.auditProtocols[svmName])
 
-			// Update cifs_ntlm_enabled label in svm
-			if cifsData, ok := my.cifsProtocols[svmName]; ok {
-				svmInstance.SetLabel("cifs_ntlm_enabled", cifsData.cifsNtlmEnabled)
-				svmInstance.SetLabel("smb_encryption_required", cifsData.smbEncryption)
-				svmInstance.SetLabel("smb_signing_required", cifsData.smbSigning)
-			}
+		// Update cifs_ntlm_enabled label in svm
+		if cifsData, ok := my.cifsProtocols[svmName]; ok {
+			svmInstance.SetLabel("cifs_ntlm_enabled", cifsData.cifsNtlmEnabled)
+			svmInstance.SetLabel("smb_encryption_required", cifsData.smbEncryption)
+			svmInstance.SetLabel("smb_signing_required", cifsData.smbSigning)
+		}
 
-			// Update nis_domain label in svm
-			svmInstance.SetLabel("nis_domain", my.nisInfo[svmName])
+		// Update nis_domain label in svm
+		svmInstance.SetLabel("nis_domain", my.nisInfo[svmName])
 
-			// Update nameservice_switch label in svm
-			if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
-				sort.Strings(nsswitchInfo.nsdb)
-				sort.Strings(nsswitchInfo.nssource)
-				nsDB := strings.Join(nsswitchInfo.nsdb, ",")
-				nsSource := strings.Join(nsswitchInfo.nssource, ",")
-				nisDomain := my.nisInfo[svmName]
-				svmInstance.SetLabel("ns_source", nsSource)
-				svmInstance.SetLabel("ns_db", nsDB)
-				collectors.SetNameservice(nsDB, nsSource, nisDomain, svmInstance)
-			}
+		// Update nameservice_switch label in svm
+		if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
+			sort.Strings(nsswitchInfo.nsdb)
+			sort.Strings(nsswitchInfo.nssource)
+			nsDB := strings.Join(nsswitchInfo.nsdb, ",")
+			nsSource := strings.Join(nsswitchInfo.nssource, ",")
+			nisDomain := my.nisInfo[svmName]
+			svmInstance.SetLabel("ns_source", nsSource)
+			svmInstance.SetLabel("ns_db", nsDB)
+			collectors.SetNameservice(nsDB, nsSource, nisDomain, svmInstance)
+		}
 
-			// Update cifs_protocol_enabled label in svm
-			if cifsEnable, ok := my.cifsEnabled[svmName]; ok {
-				svmInstance.SetLabel("cifs_protocol_enabled", strconv.FormatBool(cifsEnable))
-			}
+		// Update cifs_protocol_enabled label in svm
+		if cifsEnable, ok := my.cifsEnabled[svmName]; ok {
+			svmInstance.SetLabel("cifs_protocol_enabled", strconv.FormatBool(cifsEnable))
+		}
 
-			// Update nfs_protocol_enabled label in svm
-			if nfsEnable, ok := my.nfsEnabled[svmName]; ok {
-				svmInstance.SetLabel("nfs_protocol_enabled", nfsEnable)
-			}
+		// Update nfs_protocol_enabled label in svm
+		if nfsEnable, ok := my.nfsEnabled[svmName]; ok {
+			svmInstance.SetLabel("nfs_protocol_enabled", nfsEnable)
+		}
 
-			// Update ciphers label in svm
-			if sshInfo, ok := my.sshData[svmName]; ok {
-				svmInstance.SetLabel("ciphers", sshInfo)
-			}
+		// Update ciphers label in svm
+		if sshInfo, ok := my.sshData[svmName]; ok {
+			svmInstance.SetLabel("ciphers", sshInfo)
+		}
 
-			// Update iscsi_authentication_type label in svm
-			if authType, ok := my.iscsiAuth[svmName]; ok {
-				svmInstance.SetLabel("iscsi_authentication_type", authType)
-			}
+		// Update iscsi_authentication_type label in svm
+		if authType, ok := my.iscsiAuth[svmName]; ok {
+			svmInstance.SetLabel("iscsi_authentication_type", authType)
+		}
 
-			// Update iscsi_service_enabled label in svm
-			if available, ok := my.iscsiService[svmName]; ok {
-				svmInstance.SetLabel("iscsi_service_enabled", available)
-			}
+		// Update iscsi_service_enabled label in svm
+		if available, ok := my.iscsiService[svmName]; ok {
+			svmInstance.SetLabel("iscsi_service_enabled", available)
+		}
 
-			// Update fpolicy_enabled, fpolicy_name label in svm
-			if fpolicyData, ok := my.fpolicyData[svmName]; ok {
-				svmInstance.SetLabel("fpolicy_enabled", fpolicyData.enable)
-				svmInstance.SetLabel("fpolicy_name", fpolicyData.name)
-			}
+		// Update fpolicy_enabled, fpolicy_name label in svm
+		if fpolicyData, ok := my.fpolicyData[svmName]; ok {
+			svmInstance.SetLabel("fpolicy_enabled", fpolicyData.enable)
+			svmInstance.SetLabel("fpolicy_name", fpolicyData.name)
+		}
 
-			// Update ldap_session_security label in svm
-			if ldapSessionSecurity, ok := my.ldapData[svmName]; ok {
-				svmInstance.SetLabel("ldap_session_security", ldapSessionSecurity)
-			}
+		// Update ldap_session_security label in svm
+		if ldapSessionSecurity, ok := my.ldapData[svmName]; ok {
+			svmInstance.SetLabel("ldap_session_security", ldapSessionSecurity)
+		}
 
-			// Update nfs_kerberos_protocol_enabled label in svm
-			if kerberosEnabled, ok := my.kerberosConfig[svmName]; ok {
-				svmInstance.SetLabel("nfs_kerberos_protocol_enabled", kerberosEnabled)
-			}
-
+		// Update nfs_kerberos_protocol_enabled label in svm
+		if kerberosEnabled, ok := my.kerberosConfig[svmName]; ok {
+			svmInstance.SetLabel("nfs_kerberos_protocol_enabled", kerberosEnabled)
 		}
 	}
 
@@ -538,7 +537,12 @@ func (my *SVM) GetIscsiInitiatorAuth() (map[string]string, error) {
 	for _, iscsiSecurityEntry := range result {
 		authType := iscsiSecurityEntry.GetChildContentS("auth-type")
 		svmName := iscsiSecurityEntry.GetChildContentS("vserver")
-		vserverIscsiAuthMap[svmName] = authType
+		if _, ok := vserverIscsiAuthMap[svmName]; !ok {
+			vserverIscsiAuthMap[svmName] = authType
+		} else {
+			// If svm is already present, update the map value with append this authenticationType to previous value
+			vserverIscsiAuthMap[svmName] = vserverIscsiAuthMap[svmName] + "," + authType
+		}
 	}
 	return vserverIscsiAuthMap, nil
 }
@@ -567,7 +571,14 @@ func (my *SVM) GetIscsiService() (map[string]string, error) {
 	for _, iscsiService := range result {
 		available := iscsiService.GetChildContentS("is-available")
 		svmName := iscsiService.GetChildContentS("vserver")
-		vserverIscsiServiceMap[svmName] = available
+		if _, ok := vserverIscsiServiceMap[svmName]; !ok {
+			vserverIscsiServiceMap[svmName] = available
+		} else {
+			// If svm is already present, update the map value only if previous value is false
+			if vserverIscsiServiceMap[svmName] == "false" {
+				vserverIscsiServiceMap[svmName] = available
+			}
+		}
 	}
 	return vserverIscsiServiceMap, nil
 }
@@ -597,7 +608,14 @@ func (my *SVM) GetFpolicy() (map[string]fpolicy, error) {
 		name := fpolicyData.GetChildContentS("policy-name")
 		enable := fpolicyData.GetChildContentS("status")
 		svmName := fpolicyData.GetChildContentS("vserver")
-		vserverFpolicyMap[svmName] = fpolicy{name: name, enable: enable}
+		if _, ok := vserverFpolicyMap[svmName]; !ok {
+			vserverFpolicyMap[svmName] = fpolicy{name: name, enable: enable}
+		} else {
+			// If svm is already present, update the status value only if it is false
+			if vserverFpolicyMap[svmName].enable == "false" {
+				vserverFpolicyMap[svmName] = fpolicy{name: name, enable: enable}
+			}
+		}
 	}
 	return vserverFpolicyMap, nil
 }
@@ -655,7 +673,15 @@ func (my *SVM) GetKerberosConfig() (map[string]string, error) {
 	for _, kerberosConfig := range result {
 		enable := kerberosConfig.GetChildContentS("is-kerberos-enabled")
 		svmName := kerberosConfig.GetChildContentS("vserver")
-		vserverKerberosMap[svmName] = enable
+		if _, ok := vserverKerberosMap[svmName]; !ok {
+			vserverKerberosMap[svmName] = enable
+		} else {
+			// If any interface on the svm has kerberos on, then only set to true
+			if enable == "true" {
+				vserverKerberosMap[svmName] = enable
+			}
+		}
+
 	}
 	return vserverKerberosMap, nil
 }

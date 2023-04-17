@@ -6,17 +6,14 @@ replace github.com/netapp/harvest/v2 => ../
 
 require (
 	github.com/docker/docker v23.0.3+incompatible
-	github.com/julienroland/usg v0.0.0-20160918114137-cb52eabb3d84
 	github.com/netapp/harvest/v2 v2.0.0-20230404163343-f21b0c1a08ac
 	github.com/rs/zerolog v1.29.0
-	github.com/stretchr/testify v1.8.2
 	github.com/tidwall/gjson v1.14.4
-	golang.org/x/text v0.8.0
+	golang.org/x/text v0.9.0
 )
 
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
@@ -33,11 +30,10 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20221212215047-62379fc7944b // indirect
 	github.com/shirou/gopsutil/v3 v3.23.3 // indirect
 	github.com/shoenig/go-m1cpu v0.1.5 // indirect
-	github.com/spf13/cobra v1.6.1 // indirect
+	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect

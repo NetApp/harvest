@@ -1043,7 +1043,6 @@
               "mode": "off"
             }
           },
-          "decimals": 0,
           "links": [],
           "mappings": [],
           "thresholds": {
@@ -1059,7 +1058,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "decimals": 2
         },
         "overrides": []
       },

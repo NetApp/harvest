@@ -928,3 +928,47 @@ func checkHeatmapSettings(t *testing.T, path string, data []byte) {
 		}
 	})
 }
+
+func TestBytePanelsHave2Decimals(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkBytePanelsHave2Decimals(t, path, data)
+		})
+}
+
+func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+	byteTypes := map[string]bool{
+		"bytes":     true,
+		"decbytes":  true,
+		"bits":      true,
+		"decbits":   true,
+		"kbytes":    true,
+		"deckbytes": true,
+		"mbytes":    true,
+		"decmbytes": true,
+		"gbytes":    true,
+		"decgbytes": true,
+		"tbytes":    true,
+		"dectbytes": true,
+		"pbytes":    true,
+		"decpbytes": true,
+	}
+
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType != "timeseries" {
+			return
+		}
+		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		if !byteTypes[defaultUnit] {
+			return
+		}
+		decimals := value.Get("fieldConfig.defaults.decimals").String()
+		if decimals != "2" {
+			t.Errorf(`dashboard=%s path=%s panel="%s" got decimals=%s, want decimals=2`,
+				dashPath, path, value.Get("title").String(), decimals)
+		}
+	})
+}
