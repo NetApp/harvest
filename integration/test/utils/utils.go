@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"testing"
 	"time"
 )
 
@@ -22,6 +23,15 @@ const (
 	GrafanaPort    = "3000"
 	PrometheusPort = "9090"
 	GrafanaTokeKey = "grafana_api_token"
+
+	BookendEms     = "BOOKEND_EMS"
+	CopyDockerLogs = "COPY_DOCKER_LOGS"
+	InstallDocker  = "INSTALL_DOCKER"
+	InstallNative  = "INSTALL_NATIVE"
+	InstallRPM     = "INSTALL_RPM"
+	NonBookendEms  = "NON_BOOKEND_EMS"
+	Regression     = "REGRESSION"
+	UpgradeRPM     = "UPGRADE_RPM"
 )
 
 func Run(command string, arg ...string) (string, error) {
@@ -73,8 +83,8 @@ func Exec(dir string, command string, env []string, arg ...string) (string, erro
 	return out.String(), err
 }
 
-// DownloadFile will download a url to a local file. It's efficient because it will
-// write as it downloads and not load the whole file into memory.
+// DownloadFile will download the url to a local file.
+// It's efficient because it will write as it downloads and not load the whole file into memory.
 func DownloadFile(filepath string, url string) error {
 
 	// Get the data
@@ -116,12 +126,7 @@ func RemoveDir(dir string) error {
 	if err != nil {
 		return err
 	}
-	defer func(d *os.File) {
-		err := d.Close()
-		if err != nil {
-
-		}
-	}(d)
+	defer func(d *os.File) { _ = d.Close() }(d)
 	names, err := d.Readdirnames(-1)
 	if err != nil {
 		return err
@@ -138,8 +143,8 @@ func RemoveDir(dir string) error {
 func UseCertFile(harvestHome string) {
 	harvestCertFile := "harvest_cert.yml"
 	harvestFile := "harvest.yml"
-	Run("cp", "-p", GetConfigDir()+"/"+harvestCertFile, harvestHome+"/"+harvestFile)
-	Run("certer", "-ip", "10.193.48.11")
+	_, _ = Run("cp", "-p", GetConfigDir()+"/"+harvestCertFile, harvestHome+"/"+harvestFile)
+	_, _ = Run("certer", "-ip", "10.193.48.11")
 
 	path := harvestHome + "/cert"
 	log.Info().Str("path", path).Msg("Copy certificate files")
@@ -147,8 +152,8 @@ func UseCertFile(harvestHome string) {
 		err := RemoveDir(path)
 		PanicIfNotNil(err)
 	}
-	Run("mkdir", "-p", path)
-	Run("cp", "-R", GetConfigDir()+"/cert", harvestHome)
+	_, _ = Run("mkdir", "-p", path)
+	_, _ = Run("cp", "-R", GetConfigDir()+"/cert", harvestHome)
 }
 
 func RemoveSafely(filename string) bool {
@@ -164,71 +169,23 @@ func RemoveSafely(filename string) bool {
 	return true
 }
 
-func CopyFile(src, dst string) (err error) {
-	sfi, err := os.Stat(src)
-	if err != nil {
-		return
-	}
-	if !sfi.Mode().IsRegular() {
-		// cannot copy non-regular files (e.g., directories,
-		// symlinks, devices, etc.)
-		return fmt.Errorf("CopyFile: non-regular source file %s (%q)", sfi.Name(), sfi.Mode().String())
-	}
-	dfi, err := os.Stat(dst)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			return
+func WaitForGrafana() bool {
+	now := time.Now()
+	const waitFor = time.Second * 30
+	for {
+		if IsURLReachable(GetGrafanaHTTPURL()) {
+			return true
 		}
-	} else {
-		if !(dfi.Mode().IsRegular()) {
-			return fmt.Errorf("CopyFile: non-regular destination file %s (%q)", dfi.Name(), dfi.Mode().String())
+		if time.Now().Sub(now) > waitFor {
+			return false
 		}
-		if os.SameFile(sfi, dfi) {
-			return
-		}
+		time.Sleep(time.Second * 1)
 	}
-	if err = os.Link(src, dst); err == nil {
-		return
-	}
-	err = copyFileContents(src, dst)
-	return
-}
-
-// copyFileContents copies the contents of the file named src to the file named
-// by dst. The file will be created if it does not already exist. If the
-// destination file exists, all it's contents will be replaced by the contents
-// of the source file.
-func copyFileContents(src, dst string) (err error) {
-	in, err := os.Open(src)
-	if err != nil {
-		return
-	}
-	defer func(in *os.File) {
-		err := in.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(in)
-	out, err := os.Create(dst)
-	if err != nil {
-		return
-	}
-	defer func() {
-		cerr := out.Close()
-		if err == nil {
-			err = cerr
-		}
-	}()
-	if _, err = io.Copy(out, in); err != nil {
-		return
-	}
-	err = out.Sync()
-	return
 }
 
 func IsURLReachable(url string) bool {
-	response, errors := http.Get(url)
-	if errors == nil && response.StatusCode == 200 {
+	response, err := http.Get(url)
+	if err == nil && response.StatusCode == 200 {
 		return true
 	}
 	return false
@@ -299,26 +256,24 @@ func GetOutboundIP() string {
 func WriteToken(token string) {
 	var err error
 	filename := "harvest.yml"
+	abs, _ := filepath.Abs(filename)
 	err = conf.LoadHarvestConfig(filename)
 	PanicIfNotNil(err)
 	tools := conf.Config.Tools
 	if tools != nil {
 		if len(tools.GrafanaAPIToken) > 0 {
-			log.Info().Msg(filename + "  has an entry for grafana token")
+			log.Error().Str("path", abs).Msg("Harvest.yml contains a grafana token")
 			return
 		}
 	}
 	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		log.Fatal().Err(err).Msg("Failed to open file")
 	}
-	defer func(f *os.File) {
-		err := f.Close()
-		PanicIfNotNil(err)
-	}(f)
+	defer func(f *os.File) { _ = f.Close() }(f)
 	_, _ = fmt.Fprintf(f, "\n%s\n", "Tools:")
 	_, _ = fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
+	log.Info().Str("path", abs).Msg("Wrote Grafana token to harvest.yml")
 }
 
 func GetGrafanaHTTPURL() string {
@@ -386,4 +341,19 @@ func MarshalStack(err error) interface{} {
 		n *= 2
 	}
 	return string(trace)
+}
+
+func SkipIfMissing(t *testing.T, vars ...string) {
+	t.Helper()
+	anyMatches := false
+	for _, v := range vars {
+		e := os.Getenv(v)
+		if e != "" {
+			anyMatches = true
+			break
+		}
+	}
+	if !anyMatches {
+		t.Skipf("Set one of %s envvars to run this test", strings.Join(vars, ", "))
+	}
 }

@@ -9,10 +9,10 @@ import (
 	"regexp"
 )
 
-type GrafanaMgr struct {
+type Mgr struct {
 }
 
-func (g *GrafanaMgr) Import(jsonDir string) (bool, string) {
+func (g *Mgr) Import(jsonDir string) (bool, string) {
 	var (
 		importOutput string
 		status       bool

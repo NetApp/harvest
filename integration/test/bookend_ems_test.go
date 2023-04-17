@@ -1,14 +1,9 @@
-//go:build bookendemstest
-
 package main
 
 import (
-	"fmt"
 	promAlerts "github.com/Netapp/harvest-automation/test/alert"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
@@ -19,14 +14,14 @@ var supportedResolvingEms []string
 var oldAlertsData map[string]int
 var newAlertsData map[string]int
 
-// These bookend issuing ems are node scoped and have bookendKey as node-name only.
+// These bookend issuing EMS events are node scoped and have bookendKey as node-name only.
 var nodeScopedIssuingEmsList = []string{
 	"callhome.battery.low",
 	"sp.ipmi.lost.shutdown",
 	"sp.notConfigured",
 }
 
-// These bookend resolving ems are node scoped and have bookendKey as node-name only.
+// These bookend resolving EMS events are node scoped and have bookendKey as node-name only.
 var nodeScopedResolvingEmsList = []string{
 	"nvram.battery.charging.normal",
 	"sp.heartbeat.resumed",
@@ -35,11 +30,7 @@ var nodeScopedResolvingEmsList = []string{
 	"sp.notConfigured",
 }
 
-type EmsTestSuite struct {
-	suite.Suite
-}
-
-func (suite *EmsTestSuite) SetupSuite() {
+func setupAlerts() {
 	totalAlerts := 0
 	emsConfigDir := utils.GetHarvestRootDir() + "/conf/ems/9.6.0"
 	log.Info().Str("EmsConfigDir", emsConfigDir).Msg("Directory path")
@@ -66,28 +57,26 @@ func (suite *EmsTestSuite) SetupSuite() {
 	log.Info().Msgf("Total firing alerts %d", totalAlerts)
 }
 
-// Evaluate bookend active ems events
-func (suite *EmsTestSuite) TestBookendEmsAlerts() {
+func TestEmsTestSuite(t *testing.T) {
+	utils.SkipIfMissing(t, utils.BookendEms)
+	setupAlerts()
+
+	// Evaluate bookend active ems events
 	foundBookendEms := make([]string, 0)
 
 	for _, issuingEms := range supportedIssuingEms {
-		// If the issuingEms wasn't exist prior then ignore the test-case.
+		// If the issuingEms did not exit before, then ignore the test-case.
 		if oldAlertsData[issuingEms] > 0 {
 			v := oldAlertsData[issuingEms] - newAlertsData[issuingEms]
 			if v < 1 {
 				foundBookendEms = append(foundBookendEms, issuingEms)
 			}
 		} else {
-			log.Info().Msg("There is no active IssuingEms exist")
+			log.Info().Str("issuingEms", issuingEms).Msg("There is no active issuingEms")
 		}
 	}
 	if len(foundBookendEms) > 0 {
-		log.Error().Msg("The following bookend ems alerts have found.")
-		assert.Fail(suite.T(), fmt.Sprintf("One or more extra bookend ems alerts %s have been raised", foundBookendEms))
+		log.Error().Strs("foundBookendEms", foundBookendEms).Msg("Unexpected bookendEms found")
+		t.Errorf("One or more extra bookend ems alerts %s have been raised", foundBookendEms)
 	}
-}
-
-func TestEmsTestSuite(t *testing.T) {
-	utils.SetupLogging()
-	suite.Run(t, new(EmsTestSuite))
 }
