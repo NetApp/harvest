@@ -2407,13 +2407,14 @@
                     "id": "mappings",
                     "value": [
                       {
+                        "type": "regex",
                         "options": {
-                          "chap": {
-                            "index": 0,
-                            "text": "Enabled"
+                          "pattern": ".*chap.*",
+                          "result": {
+                            "text": "Enabled",
+                            "index": 0
                           }
-                        },
-                        "type": "value"
+                        }
                       },
                       {
                         "options": {
