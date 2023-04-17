@@ -34,6 +34,7 @@ nav:
   - Dashboards: 'dashboards.md'
   - Manage Harvest Pollers: 'manage-harvest.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
+  - Monitor Harvest: 'monitor-harvest.md'
   - Troubleshoot: 'troubleshooting.md'
   - Reference:
       - 'Plugins': 'plugins.md'
