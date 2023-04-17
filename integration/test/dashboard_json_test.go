@@ -46,7 +46,9 @@ var zapiCounterMap = map[string]struct{}{
 
 // restCounters  consists of counters which needs to be excluded for Rest only in addition to counters present in counterMap
 var restCounterMap = map[string]struct{}{
-	"aggr_snapshot_inode_used_percent": {},
+	"aggr_snapshot_inode_used_percent":                {},
+	"external_service_op_request_latency":             {},
+	"external_service_op_request_latency_hist_bucket": {},
 }
 
 type ResultInfo struct {
