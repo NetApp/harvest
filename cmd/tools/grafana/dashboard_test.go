@@ -484,6 +484,7 @@ func TestIDIsBlank(t *testing.T) {
 		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
 			checkUIDIsBlank(t, path, data)
+			checkIDIsNull(t, path, data)
 		})
 }
 
@@ -505,6 +506,13 @@ func checkUIDIsBlank(t *testing.T, path string, data []byte) {
 	uid := gjson.GetBytes(data, "uid").String()
 	if uid != "" {
 		t.Errorf(`dashboard=%s uid should be "" but is %s`, shortPath(path), uid)
+	}
+}
+
+func checkIDIsNull(t *testing.T, path string, data []byte) {
+	id := gjson.GetBytes(data, "id").String()
+	if id != "" {
+		t.Errorf(`dashboard=%s id should be null but is %s`, shortPath(path), id)
 	}
 }
 
