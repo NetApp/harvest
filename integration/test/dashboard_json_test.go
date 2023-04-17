@@ -236,7 +236,6 @@ func waitForCollectors(t *testing.T) {
 		"qos_volume_write_data",
 		"qos_volume_write_latency",
 		"qos_volume_write_ops",
-		"qos_volume_write_ops",
 		"svm_nfs_throughput",
 	}
 	for _, counterData := range countersToCheck {
