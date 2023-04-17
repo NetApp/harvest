@@ -2863,7 +2863,7 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",root_svm=\"No\"},svm)",
-        "description": null,
+        "description": "Showing only data SVMs and excluding all the root SVMs",
         "error": null,
         "hide": 0,
         "includeAll": true,
