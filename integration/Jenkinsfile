@@ -186,6 +186,7 @@ pipeline {
                                         COPY_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                         rm -f docker_logs.zip
                                         zip -r docker_logs.zip /var/log/harvest
+                                        ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                     """
                                     archiveArtifacts artifacts: "docker_logs.zip", fingerprint: true
                                 }
