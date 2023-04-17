@@ -17,18 +17,24 @@ func TestDockerInstall(t *testing.T) {
 		t.Fatalf("Grafana is not reachable.")
 	}
 	utils.WriteToken(utils.CreateGrafanaToken())
-	containerIds := docker.GetContainerID("poller")
+	containerIds, err := docker.Containers("poller")
+	if err != nil {
+		panic(err)
+	}
 	fileZapiName := installer.GetPerfFileWithQosCounters(installer.ZapiPerfDefaultFile, "defaultZapi.yaml")
 	fileRestName := installer.GetPerfFileWithQosCounters(installer.RestPerfDefaultFile, "defaultRest.yaml")
-	for _, containerId := range containerIds {
-		docker.CopyFile(containerId, installer.HarvestConfigFile, installer.HarvestHome+"/"+installer.HarvestConfigFile)
-		docker.CopyFile(containerId, fileZapiName, installer.HarvestHome+"/"+installer.ZapiPerfDefaultFile)
-		docker.CopyFile(containerId, fileRestName, installer.HarvestHome+"/"+installer.RestPerfDefaultFile)
+	for _, container := range containerIds {
+		docker.CopyFile(container.Id, installer.HarvestConfigFile, installer.HarvestHome+"/"+installer.HarvestConfigFile)
+		docker.CopyFile(container.Id, fileZapiName, installer.HarvestHome+"/"+installer.ZapiPerfDefaultFile)
+		docker.CopyFile(container.Id, fileRestName, installer.HarvestHome+"/"+installer.RestPerfDefaultFile)
 	}
-	docker.ReStartContainers("poller")
-	ids := docker.GetContainerID("poller")
+	_ = docker.ReStartContainers("poller")
+	ids, err := docker.Containers("poller")
+	if err != nil {
+		panic(err)
+	}
 	if len(ids) > 0 {
-		id := ids[0]
+		id := ids[0].Id
 		if !isValidAsup(id) {
 			panic("Asup validation failed")
 		}
