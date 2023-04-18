@@ -245,7 +245,7 @@ func waitForCollectors(t *testing.T) {
 
 func shouldSkipDashboard(path string) bool {
 	// Ignore dashboards that use dynamic expr variables
-	skip := []string{"nfs4storePool", "headroom", "tenant", "fsa", "overview"}
+	skip := []string{"nfs4storePool", "headroom", "tenant", "fsa", "overview", "fabricpool"}
 	for _, s := range skip {
 		if strings.Contains(path, s) {
 			return true
