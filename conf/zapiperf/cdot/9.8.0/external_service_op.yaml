@@ -8,7 +8,6 @@ instance_key:             uuid
 counters:
   - instance_name
   - instance_uuid
-  - last_modified_timestamp
   - node_name              => node
   - num_not_found_responses
   - num_request_failures
