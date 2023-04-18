@@ -119,3 +119,7 @@ type Container struct {
 		Propagation string `json:"Propagation"`
 	} `json:"Mounts"`
 }
+
+func (c Container) Name() string {
+	return strings.Join(c.Names, " ")
+}

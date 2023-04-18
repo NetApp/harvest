@@ -33,14 +33,17 @@ func TestCopyLogs(t *testing.T) {
 
 func TestNoErrors(t *testing.T) {
 	utils.SkipIfMissing(t, utils.AnalyzeDockerLogs)
-	containerIds := docker.GetContainerID("bin/poller")
-	for _, containerId := range containerIds {
-		checkLogs(t, containerId)
+	containerIds, err := docker.Containers("bin/poller")
+	if err != nil {
+		panic(err)
+	}
+	for _, container := range containerIds {
+		checkLogs(t, container)
 	}
 }
 
-func checkLogs(t *testing.T, container string) {
-	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -E "ERR"`, container)
+func checkLogs(t *testing.T, container docker.Container) {
+	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -E "ERR"`, container.Id)
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
 	// The grep checks for matching lines.
@@ -57,11 +60,12 @@ func checkLogs(t *testing.T, container string) {
 
 			}
 		}
-		t.Errorf("ERR checking logs container=%s cli=%s err=%v output=%s", container, cli, err, string(output))
+		t.Errorf("ERR checking logs name=%s container=%s cli=%s err=%v output=%s",
+			container.Name(), container.Id, cli, err, string(output))
 		return
 	}
 	if len(output) > 0 {
-		t.Errorf("ERRs found in poller logs container=%s size=%d. Dump of errors follows:\n%s",
-			container, len(output), string(output))
+		t.Errorf("ERRs found in poller logs name=%s id=%s size=%d. Dump of errors follows:\n%s",
+			container.Name(), container.Id[:6], len(output), string(output))
 	}
 }
