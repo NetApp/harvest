@@ -21,8 +21,6 @@ func GetCounterMap() map[string][]string {
 		"metadata_target_ping",
 		"nic_new_status",
 		"node_cifs_signed_sessions",
-		"qos_detail_resource_latency",
-		"qos_detail_volume_resource_latency",
 		"snapmirror_labels",
 		"svm_read_total",
 		"svm_write_total",

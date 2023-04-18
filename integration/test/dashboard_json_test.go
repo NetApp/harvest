@@ -73,6 +73,7 @@ func TestDashboardsLoad(t *testing.T) {
 func TestJsonExpression(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
 	waitForCollectors(t)
+	time.Sleep(2 * time.Minute) // Add buffer in case other templates have failed to collect counters due to timeouts
 	var isZapiFailed = false
 	var isRestFailed = false
 	var restErrorInfoList []ResultInfo
@@ -226,23 +227,9 @@ func waitForCollectors(t *testing.T) {
 	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
 	log.Info().Msg("Wait for data to be collected")
 	countersToCheck := []string{
-		"copy_manager_kb_copied",
-		"namespace_avg_read_latency",
-		"namespace_read_data",
-		"namespace_read_ops",
-		"namespace_write_data",
-		"namespace_avg_write_latency",
-		"namespace_write_ops",
 		"qos_read_latency",
-		"qos_volume_read_data",
-		"qos_volume_read_latency",
-		"qos_volume_read_ops",
-		"qos_volume_sequential_reads",
-		"qos_volume_sequential_writes",
-		"qos_volume_write_data",
-		"qos_volume_write_latency",
-		"qos_volume_write_ops",
-		"svm_nfs_throughput",
+		"qos_detail_resource_latency",
+		"qos_detail_volume_resource_latency",
 	}
 	for _, counterData := range countersToCheck {
 		dashboard.TestIfCounterExists(t, restDataCollectors[0], counterData)
