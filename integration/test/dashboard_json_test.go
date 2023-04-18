@@ -228,10 +228,10 @@ func waitForCollectors(t *testing.T) {
 	countersToCheck := []string{
 		"copy_manager_kb_copied",
 		"namespace_avg_read_latency",
+		"namespace_avg_write_latency",
 		"namespace_read_data",
 		"namespace_read_ops",
 		"namespace_write_data",
-		"namespace_avg_write_latency",
 		"namespace_write_ops",
 		"qos_read_latency",
 		"qos_volume_read_data",

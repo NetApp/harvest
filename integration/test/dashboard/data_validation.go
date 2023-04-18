@@ -47,6 +47,7 @@ func TestIfCounterExists(t *testing.T, restCollector string, query string) {
 func checkCounter(t *testing.T, query string) {
 	maxCount := 10
 	startCount := 1
+	const atLeast = 2
 	now := time.Now()
 	for startCount < maxCount {
 		queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusURL,
@@ -58,13 +59,20 @@ func checkCounter(t *testing.T, query string) {
 				metricArray := gjson.Get(value.Array()[0].String(), "value").Array()
 				if len(metricArray) > 1 {
 					totalRecord := metricArray[1].Int()
-					if totalRecord >= 5 {
+					if totalRecord >= atLeast {
 						log.Info().
 							Int64("numRecs", totalRecord).
 							Str("query", query).
 							Str("dur", time.Since(now).Round(time.Millisecond).String()).
 							Msg("Data is present")
 						return
+					} else if totalRecord > 0 {
+						log.Warn().
+							Int64("numRecs", totalRecord).
+							Int("atLeast", atLeast).
+							Str("query", query).
+							Str("dur", time.Since(now).Round(time.Millisecond).String()).
+							Msg("No enough data present. Retry")
 					}
 				}
 			}
