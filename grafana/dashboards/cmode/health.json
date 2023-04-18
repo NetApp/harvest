@@ -2583,7 +2583,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Home"
+                  "options": "At Home"
                 },
                 "properties": [
                   {
@@ -2654,7 +2654,7 @@
                   "cluster": "Cluster",
                   "datacenter": "Datacenter",
                   "instance": "",
-                  "isHome": "Home",
+                  "isHome": "At Home",
                   "lif": "Network Interface",
                   "severity": "Severity"
                 }
