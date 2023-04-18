@@ -27,7 +27,10 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 		panic(fmt.Errorf("prometheus is not reachable"))
 	}
 	log.Println("Import dashboard from grafana/dashboards")
-	containerIDs := docker.GetContainerID("poller")
+	containerIDs, err := docker.Containers("poller")
+	if err != nil {
+		panic(err)
+	}
 	directoryOption := ""
 	if len(jsonDir) > 0 {
 		directoryOption = "--directory"
@@ -41,7 +44,7 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 			panic(err)
 		}
 	} else {
-		params := []string{"exec", containerIDs[0], "bin/harvest", "grafana", "import", "--addr", "grafana:3000", directoryOption, jsonDir}
+		params := []string{"exec", containerIDs[0].Id, "bin/harvest", "grafana", "import", "--addr", "grafana:3000", directoryOption, jsonDir}
 		importOutput, err = utils.Run("docker", params...)
 		if err != nil {
 			log.Printf("error %s", err)

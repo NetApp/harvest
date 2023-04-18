@@ -3,7 +3,6 @@ package installer
 import "fmt"
 
 const (
-	DOCKER            = "docker"
 	RHEL              = "rpm"
 	NATIVE            = "tar"
 	HarvestConfigFile = "harvest.yml"
@@ -12,11 +11,7 @@ const (
 )
 
 func GetInstaller(installType string, path string) (Installer, error) {
-	if installType == DOCKER {
-		d := new(Docker)
-		d.Init(path)
-		return d, nil
-	} else if installType == RHEL {
+	if installType == RHEL {
 		d := new(RPM)
 		d.Init(path)
 		return d, nil
