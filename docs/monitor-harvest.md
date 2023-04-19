@@ -16,7 +16,7 @@ Here's a high-level summary of the metadata metrics Harvest publishes with detai
 
 | Metric                         | Description                                                                  | Units        |
 |:-------------------------------|:-----------------------------------------------------------------------------|:-------------|
-| metadata_collector_api_time    | amount of time to collect data from monitored cluster and object             | microseconds |
+| metadata_collector_api_time    | amount of time to collect data from monitored cluster object                 | microseconds |
 | metadata_collector_instances   | number of objects collected from monitored cluster                           | scalar       |
 | metadata_collector_metrics     | number of counters collected from monitored cluster                          | scalar       |
 | metadata_collector_parse_time  | amount of time to parse XML, JSON, etc. for cluster object                   | microseconds |
