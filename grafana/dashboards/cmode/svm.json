@@ -36,6 +36,12 @@
     },
     {
       "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
       "version": ""
@@ -65,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1676360633220,
+  "iteration": 1681881434435,
   "links": [
     {
       "asDropdown": true,
@@ -1519,6 +1525,127 @@
           "fieldConfig": {
             "defaults": {
               "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 17
+          },
+          "id": 252,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "LIF Details",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "address",
+                    "cluster",
+                    "datacenter",
+                    "home_node",
+                    "home_port",
+                    "ipspace",
+                    "is_home",
+                    "lif",
+                    "node",
+                    "port",
+                    "protocols",
+                    "status",
+                    "subnet",
+                    "svm",
+                    "services"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "address": 6,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "home_node": 10,
+                  "home_port": 11,
+                  "ipspace": 5,
+                  "is_home": 9,
+                  "lif": 2,
+                  "node": 7,
+                  "port": 8,
+                  "protocols": 13,
+                  "status": 3,
+                  "subnet": 12,
+                  "svm": 4,
+                  "type": 14
+                },
+                "renameByName": {
+                  "address": "Address",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "home_node": "Home Node",
+                  "home_port": "Home Port",
+                  "ipspace": "IPspace",
+                  "is_home": "At Home",
+                  "lif": "Name",
+                  "node": "Current Node",
+                  "port": "Current Port",
+                  "protocols": "Protocols",
+                  "services": "Services",
+                  "status": "Status",
+                  "subnet": "Subnet",
+                  "svm": "SVM",
+                  "type": "Type"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
                 "mode": "palette-classic"
               },
               "custom": {
@@ -1572,7 +1699,7 @@
             "h": 11,
             "w": 12,
             "x": 0,
-            "y": 39
+            "y": 29
           },
           "id": 89,
           "options": {
@@ -1661,7 +1788,7 @@
             "h": 11,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 29
           },
           "id": 90,
           "options": {
@@ -1750,7 +1877,7 @@
             "h": 11,
             "w": 12,
             "x": 0,
-            "y": 50
+            "y": 40
           },
           "id": 93,
           "options": {
@@ -1839,7 +1966,7 @@
             "h": 11,
             "w": 12,
             "x": 12,
-            "y": 50
+            "y": 40
           },
           "id": 94,
           "options": {
@@ -1928,7 +2055,7 @@
             "h": 11,
             "w": 12,
             "x": 0,
-            "y": 61
+            "y": 51
           },
           "id": 95,
           "options": {
@@ -2017,7 +2144,7 @@
             "h": 11,
             "w": 12,
             "x": 12,
-            "y": 61
+            "y": 51
           },
           "id": 96,
           "options": {
@@ -2049,7 +2176,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NAS LIF Drilldown",
+      "title": "LIF Drilldown",
       "type": "row"
     },
     {
@@ -2098,7 +2225,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 73
+            "y": 51
           },
           "id": 99,
           "options": {
@@ -2156,7 +2283,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 73
+            "y": 51
           },
           "id": 103,
           "options": {
@@ -2247,7 +2374,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 73
+            "y": 51
           },
           "id": 107,
           "options": {
@@ -2322,7 +2449,7 @@
             "h": 4,
             "w": 4,
             "x": 0,
-            "y": 77
+            "y": 55
           },
           "id": 100,
           "options": {
@@ -2388,7 +2515,7 @@
             "h": 4,
             "w": 4,
             "x": 4,
-            "y": 77
+            "y": 55
           },
           "id": 101,
           "options": {
@@ -2446,7 +2573,7 @@
             "h": 4,
             "w": 4,
             "x": 8,
-            "y": 77
+            "y": 55
           },
           "id": 104,
           "options": {
@@ -2504,7 +2631,7 @@
             "h": 4,
             "w": 4,
             "x": 12,
-            "y": 77
+            "y": 55
           },
           "id": 105,
           "options": {
@@ -2594,7 +2721,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 81
+            "y": 59
           },
           "id": 102,
           "options": {
@@ -2701,7 +2828,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 81
+            "y": 59
           },
           "id": 106,
           "options": {
@@ -2800,7 +2927,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 81
+            "y": 59
           },
           "id": 108,
           "options": {
@@ -2890,7 +3017,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 90
+            "y": 68
           },
           "id": 242,
           "options": {
@@ -2985,7 +3112,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 90
+            "y": 68
           },
           "id": 243,
           "options": {
@@ -3081,7 +3208,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 90
+            "y": 68
           },
           "id": 244,
           "options": {
@@ -13026,7 +13153,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels{cluster=~\"$Cluster\"}, svm)",
@@ -14521,5 +14648,5 @@
   "timezone": "",
   "title": "ONTAP: SVM",
   "uid": "",
-  "version": 21
+  "version": 22
 }
