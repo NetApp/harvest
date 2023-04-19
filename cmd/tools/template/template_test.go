@@ -339,7 +339,7 @@ func (m metric) pathString() string {
 // Tests that exported keys and labels are in sorted order
 func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 	visitTemplates(t, func(path string, model TemplateModel) {
-		sortedCounters := checkSortedCounters(model.metrics)
+		sortedCounters := checkSortedCounters(model.metrics, false)
 		if sortedCounters.got != sortedCounters.want {
 			t.Errorf("counters should be sorted path=[%s]", shortPath(path))
 			t.Errorf("use this instead\n")
@@ -347,7 +347,7 @@ func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 		}
 
 		for _, endpoint := range model.Endpoints {
-			sortedCounters := checkSortedCounters(endpoint.metrics)
+			sortedCounters := checkSortedCounters(endpoint.metrics, true)
 			if sortedCounters.got != sortedCounters.want {
 				t.Errorf("endpoint=%s counters should be sorted path=[%s]", endpoint.Query, shortPath(path))
 				t.Errorf("use this instead\n")
@@ -401,9 +401,9 @@ func checkForDuplicateMetrics(t *testing.T, model TemplateModel, path string) {
 	}
 }
 
-func checkSortedCounters(counters []metric) sorted {
+func checkSortedCounters(counters []metric, isEndpoint bool) sorted {
 	got := countersStr(counters)
-	sortZapiCounters(counters)
+	sortZapiCounters(counters, isEndpoint)
 	want := countersStr(counters)
 	return sorted{got: got, want: want}
 }
@@ -436,7 +436,7 @@ func countersStr(counters []metric) string {
 	return builder.String()
 }
 
-func sortZapiCounters(counters []metric) {
+func sortZapiCounters(counters []metric, isEndpoint bool) {
 	sort.SliceStable(counters, func(i, j int) bool {
 		a := counters[i]
 		b := counters[j]
@@ -445,8 +445,16 @@ func sortZapiCounters(counters []metric) {
 		if pa != pb {
 			return pa < pb
 		}
+
 		a2Hat := strings.Contains(a.line, "^^")
 		b2Hat := strings.Contains(b.line, "^^")
+
+		// ignore endpoint keys as they need to follow order as mentioned in counters
+		if isEndpoint {
+			if a2Hat || b2Hat {
+				return false
+			}
+		}
 		if a2Hat && b2Hat {
 			return a.left < b.left
 		}
@@ -456,6 +464,7 @@ func sortZapiCounters(counters []metric) {
 		if b2Hat {
 			return false
 		}
+
 		if a.hasSigil && b.hasSigil {
 			return a.left < b.left
 		}
