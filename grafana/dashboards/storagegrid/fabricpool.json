@@ -1790,12 +1790,12 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "6",
             "value": "6"
           },
