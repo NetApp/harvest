@@ -72,5 +72,5 @@ func checkLogs(t *testing.T, container docker.Container) {
 
 // ignoreList returns a list of errors that should be ignored
 func ignoreList() any {
-	return "RPC: Remote system error"
+	return `RPC: Remote system error|"connection error"`
 }

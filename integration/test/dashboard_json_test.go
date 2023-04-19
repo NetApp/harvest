@@ -136,7 +136,7 @@ func TestJsonExpression(t *testing.T) {
 		}
 		sub := time.Now()
 		subCounters := 0
-		subFailed := 0
+		sumMissing := 0
 		byteValue, _ := os.ReadFile(filePath)
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
@@ -161,12 +161,12 @@ func TestJsonExpression(t *testing.T) {
 				if counterIsMissing(rest, counter, 1*time.Second) {
 					t.Errorf("%s counter=%s path=%s not in DB expr=%s", rest, counter, dashPath, expression)
 					restFails++
-					subFailed++
+					sumMissing++
 				}
 				if counterIsMissing(zapi, counter, 1*time.Second) {
 					t.Errorf("%s counter=%s path=%s not in DB expr=%s", zapi, counter, dashPath, expression)
 					zapiFails++
-					subFailed++
+					sumMissing++
 				}
 			}
 
@@ -179,7 +179,7 @@ func TestJsonExpression(t *testing.T) {
 		log.Info().
 			Str("path", dashPath).
 			Int("numCounters", subCounters).
-			Int("failed", subFailed).
+			Int("missingCounters", sumMissing).
 			Str("dur", time.Since(sub).Round(time.Millisecond).String()).
 			Msg("Dashboard validation completed")
 	}
@@ -199,8 +199,8 @@ func TestJsonExpression(t *testing.T) {
 		Str("durMs", time.Since(now).Round(time.Millisecond).String()).
 		Int("exprIgnored", exprIgnored).
 		Int("numCounters", numCounters).
-		Int("restFails", restFails).
-		Int("zapiFails", zapiFails).
+		Int("restMiss", restFails).
+		Int("zapiMiss", zapiFails).
 		Msg("Dashboard Json validated")
 }
 
