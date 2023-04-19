@@ -350,7 +350,7 @@ func (r *Rest) processEndPoints() uint64 {
 		}
 
 		if len(records) == 0 {
-			r.Logger.Warn().Str("ApiPath", endpoint.prop.Query).Msg("no " + endpoint.prop.Query + " instances on cluster")
+			r.Logger.Debug().Str("ApiPath", endpoint.prop.Query).Msg("no instances on cluster")
 			continue
 		}
 		count = r.HandleResults(records, endpoint.prop, true)
