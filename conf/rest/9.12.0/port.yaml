@@ -18,8 +18,8 @@ counters:
 endpoints:
   - query: api/private/cli/network/port
     counters:
-      - ^^node                    => node
       - ^^port                    => port
+      - ^^node                    => node
       - ^duplex_admin             => admin_duplex
       - ^duplex_oper              => op_duplex
       - ^flowcontrol_admin        => admin_flowcontrol

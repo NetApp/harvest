@@ -19,8 +19,8 @@ endpoints:
   - query: api/private/cli/qtree
     counters:
       - ^^qtree           => qtree
-      - ^^volume          => volume
       - ^^vserver         => svm
+      - ^^volume          => volume
       - ^oplock_mode      => oplocks
       - ^status           => status
       - filter:
