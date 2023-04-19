@@ -3,13 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/dashboard"
-	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -20,15 +18,13 @@ import (
 )
 
 const (
-	cross = "✖"
+	rest = "REST"
+	zapi = "ZAPI"
 )
 
 var restDataCollectors = []string{"Rest"}
 
 var fileSet []string
-
-// counterMap consists of counters which need to be excluded from both Zapi/Rest in CI test
-var counterMap = data.GetCounterMap()
 
 // zapiCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Zapi
 var zapiCounterMap = map[string]struct{}{
@@ -55,11 +51,45 @@ var restCounterMap = map[string]struct{}{
 	"external_service_op_request_latency_hist_bucket": {},
 }
 
-type ResultInfo struct {
-	expression  string
-	counterName string
-	result      bool
-	reason      string
+// excludeCounters consists of counters which should be excluded from both Zapi/Rest in CI test
+var excludeCounters = []string{
+	"aggr_physical_",
+	"cluster_peer",
+	"efficiency_savings",
+	"ems_events",
+	"fabricpool_cloud_bin_op_latency_average",
+	"fabricpool_cloud_bin_operation",
+	"fcp",
+	"fcvi",
+	"flashcache_",
+	"flashpool",
+	"health_",
+	"logical_used",
+	"metadata_exporter_count",
+	"metadata_target_ping",
+	"nfs_clients_idle_duration",
+	"nic_",
+	"node_cifs_",
+	"node_nfs",
+	"node_nvmf_ops",
+	"nvme_lif",
+	"path_",
+	"poller",
+	"qos_detail_resource_latency",
+	"qos_detail_volume_resource_latency",
+	"quota_disk_used_pct_disk_limit",
+	"quota_files_used_pct_file_limit",
+	"security_login",
+	"smb2_",
+	"snapmirror_",
+	"svm_cifs_",
+	"svm_ldap",
+	"svm_nfs_latency_hist_bucket",
+	"svm_nfs_read_latency_hist_bucket",
+	"svm_nfs_write_latency_hist_bucket",
+	"svm_read_total",
+	"svm_vscan",
+	"svm_write_total",
 }
 
 func TestMain(m *testing.M) {
@@ -80,198 +110,125 @@ func TestDashboardsLoad(t *testing.T) {
 
 func TestJsonExpression(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	waitForCollectors(t)
-	var isZapiFailed = false
-	var isRestFailed = false
-	var restErrorInfoList []ResultInfo
-	var zapiErrorInfoList []ResultInfo
+	if len(fileSet) == 0 {
+		TestDashboardsLoad(t)
+	}
+	var (
+		zapiFails   int
+		restFails   int
+		exprIgnored int
+		numCounters int
+	)
+
+	now := time.Now()
 	for _, filePath := range fileSet {
-		if isValidFile(filePath) {
-			continue
-		}
+		dashPath := shortPath(filePath)
 		if shouldSkipDashboard(filePath) {
-			log.Info().Str("path", filePath).Msg("Skip")
+			log.Info().Str("path", dashPath).Msg("Skip")
 			continue
 		}
-		now := time.Now()
-		jsonFile, err := os.Open(filePath)
-		if err != nil {
-			log.Panic().Err(err).Str("dashboard", filePath).Msg("Failed to open dashboard")
-		}
-		byteValue, _ := io.ReadAll(jsonFile)
-		_ = jsonFile.Close()
+		sub := time.Now()
+		subCounters := 0
+		byteValue, _ := os.ReadFile(filePath)
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
-		if value.IsArray() {
-			for _, record := range value.Array() {
-				allExpr = append(allExpr, getAllExpr(record)...)
-				for _, targets := range record.Map()["targets"].Array() {
-					allExpr = append(allExpr, targets.Map()["expr"].Str)
-				}
+		for _, record := range value.Array() {
+			allExpr = append(allExpr, getAllExpr(record)...)
+			for _, targets := range record.Map()["targets"].Array() {
+				allExpr = append(allExpr, targets.Map()["expr"].Str)
 			}
 		}
 		allExpr = utils.RemoveDuplicateStr(allExpr)
-	ExpressionFor:
+
 		for _, expression := range allExpr {
 			counters := getAllCounters(expression)
-			for _, counter := range counters {
-				if len(counter) == 0 {
-					continue
-				}
-				// find exact counter which has no data
-				for _, noDataCounter := range counterMap[data.NoDataExact] {
-					if noDataCounter == counter {
-						continue ExpressionFor
-					}
-				}
-				// find exact counter which has no data
-				for _, noDataCounter := range counterMap[data.NoDataContains] {
-					if strings.Contains(counter, noDataCounter) {
-						continue ExpressionFor
-					}
-				}
 
-				//Test for Rest
-				query := counter + "{datacenter=~\"" + strings.Join(restDataCollectors, "|") + "\"}"
-
-				if !hasDataInDB(query) {
-					if _, ok := restCounterMap[counter]; ok {
-						continue ExpressionFor
-					}
-					errorInfo := ResultInfo{
-						expression,
-						counter,
-						false,
-						"No data found in the database",
-					}
-					restErrorInfoList = append(restErrorInfoList, errorInfo)
-				}
-
-				//Test for Zapi
-				query = counter + "{datacenter!~\"" + strings.Join(restDataCollectors, "|") + "\"}"
-				if !hasDataInDB(query) {
-					if _, ok := zapiCounterMap[counter]; ok {
-						continue ExpressionFor
-					}
-					errorInfo := ResultInfo{
-						expression,
-						counter,
-						false,
-						"No data found in the database",
-					}
-					zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
-					continue ExpressionFor
-				}
-			}
 			if len(counters) == 0 {
-				expression = strings.ToLower(expression)
-				for k, v := range data.GetCounterMapByQuery("svm_nfs_access_avg_latency") {
-					key := fmt.Sprintf("$%s", k)
-					expression = strings.ReplaceAll(expression, key, v)
-				}
-			}
-			if strings.Contains(expression, `resource=\"cloud\"`) ||
-				strings.Contains(expression, `group_type=\"vol\"`) {
+				exprIgnored++
 				continue
 			}
+			for _, counter := range counters {
+				numCounters++
+				subCounters++
+				if counterIsMissing(rest, counter) {
+					t.Errorf("%s counter=%s not in DB expr=%s path=%s", rest, counter, expression, dashPath)
+					restFails++
+				}
+				if counterIsMissing(zapi, counter) {
+					t.Errorf("%s counter=%s not in DB expr=%s path=%s", zapi, counter, expression, dashPath)
+					zapiFails++
+				}
+			}
+
 			queryStatus, actualExpression := validateExpr(expression)
-			if queryStatus {
-				errorInfo := ResultInfo{
-					actualExpression,
-					strings.Join(counters, " "),
-					true,
-					"",
-				}
-				zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
-			} else {
-				errorInfo := ResultInfo{
-					actualExpression,
-					strings.Join(counters, " "),
-					false,
-					"Query execution has failed",
-				}
-				zapiErrorInfoList = append(zapiErrorInfoList, errorInfo)
+			if !queryStatus {
+				t.Errorf("query validation failed expr=%s counters=%s",
+					actualExpression, strings.Join(counters, " "))
 			}
 		}
 		log.Info().
-			Str("path", filePath).
-			Str("dur", time.Since(now).Round(time.Millisecond).String()).
+			Str("path", dashPath).
+			Int("numCounters", subCounters).
+			Str("dur", time.Since(sub).Round(time.Millisecond).String()).
 			Msg("Dashboard validation completed")
 	}
 
-	for _, resultInfo := range zapiErrorInfoList {
-		if !resultInfo.result {
-			isZapiFailed = true
-			fmt.Println(cross, fmt.Sprintf(" Zapi Collector ERROR: %s for expr [%s]", resultInfo.reason,
-				resultInfo.expression))
-		}
-	}
-
-	for _, resultInfo := range restErrorInfoList {
-		if !resultInfo.result {
-			isRestFailed = true
-			fmt.Println(cross, fmt.Sprintf(" Rest Collector ERROR: %s for expr [%s]", resultInfo.reason,
-				resultInfo.expression))
-		}
-	}
-
-	if isRestFailed {
-		t.Errorf("Rest Test validation is failed. Pls check logs above. Count of Missing Rest counters %d", len(restErrorInfoList))
+	if restFails > 0 {
+		t.Errorf("Rest validation failures=%d", restFails)
 	} else {
 		log.Info().Msg("Rest Validation looks good!!")
 	}
 
-	// Fail if either Rest or Zapi collectors have failures
-	if isZapiFailed {
-		t.Errorf("Zapi Test validation is failed. Pls check logs above. Count of Missing Zapi counters %d", len(zapiErrorInfoList))
+	if zapiFails > 0 {
+		t.Errorf("Zapi validation failures=%d", zapiFails)
 	} else {
 		log.Info().Msg("Zapi Validation looks good!!")
 	}
+	log.Info().
+		Str("durMs", time.Since(now).Round(time.Millisecond).String()).
+		Int("exprIgnored", exprIgnored).
+		Int("numCounters", numCounters).
+		Int("restFails", restFails).
+		Int("zapiFails", zapiFails).
+		Msg("Dashboard Json validated")
 }
 
-func waitForCollectors(t *testing.T) {
-	log.Info().Msg("Exclude map info")
-	log.Info().Str("Exclude Mapping", fmt.Sprint(counterMap)).Msg("List of counter")
-	log.Info().Msg("Wait for data to be collected")
-	countersToCheck := []string{
-		"copy_manager_kb_copied",
-		"namespace_avg_read_latency",
-		"namespace_read_data",
-		"namespace_read_ops",
-		"namespace_write_data",
-		"namespace_avg_write_latency",
-		"namespace_write_ops",
-		"qos_read_latency",
-		"qos_volume_read_data",
-		"qos_volume_read_latency",
-		"qos_volume_read_ops",
-		"qos_volume_sequential_reads",
-		"qos_volume_sequential_writes",
-		"qos_volume_write_data",
-		"qos_volume_write_latency",
-		"qos_volume_write_ops",
-		"svm_nfs_throughput",
+func counterIsMissing(flavor string, counter string) bool {
+	if shouldIgnoreCounter(counter, flavor) {
+		return false
 	}
-	for _, counterData := range countersToCheck {
-		dashboard.TestIfCounterExists(t, restDataCollectors[0], counterData)
+	query := counter + `{datacenter=~"` + strings.Join(restDataCollectors, "|") + `"}`
+	if flavor == zapi {
+		query = counter + `{datacenter!~"` + strings.Join(restDataCollectors, "|") + `"}`
 	}
+	return !hasDataInDB(query)
 }
 
-func shouldSkipDashboard(path string) bool {
-	// Ignore dashboards that use dynamic expr variables
-	skip := []string{"nfs4storePool", "headroom", "tenant", "fsa", "overview"}
-	for _, s := range skip {
-		if strings.Contains(path, s) {
+func shouldIgnoreCounter(counter string, flavor string) bool {
+	if len(counter) == 0 {
+		return true
+	}
+	if flavor == zapi {
+		if _, ok := zapiCounterMap[counter]; ok {
+			return true
+		}
+	} else if flavor == rest {
+		if _, ok := restCounterMap[counter]; ok {
 			return true
 		}
 	}
+
 	return false
 }
 
-func isValidFile(filePath string) bool {
-	ignoreList := []string{"influxdb", "7mode"}
-	for _, ignoreFilePath := range ignoreList {
-		if strings.Contains(filePath, ignoreFilePath) {
+func shouldSkipDashboard(path string) bool {
+	// Skip dashboards that are not cmode or use dynamic expr variables
+	if !strings.Contains(path, "cmode") {
+		return true
+	}
+	skip := []string{"nfs4storePool", "headroom", "fsa"}
+	for _, s := range skip {
+		if strings.Contains(path, s) {
 			return true
 		}
 	}
@@ -297,7 +254,23 @@ func getAllExpr(record gjson.Result) []string {
 }
 
 func getAllCounters(expression string) []string {
-	return FindStringBetweenTwoChar(expression, "{", "(")
+	all := FindStringBetweenTwoChar(expression, "{", "(")
+	var filtered []string
+
+allLoop:
+	for _, counter := range all {
+		if len(counter) == 0 {
+			continue
+		}
+		// check if this counter should be ignored
+		for _, pattern := range excludeCounters {
+			if strings.Contains(counter, pattern) {
+				continue allLoop
+			}
+		}
+		filtered = append(filtered, counter)
+	}
+	return filtered
 }
 
 func validateExpr(expression string) (bool, string) {
@@ -360,18 +333,30 @@ func FindStringBetweenTwoChar(stringValue string, startChar string, endChar stri
 }
 
 func hasDataInDB(query string) bool {
-	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		data.PrometheusURL, query, timeNow)
-	response, _ := utils.GetResponse(queryUrl)
-	value := gjson.Get(response, "data.result")
-	return value.Exists() && value.IsArray() && (len(value.Array()) > 0)
+	const waitFor = 6 * time.Minute
+	now := time.Now()
+	for {
+		if time.Since(now) > waitFor {
+			log.Error().
+				Str("query", query).
+				Str("durMs", time.Since(now).Round(time.Millisecond).String()).
+				Msg("failed to find query")
+			return false
+		}
+		queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
+			dashboard.PrometheusURL, query, time.Now().Unix())
+		response, _ := utils.GetResponse(queryUrl)
+		value := gjson.Get(response, "data.result")
+		if len(value.Array()) > 0 {
+			return true
+		}
+		time.Sleep(1 * time.Second)
+	}
 }
 
 func generateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-		data.PrometheusURL, query, timeNow)
+	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", dashboard.PrometheusURL, query, timeNow)
 	response, _ := utils.GetResponse(queryUrl)
 	newExpression := expression
 	/**
@@ -401,4 +386,9 @@ func generateQueryWithValue(query string, expression string) string {
 		return newExpression
 	}
 	return ""
+}
+
+func shortPath(dashPath string) string {
+	splits := strings.Split(dashPath, string(filepath.Separator))
+	return strings.Join(splits[len(splits)-2:], string(filepath.Separator))
 }

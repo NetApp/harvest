@@ -1,7 +1,6 @@
 package installer
 
 import (
-	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 )
@@ -12,12 +11,11 @@ func Uninstall() {
 	log.Println("Check and remove harvest ")
 	UninstallRPM()
 	UninstallNativePkg()
-	UninstallPollerDocker()
 	CleanLogDir()
 }
 
 func UninstallRPM() {
-	utils.Run("yum", "remove", "-y", "harvest")
+	_, _ = utils.Run("yum", "remove", "-y", "harvest")
 }
 
 func UninstallNativePkg() {
@@ -29,26 +27,15 @@ func UninstallNativePkg() {
 				harvestObj.Stop()
 			}
 		}
-		utils.Run("rm", "-rf", HarvestHome)
+		_, _ = utils.Run("rm", "-rf", HarvestHome)
 	} else {
 		log.Printf(" %s doesnt exists.\n", HarvestHome)
 	}
 }
 
-func UninstallPollerDocker() {
-	pollerProcessName := "bin/poller"
-	containerIds := docker.GetContainerID(pollerProcessName)
-	if len(containerIds) > 0 {
-		docker.StopContainers(pollerProcessName)
-		docker.RemoveImage("harvest")
-	} else {
-		log.Println("No pollers were running")
-	}
-}
-
 func CleanLogDir() {
 	if utils.FileExists(LogDir) {
-		utils.Run("rm", "-rf", LogDir)
+		_, _ = utils.Run("rm", "-rf", LogDir)
 	}
 }
 
