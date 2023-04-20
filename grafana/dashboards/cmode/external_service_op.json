@@ -175,9 +175,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (operation, svm, cluster) (external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"})",
+          "expr": "avg by (operation, service_name, svm, cluster) (external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{svm}} - {{operation}} - {{server_name}}",
+          "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
         }
       ],
@@ -215,7 +215,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(increase(external_service_op_request_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"}[$__interval])) by (le)",
+          "expr": "sum(increase(external_service_op_request_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[$__interval])) by (le)",
           "format": "heatmap",
           "instant": false,
           "interval": "",
@@ -318,7 +318,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (operation, svm, cluster) (external_service_op_num_not_found_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"})",
+          "expr": "sum by (operation, service_name, svm, cluster) (external_service_op_num_not_found_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -405,7 +405,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (operation, svm, cluster) (external_service_op_num_request_failures{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"})",
+          "expr": "sum by (operation, service_name, svm, cluster) (external_service_op_num_request_failures{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -492,7 +492,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (operation, svm, cluster) (external_service_op_num_requests_sent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"})",
+          "expr": "sum by (operation, service_name, svm, cluster) (external_service_op_num_requests_sent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -579,7 +579,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (operation, svm, cluster) (external_service_op_num_responses_received{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"})",
+          "expr": "sum by (operation, service_name, svm, cluster) (external_service_op_num_responses_received{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -666,7 +666,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (operation, svm, cluster) (external_service_op_num_successful_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"})",
+          "expr": "sum by (operation, service_name, svm, cluster) (external_service_op_num_successful_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -753,7 +753,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (operation, svm, cluster) (external_service_op_num_timeouts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"})",
+          "expr": "sum by (operation, service_name, svm, cluster) (external_service_op_num_timeouts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -859,23 +859,37 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": [
-            "LDAP (NIS &amp; Name Mapping)"
-          ],
-          "value": [
-            "LDAP (NIS &amp; Name Mapping)"
-          ]
-        },
-        "definition": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, service_name)",
+        "current": {},
+        "definition": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, service_name)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "ServiceName",
         "options": [],
         "query": {
-          "query": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, service_name)",
+          "query": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, service_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "definition": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"}, operation)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Operation",
+        "options": [],
+        "query": {
+          "query": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"}, operation)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
