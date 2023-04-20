@@ -2,7 +2,6 @@ package dashboard
 
 import (
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/data"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
@@ -10,6 +9,8 @@ import (
 	"testing"
 	"time"
 )
+
+const PrometheusURL string = "http://localhost:9090"
 
 type GrafanaDb struct {
 	ID        int64      `yaml:"apiVersion"`
@@ -26,7 +27,7 @@ func HasValidData(query string) bool {
 }
 
 func HasMinRecord(query string, limit int) bool {
-	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusURL,
+	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", PrometheusURL,
 		url.QueryEscape(query))
 	resp, err := utils.GetResponse(queryURL)
 	if err == nil && gjson.Get(resp, "status").String() == "success" {
@@ -49,7 +50,7 @@ func checkCounter(t *testing.T, query string) {
 	startCount := 1
 	now := time.Now()
 	for startCount < maxCount {
-		queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", data.PrometheusURL,
+		queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", PrometheusURL,
 			url.QueryEscape(query))
 		resp, err := utils.GetResponse(queryURL)
 		if err == nil && gjson.Get(resp, "status").String() == "success" {

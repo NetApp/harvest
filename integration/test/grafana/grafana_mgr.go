@@ -56,6 +56,6 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 	} else {
 		status = true
 	}
-	log.Println(fmt.Sprintf("Grafana import status : %t", status))
+	log.Printf("Grafana import status : %t", status)
 	return status, importOutput
 }
