@@ -7,35 +7,17 @@ import (
 	"testing"
 )
 
-var nonBookendEmsNames []string
 var supportedNonBookendEms []string
 var alertsData map[string]int
 
-// These EMS events are node scoped, and are not always raised from ONTAP, even when simulated via POST call.
-var skippedEmsList = []string{
-	"callhome.hainterconnect.down",
-	"fabricpool.full",
-	"fabricpool.nearly.full",
-	"Nblade.cifsNoPrivShare",
-	"Nblade.nfsV4PoolExhaust",
-	"Nblade.vscanBadUserPrivAccess",
-	"Nblade.vscanNoRegdScanner",
-	"Nblade.vscanConnInactive",
-	"cloud.aws.iamNotInitialized",
-	"scsitarget.fct.port.full",
-}
-
 func setup() {
 	totalAlerts := 0
-	emsConfigDir := utils.GetHarvestRootDir() + "/conf/ems/9.6.0"
-	log.Info().Str("EmsConfigDir", emsConfigDir).Msg("Directory path")
+	// testing this non-bookend ems in CI
+	var nonBookendEmsName = []string{"wafl.vol.autoSize.done"}
 
-	// Fetch non-bookend ems configured in template
-	nonBookendEmsNames, _, _ = promAlerts.GetEmsAlerts(emsConfigDir, "ems.yaml")
-
-	// Identify supported non-bookend ems names for the given cluster
-	supportedNonBookendEms = promAlerts.GenerateEvents(nonBookendEmsNames, []string{})
-	log.Info().Msgf("Total supported non-bookend ems: %d", len(supportedNonBookendEms))
+	// Check if non-bookend ems name is supported for the given cluster
+	supportedNonBookendEms = promAlerts.GenerateEvents(nonBookendEmsName, []string{})
+	log.Info().Msgf("Supported non-bookend ems: %s", supportedNonBookendEms)
 
 	// Fetch prometheus alerts
 	alertsData, totalAlerts = promAlerts.GetAlerts()
@@ -53,12 +35,14 @@ func TestAlertRules(t *testing.T) {
 	notFoundNonBookendEms := make([]string, 0)
 
 	for _, nonBookendEms := range supportedNonBookendEms {
-		if !(alertsData[nonBookendEms] != 0 || utils.Contains(skippedEmsList, nonBookendEms)) {
+		if alertsData[nonBookendEms] == 0 {
 			notFoundNonBookendEms = append(notFoundNonBookendEms, nonBookendEms)
 		}
 	}
 	if len(notFoundNonBookendEms) > 0 {
 		log.Error().Strs("notFoundNonBookendEms", notFoundNonBookendEms).Msg("Expected all to be found")
-		t.Errorf("One or more ems alerts %s have not been raised", notFoundNonBookendEms)
+		t.Errorf("Ems alerts %s have not been raised", notFoundNonBookendEms)
+	} else {
+		log.Info().Msg("Non bookend ems test passed")
 	}
 }

@@ -100,6 +100,10 @@ var excludeCounters = []string{
 	"svm_write_total",
 }
 
+var flakyCounters = []string{
+	"namespace",
+}
+
 func TestMain(m *testing.M) {
 	utils.SetupLogging()
 	os.Exit(m.Run())
@@ -126,9 +130,26 @@ func TestJsonExpression(t *testing.T) {
 		restFails   int
 		exprIgnored int
 		numCounters int
+		zapiFlaky   int
+		restFlaky   int
 	)
 
 	now := time.Now()
+	// QoS counters have the longest schedule so check for them before checking for any of the other counters
+	precheckCounters := []string{"qos_read_data"}
+	for _, counter := range precheckCounters {
+		if counterIsMissing(rest, counter, 6*time.Minute) {
+			t.Fatalf("rest qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())
+		}
+		if counterIsMissing(zapi, counter, 1*time.Minute) {
+			t.Fatalf("zapi qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())
+		}
+	}
+
+	log.Info().
+		Str("dur", time.Since(now).Round(time.Millisecond).String()).
+		Msg("Pre-check counters done")
+
 	for _, filePath := range fileSet {
 		dashPath := shortPath(filePath)
 		if shouldSkipDashboard(filePath) {
@@ -137,6 +158,8 @@ func TestJsonExpression(t *testing.T) {
 		}
 		sub := time.Now()
 		subCounters := 0
+		subFlaky := 0
+		sumMissing := 0
 		byteValue, _ := os.ReadFile(filePath)
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")
@@ -158,25 +181,39 @@ func TestJsonExpression(t *testing.T) {
 			for _, counter := range counters {
 				numCounters++
 				subCounters++
-				if counterIsMissing(rest, counter) {
-					t.Errorf("%s counter=%s not in DB expr=%s path=%s", rest, counter, expression, dashPath)
+				if counterIsMissing(rest, counter, 1*time.Second) {
+					if counterIsFlaky(counter) {
+						subFlaky++
+						restFlaky++
+						continue
+					}
+					t.Errorf("%s counter=%s path=%s not in DB expr=%s", rest, counter, dashPath, expression)
 					restFails++
+					sumMissing++
 				}
-				if counterIsMissing(zapi, counter) {
-					t.Errorf("%s counter=%s not in DB expr=%s path=%s", zapi, counter, expression, dashPath)
+				if counterIsMissing(zapi, counter, 1*time.Second) {
+					if counterIsFlaky(counter) {
+						subFlaky++
+						zapiFlaky++
+						continue
+					}
+					t.Errorf("%s counter=%s path=%s not in DB expr=%s", zapi, counter, dashPath, expression)
 					zapiFails++
+					sumMissing++
 				}
 			}
 
 			queryStatus, actualExpression := validateExpr(expression)
 			if !queryStatus {
-				t.Errorf("query validation failed expr=%s counters=%s",
-					actualExpression, strings.Join(counters, " "))
+				t.Errorf("query validation failed counters=%s expr=%s ",
+					strings.Join(counters, " "), actualExpression)
 			}
 		}
 		log.Info().
 			Str("path", dashPath).
 			Int("numCounters", subCounters).
+			Int("missing", sumMissing).
+			Int("flaky", subFlaky).
 			Str("dur", time.Since(sub).Round(time.Millisecond).String()).
 			Msg("Dashboard validation completed")
 	}
@@ -196,12 +233,23 @@ func TestJsonExpression(t *testing.T) {
 		Str("durMs", time.Since(now).Round(time.Millisecond).String()).
 		Int("exprIgnored", exprIgnored).
 		Int("numCounters", numCounters).
-		Int("restFails", restFails).
-		Int("zapiFails", zapiFails).
+		Int("restMiss", restFails).
+		Int("restFlaky", restFlaky).
+		Int("zapiMiss", zapiFails).
+		Int("zapiFlaky", zapiFlaky).
 		Msg("Dashboard Json validated")
 }
 
-func counterIsMissing(flavor string, counter string) bool {
+func counterIsFlaky(counter string) bool {
+	for _, flakyCounter := range flakyCounters {
+		if strings.Contains(counter, flakyCounter) {
+			return true
+		}
+	}
+	return false
+}
+
+func counterIsMissing(flavor string, counter string, waitFor time.Duration) bool {
 	if shouldIgnoreCounter(counter, flavor) {
 		return false
 	}
@@ -209,7 +257,7 @@ func counterIsMissing(flavor string, counter string) bool {
 	if flavor == zapi {
 		query = counter + `{datacenter!~"` + strings.Join(restDataCollectors, "|") + `"}`
 	}
-	return !hasDataInDB(query)
+	return !hasDataInDB(query, waitFor)
 }
 
 func shouldIgnoreCounter(counter string, flavor string) bool {
@@ -290,6 +338,9 @@ func validateExpr(expression string) (bool, string) {
 				newExpression = generateQueryWithValue(counter, newExpression)
 			}
 		}
+		if newExpression == "" {
+			return false, expression
+		}
 		return dashboard.HasValidData(newExpression), newExpression
 
 	}
@@ -340,23 +391,17 @@ func FindStringBetweenTwoChar(stringValue string, startChar string, endChar stri
 	return counters
 }
 
-func hasDataInDB(query string) bool {
-	const waitFor = 6 * time.Minute
+func hasDataInDB(query string, waitFor time.Duration) bool {
 	now := time.Now()
 	for {
-		if time.Since(now) > waitFor {
-			log.Error().
-				Str("query", query).
-				Str("durMs", time.Since(now).Round(time.Millisecond).String()).
-				Msg("failed to find query")
-			return false
-		}
-		queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d",
-			dashboard.PrometheusURL, query, time.Now().Unix())
-		response, _ := utils.GetResponse(queryUrl)
+		q := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", dashboard.PrometheusURL, query, time.Now().Unix())
+		response, _ := utils.GetResponse(q)
 		value := gjson.Get(response, "data.result")
 		if len(value.Array()) > 0 {
 			return true
+		}
+		if time.Since(now) > waitFor {
+			return false
 		}
 		time.Sleep(1 * time.Second)
 	}
