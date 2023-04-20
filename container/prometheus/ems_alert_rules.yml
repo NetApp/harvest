@@ -1,4 +1,5 @@
 # Example Harvest ems alerts
+
 groups:
   - name: Harvest Ems Alert
     rules:
