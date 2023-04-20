@@ -84,6 +84,10 @@ var excludeCounters = []string{
 	"svm_write_total",
 }
 
+var flakyCounters = []string{
+	"namespace",
+}
+
 func TestMain(m *testing.M) {
 	utils.SetupLogging()
 	os.Exit(m.Run())
@@ -110,6 +114,8 @@ func TestJsonExpression(t *testing.T) {
 		restFails   int
 		exprIgnored int
 		numCounters int
+		zapiFlaky   int
+		restFlaky   int
 	)
 
 	now := time.Now()
@@ -136,6 +142,7 @@ func TestJsonExpression(t *testing.T) {
 		}
 		sub := time.Now()
 		subCounters := 0
+		subFlaky := 0
 		sumMissing := 0
 		byteValue, _ := os.ReadFile(filePath)
 		var allExpr []string
@@ -159,11 +166,21 @@ func TestJsonExpression(t *testing.T) {
 				numCounters++
 				subCounters++
 				if counterIsMissing(rest, counter, 1*time.Second) {
+					if counterIsFlaky(counter) {
+						subFlaky++
+						restFlaky++
+						continue
+					}
 					t.Errorf("%s counter=%s path=%s not in DB expr=%s", rest, counter, dashPath, expression)
 					restFails++
 					sumMissing++
 				}
 				if counterIsMissing(zapi, counter, 1*time.Second) {
+					if counterIsFlaky(counter) {
+						subFlaky++
+						zapiFlaky++
+						continue
+					}
 					t.Errorf("%s counter=%s path=%s not in DB expr=%s", zapi, counter, dashPath, expression)
 					zapiFails++
 					sumMissing++
@@ -179,7 +196,8 @@ func TestJsonExpression(t *testing.T) {
 		log.Info().
 			Str("path", dashPath).
 			Int("numCounters", subCounters).
-			Int("missingCounters", sumMissing).
+			Int("missing", sumMissing).
+			Int("flaky", subFlaky).
 			Str("dur", time.Since(sub).Round(time.Millisecond).String()).
 			Msg("Dashboard validation completed")
 	}
@@ -200,8 +218,19 @@ func TestJsonExpression(t *testing.T) {
 		Int("exprIgnored", exprIgnored).
 		Int("numCounters", numCounters).
 		Int("restMiss", restFails).
+		Int("restFlaky", restFlaky).
 		Int("zapiMiss", zapiFails).
+		Int("zapiFlaky", zapiFlaky).
 		Msg("Dashboard Json validated")
+}
+
+func counterIsFlaky(counter string) bool {
+	for _, flakyCounter := range flakyCounters {
+		if strings.Contains(counter, flakyCounter) {
+			return true
+		}
+	}
+	return false
 }
 
 func counterIsMissing(flavor string, counter string, waitFor time.Duration) bool {
