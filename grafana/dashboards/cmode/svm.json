@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1681881434435,
+  "iteration": 1681989179502,
   "links": [
     {
       "asDropdown": true,
@@ -1547,7 +1547,34 @@
                 ]
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "At Home"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 1,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 12,
