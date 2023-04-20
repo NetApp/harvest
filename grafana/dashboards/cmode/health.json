@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1681133194625,
+  "iteration": 1681988994523,
   "links": [
     {
       "asDropdown": true,
@@ -304,7 +304,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}[24h]) == 1) or vector(0))\n+\n(count(health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
+          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}[24h]) == 1) or vector(0))\n+\n(count(health_lif_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0))\n+\n(count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -605,11 +605,11 @@
         },
         {
           "exemplar": false,
-          "expr": "count(health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+          "expr": "count(health_lif_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Network Interface are not at home port",
+          "legendFormat": "Lif are not at home port",
           "refId": "D"
         },
         {
@@ -1849,7 +1849,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 31
           },
           "id": 264,
           "interval": "1m",
@@ -2235,7 +2235,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 40
           },
           "id": 271,
           "interval": "1m",
@@ -2485,7 +2485,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 1
+            "y": 32
           },
           "id": 276,
           "options": {
@@ -2554,7 +2554,7 @@
       "id": 255,
       "panels": [
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2594,6 +2594,10 @@
                           "false": {
                             "index": 0,
                             "text": "No"
+                          },
+                          "true": {
+                            "index": 1,
+                            "text": "Yes"
                           }
                         },
                         "type": "value"
@@ -2605,20 +2609,21 @@
             ]
           },
           "gridPos": {
-            "h": 8,
+            "h": 10,
             "w": 24,
             "x": 0,
-            "y": 23
+            "y": 33
           },
-          "id": 257,
+          "id": 280,
           "options": {
-            "showHeader": true
+            "showHeader": true,
+            "sortBy": []
           },
           "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
-              "expr": "health_network_interface_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(lif,svm,cluster,datacenter) group_left(severity) health_lif_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2626,37 +2631,73 @@
               "refId": "A"
             }
           ],
-          "title": "Network interfaces not at home port",
+          "title": "Lif not at home port",
           "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "address",
+                    "cluster",
+                    "datacenter",
+                    "home_node",
+                    "home_port",
+                    "ipspace",
+                    "is_home",
+                    "lif",
+                    "node",
+                    "port",
+                    "protocols",
+                    "services",
+                    "status",
+                    "subnet",
+                    "svm",
+                    "severity"
+                  ]
+                }
+              }
+            },
             {
               "id": "organize",
               "options": {
-                "excludeByName": {
-                  "Time": true,
-                  "Value": true,
-                  "__name__": true,
-                  "instance": true,
-                  "job": true
-                },
+                "excludeByName": {},
                 "indexByName": {
-                  "Time": 0,
-                  "Value": 9,
-                  "__name__": 1,
-                  "cluster": 3,
-                  "datacenter": 2,
-                  "instance": 7,
-                  "isHome": 5,
-                  "job": 8,
-                  "lif": 4,
-                  "severity": 6
+                  "address": 7,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "home_node": 11,
+                  "home_port": 12,
+                  "ipspace": 6,
+                  "is_home": 10,
+                  "lif": 2,
+                  "node": 8,
+                  "port": 9,
+                  "protocols": 14,
+                  "services": 15,
+                  "severity": 3,
+                  "status": 4,
+                  "subnet": 13,
+                  "svm": 5
                 },
                 "renameByName": {
+                  "address": "Address",
                   "cluster": "Cluster",
                   "datacenter": "Datacenter",
-                  "instance": "",
-                  "isHome": "At Home",
-                  "lif": "Network Interface",
-                  "severity": "Severity"
+                  "home_node": "Home Node",
+                  "home_port": "Home Port",
+                  "ipspace": "IPspace",
+                  "is_home": "At Home",
+                  "lif": "Name",
+                  "node": "Current Node",
+                  "port": "Current Port",
+                  "protocols": "Protocols",
+                  "services": "Services",
+                  "severity": "Severity",
+                  "status": "Status",
+                  "subnet": "Subnet",
+                  "svm": "SVM",
+                  "type": "Type"
                 }
               }
             }
@@ -2664,7 +2705,7 @@
           "type": "table"
         }
       ],
-      "title": "Network Interface",
+      "title": "Lif",
       "type": "row"
     },
     {
@@ -2710,7 +2751,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 34
           },
           "id": 261,
           "options": {
@@ -2798,7 +2839,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 32
+            "y": 42
           },
           "id": 262,
           "options": {
@@ -3215,5 +3256,5 @@
   "timezone": "",
   "title": "ONTAP: Health",
   "uid": "",
-  "version": 1
+  "version": 2
 }

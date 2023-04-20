@@ -1,0 +1,41 @@
+name:       LIF
+query:      api/network/ip/interfaces
+object:     lif
+
+counters:
+  - ^^name                         => lif
+  - ^^svm.name                     => svm
+  - ^ip.address                    => address
+  - ^ipspace.name                  => ipspace
+  - ^location.home_node.name       => home_node
+  - ^location.home_port.name       => home_port
+  - ^location.is_home              => is_home
+  - ^location.node.name            => node
+  - ^location.port.name            => port
+  - ^services                      => services
+  - ^state                         => status
+  - ^subnet.name                   => subnet
+
+endpoints:
+  - query: api/private/cli/network/interface
+    counters:
+      - ^^lif
+      - ^^vserver                  => svm
+      - ^data_protocol             => protocols
+
+export_options:
+  instance_keys:
+    - lif
+    - svm
+  instance_labels:
+    - address
+    - home_node
+    - home_port
+    - ipspace
+    - is_home
+    - node
+    - port
+    - protocols
+    - services
+    - status
+    - subnet

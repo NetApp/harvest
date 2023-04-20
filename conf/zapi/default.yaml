@@ -11,6 +11,7 @@ objects:
   CIFSClients:                 cifs_clients.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
+  LIF:                         lif.yaml
   Lun:                         lun.yaml
 #  NetPort:                     netPort.yaml
   Namespace:                   namespace.yaml
