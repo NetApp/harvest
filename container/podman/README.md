@@ -2,7 +2,7 @@
 
 RHEL 8 ships with [Podman](https://github.com/containers/podman) instead of Docker. There are two ways to run containers with Podman: rootless or with root. Both setups are outlined below. The Podman ecosystem is changing rapidly so the shelf life of these instructions may be short. Make sure you have at least the same [versions](#versions) of the tools listed below. 
 
-If you don't want to bother with Podman, you can also install Docker on RHEL 8 and use it to run [Harvest per normal](https://github.com/NetApp/harvest/tree/main/docker).
+If you don't want to bother with Podman, you can also install Docker on RHEL 8 and use it to run [Harvest per normal](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer).
 
 ## Setup
 
@@ -76,7 +76,7 @@ podman info | grep runRoot
 
 By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091 so we can run both Cockpit and Prometheus. Line `2` below does that.
 
-With these changes, the [standard Harvest compose instructions](https://github.com/NetApp/harvest/tree/main/docker) can be followed as normal now. In summary,
+With these changes, the [standard Harvest compose instructions](https://netapp.github.io/harvest/23.05/install/containers/#docker-compose) can be followed as normal now. In summary,
 1. Add the clusters, exporters, etc. to your `harvest.yml` file
 2. Generate a compose file from your `harvest.yml` by running `bin/harvest generate docker full --port --output harvest-compose.yml --promPort 9091`
 3. Bring everything up with `docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans`

@@ -10,7 +10,7 @@ groups:
         labels:
           severity: "error"
         annotations:
-          summary: "Anti-ransomware state was changed to [{{ $labels.op }}] for Volume uuid [{{ $labels.volumeuuid }}]."
+          summary: "Anti-ransomware state was changed to [{{ $labels.op }}] for Volume uuid [{{ $labels.volume_uuid }}]."
 
       # Alert for SVM Anti-ransomware state change ems
       - alert: Storage VM Anti-ransomware Monitoring State Changed
@@ -402,7 +402,7 @@ groups:
         labels:
           severity: "error"
         annotations:
-          summary: "Storage VM stop succeeded for instance uuid [{{ $labels.instuuid }}]"
+          summary: "Storage VM stop succeeded for instance uuid [{{ $labels.inst_uuid }}]"
 
       # Alert for READDIR timeout ems
       - alert: READDIR Timeout
@@ -426,7 +426,7 @@ groups:
         labels:
           severity: "error"
         annotations:
-          summary: "Volume offline for instance uuid [{{ $labels.instuuid }}]"
+          summary: "Volume offline for instance uuid [{{ $labels.inst_uuid }}]"
 
       # Alert for Volume restricted ems
       - alert: Volume Restricted
@@ -434,4 +434,4 @@ groups:
         labels:
           severity: "error"
         annotations:
-          summary: "Volume restricted for instance uuid [{{ $labels.instuuid }}]"
+          summary: "Volume restricted for instance uuid [{{ $labels.inst_uuid }}]"

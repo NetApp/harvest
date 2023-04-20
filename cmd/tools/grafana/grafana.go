@@ -863,7 +863,7 @@ func sendRequest(opts *options, method, url string, query map[string]interface{}
 
 	var result map[string]interface{}
 
-	data, status, code, err := doRequest(opts, method, url, query)
+	data, status, code, err := doRequestWithRetry(opts, method, url, query, 3)
 	if err != nil {
 		return result, status, code, err
 	}
@@ -879,7 +879,7 @@ func sendRequestArray(opts *options, method, url string, query map[string]interf
 
 	var result []map[string]interface{}
 
-	data, status, code, err := doRequest(opts, method, url, query)
+	data, status, code, err := doRequestWithRetry(opts, method, url, query, 3)
 	if err != nil {
 		return result, status, code, err
 	}
@@ -889,6 +889,28 @@ func sendRequestArray(opts *options, method, url string, query map[string]interf
 		fmt.Println(string(data))
 	}
 	return result, status, code, err
+}
+
+func doRequestWithRetry(opts *options, method, url string, query map[string]any, retry int) ([]byte, string, int, error) {
+	var (
+		status string
+		code   int
+		err    error
+		data   []byte
+	)
+
+	for {
+		retry--
+		data, status, code, err = doRequest(opts, method, url, query)
+		if err != nil || code >= 500 {
+			fmt.Printf("  request failed, retrying. retry=%d code=%d err=%+v url=%s\n", retry, code, err, url)
+			if retry > 0 {
+				continue
+			}
+		}
+		break
+	}
+	return data, status, code, err
 }
 
 func doRequest(opts *options, method, url string, query map[string]interface{}) ([]byte, string, int, error) {
