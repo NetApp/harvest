@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -166,6 +167,8 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 		display, name, kind, metricType string
 	)
 
+	instanceKeys := make(map[string]string)
+
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
 			name, display, kind, metricType = util.ParseMetric(c)
@@ -179,7 +182,7 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 			switch kind {
 			case "key":
 				prop.InstanceLabels[name] = display
-				prop.InstanceKeys = append(prop.InstanceKeys, name)
+				instanceKeys[display] = name
 			case "label":
 				prop.InstanceLabels[name] = display
 			case "float":
@@ -187,6 +190,19 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 				prop.Metrics[name] = m
 			}
 		}
+	}
+
+	// populate prop.instanceKeys
+	// sort keys by display name. This is needed to match counter and endpoints keys
+	var keys []string
+	for k := range instanceKeys {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	// Append instance keys to prop
+	for _, k := range keys {
+		prop.InstanceKeys = append(prop.InstanceKeys, instanceKeys[k])
 	}
 
 	if prop.APIType == "private" {
