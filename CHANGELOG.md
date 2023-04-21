@@ -4,8 +4,7 @@
 
 ## 23.05.0 / 2023-05-??
 
-**IMPORTANT** The `volume_aggr_labels` metric is being deprecated in this
-release and will be removed in the next release of Harvest ([#1966](https://github.com/NetApp/harvest/pull/1966))
+**IMPORTANT** The `volume_aggr_labels` metric is being deprecated in the `23.05` release and will be removed in the `23.08` release of Harvest ([#1966](https://github.com/NetApp/harvest/pull/1966))
 
 ## 23.02.0 / 2023-02-21
 
