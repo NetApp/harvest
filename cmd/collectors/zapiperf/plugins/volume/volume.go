@@ -7,7 +7,9 @@ package volume
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -32,6 +34,19 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 	opsKeyPrefix := "temp_"
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
+	flexgroupAggrsMap := make(map[string]*set.Set)
+	// new metric would be volume_aggr_labels
+	metricName := "labels"
+	volumeAggrmetric := matrix.New(".Volume", "volume_aggr", "volume_aggr")
+	volumeAggrmetric.SetGlobalLabels(data.GetGlobalLabels())
+
+	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
+	if err != nil {
+		me.Logger.Error().Err(err).Msg("add metric")
+		return nil, err
+	}
+	me.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
+
 	cache := data.Clone(false, true, false)
 	cache.UUID += ".Volume"
 
@@ -49,10 +64,35 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 				fg.SetLabel("node", "")
 				fg.SetLabel("style", "flexgroup")
 			}
+
+			if volumeAggrmetric.GetInstance(key) == nil {
+				flexgroupInstance, _ := volumeAggrmetric.NewInstance(key)
+				flexgroupInstance.SetLabels(i.GetLabels().Copy())
+				flexgroupInstance.SetLabel("volume", match[1])
+				// Flexgroup don't show any node
+				flexgroupInstance.SetLabel("node", "")
+				flexgroupInstance.SetLabel("style", "flexgroup")
+				flexgroupAggrsMap[key] = set.New()
+				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
+					me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+				}
+			}
+			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel("style", "flexgroup_constituent")
 			i.SetExportable(false)
 		} else {
 			i.SetLabel("style", "flexvol")
+			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
+			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
+			if err != nil {
+				me.Logger.Error().Err(err).Str("key", key).Msg("Failed to create new instance")
+				continue
+			}
+			flexvolInstance.SetLabels(i.GetLabels().Copy())
+			flexvolInstance.SetLabel("style", "flexvol")
+			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
+				me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+			}
 		}
 
 	}
@@ -66,6 +106,15 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			// instance key is svm.flexgroup-volume
 			key := i.GetLabel("svm") + "." + match[1]
+
+			// set aggrs label for flexgroup in new metrics
+			flexgroupInstance := volumeAggrmetric.GetInstance(key)
+			if flexgroupInstance != nil {
+				// make sure the order of aggregate is same for each poll
+				aggrs := flexgroupAggrsMap[key].Values()
+				sort.Strings(aggrs)
+				flexgroupInstance.SetLabel("aggr", strings.Join(aggrs, ","))
+			}
 
 			fg := cache.GetInstance(key)
 			if fg == nil {
@@ -185,5 +234,5 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 		}
 	}
 
-	return []*matrix.Matrix{cache}, nil
+	return []*matrix.Matrix{cache, volumeAggrmetric}, nil
 }
