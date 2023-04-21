@@ -35,7 +35,7 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 	flexgroupAggrsMap := make(map[string]*set.Set)
-	// new metric would be volume_aggr_labels
+	// volume_aggr_labels metric is deprecated now and will be removed later.
 	metricName := "labels"
 	volumeAggrmetric := matrix.New(".Volume", "volume_aggr", "volume_aggr")
 	volumeAggrmetric.SetGlobalLabels(data.GetGlobalLabels())
@@ -234,5 +234,6 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 		}
 	}
 
+	// volume_aggr_labels metric is deprecated now and will be removed later.
 	return []*matrix.Matrix{cache, volumeAggrmetric}, nil
 }
