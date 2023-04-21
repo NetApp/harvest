@@ -5,18 +5,17 @@ query:                    api/storage/volumes
 object:                   volume
 
 counters:
-  - ^^uuid                                        => instance_uuid
+  - ^^name                                        => volume
+  - ^^svm.name                                    => svm
   - ^aggregates.#.name                            => aggr
   - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
   - ^anti_ransomware.state                        => antiRansomwareState
   - ^encryption.enabled                           => isEncrypted
   - ^is_svm_root                                  => svm_root
-  - ^name                                         => volume
   - ^snaplock.type                                => snaplock_type
   - ^snapshot_policy.name                         => snapshot_policy
   - ^state                                        => state
   - ^style                                        => style
-  - ^svm.name                                     => svm
   - ^type                                         => type
   - autosize.grow_threshold                       => autosize_grow_threshold_percent
   - autosize.maximum                              => autosize_maximum_size
@@ -54,7 +53,8 @@ counters:
 endpoints:
   - query: api/private/cli/volume
     counters:
-      - ^^instance_uuid                           => instance_uuid
+      - ^^volume
+      - ^^vserver                                 => svm
       - ^is_sis_volume                            => is_sis_volume
       - ^nodes                                    => node
       - compression_space_saved                   => sis_compress_saved
@@ -65,6 +65,15 @@ endpoints:
       - files_used                                => inode_files_used
       - sis_space_saved                           => sis_total_saved
       - sis_space_saved_percent                   => sis_total_saved_percent
+
+  - query: api/private/cli/volume/efficiency/stat
+    counters:
+      - ^^volume
+      - ^^vserver                                 => svm
+      - num_compress_attempts
+      - num_compress_fail
+      - filter:
+          - privilege_level=diagnostic
 
 plugins:
   - Volume:

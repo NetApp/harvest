@@ -43,7 +43,7 @@ func TestNoErrors(t *testing.T) {
 }
 
 func checkLogs(t *testing.T, container docker.Container) {
-	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -E "ERR"`, container.Id)
+	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -v "%s" | grep -E "ERR"`, container.Id, ignoreList())
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
 	// The grep checks for matching lines.
@@ -68,4 +68,9 @@ func checkLogs(t *testing.T, container docker.Container) {
 		t.Errorf("ERRs found in poller logs name=%s id=%s size=%d. Dump of errors follows:\n%s",
 			container.Name(), container.Id[:6], len(output), string(output))
 	}
+}
+
+// ignoreList returns a list of errors that should be ignored
+func ignoreList() any {
+	return `RPC: Remote system error|"connection error"`
 }

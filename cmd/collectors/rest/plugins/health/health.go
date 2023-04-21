@@ -26,7 +26,7 @@ const (
 	nodeHealthMatrix                              = "health_node"
 	networkEthernetPortHealthMatrix               = "health_network_ethernet_port"
 	networkFCPortHealthMatrix                     = "health_network_fc_port"
-	networkInterfaceHealthMatrix                  = "health_network_interface"
+	lifHealthMatrix                               = "health_lif"
 	volumeRansomwareHealthMatrix                  = "health_volume_ransomware"
 	volumeMoveHealthMatrix                        = "health_volume_move"
 	licenseHealthMatrix                           = "health_license"
@@ -76,7 +76,7 @@ func (h *Health) Init() error {
 func (h *Health) initAllMatrix() error {
 	h.data = make(map[string]*matrix.Matrix)
 	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
-		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, networkInterfaceHealthMatrix,
+		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, lifHealthMatrix,
 		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix}
 	for _, m := range mats {
 		if err := h.initMatrix(m); err != nil {
@@ -287,16 +287,18 @@ func (h *Health) collectNetworkInterfacesAlerts() {
 		}
 		return
 	}
-	mat := h.data[networkInterfaceHealthMatrix]
+	mat := h.data[lifHealthMatrix]
 	for _, record := range records {
 		uuid := record.Get("uuid").String()
 		lif := record.Get("name").String()
+		svm := record.Get("svm.name").String()
 		isHome := record.Get("location.is_home").String()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
 			h.Logger.Warn().Str("key", uuid).Msg("error while creating instance")
 			continue
 		}
+		instance.SetLabel("svm", svm)
 		instance.SetLabel("isHome", isHome)
 		instance.SetLabel("lif", lif)
 		instance.SetLabel(severityLabel, string(warning))
@@ -630,7 +632,7 @@ func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
 	)
 
 	query := "api/network/ip/interfaces"
-	href := rest.BuildHref(query, "", []string{"location.is_home=false"}, "", "", "", "", query)
+	href := rest.BuildHref(query, "svm,location", []string{"location.is_home=false"}, "", "", "", "", query)
 
 	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
 		return nil, err
