@@ -1,0 +1,3 @@
+# fails because "objects" does not contain a map of name => path
+objects:
+  ClusterInfo.yaml

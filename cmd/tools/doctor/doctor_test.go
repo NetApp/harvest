@@ -102,3 +102,52 @@ func loadTestConfig() {
 		panic(err)
 	}
 }
+
+func TestCustomYamlIsValid(t *testing.T) {
+	valid := checkCustomYaml("testdata/conf1")
+	if valid.isValid {
+		t.Error(`want isValid=false`)
+	}
+	if len(valid.invalid) != 1 {
+		t.Errorf(`want 1 invalid, got %d`, len(valid.invalid))
+	}
+	type test struct {
+		path        string
+		numInvalid  int
+		msgContains string
+	}
+
+	tests := []test{
+		{
+			path:        "testdata/conf1",
+			numInvalid:  1,
+			msgContains: "top-level",
+		},
+		{
+			path:        "testdata/conf2",
+			numInvalid:  1,
+			msgContains: "should be a map",
+		},
+		{
+			path:        "testdata/conf3",
+			numInvalid:  1,
+			msgContains: "does not exist",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			valid := checkCustomYaml(tt.path)
+			if valid.isValid {
+				t.Errorf("want isValid=%t, got %t", false, valid.isValid)
+			}
+			if len(valid.invalid) != tt.numInvalid {
+				t.Errorf("want %d invalid, got %d", tt.numInvalid, len(valid.invalid))
+			}
+			for _, invalid := range valid.invalid {
+				if !strings.Contains(invalid, tt.msgContains) {
+					t.Errorf("want invalid to contain %s, got %s", tt.msgContains, invalid)
+				}
+			}
+		})
+	}
+}
