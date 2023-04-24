@@ -611,8 +611,9 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 		if !strings.Contains(v.query, "topk") || !strings.Contains(v.query, "__range") {
 			continue
 		}
+
 		if v.refresh != "2" {
-			t.Errorf(`dashboard=%s name=%s use topk , refresh should be set to "On time range change". query=%s`,
+			t.Errorf("dashboard=%s name=%s use topk, refresh should be set to \"On time range change\". query=%s",
 				shortPath(path), v.name, v.query)
 		}
 	}
