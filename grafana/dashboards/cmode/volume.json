@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1682336767617,
+  "iteration": 1682336767620,
   "links": [
     {
       "asDropdown": true,
@@ -5270,7 +5270,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (avg_over_time(volume_num_compress_fail{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeNumCompressFailPercent\"}[${__range}])/avg_over_time(volume_num_compress_attempts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeNumCompressFailPercent\"}[${__range}]))) * 100",
+              "expr": "topk($TopResources, (volume_num_compress_fail{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeNumCompressFailPercent\"}/volume_num_compress_attempts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeNumCompressFailPercent\"})) * 100",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
