@@ -772,7 +772,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -791,7 +791,7 @@
           "query": "label_values(ontaps3_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -816,7 +816,7 @@
           "query": "label_values(ontaps3_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -838,7 +838,7 @@
           "query": "label_values(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -868,7 +868,7 @@
           "query": "label_values(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, bucket)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
