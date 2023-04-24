@@ -1,0 +1,3 @@
+# fails because Objects should be objects
+Objects:
+  ClusterInfo.yaml

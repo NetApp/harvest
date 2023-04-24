@@ -1,14 +1,19 @@
 package doctor
 
 import (
+	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
+	"io/fs"
 	"os"
+	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -118,12 +123,97 @@ func checkAll(path string, contents []byte) {
 	anyFailed = !checkUniquePromPorts(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkPollersExportToUniquePromPorts(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkExporterTypes(*harvestConfig).isValid || anyFailed
+	anyFailed = !checkCustomYaml("").isValid || anyFailed
 
 	if anyFailed {
 		os.Exit(1)
 	} else {
 		os.Exit(0)
 	}
+}
+
+func checkCustomYaml(confParent string) validation {
+	valid := validation{isValid: true}
+	confDir := path.Join(conf.GetHarvestHomePath(), "conf")
+	if confParent != "" {
+		confDir = path.Join(confParent, "conf")
+	}
+
+	dir, err := os.ReadDir(confDir)
+	if err != nil {
+		fmt.Printf("unable to read directory=%s err=%s\n", confDir, err)
+	}
+	for _, f := range dir {
+		if !f.IsDir() {
+			continue
+		}
+		flavor := f.Name()
+		custom := path.Join(confDir, flavor, "custom.yaml")
+		if _, err := os.Stat(custom); errors.Is(err, os.ErrNotExist) {
+			continue
+		}
+		template, err := collector.ImportTemplate(confParent, "custom.yaml", flavor)
+		if err != nil {
+			valid.isValid = false
+			valid.invalid = append(valid.invalid, fmt.Sprintf(`%s is empty or invalid err=%+v`, custom, err))
+			continue
+		}
+		s := template.GetChildS("objects")
+		if s == nil {
+			valid.isValid = false
+			msg := fmt.Sprintf(`%s should have a top-level "objects" key`, custom)
+			valid.invalid = append(valid.invalid, msg)
+			continue
+		}
+		if s.Children == nil {
+			valid.isValid = false
+			msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
+			valid.invalid = append(valid.invalid, msg)
+		} else {
+			for _, t := range s.Children {
+				if len(t.Content) == 0 {
+					valid.isValid = false
+					msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
+					valid.invalid = append(valid.invalid, msg)
+					continue
+				}
+				searchDir := path.Join(confDir, flavor)
+				if !templateExists(searchDir, t.GetContentS()) {
+					valid.isValid = false
+					msg := fmt.Sprintf(`%s references template file "%s" which does not exist in %s`,
+						custom, t.GetContentS(), path.Join(searchDir, "**"))
+					valid.invalid = append(valid.invalid, msg)
+					continue
+				}
+			}
+		}
+	}
+	if len(valid.invalid) > 0 {
+		fmt.Printf("%s: Problems found in custom.yaml files\n", color.Colorize("Error", color.Red))
+		for _, s := range valid.invalid {
+			fmt.Printf("  %s\n", s)
+		}
+	}
+	return valid
+}
+
+func templateExists(searchDir string, templateName string) bool {
+	// recursively search searchDir for a file named templateName
+	found := false
+	err := filepath.WalkDir(searchDir, func(path string, d fs.DirEntry, err error) error {
+		if d.IsDir() {
+			return nil
+		}
+		if strings.HasSuffix(path, templateName) {
+			found = true
+			return filepath.SkipAll
+		}
+		return nil
+	})
+	if err != nil {
+		fmt.Printf("failed to walk dir=%s err=%v", searchDir, err)
+	}
+	return found
 }
 
 // checkExporterTypes validates that all exporters are of valid types
@@ -162,7 +252,7 @@ func checkExporterTypes(config conf.HarvestConfig) validation {
 }
 
 // checkUniquePromPorts checks that all Prometheus exporters
-// that specify a port, do so uniquely
+// which specify a port, do so uniquely
 func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	if config.Exporters == nil {
 		return validation{}
@@ -220,7 +310,7 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	return valid
 }
 
-// checkPollersExportToUniquePromPorts checks that all pollers that export
+// checkPollersExportToUniquePromPorts checks that all pollers which export
 // to a Prometheus exporter, do so to a unique promPort
 func checkPollersExportToUniquePromPorts(config conf.HarvestConfig) validation {
 	if config.Exporters == nil {

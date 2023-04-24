@@ -11,14 +11,149 @@ exports:
   - index                                   => index
 
 events:
+  - name: LUN.destroy
+    exports:
+      - parameters.lun_path                 => lun_path
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.volume_dsid              => volume_ds_id
+      - parameters.volume_name              => volume
+
+  - name: LUN.offline
+    exports:
+      - ^^parameters.object_uuid            => object_uuid
+      - parameters.lun_path                 => lun_path
+      - parameters.object_type              => object_type
+      - parameters.volume_dsid              => volume_ds_id
+      - parameters.volume_name              => volume
+    resolve_when_ems:
+      - name: LUN.online
+        resolve_after: 672h
+
+  - name: NVMeNS.destroy
+    exports:
+      - parameters.NVMeNS_path              => path
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.volume_dsid              => volume_ds_id
+      - parameters.volume_name              => volume
+
+  - name: NVMeNS.offline
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.path                     => path
+      - parameters.volume_dsid              => volume_ds_id
+      - parameters.volume_name              => volume
+
+  - name: NVMeNS.online
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.path                     => path
+      - parameters.volume_dsid              => volume_ds_id
+      - parameters.volume_name              => volume
+
+  - name: Nblade.cifsManyAuths
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.remoteIpAddress          => remote_ip_address
+      - parameters.vsId                     => vs_id
+
+  - name: Nblade.cifsMaxOpenSameFile
+    exports:
+      - parameters.IpAddress                => ip_address
+      - parameters.filePath                 => file_path
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.port                     => port
+      - parameters.shareName                => share
+      - parameters.vserverName              => svm
+
+  - name: Nblade.cifsMaxSessPerUsrConn
+    exports:
+      - parameters.IpAddress                => ip_address
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.port                     => port
+      - parameters.userName                 => user
+      - parameters.vserverName              => svm
+
+  - name: Nblade.cifsNbNameConflict
+    exports:
+      - parameters.IpAddress                => ip_address
+      - parameters.nbName                   => nb
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+
+  - name: Nblade.cifsNoPrivShare
+    exports:
+      - parameters.clientIp                 => client_ip
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.userName                 => user
+      - parameters.vserverId                => svm_uuid
+
+  - name: Nblade.nfsV4PoolExhaust
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.poolname                 => pool
+
+  - name: Nblade.vscanBadUserPrivAccess
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.scannerIp                => scanner_ip
+      - parameters.userName                 => user
+      - parameters.vserverName              => svm
+
+  - name: Nblade.vscanConnBackPressure
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.scannerIp                => scanner_ip
+      - parameters.vserverName              => svm
+
+  - name: Nblade.vscanConnInactive
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.scannerIp                => scanner_ip
+      - parameters.vserverName              => svm
+
+  - name: Nblade.vscanNoRegdScanner
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.scannerIp                => scanner_ip
+      - parameters.vserverName              => svm
+
+  - name: Nblade.vscanNoScannerConn
+    exports:
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.vserverName              => svm
+
+  - name: Nblade.vscanVirusDetected
+    exports:
+      - parameters.SID                      => sid
+      - parameters.clientIp                 => client_ip
+      - parameters.filePath                 => file_path
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.vscanServerIp            => vscan_server_ip
+      - parameters.vserverName              => svm
+
   - name: arw.volume.state
     matches:
       - name: op
         value: disable-in-progress
     exports:
       - parameters.op                       => op
-      - parameters.volumeUuid               => volume_uuid
       - parameters.volumeName               => volume
+      - parameters.volumeUuid               => volume_uuid
       - parameters.vserverName              => svm
       - parameters.vserverUuid              => svm_uuid
 
@@ -28,8 +163,8 @@ events:
         value: disabled
     exports:
       - parameters.op                       => op
-      - parameters.volumeUuid               => volume_uuid
       - parameters.volumeName               => volume
+      - parameters.volumeUuid               => volume_uuid
       - parameters.vserverName              => svm
       - parameters.vserverUuid              => svm_uuid
 
@@ -39,8 +174,8 @@ events:
         value: dry-run
     exports:
       - parameters.op                       => op
-      - parameters.volumeUuid               => volume_uuid
       - parameters.volumeName               => volume
+      - parameters.volumeUuid               => volume_uuid
       - parameters.vserverName              => svm
       - parameters.vserverUuid              => svm_uuid
 
@@ -50,8 +185,8 @@ events:
         value: dry-run-paused
     exports:
       - parameters.op                       => op
-      - parameters.volumeUuid               => volume_uuid
       - parameters.volumeName               => volume
+      - parameters.volumeUuid               => volume_uuid
       - parameters.vserverName              => svm
       - parameters.vserverUuid              => svm_uuid
 
@@ -61,8 +196,8 @@ events:
         value: enable-paused
     exports:
       - parameters.op                       => op
-      - parameters.volumeUuid               => volume_uuid
       - parameters.volumeName               => volume
+      - parameters.volumeUuid               => volume_uuid
       - parameters.vserverName              => svm
       - parameters.vserverUuid              => svm_uuid
 
@@ -72,15 +207,15 @@ events:
         value: enabled
     exports:
       - parameters.op                       => op
-      - parameters.volumeUuid               => volume_uuid
       - parameters.volumeName               => volume
+      - parameters.volumeUuid               => volume_uuid
       - parameters.vserverName              => svm
       - parameters.vserverUuid              => svm_uuid
 
   - name: arw.vserver.state
     matches:
       - name: op
-        value: enabled
+        value: disabled
     exports:
       - parameters.op                       => op
       - parameters.vserverName              => svm
@@ -98,8 +233,8 @@ events:
 
   - name: callhome.arw.activity.seen
     exports:
-      - parameters.volUuid                  => volume_uuid
       - parameters.volName                  => volume
+      - parameters.volUuid                  => volume_uuid
       - parameters.vserverName              => svm
       - parameters.vserverUuid              => svm_uuid
 
@@ -114,13 +249,13 @@ events:
 
   - name: cifs.shadowcopy.failure
     exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.operation                => operation
-      - parameters.clientShadowCopySetId    => client_shadow_copy_set_id
-      - parameters.filerShadowCopySetId     => filer_shadow_copy_set_id
       - parameters.clientShadowCopyId       => client_shadow_copy_id
+      - parameters.clientShadowCopySetId    => client_shadow_copy_set_id
       - parameters.filerShadowCopyId        => filer_shadow_copy_id
+      - parameters.filerShadowCopySetId     => filer_shadow_copy_set_id
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.operation                => operation
       - parameters.shareName                => share
 
   - name: cloud.aws.iamNotInitialized
@@ -129,51 +264,32 @@ events:
 
   - name: cluster.switch.pwr.fail
     exports:
-      - parameters.switch_name              => switch_name
-      - parameters.pwr_supply_name          => pwr_supply_name
+      - parameters.pwr_supply_name          => pwr_supply
       - parameters.status                   => status
+      - parameters.switch_name              => switch
 
   - name: disk.outOfService
     exports:
       - parameters.diskName                 => disk
-      - parameters.serialno                 => serial_no
       - parameters.powerOnHours             => power_on_hours
+      - parameters.serialno                 => serial_no
 
   - name: fabricpool.full
     exports:
       - parameters.cluster_uuid             => cluster_uuid
-      - parameters.used_capacity            => used_capacity
       - parameters.licensed_capacity        => licensed_capacity
+      - parameters.used_capacity            => used_capacity
 
   - name: fabricpool.nearly.full
     exports:
       - parameters.cluster_uuid             => cluster_uuid
-      - parameters.used_capacity            => used_capacity
       - parameters.licensed_capacity        => licensed_capacity
+      - parameters.used_capacity            => used_capacity
 
   - name: gb.netra.ca.check.failed
     exports:
-      - parameters.vol                      => volume
       - parameters.aggr_uuid                => aggr_uuid
-
-  - name: LUN.destroy
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.lun_path                 => lun_path
-      - parameters.volume_name              => volume
-      - parameters.volume_dsid              => volume_ds_id
-
-  - name: LUN.offline
-    exports:
-      - ^^parameters.object_uuid            => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.lun_path                 => lun_path
-      - parameters.volume_name              => volume
-      - parameters.volume_dsid              => volume_ds_id
-    resolve_when_ems:
-      - name: LUN.online
-        resolve_after: 672h
+      - parameters.vol                      => volume
 
   - name: mgmtgwd.rootvolrec.low.space
     exports:
@@ -201,145 +317,29 @@ events:
       - name: monitor.fan.ok
         resolve_after: 672h
 
-  - name: Nblade.cifsManyAuths
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.vsId                     => vs_id
-      - parameters.remoteIpAddress          => remote_ip_address
-      - parameters.object_type              => object_type
-
-  - name: Nblade.cifsMaxOpenSameFile
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.IpAddress                => ip_address
-      - parameters.port                     => port
-      - parameters.filePath                 => file_path
-      - parameters.shareName                => share
-      - parameters.vserverName              => svm
-
-  - name: Nblade.cifsMaxSessPerUsrConn
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.IpAddress                => ip_address
-      - parameters.port                     => port
-      - parameters.userName                 => user
-      - parameters.vserverName              => svm
-
-  - name: Nblade.cifsNbNameConflict
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.IpAddress                => ip_address
-      - parameters.nbName                   => nb
-
-  - name: Nblade.cifsNoPrivShare
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.vserverId                => svm_uuid
-      - parameters.userName                 => user
-      - parameters.clientIp                 => client_id
-
-  - name: Nblade.nfsV4PoolExhaust
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.poolname                 => pool
-
-  - name: Nblade.vscanBadUserPrivAccess
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.vserverName              => svm
-      - parameters.scannerIp                => scanner_ip
-      - parameters.userName                 => user
-
-  - name: Nblade.vscanConnBackPressure
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.vserverName              => svm
-      - parameters.scannerIp                => scanner_ip
-
-  - name: Nblade.vscanNoRegdScanner
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.vserverName              => svm
-      - parameters.scannerIp                => scanner_ip
-
-  - name: Nblade.vscanNoScannerConn
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.vserverName              => svm
-
-  - name: Nblade.vscanVirusDetected
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.vserverName              => svm
-      - parameters.vscanServerIp            => vscan_server_ip
-      - parameters.filePath                 => file_path
-      - parameters.clientIp                 => client_ip
-      - parameters.SID                      => sid
-
-  - name: Nblade.vscanConnInactive
-    expots:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.vserverName              => svm
-      - parameters.scannerIp                => scannerIp
-
-  - name: NVMeNS.destroy
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.NVMeNS_path              => path
-      - parameters.volume_name              => volume
-      - parameters.volume_dsid              => volume_ds_id
-
-  - name: NVMeNS.offline
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.path                     => path
-      - parameters.volume_name              => volume
-      - parameters.volume_dsid              => volume_ds_id
-
-  - name: NVMeNS.online
-    exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
-      - parameters.path                     => path
-      - parameters.volume_name              => volume
-      - parameters.volume_dsid              => volume_ds_id
-
   - name: nvmf.graceperiod.active
     exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
       - parameters.days_remaining           => days_remaining
       - parameters.expiration_date          => expiration_date
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
 
   - name: nvmf.graceperiod.expired
     exports:
-      - parameters.object_uuid              => object_uuid
       - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
 
   - name: nvmf.graceperiod.start
     exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.object_type              => object_type
       - parameters.days_remaining           => days_remaining
       - parameters.expiration_date          => expiration_date
+      - parameters.object_type              => object_type
+      - parameters.object_uuid              => object_uuid
 
   - name: object.store.unavailable
     exports:
-      - parameters.configname               => config_name
       - ^^parameters.node_uuid              => node_uuid
+      - parameters.configname               => config
     resolve_when_ems:
       - name: object.store.available
         resolve_after: 672h
@@ -351,35 +351,35 @@ events:
 
   - name: objstore.interclusterlifDown
     exports:
-      - parameters.ipspaceID                => ip_space_id
+      - parameters.ipspaceID                => ipspace_id
       - parameters.nodeUuid                 => node_uuid
 
   - name: osc.signatureMismatch
     exports:
-      - parameters.operation                => operation
-      - parameters.serverHostname           => server_host
       - parameters.bucket                   => bucket
       - parameters.nodeUuid                 => node_uuid
+      - parameters.operation                => operation
+      - parameters.serverHostname           => server_host
 
   - name: qos.monitor.memory.maxed
     exports:
       - ^^parameters.object_uuid            => object_uuid
-      - parameters.object_type              => object_type
       - parameters.count                    => count
+      - parameters.object_type              => object_type
     resolve_when_ems:
       - name: qos.monitor.memory.abated
         resolve_after: 672h
 
   - name: scsiblade.san.config.active
     exports:
-      - parameters.state                    => state
       - parameters.num_luns                 => num_luns
+      - parameters.state                    => state
 
   - name: scsitarget.fct.port.full
     exports:
-      - parameters.portname                 => port
       - parameters.active_commands          => active_commands
       - parameters.max_commands             => max_commands
+      - parameters.portname                 => port
 
   - name: ses.status.fanError
     exports:
@@ -394,16 +394,16 @@ events:
   - name: sms.status.out.of.sync
     exports:
       - ^^parameters.relationship_id        => relationship_id
-      - parameters.srcpath                  => src_path
       - parameters.dstpath                  => dst_path
+      - parameters.srcpath                  => src_path
     resolve_when_ems:
       - name: sms.status.in.sync
         resolve_after: 672h
 
   - name: sp.ipmi.lost.shutdown
     exports:
-      - parameters.num_minutes              => num_minutes
       - ^^node.name                         => node
+      - parameters.num_minutes              => num_minutes
     resolve_when_ems:
       - name: sp.heartbeat.resumed
         resolve_after: 672h
@@ -429,40 +429,38 @@ events:
 
   - name: wafl.readdir.expired
     exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.volume                   => volume
       - parameters.app                      => app
-      - parameters.volident                 => vol_ident
-      - parameters.snapid                   => snap_id
       - parameters.directory_inum           => directory_inum
+      - parameters.object_uuid              => object_uuid
+      - parameters.snapid                   => snap_id
+      - parameters.volident                 => vol_ident
+      - parameters.volume                   => volume
 
   - name: wafl.vol.autoSize.done
     exports:
-      - parameters.object_uuid              => object_uuid
-      - parameters.vol                      => volume
       - parameters.app                      => app
-      - parameters.volident                 => vol_ident
-      - parameters.size                     => size
       - parameters.event_type               => event_type
+      - parameters.object_uuid              => object_uuid
+      - parameters.size                     => size
+      - parameters.vol                      => volume
+      - parameters.volident                 => vol_ident
 
   - name: wafl.vvol.offline
     exports:
-      - ^^parameters.name                   => volume
+      - ^^parameters.volident               => vol_ident
       - parameters.app                      => app
-      - parameters.volident                 => vol_ident
       - parameters.instuuid                 => inst_uuid
+      - parameters.name                     => volume
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
-        resolve_key:
-          - ^^parameters.vol                => volume
 
   - name: wafl.vvol.restrict
     exports:
-      - ^^parameters.vol                    => volume
+      - ^^parameters.volident               => vol_ident
       - parameters.app                      => app
-      - parameters.volident                 => vol_ident
       - parameters.instuuid                 => inst_uuid
+      - parameters.vol                      => volume
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h

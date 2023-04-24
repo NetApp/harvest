@@ -3981,7 +3981,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeSizeUsed\"} * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsed\"})",
+              "expr": "topk($TopResources, volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeSizeUsed\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsed\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4076,7 +4076,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSizeUsedPercent\"} * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsedPercent\"})",
+              "expr": "topk($TopResources, volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSizeUsedPercent\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsedPercent\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4170,7 +4170,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSnapshotSizeUsed\"} * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsed\"})",
+              "expr": "topk($TopResources, volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSnapshotSizeUsed\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsed\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4265,7 +4265,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSnapshotSizeUsedPercent\"} * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsedPercent\"})",
+              "expr": "topk($TopResources, volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeSnapshotSizeUsedPercent\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsedPercent\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4306,7 +4306,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -4328,7 +4328,7 @@
           "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4354,7 +4354,7 @@
           "query": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4380,7 +4380,7 @@
           "query": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4406,7 +4406,7 @@
           "query": "label_values(aggr_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4432,7 +4432,7 @@
           "query": "query_result(avg by (aggr) (avg_over_time(aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*aggr=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -4533,7 +4533,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4543,10 +4543,10 @@
         "name": "TopVolumeSizeUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))",
+          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
@@ -4556,7 +4556,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4566,10 +4566,10 @@
         "name": "TopVolumeSizeUsedPercent",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
@@ -4579,7 +4579,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4589,10 +4589,10 @@
         "name": "TopVolumeSnapshotSizeUsed",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
@@ -4602,7 +4602,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4612,10 +4612,10 @@
         "name": "TopVolumeSnapshotSizeUsedPercent",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,

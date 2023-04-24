@@ -614,16 +614,29 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				shortPath(path), expr.path, expr.expr)
 		}
 	}
+
+	for _, v := range variables {
+		if !strings.Contains(v.query, "topk") || !strings.Contains(v.query, "__range") {
+			continue
+		}
+
+		if v.refresh != "2" {
+			t.Errorf("dashboard=%s name=%s use topk, refresh should be set to \"On time range change\". query=%s",
+				shortPath(path), v.name, v.query)
+		}
+	}
+
 }
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
-		"cmode/shelf.json":    2,
-		"cmode/security.json": 3,
-		"cmode/fsa.json":      2,
-		"cmode/workload.json": 2,
-		"cmode/smb2.json":     2,
-		"cmode/health.json":   2,
+		"cmode/shelf.json":            2,
+		"cmode/security.json":         3,
+		"cmode/fsa.json":              2,
+		"cmode/workload.json":         2,
+		"cmode/smb2.json":             2,
+		"cmode/health.json":           2,
+		"storagegrid/fabricpool.json": 2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(
