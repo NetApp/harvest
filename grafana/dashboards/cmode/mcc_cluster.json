@@ -2534,7 +2534,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -2558,7 +2558,7 @@
           "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -2587,7 +2587,7 @@
           "query": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -2614,7 +2614,7 @@
           "query": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -2639,7 +2639,7 @@
           "query": "label_values(aggr_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -2746,7 +2746,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(plex_disk_busy{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*plex=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2769,7 +2769,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*plex=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2792,7 +2792,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*plex=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2815,7 +2815,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*plex=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2838,7 +2838,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*plex=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2861,7 +2861,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*hostadapter=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2884,7 +2884,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*hostadapter=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
