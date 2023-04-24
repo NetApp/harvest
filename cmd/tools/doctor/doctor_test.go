@@ -104,13 +104,6 @@ func loadTestConfig() {
 }
 
 func TestCustomYamlIsValid(t *testing.T) {
-	valid := checkCustomYaml("testdata/conf1")
-	if valid.isValid {
-		t.Error(`want isValid=false`)
-	}
-	if len(valid.invalid) != 1 {
-		t.Errorf(`want 1 invalid, got %d`, len(valid.invalid))
-	}
 	type test struct {
 		path        string
 		numInvalid  int
