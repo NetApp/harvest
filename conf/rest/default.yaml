@@ -26,7 +26,6 @@ objects:
   NtpServer:                   ntpserver.yaml
   OntapS3:                     ontap_s3.yaml
   OntapS3Policy:               ontap_s3_policy.yaml
-  Port:                        port.yaml
   QosPolicyAdaptive:           qos_policy_adaptive.yaml
   QosPolicyFixed:              qos_policy_fixed.yaml
   Qtree:                       qtree.yaml
