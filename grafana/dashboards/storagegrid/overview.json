@@ -2162,7 +2162,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -2184,7 +2184,7 @@
           "query": "label_values(storagegrid_storage_utilization_data_bytes, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -2207,7 +2207,7 @@
           "query": "label_values(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\"},cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -2230,7 +2230,7 @@
           "query": "label_values(storagegrid_private_load_balancer_storage_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},policy)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -2344,7 +2344,7 @@
           "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*tenant=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2367,7 +2367,7 @@
           "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "/.*node=\"(.*?)\".*/",
         "skipUrlSync": false,
         "sort": 0,
@@ -2390,7 +2390,7 @@
           "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "/.*node=\"(.*?)\".*/",
         "skipUrlSync": false,
         "sort": 0,
@@ -2413,7 +2413,7 @@
           "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*tenant=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2436,7 +2436,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*policy=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2459,7 +2459,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*policy=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2482,7 +2482,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*policy=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2505,7 +2505,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*policy=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,

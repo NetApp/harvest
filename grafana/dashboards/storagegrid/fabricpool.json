@@ -1648,7 +1648,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -1670,7 +1670,7 @@
           "query": "label_values(aggr_labels{cloud_stores!=\"\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1696,7 +1696,7 @@
           "query": "label_values(aggr_labels{cluster=~\"$Cluster\",cloud_stores!=\"\"}, aggr)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1722,7 +1722,7 @@
           "query": "label_values(storagegrid_storage_utilization_data_bytes,cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1745,7 +1745,7 @@
           "query": "label_values(cloud_target_labels{cluster=~\"$Cluster\"}, container)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1862,7 +1862,7 @@
           "query": "label_values(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\"},policy)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1885,7 +1885,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*policy=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1908,7 +1908,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*policy=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1931,7 +1931,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*policy=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,

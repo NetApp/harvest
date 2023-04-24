@@ -748,7 +748,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -770,7 +770,7 @@
           "query": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -798,7 +798,7 @@
           "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -823,7 +823,7 @@
           "query": "label_values(qtree_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -848,7 +848,7 @@
           "query": "label_values(qtree_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, volume)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -873,7 +873,7 @@
           "query": "label_values(qtree_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}, qtree)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
@@ -973,7 +973,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qtree_nfs_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -996,7 +996,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1019,7 +1019,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qtree_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1042,7 +1042,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qtree_internal_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1065,7 +1065,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(quota_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1088,7 +1088,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(quota_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1111,7 +1111,7 @@
           "query": "query_result(topk($TopResources, rate(quota_disk_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,

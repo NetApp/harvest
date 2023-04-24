@@ -96,10 +96,11 @@ func setToList(seen map[string]struct{}) []string {
 }
 
 type variable struct {
-	name  string
-	kind  string
-	query string
-	path  string
+	name    string
+	kind    string
+	query   string
+	refresh string
+	path    string
 }
 
 func allVariables(data []byte) []variable {
@@ -111,10 +112,11 @@ func allVariables(data []byte) []variable {
 		}
 
 		variables = append(variables, variable{
-			name:  value.Get("name").String(),
-			kind:  value.Get("type").String(),
-			query: value.Get("query.query").String(),
-			path:  key.String(),
+			name:    value.Get("name").String(),
+			kind:    value.Get("type").String(),
+			query:   value.Get("query.query").String(),
+			refresh: value.Get("refresh").String(),
+			path:    key.String(),
 		})
 		return true
 	})

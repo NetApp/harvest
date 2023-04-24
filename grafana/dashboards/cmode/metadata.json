@@ -4057,7 +4057,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -4079,7 +4079,7 @@
           "query": "label_values(poller_status, datacenter)",
           "refId": "Prometheus-Datacenter-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4105,7 +4105,7 @@
           "query": "label_values(poller_status, hostname)",
           "refId": "Prometheus-Hostname-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4131,7 +4131,7 @@
           "query": "label_values(poller_status, poller)",
           "refId": "Prometheus-Poller-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4157,7 +4157,7 @@
           "query": "label_values(metadata_component_status{type=\"collector\",poller=~\"$Poller\"}, name)",
           "refId": "Prometheus-Collector-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4183,7 +4183,7 @@
           "query": "label_values(metadata_component_status{type=\"collector\",poller=~\"$Poller\",name=~\"$Collector\"}, target)",
           "refId": "Prometheus-Object-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
