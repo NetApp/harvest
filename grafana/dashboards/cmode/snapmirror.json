@@ -4424,7 +4424,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -4446,7 +4446,7 @@
           "query": "label_values(snapmirror_labels{system_type!=\"7mode\"},datacenter)",
           "refId": "Prometheus-Datacenter-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4472,7 +4472,7 @@
           "query": "query_result(snapmirror_labels{system_type!=\"7mode\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\"))",
           "refId": "Prometheus-Cluster-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*source_cluster=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
@@ -4498,7 +4498,7 @@
           "query": "label_values(snapmirror_labels{system_type!=\"7mode\", source_cluster=~\"$SourceCluster\"}, destination_node)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4524,7 +4524,7 @@
           "query": "query_result((snapmirror_labels{system_type!=\"7mode\",source_cluster=~\"$SourceCluster\"} * on (source_volume, source_vserver, source_cluster) group_left(source_node)  label_replace( label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$SourceCluster\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") , \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) \n\n\n",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*source_node=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
@@ -4550,7 +4550,7 @@
           "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_vserver)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4576,7 +4576,7 @@
           "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_vserver)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4602,7 +4602,7 @@
           "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_volume)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4628,7 +4628,7 @@
           "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_volume)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -4750,7 +4750,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*relationship_id=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -4773,7 +4773,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*relationship_id=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -4796,7 +4796,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*relationship_id=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,

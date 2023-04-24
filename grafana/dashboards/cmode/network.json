@@ -3178,7 +3178,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -3200,7 +3200,7 @@
           "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -3226,7 +3226,7 @@
           "query": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -3252,7 +3252,7 @@
           "query": "label_values(node_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -3278,7 +3278,7 @@
           "query": "label_values(nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -3304,7 +3304,7 @@
           "query": "label_values(fcp_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -3426,7 +3426,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*nic=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3449,7 +3449,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*nic=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3472,7 +3472,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3495,7 +3495,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3518,7 +3518,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3541,7 +3541,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3564,7 +3564,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3587,7 +3587,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3610,7 +3610,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3633,7 +3633,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3656,7 +3656,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -3679,7 +3679,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,

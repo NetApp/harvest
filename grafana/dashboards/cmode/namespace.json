@@ -928,7 +928,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -950,7 +950,7 @@
           "query": "label_values(node_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -976,7 +976,7 @@
           "query": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1002,7 +1002,7 @@
           "query": "label_values(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1028,7 +1028,7 @@
           "query": "label_values(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1054,7 +1054,7 @@
           "query": "label_values(namespace_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume\"},path)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1171,7 +1171,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(namespace_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*path=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1194,7 +1194,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(namespace_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*path=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1217,7 +1217,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(namespace_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*path=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1240,7 +1240,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(namespace_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*path=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1263,7 +1263,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(namespace_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*path=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -1286,7 +1286,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(namespace_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*path=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
