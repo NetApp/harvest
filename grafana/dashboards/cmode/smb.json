@@ -1799,7 +1799,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*client_ip=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
