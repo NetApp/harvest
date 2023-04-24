@@ -454,8 +454,6 @@ events:
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
-        resolve_key:
-          - ^^parameters.volident           => vol_ident
 
   - name: wafl.vvol.restrict
     exports:
