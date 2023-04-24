@@ -12,11 +12,33 @@ counters:
   - ^lag.distribution_policy                 => lag_distribution_policy
   - ^lag.mode                                => lag_mode
   - ^operational_speed                       => op_speed
+  - ^speed                                   => speed
   - ^state                                   => status
+  - ^type                                    => port_type
   - ^vlan.base_port.name                     => vlan_port
   - ^vlan.base_port.node.name                => vlan_node
   - ^vlan.tag                                => vlan_id
   - mtu                                      => mtu
+
+endpoints:
+  - query: api/private/cli/network/port
+    counters:
+      - ^^node                               => node
+      - ^^port                               => port
+      - ^duplex_admin                        => admin_duplex
+      - ^duplex_oper                         => op_duplex
+      - ^flowcontrol_admin                   => admin_flowcontrol
+      - ^role                                => role
+      - ^speed_admin                         => admin_speed
+  - query: api/private/cli/network/port/ifgrp
+    counters:
+      - ^^ifgrp                              => port
+      - ^^node                               => node
+      - ^activeports                         => activeports
+      - ^distr_func                          => ifgrp_func
+      - ^down_ports                          => down_ports
+      - ^ports                               => ports
+      - ^up_ports                            => up_ports
 
 plugins:
   LabelAgent:
