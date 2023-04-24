@@ -684,7 +684,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 	for _, k := range p.InstanceKeys {
 		value := parseProperties(instanceData, k)
 		if value.Exists() {
-			instanceKey += value.String() + Hyphen
+			instanceKey += Hyphen + value.String()
 		} else {
 			e.Logger.Error().Str("key", k).Msg("skip instance, missing key")
 			break
