@@ -605,7 +605,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 							instanceLabelCount++
 						} else {
-							e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+							e.Logger.Error().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 						}
 					}
 
@@ -684,9 +684,9 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 	for _, k := range p.InstanceKeys {
 		value := parseProperties(instanceData, k)
 		if value.Exists() {
-			instanceKey += Hyphen + value.String()
+			instanceKey += value.String() + Hyphen
 		} else {
-			e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+			e.Logger.Error().Str("key", k).Msg("skip instance, missing key")
 			break
 		}
 	}
