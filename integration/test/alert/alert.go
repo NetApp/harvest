@@ -24,7 +24,7 @@ var volumeArwState = []string{
 	`"enabled"`,
 }
 var vserverArwState = []string{
-	`"enabled"`,
+	`"disabled"`,
 	`"dry-run"`,
 }
 
