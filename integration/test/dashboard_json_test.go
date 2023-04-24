@@ -46,6 +46,7 @@ var restCounterMap = map[string]struct{}{
 // excludeCounters consists of counters which should be excluded from both Zapi/Rest in CI test
 var excludeCounters = []string{
 	"aggr_physical_",
+	"cifs_session",
 	"cluster_peer",
 	"efficiency_savings",
 	"ems_events",

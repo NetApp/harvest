@@ -1,0 +1,37 @@
+name:               CIFSSession
+query:              api/protocols/cifs/sessions
+object:             cifs_session
+
+counters:
+  - ^^identifier
+  - ^authentication
+  - ^client_ip
+  - ^connection_id
+  - ^large_mtu
+  - ^mapped_unix_user
+  - ^node.name               => node
+  - ^protocol
+  - ^server_ip
+  - ^smb_encryption
+  - ^smb_signing
+  - ^svm.name                => svm
+  - ^user
+  - connection_count
+
+export_options:
+  instance_keys:
+    - client_ip
+    - identifier
+    - node
+    - protocol
+    - server_ip
+    - svm
+  instance_labels:
+    - authentication
+    - connection_id
+    - large_mtu
+    - mapped_unix_user
+    - smb_encryption
+    - smb_signing
+    - svm
+    - user
