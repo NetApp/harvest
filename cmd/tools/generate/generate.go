@@ -29,9 +29,11 @@ type PollerInfo struct {
 	ContainerName string
 	ShowPorts     bool
 	IsFull        bool
+	DefaultMounts bool
 	TemplateDir   string
 	CertDir       string
 	Mounts        []string
+	EnableVolumes bool
 }
 
 type AdminInfo struct {
@@ -55,17 +57,18 @@ type PromTemplate struct {
 }
 
 type options struct {
-	Poller      string
-	loglevel    int
-	image       string
-	filesdPath  string
-	showPorts   bool
-	outputPath  string
-	templateDir string
-	certDir     string
-	promPort    int
-	grafanaPort int
-	mounts      []string
+	Poller        string
+	loglevel      int
+	image         string
+	filesdPath    string
+	showPorts     bool
+	outputPath    string
+	templateDir   string
+	certDir       string
+	promPort      int
+	grafanaPort   int
+	mounts        []string
+	defaultMounts bool
 }
 
 var opts = &options{
@@ -177,9 +180,11 @@ func generateDocker(path string, kind int) {
 			ContainerName: normalizeContainerNames("poller_" + v),
 			ShowPorts:     kind == harvest || opts.showPorts,
 			IsFull:        kind == full,
+			DefaultMounts: opts.defaultMounts,
 			TemplateDir:   templateDirPath,
 			CertDir:       certDirPath,
 			Mounts:        opts.mounts,
+			EnableVolumes: len(opts.mounts) > 0 || opts.defaultMounts,
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
@@ -412,6 +417,8 @@ func init() {
 	dFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
 	dFlags.StringSliceVar(&opts.mounts, "volume", []string{}, "Additional volume mounts to include in compose file")
+	dFlags.BoolVar(&opts.defaultMounts, "defaultMounts", true, "Enable/Disable Default Mounts")
+	_ = fullCmd.PersistentFlags().MarkHidden("excludeDefaultMounts")
 
 	fFlags.StringVar(&opts.filesdPath, "filesdpath", "container/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")

@@ -25,12 +25,16 @@ services:
     {{- end}}
     command: '--poller {{ .PollerName }} {{if .Port }}--promPort {{ .Port }} {{ end }}
     {{- if ne .LogLevel 2 }}--loglevel {{ .LogLevel }} {{ end}}--config /opt/harvest.yml'
+    {{- if .EnableVolumes}}
     volumes:
+    {{- if .DefaultMounts}}
       - {{ .TemplateDir }}:/opt/harvest/conf
       - {{ .CertDir }}:/opt/harvest/cert
       - {{ .ConfigFile }}:/opt/harvest.yml
+    {{- end}}
     {{- range .Mounts}}
       - {{.}}
+    {{- end}}
     {{- end}}
     {{- if .IsFull}}
     networks:
