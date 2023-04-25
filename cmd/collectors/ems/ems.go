@@ -208,7 +208,7 @@ func (e *Ems) InitCache() error {
 
 		// check if name is present in template
 		if line.GetChildContentS("name") == "" {
-			e.Logger.Warn().Msg("Missing event name")
+			e.Logger.Error().Msg("Missing event name")
 			continue
 		}
 
@@ -509,7 +509,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 		messageName := instanceData.Get("message.name")
 		// verify if message name exists in ONTAP response
 		if !messageName.Exists() {
-			e.Logger.Warn().Msg("skip instance, missing message name")
+			e.Logger.Error().Msg("skip instance, missing message name")
 			continue
 		}
 		msgName := messageName.String()
@@ -686,7 +686,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 		if value.Exists() {
 			instanceKey += Hyphen + value.String()
 		} else {
-			e.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+			e.Logger.Error().Str("key", k).Msg("skip instance, missing key")
 			break
 		}
 	}

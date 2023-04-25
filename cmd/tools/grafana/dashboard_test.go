@@ -634,7 +634,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/security.json":         3,
 		"cmode/fsa.json":              2,
 		"cmode/workload.json":         2,
-		"cmode/smb2.json":             2,
+		"cmode/smb.json":              2,
 		"cmode/health.json":           2,
 		"storagegrid/fabricpool.json": 2,
 	}
