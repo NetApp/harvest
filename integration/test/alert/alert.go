@@ -58,7 +58,7 @@ func GetAlerts() (map[string]int, int) {
 			}
 		}
 	}
-	defer log.Info().
+	log.Info().
 		Int("alertsData", len(alertsData)).
 		Int("totalAlerts", totalAlerts).
 		Str("dur", time.Since(now).Round(time.Millisecond).String()).
