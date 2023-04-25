@@ -5,6 +5,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/rs/zerolog/log"
 	"testing"
+	"time"
 )
 
 var issuingEmsNames []string
@@ -31,7 +32,7 @@ var nodeScopedResolvingEmsList = []string{
 }
 
 func setupAlerts() {
-	totalAlerts := 0
+	numAlerts := 0
 	emsConfigDir := utils.GetHarvestRootDir() + "/conf/ems/9.6.0"
 	log.Info().Str("EmsConfigDir", emsConfigDir).Msg("Directory path")
 
@@ -39,22 +40,30 @@ func setupAlerts() {
 	_, issuingEmsNames, resolvingEmsNames = promAlerts.GetEmsAlerts(emsConfigDir, "ems.yaml")
 
 	// Identify supported issuing ems names for the given cluster
+	now := time.Now()
 	supportedIssuingEms = promAlerts.GenerateEvents(issuingEmsNames, nodeScopedIssuingEmsList)
-	log.Info().Msgf("Total supported issuing ems: %d", len(supportedIssuingEms))
+	log.Info().
+		Int("supportedIssuingEms", len(supportedIssuingEms)).
+		Str("dur", time.Since(now).Round(time.Millisecond).String()).
+		Msg("Supported issuing ems")
 
 	// Fetch previous prometheus alerts
 	oldAlertsData, _ = promAlerts.GetAlerts()
 
 	// Identify supported ems names for the given cluster
+	now = time.Now()
 	supportedResolvingEms = promAlerts.GenerateEvents(resolvingEmsNames, nodeScopedResolvingEmsList)
-	log.Info().Msgf("Total supported resolving ems:%d", len(supportedResolvingEms))
+	log.Info().
+		Int("supportedResolvingEms", len(supportedResolvingEms)).
+		Str("dur", time.Since(now).Round(time.Millisecond).String()).
+		Msg("Supported resolving ems")
 
 	// Fetch current prometheus alerts
-	newAlertsData, totalAlerts = promAlerts.GetAlerts()
-	if totalAlerts == 0 {
+	newAlertsData, numAlerts = promAlerts.GetAlerts()
+	if numAlerts == 0 {
 		log.Info().Msg("No alerts found in prometheus")
 	}
-	log.Info().Msgf("Total firing alerts %d", totalAlerts)
+	log.Info().Int("numAlerts", numAlerts).Msg("Firing alerts")
 }
 
 func TestEmsTestSuite(t *testing.T) {
@@ -62,21 +71,15 @@ func TestEmsTestSuite(t *testing.T) {
 	setupAlerts()
 
 	// Evaluate bookend active ems events
-	foundBookendEms := make([]string, 0)
-
 	for _, issuingEms := range supportedIssuingEms {
-		// If the issuingEms did not exit before, then ignore the test-case.
+		// If the issuingEms did not exist before, then ignore the test-case.
 		if oldAlertsData[issuingEms] > 0 {
-			v := oldAlertsData[issuingEms] - newAlertsData[issuingEms]
-			if v < 1 {
-				foundBookendEms = append(foundBookendEms, issuingEms)
+			v := newAlertsData[issuingEms] - oldAlertsData[issuingEms]
+			if v > 1 {
+				t.Errorf("Extra bookend ems alerts raised event=%s, count=%d", issuingEms, v)
 			}
 		} else {
-			log.Info().Str("issuingEms", issuingEms).Msg("There is no active issuingEms")
+			log.Info().Str("issuingEms", issuingEms).Msg("Ignore. Did not exist before")
 		}
-	}
-	if len(foundBookendEms) > 0 {
-		log.Error().Strs("foundBookendEms", foundBookendEms).Msg("Unexpected bookendEms found")
-		t.Errorf("One or more extra bookend ems alerts %s have been raised", foundBookendEms)
 	}
 }

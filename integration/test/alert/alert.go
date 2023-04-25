@@ -2,6 +2,7 @@ package promAlerts
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
@@ -13,7 +14,7 @@ import (
 const PrometheusAlertURL string = "http://localhost:9090/api/v1/alerts"
 const TestClusterName = "umeng-aff300-05-06"
 const TestNodeName = "umeng-aff300-06"
-const User = "admin"
+const Admin = "admin"
 
 var volumeArwState = []string{
 	`"disable-in-progress"`,
@@ -34,6 +35,7 @@ type PromAlert struct {
 }
 
 func GetAlerts() (map[string]int, int) {
+	now := time.Now()
 	alertsData := make(map[string]int)
 	totalAlerts := 0
 
@@ -56,6 +58,11 @@ func GetAlerts() (map[string]int, int) {
 			}
 		}
 	}
+	defer log.Info().
+		Int("alertsData", len(alertsData)).
+		Int("totalAlerts", totalAlerts).
+		Str("dur", time.Since(now).Round(time.Millisecond).String()).
+		Msg("Get Prometheus alerts")
 	return alertsData, totalAlerts
 }
 
@@ -93,8 +100,13 @@ func GetEmsAlerts(dir string, fileName string) ([]string, []string, []string) {
 func GenerateEvents(emsNames []string, nodeScopedEms []string) []string {
 	supportedEms := make([]string, 0)
 	var jsonValue []byte
-	addr, user, pass, nodeName := GetPollerDetail()
-	url := "https://" + addr + "/api/private/cli/event/generate"
+	err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
+	poller, err2 := conf.PollerNamed(TestClusterName)
+	dc1, err3 := conf.PollerNamed("dc1")
+	if err != nil && err2 != nil && err3 != nil {
+		log.Fatal().Errs("errors", []error{err, err2, err3}).Msg("Failed to load config")
+	}
+	url := "https://" + poller.Addr + "/api/private/cli/event/generate"
 	method := "POST"
 
 	volumeArwCount := 0
@@ -112,13 +124,13 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) []string {
 
 		// Handle for node-scoped ems, Passing node-name as input
 		if utils.Contains(nodeScopedEms, ems) {
-			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9], "node": "%s"}`, ems, value, nodeName))
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], "node": "%s"}`, ems, value, TestNodeName))
 		} else {
-			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9]}`, ems, value))
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}`, ems, value))
 		}
 
 		var data map[string]interface{}
-		data = utils.SendPostReqAndGetRes(url, method, jsonValue, user, pass)
+		data = utils.SendPostReqAndGetRes(url, method, jsonValue, Admin, dc1.Password)
 		if response := data["error"]; response != nil {
 			errorDetail := response.(map[string]interface{})
 			code := errorDetail["code"].(string)
@@ -132,21 +144,4 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) []string {
 	}
 
 	return supportedEms
-}
-
-func GetPollerDetail() (string, string, string, string) {
-	var (
-		err    error
-		poller *conf.Poller
-	)
-
-	if err = conf.LoadHarvestConfig(utils.GetConfigDir() + "/harvest.yml"); err != nil {
-		utils.PanicIfNotNil(err)
-	}
-
-	if poller, err = conf.PollerNamed(TestClusterName); err != nil {
-		utils.PanicIfNotNil(err)
-	}
-
-	return poller.Addr, User, poller.Password, TestNodeName
 }
