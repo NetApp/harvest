@@ -1,0 +1,38 @@
+name:               CIFSSession
+query:              cifs-session-get-iter
+object:             cifs_session
+
+counters:
+  cifs-session:
+    - ^^session-id             => identifier
+    - ^address                 => client_ip
+    - ^auth-mechanism          => authentication
+    - ^connection-id           => connection_id
+    - ^is-large-mtu-enabled    => large_mtu
+    - ^is-session-signed       => smb_signing
+    - ^lif-address             => server_ip
+    - ^node                    => node
+    - ^protocol-version        => protocol
+    - ^smb-encryption-status   => smb_encryption
+    - ^unix-user               => mapped_unix_user
+    - ^vserver                 => svm
+    - ^windows-user            => user
+    - connection-count         => connection_count
+
+export_options:
+  instance_keys:
+    - client_ip
+    - identifier
+    - node
+    - protocol
+    - server_ip
+    - svm
+  instance_labels:
+    - authentication
+    - connection_id
+    - large_mtu
+    - mapped_unix_user
+    - smb_encryption
+    - smb_signing
+    - svm
+    - user
