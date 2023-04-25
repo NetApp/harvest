@@ -5332,7 +5332,7 @@
                   }
                 ]
               },
-              "unit": "string"
+              "unit": "short"
             },
             "overrides": []
           },
@@ -5423,7 +5423,7 @@
                   }
                 ]
               },
-              "unit": "string"
+              "unit": "short"
             },
             "overrides": []
           },
