@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -194,11 +193,7 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 
 	// populate prop.instanceKeys
 	// sort keys by display name. This is needed to match counter and endpoints keys
-	var keys []string
-	for k := range instanceKeys {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
+	keys := util.GetSortedKeys(instanceKeys)
 
 	// Append instance keys to prop
 	for _, k := range keys {
