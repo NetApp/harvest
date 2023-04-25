@@ -40,15 +40,7 @@ var zapiCounterMap = map[string]struct{}{
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
 var restCounterMap = map[string]struct{}{
-	"aggr_snapshot_inode_used_percent":                {},
-	"external_service_op_num_not_found_responses":     {},
-	"external_service_op_num_request_failures":        {},
-	"external_service_op_num_requests_sent":           {},
-	"external_service_op_num_responses_received":      {},
-	"external_service_op_num_successful_responses":    {},
-	"external_service_op_num_timeouts":                {},
-	"external_service_op_request_latency":             {},
-	"external_service_op_request_latency_hist_bucket": {},
+	"aggr_snapshot_inode_used_percent": {},
 }
 
 // excludeCounters consists of counters which should be excluded from both Zapi/Rest in CI test
@@ -57,14 +49,8 @@ var excludeCounters = []string{
 	"cluster_peer",
 	"efficiency_savings",
 	"ems_events",
-	"external_service_op_num_not_found_responses",
-	"external_service_op_num_request_failures",
-	"external_service_op_num_requests_sent",
-	"external_service_op_num_responses_received",
-	"external_service_op_num_successful_responses",
-	"external_service_op_num_timeouts",
-	"external_service_op_request_latency",
-	"external_service_op_request_latency_hist_bucket",
+	"external_service_op_num_",
+	"external_service_op_request_",
 	"fabricpool_cloud_bin_op_latency_average",
 	"fabricpool_cloud_bin_operation",
 	"fcp",
