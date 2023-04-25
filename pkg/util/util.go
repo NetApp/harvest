@@ -15,6 +15,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -404,4 +405,13 @@ func HasDuplicates(slice []string) bool {
 	}
 
 	return false
+}
+
+func GetSortedKeys(instanceKeyMap map[string]string) []string {
+	var sortedKeys []string
+	for k := range instanceKeyMap {
+		sortedKeys = append(sortedKeys, k)
+	}
+	sort.Strings(sortedKeys)
+	return sortedKeys
 }
