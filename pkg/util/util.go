@@ -407,9 +407,9 @@ func HasDuplicates(slice []string) bool {
 	return false
 }
 
-func GetSortedKeys(instanceKeyMap map[string]string) []string {
+func GetSortedKeys(m map[string]string) []string {
 	var sortedKeys []string
-	for k := range instanceKeyMap {
+	for k := range m {
 		sortedKeys = append(sortedKeys, k)
 	}
 	sort.Strings(sortedKeys)
