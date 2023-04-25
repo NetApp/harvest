@@ -75,8 +75,8 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 	var (
 		display, name, key string
-		bookendKeys        []string
 	)
+	bookendKeys := make(map[string]string)
 
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
@@ -91,7 +91,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 
 			if key == "key" {
 				// only for bookend EMS
-				bookendKeys = append(bookendKeys, name)
+				bookendKeys[display] = name
 				e.Logger.Debug().
 					Str("name", name).
 					Str("display", display).
@@ -102,7 +102,11 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 
 	// For bookend case, instanceKeys are replaced with bookendKeys
 	if len(bookendKeys) > 0 {
-		prop.InstanceKeys = append(prop.InstanceKeys, bookendKeys...)
+		sortedBookendKeys := util.GetSortedKeys(bookendKeys)
+		// Append instance keys to ems prop
+		for _, k := range sortedBookendKeys {
+			prop.InstanceKeys = append(prop.InstanceKeys, bookendKeys[k])
+		}
 	}
 }
 
@@ -116,7 +120,7 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 
 	// check if resolvedby is present in template
 	if resolveEmsName = resolveEvent.GetChildContentS("name"); resolveEmsName == "" {
-		e.Logger.Warn().Msg("Missing resolving event name")
+		e.Logger.Error().Msg("Missing resolving event name")
 		return
 	}
 	prop.Name = resolveEmsName
@@ -132,7 +136,7 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 		} else {
 			// If bookendKey is missing in IssueEms, the  default bookendKey is index of IssueEMs
 			prop.InstanceKeys = issueEmsProp.InstanceKeys[0:1]
-			e.Logger.Warn().Str("Ems name", issueEmsProp.Name).Msg("Missing bookend keys")
+			e.Logger.Error().Str("Ems name", issueEmsProp.Name).Msg("Missing bookend keys")
 		}
 	} else {
 		e.ParseExports(resolveKey, &prop)

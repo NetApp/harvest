@@ -2,7 +2,7 @@ name:   EMS
 query:  api/support/ems/events
 object: ems
 
-# default list of exports attached to each EMS event
+# default list of exports attached to all EMS event
 exports:
   - message.name                            => message
   - node.name                               => node
@@ -13,454 +13,932 @@ exports:
 events:
   - name: LUN.destroy
     exports:
-      - parameters.lun_path                 => lun_path
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.volume_dsid              => volume_ds_id
-      - parameters.volume_name              => volume
+      - parameters.lun_path    => lun_path
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.volume_dsid => volume_ds_id
+      - parameters.volume_name => volume
 
   - name: LUN.offline
     exports:
-      - ^^parameters.object_uuid            => object_uuid
-      - parameters.lun_path                 => lun_path
-      - parameters.object_type              => object_type
-      - parameters.volume_dsid              => volume_ds_id
-      - parameters.volume_name              => volume
+      - ^^parameters.object_uuid => object_uuid
+      - parameters.lun_path      => lun_path
+      - parameters.object_type   => object_type
+      - parameters.volume_dsid   => volume_ds_id
+      - parameters.volume_name   => volume
     resolve_when_ems:
       - name: LUN.online
         resolve_after: 672h
 
   - name: NVMeNS.destroy
     exports:
-      - parameters.NVMeNS_path              => path
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.volume_dsid              => volume_ds_id
-      - parameters.volume_name              => volume
+      - parameters.NVMeNS_path => path
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.volume_dsid => volume_ds_id
+      - parameters.volume_name => volume
 
   - name: NVMeNS.offline
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.path                     => path
-      - parameters.volume_dsid              => volume_ds_id
-      - parameters.volume_name              => volume
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.path        => path
+      - parameters.volume_dsid => volume_ds_id
+      - parameters.volume_name => volume
 
   - name: NVMeNS.online
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.path                     => path
-      - parameters.volume_dsid              => volume_ds_id
-      - parameters.volume_name              => volume
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.path        => path
+      - parameters.volume_dsid => volume_ds_id
+      - parameters.volume_name => volume
 
   - name: Nblade.cifsManyAuths
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.remoteIpAddress          => remote_ip_address
-      - parameters.vsId                     => vs_id
+      - parameters.object_type     => object_type
+      - parameters.object_uuid     => object_uuid
+      - parameters.remoteIpAddress => remote_ip_address
+      - parameters.vsId            => vs_id
 
   - name: Nblade.cifsMaxOpenSameFile
     exports:
-      - parameters.IpAddress                => ip_address
-      - parameters.filePath                 => file_path
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.port                     => port
-      - parameters.shareName                => share
-      - parameters.vserverName              => svm
+      - parameters.IpAddress   => ip_address
+      - parameters.filePath    => file_path
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.port        => port
+      - parameters.shareName   => share
+      - parameters.vserverName => svm
 
   - name: Nblade.cifsMaxSessPerUsrConn
     exports:
-      - parameters.IpAddress                => ip_address
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.port                     => port
-      - parameters.userName                 => user
-      - parameters.vserverName              => svm
+      - parameters.IpAddress   => ip_address
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.port        => port
+      - parameters.userName    => user
+      - parameters.vserverName => svm
 
   - name: Nblade.cifsNbNameConflict
     exports:
-      - parameters.IpAddress                => ip_address
-      - parameters.nbName                   => nb
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
+      - parameters.IpAddress   => ip_address
+      - parameters.nbName      => nb
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
 
   - name: Nblade.cifsNoPrivShare
     exports:
-      - parameters.clientIp                 => client_ip
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.userName                 => user
-      - parameters.vserverId                => svm_uuid
+      - parameters.clientIp    => client_ip
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.userName    => user
+      - parameters.vserverId   => svm_uuid
 
   - name: Nblade.nfsV4PoolExhaust
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.poolname                 => pool
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.poolname    => pool
 
   - name: Nblade.vscanBadUserPrivAccess
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.scannerIp                => scanner_ip
-      - parameters.userName                 => user
-      - parameters.vserverName              => svm
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.scannerIp   => scanner_ip
+      - parameters.userName    => user
+      - parameters.vserverName => svm
 
   - name: Nblade.vscanConnBackPressure
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.scannerIp                => scanner_ip
-      - parameters.vserverName              => svm
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.scannerIp   => scanner_ip
+      - parameters.vserverName => svm
 
   - name: Nblade.vscanConnInactive
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.scannerIp                => scanner_ip
-      - parameters.vserverName              => svm
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.scannerIp   => scanner_ip
+      - parameters.vserverName => svm
 
   - name: Nblade.vscanNoRegdScanner
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.scannerIp                => scanner_ip
-      - parameters.vserverName              => svm
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.scannerIp   => scanner_ip
+      - parameters.vserverName => svm
 
   - name: Nblade.vscanNoScannerConn
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.vserverName              => svm
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+      - parameters.vserverName => svm
 
   - name: Nblade.vscanVirusDetected
     exports:
-      - parameters.SID                      => sid
-      - parameters.clientIp                 => client_ip
-      - parameters.filePath                 => file_path
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.vscanServerIp            => vscan_server_ip
-      - parameters.vserverName              => svm
+      - parameters.SID           => sid
+      - parameters.clientIp      => client_ip
+      - parameters.filePath      => file_path
+      - parameters.object_type   => object_type
+      - parameters.object_uuid   => object_uuid
+      - parameters.vscanServerIp => vscan_server_ip
+      - parameters.vserverName   => svm
+
+  - name: arl.netra.ca.check.failed
+    exports:
+      - parameters.aggr_uuid => aggr_uuid
+      - parameters.vol       => volume
 
   - name: arw.volume.state
     matches:
       - name: op
         value: disable-in-progress
     exports:
-      - parameters.op                       => op
-      - parameters.volumeName               => volume
-      - parameters.volumeUuid               => volume_uuid
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.op          => op
+      - parameters.volumeName  => volume
+      - parameters.volumeUuid  => volume_uuid
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: arw.volume.state
     matches:
       - name: op
         value: disabled
     exports:
-      - parameters.op                       => op
-      - parameters.volumeName               => volume
-      - parameters.volumeUuid               => volume_uuid
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.op          => op
+      - parameters.volumeName  => volume
+      - parameters.volumeUuid  => volume_uuid
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: arw.volume.state
     matches:
       - name: op
         value: dry-run
     exports:
-      - parameters.op                       => op
-      - parameters.volumeName               => volume
-      - parameters.volumeUuid               => volume_uuid
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.op          => op
+      - parameters.volumeName  => volume
+      - parameters.volumeUuid  => volume_uuid
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: arw.volume.state
     matches:
       - name: op
         value: dry-run-paused
     exports:
-      - parameters.op                       => op
-      - parameters.volumeName               => volume
-      - parameters.volumeUuid               => volume_uuid
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.op          => op
+      - parameters.volumeName  => volume
+      - parameters.volumeUuid  => volume_uuid
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: arw.volume.state
     matches:
       - name: op
         value: enable-paused
     exports:
-      - parameters.op                       => op
-      - parameters.volumeName               => volume
-      - parameters.volumeUuid               => volume_uuid
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.op          => op
+      - parameters.volumeName  => volume
+      - parameters.volumeUuid  => volume_uuid
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: arw.volume.state
     matches:
       - name: op
         value: enabled
     exports:
-      - parameters.op                       => op
-      - parameters.volumeName               => volume
-      - parameters.volumeUuid               => volume_uuid
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.op          => op
+      - parameters.volumeName  => volume
+      - parameters.volumeUuid  => volume_uuid
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: arw.vserver.state
     matches:
       - name: op
         value: disabled
     exports:
-      - parameters.op                       => op
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.op          => op
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: arw.vserver.state
     matches:
       - name: op
         value: dry-run
     exports:
-      - parameters.op                       => op
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
-
+      - parameters.op          => op
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: callhome.arw.activity.seen
     exports:
-      - parameters.volName                  => volume
-      - parameters.volUuid                  => volume_uuid
-      - parameters.vserverName              => svm
-      - parameters.vserverUuid              => svm_uuid
+      - parameters.volName     => volume
+      - parameters.volUuid     => volume_uuid
+      - parameters.vserverName => svm
+      - parameters.vserverUuid => svm_uuid
 
   - name: callhome.battery.low
     exports:
-      - ^^node.name                         => node
+      - ^^node.name => node
     resolve_when_ems:
       - name: nvram.battery.charging.normal
         resolve_after: 672h
 
   - name: callhome.hainterconnect.down
 
+  - name: callhome.sp.hbt.missed
+
+  - name: callhome.sp.hbt.stopped
+
   - name: cifs.shadowcopy.failure
     exports:
-      - parameters.clientShadowCopyId       => client_shadow_copy_id
-      - parameters.clientShadowCopySetId    => client_shadow_copy_set_id
-      - parameters.filerShadowCopyId        => filer_shadow_copy_id
-      - parameters.filerShadowCopySetId     => filer_shadow_copy_set_id
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.operation                => operation
-      - parameters.shareName                => share
+      - parameters.clientShadowCopyId    => client_shadow_copy_id
+      - parameters.clientShadowCopySetId => client_shadow_copy_set_id
+      - parameters.filerShadowCopyId     => filer_shadow_copy_id
+      - parameters.filerShadowCopySetId  => filer_shadow_copy_set_id
+      - parameters.object_type           => object_type
+      - parameters.object_uuid           => object_uuid
+      - parameters.operation             => operation
+      - parameters.shareName             => share
 
   - name: cloud.aws.iamNotInitialized
     exports:
-      - parameters.nodeUuid                 => node_uuid
+      - parameters.nodeUuid => node_uuid
 
   - name: cluster.switch.pwr.fail
     exports:
-      - parameters.pwr_supply_name          => pwr_supply
-      - parameters.status                   => status
-      - parameters.switch_name              => switch
+      - parameters.pwr_supply_name => pwr_supply
+      - parameters.status          => status
+      - parameters.switch_name     => switch
 
   - name: disk.outOfService
     exports:
-      - parameters.diskName                 => disk
-      - parameters.powerOnHours             => power_on_hours
-      - parameters.serialno                 => serial_no
+      - parameters.diskName     => disk
+      - parameters.powerOnHours => power_on_hours
+      - parameters.serialno     => serial_no
+
+  - name: diskShelf.psu.added
+    exports:
+      - parameters.channelName  => channel
+      - parameters.location     => location
+      - parameters.serialNumber => serial_no
+      - parameters.shelfIdent   => shelf_ident
+
+  - name: diskShelf.psu.removed
+    exports:
+      - parameters.channelName  => channel
+      - parameters.location     => location
+      - parameters.serialNumber => serial_no
+      - parameters.shelfIdent   => shelf_ident
 
   - name: fabricpool.full
     exports:
-      - parameters.cluster_uuid             => cluster_uuid
-      - parameters.licensed_capacity        => licensed_capacity
-      - parameters.used_capacity            => used_capacity
+      - parameters.cluster_uuid      => cluster_uuid
+      - parameters.licensed_capacity => licensed_capacity
+      - parameters.used_capacity     => used_capacity
 
   - name: fabricpool.nearly.full
     exports:
-      - parameters.cluster_uuid             => cluster_uuid
-      - parameters.licensed_capacity        => licensed_capacity
-      - parameters.used_capacity            => used_capacity
+      - parameters.cluster_uuid      => cluster_uuid
+      - parameters.licensed_capacity => licensed_capacity
+      - parameters.used_capacity     => used_capacity
 
   - name: gb.netra.ca.check.failed
     exports:
-      - parameters.aggr_uuid                => aggr_uuid
-      - parameters.vol                      => volume
+      - parameters.aggr_uuid => aggr_uuid
+      - parameters.vol       => volume
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: RaidLeftBehindAggrAlert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: RaidLeftBehindSpareAlert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: NoISLPresentAlert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: ClusterSeveredAllLinksAlert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: StorageBridgePortDown_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: StorageBridgeTempAboveCritical_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: StorageBridgeTempBelowCritical_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: StorageBridgeUnreachable_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: StorageFCAdapterFault_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: InterconnectAdapterOfflineAlert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: RaidDegradedMirrorAggrAlert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: InterclusterBrokenConnectionAlert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: SASAdapterOffline_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: FabricSwitchFanFail_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: FabricSwitchPowerFail_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: FabricSwitchTempCritical_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: FabricSwitchTempSensorFailed_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: hm.alert.raised
+    matches:
+      - name: alert_id
+        value: FabricSwitchUnreachable_Alert
+    exports:
+      - ^^parameters.alert_id              => alert_id
+      - parameters.acknowledge             => acknowledge
+      - parameters.acknowledger            => acknowledger
+      - parameters.alert_corrective_action => alert_corrective_action
+      - parameters.alerting_resource       => alerting_resource
+      - parameters.asup_enable             => asup_enable
+      - parameters.monitor                 => monitor
+      - parameters.possible_effect         => possible_effect
+      - parameters.suppress                => suppress
+      - parameters.suppressor              => suppressor
+    resolve_when_ems:
+      - name: hm.alert.cleared
+        resolve_after: 672h
+
+  - name: mcc.config.auso.stDisabled
+    exports:
+      - ^^parameters.alertId        => alert_id
+      - parameters.alertingResource => alerting_resource
+    resolve_when_ems:
+      - name: mcc.config.auso.stEnabled
+        resolve_after: 672h
 
   - name: mgmtgwd.rootvolrec.low.space
     exports:
-      - parameters.node                     => node
-      - parameters.threshold_in_mb          => threshold_in_mb
+      - parameters.node            => node
+      - parameters.threshold_in_mb => threshold_in_mb
 
   - name: monitor.fan.critical
     exports:
-      - ^^parameters.report                 => report
+      - ^^parameters.report => report
     resolve_when_ems:
       - name: monitor.fan.ok
         resolve_after: 672h
 
   - name: monitor.fan.failed
     exports:
-      - ^^parameters.report                 => report
+      - ^^parameters.report => report
     resolve_when_ems:
       - name: monitor.fan.ok
         resolve_after: 672h
 
   - name: monitor.fan.warning
     exports:
-      - ^^parameters.report                 => report
+      - ^^parameters.report => report
     resolve_when_ems:
       - name: monitor.fan.ok
         resolve_after: 672h
 
   - name: nvmf.graceperiod.active
     exports:
-      - parameters.days_remaining           => days_remaining
-      - parameters.expiration_date          => expiration_date
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
+      - parameters.days_remaining  => days_remaining
+      - parameters.expiration_date => expiration_date
+      - parameters.object_type     => object_type
+      - parameters.object_uuid     => object_uuid
 
   - name: nvmf.graceperiod.expired
     exports:
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
 
   - name: nvmf.graceperiod.start
     exports:
-      - parameters.days_remaining           => days_remaining
-      - parameters.expiration_date          => expiration_date
-      - parameters.object_type              => object_type
-      - parameters.object_uuid              => object_uuid
+      - parameters.days_remaining  => days_remaining
+      - parameters.expiration_date => expiration_date
+      - parameters.object_type     => object_type
+      - parameters.object_uuid     => object_uuid
 
   - name: object.store.unavailable
     exports:
-      - ^^parameters.node_uuid              => node_uuid
-      - parameters.configname               => config
+      - ^^parameters.node_uuid => node_uuid
+      - parameters.configname  => config
     resolve_when_ems:
       - name: object.store.available
         resolve_after: 672h
 
   - name: objstore.host.unresolvable
     exports:
-      - parameters.hostname                 => host
-      - parameters.nodeUuid                 => node_uuid
+      - parameters.hostname => host
+      - parameters.nodeUuid => node_uuid
 
   - name: objstore.interclusterlifDown
     exports:
-      - parameters.ipspaceID                => ipspace_id
-      - parameters.nodeUuid                 => node_uuid
+      - parameters.ipspaceID => ipspace_id
+      - parameters.nodeUuid  => node_uuid
 
   - name: osc.signatureMismatch
     exports:
-      - parameters.bucket                   => bucket
-      - parameters.nodeUuid                 => node_uuid
-      - parameters.operation                => operation
-      - parameters.serverHostname           => server_host
+      - parameters.bucket         => bucket
+      - parameters.nodeUuid       => node_uuid
+      - parameters.operation      => operation
+      - parameters.serverHostname => server_host
 
   - name: qos.monitor.memory.maxed
     exports:
-      - ^^parameters.object_uuid            => object_uuid
-      - parameters.count                    => count
-      - parameters.object_type              => object_type
+      - ^^parameters.object_uuid => object_uuid
+      - parameters.count         => count
+      - parameters.object_type   => object_type
     resolve_when_ems:
       - name: qos.monitor.memory.abated
         resolve_after: 672h
 
   - name: scsiblade.san.config.active
     exports:
-      - parameters.num_luns                 => num_luns
-      - parameters.state                    => state
+      - parameters.num_luns => num_luns
+      - parameters.state    => state
 
   - name: scsitarget.fct.port.full
     exports:
-      - parameters.active_commands          => active_commands
-      - parameters.max_commands             => max_commands
-      - parameters.portname                 => port
+      - parameters.active_commands => active_commands
+      - parameters.max_commands    => max_commands
+      - parameters.portname        => port
+
+  - name: scsitarget.fct.sfpRxPowerLow
+    exports:
+      - parameters.adapter         => adapter
+      - parameters.operating_value => operating_value
+      - parameters.threshold_value => threshold_value
+
+  - name: scsitarget.fct.sfpTxPowerLow
+    exports:
+      - parameters.adapter         => adapter
+      - parameters.operating_value => operating_value
+      - parameters.threshold_value => threshold_value
 
   - name: ses.status.fanError
     exports:
-      - ^^parameters.prodChannel            => prod_channel
-      - parameters.fanNumber                => fan_number
+      - ^^parameters.prodChannel => prod_channel
+      - parameters.fanNumber     => fan_number
     resolve_when_ems:
       - name: ses.status.fanInfo
         resolve_after: 672h
 
   - name: sk.panic
 
+  - name: sm.mediator.added
+    exports:
+      - parameters.cluster     => cluster
+      - parameters.ipAddress   => ip_address
+      - parameters.peerCluster => peer_cluster
+      - parameters.version     => version
+
+  - name: sm.mediator.cacert.expired
+    exports:
+      - ^^parameters.ipAddress => ip_address
+      - parameters.expiryDate  => expiry_date
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
+  - name: sm.mediator.cacert.expiring
+    exports:
+      - ^^parameters.ipAddress  => ip_address
+      - parameters.daysToExpire => days_to_expire
+      - parameters.expiryDate   => expiry_date
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
+  - name: sm.mediator.clientc.expired
+    exports:
+      - ^^parameters.ipAddress => ip_address
+      - parameters.expiryDate  => expiry_date
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
+  - name: sm.mediator.clientc.expiring
+    exports:
+      - ^^parameters.ipAddress  => ip_address
+      - parameters.daysToExpire => days_to_expire
+      - parameters.expiryDate   => expiry_date
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
+  - name: sm.mediator.misconfigured
+    exports:
+      - ^^parameters.ipAddress => ip_address
+      - parameters.cluster     => cluster
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
+  - name: sm.mediator.removed
+    exports:
+      - parameters.cluster     => cluster
+      - parameters.ipAddress   => ip_address
+      - parameters.peerCluster => peer_cluster
+      - parameters.version     => version
+
+  - name: sm.mediator.serverc.expired
+    exports:
+      - ^^parameters.ipAddress => ip_address
+      - parameters.expiryDate  => expiry_date
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
+  - name: sm.mediator.serverc.expiring
+    exports:
+      - ^^parameters.ipAddress  => ip_address
+      - parameters.daysToExpire => days_to_expire
+      - parameters.expiryDate   => expiry_date
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
+  - name: sm.mediator.unreachable
+    exports:
+      - ^^parameters.ipAddress => ip_address
+      - parameters.cluster     => cluster
+    resolve_when_ems:
+      - name: sm.mediator.in.quorum
+        resolve_after: 672h
+
   - name: sms.status.out.of.sync
     exports:
-      - ^^parameters.relationship_id        => relationship_id
-      - parameters.dstpath                  => dst_path
-      - parameters.srcpath                  => src_path
+      - ^^parameters.relationship_id => relationship_id
+      - parameters.dstpath           => dst_path
+      - parameters.srcpath           => src_path
     resolve_when_ems:
       - name: sms.status.in.sync
         resolve_after: 672h
 
+  - name: sms.status.out.of.sync.cg
+    exports:
+      - parameters.cg_relationship_id => cg_relationship_id
+      - parameters.dstcgpath          => dst_cg_path
+      - parameters.srccgpath          => src_cg_path
+
   - name: sp.ipmi.lost.shutdown
     exports:
-      - ^^node.name                         => node
-      - parameters.num_minutes              => num_minutes
+      - ^^node.name            => node
+      - parameters.num_minutes => num_minutes
     resolve_when_ems:
       - name: sp.heartbeat.resumed
         resolve_after: 672h
 
   - name: sp.notConfigured
     exports:
-      - ^^node.name                         => node
+      - ^^node.name => node
     resolve_when_ems:
       - name: sp.heartbeat.resumed
         resolve_after: 672h
 
   - name: unowned.disk.reminder
     exports:
-      - parameters.count                    => count
+      - parameters.count => count
 
   - name: vserver.stop.succeeded
     exports:
-      - ^^parameters.vserver_name           => svm
-      - parameters.vserver_uuid             => svm_uuid
+      - ^^parameters.vserver_name => svm
+      - parameters.vserver_uuid   => svm_uuid
     resolve_when_ems:
       - name: vserver.start.succeeded
         resolve_after: 672h
 
+  - name: wafl.ca.resync.complete
+    exports:
+      - parameters.aggr              => aggr
+      - parameters.aggr_uuid         => aggr_uuid
+      - parameters.mirror_config_id  => mirror_config_id
+      - parameters.primary_config_id => primary_config_id
+
   - name: wafl.readdir.expired
     exports:
-      - parameters.app                      => app
-      - parameters.directory_inum           => directory_inum
-      - parameters.object_uuid              => object_uuid
-      - parameters.snapid                   => snap_id
-      - parameters.volident                 => vol_ident
-      - parameters.volume                   => volume
+      - parameters.app            => app
+      - parameters.directory_inum => directory_inum
+      - parameters.object_uuid    => object_uuid
+      - parameters.snapid         => snap_id
+      - parameters.volident       => vol_ident
+      - parameters.volume         => volume
 
   - name: wafl.vol.autoSize.done
     exports:
-      - parameters.app                      => app
-      - parameters.event_type               => event_type
-      - parameters.object_uuid              => object_uuid
-      - parameters.size                     => size
-      - parameters.vol                      => volume
-      - parameters.volident                 => vol_ident
+      - parameters.app         => app
+      - parameters.event_type  => event_type
+      - parameters.object_uuid => object_uuid
+      - parameters.size        => size
+      - parameters.vol         => volume
+      - parameters.volident    => vol_ident
 
   - name: wafl.vvol.offline
     exports:
-      - ^^parameters.volident               => vol_ident
-      - parameters.app                      => app
-      - parameters.instuuid                 => inst_uuid
-      - parameters.name                     => volume
+      - ^^parameters.volident => vol_ident
+      - parameters.app        => app
+      - parameters.instuuid   => inst_uuid
+      - parameters.name       => volume
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
 
   - name: wafl.vvol.restrict
     exports:
-      - ^^parameters.volident               => vol_ident
-      - parameters.app                      => app
-      - parameters.instuuid                 => inst_uuid
-      - parameters.vol                      => volume
+      - ^^parameters.volident => vol_ident
+      - parameters.app        => app
+      - parameters.instuuid   => inst_uuid
+      - parameters.vol        => volume
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
