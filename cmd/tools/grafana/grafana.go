@@ -315,7 +315,7 @@ func newLabelVar(label string) []byte {
     "query": "label_values(%s)",
     "refId": "StandardVariableQuery"
   },
-  "refresh": 1,
+  "refresh": 2,
   "regex": "",
   "skipUrlSync": false,
   "sort": 0,

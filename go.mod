@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/bbrks/wrap/v2 v2.5.0
-	github.com/go-openapi/spec v0.20.8
+	github.com/go-openapi/spec v0.20.9
 	github.com/hashicorp/go-version v1.6.0
 	github.com/imdario/mergo v0.3.15
 	github.com/olekukonko/tablewriter v0.0.5

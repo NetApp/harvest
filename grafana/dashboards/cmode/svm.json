@@ -13122,7 +13122,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -13144,7 +13144,7 @@
           "query": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -13170,7 +13170,7 @@
           "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -13196,7 +13196,7 @@
           "query": "label_values(volume_labels{cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -13313,7 +13313,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13336,7 +13336,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13359,7 +13359,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13382,7 +13382,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13405,7 +13405,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13428,7 +13428,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13451,7 +13451,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(lif_sent_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13474,7 +13474,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(lif_recv_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13497,7 +13497,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(nvme_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13520,7 +13520,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(nvme_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13543,7 +13543,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(iscsi_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13566,7 +13566,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(iscsi_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13589,7 +13589,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_lif_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13612,7 +13612,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(fcp_lif_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*lif=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13635,7 +13635,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13658,7 +13658,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13681,7 +13681,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13704,7 +13704,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13727,7 +13727,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13750,7 +13750,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13773,7 +13773,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13796,7 +13796,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13819,7 +13819,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13842,7 +13842,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13865,7 +13865,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13888,7 +13888,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13911,7 +13911,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13934,7 +13934,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13957,7 +13957,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -13980,7 +13980,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14003,7 +14003,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14026,7 +14026,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14049,7 +14049,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14072,7 +14072,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14095,7 +14095,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14118,7 +14118,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14141,7 +14141,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14164,7 +14164,7 @@
           "query": "query_result(topk($TopResources, avg by (svm) (avg_over_time(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14187,7 +14187,7 @@
           "query": "query_result(topk($TopResources, avg by (svm) (avg_over_time(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14210,7 +14210,7 @@
           "query": "query_result(topk($TopResources, sum by (svm) (avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14233,7 +14233,7 @@
           "query": "query_result(topk($TopResources, sum by (svm) (avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14256,7 +14256,7 @@
           "query": "query_result(topk($TopResources, sum by (svm) (avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14279,7 +14279,7 @@
           "query": "query_result(topk($TopResources, sum by (svm) (avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*svm=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14302,7 +14302,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"network\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14325,7 +14325,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"throttle\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14348,7 +14348,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"frontend\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14371,7 +14371,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"backend\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14394,7 +14394,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"cluster\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14417,7 +14417,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"disk\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14440,7 +14440,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"nvlog\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14463,7 +14463,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"suspend\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14486,7 +14486,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",resource=\"cloud\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14509,7 +14509,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14532,7 +14532,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14555,7 +14555,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14578,7 +14578,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_sis_dedup_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14601,7 +14601,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14624,7 +14624,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_sis_compress_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -14647,7 +14647,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(volume_sis_total_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,

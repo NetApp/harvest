@@ -1899,7 +1899,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -1921,7 +1921,7 @@
           "query": "label_values(volume_labels{system_type!=\"7mode\"}, datacenter)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1947,7 +1947,7 @@
           "query": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1973,7 +1973,7 @@
           "query": "label_values(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, workload)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1999,7 +1999,7 @@
           "query": "label_values(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}, volume)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -2116,7 +2116,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"backend\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2139,7 +2139,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"frontend\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2162,7 +2162,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"throttle\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2185,7 +2185,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"network\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2208,7 +2208,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"cluster\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2231,7 +2231,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"cp\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2254,7 +2254,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"qos_min\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2277,7 +2277,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"suspend\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2300,7 +2300,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"disk\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2323,7 +2323,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"cloud\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2346,7 +2346,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"nvlog\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2369,7 +2369,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"flexcache_ral\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2392,7 +2392,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"flexcache_spinhi\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2415,7 +2415,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"sync_repl\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2438,7 +2438,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"cop\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
@@ -2461,7 +2461,7 @@
           "query": "query_result(topk($TopResources, avg_over_time(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\",resource=\"admission\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,

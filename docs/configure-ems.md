@@ -9,7 +9,7 @@ metric. This means you can collect new EMS events or attach new labels by editin
 the [default template](https://github.com/NetApp/harvest/blob/main/conf/ems/default.yaml) file or by [extending existing
 templates](configure-templates.md#how-to-extend-a-restrestperfems-collectors-existing-object-template).
 
-The [default template](https://github.com/NetApp/harvest/blob/main/conf/ems/default.yaml) file contains 60+ EMS events.
+The [default template](https://github.com/NetApp/harvest/blob/main/conf/ems/default.yaml) file contains 98 EMS events.
 
 ### Supported ONTAP Systems
 

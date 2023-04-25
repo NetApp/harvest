@@ -1,0 +1,3 @@
+# fails because the path for clusterinfo.yaml does not exist
+objects:
+  ClusterInfo: clusterinfo.yaml

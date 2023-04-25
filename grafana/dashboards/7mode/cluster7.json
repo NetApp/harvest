@@ -1587,7 +1587,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -1609,7 +1609,7 @@
           "query": "label_values(node_labels{system_type=\"7mode\"},datacenter)",
           "refId": "Prometheus-Datacenter-Variable-Query"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1635,7 +1635,7 @@
           "query": "label_values(node_labels{system_type=\"7mode\",datacenter=~\"$Datacenter\"},node)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
