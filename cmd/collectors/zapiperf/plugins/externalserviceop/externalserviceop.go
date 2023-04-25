@@ -8,6 +8,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 )
 
+const Hyphen = "-"
+
 type ExternalServiceOp struct {
 	*plugin.AbstractPlugin
 }
@@ -18,13 +20,11 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (e *ExternalServiceOp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[e.Object]
-	keyIndex := 0
-	datacenterClusterKey := data.GetGlobalLabels().Get("datacenter") + "-" + data.GetGlobalLabels().Get("cluster") + "-"
+	datacenterClusterKey := data.GetGlobalLabels().Get("datacenter") + Hyphen + data.GetGlobalLabels().Get("cluster") + Hyphen
 	for _, instance := range data.GetInstances() {
 		// generate unique key by appending datacenter, cluster, svm, service_name and operation to support topk in grafana dashboard
-		key := datacenterClusterKey + instance.GetLabel("svm") + "-" + instance.GetLabel("service_name") + "-" + instance.GetLabel("operation")
+		key := datacenterClusterKey + instance.GetLabel("svm") + Hyphen + instance.GetLabel("service_name") + Hyphen + instance.GetLabel("operation")
 		instance.SetLabel("key", key)
-		keyIndex++
 	}
 	return nil, nil
 }
