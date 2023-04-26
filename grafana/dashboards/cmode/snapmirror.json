@@ -93,7 +93,7 @@
       },
       "id": 29,
       "options": {
-        "content": "To monitor both sides of a snapmirror relationship, both source and destination clusters must be monitored by Harvest. Make sure both clusters are listed in your harvest.yml config.",
+        "content": "To monitor both sides of a snapmirror relationship, both source and destination clusters must be monitored by Harvest. Both clusters need to export their metrics to the same Prometheus instance.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
