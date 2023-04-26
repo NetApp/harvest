@@ -26,9 +26,9 @@ type PollerInfo struct {
 	ConfigFile    string
 	LogLevel      int
 	Image         string
+	IsFull        bool
 	ContainerName string
 	ShowPorts     bool
-	IsFull        bool
 	TemplateDir   string
 	CertDir       string
 	Mounts        []string
@@ -44,14 +44,16 @@ type AdminInfo struct {
 	CertDir       string
 }
 
-type PollerTemplate struct {
-	Pollers []PollerInfo
-	Admin   AdminInfo
-}
-
-type PromTemplate struct {
+type PromGrafanaInfo struct {
+	IsFull      bool
 	GrafanaPort int
 	PromPort    int
+}
+
+type PollerTemplate struct {
+	Pollers     []PollerInfo
+	Admin       AdminInfo
+	PromGrafana PromGrafanaInfo
 }
 
 type options struct {
@@ -144,10 +146,18 @@ func normalizeContainerNames(name string) string {
 
 func generateDocker(path string, kind int) {
 	pollerTemplate := PollerTemplate{}
-	promTemplate := PromTemplate{
-		opts.grafanaPort,
-		opts.promPort,
+	if kind == full {
+		pollerTemplate.PromGrafana = PromGrafanaInfo{
+			IsFull:      true,
+			GrafanaPort: opts.grafanaPort,
+			PromPort:    opts.promPort,
+		}
+	} else {
+		pollerTemplate.PromGrafana = PromGrafanaInfo{
+			IsFull: false,
+		}
 	}
+
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		return
@@ -192,53 +202,43 @@ func generateDocker(path string, kind int) {
 
 	var out *os.File
 	color.DetectConsole("")
-	out, err = os.Create(opts.outputPath)
-	if err != nil {
-		logErrAndExit(err)
+	if opts.outputPath != "" {
+		out, err = os.Create(opts.outputPath)
+		if err != nil {
+			logErrAndExit(err)
+		}
 	}
 
-	if kind == harvest {
-		// generate admin service if configuration is present in harvest config
-		if conf.Config.Admin.Httpsd.Listen != "" {
-			httpsd := conf.Config.Admin.Httpsd.Listen
+	// generate admin service if configuration is present in harvest config
+	if conf.Config.Admin.Httpsd.Listen != "" {
+		httpsd := conf.Config.Admin.Httpsd.Listen
 
-			adminPort := 8887
-			if s := strings.Split(httpsd, ":"); len(s) == 2 {
-				adminPort, err = strconv.Atoi(s[1])
-				if err != nil {
-					logErrAndExit(fmt.Errorf("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
-				}
-			} else {
+		adminPort := 8887
+		if s := strings.Split(httpsd, ":"); len(s) == 2 {
+			adminPort, err = strconv.Atoi(s[1])
+			if err != nil {
 				logErrAndExit(fmt.Errorf("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 			}
-
-			pollerTemplate.Admin = AdminInfo{
-				ServiceName:   "admin",
-				ConfigFile:    configFilePath,
-				Port:          adminPort,
-				Image:         opts.image,
-				ContainerName: "admin",
-				Enabled:       true,
-				CertDir:       certDirPath,
-			}
-		}
-	} else {
-		pt, err := template.New("prom-stack.tmpl").ParseFiles("prom-stack.tmpl")
-		if err != nil {
-			logErrAndExit(err)
+		} else {
+			logErrAndExit(fmt.Errorf("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 		}
 
-		promStackOut, err := os.Create("prom-stack.yml")
-		if err != nil {
-			logErrAndExit(err)
-		}
-		err = pt.Execute(promStackOut, promTemplate)
-		if err != nil {
-			logErrAndExit(err)
+		pollerTemplate.Admin = AdminInfo{
+			ServiceName:   "admin",
+			ConfigFile:    configFilePath,
+			Port:          adminPort,
+			Image:         opts.image,
+			ContainerName: "admin",
+			Enabled:       true,
+			CertDir:       certDirPath,
 		}
 	}
 
-	err = t.Execute(out, pollerTemplate)
+	if out != nil {
+		err = t.Execute(out, pollerTemplate)
+	} else {
+		err = t.Execute(os.Stdout, pollerTemplate)
+	}
 	if err != nil {
 		logErrAndExit(err)
 	}
@@ -410,7 +410,6 @@ func init() {
 	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
 	dFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
-	_ = dockerCmd.MarkPersistentFlagRequired("output")
 	dFlags.StringSliceVar(&opts.mounts, "volume", []string{}, "Additional volume mounts to include in compose file")
 
 	fFlags.StringVar(&opts.filesdPath, "filesdpath", "container/prometheus/harvest_targets.yml",

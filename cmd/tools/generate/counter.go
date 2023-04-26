@@ -28,6 +28,7 @@ var (
 		"environment_sensor": "sensors",
 		"ontaps3":            "xc_s3_bucket",
 		"security_ssh":       "cluster_ssh_server",
+		"namespace":          "nvme_namespace",
 	}
 	swaggerBytes []byte
 )
@@ -216,6 +217,11 @@ func processRestConfigCounters(path string) map[string]Counter {
 	query := t.GetChildContentS("query")
 	object := t.GetChildContentS("object")
 	templateCounters := t.GetChildS("counters")
+	exportData := t.GetChildContentS("export_data")
+	if exportData == "false" {
+		return nil
+	}
+
 	if templateCounters == nil {
 		return nil
 	}
@@ -265,6 +271,15 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	object := t.GetChildContentS("object")
 	templateCounters := t.GetChildS("counters")
 	override := t.GetChildS("override")
+
+	exportData := t.GetChildContentS("export_data")
+	if exportData == "false" {
+		return nil
+	}
+
+	if templateCounters == nil {
+		return nil
+	}
 
 	// build request
 	request = node.NewXMLS("perf-object-counter-list-info")
@@ -349,6 +364,10 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	query := t.GetChildContentS("query")
 	object := t.GetChildContentS("object")
 	templateCounters := t.GetChildS("counters")
+	exportData := t.GetChildContentS("export_data")
+	if exportData == "false" {
+		return nil
+	}
 	if templateCounters == nil {
 		return nil
 	}
@@ -529,10 +548,14 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	object := t.GetChildContentS("object")
 	templateCounters := t.GetChildS("counters")
 	override := t.GetChildS("override")
-
+	exportData := t.GetChildContentS("export_data")
+	if exportData == "false" {
+		return nil
+	}
 	if templateCounters == nil {
 		return nil
 	}
+
 	counterMap := make(map[string]string)
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
