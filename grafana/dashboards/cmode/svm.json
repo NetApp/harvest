@@ -6357,7 +6357,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadAvgLatency\"})",
+              "expr": "topk($TopResources, svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadAvgLatency\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -6365,7 +6365,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteAvgLatency\"})",
+              "expr": "topk($TopResources, svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteAvgLatency\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -6449,7 +6449,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadThroughput\"})",
+              "expr": "topk($TopResources, svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadThroughput\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -6457,7 +6457,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteThroughput\"})",
+              "expr": "topk($TopResources, svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteThroughput\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -6465,7 +6465,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3TotalThroughput\"})",
+              "expr": "topk($TopResources, svm_nfs_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3TotalThroughput\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Total - {{svm}}",
@@ -6549,7 +6549,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadIops\"})",
+              "expr": "topk($TopResources, svm_nfs_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadIops\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -6557,7 +6557,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteIops\"})",
+              "expr": "topk($TopResources, svm_nfs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteIops\",nfsv=\"v3\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -6565,7 +6565,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3TotalIops\"})",
+              "expr": "topk($TopResources, svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3TotalIops\",nfsv=\"v3\"})",
               "interval": "",
               "legendFormat": "Total - {{svm}}",
               "refId": "Total Ops"
@@ -7645,7 +7645,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4ReadAvgLatency\"})",
+              "expr": "topk($TopResources, svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4ReadAvgLatency\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -7653,7 +7653,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4WriteAvgLatency\"})",
+              "expr": "topk($TopResources, svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4WriteAvgLatency\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -7744,7 +7744,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4ReadThroughput\"})",
+              "expr": "topk($TopResources, svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4ReadThroughput\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -7752,7 +7752,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4WriteThroughput\"})",
+              "expr": "topk($TopResources, svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4WriteThroughput\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -7838,7 +7838,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4ReadIops\"})",
+              "expr": "topk($TopResources, svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4ReadIops\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -7846,7 +7846,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4WriteIops\"})",
+              "expr": "topk($TopResources, svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4WriteIops\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -7854,7 +7854,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4TotalIops\"})",
+              "expr": "topk($TopResources, svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4TotalIops\",nfsv=\"v4\"})",
               "interval": "",
               "legendFormat": "Total - {{svm}}",
               "refId": "Total Ops"
@@ -8945,7 +8945,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41ReadAvgLatency\"})",
+              "expr": "topk($TopResources, svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41ReadAvgLatency\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -8953,7 +8953,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41WriteAvgLatency\"})",
+              "expr": "topk($TopResources, svm_nfs_write_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41WriteAvgLatency\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -9044,7 +9044,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41ReadThroughput\"})",
+              "expr": "topk($TopResources, svm_nfs_read_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41ReadThroughput\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -9052,7 +9052,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41WriteThroughput\"})",
+              "expr": "topk($TopResources, svm_nfs_write_throughput{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41WriteThroughput\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -9143,7 +9143,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41ReadIops\"})",
+              "expr": "topk($TopResources, svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41ReadIops\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Read - {{svm}}",
@@ -9151,7 +9151,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41WriteIops\"})",
+              "expr": "topk($TopResources, svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41WriteIops\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{svm}}",
@@ -9159,7 +9159,7 @@
             },
             {
               "exemplar": false,
-              "expr": "topk($TopResources, svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41TotalIops\"})",
+              "expr": "topk($TopResources, svm_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41TotalIops\",nfsv=\"v4.1\"})",
               "interval": "",
               "legendFormat": "Total - {{svm}}",
               "refId": "Total Ops"
