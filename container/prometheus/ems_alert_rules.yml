@@ -3,286 +3,8 @@
 groups:
   - name: Harvest Ems Alert
     rules:
-
-      # Alert for Volume Anti-ransomware state change ems
-      - alert: Volume Anti-ransomware Monitoring State Changed
-        expr: last_over_time(ems_events{message="arw.volume.state"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Anti-ransomware state was changed to [{{ $labels.op }}] for Volume uuid [{{ $labels.volume_uuid }}]."
-
-      # Alert for SVM Anti-ransomware state change ems
-      - alert: Storage VM Anti-ransomware Monitoring State Changed
-        expr: last_over_time(ems_events{message="arw.vserver.state"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Anti-ransomware state was changed to [{{ $labels.op }}] for SVM name [{{ $labels.vserverName }}]."
-
-      # Alert for Ransomware activity ems
-      - alert: Ransomware Activity Detected
-        expr: last_over_time(ems_events{message="callhome.arw.activity.seen"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Ransomware activity detected for Volume uuid [{{ $labels.volume_uuid }}]."
-
-      # Alert for NVRAM battery low ems
-      - alert: NVRAM Battery Low
-        expr: last_over_time(ems_events{message="callhome.battery.low"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "NVRAM battery low for Node uuid [{{ $labels.node_uuid }}]"
-
-      # Alert for HA interconnect down ems
-      - alert: HA Interconnect Down
-        expr: last_over_time(ems_events{message="callhome.hainterconnect.down"} [1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "HA interconnect down for Node uuid [{{ $labels.node_uuid }}]."
-
-      # Alert for Shadow copy failed ems
-      - alert: Shadow Copy Failed
-        expr: last_over_time(ems_events{message="cifs.shadowcopy.failure"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Shadow copy failed for Object uuid [{{ $labels.object_uuid }}]."
-
-      # Alert for Cloud aws not initialized ems
-      - alert: AWS Credentials Not Initialized
-        expr: last_over_time(ems_events{message="cloud.aws.iamNotInitialized"} [5m]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "AWS credentials not initialized on Node uuid [{{ $labels.node_uuid }}]."
-
-      # Alert for Switch power supply failed ems
-      - alert: Storage Switch Power Supplies Failed
-        expr: last_over_time(ems_events{message="cluster.switch.pwr.fail"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Storage switch power supplies failed on Cluster uuid [{{ $labels.cluster_uuid }}]."
-
-      # Alert for Disk out of service ems
-      - alert: Disk Out of Service
-        expr: last_over_time(ems_events{message="disk.outOfService"} [5m]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Disk out of service for Node uuid [{{ $labels.node_uuid }}]."
-
-      # Alert for FabricPool space full ems
-      - alert: FabricPool Space Usage Limit Reached
-        expr: last_over_time(ems_events{message="fabricpool.full"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "FabricPool space usage limit reached for Cluster uuid [{{ $labels.cluster_uuid }}]."
-
-      # Alert for FabricPool space nearly full ems
-      - alert: FabricPool Space Usage Limit Nearly Reached
-        expr: last_over_time(ems_events{message="fabricpool.nearly.full"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "FabricPool space usage limit nearly reached for Cluster uuid [{{ $labels.cluster_uuid }}]."
-
-      # Alert for Giveback of failed aggr ems
-      - alert: Giveback of Aggregate Failed
-        expr: last_over_time(ems_events{message="gb.netra.ca.check.failed"} [4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Giveback of aggregate failed of Aggregate uuid [{{ $labels.aggr_uuid }}]."
-
-      # Alert for LUN destroyed ems
       - alert: LUN Destroyed
-        expr: last_over_time(ems_events{message="LUN.destroy"} [5m]) == 1
+        expr: last_over_time(ems_events{message="LUN.destroy"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -301,400 +23,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "LUN destroyed of Object uuid [{{ $labels.object_uuid }}]."
+          summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) destroyed (UUID: {{ $labels.object_uuid }})."
 
-      # Alert for Lun offline ems
-      - alert: LUN Offline
-        expr: last_over_time(ems_events{message="LUN.offline"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Lun offline for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for root volume space low ems
-      - alert: Node Root Volume Space Low
-        expr: last_over_time(ems_events{message="mgmtgwd.rootvolrec.low.space"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Node root volume space low on Node uuid [{{ $labels.node_uuid }}]"
-
-      # Alert for Main unit fan in critical ems
-      - alert: System Cannot Operate Due to Main Unit Fan Failure
-        expr: last_over_time(ems_events{message="monitor.fan.critical"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "System cannot operate due to main unit fan failure for Node uuid [{{ $labels.node_uuid }}]"
-
-      # Alert for Main unit fan in failed ems
-      - alert: Main Unit Fan Failed
-        expr: last_over_time(ems_events{message="monitor.fan.failed"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Main unit fan failed for Node uuid [{{ $labels.node_uuid }}]"
-
-      # Alert for Main unit fan in warning ems
-      - alert: Main Unit Fan in Warning State
-        expr: last_over_time(ems_events{message="monitor.fan.warning"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Main unit fan in warning state for Node uuid [{{ $labels.node_uuid }}]"
-
-      # Alert for Too many auths ems
-      - alert: Too Many CIFS Authentication
-        expr: last_over_time(ems_events{message="Nblade.cifsManyAuths"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Too many CIFS authentication on Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Max times open per file exceeded ems
-      - alert: Max Times Open Per File Exceeded
-        expr: last_over_time(ems_events{message="Nblade.cifsMaxOpenSameFile"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Max times open per file exceeded on Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Max sessions per user exceeded ems
-      - alert: Max Sessions Per User Exceeded
-        expr: last_over_time(ems_events{message="Nblade.cifsMaxSessPerUsrConn"}[4w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Max sessions per user exceeded for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for NetBIOS name conflict ems
-      - alert: NetBIOS Name Conflict
-        expr: last_over_time(ems_events{message="Nblade.cifsNbNameConflict"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "NetBIOS name conflict for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Nonexistent admin share ems
-      - alert: Nonexistent Admin Share
-        expr: last_over_time(ems_events{message="Nblade.cifsNoPrivShare"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Nonexistent admin share for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Nfsv4 pool exhausted ems
-      - alert: NFSv4 Store Pool Exhausted
-        expr: last_over_time(ems_events{message="Nblade.nfsV4PoolExhaust"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "NFSv4 store pool exhausted for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Unauthorized user access ems
-      - alert: Unauthorized User Access to Admin Share
-        expr: last_over_time(ems_events{message="Nblade.vscanBadUserPrivAccess"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Unauthorized user access to admin share for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Antivirus server busy ems
-      - alert: Antivirus Server Busy
-        expr: last_over_time(ems_events{message="Nblade.vscanConnBackPressure"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Antivirus server busy for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for No registered scan engine ems
-      - alert: No Registered Scan Engine
-        expr: last_over_time(ems_events{message="Nblade.vscanNoRegdScanner"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "No registered scan engine for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for No vscan connection ems
-      - alert: No Vscan Connection
-        expr: last_over_time(ems_events{message="Nblade.vscanNoScannerConn"}[1d]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "No vscan connection for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Virus detected ems
-      - alert: Virus Detected
-        expr: last_over_time(ems_events{message="Nblade.vscanVirusDetected"}[1w]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Virus detected for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for Non-responsive antiVirus server ems
-      - alert: Non-responsive AntiVirus Server
-        expr: last_over_time(ems_events{message="Nblade.vscanConnInactive"}[5m]) == 1
-        labels:
-          severity: >
-            {{- if $labels.severity -}}
-            {{- if eq $labels.severity "alert" -}}
-            critical
-            {{- else if eq $labels.severity "error" -}}
-            warning
-            {{- else if eq $labels.severity "emergency" -}}
-            critical
-            {{- else if eq $labels.severity "notice" -}}
-            info
-            {{- else if eq $labels.severity "informational" -}}
-            info
-            {{- else -}}
-            {{ $labels.severity }}
-            {{- end -}}
-            {{- end -}}
-        annotations:
-          summary: "Non-responsive antiVirus server for Object uuid [{{ $labels.object_uuid }}]"
-
-      # Alert for NVMe namespace destroyed ems
       - alert: NVMe Namespace Destroyed
         expr: last_over_time(ems_events{message="NVMeNS.destroy"}[5m]) == 1
         labels:
@@ -715,9 +45,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe namespace destroyed for Object uuid [{{ $labels.object_uuid }}]"
+          summary: "NVMe namespace {{ $labels.NVMeNS_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was destroyed (UUID: {{ $labels.object_uuid }})."
 
-      # Alert for NVMe namespace offline ems
       - alert: NVMe Namespace Offline
         expr: last_over_time(ems_events{message="NVMeNS.offline"}[5m]) == 1
         labels:
@@ -738,9 +67,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe namespace offline for Object uuid [{{ $labels.object_uuid }}]"
+          summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought offline (UUID: {{ $labels.object_uuid }})."
 
-      # Alert for NVMe namespace online ems
       - alert: NVMe Namespace Online
         expr: last_over_time(ems_events{message="NVMeNS.online"}[5m]) == 1
         labels:
@@ -761,10 +89,779 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe namespace online for Object uuid [{{ $labels.object_uuid }}]"
+          summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought online (UUID: {{ $labels.object_uuid }})."
 
-      # Alert for NVMe-oF grace period active ems
-      - alert: NVMe-oF Grace Period Active
+      - alert: Too Many CIFS Authentication
+        expr: last_over_time(ems_events{message="Nblade.cifsManyAuths"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Many simultaneous new CIFS connections are occurring on Vserver ID {{ $labels.vsId }} from IP address {{ $labels.remoteIpAddress }} object type is {{ $labels.object_type }} with UUID {{ $labels.object_uuid }}."
+
+      - alert: Max Times Open Per File Exceeded
+        expr: last_over_time(ems_events{message="Nblade.cifsMaxOpenSameFile"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Received too many open file requests for the same file by one user on a connection: clientIP:port {{ $labels.IpAddress }}:{{ $labels.port }}, file \"{{ $labels.filePath }}\" on share \"{{ $labels.shareName }}\", vserver: \"{{ $labels.vserverName }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+
+      - alert: Max Sessions Per User Exceeded
+        expr: last_over_time(ems_events{message="Nblade.cifsMaxSessPerUsrConn"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Received too many session requests from the same user on one TCP connection: clientIP:port {{ $labels.IpAddress }}:{{ $labels.port }}, user \"{{ $labels.userName }}\", vserver: \"{{ $labels.vserverName }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+
+      - alert: NetBIOS Name Conflict
+        expr: last_over_time(ems_events{message="Nblade.cifsNbNameConflict"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "The NetBIOS Name Service received a negative name registration response. The name {{ $labels.nbName }} is owned by a remote machine. The IP address being registered is {{ $labels.IpAddress }}. Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+
+      - alert: Nonexistent Admin Share
+        expr: last_over_time(ems_events{message="Nblade.cifsNoPrivShare"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Vserver ID: {{ $labels.vserverId }}, user name: {{ $labels.userName }}, client ip: {{ $labels.clientIp }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+
+      - alert: NFSv4 Store Pool Exhausted
+        expr: last_over_time(ems_events{message="Nblade.nfsV4PoolExhaust"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "NFS Store Pool for {{ $labels.poolname }} exhausted. Associated object type is {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+
+      - alert: Unauthorized User Access to Admin Share
+        expr: last_over_time(ems_events{message="Nblade.vscanBadUserPrivAccess"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "For Vserver \"{{ $labels.vserverName }}\", the attempt to connect to the privileged ONTAP_ADMIN$ share by the client \"{{ $labels.scannerIp }}\" is rejected because its logged-in user \"{{ $labels.userName }}\" is not configured in any of the Vserver active scanner pools."
+
+      - alert: Antivirus Server Busy
+        expr: last_over_time(ems_events{message="Nblade.vscanConnBackPressure"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "For Vserver \"{{ $labels.vserverName }}\", AV server \"{{ $labels.scannerIp }}\" is too busy to accept new scan requests."
+
+      - alert: Non-responsive AntiVirus Server
+        expr: last_over_time(ems_events{message="Nblade.vscanConnInactive"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "For Vserver \"{{ $labels.vserverName }}\", ONTAP(R) forcibly closed the vscan connection originated from the nonresponsive AV server \"{{ $labels.scannerIp }}\"."
+
+      - alert: No Registered Scan Engine
+        expr: last_over_time(ems_events{message="Nblade.vscanNoRegdScanner"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "For Vserver \"{{ $labels.vserverName }}\", AV Connector running on the AV server \"{{ $labels.scannerIp }}\" does not have a registered scan-engine to it."
+
+      - alert: No Vscan Connection
+        expr: last_over_time(ems_events{message="Nblade.vscanNoScannerConn"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Vserver \"{{ $labels.vserverName }}\" has no virus scanner connection."
+
+      - alert: Virus Detected
+        expr: last_over_time(ems_events{message="Nblade.vscanVirusDetected"}[1w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Possible virus detected. Vserver: {{ $labels.vserverName }}, vscan server IP: {{ $labels.vscanServerIp }}, file path: {{ $labels.filePath }}, client IP: {{ $labels.clientIp }}, SID: {{ $labels.SID }}, vscan engine status: {{ $labels.vscanEngineStatus }}, vscan engine result string: {{ $labels.vscanEngineResultString }}."
+
+      - alert: Relocation of Storage Pool Failed
+        expr: last_over_time(ems_events{message="arl.netra.ca.check.failed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Relocation of aggregate '{{ $labels.vol }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
+
+      - alert: Volume Anti-ransomware Monitoring
+        expr: last_over_time(ems_events{message="arw.volume.state"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Anti-ransomware state was changed to \"{{ $labels.op }}\" on volume \"{{ $labels.volumeName }}\" (UUID: \"{{ $labels.volumeUuid }}\") in Vserver \"{{ $labels.vserverName }}\" (UUID: \"{{ $labels.vserverUuid }}\")."
+
+      - alert: Storage VM Anti-ransomware Monitoring
+        expr: last_over_time(ems_events{message="arw.vserver.state"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Anti-ransomware was changed to \"{{ $labels.op }}\" on Vserver \"{{ $labels.vserverName }}\" (UUID: \"{{ $labels.vserverUuid }}\")."
+
+      - alert: Ransomware Activity Detected
+        expr: last_over_time(ems_events{message="callhome.arw.activity.seen"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Call-home message for {{ $labels.subject }}"
+
+      - alert: NVRAM Battery Low
+        expr: last_over_time(ems_events{message="callhome.battery.low"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Call home for BATTERY_LOW."
+
+      - alert: HA Interconnect Down
+        expr: last_over_time(ems_events{message="callhome.hainterconnect.down"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Call home for {{ $labels.subject }} due to {{ $labels.reason }}."
+
+      - alert: Service Processor Heartbeat Missed
+        expr: last_over_time(ems_events{message="callhome.sp.hbt.missed"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Call home for SP HBT MISSED"
+
+      - alert: Service Processor Heartbeat Stopped
+        expr: last_over_time(ems_events{message="callhome.sp.hbt.stopped"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Call home for SP HBT STOPPED"
+
+      - alert: Shadow Copy Failed
+        expr: last_over_time(ems_events{message="cifs.shadowcopy.failure"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "A shadow copy operation has failed: {{ $labels.errMsg }}. ( Operation : {{ $labels.operation }} , Client Shadow Copy Set ID : {{ $labels.clientShadowCopySetId }} , Filer Shadow Copy Set ID : {{ $labels.filerShadowCopySetId }} , Client Shadow Copy ID : {{ $labels.clientShadowCopyId }} , Filer Shadow Copy ID : {{ $labels.filerShadowCopyId }} , Share Name : {{ $labels.shareName }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }} )"
+
+      - alert: AWS Credentials Not Initialized
+        expr: last_over_time(ems_events{message="cloud.aws.iamNotInitialized"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "A module attempted to access credential information before the cloud credential thread initialized on node {{ $labels.nodeUuid }}."
+
+      - alert: Storage Switch Power Supplies Failed
+        expr: last_over_time(ems_events{message="cluster.switch.pwr.fail"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Cluster switch: {{ $labels.switch_name }} power supply: {{ $labels.pwr_supply_name }} status: {{ $labels.status }}."
+
+      - alert: Disk Out of Service
+        expr: last_over_time(ems_events{message="disk.outOfService"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive {{ $labels.diskName }} ({{ $labels.serialno }}){{ $labels.reason }}. Power-On Hours: {{ $labels.powerOnHours }}, GList Count: {{ $labels.glistEntries }}, Drive Info: {{ $labels.disk_information }}."
+
+      - alert: Disk Shelf Power Supply Discovered
+        expr: last_over_time(ems_events{message="diskShelf.psu.added"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "{{ $labels.location }} power supply was added to {{ $labels.channelName }}.shelf{{ $labels.shelfIdent }}"
+
+      - alert: Disk Shelves Power Supply Removed
+        expr: last_over_time(ems_events{message="diskShelf.psu.removed"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "{{ $labels.location }} power supply was removed from {{ $labels.channelName }}.shelf{{ $labels.shelfIdent }}"
+
+      - alert: FabricPool Space Usage Limit Reached
+        expr: last_over_time(ems_events{message="fabricpool.full"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Total, cluster-wide FabricPool space usage of object stores from capacity-licensed providers has reached the licensed limit. Cluster ID: {{ $labels.cluster_uuid }}. Current usage: {{ $labels.used_capacity }}, licensed capacity: {{ $labels.licensed_capacity }}."
+
+      - alert: FabricPool Space Usage Limit Nearly Reached
+        expr: last_over_time(ems_events{message="fabricpool.nearly.full"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Total, cluster-wide FabricPool space usage of object stores from capacity-licensed providers has nearly reached the licensed limit. Cluster id: {{ $labels.cluster_uuid }}. Current usage: {{ $labels.used_capacity }}, licensed capacity: {{ $labels.licensed_capacity }}."
+
+      - alert: Giveback of Storage Pool Failed
+        expr: last_over_time(ems_events{message="gb.netra.ca.check.failed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Giveback of aggregate '{{ $labels.vol }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
+
+      - alert: MetroCluster Monitoring
+        expr: last_over_time(ems_events{message="hm.alert.raised"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "{{ $labels.detailed_info }} raised by monitor {{ $labels.monitor }}"
+
+      - alert:  MetroCluster Automatic Unplanned Switchover Disabled
+        expr: last_over_time(ems_events{message="mcc.config.auso.stDisabled"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "The state of Automatic Unplanned Switchover capability has been disabled."
+
+      - alert: Node Root Volume Space Low
+        expr: last_over_time(ems_events{message="mgmtgwd.rootvolrec.low.space"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "The root volume on node \"{{ $labels.node }}\" is dangerously low on space. Less than {{ $labels.threshold_in_mb }} MB of free space remaining."
+
+      - alert: System Cannot Operate Due to Main Unit Fan Failure
+        expr: last_over_time(ems_events{message="monitor.fan.critical"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "{{ $labels.report }}"
+
+      - alert: Main Unit Fan Failed
+        expr: last_over_time(ems_events{message="monitor.fan.failed"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "{{ $labels.report }}"
+
+      - alert: Main Unit Fan in Warning State
+        expr: last_over_time(ems_events{message="monitor.fan.warning"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "{{ $labels.report }}"
+
+      - alert: NVMe-oF License Grace Period Active
         expr: last_over_time(ems_events{message="nvmf.graceperiod.active"}[4w]) == 1
         labels:
           severity: >
@@ -784,10 +881,9 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe-oF grace period active for Cluster uuid [{{ $labels.cluster_uuid }}]"
+          summary: "The NVMe-oF feature requires a license in this version of ONTAP. NVMe-oF functionality will be disabled in {{ $labels.days_remaining }} days ({{ $labels.expiration_date }}) unless a license is added to the cluster."
 
-      # Alert for NVMe-oF grace period expired ems
-      - alert: NVMe-oF Grace Period Expired
+      - alert: NVMe-oF License Grace Period Expired
         expr: last_over_time(ems_events{message="nvmf.graceperiod.expired"}[4w]) == 1
         labels:
           severity: >
@@ -807,10 +903,9 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe-oF grace period expired for Cluster uuid [{{ $labels.cluster_uuid }}]"
+          summary: "The NVMe-oF feature requires a license in this version of ONTAP and the grace period has expired. NVMe-oF functionality will be disabled until a license is added to the cluster."
 
-      # Alert for NVMe-oF grace period start ems
-      - alert: NVMe-oF Grace Period Start
+      - alert: NVMe-oF License Grace Period Start
         expr: last_over_time(ems_events{message="nvmf.graceperiod.start"}[4w]) == 1
         labels:
           severity: >
@@ -830,11 +925,10 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe-oF grace period start for Cluster uuid [{{ $labels.cluster_uuid }}]"
+          summary: "The NVMe-oF feature requires a license in this version of ONTAP. NVMe-oF functionality will be disabled in {{ $labels.days_remaining }} days ({{ $labels.expiration_date }}) unless a license is added to the cluster."
 
-      # Alert for Cloud tier unreachable ems
       - alert: Cloud Tier Unreachable
-        expr: last_over_time(ems_events{message="object.store.unavailable"}[4w]) == 1
+        expr: last_over_time(ems_events{message="object.store.unavailable"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -853,9 +947,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Cloud tier unreachable for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "Unable to connect to the object store \"{{ $labels.configname }}\" from node {{ $labels.node_uuid }}. Reason: {{ $labels.reason }}."
 
-      # Alert for Object store host unresolvable ems
       - alert: Object Store Host Unresolvable
         expr: last_over_time(ems_events{message="objstore.host.unresolvable"}[1d]) == 1
         labels:
@@ -876,9 +969,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Object store host unresolvable for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "Object-store server host name \"{{ $labels.hostname }}\" cannot be resolved to an IP address on node {{ $labels.nodeUuid }}."
 
-      # Alert for Object store intercluster LIF down ems
       - alert: Object Store Intercluster LIF Down
         expr: last_over_time(ems_events{message="objstore.interclusterlifDown"}[1d]) == 1
         labels:
@@ -899,9 +991,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Object store intercluster LIF down for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "Object-store client could not find an operational intercluster LIF (IPspace ID: {{ $labels.ipspaceID }}) on node {{ $labels.nodeUuid }}."
 
-      # Alert for Object store signature mismatch ems
       - alert: Object Store Signature Mismatch
         expr: last_over_time(ems_events{message="osc.signatureMismatch"}[1d]) == 1
         labels:
@@ -922,11 +1013,10 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Object store signature mismatch for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "Object-store {{ $labels.operation }} operation server-calculated request signature does not match the signature sent to object-store server {{ $labels.serverHostname }} for bucket or container \"{{ $labels.bucket }}\" on node {{ $labels.nodeUuid }}. Check the keys and signing method."
 
-      # Alert for QoS monitor memory maxed out ems
       - alert: QoS Monitor Memory Maxed Out
-        expr: last_over_time(ems_events{message="qos.monitor.memory.maxed"}[4w]) == 1
+        expr: last_over_time(ems_events{message="qos.monitor.memory.maxed"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -945,10 +1035,9 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "QoS monitor memory maxed out for Object uuid [{{ $labels.object_uuid }}]"
+          summary: "QoS dynamic memory has reached its limit. Some QoS features might operate in a limited capacity."
 
-      # Alert for SAN [active-active] state change ems
-      - alert: SAN [active-active] State Changed
+      - alert: SAN "active-active" State Changed
         expr: last_over_time(ems_events{message="scsiblade.san.config.active"}[5m]) == 1
         labels:
           severity: >
@@ -968,9 +1057,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SAN [active-active] state changed for Object uuid [{{ $labels.object_uuid }}]"
+          summary: "The symmetric active-active state is {{ $labels.state }} on {{ $labels.num_luns }} LUNs."
 
-      # Alert for FC target port commands exceeded ems
       - alert: FC Target Port Commands Exceeded
         expr: last_over_time(ems_events{message="scsitarget.fct.port.full"}[5m]) == 1
         labels:
@@ -991,11 +1079,10 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "FC target port commands exceeded for Port Name [{{ $labels.portname }}]"
+          summary: "FC target port {{ $labels.portname }} has {{ $labels.active_commands }} outstanding commands, which exceeds the maximum number of commands {{ $labels.max_commands }} that can be supported by this port."
 
-      # Alert for Shelf fan failed ems
-      - alert: Shelf Fan Failed
-        expr: last_over_time(ems_events{message="ses.status.fanError"}[4w]) == 1
+      - alert: SFP in FC target adapter receiving low power
+        expr: last_over_time(ems_events{message="scsitarget.fct.sfpRxPowerLow"}[8h]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -1014,9 +1101,52 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Shelf fan failed for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "The SFP in FC target adapter {{ $labels.adapter }} reports that it is receiving (RX) at a low level of power. Operating value {{ $labels.operating_value }} (uWatts), Threshold value {{ $labels.threshold_value }} (uWatts)."
 
-      # Alert for Node panic ems
+      - alert: SFP in FC target adapter transmitting low power
+        expr: last_over_time(ems_events{message="scsitarget.fct.sfpTxPowerLow"}[8h]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "The SFP in FC target adapter {{ $labels.adapter }} reports that it is transmitting (TX) at a low level of power. Operating value {{ $labels.operating_value }} (uWatts), Threshold value {{ $labels.threshold_value }} (uWatts)."
+
+      - alert: Shelf Fan Failed
+        expr: last_over_time(ems_events{message="ses.status.fanError"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "{{ $labels.prodChannel }} cooling fan error for {{ $labels.typeText }} {{ $labels.fanNumber }}: {{ $labels.errorMsg }}{{ $labels.errorText }}. {{ $labels.locationText }}."
+
       - alert: Node Panic
         expr: last_over_time(ems_events{message="sk.panic"}[1d]) == 1
         labels:
@@ -1037,11 +1167,230 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Node panic for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "Panic String: {{ $labels.reason }}"
 
-      # Alert for SnapMirror relationship out of sync ems
+      - alert: ONTAP Mediator Added
+        expr: last_over_time(ems_events{message="sm.mediator.added"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "ONTAP Mediator (version {{ $labels.version }}) is added on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
+
+      - alert: SMBC CA Certificate Expired
+        expr: last_over_time(ems_events{message="sm.mediator.cacert.expired"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "CA certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+
+      - alert: SMBC CA Certificate Expiring
+        expr: last_over_time(ems_events{message="sm.mediator.cacert.expiring"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "CA certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+
+      - alert: SMBC Client Certificate Expired
+        expr: last_over_time(ems_events{message="sm.mediator.clientc.expired"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Client certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+
+      - alert: SMBC Client Certificate Expiring
+        expr: last_over_time(ems_events{message="sm.mediator.clientc.expiring"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Client certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+
+      - alert: ONTAP Mediator Not Accessible
+        expr: last_over_time(ems_events{message="sm.mediator.misconfigured"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "ONTAP Mediator is not accessible on cluster '{{ $labels.cluster }}' with Mediator IP address '{{ $labels.ipAddress }}'."
+
+      - alert: ONTAP Mediator Removed
+        expr: last_over_time(ems_events{message="sm.mediator.removed"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "ONTAP Mediator (version {{ $labels.version }}) was removed on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
+
+      - alert: SMBC Server Certificate Expired
+        expr: last_over_time(ems_events{message="sm.mediator.serverc.expired"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Server certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+
+      - alert: SMBC Server Certificate Expiring
+        expr: last_over_time(ems_events{message="sm.mediator.serverc.expiring"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Server certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+
+      - alert: ONTAP Mediator Unreachable
+        expr: last_over_time(ems_events{message="sm.mediator.unreachable"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "ONTAP Mediator (IP: {{ $labels.ipAddress }}) is unreachable from cluster {{ $labels.cluster }}."
+
       - alert: SnapMirror Relationship Out of Sync
-        expr: last_over_time(ems_events{message="sms.status.out.of.sync"}[4w]) == 1
+        expr: last_over_time(ems_events{message="sms.status.out.of.sync"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -1060,11 +1409,32 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SnapMirror relationship out of sync for Relationship id [{{ $labels.relationship_id }}]"
+          summary: "Source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" is in \"out-of-sync\" status due to the following reason: \"{{ $labels.error_msg }}\"."
 
-      # Alert for Service processor offline ems
+      - alert: SMBC Relationship Out of Sync
+        expr: last_over_time(ems_events{message="sms.status.out.of.sync.cg"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Source CG \"{{ $labels.srccgpath }}\" and destination CG \"{{ $labels.dstcgpath }}\" with relationship UUID \"{{ $labels.cg_relationship_id }}\" is in \"out-of-sync\" status. Reason: \"{{ $labels.error_msg }}\"."
+
       - alert: Service Processor Offline
-        expr: last_over_time(ems_events{message="sp.ipmi.lost.shutdown"}[4w]) == 1
+        expr: last_over_time(ems_events{message="sp.ipmi.lost.shutdown"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -1083,11 +1453,10 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Service processor offline for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "SP heartbeat stopped and cannot be recovered. To prevent hardware damage and data loss, the system will shut down in {{ $labels.num_minutes }} minutes."
 
-      # Alert for Service processor not configured ems
       - alert: Service Processor Not Configured
-        expr: last_over_time(ems_events{message="sp.notConfigured"}[4w]) == 1
+        expr: last_over_time(ems_events{message="sp.notConfigured"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -1106,9 +1475,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Service processor not configured for Node uuid [{{ $labels.node_uuid }}]"
+          summary: "The system's Service Processor (SP) is not configured. Use the 'system service-processor network modify' command to configure it."
 
-      # Alert for Unassigned disks ems
       - alert: Unassigned Disks
         expr: last_over_time(ems_events{message="unowned.disk.reminder"}[5m]) == 1
         labels:
@@ -1129,11 +1497,10 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Unassigned disks for Cluster uuid [{{ $labels.cluster_uuid }}]"
+          summary: "{{ $labels.count }} disks are currently unowned. Use the \"disk assign\" command to assign the disks to a system."
 
-      # Alert for SVM stop succeeded ems
       - alert: Storage VM Stop Succeeded
-        expr: last_over_time(ems_events{message="vserver.stop.succeeded"}[4w]) == 1
+        expr: last_over_time(ems_events{message="vserver.stop.succeeded"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -1152,9 +1519,30 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Storage VM stop succeeded for instance uuid [{{ $labels.instuuid }}]"
+          summary: "Vserver {{ $labels.vserver_name }} (UUID: {{ $labels.vserver_uuid }}) stopped successfully."
 
-      # Alert for READDIR timeout ems
+      - alert: FabricPool Mirror Replication Resync Completed
+        expr: last_over_time(ems_events{message="wafl.ca.resync.complete"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "FabricPool mirror resync process is completed for FabricPool {{ $labels.aggr }} (uuid {{ $labels.aggr_uuid }}) from primary object store (config id {{ $labels.primary_config_id }}) to mirror object store (config id {{ $labels.mirror_config_id }})."
+
       - alert: READDIR Timeout
         expr: last_over_time(ems_events{message="wafl.readdir.expired"}[4w]) == 1
         labels:
@@ -1175,9 +1563,8 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "READDIR timeout for Object uuid [{{ $labels.object_uuid }}]"
+          summary: "A READDIR file operation has expired for the directory associated with volume \"{{ $labels.volume }}{{ $labels.app }}/{{ $labels.volident }}\" Snapshot copy ID {{ $labels.snapid }} and inode {{ $labels.directory_inum }}."
 
-      # Alert for Volume automatic resizing succeeded ems
       - alert: Volume Automatic Resizing Succeeded
         expr: last_over_time(ems_events{message="wafl.vol.autoSize.done"}[5m]) == 1
         labels:
@@ -1198,11 +1585,10 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Volume automatic resizing succeeded for Object uuid [{{ $labels.object_uuid }}]"
+          summary: "Volume autosize: Automatic {{ $labels.event_type }} of volume '{{ $labels.vol }}{{ $labels.app }}{{ $labels.volident }}' by {{ $labels.size }} is complete."
 
-      # Alert for Volume offline ems
       - alert: Volume Offline
-        expr: last_over_time(ems_events{message="wafl.vvol.offline"}[4w]) == 1
+        expr: last_over_time(ems_events{message="wafl.vvol.offline"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -1221,11 +1607,10 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Volume offline for instance uuid [{{ $labels.inst_uuid }}]"
+          summary: "Volume '{{ $labels.name }}{{ $labels.app }}{{ $labels.volident }}' has been set temporarily offline"
 
-      # Alert for Volume restricted ems
       - alert: Volume Restricted
-        expr: last_over_time(ems_events{message="wafl.vvol.restrict"}[4w]) == 1
+        expr: last_over_time(ems_events{message="wafl.vvol.restrict"}[5m]) == 1
         labels:
           severity: >
             {{- if $labels.severity -}}
@@ -1244,4 +1629,4 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Volume restricted for instance uuid [{{ $labels.inst_uuid }}]"
+          summary: "vol=\"{{ $labels.vol }}\", app=\"{{ $labels.app }}\", volident=\"{{ $labels.volident }}\", instuuid=\"{{ $labels.instuuid }}\""
