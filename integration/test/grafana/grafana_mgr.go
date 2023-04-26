@@ -35,21 +35,22 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 	if len(jsonDir) > 0 {
 		directoryOption = "--directory"
 	}
-	if !docker.IsDockerBasedPoller() {
-		//assuming non docker based harvest grafana
-		log.Println("It is non docker based harvest")
-		importOutput, err = utils.Exec(installer.HarvestHome, "bin/harvest", nil, "grafana", "import", "--addr", utils.GetGrafanaURL(), directoryOption, jsonDir)
-		if err != nil {
-			log.Printf("error %s", err)
-			panic(err)
-		}
-	} else {
-		params := []string{"exec", containerIDs[0].Id, "bin/harvest", "grafana", "import", "--addr", "grafana:3000", directoryOption, jsonDir}
+	grafanaURL := utils.GetGrafanaURL()
+	if docker.IsDockerBasedPoller() {
+		grafanaURL = "grafana:3000"
+	}
+	importCmds := []string{"grafana", "import", "--overwrite", "--addr", grafanaURL, directoryOption, jsonDir}
+	if docker.IsDockerBasedPoller() {
+		params := []string{"exec", containerIDs[0].Id, "bin/harvest"}
+		params = append(params, importCmds...)
 		importOutput, err = utils.Run("docker", params...)
-		if err != nil {
-			log.Printf("error %s", err)
-			panic(err)
-		}
+	} else {
+		log.Println("It is non docker based harvest")
+		importOutput, err = utils.Exec(installer.HarvestHome, "bin/harvest", nil, importCmds...)
+	}
+	if err != nil {
+		log.Printf("error %s", err)
+		panic(err)
 	}
 	if re.MatchString(importOutput) {
 		status = false
