@@ -75,7 +75,7 @@ func TestEmsTestSuite(t *testing.T) {
 		// If the issuingEms did not exist before, then ignore the test-case.
 		if oldAlertsData[issuingEms] > 0 {
 			v := newAlertsData[issuingEms] - oldAlertsData[issuingEms]
-			if v > 1 {
+			if v >= 0 {
 				t.Errorf("Extra bookend ems alerts raised event=%s, count=%d", issuingEms, v)
 			}
 		} else {
