@@ -95,7 +95,7 @@
       },
       "id": 29,
       "options": {
-        "content": "You must uncomment the external_service_op.yaml section in your $HARVEST/conf/zapiperf/default.yaml file.",
+        "content": "You must uncomment the external_service_operation.yaml section in your $HARVEST/conf/zapiperf/default.yaml file.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -921,9 +921,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "2",
-          "value": "2"
+          "selected": true,
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
@@ -939,7 +939,7 @@
             "value": "1"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "2",
             "value": "2"
           },
@@ -954,7 +954,7 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
