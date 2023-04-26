@@ -147,7 +147,14 @@ To upgrade Harvest:
 2. Copy your existing `harvest.yml` into the new Harvest directory created in step #1.
 
 3. Regenerate your `harvest-compose.yml` file by
-   running `bin/harvest generate docker full --port --output harvest-compose.yml`
+   running `bin/harvest generate docker full --output harvest-compose.yml`
+   By default, generate will use the `latest` tag. If you want to upgrade to a `nightly` build see the twisty.
+
+    ??? question "I want to upgrade to a nightly build"
+    
+        Tell the `generate` cmd to use a different tag like so:
+
+        `bin/harvest generate docker full --image ghcr.io/netapp/harvest:nightly --output harvest-compose.yml`
 
 4. Pull new images and restart your containers like so:
 
