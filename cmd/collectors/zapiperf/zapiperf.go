@@ -27,7 +27,7 @@ package zapiperf
 import (
 	"errors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/disk"
-	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/externalserviceop"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/externalserviceoperation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
@@ -126,8 +126,8 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		return vscan.New(abc)
 	case "Disk":
 		return disk.New(abc)
-	case "ExternalServiceOp":
-		return externalserviceop.New(abc)
+	case "ExternalServiceOperation":
+		return externalserviceoperation.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapiPerf plugin found for %s", kind)
 	}

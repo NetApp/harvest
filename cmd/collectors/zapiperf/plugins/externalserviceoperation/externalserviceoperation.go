@@ -1,7 +1,7 @@
 /*
  * Copyright NetApp Inc, 2023 All rights reserved
  */
-package externalserviceop
+package externalserviceoperation
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -10,15 +10,15 @@ import (
 
 const Hyphen = "-"
 
-type ExternalServiceOp struct {
+type ExternalServiceOperation struct {
 	*plugin.AbstractPlugin
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &ExternalServiceOp{AbstractPlugin: p}
+	return &ExternalServiceOperation{AbstractPlugin: p}
 }
 
-func (e *ExternalServiceOp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (e *ExternalServiceOperation) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[e.Object]
 	datacenterClusterKey := data.GetGlobalLabels().Get("datacenter") + Hyphen + data.GetGlobalLabels().Get("cluster") + Hyphen
 	for _, instance := range data.GetInstances() {

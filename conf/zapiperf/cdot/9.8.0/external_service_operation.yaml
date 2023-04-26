@@ -25,7 +25,7 @@ counters:
   - vserver_name           => svm
 
 plugins:
-  - ExternalServiceOp
+  - ExternalServiceOperation
 
 export_options:
   instance_keys:
