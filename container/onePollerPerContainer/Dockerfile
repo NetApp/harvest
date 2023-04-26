@@ -12,7 +12,7 @@ ARG ASUP_MAKE_TARGET=build
 # Set the Current Working Directory inside the container
 WORKDIR $BUILD_DIR
 
-RUN mkdir -p $INSTALL_DIR $INSTALL_DIR/container/onePollerPerContainer
+RUN mkdir -p $INSTALL_DIR $INSTALL_DIR/container/onePollerPerContainer $INSTALL_DIR/container/prometheus
 
 COPY . .
 
