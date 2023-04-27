@@ -416,9 +416,6 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	apiD = time.Since(startTime)
 
 	if len(records) == 0 {
-		e.Logger.Info().
-			Int("queried", len(e.eventNames)).
-			Msg("No EMS events returned")
 		e.lastFilterTime = toTime
 		_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 		_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
