@@ -10,8 +10,8 @@ import (
 
 var issuingEmsNames []string
 var resolvingEmsNames []string
-var supportedIssuingEms []string
-var supportedResolvingEms []string
+var supportedIssuingEms map[string]bool
+var supportedResolvingEms map[string]bool
 var oldAlertsData map[string]int
 var newAlertsData map[string]int
 
@@ -71,7 +71,7 @@ func TestEmsTestSuite(t *testing.T) {
 	setupAlerts()
 
 	// Evaluate bookend active ems events
-	for _, issuingEms := range supportedIssuingEms {
+	for issuingEms, _ := range supportedIssuingEms {
 		// If the issuingEms did not exist before, then ignore the test-case.
 		if oldAlertsData[issuingEms] > 0 {
 			v := newAlertsData[issuingEms] - oldAlertsData[issuingEms]
