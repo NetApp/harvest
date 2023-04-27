@@ -1,6 +1,7 @@
 global:
-  scrape_interval:     15s
-  evaluation_interval: 30s
+  scrape_interval: 1m
+  scrape_timeout: 10s
+  evaluation_interval: 1m
   external_labels:
     monitor: 'harvest'
 
