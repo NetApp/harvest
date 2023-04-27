@@ -1,4 +1,5 @@
 counters:
+
   - Name: aggr_physical_used_wo_snapshots
     Description: Total Data Reduction Physical Used Without Snapshots
     APIs:
@@ -22,7 +23,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -39,27 +39,33 @@ counters:
   - Name: aggr_raid_plex_count
     Description: Number of plexes in the aggregate
 
-  - Name: aggr_snapshot_maxfiles_possible
-    Description: The largest value to which the maxfiles-available parameter can be increased by reconfiguration, on the referenced file system.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
-
-  - Name: aggr_space_used_percent
-    Description: The percentage of disk space currently in use on the referenced file system
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
-
   - Name: aggr_snapshot_inode_used_percent
-    Description: The percentage of disk space currently in use based on user-visible file (inode) count on the referenced file system.
+    Description: The percentage of disk space currently in use based on user-visible
+      file (inode) count on the referenced file system.
+
+  - Name: aggr_snapshot_maxfiles_possible
+    Description: The largest value to which the maxfiles-available parameter can be
+      increased by reconfiguration, on the referenced file system.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_space_reserved
-    Description:  The total disk space in bytes that is reserved on the referenced file system. The reserved space is already counted in the used space, so this element can be used to see what portion of the used space represents space reserved for future use.
+    Description: The total disk space in bytes that is reserved on the referenced file
+      system. The reserved space is already counted in the used space, so this element
+      can be used to see what portion of the used space represents space reserved for
+      future use.
+
+  - Name: aggr_space_used_percent
+    Description: The percentage of disk space currently in use on the referenced file
+      system
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_total_physical_used
     Description: Total Physical Used
@@ -72,11 +78,25 @@ counters:
   - Name: aggr_volume_count_flexvol
     Description: Number of flexvol volumes in the aggregate.
 
-  - Name: cluster_subsystem_suppressed_alerts
-    Description: Number of suppressed alerts
+  - Name: cluster_new_status
+    Description: It is an indicator of the overall health status of the cluster, with
+      a value of 1 indicating a healthy status and a value of 0 indicating an unhealthy
+      status.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/subsystem.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/subsystem.yaml
 
   - Name: cluster_subsystem_outstanding_alerts
     Description: Number of outstanding alerts
+
+  - Name: cluster_subsystem_suppressed_alerts
+    Description: Number of suppressed alerts
 
   - Name: disk_stats_io_kbps
     Description: Total Disk Throughput in KBPS Across All Active Paths
@@ -120,7 +140,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -133,7 +152,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -146,7 +164,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -159,7 +176,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -172,7 +188,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -185,7 +200,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -198,7 +212,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -211,7 +224,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
@@ -224,19 +236,457 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/sensor.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
 
+  - Name: metadata_collector_api_time
+    Description: amount of time to collect data from monitored cluster object
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_collector_instances
+    Description: number of objects collected from monitored cluster
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_collector_metrics
+    Description: number of counters collected from monitored cluster
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_collector_parse_time
+    Description: amount of time to parse XML, JSON, etc. for cluster object
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_collector_plugin_time
+    Description: amount of time for all plugins to post-process metrics
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_collector_poll_time
+    Description: amount of time it took for the poll to finish
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_collector_task_time
+    Description: amount of time it took for each collector's subtasks to complete
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_component_count
+    Description: number of metrics collected for each object
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_component_status
+    Description: status of the collector - 0 means running, 1 means standby, 2 means
+      failed
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_exporter_count
+    Description: number of metrics and labels exported
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_exporter_time
+    Description: amount of time it took to render, export, and serve exported data
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_target_goroutines
+    Description: number of goroutines that exist within the poller
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: metadata_target_status
+    Description: status of the system being monitored. 0 means reachable, 1 means unreachable
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
   - Name: node_cpu_busytime
-    Description: The time (in hundredths of a second) that the CPU has been doing useful work since the last boot
+    Description: The time (in hundredths of a second) that the CPU has been doing useful
+      work since the last boot
     APIs:
       - API: REST
         Endpoint: api/private/cli/node
         ONTAPCounter: cpu_busy_time
         Template: conf/rest/9.12.0/node.yaml
+
+  - Name: qos_detail_resource_latency
+    Description: average latency for workload on Data ONTAP subsystems
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/qos_detail
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/workload_detail.yaml
+      - API: ZAPI
+        Endpoint: perf-object-get-instances workload_detail
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/9.12.0/workload_detail.yaml
+
+  - Name: qos_detail_volume_resource_latency
+    Description: average latency for volume on Data ONTAP subsystems
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/qos_detail_volume
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/workload_detail_volume.yaml
+      - API: ZAPI
+        Endpoint: perf-object-get-instances workload_detail_volume
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/9.12.0/workload_detail_volume.yaml
+
+  - Name: quota_disk_limit
+    Description: Maximum amount of disk space, in kilobytes, allowed for the quota target
+      (hard disk space limit). The value is -1 if the limit is unlimited.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: space.hard_limit
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: disk-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_disk_used
+    Description: Current amount of disk space, in kilobytes, used by the quota target.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: space.used.total
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: disk-used
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_disk_used_pct_disk_limit
+    Description: Current disk space used expressed as a percentage of hard disk limit.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: space.used.hard_limit_percent
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: disk-used-pct-disk-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_disk_used_pct_soft_disk_limit
+    Description: Current disk space used expressed as a percentage of soft disk limit.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: space.used.soft_limit_percent
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: disk-used-pct-soft-disk-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_disk_used_pct_threshold
+    Description: Current disk space used expressed as a percentage of threshold.
+    APIs:
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: disk-used-pct-threshold
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_file_limit
+    Description: aximum number of files allowed for the quota target (hard files limit).
+      The value is -1 if the limit is unlimited.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: files.hard_limit
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: file-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_files_used
+    Description: Current number of files used by the quota target.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: files.used.total
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: files-used
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_files_used_pct_file_limit
+    Description: Current number of files used expressed as a percentage of hard file
+      limit.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: files.used.hard_limit_percent
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: files-used-pct-file-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_files_used_pct_soft_file_limit
+    Description: Current number of files used expressed as a percentage of soft file
+      limit.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: files.used.soft_limit_percent
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: files-used-pct-soft-file-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_soft_disk_limit
+    Description: soft disk space limit, in kilobytes, for the quota target. The value
+      is -1 if the limit is unlimited.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: space.soft_limit
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: soft-disk-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_soft_file_limit
+    Description: Soft file limit, in number of files, for the quota target. The value
+      is -1 if the limit is unlimited.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/quota/reports
+        ONTAPCounter: files.soft_limit
+        Template: conf/rest/9.12.0/qtree.yaml
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: soft-file-limit
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: quota_threshold
+    Description: Disk space threshold, in kilobytes, for the quota target. The value
+      is -1 if the limit is unlimited.
+    APIs:
+      - API: ZAPI
+        Endpoint: quota-report-iter
+        ONTAPCounter: threshold
+        Template: conf/zapi/cdot/9.8.0/qtree.yaml
+
+  - Name: security_audit_destination_port
+    Description: The destination port used to forward the message.
+
+  - Name: shelf_average_ambient_temperature
+    Description: Average temperature of all ambient sensors for shelf in Celsius.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_average_fan_speed
+    Description: Average fan speed for shelf in rpm.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_average_temperature
+    Description: Average temperature of all non-ambient sensors for shelf in Celsius.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_disk_count
+    Description: Disk count in a shelf.
+
+  - Name: shelf_max_fan_speed
+    Description: Maximum fan speed for shelf in rpm.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_max_temperature
+    Description: Maximum temperature of all non-ambient sensors for shelf in Celsius.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_min_ambient_temperature
+    Description: Minimum temperature of all ambient sensors for shelf in Celsius.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_min_fan_speed
+    Description: Minimum fan speed for shelf in rpm.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_min_temperature
+    Description: Minimum temperature of all non-ambient sensors for shelf in Celsius.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: shelf_power
+    Description: Power consumed by shelf in Watts.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: snapmirror_break_failed_count
     Description: The number of failed SnapMirror break operations for the relationship
@@ -259,17 +709,17 @@ counters:
   - Name: snapmirror_newest_snapshot_timestamp
     Description: The timestamp of the newest Snapshot copy on the destination volume
 
-  - Name: snapmirror_total_transfer_time_secs
-    Description: Cumulative total transfer time in seconds for the relationship
-
-  - Name: snapmirror_total_transfer_bytes
-    Description: Cumulative bytes transferred for the relationship
+  - Name: snapmirror_resync_failed_count
+    Description: The number of failed SnapMirror resync operations for the relationship
 
   - Name: snapmirror_resync_successful_count
     Description: The number of successful SnapMirror resync operations for the relationship
 
-  - Name: snapmirror_resync_failed_count
-    Description: The number of failed SnapMirror resync operations for the relationship
+  - Name: snapmirror_total_transfer_bytes
+    Description: Cumulative bytes transferred for the relationship
+
+  - Name: snapmirror_total_transfer_time_secs
+    Description: Cumulative total transfer time in seconds for the relationship
 
   - Name: snapmirror_update_failed_count
     Description: The number of successful SnapMirror update operations for the relationship
@@ -281,7 +731,8 @@ counters:
     Description: Total Number of Schedules in this Policy
 
   - Name: volume_inode_files_total
-    Description: Total user-visible file (inode) count, i.e., current maximum number of user-visible files (inodes) that this volume can currently hold.
+    Description: Total user-visible file (inode) count, i.e., current maximum number
+      of user-visible files (inodes) that this volume can currently hold.
     APIs:
       - API: REST
         Endpoint: api/private/cli/volume
@@ -289,329 +740,13 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_inode_files_used
-    Description: Number of user-visible files (inodes) used. This field is valid only when the volume is online.
+    Description: Number of user-visible files (inodes) used. This field is valid only
+      when the volume is online.
     APIs:
       - API: REST
         Endpoint: api/private/cli/volume
         ONTAPCounter: files_used
         Template: conf/rest/9.12.0/volume.yaml
-
-  - Name: volume_sis_compress_saved
-    Description: The total disk space (in bytes) that is saved by compressing blocks on the referenced file system.
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/volume
-        ONTAPCounter: compression_space_saved
-        Template: conf/rest/9.12.0/volume.yaml
-
-  - Name: volume_sis_compress_saved_percent
-    Description: Percentage of the total disk space that is saved by compressing blocks on the referenced file system
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/volume
-        ONTAPCounter: compression_space_saved_percent
-        Template: conf/rest/9.12.0/volume.yaml
-
-  - Name: volume_sis_dedup_saved
-    Description: The total disk space (in bytes) that is saved by deduplication and file cloning.
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/volume
-        ONTAPCounter: dedupe_space_saved
-        Template: conf/rest/9.12.0/volume.yaml
-
-  - Name: volume_sis_dedup_saved_percent
-    Description: Percentage of the total disk space that is saved by deduplication and file cloning.
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/volume
-        ONTAPCounter: dedupe_space_saved_percent
-        Template: conf/rest/9.12.0/volume.yaml
-
-  - Name: volume_sis_total_saved
-    Description: Total space saved (in bytes) in the volume due to deduplication, compression, and file cloning.
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/volume
-        ONTAPCounter: sis_space_saved
-        Template: conf/rest/9.12.0/volume.yaml
-
-  - Name: volume_sis_total_saved_percent
-    Description: Percentage of total disk space that is saved by compressing blocks, deduplication and file cloning.
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/volume
-        ONTAPCounter: sis_space_saved_percent
-        Template: conf/rest/9.12.0/volume.yaml
-
-  - Name: quota_disk_limit
-    Description: Maximum amount of disk space, in kilobytes, allowed for the quota target (hard disk space limit). The value is -1 if the limit is unlimited.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: space.hard_limit
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: disk-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_disk_used
-    Description: Current amount of disk space, in kilobytes, used by the quota target.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: space.used.total
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: disk-used
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_disk_used_pct_disk_limit
-    Description: Current disk space used expressed as a percentage of hard disk limit.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: space.used.hard_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: disk-used-pct-disk-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_disk_used_pct_soft_disk_limit
-    Description: Current disk space used expressed as a percentage of soft disk limit.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: space.used.soft_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: disk-used-pct-soft-disk-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_disk_used_pct_threshold
-    Description: Current disk space used expressed as a percentage of threshold.
-    APIs:
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: disk-used-pct-threshold
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_file_limit
-    Description: aximum number of files allowed for the quota target (hard files limit). The value is -1 if the limit is unlimited.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: files.hard_limit
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: file-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_files_used
-    Description: Current number of files used by the quota target.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: files.used.total
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: files-used
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_files_used_pct_file_limit
-    Description: Current number of files used expressed as a percentage of hard file limit.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: files.used.hard_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: files-used-pct-file-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_files_used_pct_soft_file_limit
-    Description: Current number of files used expressed as a percentage of soft file limit.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: files.used.soft_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: files-used-pct-soft-file-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_soft_disk_limit
-    Description: soft disk space limit, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: space.soft_limit
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: soft-disk-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_soft_file_limit
-    Description: Soft file limit, in number of files, for the quota target. The value is -1 if the limit is unlimited.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/quota/reports
-        ONTAPCounter: files.soft_limit
-        Template: conf/rest/9.12.0/qtree.yaml
-
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: soft-file-limit
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: quota_threshold
-    Description: Disk space threshold, in kilobytes, for the quota target. The value is -1 if the limit is unlimited.
-    APIs:
-      - API: ZAPI
-        Endpoint: quota-report-iter
-        ONTAPCounter: threshold
-        Template: conf/zapi/cdot/9.8.0/qtree.yaml
-
-  - Name: security_audit_destination_port
-    Description: The destination port used to forward the message.
-
-  - Name: shelf_disk_count
-    Description: Disk count in a shelf.
-
-  - Name: shelf_average_ambient_temperature
-    Description: Average temperature of all ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_average_fan_speed
-    Description: Average fan speed for shelf in rpm.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_average_temperature
-    Description: Average temperature of all non-ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_max_fan_speed
-    Description: Maximum fan speed for shelf in rpm.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_max_temperature
-    Description: Maximum temperature of all non-ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_min_ambient_temperature
-    Description: Minimum temperature of all ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_min_fan_speed
-    Description: Minimum fan speed for shelf in rpm.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_min_temperature
-    Description: Minimum temperature of all non-ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_power
-    Description: Power consumed by shelf in Watts.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: volume_inode_used_percent
     Description: volume_inode_files_used / volume_inode_total
@@ -620,9 +755,102 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/volume.yaml
-
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/volume.yaml
 
+  - Name: volume_overwrite_reserve_available
+    Description: amount of storage space that is currently available for overwrites,
+      calculated by subtracting the total amount of overwrite reserve space from the
+      amount that has already been used.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/volume.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: volume_sis_compress_saved
+    Description: The total disk space (in bytes) that is saved by compressing blocks
+      on the referenced file system.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/volume
+        ONTAPCounter: compression_space_saved
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_compress_saved_percent
+    Description: Percentage of the total disk space that is saved by compressing blocks
+      on the referenced file system
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/volume
+        ONTAPCounter: compression_space_saved_percent
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_dedup_saved
+    Description: The total disk space (in bytes) that is saved by deduplication and
+      file cloning.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/volume
+        ONTAPCounter: dedupe_space_saved
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_dedup_saved_percent
+    Description: Percentage of the total disk space that is saved by deduplication and
+      file cloning.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/volume
+        ONTAPCounter: dedupe_space_saved_percent
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_total_saved
+    Description: Total space saved (in bytes) in the volume due to deduplication, compression,
+      and file cloning.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/volume
+        ONTAPCounter: sis_space_saved
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_sis_total_saved_percent
+    Description: Percentage of total disk space that is saved by compressing blocks,
+      deduplication and file cloning.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/volume
+        ONTAPCounter: sis_space_saved_percent
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_size_used_percent
+    Description: percentage of utilized storage space in a volume relative to its total
+      capacity
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/volume.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: volume_snapshot_reserve_used
+    Description: amount of storage space currently used by a volume's snapshot reserve,
+      which is calculated by subtracting the snapshot reserve available space from the
+      snapshot reserve size.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/volume.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
