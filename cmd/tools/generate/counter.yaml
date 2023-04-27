@@ -489,7 +489,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_file_limit
-    Description: aximum number of files allowed for the quota target (hard files limit).
+    Description: Maximum number of files allowed for the quota target (hard files limit).
       The value is -1 if the limit is unlimited.
     APIs:
       - API: REST

@@ -7168,7 +7168,7 @@ Current disk space used expressed as a percentage of threshold.
 
 ### quota_file_limit
 
-aximum number of files allowed for the quota target (hard files limit). The value is -1 if the limit is unlimited.
+Maximum number of files allowed for the quota target (hard files limit). The value is -1 if the limit is unlimited.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
