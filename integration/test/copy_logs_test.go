@@ -22,11 +22,11 @@ func TestCopyLogs(t *testing.T) {
 		panic(err)
 	}
 	for _, container := range containerIds {
-		containerShortId := container.Id[:10]
-		dest := harvestLogDir + "/" + containerShortId + ".log"
-		err = docker.StoreContainerLog(containerShortId, dest)
+		containerShortID := container.ID[:10]
+		dest := harvestLogDir + "/" + containerShortID + ".log"
+		err = docker.StoreContainerLog(containerShortID, dest)
 		if err != nil {
-			log.Error().Err(err).Str("id", containerShortId).Str("dest", dest).Msg("Unable to copy logs")
+			log.Error().Err(err).Str("id", containerShortID).Str("dest", dest).Msg("Unable to copy logs")
 		}
 	}
 }
@@ -43,7 +43,7 @@ func TestNoErrors(t *testing.T) {
 }
 
 func checkLogs(t *testing.T, container docker.Container) {
-	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -v "%s" | grep -E "ERR"`, container.Id, ignoreList())
+	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -v "%s" | grep -E "ERR"`, container.ID, ignoreList())
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
 	// The grep checks for matching lines.
@@ -61,12 +61,12 @@ func checkLogs(t *testing.T, container docker.Container) {
 			}
 		}
 		t.Errorf("ERR checking logs name=%s container=%s cli=%s err=%v output=%s",
-			container.Name(), container.Id, cli, err, string(output))
+			container.Name(), container.ID, cli, err, string(output))
 		return
 	}
 	if len(output) > 0 {
 		t.Errorf("ERRs found in poller logs name=%s id=%s size=%d. Dump of errors follows:\n%s",
-			container.Name(), container.Id[:6], len(output), string(output))
+			container.Name(), container.ID[:6], len(output), string(output))
 	}
 }
 

@@ -398,8 +398,8 @@ func hasDataInDB(query string, waitFor time.Duration) bool {
 
 func generateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
-	queryUrl := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", dashboard.PrometheusURL, query, timeNow)
-	response, _ := utils.GetResponse(queryUrl)
+	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", dashboard.PrometheusURL, query, timeNow)
+	response, _ := utils.GetResponse(queryURL)
 	newExpression := expression
 	/**
 	We are not following standard naming convention for variables in the json

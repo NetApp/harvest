@@ -41,7 +41,7 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 	}
 	importCmds := []string{"grafana", "import", "--overwrite", "--addr", grafanaURL, directoryOption, jsonDir}
 	if docker.IsDockerBasedPoller() {
-		params := []string{"exec", containerIDs[0].Id, "bin/harvest"}
+		params := []string{"exec", containerIDs[0].ID, "bin/harvest"}
 		params = append(params, importCmds...)
 		importOutput, err = utils.Run("docker", params...)
 	} else {

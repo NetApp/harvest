@@ -34,7 +34,7 @@ func TestAlertRules(t *testing.T) {
 	// Evaluate all active ems events
 	notFoundNonBookendEms := make([]string, 0)
 
-	for nonBookendEms, _ := range supportedNonBookendEms {
+	for nonBookendEms := range supportedNonBookendEms {
 		if alertsData[nonBookendEms] == 0 {
 			notFoundNonBookendEms = append(notFoundNonBookendEms, nonBookendEms)
 		}

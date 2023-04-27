@@ -44,7 +44,6 @@ func (r *RPM) Install() bool {
 	asupExecPath := HarvestHome + "/autosupport/asup"
 	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
 	return status && isValidAsup
-	return status
 }
 
 func (r *RPM) Upgrade() bool {
