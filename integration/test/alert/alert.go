@@ -122,12 +122,9 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) map[string]bool {
 			arg1 = vserverArwState[vserverArwCount]
 			vserverArwCount++
 		}
-		// bookendkey is ipaddress for below 2 ems
+		// special case as arg order is different in issuing ems than resolving ems
 		if ems == "sm.mediator.misconfigured" {
-			arg2 = "1.1.1.1"
-		}
-		if ems == "sm.mediator.in.quorum" {
-			arg1 = "1.1.1.1"
+			arg2 = "1"
 		}
 
 		// Handle for node-scoped ems, Passing node-name as input
