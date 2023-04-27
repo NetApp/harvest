@@ -2203,7 +2203,7 @@
           },
           "id": 91,
           "options": {
-            "content": "This dashboard requires Workload/QOS counters templates. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
+            "content": "This dashboard requires Workload/QOS counter templates. They are disabled by default because they typically slow down data collection due to a high number of metrics. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -2957,7 +2957,7 @@
           },
           "id": 103,
           "options": {
-            "content": "This dashboard requires Workload/QOS counters templates. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
+            "content": "This dashboard requires Workload/QOS counter templates. They are disabled by default because they typically slow down data collection due to a high number of metrics. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
