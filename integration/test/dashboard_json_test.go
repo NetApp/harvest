@@ -52,6 +52,8 @@ var excludeCounters = []string{
 	"cluster_peer",
 	"efficiency_savings",
 	"ems_events",
+	"external_service_op_num_",
+	"external_service_op_request_",
 	"fabricpool_cloud_bin_op_latency_average",
 	"fabricpool_cloud_bin_operation",
 	"fcp",
