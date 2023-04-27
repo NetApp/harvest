@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var supportedNonBookendEms []string
+var supportedNonBookendEms map[string]bool
 var alertsData map[string]int
 
 func setup() {
@@ -17,7 +17,7 @@ func setup() {
 
 	// Check if non-bookend ems name is supported for the given cluster
 	supportedNonBookendEms = promAlerts.GenerateEvents(nonBookendEmsName, []string{})
-	log.Info().Msgf("Supported non-bookend ems: %s", supportedNonBookendEms)
+	log.Info().Msgf("Supported non-bookend ems: %v", supportedNonBookendEms)
 
 	// Fetch prometheus alerts
 	alertsData, totalAlerts = promAlerts.GetAlerts()
@@ -34,7 +34,7 @@ func TestAlertRules(t *testing.T) {
 	// Evaluate all active ems events
 	notFoundNonBookendEms := make([]string, 0)
 
-	for _, nonBookendEms := range supportedNonBookendEms {
+	for nonBookendEms, _ := range supportedNonBookendEms {
 		if alertsData[nonBookendEms] == 0 {
 			notFoundNonBookendEms = append(notFoundNonBookendEms, nonBookendEms)
 		}

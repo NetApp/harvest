@@ -97,8 +97,8 @@ func GetEmsAlerts(dir string, fileName string) ([]string, []string, []string) {
 	return nonBookendEms, issuingEms, resolvingEms
 }
 
-func GenerateEvents(emsNames []string, nodeScopedEms []string) []string {
-	supportedEms := make([]string, 0)
+func GenerateEvents(emsNames []string, nodeScopedEms []string) map[string]bool {
+	supportedEms := make(map[string]bool)
 	var jsonValue []byte
 	err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	poller, err2 := conf.PollerNamed(TestClusterName)
@@ -112,21 +112,29 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) []string {
 	volumeArwCount := 0
 	vserverArwCount := 0
 	for _, ems := range emsNames {
-		value := "1"
+		arg1 := "1"
+		arg2 := "2"
 		if ems == "arw.volume.state" {
-			value = volumeArwState[volumeArwCount]
+			arg1 = volumeArwState[volumeArwCount]
 			volumeArwCount++
 		}
 		if ems == "arw.vserver.state" {
-			value = vserverArwState[vserverArwCount]
+			arg1 = vserverArwState[vserverArwCount]
 			vserverArwCount++
+		}
+		// bookendkey is ipaddress for below 2 ems
+		if ems == "sm.mediator.misconfigured" {
+			arg2 = "1.1.1.1"
+		}
+		if ems == "sm.mediator.in.quorum" {
+			arg1 = "1.1.1.1"
 		}
 
 		// Handle for node-scoped ems, Passing node-name as input
 		if utils.Contains(nodeScopedEms, ems) {
-			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], "node": "%s"}`, ems, value, TestNodeName))
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,%s,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], "node": "%s"}`, ems, arg1, arg2, TestNodeName))
 		} else {
-			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}`, ems, value))
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,%s,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}`, ems, arg1, arg2))
 		}
 
 		var data map[string]interface{}
@@ -136,10 +144,10 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) []string {
 			code := errorDetail["code"].(string)
 			target := errorDetail["target"].(string)
 			if !(code == "2" && target == "message-name") {
-				supportedEms = append(supportedEms, ems)
+				supportedEms[ems] = true
 			}
 		} else {
-			supportedEms = append(supportedEms, ems)
+			supportedEms[ems] = true
 		}
 	}
 
