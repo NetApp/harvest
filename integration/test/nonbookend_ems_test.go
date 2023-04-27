@@ -17,7 +17,7 @@ func setup() {
 
 	// Check if non-bookend ems name is supported for the given cluster
 	supportedNonBookendEms = promAlerts.GenerateEvents(nonBookendEmsName, []string{})
-	log.Info().Msgf("Supported non-bookend ems: %s", supportedNonBookendEms)
+	log.Info().Msgf("Supported non-bookend ems: %v", supportedNonBookendEms)
 
 	// Fetch prometheus alerts
 	alertsData, totalAlerts = promAlerts.GetAlerts()
