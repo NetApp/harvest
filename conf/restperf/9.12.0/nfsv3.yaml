@@ -22,6 +22,7 @@ counters:
   - getattr.average_latency        => getattr_avg_latency
   - getattr.total                  => getattr_total
   - latency
+  - latency_histogram              => latency_hist
   - link.average_latency           => link_avg_latency
   - link.total                     => link_total
   - lookup.average_latency         => lookup_avg_latency
@@ -37,6 +38,7 @@ counters:
   - pathconf.total                 => pathconf_total
   - read.average_latency           => read_avg_latency
   - read.total                     => read_total
+  - read_latency_histogram         => read_latency_hist
   - read_ops
   - read_symlink.average_latency   => read_symlink_avg_latency
   - read_symlink.total             => read_symlink_total
@@ -58,6 +60,7 @@ counters:
   - throughput
   - write.average_latency          => write_avg_latency
   - write.total                    => write_total
+  - write_latency_histogram        => write_latency_hist
   - write_ops
   - write_throughput
 
