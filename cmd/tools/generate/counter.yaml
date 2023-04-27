@@ -248,10 +248,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
 
   - Name: metadata_collector_instances
     Description: number of objects collected from monitored cluster
@@ -260,10 +262,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
 
   - Name: metadata_collector_metrics
     Description: number of counters collected from monitored cluster
@@ -272,10 +276,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
 
   - Name: metadata_collector_parse_time
     Description: amount of time to parse XML, JSON, etc. for cluster object
@@ -284,10 +290,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
 
   - Name: metadata_collector_plugin_time
     Description: amount of time for all plugins to post-process metrics
@@ -296,10 +304,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
 
   - Name: metadata_collector_poll_time
     Description: amount of time it took for the poll to finish
@@ -308,10 +318,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
 
   - Name: metadata_collector_task_time
     Description: amount of time it took for each collector's subtasks to complete
@@ -320,10 +332,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
 
   - Name: metadata_component_count
     Description: number of metrics collected for each object
@@ -332,10 +346,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
 
   - Name: metadata_component_status
     Description: status of the collector - 0 means running, 1 means standby, 2 means
@@ -345,10 +361,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: enum
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: enum
 
   - Name: metadata_exporter_count
     Description: number of metrics and labels exported
@@ -357,10 +375,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
 
   - Name: metadata_exporter_time
     Description: amount of time it took to render, export, and serve exported data
@@ -369,10 +389,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: microseconds
 
   - Name: metadata_target_goroutines
     Description: number of goroutines that exist within the poller
@@ -381,10 +403,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: scalar
 
   - Name: metadata_target_status
     Description: status of the system being monitored. 0 means reachable, 1 means unreachable
@@ -393,10 +417,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: enum
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+        Unit: enum
 
   - Name: node_cpu_busytime
     Description: The time (in hundredths of a second) that the CPU has been doing useful
@@ -414,10 +440,12 @@ counters:
         Endpoint: api/cluster/counter/tables/qos_detail
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/workload_detail.yaml
+        Unit: microseconds
       - API: ZAPI
         Endpoint: perf-object-get-instances workload_detail
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/9.12.0/workload_detail.yaml
+        Unit: microseconds
 
   - Name: qos_detail_volume_resource_latency
     Description: average latency for volume on Data ONTAP subsystems
@@ -426,10 +454,12 @@ counters:
         Endpoint: api/cluster/counter/tables/qos_detail_volume
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/workload_detail_volume.yaml
+        Unit: microseconds
       - API: ZAPI
         Endpoint: perf-object-get-instances workload_detail_volume
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/9.12.0/workload_detail_volume.yaml
+        Unit: microseconds
 
   - Name: quota_disk_limit
     Description: Maximum amount of disk space, in kilobytes, allowed for the quota target
