@@ -1,7 +1,10 @@
-This document contains details about Harvest metrics and their relevant ONTAP ZAPI and REST API mappings.
+This document describes how Harvest metrics relate to their relevant ONTAP ZAPI and REST mappings, including:
 
-Details about which Harvest metrics each dashboard uses can be generated on demand by running `bin/harvest grafana metrics`. See
+- Details about which Harvest metrics each dashboard uses.
+These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
+
+- More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
 Creation Date : 2023-Apr-27
@@ -842,6 +845,78 @@ Provides the sensor reading.
 |--------|----------|--------|---------|
 | REST | `api/cluster/sensors` | `value` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `environment-sensors-get-iter` | `environment-sensors-info.threshold-sensor-value` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### external_service_op_num_not_found_responses
+
+Number of &apos;Not Found&apos; responses for calls to this operation.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `num_not_found_responses`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
+
+
+### external_service_op_num_request_failures
+
+A cumulative count of all request failures.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `num_request_failures`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
+
+
+### external_service_op_num_requests_sent
+
+Number of requests sent to this service.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `num_requests_sent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
+
+
+### external_service_op_num_responses_received
+
+Number of responses received from the server (does not include timeouts).
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `num_responses_received`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
+
+
+### external_service_op_num_successful_responses
+
+Number of successful responses to this operation.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `num_successful_responses`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
+
+
+### external_service_op_num_timeouts
+
+Number of times requests to the server for this operation timed out, meaning no response was recevied in a given time period.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `num_timeouts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
+
+
+### external_service_op_request_latency
+
+Average latency of requests for operations of this type on this server.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `request_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> num_requests_sent | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
+
+
+### external_service_op_request_latency_hist
+
+This histogram holds the latency values for requests of this operation to the specified server.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances external_service_op` | `request_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml | 
 
 
 ### fabricpool_average_latency
@@ -8317,6 +8392,7 @@ Histogram of latency for NFSv3 operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
@@ -8766,6 +8842,7 @@ Histogram of latency for Read operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv3` | `read_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
@@ -9285,6 +9362,7 @@ Histogram of latency for Write operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv3` | `write_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
