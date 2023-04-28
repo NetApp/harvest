@@ -315,7 +315,8 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "filterable": true
           },
           "mappings": [],
           "thresholds": {
@@ -576,5 +577,5 @@
   "timezone": "",
   "title": "StorageGrid: Tenants",
   "uid": "",
-  "version": 1
+  "version": 2
 }
