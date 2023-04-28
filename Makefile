@@ -134,6 +134,8 @@ harvest: deps
 	@echo "Building daemonize"
 	@cd cmd/tools/daemonize; gcc daemonize.c -o ../../../bin/daemonize
 
+	@cp service/contrib/grafana bin; chmod +x bin/grafana
+
 ###############################################################################
 # Build tar gz distribution
 ###############################################################################
