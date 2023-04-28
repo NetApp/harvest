@@ -715,6 +715,7 @@ func (e *Ems) updateMatrix() {
 	for issuingEms, mx := range tempMap {
 		if metr, ok = mx.GetMetrics()["events"]; !ok {
 			e.Logger.Error().
+				Str("issuingEms", issuingEms).
 				Str("name", "events").
 				Msg("failed to get metric")
 			continue
