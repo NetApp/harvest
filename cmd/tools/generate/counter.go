@@ -35,6 +35,14 @@ var (
 		"workload_detail.yaml":        {},
 		"workload_detail_volume.yaml": {},
 	}
+	excludeCounters = map[string]struct{}{
+		"write_latency_histogram": {},
+		"read_latency_histogram":  {},
+		"latency_histogram":       {},
+		"nfsv3_latency_hist":      {},
+		"read_latency_hist":       {},
+		"write_latency_hist":      {},
+	}
 )
 
 type Counters struct {
@@ -243,6 +251,9 @@ func processRestConfigCounters(path string) map[string]Counter {
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
+			if _, ok := excludeCounters[name]; ok {
+				continue
+			}
 			description := searchDescriptionSwagger(object, name)
 			harvestName := strings.Join([]string{object, display}, "_")
 			if m == "float" {
@@ -341,6 +352,9 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 			}
 			harvestName := strings.Join([]string{object, display}, "_")
 			if m == "float" {
+				if _, ok := excludeCounters[name]; ok {
+					continue
+				}
 				if zapiTypeMap[name] != "string" {
 					co := Counter{
 						Name:        harvestName,
@@ -393,6 +407,9 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	}
 
 	for k, v := range zc {
+		if _, ok := excludeCounters[k]; ok {
+			continue
+		}
 		co := Counter{
 			Name: k,
 			APIs: []MetricDef{
@@ -596,6 +613,10 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 			return true
 		}
 		ontapCounterName := r.Get("name").String()
+		if _, ok := excludeCounters[ontapCounterName]; ok {
+			return true
+		}
+
 		description := r.Get("description").String()
 		ty := r.Get("type").String()
 		if override != nil {

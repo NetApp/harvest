@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Apr-27
+Creation Date : 2023-Apr-28
 ONTAP Version: 9.12.1
 ```
 ## Understanding the structure
@@ -8386,16 +8386,6 @@ Average latency of nfsv42 requests. This counter keeps track of the average resp
 | ZAPI | `perf-object-get-instances nfsv4_1` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
-### svm_nfs_latency_hist
-
-Histogram of latency for NFSv3 operations.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
-
-
 ### svm_nfs_layoutcommit_avg_latency
 
 Average latency of NFSv4.2 LAYOUTCOMMIT operations.
@@ -8834,16 +8824,6 @@ Average latency of NFSv4.2 READ operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
-
-
-### svm_nfs_read_latency_hist
-
-Histogram of latency for Read operations.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `read_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_read_ops
@@ -9354,16 +9334,6 @@ Average latency of NFSv4.2 WRITE operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
-
-
-### svm_nfs_write_latency_hist
-
-Histogram of latency for Write operations.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `write_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_write_ops
