@@ -37,8 +37,8 @@ type Ems struct {
 	maxURLSize     int
 	DefaultLabels  []string
 	severityFilter string
-	eventNames     []string            // consist of all ems events supported
-	bookendEmsMap  map[string][]string // This is reverse bookend ems map, [Resolving ems]:[Issuing ems slice]
+	eventNames     []string                   // consist of all ems events supported
+	bookendEmsMap  map[string]map[string]bool // This is reverse bookend ems map, [Resolving ems]:map[Issuing ems slice][exist]
 	resolveAfter   time.Duration
 }
 
@@ -93,7 +93,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	// init ems props
 	e.InitEmsProp()
 
-	e.bookendEmsMap = make(map[string][]string)
+	e.bookendEmsMap = make(map[string]map[string]bool)
 
 	if err = e.InitClient(); err != nil {
 		return err
@@ -322,8 +322,8 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	e.eventNames = filteredNames
 
 	// check instance timestamp and remove it after given resolve_after duration and warning when total instance in cache > 1000 instance
-	for _, issuingEmsList := range e.bookendEmsMap {
-		for _, issuingEms := range issuingEmsList {
+	for _, issuingEmsMap := range e.bookendEmsMap {
+		for issuingEms := range issuingEmsMap {
 			if mx := e.Matrix[issuingEms]; mx != nil {
 				for instanceKey, instance := range mx.GetInstances() {
 					if metr, ok = mx.GetMetrics()["timestamp"]; !ok {
@@ -511,7 +511,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 		}
 		msgName := messageName.String()
 
-		if issuingEmsList, ok := e.bookendEmsMap[msgName]; ok {
+		if issuingEmsMap, ok := e.bookendEmsMap[msgName]; ok {
 			props := prop[msgName]
 			if len(props) == 0 {
 				e.Logger.Warn().Str("resolving ems", msgName).
@@ -531,7 +531,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			     - loop would iterate for all possible issuing ems
 			     - if one or more issuing ems exist then resolve all matching ems else log warning as unable to find matching ems in cache
 			*/
-			for _, issuingEms := range issuingEmsList {
+			for issuingEms := range issuingEmsMap {
 				if mx = m[issuingEms]; mx != nil {
 					metr, exist := mx.GetMetrics()["events"]
 					if !exist {
@@ -557,8 +557,8 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 
 			if !emsResolved {
-				e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", strings.Join(issuingEmsList, ",")).
-					Msg("Unable to find matching issue ems in cache")
+				e.Logger.Warn().Str("resolving ems", msgName).
+					Msgf("Unable to find matching issue ems in cache: %v", issuingEmsMap)
 			}
 		} else {
 			if _, ok := m[msgName]; !ok {
@@ -699,8 +699,8 @@ func (e *Ems) updateMatrix() {
 
 	tempMap := make(map[string]*matrix.Matrix)
 	// store the bookend ems metric in tempMap
-	for _, issuingEmsList := range e.bookendEmsMap {
-		for _, issuingEms := range issuingEmsList {
+	for _, issuingEmsMap := range e.bookendEmsMap {
+		for issuingEms := range issuingEmsMap {
 			if mx, exist := e.Matrix[issuingEms]; exist {
 				tempMap[issuingEms] = mx
 			}

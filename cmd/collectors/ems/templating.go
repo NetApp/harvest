@@ -151,6 +151,9 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 	}
 	e.Logger.Debug().Str("bookend ems resolve After", e.resolveAfter.String()).Msg("")
 
-	e.bookendEmsMap[resolveEmsName] = append(e.bookendEmsMap[resolveEmsName], issueEmsProp.Name)
+	if _, ok := e.bookendEmsMap[resolveEmsName]; !ok {
+		e.bookendEmsMap[resolveEmsName] = make(map[string]bool)
+	}
+	e.bookendEmsMap[resolveEmsName][issueEmsProp.Name] = true
 	e.emsProp[resolveEmsName] = append(e.emsProp[resolveEmsName], &prop)
 }
