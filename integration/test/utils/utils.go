@@ -62,9 +62,7 @@ func Exec(dir string, command string, env []string, arg ...string) (string, erro
 	fmt.Println("CMD : " + cmdString)
 	cmd := exec.Command(command, arg...)
 	cmd.Env = os.Environ()
-	for _, v := range env {
-		cmd.Env = append(cmd.Env, v)
-	}
+	cmd.Env = append(cmd.Env, env...)
 	if len(dir) > 0 {
 		cmd.Dir = dir
 	}
@@ -89,16 +87,11 @@ func Exec(dir string, command string, env []string, arg ...string) (string, erro
 func DownloadFile(filepath string, url string) error {
 
 	// Get the data
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(resp.Body)
+	defer resp.Body.Close()
 
 	// Create the file
 	out, err := os.Create(filepath)
@@ -177,7 +170,7 @@ func WaitForGrafana() bool {
 		if IsURLReachable(GetGrafanaHTTPURL()) {
 			return true
 		}
-		if time.Now().Sub(now) > waitFor {
+		if time.Since(now) > waitFor {
 			return false
 		}
 		time.Sleep(time.Second * 1)
@@ -185,11 +178,12 @@ func WaitForGrafana() bool {
 }
 
 func IsURLReachable(url string) bool {
-	response, err := http.Get(url)
-	if err == nil && response.StatusCode == 200 {
-		return true
+	response, err := http.Get(url) //nolint:gosec
+	if err != nil {
+		return false
 	}
-	return false
+	defer response.Body.Close()
+	return response.StatusCode == 200
 }
 
 func AddPrometheusToGrafana() {
@@ -198,8 +192,7 @@ func AddPrometheusToGrafana() {
 	method := "POST"
 	jsonValue := []byte(fmt.Sprintf(`{"name": "Prometheus", "type": "prometheus", "access": "direct",
 		"url": "%s", "isDefault": true, "basicAuth": false}`, "http://"+GetOutboundIP()+":"+PrometheusPort))
-	var data map[string]interface{}
-	data = SendReqAndGetRes(url, method, jsonValue)
+	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["message"])
 	if key == "Datasource added" {
 		log.Info().Msg("Prometheus has been added successfully into Grafana .")
@@ -215,8 +208,7 @@ func CreateGrafanaToken() string {
 	name := fmt.Sprint(time.Now().Unix())
 	values := map[string]string{"name": name, "role": "Admin"}
 	jsonValue, _ := json.Marshal(values)
-	var data map[string]interface{}
-	data = SendReqAndGetRes(url, method, jsonValue)
+	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["key"])
 	if len(key) > 0 {
 		log.Info().Msg("Grafana: Token has been created successfully.")

@@ -12,17 +12,17 @@ import (
 )
 
 type Folder struct {
-	Id    int64  `json:"id"`
-	Uid   string `json:"uid"`
+	ID    int64  `json:"id"`
+	UID   string `json:"uid"`
 	Title string `json:"title"`
 }
 type Dashboard struct {
-	Id          int64  `json:"id"`
-	Uid         string `json:"uid"`
+	ID          int64  `json:"id"`
+	UID         string `json:"uid"`
 	Title       string `json:"title"`
 	FolderTitle string `json:"folderTitle"`
-	FolderUrl   string `json:"folderUrl"`
-	FolderId    int64  `json:"folderId"`
+	FolderURL   string `json:"folderUrl"`
+	FolderID    int64  `json:"folderId"`
 }
 
 var cDotFolder, sevenModeFolder string
@@ -65,7 +65,7 @@ func TestImport(t *testing.T) {
 
 func TestCModeDashboardCount(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	folderId := getFolderId(cDotFolder, t)
+	folderID := getFolderID(t, cDotFolder)
 	expectedName := []string{
 		"Harvest Metadata",
 		"ONTAP: Aggregate",
@@ -88,12 +88,12 @@ func TestCModeDashboardCount(t *testing.T) {
 		"ONTAP: cDOT",
 	}
 
-	verifyDashboards(folderId, expectedName, t)
+	verifyDashboards(t, folderID, expectedName)
 }
 
 func TestSevenModeDashboardCount(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	folderId := getFolderId(sevenModeFolder, t)
+	folderID := getFolderID(t, sevenModeFolder)
 	expectedName := []string{
 		"ONTAP: Aggregate 7 mode",
 		"ONTAP: Cluster 7 mode",
@@ -104,31 +104,31 @@ func TestSevenModeDashboardCount(t *testing.T) {
 		"ONTAP: Shelf 7 mode",
 		"ONTAP: Volume 7 mode",
 	}
-	verifyDashboards(folderId, expectedName, t)
+	verifyDashboards(t, folderID, expectedName)
 }
 
-func getFolderId(folderName string, t *testing.T) int64 {
+func getFolderID(t *testing.T, folderName string) int64 {
 	log.Info().Msg("Find " + folderName + " folder id")
 	data, err := utils.GetResponseBody(utils.GetGrafanaHTTPURL() + "/api/folders?limit=100")
 	utils.PanicIfNotNil(err)
 	var dataFolder []Folder
-	var folderId int64
+	var folderID int64
 	err = json.Unmarshal(data, &dataFolder)
 	utils.PanicIfNotNil(err)
 	for _, values := range dataFolder {
 		if values.Title == folderName {
-			folderId = values.Id
+			folderID = values.ID
 			break
 		}
 	}
-	if !(folderId > 0) {
+	if !(folderID > 0) {
 		t.Errorf("Folder id is empty or zero for folder=[%s]", folderName)
 	}
-	return folderId
+	return folderID
 }
 
-func verifyDashboards(folderId int64, expectedName []string, t *testing.T) {
-	log.Info().Msg(fmt.Sprintf("Find list of dashboard for folder %d", folderId))
+func verifyDashboards(t *testing.T, folderID int64, expectedName []string) {
+	log.Info().Msg(fmt.Sprintf("Find list of dashboard for folder %d", folderID))
 	url := utils.GetGrafanaHTTPURL() + "/api/search?type=dash-db"
 	log.Info().Msg(url)
 	data, err := utils.GetResponseBody(url)
@@ -138,7 +138,7 @@ func verifyDashboards(folderId int64, expectedName []string, t *testing.T) {
 	utils.PanicIfNotNil(err)
 	var actualNames []string
 	var notFoundList []string
-	log.Info().Int64("folderId", folderId).Msg("Folder details")
+	log.Info().Int64("folderID", folderID).Msg("Folder details")
 	for _, values := range dataDashboard {
 		actualNames = append(actualNames, values.Title)
 	}

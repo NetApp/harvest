@@ -71,7 +71,7 @@ func TestEmsTestSuite(t *testing.T) {
 	setupAlerts()
 
 	// Evaluate bookend active ems events
-	for issuingEms, _ := range supportedIssuingEms {
+	for issuingEms := range supportedIssuingEms {
 		// If the issuingEms did not exist before, then ignore the test-case.
 		if oldAlertsData[issuingEms] > 0 {
 			v := newAlertsData[issuingEms] - oldAlertsData[issuingEms]

@@ -1,4 +1,4 @@
-package promAlerts
+package promalerts
 
 import (
 	"fmt"
@@ -27,11 +27,6 @@ var volumeArwState = []string{
 var vserverArwState = []string{
 	`"disabled"`,
 	`"dry-run"`,
-}
-
-type PromAlert struct {
-	message string
-	count   int
 }
 
 func GetAlerts() (map[string]int, int) {
@@ -134,8 +129,7 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) map[string]bool {
 			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,%s,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}`, ems, arg1, arg2))
 		}
 
-		var data map[string]interface{}
-		data = utils.SendPostReqAndGetRes(url, method, jsonValue, Admin, dc1.Password)
+		data := utils.SendPostReqAndGetRes(url, method, jsonValue, Admin, dc1.Password)
 		if response := data["error"]; response != nil {
 			errorDetail := response.(map[string]interface{})
 			code := errorDetail["code"].(string)
