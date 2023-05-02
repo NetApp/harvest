@@ -1,6 +1,6 @@
 Harvest can be used to import dashboards to Grafana.
 
-The `bin/harvest garfana` utility requires the address (hostname or IP), port of the Grafana server,
+The `bin/harvest grafana` utility requires the address (hostname or IP), port of the Grafana server,
 and a Grafana API token. The port can be omitted if Grafana is configured to redirect the URL. Use the `-d` flag to
 point to the directory that contains the dashboards.
 
