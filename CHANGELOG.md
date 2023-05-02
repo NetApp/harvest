@@ -195,6 +195,7 @@ this release:
 - Restore Bin/Grafana For Nabox ([#2022](https://github.com/NetApp/harvest/pull/2022))
 - Remove Cifs Clients Template ([#2024](https://github.com/NetApp/harvest/pull/2024))
 - Fixing Key Order In Qtree Plugin ([#2028](https://github.com/NetApp/harvest/pull/2028))
+- 7Mode Qtree Key Order In Plugin ([#2033](https://github.com/NetApp/harvest/pull/2033))
 
 ### :closed_book: Documentation
 - Clarify Envvar And Overlapping Collectors ([#1709](https://github.com/NetApp/harvest/pull/1709))
