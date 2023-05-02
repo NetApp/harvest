@@ -50,7 +50,7 @@ When you run `bin/harvest grafana import`, you may optionally pass a set of labe
 `bin/harvest grafana import --labels org --labels dept`
 
 This will cause Harvest to do the following for each dashboard:
-1. Parse each dashboard and add a new variable for each label passed on the cmd line
+1. Parse each dashboard and add a new variable for each label passed on the command line
 2. Modify each dashboard variable to use the new label variable(s) in a chained query.
 
 Here's an example:
