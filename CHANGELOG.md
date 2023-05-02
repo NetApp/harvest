@@ -13,7 +13,7 @@
   - StorageGRID and ONTAP fabric pool
 
 - :star: Several of the existing dashboards include new panels in this release:
-  - Qtree dashboard includes topK qtress by disk-used growth
+  - Qtree dashboard includes topK qtrees by disk-used growth
   - StorageGRID Overview dashboard includes traffic classification panels
   - Network dashboard includes net routes
   - Average CPU utilization and CPU busy are included in the cDOT, Cluster, Node, and Metrocluster dashboards
@@ -62,7 +62,7 @@
 :bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please
 read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
 
-:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the `bin/harvest/grafana import` CLI, from the Grafana UI, or from the `Maintenance > Reset Harvest Dashboards` button in NAbox.
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the `Maintenance > Reset Harvest Dashboards` button in NAbox.
 
 ## Known Issues
 
