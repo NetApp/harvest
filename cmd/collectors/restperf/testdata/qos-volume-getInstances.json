@@ -1,0 +1,280 @@
+{
+  "records": [
+    {
+      "uuid": "82f651fb-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest-wid8678",
+      "workload_class": "user_defined",
+      "wid": 8678,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/82f651fb-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "8333dc06-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0001-wid13148",
+      "workload_class": "user_defined",
+      "wid": 13148,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0001",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/8333dc06-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "8374fb9e-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0002-wid50034",
+      "workload_class": "user_defined",
+      "wid": 50034,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0002",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/8374fb9e-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "83a7cd42-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0003-wid15381",
+      "workload_class": "user_defined",
+      "wid": 15381,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0003",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/83a7cd42-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "83d875b5-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0004-wid28774",
+      "workload_class": "user_defined",
+      "wid": 28774,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0004",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/83d875b5-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "847469e4-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0005-wid4532",
+      "workload_class": "user_defined",
+      "wid": 4532,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0005",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/847469e4-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "84c90da1-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0006-wid52493",
+      "workload_class": "user_defined",
+      "wid": 52493,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0006",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/84c90da1-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "851d15e3-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0007-wid1146",
+      "workload_class": "user_defined",
+      "wid": 1146,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0007",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/851d15e3-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "857628ca-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest__0008-wid41432",
+      "workload_class": "user_defined",
+      "wid": 41432,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "RahulTest__0008",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/857628ca-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    }
+  ],
+  "num_records": 225,
+  "_links": {
+    "self": {
+      "href": "/api/storage/qos/workloads?return_records=true&fields=*&workload-class=autovolume|user_defined"
+    }
+  }
+}

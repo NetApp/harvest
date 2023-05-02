@@ -360,16 +360,15 @@ func AddIntString(input string, value int) string {
 	return strconv.FormatInt(int64(i), 10)
 }
 
-var metricTypeRegex = regexp.MustCompile(`\[(.*?)]`)
+var metricReplacer = strings.NewReplacer("\n", "", " ", "", "\"", "")
 
 func ArrayMetricToString(value string) string {
-	r := strings.NewReplacer("\n", "", " ", "", "\"", "")
-	s := r.Replace(value)
+	s := metricReplacer.Replace(value)
 
-	match := metricTypeRegex.FindAllStringSubmatch(s, -1)
-	if match != nil {
-		name := match[0][1]
-		return name
+	openBracket := strings.Index(s, "[")
+	closeBracket := strings.Index(s, "]")
+	if openBracket > -1 && closeBracket > -1 {
+		return s[openBracket+1 : closeBracket]
 	}
 	return value
 }

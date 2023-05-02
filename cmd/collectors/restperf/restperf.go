@@ -230,9 +230,9 @@ func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matri
 			return true
 		}
 
-		name := c.Get("name").String()
+		name := strings.Clone(c.Get("name").String())
 		if _, has := r.Prop.Metrics[name]; has {
-			d := c.Get("denominator.name").String()
+			d := strings.Clone(c.Get("denominator.name").String())
 			if d != "" {
 				if _, has := r.Prop.Metrics[d]; !has {
 					// export false
@@ -244,22 +244,22 @@ func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matri
 		return true
 	})
 
-	counterSchema.ForEach(func(key, c gjson.Result) bool {
+	counterSchema.ForEach(func(_, c gjson.Result) bool {
 
 		if !c.IsObject() {
 			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
 			return true
 		}
 
-		name := c.Get("name").String()
+		name := strings.Clone(c.Get("name").String())
 		if _, has := r.Prop.Metrics[name]; has {
 			if _, ok := r.perfProp.counterInfo[name]; !ok {
 				r.perfProp.counterInfo[name] = &counter{
-					name:        c.Get("name").String(),
-					description: c.Get("description").String(),
-					counterType: c.Get("type").String(),
-					unit:        c.Get("unit").String(),
-					denominator: c.Get("denominator.name").String(),
+					name:        name,
+					description: strings.Clone(c.Get("description").String()),
+					counterType: strings.Clone(c.Get("type").String()),
+					unit:        strings.Clone(c.Get("unit").String()),
+					denominator: strings.Clone(c.Get("denominator.name").String()),
 				}
 				if p := r.GetOverride(name); p != "" {
 					r.perfProp.counterInfo[name].counterType = p
@@ -293,20 +293,132 @@ func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matri
 	return nil, nil
 }
 
+func parseProps(instanceData gjson.Result) map[string]gjson.Result {
+	var props = map[string]gjson.Result{
+		"id": gjson.Get(instanceData.String(), "id"),
+	}
+
+	instanceData.ForEach(func(key, v gjson.Result) bool {
+		keyS := key.String()
+		if keyS == "properties" {
+			v.ForEach(func(_, each gjson.Result) bool {
+				key := each.Get("name").String()
+				value := each.Get("value")
+				props[key] = value
+				return true
+			})
+			return false
+		}
+		return true
+	})
+	return props
+}
+
 func parseProperties(instanceData gjson.Result, property string) gjson.Result {
+	var (
+		result gjson.Result
+	)
+
 	if property == "id" {
 		value := gjson.Get(instanceData.String(), "id")
 		return value
 	}
-	t := gjson.Get(instanceData.String(), "properties.#.name")
 
-	for _, name := range t.Array() {
-		if name.String() == property {
-			value := gjson.Get(instanceData.String(), "properties.#(name="+property+").value")
-			return value
+	instanceData.ForEach(func(key, v gjson.Result) bool {
+		keyS := key.String()
+		if keyS == "properties" {
+			v.ForEach(func(_, each gjson.Result) bool {
+				if each.Get("name").String() == property {
+					value := each.Get("value")
+					result = value
+					return false
+				}
+				return true
+			})
+			return false
 		}
-	}
-	return gjson.Result{}
+		return true
+	})
+
+	return result
+}
+
+func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Metric) map[string]*metricResponse {
+	var (
+		mapMetricResponses = make(map[string]*metricResponse)
+		numWant            = len(metric)
+		numSeen            = 0
+	)
+	instanceData.ForEach(func(key, v gjson.Result) bool {
+		keyS := key.String()
+		if keyS == "counters" {
+			v.ForEach(func(key, each gjson.Result) bool {
+				if numSeen == numWant {
+					return false
+				}
+				name := each.Get("name").String()
+				_, ok := metric[name]
+				if !ok {
+					return true
+				}
+				value := each.Get("value").String()
+				if value != "" {
+					mapMetricResponses[name] = &metricResponse{value: strings.Clone(value), label: ""}
+					numSeen++
+					return true
+				}
+				values := each.Get("values").String()
+				labels := each.Get("labels").String()
+				if values != "" {
+					mapMetricResponses[name] = &metricResponse{
+						value:   util.ArrayMetricToString(strings.Clone(values)),
+						label:   util.ArrayMetricToString(strings.Clone(labels)),
+						isArray: true,
+					}
+					numSeen++
+					return true
+				}
+				subCounters := each.Get("counters")
+				if !subCounters.IsArray() {
+					return true
+				}
+
+				// handle sub metrics
+				subLabelsS := strings.Clone(labels)
+				subLabelsS = util.ArrayMetricToString(subLabelsS)
+				subLabelSlice := strings.Split(subLabelsS, ",")
+				var finalLabels []string
+				var finalValues []string
+				var vLen int
+				subCounters.ForEach(func(key, subCounter gjson.Result) bool {
+					label := strings.Clone(subCounter.Get("label").String())
+					subValues := subCounter.Get("values").String()
+					m := util.ArrayMetricToString(strings.Clone(subValues))
+					ms := strings.Split(m, ",")
+					for range ms {
+						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
+						vLen += 1
+					}
+					if vLen > len(subLabelSlice) {
+						return false
+					}
+					finalValues = append(finalValues, ms...)
+					return true
+				})
+				if vLen == len(subLabelSlice) {
+					mr := metricResponse{
+						value:   strings.Join(finalValues, ","),
+						label:   strings.Join(finalLabels, ","),
+						isArray: true,
+					}
+					mapMetricResponses[name] = &mr
+				}
+				return true
+			})
+		}
+		return true
+	})
+	return mapMetricResponses
 }
 
 func parseMetricResponse(instanceData gjson.Result, metric string) *metricResponse {
@@ -328,12 +440,13 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 			subLabels := many[3]
 			subValues := many[4]
 			if value.String() != "" {
-				return &metricResponse{value: value.String(), label: "", isArray: false}
+				return &metricResponse{value: strings.Clone(value.String()), label: ""}
 			}
 			if values.String() != "" {
 				return &metricResponse{
-					value: util.ArrayMetricToString(values.String()),
-					label: util.ArrayMetricToString(labels.String()), isArray: true,
+					value:   util.ArrayMetricToString(strings.Clone(values.String())),
+					label:   util.ArrayMetricToString(strings.Clone(labels.String())),
+					isArray: true,
 				}
 			}
 
@@ -341,15 +454,15 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 			if subLabels.String() != "" {
 				var finalLabels []string
 				var finalValues []string
-				subLabelsS := labels.String()
+				subLabelsS := strings.Clone(labels.String())
 				subLabelsS = util.ArrayMetricToString(subLabelsS)
 				subLabelSlice := strings.Split(subLabelsS, ",")
 				ls := subLabels.Array()
 				vs := subValues.Array()
 				var vLen int
 				for i, v := range vs {
-					label := ls[i].String()
-					m := util.ArrayMetricToString(v.String())
+					label := strings.Clone(ls[i].String())
+					m := util.ArrayMetricToString(strings.Clone(v.String()))
 					ms := strings.Split(m, ",")
 					for range ms {
 						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
@@ -462,7 +575,6 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 }
 
 func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
-
 	var (
 		err         error
 		perfRecords []rest.PerfRecord
@@ -521,7 +633,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	ts = float64(startTime.UnixNano()) / BILLION
 
 	startTime = time.Now()
-	parseD = time.Since(startTime)
 	instIndex = -1
 
 	if len(perfRecords) == 0 {
@@ -538,7 +649,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			r.Logger.Warn().Msg("Missing timestamp in response")
 		}
 
-		pr.ForEach(func(key, instanceData gjson.Result) bool {
+		pr.ForEach(func(_, instanceData gjson.Result) bool {
 			var (
 				instanceKey     string
 				instance        *matrix.Instance
@@ -552,12 +663,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				return true
 			}
 
+			props := parseProps(instanceData)
+
 			if len(instanceKeys) != 0 {
 				// extract instance key(s)
 				for _, k := range instanceKeys {
-					value := parseProperties(instanceData, k)
-					if value.Exists() {
-						instanceKey += value.String()
+					value, ok := props[k]
+					if ok {
+						instanceKey += strings.Clone(value.String())
 					} else {
 						r.Logger.Warn().Str("key", k).Msg("missing key")
 					}
@@ -618,17 +731,18 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			}
 
 			for label, display := range r.Prop.InstanceLabels {
-				value := parseProperties(instanceData, label)
-				if value.Exists() {
+				value, ok := props[label]
+				if ok {
 					if value.IsArray() {
 						var labelArray []string
-						for _, r := range value.Array() {
-							labelString := r.String()
+						value.ForEach(func(_, r gjson.Result) bool {
+							labelString := strings.Clone(r.String())
 							labelArray = append(labelArray, labelString)
-						}
+							return true
+						})
 						instance.SetLabel(display, strings.Join(labelArray, ","))
 					} else {
-						instance.SetLabel(display, value.String())
+						instance.SetLabel(display, strings.Clone(value.String()))
 					}
 					count++
 				} else {
@@ -648,10 +762,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				}
 			}
 
+			metricResponses := parseMetricResponses(instanceData, r.Prop.Metrics)
+
 			for name, metric := range r.Prop.Metrics {
-				f := parseMetricResponse(instanceData, name)
-				if f.value != "" {
-					description := strings.ToLower(r.perfProp.counterInfo[name].description)
+				f, ok := metricResponses[name]
+				if ok {
 					// special case for workload_detail
 					if isWorkloadDetailObject(r.Prop.Query) {
 						if name == "wait_time" || name == "service_time" {
@@ -692,6 +807,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
 							// if a counter is a histogram
 							isHistogram = false
+							description := strings.ToLower(r.perfProp.counterInfo[name].description)
 							if len(labels) > 0 && strings.Contains(description, "histogram") {
 								key := name + ".bucket"
 								histogramMetric = curMat.GetMetric(key)
@@ -812,6 +928,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		}
 	}
 
+	parseD = time.Since(startTime)
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
@@ -1059,7 +1176,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 		value := parseProperties(instanceData, "name")
 		if value.Exists() {
-			instanceKey += value.String()
+			instanceKey += strings.Clone(value.String())
 		} else {
 			r.Logger.Warn().Str("key", "name").Msg("skip instance, missing key")
 			continue
@@ -1122,7 +1239,6 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 
 // PollInstance updates instance cache
 func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
-
 	var (
 		err     error
 		records []gjson.Result
@@ -1200,7 +1316,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matr
 				value = parseProperties(instanceData, k)
 			}
 			if value.Exists() {
-				instanceKey += value.String()
+				instanceKey += strings.Clone(value.String())
 			} else {
 				r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
 				break
@@ -1220,7 +1336,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matr
 			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 				for label, display := range r.perfProp.qosLabels {
 					if value := instanceData.Get(label); value.Exists() {
-						instance.SetLabel(display, value.String())
+						instance.SetLabel(display, strings.Clone(value.String()))
 					} else {
 						// lun,file,qtree may not always exist for workload
 						r.Logger.Trace().Str("label", label).Str("instanceKey", instanceKey).Msg("Missing label")
