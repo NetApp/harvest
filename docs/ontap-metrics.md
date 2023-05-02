@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Apr-28
+Creation Date : 2023-May-02
 ONTAP Version: 9.12.1
 ```
 ## Understanding the structure
@@ -2612,6 +2612,16 @@ amount of time to collect data from monitored cluster object
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
+### metadata_collector_calc_time
+
+amount of time it took for computing metrics between two consecutive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+
+
 ### metadata_collector_instances
 
 number of objects collected from monitored cluster
@@ -2660,6 +2670,16 @@ amount of time it took for the poll to finish
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+
+
+### metadata_collector_skips
+
+number of metrics that are skipped during the computation of metrics between two consecutive polls. This metric is available for ZapiPerf/RestPerf collectors.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 ### metadata_collector_task_time

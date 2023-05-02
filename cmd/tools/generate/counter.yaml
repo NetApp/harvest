@@ -255,6 +255,20 @@ counters:
         Template: NA
         Unit: microseconds
 
+  - Name: metadata_collector_calc_time
+    Description: amount of time it took for computing metrics between two consecutive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+        Unit: microseconds
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+        Unit: microseconds
+
   - Name: metadata_collector_instances
     Description: number of objects collected from monitored cluster
     APIs:
@@ -324,6 +338,20 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: microseconds
+
+  - Name: metadata_collector_skips
+    Description: number of metrics that are skipped during the computation of metrics between two consecutive polls. This metric is available for ZapiPerf/RestPerf collectors.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+        Unit: scalar
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+        Unit: scalar
 
   - Name: metadata_collector_task_time
     Description: amount of time it took for each collector's subtasks to complete
