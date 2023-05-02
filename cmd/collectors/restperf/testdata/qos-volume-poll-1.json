@@ -1,0 +1,1210 @@
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "NS_svm_nvme-wid9168:1b3abd60-c958-11ed-b61b-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "NS_svm_nvme-wid9168"
+        },
+        {
+          "name": "uuid",
+          "value": "1b3abd60-c958-11ed-b61b-00a098d39e12"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/NS_svm_nvme-wid9168%3A1b3abd60-c958-11ed-b61b-00a098d39e12"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest-wid8678:82f651fb-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest-wid8678"
+        },
+        {
+          "name": "uuid",
+          "value": "82f651fb-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest-wid8678%3A82f651fb-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0001-wid13148:8333dc06-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0001-wid13148"
+        },
+        {
+          "name": "uuid",
+          "value": "8333dc06-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0001-wid13148%3A8333dc06-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0002-wid50034:8374fb9e-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0002-wid50034"
+        },
+        {
+          "name": "uuid",
+          "value": "8374fb9e-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0002-wid50034%3A8374fb9e-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0003-wid15381:83a7cd42-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0003-wid15381"
+        },
+        {
+          "name": "uuid",
+          "value": "83a7cd42-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0003-wid15381%3A83a7cd42-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0004-wid28774:83d875b5-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0004-wid28774"
+        },
+        {
+          "name": "uuid",
+          "value": "83d875b5-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0004-wid28774%3A83d875b5-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0005-wid4532:847469e4-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0005-wid4532"
+        },
+        {
+          "name": "uuid",
+          "value": "847469e4-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0005-wid4532%3A847469e4-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0006-wid52493:84c90da1-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0006-wid52493"
+        },
+        {
+          "name": "uuid",
+          "value": "84c90da1-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0006-wid52493%3A84c90da1-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0007-wid1146:851d15e3-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0007-wid1146"
+        },
+        {
+          "name": "uuid",
+          "value": "851d15e3-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0007-wid1146%3A851d15e3-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "qos_volume"
+      },
+      "id": "RahulTest__0008-wid41432:857628ca-8b7a-11ed-86dd-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "RahulTest__0008-wid41432"
+        },
+        {
+          "name": "uuid",
+          "value": "857628ca-8b7a-11ed-86dd-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_base",
+          "value": 0
+        },
+        {
+          "name": "read_latency",
+          "value": 1
+        },
+        {
+          "name": "read_ops",
+          "value": 100
+        },
+        {
+          "name": "sequential_reads_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_reads_base",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_percent",
+          "value": 0
+        },
+        {
+          "name": "sequential_writes_base",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "write_latency",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "concurrency",
+          "value": 0
+        },
+        {
+          "name": "read_io_type_percent",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "cache",
+            "pmem",
+            "ext_cache",
+            "disk",
+            "bamboo_ssd",
+            "hya_hdd",
+            "hya_cache",
+            "hya_non_cache",
+            "cloud",
+            "fc_miss",
+            "cloud_s2c"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qos_volume/rows/RahulTest__0008-wid41432%3A857628ca-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    }
+  ],
+  "num_records": 221,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/qos_volume/rows?return_records=true&fields=*"
+    }
+  }
+}
