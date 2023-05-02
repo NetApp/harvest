@@ -29,3 +29,38 @@ $ bin/harvest grafana export --addr my.grafana.server:3000 --directory /path/to/
 
 By default, the dashboards are connected to the `Prometheus` datasource defined in Grafana. If your datasource has a
 different name, use the `--datasource` flag during import/export.
+
+### CLI
+
+The `bin/harvest grafana` tool includes CLI help when passing the `--help` command line argument flag like so:
+
+```bash
+bin/harvest grafana import --help
+```
+
+The `labels` argument requires more explanation.
+
+#### Labels
+
+The grafana import `--labels` argument goes hand-in-hand with a poller's `Labels` section described [here](https://netapp.github.io/harvest/latest/configure-harvest-basic/#labels).
+`Labels` are used to add additional key-value pairs to a poller's metrics.
+
+When you run `bin/harvest grafana import`, you may optionally pass a set of labels like so:
+
+`bin/harvest grafana import --labels org --labels dept`
+
+This will cause Harvest to do the following for each dashboard:
+1. Parse each dashboard and add a new variable for each label passed on the command line
+2. Modify each dashboard variable to use the new label variable(s) in a chained query.
+
+Here's an example:
+
+```
+bin/harvest grafana import --labels "org,dept"
+```
+
+This will add the `Org` and `Dept` variables, as shown below, and modify the existing variables as shown.
+
+Results in
+
+![Import Labels](assets/grafana/importLabels.png)
