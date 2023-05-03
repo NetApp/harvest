@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Apr-27
+Creation Date : 2023-May-03
 ONTAP Version: 9.12.1
 ```
 ## Understanding the structure
@@ -2608,8 +2608,18 @@ amount of time to collect data from monitored cluster object
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+
+
+### metadata_collector_calc_time
+
+amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
 ### metadata_collector_instances
@@ -2618,8 +2628,8 @@ number of objects collected from monitored cluster
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 ### metadata_collector_metrics
@@ -2628,8 +2638,8 @@ number of counters collected from monitored cluster
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 ### metadata_collector_parse_time
@@ -2638,8 +2648,8 @@ amount of time to parse XML, JSON, etc. for cluster object
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
 ### metadata_collector_plugin_time
@@ -2648,8 +2658,8 @@ amount of time for all plugins to post-process metrics
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
 ### metadata_collector_poll_time
@@ -2658,8 +2668,18 @@ amount of time it took for the poll to finish
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+
+
+### metadata_collector_skips
+
+number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 ### metadata_collector_task_time
@@ -2668,8 +2688,8 @@ amount of time it took for each collector's subtasks to complete
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
 ### metadata_component_count
@@ -2678,8 +2698,8 @@ number of metrics collected for each object
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 ### metadata_component_status
@@ -2688,8 +2708,8 @@ status of the collector - 0 means running, 1 means standby, 2 means failed
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
 
 
 ### metadata_exporter_count
@@ -2698,8 +2718,8 @@ number of metrics and labels exported
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 ### metadata_exporter_time
@@ -2708,8 +2728,8 @@ amount of time it took to render, export, and serve exported data
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
 ### metadata_target_goroutines
@@ -2718,8 +2738,8 @@ number of goroutines that exist within the poller
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 ### metadata_target_status
@@ -2728,8 +2748,8 @@ status of the system being monitored. 0 means reachable, 1 means unreachable
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | NA |
-| ZAPI | `NA` | `Harvest generated` | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
 
 
 ### namespace_avg_other_latency
@@ -6889,8 +6909,8 @@ average latency for workload on Data ONTAP subsystems
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail.yaml | 
-| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
+| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail.yaml | 
+| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
 
 
 ### qos_detail_volume_resource_latency
@@ -6899,8 +6919,8 @@ average latency for volume on Data ONTAP subsystems
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos_detail_volume` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail_volume.yaml | 
-| ZAPI | `perf-object-get-instances workload_detail_volume` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail_volume.yaml | 
+| REST | `api/cluster/counter/tables/qos_detail_volume` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail_volume.yaml | 
+| ZAPI | `perf-object-get-instances workload_detail_volume` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail_volume.yaml | 
 
 
 ### qos_latency
@@ -8386,16 +8406,6 @@ Average latency of nfsv42 requests. This counter keeps track of the average resp
 | ZAPI | `perf-object-get-instances nfsv4_1` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
-### svm_nfs_latency_hist
-
-Histogram of latency for NFSv3 operations.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
-
-
 ### svm_nfs_layoutcommit_avg_latency
 
 Average latency of NFSv4.2 LAYOUTCOMMIT operations.
@@ -8834,16 +8844,6 @@ Average latency of NFSv4.2 READ operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
-
-
-### svm_nfs_read_latency_hist
-
-Histogram of latency for Read operations.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `read_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_read_ops
@@ -9354,16 +9354,6 @@ Average latency of NFSv4.2 WRITE operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
-
-
-### svm_nfs_write_latency_hist
-
-Histogram of latency for Write operations.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `write_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_write_ops

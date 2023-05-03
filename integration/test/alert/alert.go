@@ -29,12 +29,33 @@ var vserverArwState = []string{
 	`"dry-run"`,
 }
 
+var hmAlertState = []string{
+	`"RaidLeftBehindAggrAlert"`,
+	`"RaidLeftBehindSpareAlert"`,
+	`"NoISLPresentAlert"`,
+	`"ClusterSeveredAllLinksAlert"`,
+	`"StorageBridgePortDown_Alert"`,
+	`"StorageBridgeTempAboveCritical_Alert"`,
+	`"StorageBridgeTempBelowCritical_Alert"`,
+	`"StorageBridgeUnreachable_Alert"`,
+	`"StorageFCAdapterFault_Alert"`,
+	`"InterconnectAdapterOfflineAlert"`,
+	`"RaidDegradedMirrorAggrAlert"`,
+	`"InterclusterBrokenConnectionAlert"`,
+	`"SASAdapterOffline_Alert"`,
+	`"FabricSwitchFanFail_Alert"`,
+	`"FabricSwitchPowerFail_Alert"`,
+	`"FabricSwitchTempCritical_Alert"`,
+	`"FabricSwitchTempSensorFailed_Alert"`,
+	`"FabricSwitchUnreachable_Alert"`,
+}
+
 func GetAlerts() (map[string]int, int) {
 	now := time.Now()
 	alertsData := make(map[string]int)
 	totalAlerts := 0
 
-	duration, _ := time.ParseDuration("3m15s")
+	duration, _ := time.ParseDuration("6m")
 	time.Sleep(duration)
 	response, err := utils.GetResponseBody(PrometheusAlertURL)
 	utils.PanicIfNotNil(err)
@@ -98,7 +119,7 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) map[string]bool {
 	err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	poller, err2 := conf.PollerNamed(TestClusterName)
 	dc1, err3 := conf.PollerNamed("dc1")
-	if err != nil && err2 != nil && err3 != nil {
+	if err != nil || err2 != nil || err3 != nil {
 		log.Fatal().Errs("errors", []error{err, err2, err3}).Msg("Failed to load config")
 	}
 	url := "https://" + poller.Addr + "/api/private/cli/event/generate"
@@ -106,9 +127,11 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) map[string]bool {
 
 	volumeArwCount := 0
 	vserverArwCount := 0
+	hmAlertCount := 0
 	for _, ems := range emsNames {
 		arg1 := "1"
 		arg2 := "2"
+		agr3 := "3"
 		if ems == "arw.volume.state" {
 			arg1 = volumeArwState[volumeArwCount]
 			volumeArwCount++
@@ -117,6 +140,10 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) map[string]bool {
 			arg1 = vserverArwState[vserverArwCount]
 			vserverArwCount++
 		}
+		if ems == "hm.alert.raised" {
+			agr3 = hmAlertState[hmAlertCount]
+			hmAlertCount++
+		}
 		// special case as arg order is different in issuing ems than resolving ems
 		if ems == "sm.mediator.misconfigured" {
 			arg2 = "1"
@@ -124,9 +151,9 @@ func GenerateEvents(emsNames []string, nodeScopedEms []string) map[string]bool {
 
 		// Handle for node-scoped ems, Passing node-name as input
 		if utils.Contains(nodeScopedEms, ems) {
-			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,%s,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], "node": "%s"}`, ems, arg1, arg2, TestNodeName))
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,%s,%s,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], "node": "%s"}`, ems, arg1, arg2, agr3, TestNodeName))
 		} else {
-			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,%s,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}`, ems, arg1, arg2))
+			jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": [%s,%s,%s,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}`, ems, arg1, arg2, agr3))
 		}
 
 		data := utils.SendPostReqAndGetRes(url, method, jsonValue, Admin, dc1.Password)

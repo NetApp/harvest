@@ -14,21 +14,23 @@ Metrics are published for:
 
 Here's a high-level summary of the metadata metrics Harvest publishes with details below.
 
-| Metric                         | Description                                                                  | Units        |
-|:-------------------------------|:-----------------------------------------------------------------------------|:-------------|
-| metadata_collector_api_time    | amount of time to collect data from monitored cluster object                 | microseconds |
-| metadata_collector_instances   | number of objects collected from monitored cluster                           | scalar       |
-| metadata_collector_metrics     | number of counters collected from monitored cluster                          | scalar       |
-| metadata_collector_parse_time  | amount of time to parse XML, JSON, etc. for cluster object                   | microseconds |
-| metadata_collector_plugin_time | amount of time for all plugins to post-process metrics                       | microseconds |
-| metadata_collector_poll_time   | amount of time it took for the poll to finish                                | microseconds |
-| metadata_collector_task_time   | amount of time it took for each collector's subtasks to complete             | microseconds |
-| metadata_component_count       | number of metrics collected for each object                                  | scalar       |
-| metadata_component_status      | status of the collector - 0 means running, 1 means standby, 2 means failed   | enum         |
-| metadata_exporter_count        | number of metrics and labels exported                                        | scalar       |
-| metadata_exporter_time         | amount of time it took to render, export, and serve exported data            | microseconds |
-| metadata_target_goroutines     | number of goroutines that exist within the poller                            | scalar       |
-| metadata_target_status         | status of the system being monitored. 0 means reachable, 1 means unreachable | enum         |
+| Metric                         | Description                                                                                                                                                                                                   | Units        |
+|:-------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------|
+| metadata_collector_api_time    | amount of time to collect data from monitored cluster object                                                                                                                                                  | microseconds |
+| metadata_collector_instances   | number of objects collected from monitored cluster                                                                                                                                                            | scalar       |
+| metadata_collector_metrics     | number of counters collected from monitored cluster                                                                                                                                                           | scalar       |
+| metadata_collector_parse_time  | amount of time to parse XML, JSON, etc. for cluster object                                                                                                                                                    | microseconds |
+| metadata_collector_plugin_time | amount of time for all plugins to post-process metrics                                                                                                                                                        | microseconds |
+| metadata_collector_poll_time   | amount of time it took for the poll to finish                                                                                                                                                                 | microseconds |
+| metadata_collector_task_time   | amount of time it took for each collector's subtasks to complete                                                                                                                                              | microseconds |
+| metadata_component_count       | number of metrics collected for each object                                                                                                                                                                   | scalar       |
+| metadata_component_status      | status of the collector - 0 means running, 1 means standby, 2 means failed                                                                                                                                    | enum         |
+| metadata_exporter_count        | number of metrics and labels exported                                                                                                                                                                         | scalar       |
+| metadata_exporter_time         | amount of time it took to render, export, and serve exported data                                                                                                                                             | microseconds |
+| metadata_target_goroutines     | number of goroutines that exist within the poller                                                                                                                                                             | scalar       |
+| metadata_target_status         | status of the system being monitored. 0 means reachable, 1 means unreachable                                                                                                                                  | enum         |
+| metadata_collector_calc_time   | amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors. | microseconds |
+| metadata_collector_skips       | number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.                                                                           | scalar       |
 
 ## Collector Metadata
 

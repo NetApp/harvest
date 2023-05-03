@@ -8,7 +8,6 @@ schedule:
 objects:
   Aggregate:                   aggr.yaml
   AggregateEfficiency:         aggr_efficiency.yaml
-  CIFSClients:                 cifs_clients.yaml
   CIFSSession:                 cifs_session.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
