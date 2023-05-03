@@ -256,7 +256,7 @@ counters:
         Unit: microseconds
 
   - Name: metadata_collector_calc_time
-    Description: amount of time it took for computing metrics between two consecutive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.
+    Description: amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.
     APIs:
       - API: REST
         Endpoint: NA
@@ -340,7 +340,7 @@ counters:
         Unit: microseconds
 
   - Name: metadata_collector_skips
-    Description: number of metrics that are skipped during the computation of metrics between two consecutive polls. This metric is available for ZapiPerf/RestPerf collectors.
+    Description: number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.
     APIs:
       - API: REST
         Endpoint: NA
