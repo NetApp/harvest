@@ -257,7 +257,7 @@ func (my Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 				if my.client.IsClustered() {
 					qtreeInstance = data.GetInstance(tree + "." + volume + "." + vserver)
 				} else {
-					qtreeInstance = data.GetInstance(volume + "." + tree)
+					qtreeInstance = data.GetInstance(tree + "." + volume)
 				}
 				if qtreeInstance == nil {
 					my.Logger.Warn().

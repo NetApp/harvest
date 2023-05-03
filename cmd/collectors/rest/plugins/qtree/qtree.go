@@ -230,13 +230,14 @@ func (my Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 			my.Logger.Debug().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, qIndex)
 		}
 
-		qtreeInstance := data.GetInstance(vserver + volume + tree)
+		// qtree instancekey would be qtree, svm and volume(sorted keys)
+		qtreeInstance := data.GetInstance(tree + vserver + volume)
 		if qtreeInstance == nil {
 			my.Logger.Warn().
 				Str("tree", tree).
 				Str("volume", volume).
 				Str("vserver", vserver).
-				Msg("No instance matching tree.volume.vserver")
+				Msg("No instance matching tree.vserver.volume")
 			continue
 		}
 
