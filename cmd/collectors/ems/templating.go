@@ -1,6 +1,7 @@
 package ems
 
 import (
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"time"
@@ -151,9 +152,10 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 	}
 	e.Logger.Debug().Str("bookend ems resolve After", e.resolveAfter.String()).Msg("")
 
+	// Using Set to ensure it has slice of unique issuing ems
 	if _, ok := e.bookendEmsMap[resolveEmsName]; !ok {
-		e.bookendEmsMap[resolveEmsName] = make(map[string]bool)
+		e.bookendEmsMap[resolveEmsName] = set.New()
 	}
-	e.bookendEmsMap[resolveEmsName][issueEmsProp.Name] = true
+	e.bookendEmsMap[resolveEmsName].Add(issueEmsProp.Name)
 	e.emsProp[resolveEmsName] = append(e.emsProp[resolveEmsName], &prop)
 }
