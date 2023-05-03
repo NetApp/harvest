@@ -37,8 +37,8 @@ func ReStartContainers(commandSubString string) error {
 
 	var errs []error
 	for _, container := range containers {
-		log.Println("Restarting container", container.Id[:10], "...")
-		command := exec.Command("docker", "container", "restart", container.Id)
+		log.Println("Restarting container", container.ID[:10], "...")
+		command := exec.Command("docker", "container", "restart", container.ID) //nolint:gosec
 		err = command.Run()
 		if err != nil {
 			errs = append(errs, err)
@@ -57,8 +57,8 @@ func StopContainers(commandSubString string) error {
 
 	var errs []error
 	for _, container := range containers {
-		log.Println("Stopping container", container.Id[:10], "...")
-		command := exec.Command("docker", "container", "stop", container.Id)
+		log.Println("Stopping container", container.ID[:10], "...")
+		command := exec.Command("docker", "container", "stop", container.ID) //nolint:gosec
 		err = command.Run()
 		if err != nil {
 			errs = append(errs, err)
@@ -68,8 +68,8 @@ func StopContainers(commandSubString string) error {
 	return errors.Join(errs...)
 }
 
-func CopyFile(containerId string, src string, dest string) {
-	_, _ = utils.Run("docker", "cp", src, containerId+":"+dest)
+func CopyFile(containerID string, src string, dest string) {
+	_, _ = utils.Run("docker", "cp", src, containerID+":"+dest)
 }
 
 func Containers(cmdPattern string) ([]Container, error) {
@@ -94,7 +94,7 @@ func Containers(cmdPattern string) ([]Container, error) {
 }
 
 type Container struct {
-	Id      string   `json:"Id"`
+	ID      string   `json:"Id"`
 	Names   []string `json:"Names"`
 	Image   string   `json:"Image"`
 	ImageID string   `json:"ImageID"`

@@ -24,9 +24,9 @@ func TestDockerInstall(t *testing.T) {
 	fileZapiName := installer.GetPerfFileWithQosCounters(installer.ZapiPerfDefaultFile, "defaultZapi.yaml")
 	fileRestName := installer.GetPerfFileWithQosCounters(installer.RestPerfDefaultFile, "defaultRest.yaml")
 	for _, container := range containerIds {
-		docker.CopyFile(container.Id, installer.HarvestConfigFile, installer.HarvestHome+"/"+installer.HarvestConfigFile)
-		docker.CopyFile(container.Id, fileZapiName, installer.HarvestHome+"/"+installer.ZapiPerfDefaultFile)
-		docker.CopyFile(container.Id, fileRestName, installer.HarvestHome+"/"+installer.RestPerfDefaultFile)
+		docker.CopyFile(container.ID, installer.HarvestConfigFile, installer.HarvestHome+"/"+installer.HarvestConfigFile)
+		docker.CopyFile(container.ID, fileZapiName, installer.HarvestHome+"/"+installer.ZapiPerfDefaultFile)
+		docker.CopyFile(container.ID, fileRestName, installer.HarvestHome+"/"+installer.RestPerfDefaultFile)
 	}
 	_ = docker.ReStartContainers("poller")
 	ids, err := docker.Containers("poller")
@@ -34,7 +34,7 @@ func TestDockerInstall(t *testing.T) {
 		panic(err)
 	}
 	if len(ids) > 0 {
-		id := ids[0].Id
+		id := ids[0].ID
 		if !isValidAsup(id) {
 			panic("Asup validation failed")
 		}

@@ -22,16 +22,16 @@ func (p *Prometheus) Install() bool {
 	p.image = "prom/prometheus:v2.26.0"
 	log.Println("Prometheus image : " + p.image)
 	imageName := "prometheus"
-	docker.StopContainers(imageName)
-	//docker.PullImage(p.image)
+	err := docker.StopContainers(imageName)
+	utils.PanicIfNotNil(err)
 	path, _ := os.Getwd()
 	ipAddress := utils.GetOutboundIP()
-	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort,
+	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort, //nolint:gosec
 		"--add-host=localhost:"+ipAddress,
 		"-v", path+"/../../container/prometheus/:/etc/prometheus/",
 		p.image)
 	cmd.Stdout = os.Stdout
-	err := cmd.Start()
+	err = cmd.Start()
 	utils.PanicIfNotNil(err)
 	waitCount := 0
 	maxWaitCount := 5

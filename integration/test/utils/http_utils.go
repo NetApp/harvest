@@ -11,10 +11,11 @@ import (
 )
 
 func GetResponse(url string) (string, error) {
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
@@ -24,10 +25,11 @@ func GetResponse(url string) (string, error) {
 }
 
 func GetResponseBody(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
@@ -47,7 +49,7 @@ func SendReqAndGetRes(url string, method string,
 	req.Header.Add("Content-Type", "application/json")
 	res, err := client.Do(req)
 	PanicIfNotNil(err)
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(res.Body)
+	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	PanicIfNotNil(err)
 	log.Println(string(body))
