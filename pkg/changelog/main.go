@@ -108,6 +108,9 @@ func (c *cli) readPrs(notes []byte) {
 	scanner := bufio.NewScanner(bytes.NewReader(notes))
 	for scanner.Scan() {
 		line := scanner.Text()
+		if strings.HasPrefix(line, "## New Contributors") {
+			break
+		}
 		if !strings.HasPrefix(line, "*") || strings.HasPrefix(line, "**") {
 			continue
 		}
@@ -155,6 +158,9 @@ func newPr(matches []string) pr {
 		com.id = -1
 	}
 	com.id = id
+	if com.kind == "docs" {
+		com.kind = "doc"
+	}
 	return com
 }
 
@@ -234,11 +240,11 @@ type prType struct {
 }
 
 func (c *cli) initPrTypes() {
-	c.prOrder = []string{"feat", "fix", "docs", "test", "style", "refactor", "chore", "ci"}
+	c.prOrder = []string{"feat", "fix", "doc", "test", "style", "refactor", "chore", "ci"}
 
 	c.addPrType(prType{id: "feat", summary: "features", header: ":rocket: Features"})
 	c.addPrType(prType{id: "fix", summary: "bug fixes", header: ":bug: Bug Fixes"})
-	c.addPrType(prType{id: "docs", summary: "documentation", header: ":closed_book: Documentation"})
+	c.addPrType(prType{id: "doc", summary: "documentation", header: ":closed_book: Documentation"})
 	c.addPrType(prType{id: "test", summary: "testing", header: ":wrench: Testing"})
 	c.addPrType(prType{id: "style", summary: "styling", header: "Styling"})
 	c.addPrType(prType{id: "refactor", summary: "refactoring", header: "Refactoring"})
