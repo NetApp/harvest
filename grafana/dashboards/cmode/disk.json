@@ -1485,11 +1485,11 @@
                   },
                   {
                     "id": "unit",
-                    "value": "clocks"
+                    "value": "s"
                   },
                   {
                     "id": "decimals",
-                    "value": 2
+                    "value": 1
                   }
                 ]
               },
