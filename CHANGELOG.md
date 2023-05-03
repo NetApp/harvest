@@ -4,13 +4,13 @@
 ## 23.05.0 / 2023-05-03
 :pushpin: Highlights of this major release include:
 - :gem: Seven new dashboards:
-  - External service operations
+  - StorageGRID and ONTAP fabric pool
   - Health
-  - Namespace
   - S3 object storage
+  - External service operations
+  - Namespace
   - SMB
   - Workloads
-  - StorageGRID and ONTAP fabric pool
 
 - :star: Several of the existing dashboards include new panels in this release:
   - Qtree dashboard includes topK qtrees by disk-used growth
@@ -48,6 +48,8 @@
 - :closed_book: Documentation additions
   - How to set up [Harvest with Kubernetes](https://github.com/NetApp/harvest/tree/main/container/k8)
   - Harvest [metadata metrics](https://netapp.github.io/harvest/latest/monitor-harvest/)
+  - [Authenticating with ONTAP and StorageGRID](https://netapp.github.io/harvest/23.05/configure-harvest-basic/#authentication) clusters and auth precedence
+  - [Pollers](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) include a `prefer_zapi` flag that tells Harvest to use the ZAPI API if the cluster supports it, otherwise allow Harvest to choose REST or ZAPI, whichever is appropriate to the ONTAP version. See [rest-strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for details.
 
 - :tophat: Harvest makes it easy to run with both the ZAPI and REST collectors at the same time. Overlapping resources are deduplicated and only published to Prometheus once. This was the final piece in our journey to REST. See [rest-strategy.md](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) if you are interested in the details.
 
@@ -81,7 +83,7 @@ this release:
 
 @7840vz, @DAx-cGn, @Falcon667, @Hedius, @LukaszWasko, @MrObvious, @ReneMeier, @Sawall10, @T1r0l, @XDavidT, @aticatac, @chadpruden, @cygio, @ddhti, @debert-ntap, @demalik, @electrocreative, @elsgaard, @ev1963, @faguayot, @iStep2Step, @jgasher, @jmg011, @mamoep, @matejzero, @matthieu-sudo, @merdos, @pilot7777, @rodenj1, Alessandro.Nuzzo, Ed Wilts, Imthenightbird, KlausHub, MeghanaD, Paul P2, Rusty Brown, Shubham Mer, Tudor Pascu, Watson9121, jf38800, jfong, rcl23, troysmuller, twodot0h
 
-:seedling: This release includes 61 features, 47 bug fixes, 22 documentation, 2 testing, 8 refactoring, 25 miscellaneous, and 32 ci pull requests.
+:seedling: This release includes 61 features, 49 bug fixes, 22 documentation, 2 testing, 8 refactoring, 25 miscellaneous, and 32 ci pull requests.
 
 ### :rocket: Features
 - Pollers Should Allow Customers To Opt Out Of Rest Upgrade ([#1744](https://github.com/NetApp/harvest/pull/1744))
