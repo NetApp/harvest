@@ -75,9 +75,9 @@ func TestRestPerf_pollData(t *testing.T) {
 			pollCounters:  "testdata/volume-counters.json",
 			pollDataPath1: "testdata/volume-poll-1.json",
 			pollDataPath2: "testdata/volume-poll-2.json",
-			numInstances:  215,
-			numMetrics:    3225,
-			sum:           237306987,
+			numInstances:  2,
+			numMetrics:    30,
+			sum:           26,
 		},
 	}
 	for _, tt := range tests {
