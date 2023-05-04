@@ -155,6 +155,9 @@ func (r *Rest) InitClient() error {
 		return err
 	}
 
+	if r.IsTest {
+		return nil
+	}
 	if err = r.Client.Init(5); err != nil {
 		return err
 	}
@@ -196,6 +199,9 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	if a.IsTest {
+		return &rest.Client{}, nil
+	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
 		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
 		os.Exit(1)

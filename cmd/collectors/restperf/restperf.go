@@ -193,12 +193,10 @@ func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
 
 func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	var (
-		err           error
-		records       []gjson.Result
-		counterSchema gjson.Result
+		err     error
+		records []gjson.Result
 	)
 
-	mat := r.Matrix[r.Object]
 	href := rest.BuildHref(r.Prop.Query, "", nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -210,6 +208,15 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return r.handleError(err, href)
 	}
 
+	return r.pollCounter(records)
+}
+
+func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matrix, error) {
+	var (
+		err           error
+		counterSchema gjson.Result
+	)
+	mat := r.Matrix[r.Object]
 	firstRecord := records[0]
 	if firstRecord.Exists() {
 		counterSchema = firstRecord.Get("counter_schemas")
@@ -457,29 +464,17 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		count, numRecords uint64
-		apiD, parseD      time.Duration
-		startTime         time.Time
-		err               error
-		perfRecords       []rest.PerfRecord
-		instanceKeys      []string
-		resourceLatency   *matrix.Metric // for workload* objects
-		skips             int
-		instIndex         int
+		err         error
+		perfRecords []rest.PerfRecord
+		startTime   time.Time
 	)
 
 	r.Logger.Trace().Msg("updating data cache")
 
-	prevMat := r.Matrix[r.Object]
-	// clone matrix without numeric data
-	curMat := prevMat.Clone(false, true, true)
-	curMat.Reset()
-	timestamp := curMat.GetMetric("timestamp")
+	timestamp := r.Matrix[r.Object].GetMetric("timestamp")
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
-
-	instanceKeys = r.Prop.InstanceKeys
 
 	startTime = time.Now()
 
@@ -492,16 +487,38 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	// init current time
-	ts := float64(time.Now().UnixNano()) / BILLION
-
 	err = rest.FetchRestPerfData(r.Client, href, &perfRecords)
 	if err != nil {
 		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
 		return nil, err
 	}
 
+	return r.pollData(startTime, perfRecords)
+}
+
+func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) (map[string]*matrix.Matrix, error) {
+	var (
+		count, numRecords uint64
+		apiD, parseD      time.Duration
+		err               error
+		instanceKeys      []string
+		resourceLatency   *matrix.Metric // for workload* objects
+		skips             int
+		instIndex         int
+		ts                float64
+		prevMat           *matrix.Matrix
+		curMat            *matrix.Matrix
+	)
+
+	prevMat = r.Matrix[r.Object]
+	// clone matrix without numeric data
+	curMat = prevMat.Clone(false, true, true)
+	curMat.Reset()
+	instanceKeys = r.Prop.InstanceKeys
+
 	apiD = time.Since(startTime)
+	// init current time
+	ts = float64(startTime.UnixNano()) / BILLION
 
 	startTime = time.Now()
 	parseD = time.Since(startTime)
@@ -587,7 +604,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			instance = curMat.GetInstance(instanceKey)
-
 			if instance == nil {
 				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 					r.Logger.Debug().
@@ -846,7 +862,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	orderedMetrics := append(orderedNonDenominatorMetrics, orderedDenominatorMetrics...)
 	orderedKeys := append(orderedNonDenominatorKeys, orderedDenominatorKeys...)
 
-	// calculate timestamp delta first since many counters require it for postprocessing.
+	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
 	if _, err = curMat.Delta("timestamp", prevMat, r.Logger); err != nil {
 		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
@@ -1108,32 +1124,16 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	var (
-		err                              error
-		oldInstances                     *set.Set
-		oldSize, newSize, removed, added int
-		records                          []gjson.Result
+		err     error
+		records []gjson.Result
 	)
 
-	mat := r.Matrix[r.Object]
-	oldInstances = set.New()
-	for key := range mat.GetInstances() {
-		oldInstances.Add(key)
-	}
-	oldSize = oldInstances.Size()
-
 	dataQuery := path.Join(r.Prop.Query, "rows")
-	instanceKeys := r.Prop.InstanceKeys
 	fields := "*"
 	var filter []string
 
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 		dataQuery = qosWorkloadQuery
-		if isWorkloadObject(r.Prop.Query) {
-			instanceKeys = []string{"uuid"}
-		}
-		if isWorkloadDetailObject(r.Prop.Query) {
-			instanceKeys = []string{"name"}
-		}
 		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
 			filter = append(filter, "workload-class=autovolume|user_defined")
 		} else {
@@ -1151,6 +1151,31 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		return r.handleError(err, href)
+	}
+
+	return r.pollInstance(records)
+}
+
+func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matrix, error) {
+	var (
+		err                              error
+		oldInstances                     *set.Set
+		oldSize, newSize, removed, added int
+	)
+
+	mat := r.Matrix[r.Object]
+	oldInstances = set.New()
+	for key := range mat.GetInstances() {
+		oldInstances.Add(key)
+	}
+	oldSize = oldInstances.Size()
+
+	instanceKeys := r.Prop.InstanceKeys
+	if isWorkloadObject(r.Prop.Query) {
+		instanceKeys = []string{"uuid"}
+	}
+	if isWorkloadDetailObject(r.Prop.Query) {
+		instanceKeys = []string{"name"}
 	}
 
 	if len(records) == 0 {

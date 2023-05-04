@@ -103,6 +103,7 @@ type AbstractCollector struct {
 	HostVersion string
 	HostModel   string
 	HostUUID    string
+	IsTest      bool
 }
 
 func New(name, object string, options *options.Options, params *node.Node, credentials *auth.Credentials) *AbstractCollector {

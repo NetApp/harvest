@@ -1,0 +1,506 @@
+{
+  "name": "volume",
+  "description": "Counter Manager table for exporting volume performance counters. The alias names for volume:node and volume:svm are volume_node and volume_svm respectively.",
+  "counter_schemas": [
+    {
+      "name": "average_latency",
+      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "total_ops"
+      }
+    },
+    {
+      "name": "bytes_read",
+      "description": "Bytes read per second",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "bytes_written",
+      "description": "Bytes written per second",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "cifs.other_latency",
+      "description": "Average time for the WAFL filesystem to process other CIFS operations to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "cifs.other_ops"
+      }
+    },
+    {
+      "name": "cifs.other_ops",
+      "description": "Number of other CIFS operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "cifs.read_data",
+      "description": "Bytes read per second via CIFS",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "cifs.read_latency",
+      "description": "Average time for the WAFL filesystem to process CIFS read requests to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "cifs.read_ops"
+      }
+    },
+    {
+      "name": "cifs.read_ops",
+      "description": "Number of CIFS read operations per second from the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "cifs.write_data",
+      "description": "Bytes written per second via CIFS",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "cifs.write_latency",
+      "description": "Average time for the WAFL filesystem to process CIFS write requests to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "cifs.write_ops"
+      }
+    },
+    {
+      "name": "cifs.write_ops",
+      "description": "Number of CIFS write operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "fcp.other_latency",
+      "description": "Average time for the WAFL filesystem to process other FCP protocol operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "fcp.other_ops"
+      }
+    },
+    {
+      "name": "fcp.other_ops",
+      "description": "Number of other block protocol operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "fcp.read_data",
+      "description": "Bytes read per second via block protocol",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "fcp.read_latency",
+      "description": "Average time for the WAFL filesystem to process FCP protocol read operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "fcp.read_ops"
+      }
+    },
+    {
+      "name": "fcp.read_ops",
+      "description": "Number of block protocol read operations per second from the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "fcp.write_data",
+      "description": "Bytes written per second via block protocol",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "fcp.write_latency",
+      "description": "Average time for the WAFL filesystem to process FCP protocol write operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "fcp.write_ops"
+      }
+    },
+    {
+      "name": "fcp.write_ops",
+      "description": "Number of block protocol write operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "iscsi.other_latency",
+      "description": "Average time for the WAFL filesystem to process other iSCSI protocol operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI protocol request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "iscsi.other_ops"
+      }
+    },
+    {
+      "name": "iscsi.other_ops",
+      "description": "Number of other block protocol operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "iscsi.read_data",
+      "description": "Bytes read per second via block protocol",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "iscsi.read_latency",
+      "description": "Average time for the WAFL filesystem to process iSCSI protocol read operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI protocol request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "iscsi.read_ops"
+      }
+    },
+    {
+      "name": "iscsi.read_ops",
+      "description": "Number of block protocol read operations per second from the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "iscsi.write_data",
+      "description": "Bytes written per second via block protocol",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "iscsi.write_latency",
+      "description": "Average time for the WAFL filesystem to process iSCSI protocol write operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "iscsi.write_ops"
+      }
+    },
+    {
+      "name": "iscsi.write_ops",
+      "description": "Number of block protocol write operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "name",
+      "description": "This is the name of the volume counter row",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.access_latency",
+      "description": "Average time for the WAFL filesystem to process NFS protocol access requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.access_ops"
+      }
+    },
+    {
+      "name": "nfs.access_latency_histogram",
+      "description": "Latency histograms for access requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.access_ops",
+      "description": "Number of NFS accesses per second to the volume.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.getattr_latency",
+      "description": "Average time for the WAFL filesystem to process NFS protocol getattr requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.getattr_ops"
+      }
+    },
+    {
+      "name": "nfs.getattr_latency_histogram",
+      "description": "Latency histograms for getattr requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.getattr_ops",
+      "description": "Number of NFS getattr per second to the volume.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.lookup_latency",
+      "description": "Average time for the WAFL filesystem to process NFS protocol lookup requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.lookup_ops"
+      }
+    },
+    {
+      "name": "nfs.lookup_latency_histogram",
+      "description": "Latency histograms for lookup requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.lookup_ops",
+      "description": "Number of NFS lookups per second to the volume.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.misaligned_writes_histogram",
+      "description": "Mis-aligned writes for specific sized write requests from NFS to the volume in the WAFL filesystem. The mis-alignment is reported only for sizes which are a power of 2.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.other_latency",
+      "description": "Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.other_ops"
+      }
+    },
+    {
+      "name": "nfs.other_latency_histogram",
+      "description": "Latency histograms for other requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.other_ops",
+      "description": "Number of other NFS operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.punch_hole_data",
+      "description": "Bytes hole-punched per second via NFS to the volume.",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "nfs.punch_hole_histogram",
+      "description": "Granularity histogram for hole-punch requests from NFS to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.punch_hole_latency",
+      "description": "Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.punch_hole_ops"
+      }
+    },
+    {
+      "name": "nfs.punch_hole_latency_histogram",
+      "description": "Latency histograms for hole-punch requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.punch_hole_ops",
+      "description": "Number of NFS hole-punch requests per second to the volume.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.read_data",
+      "description": "Bytes read per second via NFS",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "nfs.read_latency",
+      "description": "Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.read_ops"
+      }
+    },
+    {
+      "name": "nfs.read_latency_histogram",
+      "description": "Latency histograms for read requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.read_ops",
+      "description": "Number of NFS read operations per second from the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.setattr_latency",
+      "description": "Average time for the WAFL filesystem to process NFS protocol setattr requests to the volume.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.setattr_ops"
+      }
+    },
+    {
+      "name": "nfs.setattr_latency_histogram",
+      "description": "Latency histograms for setattr requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.setattr_ops",
+      "description": "Number of NFS setattr requests per second to the volume.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.total_ops",
+      "description": "Number of total NFS operations per second to the volume.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nfs.write_data",
+      "description": "Bytes written per second via NFS",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "nfs.write_histogram",
+      "description": "Write granularity histogram for write requests from NFS to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.write_latency",
+      "description": "Average time for the WAFL filesystem to process NFS protocol write requests to the volume; not including NFS protocol request processing or network communication time, which will also be included in client observed NFS request latency",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "nfs.write_ops"
+      }
+    },
+    {
+      "name": "nfs.write_latency_histogram",
+      "description": "Latency histograms for write requests from the NFS protocol to the volume in the WAFL filesystem.",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "nfs.write_ops",
+      "description": "Number of NFS write operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "node.name",
+      "description": "Name of the Node",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "node.uuid",
+      "description": "UUID for the node",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "other_latency",
+      "description": "Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "total_other_ops"
+      }
+    },
+    {
+      "name": "parent_aggregate",
+      "description": "The name of the aggregate hosting this volume",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "read_latency",
+      "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "total_read_ops"
+      }
+    },
+    {
+      "name": "svm.name",
+      "description": "Name of the Copy Manager SVM row",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "svm.uuid",
+      "description": "UUID for the Copy Manager SVM row",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "total_ops",
+      "description": "Number of operations per second serviced by the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "total_other_ops",
+      "description": "Number of other operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "total_read_ops",
+      "description": "Number of read operations per second from the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "total_write_ops",
+      "description": "Number of write operations per second to the volume",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "uuid",
+      "description": "DSID/MSID of this volume row",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "write_latency",
+      "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "total_write_ops"
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/volume"
+    }
+  }
+}

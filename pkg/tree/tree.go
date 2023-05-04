@@ -19,8 +19,12 @@ func ImportYaml(filepath string) (*node.Node, error) {
 		return nil, err
 	}
 
+	return LoadYaml(data)
+}
+
+func LoadYaml(data []byte) (*node.Node, error) {
 	root := y3.Node{}
-	err = y3.Unmarshal(data, &root)
+	err := y3.Unmarshal(data, &root)
 	if err != nil {
 		return nil, err
 	}
