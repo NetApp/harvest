@@ -2694,6 +2694,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#metadata_collector_calc_time" class="md-nav__link">
+    metadata_collector_calc_time
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#metadata_collector_instances" class="md-nav__link">
     metadata_collector_instances
   </a>
@@ -2724,6 +2731,13 @@
           <li class="md-nav__item">
   <a href="#metadata_collector_poll_time" class="md-nav__link">
     metadata_collector_poll_time
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata_collector_skips" class="md-nav__link">
+    metadata_collector_skips
   </a>
   
 </li>
@@ -6859,13 +6873,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#svm_nfs_latency_hist" class="md-nav__link">
-    svm_nfs_latency_hist
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#svm_nfs_layoutcommit_avg_latency" class="md-nav__link">
     svm_nfs_layoutcommit_avg_latency
   </a>
@@ -7169,13 +7176,6 @@
           <li class="md-nav__item">
   <a href="#svm_nfs_read_avg_latency" class="md-nav__link">
     svm_nfs_read_avg_latency
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#svm_nfs_read_latency_hist" class="md-nav__link">
-    svm_nfs_read_latency_hist
   </a>
   
 </li>
@@ -7533,13 +7533,6 @@
           <li class="md-nav__item">
   <a href="#svm_nfs_write_avg_latency" class="md-nav__link">
     svm_nfs_write_avg_latency
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#svm_nfs_write_latency_hist" class="md-nav__link">
-    svm_nfs_write_latency_hist
   </a>
   
 </li>
@@ -10207,6 +10200,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#metadata_collector_calc_time" class="md-nav__link">
+    metadata_collector_calc_time
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#metadata_collector_instances" class="md-nav__link">
     metadata_collector_instances
   </a>
@@ -10237,6 +10237,13 @@
           <li class="md-nav__item">
   <a href="#metadata_collector_poll_time" class="md-nav__link">
     metadata_collector_poll_time
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata_collector_skips" class="md-nav__link">
+    metadata_collector_skips
   </a>
   
 </li>
@@ -14372,13 +14379,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#svm_nfs_latency_hist" class="md-nav__link">
-    svm_nfs_latency_hist
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#svm_nfs_layoutcommit_avg_latency" class="md-nav__link">
     svm_nfs_layoutcommit_avg_latency
   </a>
@@ -14682,13 +14682,6 @@
           <li class="md-nav__item">
   <a href="#svm_nfs_read_avg_latency" class="md-nav__link">
     svm_nfs_read_avg_latency
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#svm_nfs_read_latency_hist" class="md-nav__link">
-    svm_nfs_read_latency_hist
   </a>
   
 </li>
@@ -15046,13 +15039,6 @@
           <li class="md-nav__item">
   <a href="#svm_nfs_write_avg_latency" class="md-nav__link">
     svm_nfs_write_avg_latency
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#svm_nfs_write_latency_hist" class="md-nav__link">
-    svm_nfs_write_latency_hist
   </a>
   
 </li>
@@ -15783,7 +15769,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2023-Apr-27
+<div class="highlight"><pre><span></span><code>Creation Date : 2023-May-03
 ONTAP Version: 9.12.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -22426,13 +22412,39 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
+<td>NA</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metadata_collector_calc_time">metadata_collector_calc_time<a class="headerlink" href="#metadata_collector_calc_time" title="Permanent link">&para;</a></h3>
+<p>amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
+<td>NA</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22452,13 +22464,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22478,13 +22490,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22504,13 +22516,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22530,13 +22542,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22556,13 +22568,39 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
+<td>NA</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metadata_collector_skips">metadata_collector_skips<a class="headerlink" href="#metadata_collector_skips" title="Permanent link">&para;</a></h3>
+<p>number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
+<td>NA</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22582,13 +22620,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22608,13 +22646,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22634,13 +22672,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> enum</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> enum</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22660,13 +22698,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22686,13 +22724,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22712,13 +22750,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> scalar</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -22738,13 +22776,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> enum</td>
 <td>NA</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>NA</code></td>
-<td><code>Harvest generated</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> enum</td>
 <td>NA</td>
 </tr>
 </tbody>
@@ -33084,13 +33122,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/qos_detail</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/workload_detail.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances workload_detail</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/zapiperf/9.12.0/workload_detail.yaml</td>
 </tr>
 </tbody>
@@ -33110,13 +33148,13 @@ ONTAP Version: 9.12.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/qos_detail_volume</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/workload_detail_volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances workload_detail_volume</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/zapiperf/9.12.0/workload_detail_volume.yaml</td>
 </tr>
 </tbody>
@@ -36851,32 +36889,6 @@ ONTAP Version: 9.12.1
 </tr>
 </tbody>
 </table>
-<h3 id="svm_nfs_latency_hist">svm_nfs_latency_hist<a class="headerlink" href="#svm_nfs_latency_hist" title="Permanent link">&para;</a></h3>
-<p>Histogram of latency for NFSv3 operations.</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>api/cluster/counter/tables/svm_nfs_v3</code></td>
-<td><code>latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/nfsv3.yaml</td>
-</tr>
-<tr>
-<td>ZAPI</td>
-<td><code>perf-object-get-instances nfsv3</code></td>
-<td><code>nfsv3_latency_hist</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
-<td>conf/zapiperf/cdot/9.8.0/nfsv3.yaml</td>
-</tr>
-</tbody>
-</table>
 <h3 id="svm_nfs_layoutcommit_avg_latency">svm_nfs_layoutcommit_avg_latency<a class="headerlink" href="#svm_nfs_layoutcommit_avg_latency" title="Permanent link">&para;</a></h3>
 <p>Average latency of NFSv4.2 LAYOUTCOMMIT operations.</p>
 <table>
@@ -38018,32 +38030,6 @@ ONTAP Version: 9.12.1
 <td><code>perf-object-get-instances nfsv4_1</code></td>
 <td><code>read_avg_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total</td>
 <td>conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml</td>
-</tr>
-</tbody>
-</table>
-<h3 id="svm_nfs_read_latency_hist">svm_nfs_read_latency_hist<a class="headerlink" href="#svm_nfs_read_latency_hist" title="Permanent link">&para;</a></h3>
-<p>Histogram of latency for Read operations.</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>api/cluster/counter/tables/svm_nfs_v3</code></td>
-<td><code>read_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/nfsv3.yaml</td>
-</tr>
-<tr>
-<td>ZAPI</td>
-<td><code>perf-object-get-instances nfsv3</code></td>
-<td><code>read_latency_hist</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
-<td>conf/zapiperf/cdot/9.8.0/nfsv3.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -39370,32 +39356,6 @@ ONTAP Version: 9.12.1
 <td><code>perf-object-get-instances nfsv4_1</code></td>
 <td><code>write_avg_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total</td>
 <td>conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml</td>
-</tr>
-</tbody>
-</table>
-<h3 id="svm_nfs_write_latency_hist">svm_nfs_write_latency_hist<a class="headerlink" href="#svm_nfs_write_latency_hist" title="Permanent link">&para;</a></h3>
-<p>Histogram of latency for Write operations.</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>api/cluster/counter/tables/svm_nfs_v3</code></td>
-<td><code>write_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/nfsv3.yaml</td>
-</tr>
-<tr>
-<td>ZAPI</td>
-<td><code>perf-object-get-instances nfsv3</code></td>
-<td><code>write_latency_hist</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
-<td>conf/zapiperf/cdot/9.8.0/nfsv3.yaml</td>
 </tr>
 </tbody>
 </table>

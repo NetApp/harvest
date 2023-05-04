@@ -734,6 +734,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    CLI
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    Labels
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -999,6 +1019,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    CLI
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    Labels
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1017,7 +1057,7 @@
   <h1>Dashboards</h1>
 
 <p>Harvest can be used to import dashboards to Grafana.</p>
-<p>The <code>bin/harvest garfana</code> utility requires the address (hostname or IP), port of the Grafana server,
+<p>The <code>bin/harvest grafana</code> utility requires the address (hostname or IP), port of the Grafana server,
 and a Grafana API token. The port can be omitted if Grafana is configured to redirect the URL. Use the <code>-d</code> flag to
 point to the directory that contains the dashboards.</p>
 <h3 id="grafana-api-token">Grafana API token<a class="headerlink" href="#grafana-api-token" title="Permanent link">&para;</a></h3>
@@ -1035,6 +1075,25 @@ Prometheus-based dashboards from the <code>grafana</code> directory. You would r
 </code></pre></div>
 <p>By default, the dashboards are connected to the <code>Prometheus</code> datasource defined in Grafana. If your datasource has a
 different name, use the <code>--datasource</code> flag during import/export.</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>The <code>bin/harvest grafana</code> tool includes CLI help when passing the <code>--help</code> command line argument flag like so:</p>
+<div class="highlight"><pre><span></span><code>bin/harvest grafana import --help
+</code></pre></div>
+<p>The <code>labels</code> argument requires more explanation.</p>
+<h4 id="labels">Labels<a class="headerlink" href="#labels" title="Permanent link">&para;</a></h4>
+<p>The grafana import <code>--labels</code> argument goes hand-in-hand with a poller's <code>Labels</code> section described <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#labels">here</a>.
+<code>Labels</code> are used to add additional key-value pairs to a poller's metrics.</p>
+<p>When you run <code>bin/harvest grafana import</code>, you may optionally pass a set of labels like so:</p>
+<p><code>bin/harvest grafana import --labels org --labels dept</code></p>
+<p>This will cause Harvest to do the following for each dashboard:
+1. Parse each dashboard and add a new variable for each label passed on the command line
+2. Modify each dashboard variable to use the new label variable(s) in a chained query.</p>
+<p>Here's an example:</p>
+<div class="highlight"><pre><span></span><code>bin/harvest grafana import --labels &quot;org,dept&quot;
+</code></pre></div>
+<p>This will add the <code>Org</code> and <code>Dept</code> variables, as shown below, and modify the existing variables as shown.</p>
+<p>Results in</p>
+<p><img alt="Import Labels" src="../assets/grafana/importLabels.png" /></p>
 
 
 

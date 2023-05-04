@@ -1116,6 +1116,16 @@ Many of these metrics are used in the <code>Harvest Metadata</code> dashboard.</
 <td align="left">status of the system being monitored. 0 means reachable, 1 means unreachable</td>
 <td align="left">enum</td>
 </tr>
+<tr>
+<td align="left">metadata_collector_calc_time</td>
+<td align="left">amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.</td>
+<td align="left">microseconds</td>
+</tr>
+<tr>
+<td align="left">metadata_collector_skips</td>
+<td align="left">number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.</td>
+<td align="left">scalar</td>
+</tr>
 </tbody>
 </table>
 <h2 id="collector-metadata">Collector Metadata<a class="headerlink" href="#collector-metadata" title="Permanent link">&para;</a></h2>
