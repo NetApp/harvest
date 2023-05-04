@@ -12,7 +12,7 @@ ARG ASUP_MAKE_TARGET=build
 # Set the Current Working Directory inside the container
 WORKDIR $BUILD_DIR
 
-RUN mkdir -p $INSTALL_DIR
+RUN mkdir -p $INSTALL_DIR $INSTALL_DIR/container/onePollerPerContainer
 
 COPY . .
 
@@ -25,6 +25,8 @@ fi
 RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml.example
 
 RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/grafana $BUILD_DIR/autosupport $INSTALL_DIR
+
+RUN cp -a $BUILD_DIR/container/onePollerPerContainer/docker-compose.tmpl $INSTALL_DIR/container/onePollerPerContainer
 
 FROM gcr.io/distroless/static-debian11:debug
 

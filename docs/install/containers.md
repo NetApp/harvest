@@ -54,6 +54,7 @@ Defaults:
   collectors:
     - Zapi
     - ZapiPerf
+    - EMS
   use_insecure_tls: true   # <====== adjust as needed to enable/disable TLS checks 
   exporters:
     - prometheus1
@@ -73,7 +74,11 @@ Pollers:
 - Generate a Docker compose file from your `harvest.yml`
 
 ```
-bin/harvest generate docker full --port --output harvest-compose.yml
+docker run --rm \
+  --entrypoint "bin/harvest" \
+  --volume "$(pwd):/opt/harvest" \
+  ghcr.io/netapp/harvest generate docker full \
+  --output harvest-compose.yml
 ```
 
 `generate docker full` does two things:
@@ -118,7 +123,7 @@ password: admin
 ### How do I add a new poller?
 
 1. Add poller to `harvest.yml`
-2. Regenerate compose file by running [`bin/harvest generate`](#generate-a-docker-compose-for-your-pollers)
+2. Regenerate compose file by running [harvest generate](#generate-a-docker-compose-for-your-pollers)
 3. Run [docker compose up](#start-everything), for example,
 
 ```bash
@@ -144,19 +149,21 @@ To upgrade Harvest:
    This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
    image.
 
-2. Copy your existing `harvest.yml` into the new Harvest directory created in step #1.
+2. [Stop all containers](#stop-all-containers). If you change directories, be sure to shut down any running Harvest containers from the previous directory.
 
-3. Regenerate your `harvest-compose.yml` file by
-   running `bin/harvest generate docker full --output harvest-compose.yml`
+3. Copy your existing `harvest.yml` into the new Harvest directory created in step #1.
+
+4. Regenerate your `harvest-compose.yml` file by
+   running [harvest generate](#generate-a-docker-compose-for-your-pollers)
    By default, generate will use the `latest` tag. If you want to upgrade to a `nightly` build see the twisty.
 
     ??? question "I want to upgrade to a nightly build"
     
         Tell the `generate` cmd to use a different tag like so:
 
-        `bin/harvest generate docker full --image ghcr.io/netapp/harvest:nightly --output harvest-compose.yml`
+        `docker run --rm --entrypoint "bin/harvest" --volume "$(pwd):/opt/harvest" ghcr.io/netapp/harvest:nightly generate docker full --output harvest-compose.yml`
 
-4. Pull new images and restart your containers like so:
+5. Pull new images and restart your containers like so:
 
 ```
 docker pull ghcr.io/netapp/harvest   # or if using Docker Hub: docker pull rahulguptajss/harvest

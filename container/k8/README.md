@@ -22,7 +22,11 @@ To run Harvest resources in Kubernetes, please execute the following commands:
 1. After adding your clusters to `harvest.yml`, generate `harvest-compose.yml` and `prom-stack.yml`.
 
 ```
-bin/harvest generate docker full --port --output harvest-compose.yml
+docker run --rm \
+  --entrypoint "bin/harvest" \
+  --volume "$(pwd):/opt/harvest" \
+  ghcr.io/netapp/harvest generate docker full \
+  --output harvest-compose.yml
 ```
 
 <details><summary>example harvest.yml</summary>
@@ -405,7 +409,12 @@ Please note the following assumptions for the steps below:
 1. After configuring the clusters in `harvest.yml`, generate `harvest-compose.yml`. We also want to remove the `conf` directory from the `harvest-compose.yml` file, otherwise `kompose` will create an empty configMap for it. We'll remove the `conf` directory by commenting out that line using `sed`.  
 
 ```
-bin/harvest generate docker --port --output harvest-compose.yml
+docker run --rm \
+  --entrypoint "bin/harvest" \
+  --volume "$(pwd):/opt/harvest" \
+  ghcr.io/netapp/harvest generate docker full \
+  --output harvest-compose.yml
+  
 sed -i '/\/conf/s/^/#/g' harvest-compose.yml
 ```
 

@@ -19,9 +19,13 @@ and [Dockerhub](https://hub.docker.com/r/rahulguptajss/harvest).
 If you want to create a separate container for each poller in your `harvest.yaml` file, download the latest version of Harvest and run 
 
 ```
-bin/harvest generate docker --output docker-compose.yml
+docker run --rm \
+  --entrypoint "bin/harvest" \
+  --volume "$(pwd):/opt/harvest" \
+  ghcr.io/netapp/harvest generate docker \
+  --output harvest-compose.yml
 
-docker-compose up -d --remove-orphans
+docker-compose -f harvest-compose.yml up -d --remove-orphans
 ```
 
 Stop docker containers
