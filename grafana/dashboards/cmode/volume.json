@@ -2203,7 +2203,7 @@
           },
           "id": 91,
           "options": {
-            "content": "This dashboard requires Workload/QOS counter templates. They are disabled by default because they typically slow down data collection due to a high number of metrics. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
+            "content": "This panel requires Workload/QOS counter templates. They are disabled by default because they typically slow down data collection due to a high number of metrics. Two actions are required to use this panel: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -2268,7 +2268,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 21
+            "y": 20
           },
           "id": 72,
           "options": {
@@ -2358,7 +2358,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 21
+            "y": 20
           },
           "id": 73,
           "options": {
@@ -2448,7 +2448,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 30
           },
           "id": 76,
           "options": {
@@ -2538,7 +2538,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 30
           },
           "id": 77,
           "options": {
@@ -2628,7 +2628,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 41
+            "y": 40
           },
           "id": 74,
           "options": {
@@ -2718,7 +2718,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 41
+            "y": 40
           },
           "id": 75,
           "options": {
@@ -2809,7 +2809,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 51
+            "y": 50
           },
           "id": 79,
           "options": {
@@ -2900,7 +2900,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 51
+            "y": 50
           },
           "id": 80,
           "options": {
@@ -2957,7 +2957,7 @@
           },
           "id": 103,
           "options": {
-            "content": "This dashboard requires Workload/QOS counter templates. They are disabled by default because they typically slow down data collection due to a high number of metrics. Two actions are required to use this dashboard: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
+            "content": "This panel requires Workload/QOS counter templates. They are disabled by default because they typically slow down data collection due to a high number of metrics. Two actions are required to use this panel: <br>\n1. If you are using ZapiPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using RestPerf Collector, then On Harvest, You must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n\nRefer ONTAP Performance - Resolution Guide https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -5190,6 +5190,22 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 21
+          },
+          "id": 110,
+          "options": {
+            "content": "This panel requires ONTAP 9.12+ and the APIs are only available via REST. Enable the REST collector in your `harvest.yml` config.<br>\nSee https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#why-do-i-have-volume-sis-stat-panel-empty-in-volume-dashboard for more details.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -5249,7 +5265,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 21
+            "y": 23
           },
           "id": 108,
           "options": {
@@ -5341,7 +5357,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 21
+            "y": 23
           },
           "id": 106,
           "options": {
@@ -5433,7 +5449,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 21
+            "y": 23
           },
           "id": 107,
           "options": {
@@ -6616,5 +6632,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "",
-  "version": 10
+  "version": 11
 }
