@@ -16,7 +16,7 @@ git checkout origin/HEAD
 git switch --create release/$RELEASE
 git push origin release/$RELEASE
 ```
-
+- [ ] create a release branch for repo [harvest-metrics](https://github.com/NetApp/harvest-metrics) with the name specified in the previous step.
 - [ ] Ensure all issues for the release are tagged with `status/testme` and unassigned. Use `gh` or the GitHub UI to do this.
 - [ ] Use the release [issue burn down list](https://github.com/NetApp/harvest/issues?q=is%3Aissue+label%3Astatus%2Ftestme%2Cstatus%2Fopen+sort%3Acreated-asc) to verify issues are fixed. Move `status/testme` issues to `status/open` or `status/done`
 - [ ] Ensure that the release is validated against NABox.
