@@ -5,13 +5,18 @@
 package util
 
 import (
+	"bytes"
+	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
+	"io"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"regexp"
@@ -414,4 +419,31 @@ func GetSortedKeys(m map[string]string) []string {
 	}
 	sort.Strings(sortedKeys)
 	return sortedKeys
+}
+
+func SendPostReqAndGetRes(url string, method string, buf []byte, user string, pass string) (map[string]interface{}, error) {
+	tlsConfig := &tls.Config{InsecureSkipVerify: true} //nolint:gosec
+	client := &http.Client{
+		Transport: &http.Transport{TLSClientConfig: tlsConfig},
+	}
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(buf))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.SetBasicAuth(user, pass)
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	var data map[string]interface{}
+	if err = json.Unmarshal(body, &data); err != nil {
+		return nil, err
+	}
+	return data, nil
 }

@@ -451,8 +451,8 @@ func (e *Ems) getHref(names []string, filter []string) string {
 	nameFilter := "message.name=" + strings.Join(names, ",")
 	filter = append(filter, nameFilter)
 	// If both issuing ems and resolving ems would come together in same poll, This index ordering would make sure that latest ems would process last. So, if resolving ems would be latest, it will resolve the issue.
-	// add filter as order by index in descending order
-	orderByIndexFilter := "order_by=" + "index%20desc"
+	// add filter as order by index in ascending order
+	orderByIndexFilter := "order_by=" + "index%20asc"
 	filter = append(filter, orderByIndexFilter)
 
 	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
@@ -505,13 +505,13 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			continue
 		}
 		messageName := instanceData.Get("message.name")
+
 		// verify if message name exists in ONTAP response
 		if !messageName.Exists() {
 			e.Logger.Error().Msg("skip instance, missing message name")
 			continue
 		}
 		msgName := messageName.String()
-
 		if issuingEmsList, ok := e.bookendEmsMap[msgName]; ok {
 			props := prop[msgName]
 			if len(props) == 0 {

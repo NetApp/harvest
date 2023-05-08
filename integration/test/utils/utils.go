@@ -25,12 +25,10 @@ const (
 	GrafanaTokeKey = "grafana_api_token"
 
 	AnalyzeDockerLogs = "ANALYZE_DOCKER_LOGS"
-	BookendEms        = "BOOKEND_EMS"
 	CopyDockerLogs    = "COPY_DOCKER_LOGS"
 	InstallDocker     = "INSTALL_DOCKER"
 	InstallNative     = "INSTALL_NATIVE"
 	InstallRPM        = "INSTALL_RPM"
-	NonBookendEms     = "NON_BOOKEND_EMS"
 	Regression        = "REGRESSION"
 	UpgradeRPM        = "UPGRADE_RPM"
 )
