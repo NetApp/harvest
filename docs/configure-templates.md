@@ -182,7 +182,7 @@ sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="P
 
 Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom
 template will not be overwritten when upgrading Harvest. For example, if you want to
-change `conf/rest/cdot/9.12.0/aggr.yaml`, first create a copy (e.g., `conf/rest/cdot/9.12.0/custom_aggr.yaml`), then add
+change `conf/rest/9.12.0/aggr.yaml`, first create a copy (e.g., `conf/rest/9.12.0/custom_aggr.yaml`), then add
 these lines to `conf/rest/custom.yaml`:
 
 ```yaml
