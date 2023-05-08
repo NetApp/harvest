@@ -136,6 +136,23 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 docker-compose -f prom-stack.yml -f harvest-compose.yml down
 ```
 
+If you encounter the following error message while attempting to stop your Docker containers using `docker-compose down`
+
+```
+Error response from daemon: Conflict. The container name "/poller-u2" is already in use by container
+```
+
+This error is likely due to running `docker-compose down` from a different directory than where you initially ran `docker-compose up`.
+
+To resolve this issue, make sure to run the `docker-compose down` command from the same directory where you ran `docker-compose up`. This will ensure that Docker can correctly match the container names and IDs with the directory you are working in. 
+Alternatively, you can stop the Harvest, Prometheus, and Grafana containers by using the following command:
+
+```
+docker ps -aq --filter "name=prometheus" --filter "name=grafana" --filter "name=poller-" | xargs docker stop | xargs docker rm
+```
+
+Note: Deleting or stopping Docker containers does not remove the data stored in Docker volumes.
+
 ### Upgrade Harvest
 
 > Note: If you want to keep your historical Prometheus data, and you set up your Docker Compose workflow before
@@ -149,7 +166,7 @@ To upgrade Harvest:
    This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
    image.
 
-2. [Stop all containers](#stop-all-containers). If you change directories, be sure to shut down any running Harvest containers from the previous directory.
+2. [Stop all containers](#stop-all-containers)
 
 3. Copy your existing `harvest.yml` into the new Harvest directory created in step #1.
 

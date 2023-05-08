@@ -23,9 +23,9 @@ docker run --rm \
   --entrypoint "bin/harvest" \
   --volume "$(pwd):/opt/harvest" \
   ghcr.io/netapp/harvest generate docker \
-  --output harvest-compose.yml
+  --output docker-compose.yml
 
-docker-compose -f harvest-compose.yml up -d --remove-orphans
+docker-compose up -d --remove-orphans
 ```
 
 Stop docker containers
