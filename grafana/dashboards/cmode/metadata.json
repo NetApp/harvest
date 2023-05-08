@@ -2261,6 +2261,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 1,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2275,7 +2276,7 @@
                   }
                 ]
               },
-              "unit": "clocks"
+              "unit": "s"
             },
             "overrides": []
           },
@@ -4214,5 +4215,5 @@
   "timezone": "",
   "title": "Harvest Metadata",
   "uid": "",
-  "version": 4
+  "version": 5
 }
