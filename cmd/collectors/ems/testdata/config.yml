@@ -1,0 +1,14 @@
+Exporters:
+  prometheus:
+    exporter: Prometheus
+    port: 12990
+
+Defaults:
+  collectors:
+    - Ems
+  exporters:
+    - prometheus
+
+Pollers:
+  testEms:
+    addr: localhost

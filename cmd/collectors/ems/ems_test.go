@@ -1,38 +1,25 @@
 package ems
 
 import (
-	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
-	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog/log"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 	"os"
 	"strings"
 	"testing"
-	"time"
 )
 
-// This poller should be present in harvest.yml file for evaluating the ems test-case.
-const TestPoller = "dc1"
-const Admin = "admin"
+const EmsPollerName = "testEms"
 
-var nonBookendEmsNames []string
-var issuingEmsNames []string
-var resolvingEmsNames []string
-
-func Setup() (*Ems, *conf.Poller) {
-	conf.TestLoadHarvestConfig("../../../harvest.yml")
-	poller, err := conf.PollerNamed(TestPoller)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to load config")
-	}
+func Setup() *Ems {
 	pwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal().Err(err)
@@ -40,40 +27,26 @@ func Setup() (*Ems, *conf.Poller) {
 	splits := strings.Split(pwd, "/")
 	homePath := strings.Join(splits[:len(splits)-3], "/")
 
-	// Fetch ems configured in template
-	emsConfigDir := homePath + "/conf/ems/9.6.0"
-	getEmsNames(emsConfigDir, "ems.yaml")
-
 	// Initialize the Ems collector
-	e := newEms(homePath, poller)
-	return e, poller
+	e := newEms(homePath)
+	return e
 }
 
-func NonBookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
-	// remove all ems matrix except parent object
-	mat := e.Matrix[e.Object]
-	e.Matrix = make(map[string]*matrix.Matrix)
-	e.Matrix[e.Object] = mat
-	e.PollInstance() //nolint:errcheck
+func NonBookendEmsTest(t *testing.T, e *Ems) {
+	e.updateMatrix()
 
-	// Generate NonBookendEms: Check below non-bookend ems are supported for the given cluster
-	now := time.Now()
-	nonBookendEmsNames = []string{"wafl.vol.autoSize.done", "arw.volume.state"}
-	supportedEms := generateEvents(nonBookendEmsNames, poller)
-	log.Info().
-		Strs("supportedEms", supportedEms.Slice()).
-		Int("count", supportedEms.Size()).
-		Str("dur", time.Since(now).Round(time.Millisecond).String()).
-		Msg("Generated non-bookend ems")
-
-	// Polling ems collector
-	if _, err := e.PollData(); err != nil {
-		t.Fatalf("Failed to fetch data %v", err)
+	// Simulated nonBookend ems "wafl.vol.autoSize.done" and ems "arw.volume.state" with op value as "disable-in-progress"
+	nonBookendEmsNames := []string{"wafl.vol.autoSize.done", "arw.volume.state"}
+	results := jsonToEmsRecords(t, "testdata/ems-poll-1.json")
+	// Polling ems collector to handle results
+	emsMetric, emsCount := e.HandleResults(results, e.emsProp)
+	if emsCount == 0 {
+		t.Fatal("Failed to fetch data")
 	}
 
 	// Check and evaluate ems events
 	var notGeneratedEmsNames []string
-	for generatedEmsName, mx := range e.Matrix {
+	for generatedEmsName, mx := range emsMetric {
 		if util.Contains(nonBookendEmsNames, generatedEmsName) {
 			metr, ok := mx.GetMetrics()["events"]
 			// e.Matrix map would have one entry of Ems(parent) in map, skipping that as it's not required for testing.
@@ -94,6 +67,8 @@ func NonBookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
 					}
 				}
 			}
+		} else if generatedEmsName != "Ems" {
+			t.Errorf("Extra non-bookend ems event found= %s", generatedEmsName)
 		}
 	}
 
@@ -103,31 +78,21 @@ func NonBookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
 	}
 }
 
-func BookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
-	// remove all ems matrix except parent object
-	mat := e.Matrix[e.Object]
-	e.Matrix = make(map[string]*matrix.Matrix)
-	e.Matrix[e.Object] = mat
-	e.PollInstance() //nolint:errcheck
+func BookendEmsTest(t *testing.T, e *Ems) {
+	e.updateMatrix()
 
-	// Generate BookendEms: Check below bookend issuing ems are supported for the given cluster
-	now := time.Now()
-	issuingEmsNames = []string{"wafl.vvol.offline", "hm.alert.raised"}
-	supportedIssuingEms := generateEvents(issuingEmsNames, poller)
-	log.Info().
-		Strs("supportedIssuingEms", supportedIssuingEms.Slice()).
-		Int("count", supportedIssuingEms.Size()).
-		Str("dur", time.Since(now).Round(time.Millisecond).String()).
-		Msg("Generated bookend issuing ems")
-
-	// Polling ems collector
-	if _, err := e.PollData(); err != nil {
-		t.Fatalf("Failed to fetch data %v", err)
+	// Simulated bookend issuing ems "wafl.vvol.offline" and ems "hm.alert.raised" with alert_id value as "RaidLeftBehindAggrAlert"
+	issuingEmsNames := []string{"wafl.vvol.offline", "hm.alert.raised"}
+	results := jsonToEmsRecords(t, "testdata/ems-poll-2.json")
+	// Polling ems collector to handle results
+	emsMetric, emsCount := e.HandleResults(results, e.emsProp)
+	if emsCount == 0 {
+		t.Fatal("Failed to fetch data")
 	}
 
 	// Check and evaluate ems events
 	var notGeneratedEmsNames []string
-	for generatedEmsName, mx := range e.Matrix {
+	for generatedEmsName, mx := range emsMetric {
 		if util.Contains(issuingEmsNames, generatedEmsName) {
 			metr, ok := mx.GetMetrics()["events"]
 			// e.Matrix map would have one entry of Ems(parent) in map, skipping that as it's not required for testing.
@@ -148,6 +113,8 @@ func BookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
 					}
 				}
 			}
+		} else if generatedEmsName != "Ems" {
+			t.Errorf("Extra bookend issuing ems event found= %s", generatedEmsName)
 		}
 	}
 	count := len(notGeneratedEmsNames)
@@ -155,24 +122,17 @@ func BookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
 		t.Fatalf("These Bookend Ems haven't been raised: %s", notGeneratedEmsNames)
 	}
 
-	// Resolve BookendEms: Check below bookend resolving ems are supported for the given cluster
-	now = time.Now()
-	resolvingEmsNames = []string{"wafl.vvol.online", "hm.alert.cleared"}
-	supportedResolvingEms := generateEvents(resolvingEmsNames, poller)
-	log.Info().
-		Strs("supportedResolvingEms", supportedResolvingEms.Slice()).
-		Int("count", supportedResolvingEms.Size()).
-		Str("dur", time.Since(now).Round(time.Millisecond).String()).
-		Msg("Generated resolving ems")
-
-	// Polling ems collector
-	if _, err := e.PollData(); err != nil {
-		t.Fatalf("Failed to fetch data %v", err)
+	// Simulated bookend resolving ems "wafl.vvol.online" and ems "hm.alert.cleared" with alert_id value as "RaidLeftBehindAggrAlert"
+	results = jsonToEmsRecords(t, "testdata/ems-poll-3.json")
+	// Polling ems collector to handle results
+	emsMetric, emsCount = e.HandleResults(results, e.emsProp)
+	if emsCount == 0 {
+		t.Fatal("Failed to fetch data")
 	}
 
 	// Check and evaluate ems events
 	var notResolvedEmsNames []string
-	for generatedEmsName, mx := range e.Matrix {
+	for generatedEmsName, mx := range emsMetric {
 		if util.Contains(issuingEmsNames, generatedEmsName) {
 			metr, ok := mx.GetMetrics()["events"]
 			// e.Matrix map would have one entry of Ems(parent) in map, skipping that as it's not required for testing.
@@ -194,6 +154,8 @@ func BookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
 					}
 				}
 			}
+		} else if generatedEmsName != "Ems" {
+			t.Errorf("Extra bookend issuing ems event found= %s", generatedEmsName)
 		}
 	}
 	// After resolving ems, all bookend ems should resolved
@@ -204,20 +166,26 @@ func BookendEmsTest(t *testing.T, e *Ems, poller *conf.Poller) {
 }
 
 func Test_Ems(t *testing.T) {
-	e, poller := Setup()
-	NonBookendEmsTest(t, e, poller)
-	BookendEmsTest(t, e, poller)
+	e := Setup()
+	NonBookendEmsTest(t, e)
+	BookendEmsTest(t, e)
 }
 
-func newEms(homePath string, poller *conf.Poller) *Ems {
+func newEms(homePath string) *Ems {
+	conf.TestLoadHarvestConfig("testdata/config.yml")
+	emsPoller, err := conf.PollerNamed(EmsPollerName)
+	if err != nil {
+		log.Fatal().Err(err)
+	}
 	opts := options.Options{
-		Poller:   TestPoller,
+		Poller:   EmsPollerName,
 		HomePath: homePath,
 	}
-	auth := auth.NewCredentials(poller, logging.Get())
+	auth := auth.NewCredentials(emsPoller, logging.Get())
 	ac := collector.New("Ems", "Ems", &opts, emsParams(), auth)
+	ac.IsTest = true
 	e := &Ems{}
-	err := e.Init(ac)
+	err = e.Init(ac)
 	if err != nil {
 		log.Fatal().Err(err)
 	}
@@ -243,69 +211,30 @@ objects:
 	return root
 }
 
-func getEmsNames(dir string, fileName string) {
-	nonBookendEmsNames = make([]string, 0)
-	issuingEmsNames = make([]string, 0)
-	resolvingEmsNames = make([]string, 0)
-	nonBookendEmsCount := 0
-	bookendEmsCount := 0
-
-	emsConfigFilePath := dir + "/" + fileName
-	log.Debug().Str("emsConfigFilePath", emsConfigFilePath).Msg("")
-
-	data, err := tree.ImportYaml(emsConfigFilePath)
+func jsonToEmsRecords(t *testing.T, path string) []gjson.Result {
+	var (
+		emsRecords []gjson.Result
+		e          gjson.Result
+	)
+	bytes, err := os.ReadFile(path)
 	if err != nil {
-		log.Fatal().Err(err)
+		t.Fatal(err)
 	}
+	output := gjson.GetManyBytes(bytes, "records", "num_records", "_links.next.href")
+	data := output[0]
+	numRecords := output[1]
 
-	for _, child := range data.GetChildS("events").GetChildren() {
-		emsName := child.GetChildContentS("name")
-		if resolveEms := child.GetChildS("resolve_when_ems"); resolveEms != nil {
-			issuingEmsNames = append(issuingEmsNames, emsName)
-			resolvingEmsNames = append(resolvingEmsNames, resolveEms.GetChildContentS("name"))
-			bookendEmsCount++
-		} else {
-			nonBookendEmsNames = append(nonBookendEmsNames, emsName)
-			nonBookendEmsCount++
-		}
-	}
-
-	log.Info().Msgf("Total ems configured: %d, Non-Bookend ems configured:%d, Bookend ems configured:%d", nonBookendEmsCount+bookendEmsCount, nonBookendEmsCount, bookendEmsCount)
-}
-
-func generateEvents(emsNames []string, poller *conf.Poller) *set.Set {
-	supportedEms := set.New()
-	var jsonValue []byte
-	url := "https://" + poller.Addr + "/api/private/cli/event/generate"
-	method := "POST"
-
-	for _, ems := range emsNames {
-		arg1 := "1"
-		arg3 := "3"
-		if ems == "arw.volume.state" {
-			arg1 = "disable-in-progress"
-		}
-		if ems == "hm.alert.raised" || ems == "hm.alert.cleared" {
-			arg3 = "RaidLeftBehindAggrAlert"
-		}
-
-		jsonValue = []byte(fmt.Sprintf(`{"message-name": "%s", "values": ["%s",2,"%s",4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}`, ems, arg1, arg3))
-
-		data, err := util.SendPostReqAndGetRes(url, method, jsonValue, Admin, poller.Password)
+	if !data.Exists() {
+		contentJSON := `{"records":[]}`
+		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", bytes)
 		if err != nil {
-			log.Fatal().Err(err).Msg("Failed to load config")
+			t.Fatal(err)
 		}
-		if response := data["error"]; response != nil {
-			errorDetail := response.(map[string]interface{})
-			code := errorDetail["code"].(string)
-			target := errorDetail["target"].(string)
-			if !(code == "2" && target == "message-name") {
-				supportedEms.Add(ems)
-			}
-		} else {
-			supportedEms.Add(ems)
-		}
+		e = gjson.ParseBytes(response)
 	}
-
-	return supportedEms
+	if numRecords.Int() > 0 {
+		e = data
+	}
+	emsRecords = append(emsRecords, e.Array()...)
+	return emsRecords
 }
