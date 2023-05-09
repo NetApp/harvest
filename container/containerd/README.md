@@ -46,7 +46,11 @@ Follow the existing documentation to setup your `harvest.yml` file
 Create your `harvest-compose.yml` file like this:
 
 ```sh
-bin/harvest generate docker full --port --output harvest-compose.yml # --image tag, if you built a new image above
+docker run --rm \
+  --entrypoint "bin/harvest" \
+  --volume "$(pwd):/opt/harvest" \
+  ghcr.io/netapp/harvest generate docker full \
+  --output harvest-compose.yml # --image tag, if you built a new image above
 ```
 
 

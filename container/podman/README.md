@@ -78,7 +78,7 @@ By default, Cockpit runs on port 9090, same as Prometheus. We'll change Promethe
 
 With these changes, the [standard Harvest compose instructions](https://netapp.github.io/harvest/23.05/install/containers/#docker-compose) can be followed as normal now. In summary,
 1. Add the clusters, exporters, etc. to your `harvest.yml` file
-2. Generate a compose file from your `harvest.yml` by running `bin/harvest generate docker full --port --output harvest-compose.yml --promPort 9091`
+2. Generate a compose file from your `harvest.yml` by running `docker run --rm --entrypoint "bin/harvest" --volume "$(pwd):/opt/harvest" ghcr.io/netapp/harvest generate docker full --output harvest-compose.yml --promPort 9091`
 3. Bring everything up with `docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans`
 
 After starting the containers, you can view them with `podman ps -a` or using Cockpit `https://host-ip:9090/podman`.
