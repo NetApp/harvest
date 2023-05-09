@@ -1,9 +1,8 @@
 package restperf
 
 import (
-	"bytes"
-	"compress/gzip"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
@@ -13,10 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
-	"io"
 	"os"
-	"path/filepath"
 	"reflect"
 	"sort"
 	"testing"
@@ -208,9 +204,9 @@ func newRestPerf(object string, path string) *RestPerf {
 	opts := options.Options{
 		Poller:   pollerName,
 		HomePath: "testdata",
+		IsTest:   true,
 	}
 	ac := collector.New("RestPerf", object, &opts, params(object, path), nil)
-	ac.IsTest = true
 	r := RestPerf{}
 	err = r.Init(ac)
 	if err != nil {
@@ -224,46 +220,8 @@ func jsonToPerfRecords(path string) []rest.PerfRecord {
 		perfRecords []rest.PerfRecord
 		p           rest.PerfRecord
 	)
-	var reader io.Reader
-	if filepath.Ext(path) == ".gz" {
-		open, err := os.Open(path)
-		if err != nil {
-			panic(err)
-		}
-		defer open.Close()
-		reader, err = gzip.NewReader(open)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return nil
-		}
-		reader = bytes.NewReader(data)
-	}
-	var b bytes.Buffer
-	_, err := io.Copy(&b, reader) //nolint:gosec
-	if err != nil {
-		return nil
-	}
-	bb := b.Bytes()
-	output := gjson.GetManyBytes(bb, "records", "num_records", "_links.next.href")
-
-	data := output[0]
-	numRecords := output[1]
-
-	if !data.Exists() {
-		contentJSON := `{"records":[]}`
-		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", bb)
-		if err != nil {
-			panic(err)
-		}
-		p = rest.PerfRecord{Records: gjson.GetBytes(response, "records")}
-	}
-	if numRecords.Int() > 0 {
-		p = rest.PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}
-	}
+	gson := collectors.JSONToGson(path, false)
+	p = rest.PerfRecord{Records: gson[0], Timestamp: time.Now().UnixNano()}
 	perfRecords = append(perfRecords, p)
 
 	return perfRecords

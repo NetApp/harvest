@@ -1,9 +1,8 @@
 package rest
 
 import (
-	"bytes"
-	"compress/gzip"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -11,10 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
-	"io"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -71,14 +67,13 @@ var (
 	ms           []*matrix.Matrix
 	benchRest    *Rest
 	fullPollData []gjson.Result
-	gsonCache    = make(map[string][]gjson.Result)
 )
 
 func TestMain(m *testing.M) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 
 	benchRest = newRest("Volume", "volume.yaml")
-	fullPollData = jsonToGson("testdata/volume-1.json.gz")
+	fullPollData = collectors.JSONToGson("testdata/volume-1.json.gz", true)
 	now := time.Now().Truncate(time.Second)
 	_, _ = benchRest.pollData(now, fullPollData, volumeEndpoints)
 
@@ -128,7 +123,7 @@ func Test_pollDataVolume(t *testing.T) {
 
 			r := newRest("Volume", "volume.yaml")
 			now := time.Now().Truncate(time.Second)
-			pollData := jsonToGson(tt.pollDataPath1)
+			pollData := collectors.JSONToGson(tt.pollDataPath1, true)
 
 			mm, err := r.pollData(now, pollData, volumeEndpoints)
 			if err != nil {
@@ -151,65 +146,8 @@ func Test_pollDataVolume(t *testing.T) {
 
 func volumeEndpoints(e *endPoint) ([]gjson.Result, error) {
 	path := "testdata/" + strings.ReplaceAll(e.prop.Query, "/", "-") + ".json.gz"
-	toGjson := jsonToGson(path)
-	return toGjson, nil
-}
-
-func jsonToGson(path string) []gjson.Result {
-
-	var (
-		result []gjson.Result
-		err    error
-	)
-	results, ok := gsonCache[path]
-	if ok {
-		return results
-	}
-
-	var reader io.Reader
-	if filepath.Ext(path) == ".gz" {
-		open, err := os.Open(path)
-		if err != nil {
-			panic(err)
-		}
-		defer open.Close()
-		reader, err = gzip.NewReader(open)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return nil
-		}
-		reader = bytes.NewReader(data)
-	}
-	var b bytes.Buffer
-	_, err = io.Copy(&b, reader) //nolint:gosec
-	if err != nil {
-		return nil
-	}
-	bb := b.Bytes()
-	output := gjson.GetManyBytes(bb, "records", "num_records", "_links.next.href")
-
-	data := output[0]
-	numRecords := output[1]
-	isNonIterRestCall := !data.Exists()
-
-	if isNonIterRestCall {
-		contentJSON := `{"records":[]}`
-		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", bb)
-		if err != nil {
-			panic(err)
-		}
-		value := gjson.GetBytes(response, "records")
-		result = append(result, value)
-	} else if numRecords.Int() > 0 {
-		result = append(result, data.Array()...)
-	}
-
-	gsonCache[path] = result
-	return result
+	gson := collectors.JSONToGson(path, true)
+	return gson, nil
 }
 
 func newRest(object string, path string) *Rest {
@@ -220,7 +158,6 @@ func newRest(object string, path string) *Rest {
 		IsTest:   true,
 	}
 	ac := collector.New("Rest", object, &opts, params(object, path), nil)
-	ac.IsTest = true
 	r := Rest{}
 	err = r.Init(ac)
 	if err != nil {
