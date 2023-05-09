@@ -36,6 +36,7 @@ type Options struct {
 	Objects    []string // objects to load (overrides collector config)
 	Profiling  int      // in case of profiling, the HTTP port used to display results
 	Asup       bool     // if true, invoke autosupport at start up
+	IsTest     bool     // true when run from unit test
 }
 
 // String provides a string representation of Options
