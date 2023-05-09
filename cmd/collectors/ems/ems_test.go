@@ -216,6 +216,7 @@ func jsonToEmsRecords(t *testing.T, path string) []gjson.Result {
 		emsRecords []gjson.Result
 		e          gjson.Result
 	)
+
 	bytes, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
