@@ -1295,6 +1295,7 @@ Defaults:
   collectors:
     - Zapi
     - ZapiPerf
+    - EMS
   use_insecure_tls: true   # &lt;====== adjust as needed to enable/disable TLS checks 
   exporters:
     - prometheus1
@@ -1312,7 +1313,11 @@ Pollers:
 <ul>
 <li>Generate a Docker compose file from your <code>harvest.yml</code></li>
 </ul>
-<div class="highlight"><pre><span></span><code>bin/harvest generate docker full --port --output harvest-compose.yml
+<div class="highlight"><pre><span></span><code>docker run --rm \
+  --entrypoint &quot;bin/harvest&quot; \
+  --volume &quot;$(pwd):/opt/harvest&quot; \
+  ghcr.io/netapp/harvest generate docker full \
+  --output harvest-compose.yml
 </code></pre></div>
 <p><code>generate docker full</code> does two things:</p>
 <ol>
@@ -1342,7 +1347,7 @@ password: admin
 <h3 id="how-do-i-add-a-new-poller">How do I add a new poller?<a class="headerlink" href="#how-do-i-add-a-new-poller" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Add poller to <code>harvest.yml</code></li>
-<li>Regenerate compose file by running <a href="#generate-a-docker-compose-for-your-pollers"><code>bin/harvest generate</code></a></li>
+<li>Regenerate compose file by running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a></li>
 <li>Run <a href="#start-everything">docker compose up</a>, for example,</li>
 </ol>
 <div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>-f<span class="w"> </span>prom-stack.yml<span class="w"> </span>-f<span class="w"> </span>harvest-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--remove-orphans
@@ -1350,6 +1355,15 @@ password: admin
 <h3 id="stop-all-containers">Stop all containers<a class="headerlink" href="#stop-all-containers" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml down
 </code></pre></div>
+<p>If you encounter the following error message while attempting to stop your Docker containers using <code>docker-compose down</code></p>
+<div class="highlight"><pre><span></span><code>Error response from daemon: Conflict. The container name &quot;/poller-u2&quot; is already in use by container
+</code></pre></div>
+<p>This error is likely due to running <code>docker-compose down</code> from a different directory than where you initially ran <code>docker-compose up</code>.</p>
+<p>To resolve this issue, make sure to run the <code>docker-compose down</code> command from the same directory where you ran <code>docker-compose up</code>. This will ensure that Docker can correctly match the container names and IDs with the directory you are working in. 
+Alternatively, you can stop the Harvest, Prometheus, and Grafana containers by using the following command:</p>
+<div class="highlight"><pre><span></span><code>docker ps -aq --filter &quot;name=prometheus&quot; --filter &quot;name=grafana&quot; --filter &quot;name=poller-&quot; | xargs docker stop | xargs docker rm
+</code></pre></div>
+<p>Note: Deleting or stopping Docker containers does not remove the data stored in Docker volumes.</p>
 <h3 id="upgrade-harvest">Upgrade Harvest<a class="headerlink" href="#upgrade-harvest" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>Note: If you want to keep your historical Prometheus data, and you set up your Docker Compose workflow before
@@ -1365,16 +1379,19 @@ before continuing with the upgrade steps below.</p>
    image.</p>
 </li>
 <li>
+<p><a href="#stop-all-containers">Stop all containers</a></p>
+</li>
+<li>
 <p>Copy your existing <code>harvest.yml</code> into the new Harvest directory created in step #1.</p>
 </li>
 <li>
 <p>Regenerate your <code>harvest-compose.yml</code> file by
-   running <code>bin/harvest generate docker full --output harvest-compose.yml</code>
+   running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a>
    By default, generate will use the <code>latest</code> tag. If you want to upgrade to a <code>nightly</code> build see the twisty.</p>
 <details class="question">
 <summary>I want to upgrade to a nightly build</summary>
 <p>Tell the <code>generate</code> cmd to use a different tag like so:</p>
-<p><code>bin/harvest generate docker full --image ghcr.io/netapp/harvest:nightly --output harvest-compose.yml</code></p>
+<p><code>docker run --rm --entrypoint "bin/harvest" --volume "$(pwd):/opt/harvest" ghcr.io/netapp/harvest:nightly generate docker full --output harvest-compose.yml</code></p>
 </details>
 </li>
 <li>
