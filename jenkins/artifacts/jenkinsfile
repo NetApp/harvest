@@ -233,6 +233,7 @@ pipeline {
            # Add a dummy user/email for mike deploy to work
            git config user.name harvest
            git config user.email harvest
+           git fetch origin gh-pages:gh-pages
            mike deploy -r https://$GIT_TOKEN@github.com/NetApp/harvest.git --push --update-aliases nightly
             '''
           withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
