@@ -13,7 +13,6 @@ schedule:
 
 counters:
   - ^^id
-  - ^resource_name  => resource
   - service_time
   - visits
   - wait_time

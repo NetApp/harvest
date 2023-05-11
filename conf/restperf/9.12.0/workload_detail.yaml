@@ -15,7 +15,6 @@ schedule:
 counters:
   - ^^id
   - ^node.name      => node
-  - ^resource_name  => resource
   - service_time
   - visits
   - wait_time
