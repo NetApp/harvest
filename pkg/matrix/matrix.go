@@ -67,23 +67,30 @@ func (m *Matrix) SetExportable(b bool) {
 }
 
 func (m *Matrix) Clone(withData, withMetrics, withInstances bool) *Matrix {
-	clone := New(m.UUID, m.Object, m.Identifier)
+	clone := &Matrix{UUID: m.UUID, Object: m.Object, Identifier: m.Identifier}
 	clone.globalLabels = m.globalLabels
 	clone.exportOptions = m.exportOptions
 	clone.exportable = m.exportable
+	clone.displayMetrics = make(map[string]string, 0)
 
 	if withInstances {
+		clone.instances = make(map[string]*Instance, len(m.GetInstances()))
 		for key, instance := range m.GetInstances() {
 			clone.instances[key] = instance.Clone()
 		}
+	} else {
+		clone.instances = make(map[string]*Instance, 0)
 	}
 
 	if withMetrics {
+		clone.metrics = make(map[string]*Metric, len(m.GetMetrics()))
 		for key, metric := range m.GetMetrics() {
 			c := metric.Clone(withData)
 			clone.metrics[key] = c
 			clone.displayMetrics[c.GetName()] = key
 		}
+	} else {
+		clone.metrics = make(map[string]*Metric, 0)
 	}
 
 	return clone

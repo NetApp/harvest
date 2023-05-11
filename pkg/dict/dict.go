@@ -17,7 +17,8 @@ func New() *Dict {
 }
 
 func (d *Dict) Copy() *Dict {
-	c := New()
+	c := &Dict{}
+	c.dict = make(map[string]string, len(d.dict))
 	for k, v := range d.dict {
 		c.dict[k] = v
 	}

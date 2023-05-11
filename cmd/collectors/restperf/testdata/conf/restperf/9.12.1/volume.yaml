@@ -1,0 +1,35 @@
+
+name:                     Volume
+query:                    api/cluster/counter/tables/volume
+object:                   volume
+
+counters:
+  - ^^uuid
+  - ^name                  => volume
+  - ^node.name             => node
+  - ^parent_aggregate      => aggr
+  - ^svm.name              => svm
+  - average_latency        => avg_latency
+  - bytes_read             => read_data
+  - bytes_written          => write_data
+  - other_latency
+  - read_latency
+  - total_ops
+  - total_other_ops        => other_ops
+  - total_read_ops         => read_ops
+  - total_write_ops        => write_ops
+  - write_latency
+  - nfs.misaligned_writes_histogram => misaligned_writes_histogram # included for restperf_test
+
+plugins:
+  - Aggregator:
+      - node
+  - Volume
+
+export_options:
+  instance_keys:
+    - aggr
+    - node
+    - style
+    - svm
+    - volume

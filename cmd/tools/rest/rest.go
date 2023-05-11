@@ -561,7 +561,7 @@ func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) e
 				// nextLink is same as previous link, no progress is being made, exit
 				return nil
 			}
-			err := FetchRestPerfData(client, nextLink, perfRecords)
+			err := FetchRestPerfData(client, strings.Clone(next.String()), perfRecords)
 			if err != nil {
 				return err
 			}

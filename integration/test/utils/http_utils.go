@@ -13,12 +13,11 @@ import (
 func GetResponse(url string) (string, error) {
 	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
-		log.Fatalln(err)
+		return "", err
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
 		return "", err
 	}
 	return string(body), nil

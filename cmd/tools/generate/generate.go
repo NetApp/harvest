@@ -152,18 +152,12 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		return
 	}
-	configFilePath, err := filepath.Abs(path)
-	if err != nil {
-		logErrAndExit(err)
-	}
-	templateDirPath, err := filepath.Abs(opts.templateDir)
-	if err != nil {
-		logErrAndExit(err)
-	}
-	certDirPath, err := filepath.Abs(opts.certDir)
-	if err != nil {
-		logErrAndExit(err)
-	}
+	configFilePath := path
+
+	templateDirPath := opts.templateDir
+
+	certDirPath := opts.certDir
+
 	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v, true)

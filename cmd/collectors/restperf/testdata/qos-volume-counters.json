@@ -1,0 +1,143 @@
+{
+  "name": "qos_volume",
+  "description": "The workload_volume table provides workload statistics on a per volume basis. Workload information at a file or LUN level are not shown by this table (See the workload table). This table provides information such as operations per second, a breakdown of where read operations are going, the interarrival time of operation request messages, working set size information, operation latency per workload, and deferred workload information.",
+  "counter_schemas": [
+    {
+      "name": "concurrency",
+      "description": "This is the average number of concurrent requests for the workload.",
+      "type": "rate",
+      "unit": "none"
+    },
+    {
+      "name": "latency",
+      "description": "This is the average response time for requests that were initiated by the workload.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "ops"
+      }
+    },
+    {
+      "name": "name",
+      "description": "This is the name of the constituent workload row.",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "node.name",
+      "description": "System node name",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "ops",
+      "description": "This field is the workload's rate of operations that completed during the measurement interval; measured per second.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "read_data",
+      "description": "This is the amount of data read per second from the filer by the workload.",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "read_io_type_base",
+      "description": "This is the total number of WAFL read requests. It is used as a base counter (or denominator) for the read_io_types counter, to compute the percentage of reads by various WAFL components.",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "read_io_type_percent",
+      "description": "This is the percentage of read requests served from various components (such as buffer cache, ext_cache, disk, etc.).",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "read_io_type_base"
+      }
+    },
+    {
+      "name": "read_latency",
+      "description": "This is the average response time for read requests that were initiated by the workload.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "read_ops"
+      }
+    },
+    {
+      "name": "read_ops",
+      "description": "This is the rate of this workload's read operations that completed during the measurement interval.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "sequential_reads_base",
+      "description": "This is the total number of reads, performed on behalf of the workload. It is used as a base counter (or denominator) for the sequential_reads_percent counter to compute the percentage of sequential reads.",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "sequential_reads_percent",
+      "description": "This is the percentage of reads, performed on behalf of the workload, that were sequential.",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "sequential_reads_base"
+      }
+    },
+    {
+      "name": "sequential_writes_base",
+      "description": "This is the total number of writes, performed on behalf of the workload. This is used as a base counter (or denominator) for the sequential_writes_percent counter to compute the percentage of sequential writes.",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "sequential_writes_percent",
+      "description": "This is the percentage of writes, performed on behalf of the workload, that were sequential. This counter is only available on platforms with more than 4GB of NVRAM.",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "sequential_writes_base"
+      }
+    },
+    {
+      "name": "total_data",
+      "description": "This is the total amount of data read/written per second from/to the filer by the workload.",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "uuid",
+      "description": "This is the unique identifier for the qos_volume row. While the qos_volume name may change, the UUID will not change.",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "write_data",
+      "description": "This is the amount of data written per second to the filer by the workload.",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "write_latency",
+      "description": "This is the average response time for write requests that were initiated by the workload.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "write_ops"
+      }
+    },
+    {
+      "name": "write_ops",
+      "description": "This is the workload's write operations that completed during the measurement interval; measured per second.",
+      "type": "rate",
+      "unit": "per_sec"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/qos_volume"
+    }
+  }
+}

@@ -155,7 +155,7 @@ func (r *Rest) InitClient() error {
 		return err
 	}
 
-	if r.IsTest {
+	if r.Options.IsTest {
 		return nil
 	}
 	if err = r.Client.Init(5); err != nil {
@@ -199,7 +199,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if a.IsTest {
+	if a.Options.IsTest {
 		return &rest.Client{}, nil
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
@@ -285,11 +285,9 @@ func getFieldName(source string, parent string) []string {
 func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		count        uint64
-		apiD, parseD time.Duration
-		startTime    time.Time
-		err          error
-		records      []gjson.Result
+		startTime time.Time
+		err       error
+		records   []gjson.Result
 	)
 
 	r.Logger.Debug().Msg("starting data poll")
@@ -304,17 +302,29 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	apiD = time.Since(startTime)
-
 	if len(records) == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
+	return r.pollData(startTime, records, func(e *endPoint) ([]gjson.Result, error) {
+		return r.processEndPoint(e)
+	})
+}
+
+func (r *Rest) pollData(startTime time.Time, records []gjson.Result, endpointFunc func(e *endPoint) ([]gjson.Result, error)) (map[string]*matrix.Matrix, error) {
+
+	var (
+		count        uint64
+		apiD, parseD time.Duration
+	)
+
+	apiD = time.Since(startTime)
 	startTime = time.Now()
+
 	count = r.HandleResults(records, r.Prop, false)
 
 	// process endpoints
-	eCount := r.processEndPoints()
+	eCount := r.processEndPoints(endpointFunc)
 	count += eCount
 	parseD = time.Since(startTime)
 
@@ -329,7 +339,13 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
-func (r *Rest) processEndPoints() uint64 {
+func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, error) {
+	href := rest.BuildHref(r.query(e), strings.Join(r.fields(e), ","), r.filter(e), "", "", "", r.Prop.ReturnTimeOut, r.query(e))
+
+	return r.GetRestData(href)
+}
+
+func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, error)) uint64 {
 	var (
 		err   error
 		count uint64
@@ -339,16 +355,10 @@ func (r *Rest) processEndPoints() uint64 {
 		var (
 			records []gjson.Result
 		)
-		counterKey := make([]string, len(endpoint.prop.Counters))
-		i := 0
-		for k := range endpoint.prop.Counters {
-			counterKey[i] = k
-			i++
-		}
 
-		href := rest.BuildHref(r.query(endpoint), strings.Join(r.fields(endpoint), ","), r.filter(endpoint), "", "", "", r.Prop.ReturnTimeOut, r.query(endpoint))
+		records, err = endpointFunc(endpoint)
 
-		if records, err = r.GetRestData(href); err != nil {
+		if err != nil {
 			r.Logger.Error().Err(err).
 				Str("api", endpoint.prop.Query).
 				Msg("")

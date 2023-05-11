@@ -36,6 +36,15 @@ func (my *Volume) Init() error {
 		return err
 	}
 
+	my.aggrsMap = make(map[string]string)
+
+	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
+	my.currentVal = my.SetPluginInterval()
+
+	if my.Options.IsTest {
+		return nil
+	}
+
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout, my.Auth); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
@@ -45,11 +54,6 @@ func (my *Volume) Init() error {
 	if err = my.client.Init(5); err != nil {
 		return err
 	}
-
-	my.aggrsMap = make(map[string]string)
-
-	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	my.currentVal = my.SetPluginInterval()
 
 	return nil
 }
