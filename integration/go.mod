@@ -5,7 +5,7 @@ go 1.20
 replace github.com/netapp/harvest/v2 => ../
 
 require (
-	github.com/netapp/harvest/v2 v2.0.0-20230404163343-f21b0c1a08ac
+	github.com/netapp/harvest/v22 v22.11.1
 	github.com/rs/zerolog v1.29.1
 	github.com/tidwall/gjson v1.14.4
 	golang.org/x/text v0.9.0
