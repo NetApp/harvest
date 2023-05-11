@@ -155,7 +155,7 @@ func (r *Rest) InitClient() error {
 		return err
 	}
 
-	if r.IsTest {
+	if r.Options.IsTest {
 		return nil
 	}
 	if err = r.Client.Init(5); err != nil {
@@ -199,7 +199,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if a.IsTest {
+	if a.Options.IsTest {
 		return &rest.Client{}, nil
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
@@ -355,12 +355,6 @@ func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, 
 		var (
 			records []gjson.Result
 		)
-		counterKey := make([]string, len(endpoint.prop.Counters))
-		i := 0
-		for k := range endpoint.prop.Counters {
-			counterKey[i] = k
-			i++
-		}
 
 		records, err = endpointFunc(endpoint)
 
