@@ -68,6 +68,23 @@ func NonBookendEmsTest(t *testing.T, e *Ems) {
 	if count > 0 {
 		t.Fatalf("These Non-Bookend Ems haven't been raised: %s", notGeneratedEmsNames)
 	}
+
+	// AutoResolve testcase: In next poll, updateMatrix would remove all non-bookend ems and retained only bookend ems.
+	e.updateMatrix()
+
+	results = collectors.JSONToGson("testdata/ems-poll-2.json", true)
+	// Polling ems collector to handle results
+	emsMetric, emsCount = e.HandleResults(results, e.emsProp)
+	if emsCount == 0 {
+		t.Fatal("Failed to fetch data")
+	}
+
+	// Check and evaluate non-bookend ems events got auto resolved successfully.
+	for generatedEmsName := range emsMetric {
+		if util.Contains(nonBookendEmsNames, generatedEmsName) {
+			t.Errorf("Non-bookend ems event hasn't been auto resolved= %s", generatedEmsName)
+		}
+	}
 }
 
 func BookendEmsTest(t *testing.T, e *Ems) {
@@ -113,6 +130,9 @@ func BookendEmsTest(t *testing.T, e *Ems) {
 	if count > 0 {
 		t.Fatalf("These Bookend Ems haven't been raised: %s", notGeneratedEmsNames)
 	}
+
+	// update matrix
+	e.updateMatrix()
 
 	// Simulated bookend resolving ems "wafl.vvol.online" and ems "hm.alert.cleared" with alert_id value as "RaidLeftBehindAggrAlert"
 	results = collectors.JSONToGson("testdata/ems-poll-3.json", true)
