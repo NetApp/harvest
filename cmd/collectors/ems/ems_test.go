@@ -1,35 +1,27 @@
 package ems
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
-	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog/log"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 	"os"
-	"strings"
 	"testing"
 )
 
 const EmsPollerName = "testEms"
 
-func Setup() *Ems {
-	pwd, err := os.Getwd()
-	if err != nil {
-		log.Fatal().Err(err)
-	}
-	splits := strings.Split(pwd, "/")
-	homePath := strings.Join(splits[:len(splits)-3], "/")
-
+func Test_Ems(t *testing.T) {
 	// Initialize the Ems collector
-	e := newEms(homePath)
-	return e
+	e := NewEms()
+	// Non-bookend test
+	NonBookendEmsTest(t, e)
+	// Bookend issuing-resolving ems test
+	BookendEmsTest(t, e)
 }
 
 func NonBookendEmsTest(t *testing.T, e *Ems) {
@@ -37,7 +29,7 @@ func NonBookendEmsTest(t *testing.T, e *Ems) {
 
 	// Simulated nonBookend ems "wafl.vol.autoSize.done" and ems "arw.volume.state" with op value as "disable-in-progress"
 	nonBookendEmsNames := []string{"wafl.vol.autoSize.done", "arw.volume.state"}
-	results := jsonToEmsRecords(t, "testdata/ems-poll-1.json")
+	results := collectors.JSONToGson("testdata/ems-poll-1.json", true)
 	// Polling ems collector to handle results
 	emsMetric, emsCount := e.HandleResults(results, e.emsProp)
 	if emsCount == 0 {
@@ -83,7 +75,7 @@ func BookendEmsTest(t *testing.T, e *Ems) {
 
 	// Simulated bookend issuing ems "wafl.vvol.offline" and ems "hm.alert.raised" with alert_id value as "RaidLeftBehindAggrAlert"
 	issuingEmsNames := []string{"wafl.vvol.offline", "hm.alert.raised"}
-	results := jsonToEmsRecords(t, "testdata/ems-poll-2.json")
+	results := collectors.JSONToGson("testdata/ems-poll-2.json", true)
 	// Polling ems collector to handle results
 	emsMetric, emsCount := e.HandleResults(results, e.emsProp)
 	if emsCount == 0 {
@@ -123,7 +115,7 @@ func BookendEmsTest(t *testing.T, e *Ems) {
 	}
 
 	// Simulated bookend resolving ems "wafl.vvol.online" and ems "hm.alert.cleared" with alert_id value as "RaidLeftBehindAggrAlert"
-	results = jsonToEmsRecords(t, "testdata/ems-poll-3.json")
+	results = collectors.JSONToGson("testdata/ems-poll-3.json", true)
 	// Polling ems collector to handle results
 	emsMetric, emsCount = e.HandleResults(results, e.emsProp)
 	if emsCount == 0 {
@@ -165,77 +157,35 @@ func BookendEmsTest(t *testing.T, e *Ems) {
 	}
 }
 
-func Test_Ems(t *testing.T) {
-	e := Setup()
-	NonBookendEmsTest(t, e)
-	BookendEmsTest(t, e)
-}
+func NewEms() *Ems {
+	// homepath is harvest directory level
+	homePath := "../../../"
+	emsConfgPath := homePath + "conf/ems/default.yaml"
 
-func newEms(homePath string) *Ems {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
-	emsPoller, err := conf.PollerNamed(EmsPollerName)
-	if err != nil {
-		log.Fatal().Err(err)
-	}
 	opts := options.Options{
 		Poller:   EmsPollerName,
 		HomePath: homePath,
+		IsTest:   true,
 	}
-	auth := auth.NewCredentials(emsPoller, logging.Get())
-	ac := collector.New("Ems", "Ems", &opts, emsParams(), auth)
-	ac.IsTest = true
+	ac := collector.New("Ems", "Ems", &opts, emsParams(emsConfgPath), nil)
 	e := &Ems{}
-	err = e.Init(ac)
+	err := e.Init(ac)
 	if err != nil {
 		log.Fatal().Err(err)
 	}
 	return e
 }
 
-func emsParams() *node.Node {
-	yml := `
-collector: Ems
+func emsParams(emsConfigPath string) *node.Node {
+	bytes, err := os.ReadFile(emsConfigPath)
+	if err != nil {
+		panic(err)
+	}
 
-client_timeout: 1m
-schedule:
-  - instance: 24h
-  - data:     3m
-
-objects:
-  Ems: ems.yaml
-`
-	root, err := tree.LoadYaml([]byte(yml))
+	root, err := tree.LoadYaml(bytes)
 	if err != nil {
 		panic(err)
 	}
 	return root
-}
-
-func jsonToEmsRecords(t *testing.T, path string) []gjson.Result {
-	var (
-		emsRecords []gjson.Result
-		e          gjson.Result
-	)
-
-	bytes, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatal(err)
-	}
-	output := gjson.GetManyBytes(bytes, "records", "num_records", "_links.next.href")
-	data := output[0]
-	numRecords := output[1]
-
-	if !data.Exists() {
-		contentJSON := `{"records":[]}`
-		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", bytes)
-		if err != nil {
-			t.Fatal(err)
-		}
-		e = gjson.ParseBytes(response)
-	}
-	if numRecords.Int() > 0 {
-		e = data
-	}
-	emsRecords = append(emsRecords, e.Array()...)
-	return emsRecords
 }
