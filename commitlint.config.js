@@ -11,6 +11,7 @@ module.exports = {
             [
                 'collector',
                 'config',
+                'deps',
                 'exporter',
                 'grafana',
                 'influxdb',
