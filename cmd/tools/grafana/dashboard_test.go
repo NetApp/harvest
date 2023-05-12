@@ -677,14 +677,15 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 }
 
 func visitAllPanels(data []byte, handle func(path string, key gjson.Result, value gjson.Result)) {
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		path := fmt.Sprintf("panels[%d]", key.Int())
-		handle(path, key, value)
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			path2 := fmt.Sprintf("%spanels[%d]", path, key2.Int())
-			handle(path2, key2, value2)
-			return true
-		})
+	visitPanels(data, "panels", "", handle)
+}
+
+func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(path string, key gjson.Result, value gjson.Result)) {
+	gjson.GetBytes(data, panelPath).ForEach(func(key, value gjson.Result) bool {
+		path := fmt.Sprintf("%s[%d]", panelPath, key.Int())
+		fullPath := fmt.Sprintf("%s%s", pathPrefix, path)
+		handle(fullPath, key, value)
+		visitPanels([]byte(value.Raw), "panels", fullPath, handle)
 		return true
 	})
 }
