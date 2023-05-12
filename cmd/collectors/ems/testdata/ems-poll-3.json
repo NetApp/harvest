@@ -10,209 +10,77 @@
           }
         }
       },
-      "index": 41076245,
-      "time": "2023-05-09T21:42:13+12:00",
-      "message": {
-        "severity": "alert",
-        "name": "hm.alert.raised"
-      },
-      "source": "notifyd",
-      "parameters": [
-        {
-          "name": "detailed_info",
-          "value": "1"
-        },
-        {
-          "name": "monitor",
-          "value": "2"
-        },
-        {
-          "name": "alert_id",
-          "value": "RaidLeftBehindAggrAlert"
-        },
-        {
-          "name": "alerting_resource",
-          "value": "4"
-        },
-        {
-          "name": "probable_cause_description",
-          "value": "5"
-        },
-        {
-          "name": "alert_corrective_action",
-          "value": "6"
-        },
-        {
-          "name": "possible_effect",
-          "value": "7"
-        },
-        {
-          "name": "additional_info",
-          "value": "8"
-        },
-        {
-          "name": "tags",
-          "value": "9"
-        },
-        {
-          "name": "acknowledge",
-          "value": "10"
-        },
-        {
-          "name": "acknowledger",
-          "value": "11"
-        },
-        {
-          "name": "suppress",
-          "value": "12"
-        },
-        {
-          "name": "suppressor",
-          "value": "13"
-        },
-        {
-          "name": "asup_enable",
-          "value": "14"
-        }
-      ],
-      "log_message": "hm.alert.raised: 1 raised by monitor 2",
-      "_links": {
-        "self": {
-          "href": "/api/support/ems/events/umeng-aff300-01/41076245"
-        }
-      }
-    },
-    {
-      "node": {
-        "name": "umeng-aff300-01",
-        "uuid": "28e14eab-0580-11e8-bd9d-00a098d39e12",
-        "_links": {
-          "self": {
-            "href": "/api/cluster/nodes/28e14eab-0580-11e8-bd9d-00a098d39e12"
-          }
-        }
-      },
-      "index": 41076246,
-      "time": "2023-05-09T21:42:29+12:00",
-      "message": {
-        "severity": "informational",
-        "name": "wafl.vvol.offline"
-      },
-      "source": "notifyd",
-      "parameters": [
-        {
-          "name": "name",
-          "value": "1"
-        },
-        {
-          "name": "app",
-          "value": "2"
-        },
-        {
-          "name": "volident",
-          "value": "3"
-        },
-        {
-          "name": "instuuid",
-          "value": "4"
-        }
-      ],
-      "log_message": "wafl.vvol.offline: Volume '123' has been set temporarily offline",
-      "_links": {
-        "self": {
-          "href": "/api/support/ems/events/umeng-aff300-01/41076246"
-        }
-      }
-    },
-    {
-      "node": {
-        "name": "umeng-aff300-01",
-        "uuid": "28e14eab-0580-11e8-bd9d-00a098d39e12",
-        "_links": {
-          "self": {
-            "href": "/api/cluster/nodes/28e14eab-0580-11e8-bd9d-00a098d39e12"
-          }
-        }
-      },
-      "index": 41076254,
-      "time": "2023-05-09T21:43:28+12:00",
-      "message": {
-        "severity": "informational",
-        "name": "wafl.vvol.online"
-      },
-      "source": "notifyd",
-      "parameters": [
-        {
-          "name": "vol",
-          "value": "1"
-        },
-        {
-          "name": "app",
-          "value": "2"
-        },
-        {
-          "name": "volident",
-          "value": "3"
-        },
-        {
-          "name": "instuuid",
-          "value": "4"
-        }
-      ],
-      "log_message": "wafl.vvol.online: vol=\"1\", app=\"2\", volident=\"3\", instuuid=\"4\"",
-      "_links": {
-        "self": {
-          "href": "/api/support/ems/events/umeng-aff300-01/41076254"
-        }
-      }
-    },
-    {
-      "node": {
-        "name": "umeng-aff300-01",
-        "uuid": "28e14eab-0580-11e8-bd9d-00a098d39e12",
-        "_links": {
-          "self": {
-            "href": "/api/cluster/nodes/28e14eab-0580-11e8-bd9d-00a098d39e12"
-          }
-        }
-      },
-      "index": 41076255,
-      "time": "2023-05-09T21:43:50+12:00",
+      "index": 41087737,
+      "time": "2023-05-12T21:13:00+12:00",
       "message": {
         "severity": "notice",
-        "name": "hm.alert.cleared"
+        "name": "LUN.offline"
       },
       "source": "notifyd",
       "parameters": [
         {
-          "name": "detailed_info",
+          "name": "lun_path",
           "value": "1"
         },
         {
-          "name": "monitor",
+          "name": "volume_name",
           "value": "2"
         },
         {
-          "name": "alert_id",
-          "value": "RaidLeftBehindAggrAlert"
+          "name": "volume_dsid",
+          "value": "3"
         },
         {
-          "name": "alerting_resource",
+          "name": "object_uuid",
           "value": "4"
+        },
+        {
+          "name": "object_type",
+          "value": "5"
         }
       ],
-      "log_message": "hm.alert.cleared: 1 cleared by monitor 2",
+      "log_message": "LUN.offline: LUN 1, vol 2 (DSID 3) was brought offline (UUID: 4).",
       "_links": {
         "self": {
-          "href": "/api/support/ems/events/umeng-aff300-01/41076255"
+          "href": "/api/support/ems/events/umeng-aff300-01/41087737"
+        }
+      }
+    },
+    {
+      "node": {
+        "name": "umeng-aff300-01",
+        "uuid": "28e14eab-0580-11e8-bd9d-00a098d39e12",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/28e14eab-0580-11e8-bd9d-00a098d39e12"
+          }
+        }
+      },
+      "index": 41087738,
+      "time": "2023-05-12T21:13:15+12:00",
+      "message": {
+        "severity": "emergency",
+        "name": "monitor.fan.critical"
+      },
+      "source": "notifyd",
+      "parameters": [
+        {
+          "name": "report",
+          "value": "1"
+        }
+      ],
+      "log_message": "monitor.fan.critical: 1",
+      "_links": {
+        "self": {
+          "href": "/api/support/ems/events/umeng-aff300-01/41087738"
         }
       }
     }
   ],
-  "num_records": 4,
+  "num_records": 2,
   "_links": {
     "self": {
-      "href": "/api/support/ems/events?return_records=true&fields=*&message.severity=alert|emergency|error|informational|notice&time=%3E=1683625320&message.name=wafl.vvol.offline,hm.alert.raised,wafl.vvol.online,%20hm.alert.cleared&order_by=index%20asc"
+      "href": "/api/support/ems/events?return_records=true&fields=*&message.severity=alert|emergency|error|informational|notice&message.name=LUN.offline,monitor.fan.critical,callhome.battery.low&order_by=index%20asc"
     }
   }
 }

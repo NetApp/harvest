@@ -123,12 +123,96 @@
           "href": "/api/support/ems/events/umeng-aff300-01/41076246"
         }
       }
+    },
+    {
+      "node": {
+        "name": "umeng-aff300-01",
+        "uuid": "28e14eab-0580-11e8-bd9d-00a098d39e12",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/28e14eab-0580-11e8-bd9d-00a098d39e12"
+          }
+        }
+      },
+      "index": 41076254,
+      "time": "2023-05-09T21:43:28+12:00",
+      "message": {
+        "severity": "informational",
+        "name": "wafl.vvol.online"
+      },
+      "source": "notifyd",
+      "parameters": [
+        {
+          "name": "vol",
+          "value": "1"
+        },
+        {
+          "name": "app",
+          "value": "2"
+        },
+        {
+          "name": "volident",
+          "value": "3"
+        },
+        {
+          "name": "instuuid",
+          "value": "4"
+        }
+      ],
+      "log_message": "wafl.vvol.online: vol=\"1\", app=\"2\", volident=\"3\", instuuid=\"4\"",
+      "_links": {
+        "self": {
+          "href": "/api/support/ems/events/umeng-aff300-01/41076254"
+        }
+      }
+    },
+    {
+      "node": {
+        "name": "umeng-aff300-01",
+        "uuid": "28e14eab-0580-11e8-bd9d-00a098d39e12",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/28e14eab-0580-11e8-bd9d-00a098d39e12"
+          }
+        }
+      },
+      "index": 41076255,
+      "time": "2023-05-09T21:43:50+12:00",
+      "message": {
+        "severity": "notice",
+        "name": "hm.alert.cleared"
+      },
+      "source": "notifyd",
+      "parameters": [
+        {
+          "name": "detailed_info",
+          "value": "1"
+        },
+        {
+          "name": "monitor",
+          "value": "2"
+        },
+        {
+          "name": "alert_id",
+          "value": "RaidLeftBehindAggrAlert"
+        },
+        {
+          "name": "alerting_resource",
+          "value": "4"
+        }
+      ],
+      "log_message": "hm.alert.cleared: 1 cleared by monitor 2",
+      "_links": {
+        "self": {
+          "href": "/api/support/ems/events/umeng-aff300-01/41076255"
+        }
+      }
     }
   ],
-  "num_records": 2,
+  "num_records": 4,
   "_links": {
     "self": {
-      "href": "/api/support/ems/events?return_records=true&fields=*&message.severity=alert|emergency|error|informational|notice&time=%3E=1683625320&message.name=wafl.vvol.offline,hm.alert.raised&order_by=index%20asc"
+      "href": "/api/support/ems/events?return_records=true&fields=*&message.severity=alert|emergency|error|informational|notice&time=%3E=1683625320&message.name=wafl.vvol.offline,hm.alert.raised,wafl.vvol.online,%20hm.alert.cleared&order_by=index%20asc"
     }
   }
 }

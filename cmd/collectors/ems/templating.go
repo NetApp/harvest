@@ -144,13 +144,13 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 	}
 
 	// check if resolveAfter is present in template
-	e.resolveAfter = DefaultBookendResolutionDuration
+	e.resolveAfter[issueEmsProp.Name] = DefaultBookendResolutionDuration
 	if resolveAfter = resolveEvent.GetChildContentS("resolve_after"); resolveAfter != "" {
 		if durationVal, err := time.ParseDuration(resolveAfter); err == nil {
-			e.resolveAfter = durationVal
+			e.resolveAfter[issueEmsProp.Name] = durationVal
 		}
 	}
-	e.Logger.Debug().Str("bookend ems resolve After", e.resolveAfter.String()).Msg("")
+	e.Logger.Debug().Str("bookend ems resolve After", e.resolveAfter[issueEmsProp.Name].String()).Msg("")
 
 	// Using Set to ensure it has slice of unique issuing ems
 	if _, ok := e.bookendEmsMap[resolveEmsName]; !ok {
