@@ -756,7 +756,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 						if r.Prop.Query == "api/cluster/counter/tables/disk:constituent" && label == "physical_disk_id" {
 							r.Logger.Debug().Str("instanceKey", instanceKey).Str("label", label).Msg("Missing label value")
 						} else {
-							r.Logger.Warn().Str("instanceKey", instanceKey).Str("label", label).Msg("Missing label value")
+							r.Logger.Error().Str("instanceKey", instanceKey).Str("label", label).Msg("Missing label value")
 						}
 					}
 				}

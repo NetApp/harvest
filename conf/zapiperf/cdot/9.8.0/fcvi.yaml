@@ -6,7 +6,7 @@ object:                   fcvi
 instance_key:             uuid
 
 counters:
-  - instance_name
+  - instance_name           => fcvi
   - instance_uuid
   - node_name               => node
   - rdma_write_avg_latency
@@ -15,4 +15,5 @@ counters:
 
 export_options:
   instance_keys:
+    - fcvi
     - node

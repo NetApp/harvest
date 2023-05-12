@@ -17,6 +17,7 @@
         "7840vz",
         "$$$ Bots $$$",
         "dependabot",
-        "dependabot[bot]"
+        "dependabot[bot]",
+        "renovate"
     ]
 }
