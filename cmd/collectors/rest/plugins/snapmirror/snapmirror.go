@@ -137,6 +137,15 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 	var keys []string
 	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
 
+	lastTransferSizeMetric := data.GetMetric("last_transfer_size")
+	lagTimeMetric := data.GetMetric("lag_time")
+	if lastTransferSizeMetric == nil {
+		return
+	}
+	if lagTimeMetric == nil {
+		return
+	}
+
 	for key, instance := range data.GetInstances() {
 		if instance.GetLabel("group_type") == "consistencygroup" {
 			keys = append(keys, key)
@@ -156,6 +165,9 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 		// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
 		collectors.UpdateProtectedFields(instance)
+
+		// Update lag time based on checks
+		my.updateLagTime(instance, lastTransferSizeMetric, lagTimeMetric)
 	}
 
 	// handle CG relationships
@@ -199,6 +211,26 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 				cgVolumeInstance.SetLabel("source_volume", sourceVol)
 				cgVolumeInstance.SetLabel("destination_volume", destinationVol)
 			}
+		}
+	}
+
+}
+
+func (my *SnapMirror) updateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, lagTime *matrix.Metric) {
+	healthy := instance.GetLabel("healthy")
+	schedule := instance.GetLabel("schedule")
+	lastError := instance.GetLabel("last_transfer_error")
+	relationshipID := instance.GetLabel("relationship_id")
+
+	// If SM relationship is healthy, has a schedule, last_transfer_error is empty, and last_transfer_bytes is 0, Then we are setting lag_time to 0
+	// Otherwise, report the lag_time which ONTAP has originally reported.
+	if lastBytes, ok := lastTransferSize.GetValueFloat64(instance); ok {
+		if healthy == "true" && schedule != "" && lastError == "" && lastBytes == 0 {
+			lag, _ := lagTime.GetValueFloat64(instance)
+			if err := lagTime.SetValueFloat64(instance, 0); err != nil {
+				my.Logger.Error().Err(err).Str("metric", lagTime.GetName()).Msg("Unable to set value on metric")
+			}
+			my.Logger.Debug().Msgf("lagTime value set from %f to 0 for %s. Healthy: %s, Schedule: %s, LastBytes: %f, LastError:%s", lag, relationshipID, healthy, schedule, lastBytes, lastError)
 		}
 	}
 

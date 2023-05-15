@@ -43,6 +43,7 @@ endpoints:
       - ^^destination.path                   => destination_location
       - ^^uuid                               => relationship_id
       - ^source.cluster.name                 => source_cluster
+      - ^unhealthy_reason.#.message          => last_transfer_error
 
 plugins:
   - Snapmirror
@@ -61,6 +62,7 @@ export_options:
     - derived_relationship_type
     - group_type
     - healthy
+    - last_transfer_error
     - last_transfer_type
     - local
     - policy_type

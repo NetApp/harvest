@@ -9,6 +9,7 @@ counters:
     - ^destination-volume-node       => destination_node
     - ^destination-vserver
     - ^is-healthy                    => healthy
+    - ^last-transfer-error
     - ^last-transfer-type
     - ^policy-type
     - ^relationship-group-type       => group_type
@@ -51,6 +52,7 @@ export_options:
     - destination_node_limit
     - group_type
     - healthy
+    - last_transfer_error
     - last_transfer_type
     - local
     - policy_type

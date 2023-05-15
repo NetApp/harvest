@@ -10,6 +10,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"regexp"
@@ -81,6 +83,15 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		my.Logger.Debug().Msg("updated svm peer detail")
 	}
 
+	lastTransferSizeMetric := data.GetMetric("snapmirror-info.last-transfer-size")
+	lagTimeMetric := data.GetMetric("snapmirror-info.lag-time")
+	if lastTransferSizeMetric == nil {
+		return nil, errs.New(errs.ErrNoMetric, "last_transfer_size")
+	}
+	if lagTimeMetric == nil {
+		return nil, errs.New(errs.ErrNoMetric, "lag_time")
+	}
+
 	for _, instance := range data.GetInstances() {
 		// Zapi call with `expand=true` returns all the constituent's relationships. We do not want to export them.
 		if match := flexgroupConstituentName.FindStringSubmatch(instance.GetLabel("destination_volume")); len(match) == 3 {
@@ -104,6 +115,9 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 
 			// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
 			collectors.UpdateProtectedFields(instance)
+
+			// Update lag time based on checks
+			UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, my.Logger)
 		} else {
 			// 7 Mode
 			// source / destination nodes can be something like:
@@ -211,4 +225,24 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 		my.svmPeerDataMap[localSvmName] = Peer{svm: actualSvmName, cluster: peerClusterName}
 	}
 	return nil
+}
+
+func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, lagTime *matrix.Metric, logger *logging.Logger) {
+	healthy := instance.GetLabel("healthy")
+	schedule := instance.GetLabel("schedule")
+	lastError := instance.GetLabel("last_transfer_error")
+	relationshipID := instance.GetLabel("relationship_id")
+
+	// If SM relationship is healthy, has a schedule, last_transfer_error is empty, and last_transfer_bytes is 0, Then we are setting lag_time to 0
+	// Otherwise, report the lag_time which ONTAP has originally reported.
+	if lastBytes, ok := lastTransferSize.GetValueFloat64(instance); ok {
+		if healthy == "true" && schedule != "" && lastError == "" && lastBytes == 0 {
+			lag, _ := lagTime.GetValueFloat64(instance)
+			if err := lagTime.SetValueFloat64(instance, 0); err != nil {
+				logger.Error().Err(err).Str("metric", lagTime.GetName()).Msg("Unable to set value on metric")
+			}
+			logger.Debug().Msgf("lagTime value set from %f to 0 for %s. Healthy: %s, Schedule: %s, LastBytes: %f, LastError:%s", lag, relationshipID, healthy, schedule, lastBytes, lastError)
+		}
+	}
+
 }
