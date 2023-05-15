@@ -10,6 +10,8 @@ import (
 	"testing"
 )
 
+var dashboards = []string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"}
+
 func TestDatasource(t *testing.T) {
 	visitDashboards([]string{"../../../grafana/dashboards"}, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
@@ -52,7 +54,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 
 func TestUnitsAndExprMatch(t *testing.T) {
 	mt := newMetricsTable()
-	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+	visitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkUnits(t, path, mt, data)
 		})
@@ -181,14 +183,8 @@ func newMetricsTable() *metricsTable {
 }
 
 func checkUnits(t *testing.T, dashboardPath string, mt *metricsTable, data []byte) {
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		doPanel(t, "", key, value, mt, dashboardPath)
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doPanel(t, pathPrefix, key2, value2, mt, dashboardPath)
-			return true
-		})
-		return true
 	})
 }
 
@@ -355,7 +351,7 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 }
 
 func TestVariablesAreSorted(t *testing.T) {
-	visitDashboards([]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+	visitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkVariablesAreSorted(t, path, data)
 		})
@@ -388,7 +384,7 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 
 func TestNoUnusedVariables(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkUnusedVariables(t, path, data)
 		})
@@ -445,6 +441,7 @@ varLoop:
 
 func allExpressions(data []byte) []expression {
 	exprs := make([]expression, 0)
+
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
 		doExpr("", key, value, func(expr expression) {
 			exprs = append(exprs, expr)
@@ -481,7 +478,7 @@ func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc fu
 
 func TestIDIsBlank(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkUIDIsBlank(t, path, data)
 			checkIDIsNull(t, path, data)
@@ -490,7 +487,7 @@ func TestIDIsBlank(t *testing.T) {
 
 func TestExemplarIsFalse(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkExemplarIsFalse(t, path, data)
 		})
@@ -518,7 +515,7 @@ func checkIDIsNull(t *testing.T, path string, data []byte) {
 
 func TestUniquePanelIDs(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkUniquePanelIDs(t, path, data)
 		})
@@ -527,27 +524,16 @@ func TestUniquePanelIDs(t *testing.T) {
 func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 	ids := make(map[int64]struct{})
 
+	sPath := shortPath(path)
 	// visit all panel ids
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		id := value.Get("id").Int()
 		_, ok := ids[id]
 		if ok {
 			t.Errorf(`dashboard=%s path=panels[%d] has multiple panels with id=%d`,
-				shortPath(path), key.Int(), id)
+				sPath, key.Int(), id)
 		}
 		ids[id] = struct{}{}
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			where := fmt.Sprintf("panels[%d].", key.Int())
-			id := value2.Get("id").Int()
-			_, ok := ids[id]
-			if ok {
-				t.Errorf(`dashboard=%s path=%spanels[%d] has multiple panels with id=%d`,
-					shortPath(path), where, key2.Int(), id)
-			}
-			ids[id] = struct{}{}
-			return true
-		})
-		return true
 	})
 }
 
@@ -560,7 +546,7 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 
 func TestTopKRange(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkTopKRange(t, path, data)
 		})
@@ -569,24 +555,14 @@ func TestTopKRange(t *testing.T) {
 func checkTopKRange(t *testing.T, path string, data []byte) {
 	// collect all expressions
 	expressions := make([]exprP, 0)
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		doTarget("", key, value, func(path string, expr string, format string) {
 			if format == "table" || format == "stat" {
 				return
 			}
 			expressions = append(expressions, newExpr(path, expr))
 		})
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doTarget(pathPrefix, key2, value2, func(path string, expr string, format string) {
-				if format == "table" || format == "stat" {
-					return
-				}
-				expressions = append(expressions, newExpr(path, expr))
-			})
-			return true
-		})
-		return true
 	})
 
 	// collect all variables
@@ -640,7 +616,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkExpansion(t, exceptions, path, data)
 		})
@@ -692,7 +668,7 @@ func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(p
 
 func TestLegends(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkLegends(t, path, data)
 		})
@@ -761,7 +737,7 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 
 func TestConnectNullValues(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkConnectNullValues(t, path, data)
 		})
@@ -801,7 +777,7 @@ func checkPanelChildPanels(t *testing.T, path string, data []byte) {
 
 func TestRatesAreNot1m(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkRate1m(t, shortPath(path), data)
 		},
@@ -819,7 +795,7 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 
 func TestTableFilter(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkTableFilter(t, path, data)
 		})
@@ -840,7 +816,7 @@ func checkTableFilter(t *testing.T, path string, data []byte) {
 
 func TestTitlesOfTopN(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkTitlesOfTopN(t, shortPath(path), data)
 		},
@@ -878,7 +854,7 @@ func asTitle(id string) string {
 
 func TestPercentHasMinMax(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkPercentHasMinMax(t, path, data)
 		})
@@ -915,7 +891,7 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 
 func TestRefreshIsOff(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkDashboardRefresh(t, shortPath(path), data)
 		},
@@ -933,7 +909,7 @@ func checkDashboardRefresh(t *testing.T, path string, data []byte) {
 
 func TestHeatmapSettings(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkHeatmapSettings(t, shortPath(path), data)
 		},
@@ -966,7 +942,7 @@ func checkHeatmapSettings(t *testing.T, path string, data []byte) {
 
 func TestBytePanelsHave2Decimals(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkBytePanelsHave2Decimals(t, path, data)
 		})
