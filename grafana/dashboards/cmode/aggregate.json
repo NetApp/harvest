@@ -3087,7 +3087,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 2,
               "mappings": [],

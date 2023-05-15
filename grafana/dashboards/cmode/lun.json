@@ -476,7 +476,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "color-background-solid",
-                "filterable": false,
+                "filterable": true,
                 "width": 0
               },
               "mappings": [],
@@ -593,7 +593,8 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto"
+                "displayMode": "auto",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -696,7 +697,8 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto"
+                "displayMode": "auto",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -799,7 +801,8 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid"
+                "displayMode": "color-background-solid",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -910,7 +913,8 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto"
+                "displayMode": "auto",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1013,7 +1017,8 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto"
+                "displayMode": "auto",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1115,7 +1120,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {

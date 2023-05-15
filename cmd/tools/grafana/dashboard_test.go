@@ -817,6 +817,27 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 	}
 }
 
+func TestTableFilter(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkTableFilter(t, path, data)
+		})
+}
+
+func checkTableFilter(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType == "table" {
+			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").String()
+			if isFilterable != "true" {
+				t.Errorf(`dashboard=%s path=panels[%d] does not enable filtering for the table`, dashPath, key.Int())
+			}
+		}
+	})
+}
+
 func TestTitlesOfTopN(t *testing.T) {
 	visitDashboards(
 		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
