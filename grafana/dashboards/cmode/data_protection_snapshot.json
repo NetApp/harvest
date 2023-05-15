@@ -590,7 +590,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -737,7 +737,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1265,7 +1265,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {

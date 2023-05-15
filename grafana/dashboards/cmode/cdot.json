@@ -661,7 +661,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 0,
               "mappings": [],
@@ -791,7 +791,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 0,
               "mappings": [],
@@ -921,7 +921,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 0,
               "mappings": [],

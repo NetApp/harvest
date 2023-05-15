@@ -572,7 +572,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -952,7 +952,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "color-background-solid",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1071,7 +1071,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1182,7 +1182,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1292,7 +1292,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "color-background-solid",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1411,7 +1411,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1522,7 +1522,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -4815,7 +4815,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "color-background-solid",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
