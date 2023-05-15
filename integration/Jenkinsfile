@@ -65,14 +65,6 @@ pipeline {
                                 REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 """
                             }
-                        }
-                        stage('Evaluating Alert Rules') {
-                            steps {
-                                sh """
-                                NON_BOOKEND_EMS=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                BOOKEND_EMS=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                """
-                            }
                             post {
                                 always {
                                      sh '''

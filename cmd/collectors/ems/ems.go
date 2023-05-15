@@ -38,9 +38,9 @@ type Ems struct {
 	maxURLSize     int
 	DefaultLabels  []string
 	severityFilter string
-	eventNames     []string            // consist of all ems events supported
-	bookendEmsMap  map[string]*set.Set // This is reverse bookend ems map, [Resolving ems]:[Set of Issuing ems]. Using Set here to ensure that it has slice of unique issuing ems
-	resolveAfter   time.Duration
+	eventNames     []string                 // consist of all ems events supported
+	bookendEmsMap  map[string]*set.Set      // This is reverse bookend ems map, [Resolving ems]:[Set of Issuing ems]. Using Set here to ensure that it has slice of unique issuing ems
+	resolveAfter   map[string]time.Duration // This is resolve after map, [Issuing ems]:[Duration]. After this duration, ems got auto resolved.
 }
 
 type Metric struct {
@@ -95,6 +95,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	e.InitEmsProp()
 
 	e.bookendEmsMap = make(map[string]*set.Set)
+	e.resolveAfter = make(map[string]time.Duration)
 
 	if err = e.InitClient(); err != nil {
 		return err
@@ -282,10 +283,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	var (
 		err              error
 		records          []gjson.Result
-		ok               bool
-		metr             *matrix.Metric
 		bookendCacheSize int
-		metricTimestamp  float64
 	)
 
 	query := "api/support/ems/messages"
@@ -322,29 +320,10 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	e.Logger.Debug().Strs("skipped events", missingNames).Msg("")
 	e.eventNames = filteredNames
 
-	// check instance timestamp and remove it after given resolve_after duration and warning when total instance in cache > 1000 instance
+	// warning when total instance in cache > 1000 instance
 	for _, issuingEmsList := range e.bookendEmsMap {
 		for _, issuingEms := range issuingEmsList.Slice() {
 			if mx := e.Matrix[issuingEms]; mx != nil {
-				for instanceKey, instance := range mx.GetInstances() {
-					if metr, ok = mx.GetMetrics()["timestamp"]; !ok {
-						e.Logger.Error().
-							Str("name", "timestamp").
-							Msg("failed to get metric")
-					}
-					// check instance timestamp and remove it after given resolve_after value
-					if metricTimestamp, ok = metr.GetValueFloat64(instance); ok {
-						if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter) {
-							mx.RemoveInstance(instanceKey)
-						}
-					}
-				}
-
-				if instances := mx.GetInstances(); len(instances) == 0 {
-					delete(e.Matrix, issuingEms)
-					continue
-				}
-
 				bookendCacheSize += len(mx.GetInstances())
 			}
 		}
@@ -451,8 +430,8 @@ func (e *Ems) getHref(names []string, filter []string) string {
 	nameFilter := "message.name=" + strings.Join(names, ",")
 	filter = append(filter, nameFilter)
 	// If both issuing ems and resolving ems would come together in same poll, This index ordering would make sure that latest ems would process last. So, if resolving ems would be latest, it will resolve the issue.
-	// add filter as order by index in descending order
-	orderByIndexFilter := "order_by=" + "index%20desc"
+	// add filter as order by index in ascending order
+	orderByIndexFilter := "order_by=" + "index%20asc"
 	filter = append(filter, orderByIndexFilter)
 
 	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
@@ -505,13 +484,13 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			continue
 		}
 		messageName := instanceData.Get("message.name")
+
 		// verify if message name exists in ONTAP response
 		if !messageName.Exists() {
 			e.Logger.Error().Msg("skip instance, missing message name")
 			continue
 		}
 		msgName := messageName.String()
-
 		if issuingEmsList, ok := e.bookendEmsMap[msgName]; ok {
 			props := prop[msgName]
 			if len(props) == 0 {
@@ -693,9 +672,9 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 
 func (e *Ems) updateMatrix() {
 	var (
-		ok   bool
-		val  float64
-		metr *matrix.Metric
+		ok                           bool
+		val                          float64
+		eventMetric, timestampMetric *matrix.Metric
 	)
 
 	tempMap := make(map[string]*matrix.Matrix)
@@ -714,7 +693,7 @@ func (e *Ems) updateMatrix() {
 	e.Matrix[e.Object] = mat
 
 	for issuingEms, mx := range tempMap {
-		if metr, ok = mx.GetMetrics()["events"]; !ok {
+		if eventMetric, ok = mx.GetMetrics()["events"]; !ok {
 			e.Logger.Error().
 				Str("issuingEms", issuingEms).
 				Str("name", "events").
@@ -722,12 +701,26 @@ func (e *Ems) updateMatrix() {
 			continue
 		}
 
+		if timestampMetric, ok = mx.GetMetrics()["timestamp"]; !ok {
+			e.Logger.Error().
+				Str("issuingEms", issuingEms).
+				Str("name", "timestamp").
+				Msg("failed to get metric")
+			continue
+		}
 		for instanceKey, instance := range mx.GetInstances() {
 			// set export to false
 			instance.SetExportable(false)
 
-			if val, ok = metr.GetValueFloat64(instance); ok && val == 0 {
+			if val, ok = eventMetric.GetValueFloat64(instance); ok && val == 0 {
 				mx.RemoveInstance(instanceKey)
+				continue
+			}
+			// check instance timestamp and remove it after given resolve_after duration
+			if metricTimestamp, ok := timestampMetric.GetValueFloat64(instance); ok {
+				if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter[issuingEms]) {
+					mx.RemoveInstance(instanceKey)
+				}
 			}
 		}
 		if instances := mx.GetInstances(); len(instances) == 0 {
