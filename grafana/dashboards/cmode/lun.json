@@ -801,7 +801,8 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid"
+                "displayMode": "color-background-solid",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
