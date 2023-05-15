@@ -1261,7 +1261,8 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto"
+                "displayMode": "auto",
+                "filterable": true
               },
               "decimals": 2,
               "displayName": "",

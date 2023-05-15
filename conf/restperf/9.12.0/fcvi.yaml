@@ -12,4 +12,5 @@ counters:
 
 export_options:
   instance_keys:
+    - fcvi
     - node

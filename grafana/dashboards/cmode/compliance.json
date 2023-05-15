@@ -105,7 +105,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 0,
               "mappings": [],
@@ -506,7 +506,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1659,7 +1659,7 @@
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 0,
               "mappings": [],
@@ -2002,7 +2002,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {

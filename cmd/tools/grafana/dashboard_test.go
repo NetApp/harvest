@@ -677,14 +677,15 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 }
 
 func visitAllPanels(data []byte, handle func(path string, key gjson.Result, value gjson.Result)) {
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		path := fmt.Sprintf("panels[%d]", key.Int())
-		handle(path, key, value)
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			path2 := fmt.Sprintf("%spanels[%d]", path, key2.Int())
-			handle(path2, key2, value2)
-			return true
-		})
+	visitPanels(data, "panels", "", handle)
+}
+
+func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(path string, key gjson.Result, value gjson.Result)) {
+	gjson.GetBytes(data, panelPath).ForEach(func(key, value gjson.Result) bool {
+		path := fmt.Sprintf("%s[%d]", panelPath, key.Int())
+		fullPath := fmt.Sprintf("%s%s", pathPrefix, path)
+		handle(fullPath, key, value)
+		visitPanels([]byte(value.Raw), "panels", fullPath, handle)
 		return true
 	})
 }
@@ -814,6 +815,27 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr.metric)
 		}
 	}
+}
+
+func TestTableFilter(t *testing.T) {
+	visitDashboards(
+		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		func(path string, data []byte) {
+			checkTableFilter(t, path, data)
+		})
+}
+
+func checkTableFilter(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType == "table" {
+			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").String()
+			if isFilterable != "true" {
+				t.Errorf(`dashboard=%s path=panels[%d] does not enable filtering for the table`, dashPath, key.Int())
+			}
+		}
+	})
 }
 
 func TestTitlesOfTopN(t *testing.T) {

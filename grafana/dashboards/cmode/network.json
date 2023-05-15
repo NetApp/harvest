@@ -570,7 +570,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 2,
               "mappings": [],
@@ -1421,7 +1421,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 2,
               "mappings": [],
@@ -2479,7 +2479,7 @@
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "filterable": false
+                "filterable": true
               },
               "decimals": 2,
               "mappings": [],

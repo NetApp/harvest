@@ -379,7 +379,7 @@
           "custom": {
             "align": "auto",
             "displayMode": "gradient-gauge",
-            "filterable": false
+            "filterable": true
           },
           "decimals": 0,
           "mappings": [],
@@ -815,7 +815,7 @@
           "custom": {
             "align": "left",
             "displayMode": "auto",
-            "filterable": false
+            "filterable": true
           },
           "mappings": [],
           "thresholds": {
@@ -1015,7 +1015,7 @@
           "custom": {
             "align": "auto",
             "displayMode": "gradient-gauge",
-            "filterable": false
+            "filterable": true
           },
           "decimals": 0,
           "mappings": [],
@@ -1299,7 +1299,7 @@
           "custom": {
             "align": "left",
             "displayMode": "auto",
-            "filterable": false
+            "filterable": true
           },
           "mappings": [],
           "thresholds": {
@@ -1475,7 +1475,7 @@
           "custom": {
             "align": "auto",
             "displayMode": "gradient-gauge",
-            "filterable": false,
+            "filterable": true,
             "minWidth": 50
           },
           "decimals": 0,
@@ -1892,7 +1892,7 @@
           "custom": {
             "align": "left",
             "displayMode": "auto",
-            "filterable": false
+            "filterable": true
           },
           "mappings": [],
           "thresholds": {
