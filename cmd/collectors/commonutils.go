@@ -172,3 +172,22 @@ func SetNameservice(nsDB, nsSource, nisDomain string, instance *matrix.Instance)
 func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) bool {
 	return time.Since(time.UnixMicro(int64(timestamp))) > duration
 }
+
+func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, lagTime *matrix.Metric, logger *logging.Logger) {
+	healthy := instance.GetLabel("healthy")
+	schedule := instance.GetLabel("schedule")
+	lastError := instance.GetLabel("last_transfer_error")
+	relationshipID := instance.GetLabel("relationship_id")
+
+	// If SM relationship is healthy, has a schedule, last_transfer_error is empty, and last_transfer_bytes is 0, Then we are setting lag_time to 0
+	// Otherwise, report the lag_time which ONTAP has originally reported.
+	if lastBytes, ok := lastTransferSize.GetValueFloat64(instance); ok {
+		if healthy == "true" && schedule != "" && lastError == "" && lastBytes == 0 {
+			lag, _ := lagTime.GetValueFloat64(instance)
+			if err := lagTime.SetValueFloat64(instance, 0); err != nil {
+				logger.Error().Err(err).Str("metric", lagTime.GetName()).Msg("Unable to set value on metric")
+			}
+			logger.Debug().Msgf("lagTime value set from %f to 0 for %s. Healthy: %s, Schedule: %s, LastBytes: %f, LastError:%s", lag, relationshipID, healthy, schedule, lastBytes, lastError)
+		}
+	}
+}

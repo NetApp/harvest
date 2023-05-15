@@ -137,6 +137,15 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 	var keys []string
 	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
 
+	lastTransferSizeMetric := data.GetMetric("last_transfer_size")
+	lagTimeMetric := data.GetMetric("lag_time")
+	if lastTransferSizeMetric == nil {
+		return
+	}
+	if lagTimeMetric == nil {
+		return
+	}
+
 	for key, instance := range data.GetInstances() {
 		if instance.GetLabel("group_type") == "consistencygroup" {
 			keys = append(keys, key)
@@ -156,6 +165,9 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 		// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
 		collectors.UpdateProtectedFields(instance)
+
+		// Update lag time based on checks
+		collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, my.Logger)
 	}
 
 	// handle CG relationships

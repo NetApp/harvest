@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/dict"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"regexp"
@@ -81,6 +82,15 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		my.Logger.Debug().Msg("updated svm peer detail")
 	}
 
+	lastTransferSizeMetric := data.GetMetric("snapmirror-info.last-transfer-size")
+	lagTimeMetric := data.GetMetric("snapmirror-info.lag-time")
+	if lastTransferSizeMetric == nil {
+		return nil, errs.New(errs.ErrNoMetric, "last_transfer_size")
+	}
+	if lagTimeMetric == nil {
+		return nil, errs.New(errs.ErrNoMetric, "lag_time")
+	}
+
 	for _, instance := range data.GetInstances() {
 		// Zapi call with `expand=true` returns all the constituent's relationships. We do not want to export them.
 		if match := flexgroupConstituentName.FindStringSubmatch(instance.GetLabel("destination_volume")); len(match) == 3 {
@@ -104,6 +114,9 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 
 			// update the protectedBy and protectionSourceType fields and derivedRelationshipType in snapmirror_labels
 			collectors.UpdateProtectedFields(instance)
+
+			// Update lag time based on checks
+			collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, my.Logger)
 		} else {
 			// 7 Mode
 			// source / destination nodes can be something like:
