@@ -74,6 +74,13 @@ func (a *Aggregate) getCloudStores() error {
 	request := node.NewXMLS("aggr-object-store-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
 
+	desired := node.NewXMLS("desired-attributes")
+	objectStoreInfo := node.NewXMLS("object-store-information")
+	objectStoreInfo.NewChildS("aggregate-uuid", "")
+	objectStoreInfo.NewChildS("object-store-name", "")
+	desired.AddChild(objectStoreInfo)
+	request.AddChild(desired)
+
 	if result, err = a.client.InvokeZapiCall(request); err != nil {
 		return err
 	}
