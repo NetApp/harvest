@@ -14,7 +14,6 @@ import (
 
 type Aggregate struct {
 	*plugin.AbstractPlugin
-	currentVal         int
 	client             *zapi.Client
 	aggrCloudStoresMap map[string][]string // aggregate-uuid -> slice of cloud stores map
 }
@@ -23,66 +22,59 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Aggregate{AbstractPlugin: p}
 }
 
-func (my *Aggregate) Init() error {
+func (a *Aggregate) Init() error {
 
 	var err error
 
-	if err = my.InitAbc(); err != nil {
+	if err = a.InitAbc(); err != nil {
 		return err
 	}
 
-	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
-		my.Logger.Error().Stack().Err(err).Msg("connecting")
+	if a.client, err = zapi.New(conf.ZapiPoller(a.ParentParams), a.Auth); err != nil {
+		a.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err = a.client.Init(5); err != nil {
 		return err
 	}
 
-	my.aggrCloudStoresMap = make(map[string][]string)
-
-	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	my.currentVal = my.SetPluginInterval()
+	a.aggrCloudStoresMap = make(map[string][]string)
 	return nil
 }
 
-func (my *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[a.Object]
 
-	data := dataMap[my.Object]
-	if my.currentVal >= my.PluginInvocationRate {
-		my.currentVal = 0
-
-		// invoke aggr-object-store-get-iter zapi and populate cloud stores info
-		if err := my.getCloudStores(); err != nil {
-			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect cloud store data")
-			} else {
-				my.Logger.Error().Err(err).Msg("Failed to collect cloud store data")
-			}
+	// invoke aggr-object-store-get-iter zapi and populate cloud stores info
+	if err := a.getCloudStores(); err != nil {
+		if errors.Is(err, errs.ErrNoInstance) {
+			a.Logger.Debug().Err(err).Msg("Failed to collect cloud store data")
+		} else {
+			a.Logger.Error().Err(err).Msg("Failed to collect cloud store data")
 		}
 	}
 
-	// update aggregate instance label with cloud stores
-	for aggrUUID, aggr := range data.GetInstances() {
-		aggr.SetLabel("cloud_stores", strings.Join(my.aggrCloudStoresMap[aggrUUID], ","))
+	// update aggregate instance label with cloud stores info
+	if len(a.aggrCloudStoresMap) > 0 {
+		for aggrUUID, aggr := range data.GetInstances() {
+			aggr.SetLabel("cloud_stores", strings.Join(a.aggrCloudStoresMap[aggrUUID], ","))
+		}
 	}
-
-	my.currentVal++
 	return nil, nil
 }
 
-func (my *Aggregate) getCloudStores() error {
+func (a *Aggregate) getCloudStores() error {
 	var (
 		result []*node.Node
 		err    error
 	)
 
-	my.aggrCloudStoresMap = make(map[string][]string)
+	a.aggrCloudStoresMap = make(map[string][]string)
 	request := node.NewXMLS("aggr-object-store-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = a.client.InvokeZapiCall(request); err != nil {
 		return err
 	}
 
@@ -93,7 +85,7 @@ func (my *Aggregate) getCloudStores() error {
 	for _, objectStore := range result {
 		aggregateUUID := objectStore.GetChildContentS("aggregate-uuid")
 		objectStoreName := objectStore.GetChildContentS("object-store-name")
-		my.aggrCloudStoresMap[aggregateUUID] = append(my.aggrCloudStoresMap[aggregateUUID], objectStoreName)
+		a.aggrCloudStoresMap[aggregateUUID] = append(a.aggrCloudStoresMap[aggregateUUID], objectStoreName)
 	}
 	return nil
 }

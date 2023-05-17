@@ -61,9 +61,7 @@ counters:
         - flexvol-count
 
 plugins:
-  - Aggregate:
-      schedule:
-        - data: 900s  # should be multiple of data poll duration
+  - Aggregate
   - LabelAgent:
     exclude_equals:
       - root_aggr `true`
