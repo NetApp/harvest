@@ -50,9 +50,9 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	if err := a.getCloudStores(); err != nil {
 		if errors.Is(err, errs.ErrNoInstance) {
 			a.Logger.Debug().Err(err).Msg("Failed to collect cloud store data")
-		} else {
-			a.Logger.Error().Err(err).Msg("Failed to collect cloud store data")
+			return nil, nil
 		}
+		return nil, err
 	}
 
 	// update aggregate instance label with cloud stores info
