@@ -58,6 +58,7 @@ type options struct {
 	labels              []string
 	dirGrafanaFolderMap map[string]*Folder
 	addMultiSelect      bool
+	svmRegex            string
 }
 
 type Folder struct {
@@ -180,6 +181,28 @@ func exportFiles(dir string, folder *Folder) error {
 	}
 	fmt.Printf("exported %d dashboards to [%s]\n", count, dir)
 	return nil
+}
+
+func addSvmRegex(content []byte, fileName string, val string) []byte {
+	var err error
+	newContent := content
+	var svmExpression []string
+	if fileName == "snapmirror.json" {
+		svmExpression = []string{"templating.list.#(name=\"DestinationSVM\")", "templating.list.#(name=\"SourceSVM\")"}
+	} else {
+		svmExpression = []string{"templating.list.#(name=\"SVM\")"}
+	}
+	for _, s := range svmExpression {
+		svm := gjson.GetBytes(content, s)
+		if svm.Exists() {
+			newContent, err = sjson.SetBytes(newContent, s+".regex", []byte(val))
+			if err != nil {
+				fmt.Printf("error while setting svm regex")
+				continue
+			}
+		}
+	}
+	return newContent
 }
 
 func addLabel(content []byte, label string, labelMap map[string]string) []byte {
@@ -467,6 +490,11 @@ func importFiles(dir string, folder *Folder) {
 					continue
 				}
 			}
+		}
+
+		// add svm regex
+		if opts.svmRegex != "" {
+			data = addSvmRegex(data, file.Name(), opts.svmRegex)
 		}
 
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
@@ -1015,6 +1043,7 @@ func addFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 		cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "Address of Grafana server (IP, FQDN or hostname)")
 		cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
+		cmd.PersistentFlags().StringVar(&opts.svmRegex, "svm-variable-regex", "", "SVM variable regex to filter SVM query results")
 		cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
 		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
 		cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
@@ -1023,6 +1052,7 @@ func addFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 		cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
 		cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
+		_ = cmd.PersistentFlags().MarkHidden("svm-variable-regex")
 		_ = cmd.MarkPersistentFlagRequired("serverfolder")
 		_ = cmd.MarkPersistentFlagRequired("directory")
 	}
