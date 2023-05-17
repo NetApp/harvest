@@ -6,6 +6,7 @@ package zapi
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
@@ -156,7 +157,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return qospolicyfixed.New(abc)
 	case "QosPolicyAdaptive":
 		return qospolicyadaptive.New(abc)
-
+	case "Aggregate":
+		return aggregate.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapi plugin found for %s", kind)
 	}

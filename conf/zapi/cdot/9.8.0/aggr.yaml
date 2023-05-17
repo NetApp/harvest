@@ -61,7 +61,8 @@ counters:
         - flexvol-count
 
 plugins:
-  LabelAgent:
+  - Aggregate
+  - LabelAgent:
     exclude_equals:
       - root_aggr `true`
     # metric label zapi_value rest_value `default_value`
@@ -73,6 +74,7 @@ export_options:
     - aggr
     - node
   instance_labels:
+    - cloud_stores
     - is_encrypted
     - state
     - type
