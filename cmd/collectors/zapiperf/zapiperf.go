@@ -29,6 +29,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/externalserviceoperation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcvi"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
@@ -128,6 +129,8 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		return disk.New(abc)
 	case "ExternalServiceOperation":
 		return externalserviceoperation.New(abc)
+	case "FCVI":
+		return fcvi.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapiPerf plugin found for %s", kind)
 	}

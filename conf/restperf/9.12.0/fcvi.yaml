@@ -3,14 +3,28 @@ query:                    api/cluster/counter/tables/fcvi
 object:                   fcvi
 
 counters:
-  - ^^id
-  - ^name                       => fcvi
-  - ^node.name                  => node
-  - rdma.write_average_latency  => rdma_write_avg_latency
-  - rdma.write_ops              => rdma_write_ops
-  - rdma.write_throughput       => rdma_write_throughput
+  - ^^id                                 => fcvi
+  - ^node.name                           => node
+  - firmware.invalid_crc_count           => fw_invalid_crc
+  - firmware.invalid_transmit_word_count => fw_invalid_xmit_words
+  - firmware.link_failure_count          => fw_link_failure
+  - firmware.loss_of_signal_count        => fw_loss_of_signal
+  - firmware.loss_of_sync_count          => fw_loss_of_sync
+  - firmware.systat.discard_frames       => fw_SyStatDiscardFrames
+  - hard_reset_count                     => hard_reset_cnt
+  - rdma.write_average_latency           => rdma_write_avg_latency
+  - rdma.write_ops                       => rdma_write_ops
+  - rdma.write_throughput                => rdma_write_throughput
+  - soft_reset_count                     => soft_reset_cnt
+
+plugins:
+  - LabelAgent:
+    split:
+      - fcvi `:` ,fcvi
+  - FCVI
 
 export_options:
   instance_keys:
     - fcvi
     - node
+    - port

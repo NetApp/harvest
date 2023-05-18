@@ -6,14 +6,26 @@ object:                   fcvi
 instance_key:             uuid
 
 counters:
+  - fw_SyStatDiscardFrames
+  - fw_invalid_crc
+  - fw_invalid_xmit_words
+  - fw_link_failure
+  - fw_loss_of_signal
+  - fw_loss_of_sync
+  - hard_reset_cnt
   - instance_name           => fcvi
   - instance_uuid
   - node_name               => node
   - rdma_write_avg_latency
   - rdma_write_ops
   - rdma_write_throughput
+  - soft_reset_cnt
+
+plugins:
+  - FCVI
 
 export_options:
   instance_keys:
     - fcvi
     - node
+    - port
