@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1682433601631,
+  "iteration": 1684414609607,
   "links": [
     {
       "asDropdown": true,
@@ -1695,7 +1695,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 3
+            "y": 15
           },
           "id": 30,
           "options": {
@@ -1785,7 +1785,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 3
+            "y": 15
           },
           "id": 31,
           "options": {
@@ -1876,7 +1876,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 3
+            "y": 15
           },
           "id": 32,
           "options": {
@@ -1966,7 +1966,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 12
+            "y": 24
           },
           "id": 33,
           "options": {
@@ -2056,7 +2056,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 12
+            "y": 24
           },
           "id": 34,
           "options": {
@@ -2146,7 +2146,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 12
+            "y": 24
           },
           "id": 35,
           "options": {
@@ -2176,6 +2176,195 @@
           "timeShift": null,
           "title": "Top $TopResources Volumes by Write IOPs",
           "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "semi-dark-blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 33
+          },
+          "id": 112,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.0.6",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg by(__name__) ({__name__=~\"volume_nfs_(.*)_latency\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{__name__}}",
+              "refId": "Read Throughput"
+            }
+          ],
+          "title": "Volume Latency by Op Type",
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "volume_nfs_(.*)_latency",
+                "renamePattern": "$1"
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "graph": false,
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "semi-dark-blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 33
+          },
+          "id": 114,
+          "options": {
+            "legend": {
+              "calcs": [
+                "sum"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.0.6",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (__name__) ({__name__=~\"volume_nfs_(.*)_ops\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{__name__}}",
+              "refId": "Read Throughput"
+            }
+          ],
+          "title": "Volume IOPs per Type",
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "volume_nfs_(.*)_ops",
+                "renamePattern": "$1"
+              }
+            }
+          ],
           "type": "timeseries"
         }
       ],
@@ -4029,7 +4218,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 6
+            "y": 18
           },
           "id": 83,
           "options": {
@@ -4147,7 +4336,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 6
+            "y": 18
           },
           "id": 84,
           "options": {
@@ -4256,7 +4445,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 18
+            "y": 30
           },
           "id": 87,
           "options": {
@@ -4374,7 +4563,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 18
+            "y": 30
           },
           "id": 85,
           "options": {
@@ -6632,5 +6821,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "",
-  "version": 11
+  "version": 12
 }
