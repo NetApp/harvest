@@ -19,6 +19,7 @@ objects:
   NtpServer:                   ntpserver.yaml
   QosPolicyAdaptive:           qos_policy_adaptive.yaml
   QosPolicyFixed:              qos_policy_fixed.yaml
+  QosWorkload:                 qos_workload.yaml
   Qtree:                       qtree.yaml
   Security:                    security.yaml
   SecurityAccount:             security_account.yaml

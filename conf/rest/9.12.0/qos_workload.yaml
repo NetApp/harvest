@@ -1,0 +1,15 @@
+name:             QosWorkload
+query:            api/storage/qos/workloads
+object:           qos_workload
+
+counters:
+  - ^^uuid               => uuid
+  - ^name
+  - ^workload_class      => class
+
+export_options:
+  instance_keys:
+    - uuid
+  instance_labels:
+    - class
+    - name

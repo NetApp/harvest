@@ -1,0 +1,18 @@
+name:             QosWorkload
+query:            qos-workload-get-iter
+object:           qos_workload
+
+counters:
+  qos-workload-info:
+    - ^^uuid               => uuid
+    - ^workload-class      => class
+    - ^workload-name       => name
+
+collect_only_labels: true
+
+export_options:
+  instance_keys:
+    - uuid
+  instance_labels:
+    - class
+    - name
