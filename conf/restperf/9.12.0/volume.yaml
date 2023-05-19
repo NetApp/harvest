@@ -12,6 +12,23 @@ counters:
   - average_latency        => avg_latency
   - bytes_read             => read_data
   - bytes_written          => write_data
+  - nfs.access_latency     => nfs_access_latency
+  - nfs.access_ops         => nfs_access_ops
+  - nfs.getattr_latency    => nfs_getattr_latency
+  - nfs.getattr_ops        => nfs_getattr_ops
+  - nfs.lookup_latency     => nfs_lookup_latency
+  - nfs.lookup_ops         => nfs_lookup_ops
+  - nfs.other_latency      => nfs_other_latency
+  - nfs.other_ops          => nfs_other_ops
+  - nfs.punch_hole_latency => nfs_punch_hole_latency
+  - nfs.punch_hole_ops     => nfs_punch_hole_ops
+  - nfs.read_latency       => nfs_read_latency
+  - nfs.read_ops           => nfs_read_ops
+  - nfs.setattr_latency    => nfs_setattr_latency
+  - nfs.setattr_ops        => nfs_setattr_ops
+  - nfs.total_ops          => nfs_total_ops
+  - nfs.write_latency      => nfs_write_latency
+  - nfs.write_ops          => nfs_write_ops
   - other_latency
   - read_latency
   - total_ops
