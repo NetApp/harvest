@@ -1251,9 +1251,9 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 		dataQuery = qosWorkloadQuery
 		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
-			filter = append(filter, "workload-class=autovolume|user_defined")
+			filter = append(filter, "workload-class=autovolume|user_defined|system_defined")
 		} else {
-			filter = append(filter, "workload-class=user_defined")
+			filter = append(filter, "workload-class=user_defined|system_defined")
 		}
 	}
 
