@@ -13,7 +13,6 @@ counters:
   - iw_read_ops             => read_ops
   - iw_write_ops            => write_ops
   - node_name               => node
-  - rdma_write_throughput
 
 export_options:
   instance_keys:
