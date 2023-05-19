@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1684500540640,
+  "iteration": 1684509077981,
   "links": [
     {
       "asDropdown": true,
@@ -198,7 +198,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(avg(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}) by (resource))",
+              "expr": "(avg(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$Volume\"}) by (resource))",
               "interval": "",
               "legendFormat": "{{resource}}",
               "refId": "A"
@@ -297,7 +297,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",resource=\"backend\"}) by (workload)/ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",resource=\"backend\"}))",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",volume=~\"$Volume\",resource=\"backend\"}) by (workload)/ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",volume=~\"$Volume\",resource=\"backend\"}))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -397,7 +397,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",resource=\"frontend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",resource=\"frontend\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",volume=~\"$Volume\",resource=\"frontend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",volume=~\"$Volume\",resource=\"frontend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -502,7 +502,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCluster\",resource=\"cluster\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCluster\",resource=\"cluster\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCluster\",volume=~\"$Volume\",resource=\"cluster\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCluster\",volume=~\"$Volume\",resource=\"cluster\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -606,7 +606,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCP\",resource=\"cp\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCP\",resource=\"cp\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCP\",volume=~\"$Volume\",resource=\"cp\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCP\",volume=~\"$Volume\",resource=\"cp\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -710,7 +710,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSDisk\",resource=\"disk\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSDisk\",resource=\"disk\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSDisk\",volume=~\"$Volume\",resource=\"disk\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSDisk\",volume=~\"$Volume\",resource=\"disk\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -815,7 +815,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNetwork\",resource=\"network\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNetwork\",resource=\"network\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNetwork\",volume=~\"$Volume\",resource=\"network\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNetwork\",volume=~\"$Volume\",resource=\"network\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -919,7 +919,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNVLog\",resource=\"nvlog\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNVLog\",resource=\"nvlog\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNVLog\",volume=~\"$Volume\",resource=\"nvlog\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNVLog\",volume=~\"$Volume\",resource=\"nvlog\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1023,7 +1023,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSuspend\",resource=\"suspend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSuspend\",resource=\"suspend\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSuspend\",volume=~\"$Volume\",resource=\"suspend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSuspend\",volume=~\"$Volume\",resource=\"suspend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1128,7 +1128,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSThrottle\",resource=\"throttle\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSThrottle\",resource=\"throttle\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSThrottle\",volume=~\"$Volume\",resource=\"throttle\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSThrottle\",volume=~\"$Volume\",resource=\"throttle\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1233,7 +1233,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSQosMin\",resource=\"qos_min\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSQosMin\",resource=\"qos_min\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSQosMin\",volume=~\"$Volume\",resource=\"qos_min\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSQosMin\",volume=~\"$Volume\",resource=\"qos_min\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1337,7 +1337,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",volume=~\"$Volume\",resource=\"flexcache_spinhi\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",volume=~\"$Volume\",resource=\"flexcache_spinhi\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1442,7 +1442,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCloud\",resource=\"cloud\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCloud\",resource=\"cloud\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCloud\",volume=~\"$Volume\",resource=\"cloud\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCloud\",volume=~\"$Volume\",resource=\"cloud\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1546,7 +1546,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCOP\",resource=\"cop\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCOP\",resource=\"cop\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCOP\",volume=~\"$Volume\",resource=\"cop\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCOP\",volume=~\"$Volume\",resource=\"cop\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1650,7 +1650,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRAL\",resource=\"flexcache_ral\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRAL\",resource=\"flexcache_ral\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRAL\",volume=~\"$Volume\",resource=\"flexcache_ral\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRAL\",volume=~\"$Volume\",resource=\"flexcache_ral\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1754,7 +1754,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSyncRepl\",resource=\"sync_repl\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSyncRepl\",resource=\"sync_repl\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSyncRepl\",volume=~\"$Volume\",resource=\"sync_repl\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSyncRepl\",volume=~\"$Volume\",resource=\"sync_repl\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1858,7 +1858,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWaflAdmission\",resource=\"admission\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWaflAdmission\",resource=\"admission\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWaflAdmission\",volume=~\"$Volume\",resource=\"admission\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWaflAdmission\",volume=~\"$Volume\",resource=\"admission\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{workload}}",
@@ -1944,7 +1944,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 98
+            "y": 8
           },
           "id": 103,
           "options": {
@@ -2043,7 +2043,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 108
+            "y": 18
           },
           "id": 104,
           "options": {
@@ -2064,10 +2064,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSBackend\",resource=\"backend\"}) by (workload)/ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSBackend\",resource=\"backend\"}))",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSBackend\",resource=\"backend\"}) by (workload,volume)/ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSBackend\",resource=\"backend\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2143,7 +2143,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 108
+            "y": 18
           },
           "id": 105,
           "options": {
@@ -2164,10 +2164,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFrontend\",resource=\"frontend\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2248,7 +2248,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 118
+            "y": 28
           },
           "id": 110,
           "options": {
@@ -2269,10 +2269,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCluster\",resource=\"cluster\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2352,7 +2352,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 118
+            "y": 28
           },
           "id": 111,
           "options": {
@@ -2373,10 +2373,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCP\",resource=\"cp\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2456,7 +2456,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 128
+            "y": 38
           },
           "id": 114,
           "options": {
@@ -2477,10 +2477,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSDisk\",resource=\"disk\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2561,7 +2561,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 128
+            "y": 38
           },
           "id": 108,
           "options": {
@@ -2582,10 +2582,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNetwork\",resource=\"network\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNetwork\",resource=\"network\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNetwork\",resource=\"network\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNetwork\",resource=\"network\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2665,7 +2665,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 138
+            "y": 48
           },
           "id": 116,
           "options": {
@@ -2686,10 +2686,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSNVLog\",resource=\"nvlog\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2769,7 +2769,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 138
+            "y": 48
           },
           "id": 112,
           "options": {
@@ -2790,10 +2790,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSuspend\",resource=\"suspend\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2874,7 +2874,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 148
+            "y": 58
           },
           "id": 109,
           "options": {
@@ -2895,10 +2895,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSThrottle\",resource=\"throttle\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSThrottle\",resource=\"throttle\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSThrottle\",resource=\"throttle\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSThrottle\",resource=\"throttle\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -2979,7 +2979,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 148
+            "y": 58
           },
           "id": 113,
           "options": {
@@ -3000,10 +3000,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSQosMin\",resource=\"qos_min\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSQosMin\",resource=\"qos_min\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSQosMin\",resource=\"qos_min\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSQosMin\",resource=\"qos_min\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3083,7 +3083,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 158
+            "y": 68
           },
           "id": 118,
           "options": {
@@ -3104,10 +3104,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3188,7 +3188,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 158
+            "y": 68
           },
           "id": 115,
           "options": {
@@ -3209,10 +3209,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCloud\",resource=\"cloud\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3292,7 +3292,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 168
+            "y": 78
           },
           "id": 120,
           "options": {
@@ -3313,10 +3313,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCOP\",resource=\"cop\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCOP\",resource=\"cop\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCOP\",resource=\"cop\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSCOP\",resource=\"cop\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3396,7 +3396,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 168
+            "y": 78
           },
           "id": 117,
           "options": {
@@ -3417,10 +3417,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSFlexcacheRAL\",resource=\"flexcache_ral\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3500,7 +3500,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 178
+            "y": 88
           },
           "id": 119,
           "options": {
@@ -3521,10 +3521,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSSyncRepl\",resource=\"sync_repl\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3604,7 +3604,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 178
+            "y": 88
           },
           "id": 121,
           "options": {
@@ -3625,10 +3625,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSWaflAdmission\",resource=\"admission\"}) by (workload)) / ignoring(workload) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSWaflAdmission\",resource=\"admission\"})",
+              "expr": "100 * topk($TopResources, sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSWaflAdmission\",resource=\"admission\"}) by (workload,volume)) / ignoring(workload,volume) group_left  sum(qos_detail_volume_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",volume=~\"$TopVolumeQOSWaflAdmission\",resource=\"admission\"})",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3638,7 +3638,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Workload Volume Latency",
+      "title": "Volume Workload Latency (workload statistics on a per volume basis)",
       "type": "row"
     }
   ],
@@ -3779,7 +3779,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "5",
           "value": "5"
         },

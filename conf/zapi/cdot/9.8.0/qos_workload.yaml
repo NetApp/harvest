@@ -4,7 +4,7 @@ object:           qos_workload
 
 counters:
   qos-workload-info:
-    - ^^uuid               => uuid
+    - ^^workload-uuid      => uuid
     - ^workload-class      => class
     - ^workload-name       => name
 
