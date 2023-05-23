@@ -1409,7 +1409,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node)(fcvi_firmwares_systat_discard_frames{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_firmware_systat_discard_frames{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
