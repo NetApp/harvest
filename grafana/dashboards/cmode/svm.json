@@ -3265,7 +3265,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "CIFS Frontend Drilldown",
+      "title": "CIFS Drilldown",
       "type": "row"
     },
     {
@@ -6763,7 +6763,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NFSv3 Frontend Drilldown",
+      "title": "NFSv3 Drilldown",
       "type": "row"
     },
     {
