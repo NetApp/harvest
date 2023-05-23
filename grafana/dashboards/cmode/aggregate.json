@@ -4279,6 +4279,552 @@
       ],
       "title": "Volume Statistics",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 58
+      },
+      "id": 28,
+      "panels": [
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 6
+          },
+          "id": 88,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeReadLatency\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeReadLatency\"})",
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Read Latency",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 8,
+            "y": 6
+          },
+          "id": 89,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeReadThroughput\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeReadThroughput\"})",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Read Throughput",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 16,
+            "y": 6
+          },
+          "id": 90,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeReadIOPS\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeReadIOPS\"})",
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Read IOPs",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 15
+          },
+          "id": 91,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeWriteLatency\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeWriteLatency\"})",
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Write Latency",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 8,
+            "y": 15
+          },
+          "id": 92,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeWriteThroughput\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeWriteThroughput\"})",
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Write Throughput",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 16,
+            "y": 15
+          },
+          "id": 93,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "topk($TopResources, volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", volume=~\"$TopVolumeWriteIOPS\"} * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeWriteIOPS\"})",
+              "interval": "",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Write IOPs",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Volume WAFL Layer Drilldown",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -4619,6 +5165,114 @@
         "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeReadLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeReadThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeReadIOPS",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeWriteLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeWriteThroughput",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "TopVolumeWriteIOPS",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}]) * on (cluster, svm, volume) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}))\n",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
         "type": "query"
       }
     ]
