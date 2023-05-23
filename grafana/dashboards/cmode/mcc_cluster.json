@@ -940,7 +940,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_hard_reset_cnt{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_hard_reset_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1032,7 +1032,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_soft_reset_cnt{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_soft_reset_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1124,7 +1124,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_fw_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_firmware_link_failure_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1216,7 +1216,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_fw_loss_of_signal{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_firmware_loss_of_signal_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1308,7 +1308,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_fw_loss_of_sync{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_firmware_loss_of_sync_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1400,7 +1400,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_fw_SyStatDiscardFrames{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_firmwares_systat_discard_frames{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1492,7 +1492,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_fw_invalid_crc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_firmware_invalid_crc_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1584,7 +1584,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_fw_invalid_xmit_words{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "avg by (node)(fcvi_firmware_invalid_transmit_word_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",

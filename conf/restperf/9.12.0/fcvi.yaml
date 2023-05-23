@@ -5,17 +5,17 @@ object:                   fcvi
 counters:
   - ^^id                                 => fcvi
   - ^node.name                           => node
-  - firmware.invalid_crc_count           => fw_invalid_crc
-  - firmware.invalid_transmit_word_count => fw_invalid_xmit_words
-  - firmware.link_failure_count          => fw_link_failure
-  - firmware.loss_of_signal_count        => fw_loss_of_signal
-  - firmware.loss_of_sync_count          => fw_loss_of_sync
-  - firmware.systat.discard_frames       => fw_SyStatDiscardFrames
-  - hard_reset_count                     => hard_reset_cnt
+  - firmware.invalid_crc_count           => firmware_invalid_crc_count
+  - firmware.invalid_transmit_word_count => firmware_invalid_transmit_word_count
+  - firmware.link_failure_count          => firmware_link_failure_count
+  - firmware.loss_of_signal_count        => firmware_loss_of_signal_count
+  - firmware.loss_of_sync_count          => firmware_loss_of_sync_count
+  - firmware.systat.discard_frames       => firmware_systat_discard_frames
+  - hard_reset_count                     => hard_reset_count
   - rdma.write_average_latency           => rdma_write_avg_latency
   - rdma.write_ops                       => rdma_write_ops
   - rdma.write_throughput                => rdma_write_throughput
-  - soft_reset_count                     => soft_reset_cnt
+  - soft_reset_count                     => soft_reset_count
 
 plugins:
   - LabelAgent:
