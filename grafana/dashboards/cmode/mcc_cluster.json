@@ -575,7 +575,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -585,7 +585,8 @@
       "id": 90,
       "panels": [
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average RDMA write I/O latency per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -677,7 +678,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average RDMA write throughput in bytes per second per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -769,7 +771,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average Number of RDMA write I/Os issued per second per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -861,7 +864,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times hard reset of FCVI adapter got issued per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -940,7 +944,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_hard_reset_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_hard_reset_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -953,7 +957,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times soft reset of FCVI adapter got issued per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1032,7 +1037,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_soft_reset_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_soft_reset_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1045,7 +1050,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times Firmware reported link failure count per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1124,7 +1130,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_firmware_link_failure_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_firmware_link_failure_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1137,7 +1143,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times Firmware reported loss of signal count per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1216,7 +1223,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_firmware_loss_of_signal_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_firmware_loss_of_signal_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1229,7 +1236,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times Firmware reported loss of sync count per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1308,7 +1316,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_firmware_loss_of_sync_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_firmware_loss_of_sync_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1321,7 +1329,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times Firmware reported SyStatDiscardFrames value per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1400,7 +1409,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_firmwares_systat_discard_frames{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_firmwares_systat_discard_frames{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1409,11 +1418,12 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SyStatDiscardFrames value",
+          "title": "SyStatDiscardFrames Value",
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times Firmware reported invalid crc count per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1492,7 +1502,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_firmware_invalid_crc_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_firmware_invalid_crc_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1505,7 +1515,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Number of times Firmware reported invalid transmit word count per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1584,7 +1595,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node)(fcvi_firmware_invalid_transmit_word_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum by (node)(fcvi_firmware_invalid_transmit_word_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A",
@@ -1603,7 +1614,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "Prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1613,7 +1624,8 @@
       "id": 107,
       "panels": [
         {
-          "datasource": "Prometheus",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average Number of RDMA I/Os issued per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1705,7 +1717,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average Number of RDMA read I/Os issued per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1797,7 +1810,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average Number of RDMA write I/Os issued per node",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1889,7 +1903,8 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average RDMA I/O latency per node",
           "fieldConfig": {
             "defaults": {
               "color": {
