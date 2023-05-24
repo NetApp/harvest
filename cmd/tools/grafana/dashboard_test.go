@@ -78,6 +78,9 @@ func TestUnitsAndExprMatch(t *testing.T) {
 
 	for _, metric := range metricNames {
 		u := mt.metricsByUnit[metric]
+		checkUnitsForPanel(t, u, "latency", "µs", "ms")
+		checkUnitsForPanel(t, u, "throughput", "Bps")
+		checkUnitsForPanel(t, u, "ops", "iops")
 
 		failText := strings.Builder{}
 		// Normalize units if there are rates
@@ -122,6 +125,29 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		if failText.Len() > 0 {
 			t.Errorf("%s has conflicting units\n%s", metric, failText.String())
 		}
+	}
+}
+
+func checkUnitsForPanel(t *testing.T, u *units, panelContains string, possibleUnits ...string) {
+	if len(possibleUnits) <= 0 {
+		t.Errorf("Units haven't beed passed for panel")
+	}
+	for unit, location := range u.units {
+		for _, l := range location {
+			dashboard := l.dashboard
+			title := l.title
+
+			if len(possibleUnits) > 1 {
+				if strings.Contains(title, panelContains) && unit != possibleUnits[0] && unit != possibleUnits[1] {
+					t.Errorf(`Panel:"%s" should have unit:%s or %s but got:%s in %s`, title, possibleUnits[0], possibleUnits[1], unit, dashboard)
+				}
+			} else {
+				if strings.Contains(title, panelContains) && unit != possibleUnits[0] {
+					t.Errorf(`Panel:"%s" should have unit:%s but got:%s in %s`, title, possibleUnits[0], unit, dashboard)
+				}
+			}
+		}
+
 	}
 }
 
