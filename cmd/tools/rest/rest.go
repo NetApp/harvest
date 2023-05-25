@@ -469,9 +469,9 @@ func fetch(client *Client, href string, records *[]gjson.Result, downloadAll boo
 			*records = append(*records, data)
 			if !downloadAll {
 				maxRecords = maxRecords - numRecords.Int()
-			}
-			if maxRecords <= 0 {
-				return nil
+				if maxRecords <= 0 {
+					return nil
+				}
 			}
 		}
 
@@ -510,9 +510,9 @@ func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analyt
 		*records = append(*records, data)
 		if !downloadAll {
 			maxRecords = maxRecords - numRecords.Int()
-		}
-		if maxRecords <= 0 {
-			return nil
+			if maxRecords <= 0 {
+				return nil
+			}
 		}
 	}
 
