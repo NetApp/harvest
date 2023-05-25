@@ -4,7 +4,7 @@
 
 name:                     WorkloadVolume
 query:                    workload_volume
-object:                   qos_volume
+object:                   qos
 
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s

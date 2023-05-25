@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1684760458751,
+  "iteration": 1685028845871,
   "links": [
     {
       "asDropdown": true,
@@ -1958,9 +1958,54 @@
       },
       {
         "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Workload Class",
+        "multi": true,
+        "name": "WorkloadClass",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "user_defined",
+            "value": "user_defined"
+          },
+          {
+            "selected": false,
+            "text": "system_defined",
+            "value": "system_defined"
+          },
+          {
+            "selected": false,
+            "text": "autovolume",
+            "value": "autovolume"
+          }
+        ],
+        "query": "user_defined,system_defined,autovolume",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, name)",
+        "definition": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1970,7 +2015,7 @@
         "name": "Workload",
         "options": [],
         "query": {
-          "query": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, name)",
+          "query": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,

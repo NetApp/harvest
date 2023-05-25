@@ -4,7 +4,7 @@ object:           qos_workload
 
 counters:
   - ^^uuid               => uuid
-  - ^name
+  - ^name                => workload
   - ^workload_class      => class
 
 export_options:
@@ -12,4 +12,4 @@ export_options:
     - uuid
   instance_labels:
     - class
-    - name
+    - workload

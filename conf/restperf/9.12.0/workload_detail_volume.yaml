@@ -2,7 +2,7 @@
 # object provides latency breakdown per service or delay center per volume
 name:                     WorkloadDetailVolume
 query:                    api/cluster/counter/tables/qos_detail_volume
-object:                   qos_detail_volume
+object:                   qos_detail
 
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s

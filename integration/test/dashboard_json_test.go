@@ -73,7 +73,6 @@ var excludeCounters = []string{
 	"path_",
 	"poller",
 	"qos_detail_resource_latency",
-	"qos_detail_volume_resource_latency",
 	"quota_disk_used_pct_disk_limit",
 	"quota_files_used_pct_file_limit",
 	"security_login",

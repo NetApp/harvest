@@ -2,7 +2,7 @@
 # object provides latency breakdown per service or delay center per volume
 name:                     WorkloadDetailVolume
 query:                    workload_detail_volume
-object:                   qos_detail_volume
+object:                   qos_detail
 
 instance_key:             name
 

@@ -6,7 +6,7 @@ counters:
   qos-workload-info:
     - ^^workload-uuid      => uuid
     - ^workload-class      => class
-    - ^workload-name       => name
+    - ^workload-name       => workload
 
 collect_only_labels: true
 
@@ -15,4 +15,4 @@ export_options:
     - uuid
   instance_labels:
     - class
-    - name
+    - workload
