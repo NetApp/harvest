@@ -4282,9 +4282,7 @@
     },
     {
       "collapsed": true,
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4823,7 +4821,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume WAFL Layer Drilldown",
+      "title": "Busy Volumes Drilldown",
       "type": "row"
     }
   ],

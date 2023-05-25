@@ -28,6 +28,9 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 			}
 			t.Errorf("dashboard=%s panel=%s has a null datasource", path, key.String())
 		}
+		if dsResult.String() != "${DS_PROMETHEUS}" {
+			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", shortPath(path), key.String(), dsResult.String())
+		}
 		return true
 	})
 
