@@ -61,6 +61,7 @@ var excludeCounters = []string{
 	"flashcache_",
 	"flashpool",
 	"health_",
+	"iw",
 	"logical_used",
 	"metadata_exporter_count",
 	"metadata_target_ping",
