@@ -141,7 +141,7 @@
               }
             ]
           },
-          "unit": "us"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -415,7 +415,7 @@
               }
             ]
           },
-          "unit": "us"
+          "unit": "µs"
         },
         "overrides": []
       },
