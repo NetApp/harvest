@@ -19,19 +19,26 @@ func TestDatasource(t *testing.T) {
 }
 
 func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+	path = shortPath(path)
+	// visit all panel for datasource test
+	visitAllPanels(data, func(p string, key, value gjson.Result) {
 		dsResult := value.Get("datasource")
+		panelTitle := value.Get("title").String()
+		if !dsResult.Exists() {
+			t.Errorf("dashboard=%s panel=%s don't have datasource", path, panelTitle)
+			return
+		}
+
 		if dsResult.Type == gjson.Null {
 			// if the panel is a row, it is OK if there is no datasource
 			if value.Get("type").String() == "row" {
-				return true
+				return
 			}
-			t.Errorf("dashboard=%s panel=%s has a null datasource", path, key.String())
+			t.Errorf("dashboard=%s panel=%s has a null datasource", path, panelTitle)
 		}
 		if dsResult.String() != "${DS_PROMETHEUS}" {
-			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", shortPath(path), key.String(), dsResult.String())
+			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", path, panelTitle, dsResult.String())
 		}
-		return true
 	})
 
 	// Check that the variable DS_PROMETHEUS exist
