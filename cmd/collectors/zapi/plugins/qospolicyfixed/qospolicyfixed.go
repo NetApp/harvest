@@ -61,11 +61,11 @@ func (p *QosPolicyFixed) setThroughput(data *matrix.Matrix, instance *matrix.Ins
 		p.Logger.Warn().Str(labelName, val).Msg("Unable to convert label, skipping")
 		return
 	}
-	p.setLabelMetric(data, instance, iopLabel, xput.IOPS)
-	p.setLabelMetric(data, instance, mbpsLabel, xput.Mbps)
+	p.setLabel(iopLabel, data, instance, xput.IOPS)
+	p.setLabel(mbpsLabel, data, instance, xput.Mbps)
 }
 
-func (p *QosPolicyFixed) setLabelMetric(data *matrix.Matrix, instance *matrix.Instance, labelName string, value string) {
+func (p *QosPolicyFixed) setLabel(labelName string, data *matrix.Matrix, instance *matrix.Instance, value string) {
 	instance.SetLabel(labelName, value)
 	m := data.GetMetric(labelName)
 	if m != nil {

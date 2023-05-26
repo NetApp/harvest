@@ -61,13 +61,13 @@ func (p *QosPolicyFixed) setFixed(data *matrix.Matrix, instance *matrix.Instance
 		p.Logger.Error().Err(err).Str("label", after).Msg("Failed to parse fixed xput label")
 		return
 	}
-	p.setLabelMetric(data, instance, "min_throughput_iops", min.IOPS)
-	p.setLabelMetric(data, instance, "max_throughput_iops", max.IOPS)
-	p.setLabelMetric(data, instance, "min_throughput_mbps", min.Mbps)
-	p.setLabelMetric(data, instance, "max_throughput_mbps", max.Mbps)
+	p.setLabel("min_throughput_iops", data, instance, min.IOPS)
+	p.setLabel("max_throughput_iops", data, instance, max.IOPS)
+	p.setLabel("min_throughput_mbps", data, instance, min.Mbps)
+	p.setLabel("max_throughput_mbps", data, instance, max.Mbps)
 }
 
-func (p *QosPolicyFixed) setLabelMetric(data *matrix.Matrix, instance *matrix.Instance, labelName string, value string) {
+func (p *QosPolicyFixed) setLabel(labelName string, data *matrix.Matrix, instance *matrix.Instance, value string) {
 	instance.SetLabel(labelName, value)
 	m := data.GetMetric(labelName)
 	if m != nil {
