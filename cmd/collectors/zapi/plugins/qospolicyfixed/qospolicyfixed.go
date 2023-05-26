@@ -10,6 +10,13 @@ import (
 	"strings"
 )
 
+var metrics = []string{
+	"max_throughput_iops",
+	"max_throughput_mbps",
+	"min_throughput_iops",
+	"min_throughput_mbps",
+}
+
 type QosPolicyFixed struct {
 	*plugin.AbstractPlugin
 }
@@ -22,6 +29,16 @@ func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	// Change ZAPI max-throughput/min-throughput to match what REST publishes
 
 	data := dataMap[p.Object]
+
+	// create metrics
+	for _, k := range metrics {
+		err := matrix.CreateMetric(k, data)
+		if err != nil {
+			p.Logger.Error().Err(err).Str("key", k).Msg("error while creating metric")
+			return nil, err
+		}
+	}
+
 	for _, instance := range data.GetInstances() {
 		policyClass := instance.GetLabel("class")
 		if policyClass != "user_defined" {
@@ -30,22 +47,33 @@ func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 			instance.SetExportable(false)
 			continue
 		}
-		p.setThroughput(instance, "max_xput", "max_throughput_iops", "max_throughput_mbps")
-		p.setThroughput(instance, "min_xput", "min_throughput_iops", "min_throughput_mbps")
+		p.setThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps")
+		p.setThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps")
 	}
 
 	return nil, nil
 }
 
-func (p *QosPolicyFixed) setThroughput(instance *matrix.Instance, labelName string, iopLabel string, mbpsLabel string) {
+func (p *QosPolicyFixed) setThroughput(data *matrix.Matrix, instance *matrix.Instance, labelName string, iopLabel string, mbpsLabel string) {
 	val := instance.GetLabel(labelName)
 	xput, err := ZapiXputToRest(val)
 	if err != nil {
 		p.Logger.Warn().Str(labelName, val).Msg("Unable to convert label, skipping")
 		return
 	}
-	instance.SetLabel(iopLabel, xput.IOPS)
-	instance.SetLabel(mbpsLabel, xput.Mbps)
+	p.setLabelMetric(data, instance, iopLabel, xput.IOPS)
+	p.setLabelMetric(data, instance, mbpsLabel, xput.Mbps)
+}
+
+func (p *QosPolicyFixed) setLabelMetric(data *matrix.Matrix, instance *matrix.Instance, labelName string, value string) {
+	instance.SetLabel(labelName, value)
+	m := data.GetMetric(labelName)
+	if m != nil {
+		err := m.SetValueString(instance, value)
+		if err != nil {
+			p.Logger.Error().Str(labelName, value).Err(err).Msg("Unable to set metric")
+		}
+	}
 }
 
 var iopsRe = regexp.MustCompile(`(\d+)iops`)
