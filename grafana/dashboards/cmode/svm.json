@@ -6089,7 +6089,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "gridPos": {
             "h": 8,
@@ -6158,7 +6158,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "gridPos": {
             "h": 8,
@@ -6227,7 +6227,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "gridPos": {
             "h": 8,

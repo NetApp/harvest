@@ -1012,7 +1012,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": null,
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg by (key) (avg_over_time(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -1035,7 +1035,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": null,
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (key) (avg_over_time(external_service_op_num_not_found_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -1058,7 +1058,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": null,
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (key) (avg_over_time(external_service_op_num_request_failures{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -1081,7 +1081,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": null,
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (key) (avg_over_time(external_service_op_num_requests_sent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -1104,7 +1104,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": null,
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (key) (avg_over_time(external_service_op_num_responses_received{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -1127,7 +1127,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": null,
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (key) (avg_over_time(external_service_op_num_successful_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -1150,7 +1150,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": null,
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (key) (avg_over_time(external_service_op_num_timeouts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[${__range}]))))",
         "description": null,
         "error": null,
