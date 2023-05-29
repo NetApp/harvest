@@ -19,13 +19,13 @@ plugins:
 
 export_options:
   instance_keys:
+    - class
+    - name
     - svm
   instance_labels:
     - capacity_shared
-    - class
     - max_throughput_iops
     - max_throughput_mbps
     - min_throughput_iops
     - min_throughput_mbps
-    - name
     - object_count
