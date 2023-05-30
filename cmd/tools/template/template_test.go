@@ -582,7 +582,7 @@ func newZapiMetric(n *y3.Node, parents []string) metric {
 	return m
 }
 
-var setRe = regexp.MustCompile(`SetLabel\("(\w+)",`)
+var setRe = regexp.MustCompile(`[sS]etLabel\("(\w+)",`)
 
 func findCustomPlugins(path string, template *node.Node, model *TemplateModel) error {
 	plug := template.SearchChildren([]string{"plugins"})
@@ -608,6 +608,7 @@ func findCustomPlugins(path string, template *node.Node, model *TemplateModel) e
 		goPluginName := strings.ToLower(name)
 		splits := strings.Split(path, "/")
 		pluginGo := fmt.Sprintf("../../../cmd/collectors/%s/plugins/%s/%s.go", splits[4], goPluginName, goPluginName)
+
 		err2 := readPlugin(pluginGo, model)
 		if err2 != nil {
 			return err2

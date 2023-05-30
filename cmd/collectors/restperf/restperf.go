@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fabricpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fcp"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/fcvi"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
@@ -1231,6 +1232,8 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 		return vscan.New(p)
 	case "FabricPool":
 		return fabricpool.New(p)
+	case "FCVI":
+		return fcvi.New(p)
 	default:
 		r.Logger.Info().Str("kind", kind).Msg("no Restperf plugin found")
 	}

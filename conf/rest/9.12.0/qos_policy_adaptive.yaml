@@ -19,12 +19,12 @@ plugins:
 
 export_options:
   instance_keys:
+    - name
     - svm
   instance_labels:
     - absolute_min_iops
     - expected_iops
     - expected_iops_allocation
-    - name
     - object_count
     - peak_iops
     - peak_iops_allocation

@@ -4629,6 +4629,7 @@
       "id": 92,
       "panels": [
         {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency per GET operation to object storage",
           "fieldConfig": {
             "defaults": {
@@ -4720,6 +4721,7 @@
           "type": "timeseries"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total GET request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
@@ -4812,6 +4814,7 @@
           "type": "timeseries"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency per PUT operation to object storage",
           "fieldConfig": {
             "defaults": {
@@ -4903,6 +4906,7 @@
           "type": "timeseries"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total PUT request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
@@ -4995,6 +4999,7 @@
           "type": "timeseries"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average request count, per volume, in the chosen time window, to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
@@ -5092,7 +5097,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -5102,7 +5107,7 @@
       "id": 98,
       "panels": [
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5189,7 +5194,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5275,7 +5280,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5368,7 +5373,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,

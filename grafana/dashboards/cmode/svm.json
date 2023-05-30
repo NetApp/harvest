@@ -5387,7 +5387,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -5715,7 +5715,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -5814,7 +5814,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -6089,7 +6089,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "gridPos": {
             "h": 8,
@@ -6158,7 +6158,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "gridPos": {
             "h": 8,
@@ -6227,7 +6227,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": null,
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "gridPos": {
             "h": 8,
@@ -6420,7 +6420,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -6877,7 +6877,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -7205,7 +7205,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -7304,7 +7304,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -7434,7 +7434,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(svm_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
+              "expr": "sum(svm_nfs_read_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -7533,7 +7533,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(svm_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
+              "expr": "sum(svm_nfs_write_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -7715,7 +7715,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -8177,7 +8177,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -8505,7 +8505,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -8604,7 +8604,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -9015,7 +9015,7 @@
                   }
                 ]
               },
-              "unit": "ops"
+              "unit": "Bps"
             },
             "overrides": []
           },
