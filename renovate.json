@@ -1,7 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:base",
+    ":semanticCommitTypeAll(chore)",
+    ":semanticCommitScopeDisabled"
   ],
   "ignorePaths": ["**/integration/**"],
   "schedule": ["after 10pm and before 5am every weekday", "every weekend"]
