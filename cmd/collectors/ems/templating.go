@@ -158,4 +158,7 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 	}
 	e.bookendEmsMap[resolveEmsName].Add(issueEmsProp.Name)
 	e.emsProp[resolveEmsName] = append(e.emsProp[resolveEmsName], &prop)
+
+	// add autoresolved label in issuingEms labels
+	issueEmsProp.InstanceLabels[AutoResolved] = AutoResolved
 }

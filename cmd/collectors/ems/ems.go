@@ -25,6 +25,7 @@ const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
 const Hyphen = "-"
+const AutoResolved = "autoresolved"
 
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -41,6 +42,7 @@ type Ems struct {
 	eventNames     []string                 // consist of all ems events supported
 	bookendEmsMap  map[string]*set.Set      // This is reverse bookend ems map, [Resolving ems]:[Set of Issuing ems]. Using Set here to ensure that it has slice of unique issuing ems
 	resolveAfter   map[string]time.Duration // This is resolve after map, [Issuing ems]:[Duration]. After this duration, ems got auto resolved.
+	autoresolved   bool
 }
 
 type Metric struct {
@@ -88,6 +90,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	e.Fields = []string{"*"}
 	e.maxURLSize = maxURLSize
 	e.severityFilter = severityFilterPrefix + defaultSeverityFilter
+	e.autoresolved = false
 
 	// init Rest props
 	e.InitProp()
@@ -395,7 +398,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	apiD = time.Since(startTime)
 
-	if len(records) == 0 {
+	if len(records) == 0 && !e.autoresolved {
 		e.lastFilterTime = toTime
 		_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 		_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
@@ -568,6 +571,10 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 					instance.SetExportable(true)
 
 					for label, display := range p.InstanceLabels {
+						if label == AutoResolved {
+							instance.SetLabel(display, "")
+							continue
+						}
 						value := parseProperties(instanceData, label)
 						if value.Exists() {
 							if value.IsArray() {
@@ -672,9 +679,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 
 func (e *Ems) updateMatrix() {
 	var (
-		ok                           bool
-		val                          float64
-		eventMetric, timestampMetric *matrix.Metric
+		val float64
 	)
 
 	tempMap := make(map[string]*matrix.Matrix)
@@ -691,9 +696,11 @@ func (e *Ems) updateMatrix() {
 	mat := e.Matrix[e.Object]
 	e.Matrix = make(map[string]*matrix.Matrix)
 	e.Matrix[e.Object] = mat
+	e.autoresolved = false
 
 	for issuingEms, mx := range tempMap {
-		if eventMetric, ok = mx.GetMetrics()["events"]; !ok {
+		eventMetric, ok := mx.GetMetrics()["events"]
+		if !ok {
 			e.Logger.Error().
 				Str("issuingEms", issuingEms).
 				Str("name", "events").
@@ -701,7 +708,8 @@ func (e *Ems) updateMatrix() {
 			continue
 		}
 
-		if timestampMetric, ok = mx.GetMetrics()["timestamp"]; !ok {
+		timestampMetric, ok := mx.GetMetrics()["timestamp"]
+		if !ok {
 			e.Logger.Error().
 				Str("issuingEms", issuingEms).
 				Str("name", "timestamp").
@@ -716,10 +724,19 @@ func (e *Ems) updateMatrix() {
 				mx.RemoveInstance(instanceKey)
 				continue
 			}
+
 			// check instance timestamp and remove it after given resolve_after duration
 			if metricTimestamp, ok := timestampMetric.GetValueFloat64(instance); ok {
 				if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter[issuingEms]) {
-					mx.RemoveInstance(instanceKey)
+					// Set events metric value as 0 and export instance to true with label autoresolved as true.
+					if err := eventMetric.SetValueFloat64(instance, 0); err != nil {
+						e.Logger.Error().Err(err).Str("key", "events").
+							Msg("Unable to set float key on metric")
+						continue
+					}
+					instance.SetExportable(true)
+					instance.SetLabel(AutoResolved, "true")
+					e.autoresolved = true
 				}
 			}
 		}
