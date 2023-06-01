@@ -1,0 +1,92 @@
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "volume"
+      },
+      "id": "umeng-aff300-01:arunima-test:harvest:cde3cfe9-de9a-11ed-a376-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "svm.name",
+          "value": "arunima-test"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "7693d638-f38c-11ec-9e8d-00a098d390f2"
+        },
+        {
+          "name": "parent_aggregate",
+          "value": "umeng_aff300_aggr2"
+        },
+        {
+          "name": "name",
+          "value": "harvest"
+        },
+        {
+          "name": "uuid",
+          "value": "cde3cfe9-de9a-11ed-a376-00a098d39e12"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/volume/rows/umeng-aff300-01%3Aarunima-test%3Aharvest%3Acde3cfe9-de9a-11ed-a376-00a098d39e12"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "volume"
+      },
+      "id": "umeng-aff300-01:astra_300:svm_root:a2944e62-2225-4dea-a4f2-93b3fdf11ed9",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_300"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "835c0d25-ceb0-11eb-80e3-00a098d39e12"
+        },
+        {
+          "name": "parent_aggregate",
+          "value": "umeng_aff300_aggr2"
+        },
+        {
+          "name": "name",
+          "value": "svm_root"
+        },
+        {
+          "name": "uuid",
+          "value": "a2944e62-2225-4dea-a4f2-93b3fdf11ed9"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/volume/rows/umeng-aff300-01%3Aastra_300%3Asvm_root%3Aa2944e62-2225-4dea-a4f2-93b3fdf11ed9"
+        }
+      }
+    }
+  ],
+  "num_records": 2,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/volume/rows?return_records=true&fields=*"
+    }
+  }
+}
