@@ -111,8 +111,8 @@ The EMS event template parameters are explained below along with an example for 
       named `LUN.online` is received.
     - `resolve_after` (optional, Go duration, default = 28 days) resolve the issuing EMS after the specified duration
       has elapsed (`672h` = `28d`).
-      If the bookend pair is not received within the `resolve_after` duration, the Issuing EMS event expires. Harvest
-      would marked as auto resolved ems event and add `autoresolve` = `true` label in Issuing EMS event.
+      If the bookend pair is not received within the `resolve_after` duration, the Issuing EMS event expires. When that
+      happens, Harvest will mark the event as auto resolved by adding the `autoresolve=true` label to the Issuing EMS event.
     - `resolve_key` (optional) bookend key used to match bookend EMS events. Defaults to prefixed (`^^`) labels
       in `exports` section. `resolve_key` allows you to override what is defined in the `exports` section.
 
