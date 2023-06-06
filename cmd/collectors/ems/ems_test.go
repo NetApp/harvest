@@ -80,7 +80,7 @@ func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
 
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
-	if _, emsCount := e.HandleResults(results, e.emsProp); emsCount == 0 {
+	if _, emsCount, _ := e.HandleResults(results, e.emsProp); emsCount == 0 {
 		t.Fatal("Failed to fetch data")
 	}
 
@@ -119,7 +119,7 @@ func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
 	// Simulated bookend resolving ems "wafl.vvol.online" and ems "hm.alert.cleared" with alert_id value as "RaidLeftBehindAggrAlert"
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
-	if _, emsCount := e.HandleResults(results, e.emsProp); emsCount == 0 {
+	if _, emsCount, _ := e.HandleResults(results, e.emsProp); emsCount == 0 {
 		t.Fatal("Failed to fetch data")
 	}
 
@@ -160,7 +160,7 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
-	if _, emsCount := e.HandleResults(results, e.emsProp); emsCount == 0 {
+	if _, emsCount, _ := e.HandleResults(results, e.emsProp); emsCount == 0 {
 		t.Fatal("Failed to fetch data")
 	}
 

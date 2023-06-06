@@ -42,7 +42,6 @@ type Ems struct {
 	eventNames     []string                 // consist of all ems events supported
 	bookendEmsMap  map[string]*set.Set      // This is reverse bookend ems map, [Resolving ems]:[Set of Issuing ems]. Using Set here to ensure that it has slice of unique issuing ems
 	resolveAfter   map[string]time.Duration // This is resolve after map, [Issuing ems]:[Duration]. After this duration, ems got auto resolved.
-	autoresolved   bool
 }
 
 type Metric struct {
@@ -90,7 +89,6 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	e.Fields = []string{"*"}
 	e.maxURLSize = maxURLSize
 	e.severityFilter = severityFilterPrefix + defaultSeverityFilter
-	e.autoresolved = false
 
 	// init Rest props
 	e.InitProp()
@@ -343,11 +341,11 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		count        uint64
-		apiD, parseD time.Duration
-		startTime    time.Time
-		err          error
-		records      []gjson.Result
+		count, instanceCount uint64
+		apiD, parseD         time.Duration
+		startTime            time.Time
+		err                  error
+		records              []gjson.Result
 	)
 
 	e.Logger.Debug().Msg("starting data poll")
@@ -398,29 +396,15 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	apiD = time.Since(startTime)
 
-	if len(records) == 0 && !e.autoresolved {
-		e.lastFilterTime = toTime
-		_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-		_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-		_ = e.Metadata.LazySetValueUint64("metrics", "data", 0)
-		_ = e.Metadata.LazySetValueUint64("instances", "data", 0)
-		return nil, nil
-	}
-
 	startTime = time.Now()
-	_, count = e.HandleResults(records, e.emsProp)
+	_, count, instanceCount = e.HandleResults(records, e.emsProp)
 
 	parseD = time.Since(startTime)
-
-	var instanceCount int
-	for _, v := range e.Matrix {
-		instanceCount += len(v.GetInstances())
-	}
 
 	_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = e.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = e.Metadata.LazySetValueUint64("instances", "data", uint64(instanceCount))
+	_ = e.Metadata.LazySetValueUint64("instances", "data", instanceCount)
 
 	e.AddCollectCount(count)
 
@@ -467,11 +451,11 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 }
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
-func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64) {
+func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64, uint64) {
 	var (
-		err   error
-		count uint64
-		mx    *matrix.Matrix
+		err                  error
+		count, instanceCount uint64
+		mx                   *matrix.Matrix
 	)
 
 	var m = e.Matrix
@@ -659,7 +643,16 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			count += instanceLabelCount
 		}
 	}
-	return m, count
+
+	for _, v := range e.Matrix {
+		for _, i := range v.GetInstances() {
+			if i.IsExportable() {
+				instanceCount++
+			}
+		}
+	}
+
+	return m, count, instanceCount
 }
 
 func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
@@ -678,10 +671,6 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 }
 
 func (e *Ems) updateMatrix() {
-	var (
-		val float64
-	)
-
 	tempMap := make(map[string]*matrix.Matrix)
 	// store the bookend ems metric in tempMap
 	for _, issuingEmsList := range e.bookendEmsMap {
@@ -696,7 +685,6 @@ func (e *Ems) updateMatrix() {
 	mat := e.Matrix[e.Object]
 	e.Matrix = make(map[string]*matrix.Matrix)
 	e.Matrix[e.Object] = mat
-	e.autoresolved = false
 
 	for issuingEms, mx := range tempMap {
 		eventMetric, ok := mx.GetMetrics()["events"]
@@ -720,7 +708,7 @@ func (e *Ems) updateMatrix() {
 			// set export to false
 			instance.SetExportable(false)
 
-			if val, ok = eventMetric.GetValueFloat64(instance); ok && val == 0 {
+			if val, exist := eventMetric.GetValueFloat64(instance); exist && val == 0 {
 				mx.RemoveInstance(instanceKey)
 				continue
 			}
@@ -736,7 +724,6 @@ func (e *Ems) updateMatrix() {
 					}
 					instance.SetExportable(true)
 					instance.SetLabel(AutoResolved, "true")
-					e.autoresolved = true
 				}
 			}
 		}
