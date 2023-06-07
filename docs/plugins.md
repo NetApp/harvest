@@ -278,6 +278,30 @@ join:
 # by joining their values with "_"
 ```
 
+## rename
+
+If the label named `SOURCE` exists, rename that label to `TARGET`.
+If the `TARGET` label already exists, overwrite it.
+
+NOTE: Don't forget to update your `export_options` to include the `TARGET` label.
+
+Rule syntax:
+
+```yaml
+rename:
+  - SOURCE TARGET
+```
+
+Example:
+
+```yaml
+rename:
+  - style type
+# this rule will rename the `style` label to `type`
+# for example, metric_one{style="flex",vol="vol1"} 3  
+#  becomes     metric_one{type="flex",vol="vol1"} 3
+```
+
 ## replace
 
 Substitute substring `OLD` with `NEW` in label `SOURCE` and store in `TARGET`. Note that target and source labels can be
@@ -296,7 +320,7 @@ Example:
 ```yaml
 replace:
   - node node_short `node_` ``
-# this rule will just remove "node_" from all values of label
+# this rule will remove "node_" from all values of label
 # "node". E.g. if label is "node_jamaica1", it will rewrite it 
 # as "jamaica1"
 ```

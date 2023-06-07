@@ -54,7 +54,7 @@ func newLabelAgent() *LabelAgent {
 	// create metric "result", if label "state" matches regex then map to 1 else use default value "4"
 	params.NewChildS("value_to_num_regex", "").NewChildS("", "result value ^test\\d+ ^error `4`")
 
-	// These both are mutually exclusive, and should honour the above one's filtered result.
+	// These both are mutually exclusive, and should honor the above one's filtered result.
 	// exclude instance if label "volstate" has value "offline"
 	params.NewChildS("exclude_equals", "").NewChildS("", "volstate `offline`")
 	// include instance if label "voltype" has value "rw"
@@ -63,6 +63,9 @@ func newLabelAgent() *LabelAgent {
 	params.NewChildS("include_contains", "").NewChildS("", "volstyle `flexvol`")
 	// exclude instance if label "volstatus" has value which starts with "stopped_"
 	params.NewChildS("exclude_contains", "").NewChildS("", "volstatus `stop`")
+
+	// rename label named style to type
+	params.NewChildS("rename", "").NewChildS("", "style type")
 
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &LabelAgent{AbstractPlugin: abc}
@@ -142,6 +145,23 @@ func TestJoinSimpleRule(t *testing.T) {
 		// OK
 	} else {
 		t.Error("Label A does have expected value")
+	}
+}
+
+func TestRenameRule(t *testing.T) {
+	m := matrix.New("TestLabelAgent", "test", "test")
+	p := newLabelAgent()
+
+	instance, _ := m.NewInstance("0")
+	instance.SetLabel("style", "aaa_X")
+
+	_ = p.rename(m)
+
+	if instance.GetLabel("type") != "aaa_X" {
+		t.Errorf("rename failed, label type got=[%s] want=[%s]", instance.GetLabel("type"), "aaa_X")
+	}
+	if instance.GetLabel("style") != "" {
+		t.Errorf("rename failed, style lable should not exist got=[%s] ", instance.GetLabel("style"))
 	}
 }
 

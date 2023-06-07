@@ -46,6 +46,8 @@ func (a *LabelAgent) parseRules() int {
 				a.parseSplitPairsRule(rule)
 			case "join":
 				a.parseJoinSimpleRule(rule)
+			case "rename":
+				a.parseRenameRule(rule)
 			case "replace":
 				a.parseReplaceSimpleRule(rule)
 			case "replace_regex":
@@ -99,6 +101,11 @@ func (a *LabelAgent) parseRules() int {
 			if len(a.joinSimpleRules) != 0 {
 				a.actions = append(a.actions, a.joinSimple)
 				count += len(a.joinSimpleRules)
+			}
+		case "rename":
+			if len(a.renameRules) != 0 {
+				a.actions = append(a.actions, a.rename)
+				count += len(a.renameRules)
 			}
 		case "replace":
 			if len(a.replaceSimpleRules) != 0 {
@@ -276,6 +283,28 @@ func (a *LabelAgent) parseJoinSimpleRule(rule string) {
 		}
 	}
 	a.Logger.Warn().Msgf("(join) rule has invalid format [%s]", rule)
+}
+
+type renameRule struct {
+	source string
+	target string
+}
+
+// example rule:
+// style type
+// if the label named `style` exists, rename that label to `type`
+// metric_one{style="flex",vol="vol1"} becomes metric_one{type="flex",vol="vol1"}
+
+func (a *LabelAgent) parseRenameRule(rule string) {
+	if fields := strings.SplitN(rule, " ", 2); len(fields) == 2 {
+		r := renameRule{source: strings.TrimSpace(fields[0]), target: strings.TrimSpace(fields[1])}
+		a.Logger.Debug().Msgf("fields := %v", fields)
+		a.renameRules = append(a.renameRules, r)
+		a.addNewLabels([]string{r.target})
+		a.Logger.Debug().Msgf("(rename) parsed rule [%v]", r)
+		return
+	}
+	a.Logger.Warn().Str("rule", rule).Msg("rename rule has invalid format")
 }
 
 type replaceSimpleRule struct {
