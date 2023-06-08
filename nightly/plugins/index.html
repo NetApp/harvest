@@ -948,6 +948,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#rename" class="md-nav__link">
+    rename
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#replace" class="md-nav__link">
     replace
   </a>
@@ -1311,6 +1318,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#rename" class="md-nav__link">
+    rename
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#replace" class="md-nav__link">
     replace
   </a>
@@ -1621,6 +1635,21 @@ options, otherwise they will not be exported.</p>
 <span class="c1"># if they are set, a new &quot;plex_long&quot; label will be added</span>
 <span class="c1"># by joining their values with &quot;_&quot;</span>
 </code></pre></div>
+<h2 id="rename">rename<a class="headerlink" href="#rename" title="Permanent link">&para;</a></h2>
+<p>If the label named <code>SOURCE</code> exists, rename that label to <code>TARGET</code>.
+If the <code>TARGET</code> label already exists, overwrite it.</p>
+<p>NOTE: Don't forget to update your <code>export_options</code> to include the <code>TARGET</code> label.</p>
+<p>Rule syntax:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">rename</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOURCE TARGET</span>
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">rename</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style type</span>
+<span class="c1"># this rule will rename the `style` label to `type`</span>
+<span class="c1"># for example, metric_one{style=&quot;flex&quot;,vol=&quot;vol1&quot;} 3  </span>
+<span class="c1">#  becomes     metric_one{type=&quot;flex&quot;,vol=&quot;vol1&quot;} 3</span>
+</code></pre></div>
 <h2 id="replace">replace<a class="headerlink" href="#replace" title="Permanent link">&para;</a></h2>
 <p>Substitute substring <code>OLD</code> with <code>NEW</code> in label <code>SOURCE</code> and store in <code>TARGET</code>. Note that target and source labels can be
 the same.</p>
@@ -1632,7 +1661,7 @@ the same.</p>
 <p>Example:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">replace</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node node_short `node_` ``</span>
-<span class="c1"># this rule will just remove &quot;node_&quot; from all values of label</span>
+<span class="c1"># this rule will remove &quot;node_&quot; from all values of label</span>
 <span class="c1"># &quot;node&quot;. E.g. if label is &quot;node_jamaica1&quot;, it will rewrite it </span>
 <span class="c1"># as &quot;jamaica1&quot;</span>
 </code></pre></div>
