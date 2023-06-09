@@ -151,6 +151,10 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 
 	copyDefault := *conf.Config.Defaults
 	copyDefault.Name = c.poller.Name
+	copyDefault.Addr = c.poller.Addr
+	if c.poller.Username != "" {
+		copyDefault.Username = c.poller.Username
+	}
 	defaultAuth, err := getPollerAuth(c, &copyDefault)
 	if err != nil {
 		return PollerAuth{}, err
