@@ -92,7 +92,7 @@ Pollers:
 		{
 			name:           "default credentials_script",
 			pollerName:     "test",
-			want:           PollerAuth{Username: "username", Password: "pass-from-script", IsCert: false},
+			want:           PollerAuth{Username: "username", Password: "addr=a.b.c user=username", IsCert: false},
 			defaultDefined: true,
 			yaml: `
 Defaults:
@@ -106,9 +106,24 @@ Pollers:
 		},
 
 		{
+			name:           "credentials_script with default username",
+			pollerName:     "test",
+			want:           PollerAuth{Username: "me", Password: "addr=a.b.c user=me", IsCert: false},
+			defaultDefined: true,
+			yaml: `
+Defaults:
+	username: me
+	credentials_script:
+		path: testdata/get_pass
+Pollers:
+	test:
+		addr: a.b.c`,
+		},
+
+		{
 			name:       "no default",
 			pollerName: "test",
-			want:       PollerAuth{Username: "username", Password: "pass-from-script", IsCert: false},
+			want:       PollerAuth{Username: "username", Password: "addr=a.b.c user=username", IsCert: false},
 			yaml: `
 Pollers:
 	test:

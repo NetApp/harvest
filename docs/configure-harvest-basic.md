@@ -204,10 +204,11 @@ Pollers:
 You can fetch authentication information via an external script by using the `credentials_script` section in
 the `Pollers` section of your `harvest.yml` as shown in the [example below](#example). 
 
-At runtime, Harvest will invoke the script referenced in the `credentials_script` `path` section. 
-Harvest will call the script with two arguments via `standard in`, in this order:
-1. address of the cluster taken from your `harvest.yaml` file, section `Pollers` `addr`
-2. username of the cluster taken from your `harvest.yaml` file, section `Pollers` `username`
+At runtime, Harvest will invoke the script referenced in the `credentials_script` `path` section.
+Harvest will call the script with two arguments like so: `./script $addr $username`. 
+
+- The first argument is the address of the cluster taken from your `harvest.yaml` file, section `Pollers addr`
+- The second argument is the username of the cluster taken from your `harvest.yaml` file, section `Pollers username`
 
 The script should use the two arguments to look up and return the password via the script's `standard out`.
 If the script doesn't finish within the specified `timeout`, Harvest will kill the script and any spawned processes.
