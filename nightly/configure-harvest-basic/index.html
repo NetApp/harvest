@@ -1645,10 +1645,12 @@ See #884 for examples.</p>
 <h2 id="credentials-script">Credentials Script<a class="headerlink" href="#credentials-script" title="Permanent link">&para;</a></h2>
 <p>You can fetch authentication information via an external script by using the <code>credentials_script</code> section in
 the <code>Pollers</code> section of your <code>harvest.yml</code> as shown in the <a href="#example">example below</a>. </p>
-<p>At runtime, Harvest will invoke the script referenced in the <code>credentials_script</code> <code>path</code> section. 
-Harvest will call the script with two arguments via <code>standard in</code>, in this order:
-1. address of the cluster taken from your <code>harvest.yaml</code> file, section <code>Pollers</code> <code>addr</code>
-2. username of the cluster taken from your <code>harvest.yaml</code> file, section <code>Pollers</code> <code>username</code></p>
+<p>At runtime, Harvest will invoke the script referenced in the <code>credentials_script</code> <code>path</code> section.
+Harvest will call the script with two arguments like so: <code>./script $addr $username</code>. </p>
+<ul>
+<li>The first argument is the address of the cluster taken from your <code>harvest.yaml</code> file, section <code>Pollers addr</code></li>
+<li>The second argument is the username of the cluster taken from your <code>harvest.yaml</code> file, section <code>Pollers username</code></li>
+</ul>
 <p>The script should use the two arguments to look up and return the password via the script's <code>standard out</code>.
 If the script doesn't finish within the specified <code>timeout</code>, Harvest will kill the script and any spawned processes.</p>
 <p>Credential scripts are defined in your <code>harvest.yml</code> under the <code>Pollers</code> <code>credentials_script</code> section. 
