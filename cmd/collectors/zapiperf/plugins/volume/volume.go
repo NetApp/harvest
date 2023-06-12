@@ -15,8 +15,7 @@ import (
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	historicalLabels bool
-	styleType        string
+	styleType string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -30,11 +29,9 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	v.historicalLabels = false
 	v.styleType = "style"
 
 	if v.Params.HasChildS("historicalLabels") {
-		v.historicalLabels = true
 		v.styleType = "type"
 	}
 	return nil
