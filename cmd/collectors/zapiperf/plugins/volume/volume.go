@@ -49,7 +49,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	var (
 		err error
 	)
+
 	data := dataMap[v.Object]
+	style := v.styleType
 	opsKeyPrefix := "temp_"
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
@@ -81,7 +83,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				// Flexgroup don't show any aggregate, node
 				fg.SetLabel("aggr", "")
 				fg.SetLabel("node", "")
-				fg.SetLabel(v.styleType, "flexgroup")
+				fg.SetLabel(style, "flexgroup")
 			}
 
 			if volumeAggrmetric.GetInstance(key) == nil {
@@ -90,17 +92,17 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				flexgroupInstance.SetLabel("volume", match[1])
 				// Flexgroup don't show any node
 				flexgroupInstance.SetLabel("node", "")
-				flexgroupInstance.SetLabel(v.styleType, "flexgroup")
+				flexgroupInstance.SetLabel(style, "flexgroup")
 				flexgroupAggrsMap[key] = set.New()
 				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
 					v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 				}
 			}
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
-			i.SetLabel(v.styleType, "flexgroup_constituent")
+			i.SetLabel(style, "flexgroup_constituent")
 			i.SetExportable(false)
 		} else {
-			i.SetLabel(v.styleType, "flexvol")
+			i.SetLabel(style, "flexvol")
 			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
 			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
 			if err != nil {
@@ -108,7 +110,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				continue
 			}
 			flexvolInstance.SetLabels(i.GetLabels().Copy())
-			flexvolInstance.SetLabel(v.styleType, "flexvol")
+			flexvolInstance.SetLabel(style, "flexvol")
 			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
 				v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 			}
