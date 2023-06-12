@@ -15,22 +15,41 @@ import (
 
 type Volume struct {
 	*plugin.AbstractPlugin
+	historicalLabels bool
+	styleType        string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
 
+func (v *Volume) Init() error {
+	var err error
+
+	if err = v.InitAbc(); err != nil {
+		return err
+	}
+
+	v.historicalLabels = false
+	v.styleType = "style"
+
+	if v.Params.HasChildS("historicalLabels") {
+		v.historicalLabels = true
+		v.styleType = "type"
+	}
+	return nil
+}
+
 //@TODO cleanup logging
 //@TODO rewrite using vector arithmetic
 // will simplify the code a whole!!!
 
-func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	var (
 		err error
 	)
-	data := dataMap[me.Object]
+	data := dataMap[v.Object]
 	opsKeyPrefix := "temp_"
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
@@ -42,10 +61,10 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 
 	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
 	if err != nil {
-		me.Logger.Error().Err(err).Msg("add metric")
+		v.Logger.Error().Err(err).Msg("add metric")
 		return nil, err
 	}
-	me.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
+	v.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
 
 	cache := data.Clone(false, true, false)
 	cache.UUID += ".Volume"
@@ -62,7 +81,7 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 				// Flexgroup don't show any aggregate, node
 				fg.SetLabel("aggr", "")
 				fg.SetLabel("node", "")
-				fg.SetLabel("style", "flexgroup")
+				fg.SetLabel(v.styleType, "flexgroup")
 			}
 
 			if volumeAggrmetric.GetInstance(key) == nil {
@@ -71,33 +90,33 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 				flexgroupInstance.SetLabel("volume", match[1])
 				// Flexgroup don't show any node
 				flexgroupInstance.SetLabel("node", "")
-				flexgroupInstance.SetLabel("style", "flexgroup")
+				flexgroupInstance.SetLabel(v.styleType, "flexgroup")
 				flexgroupAggrsMap[key] = set.New()
 				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
-					me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+					v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 				}
 			}
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
-			i.SetLabel("style", "flexgroup_constituent")
+			i.SetLabel(v.styleType, "flexgroup_constituent")
 			i.SetExportable(false)
 		} else {
-			i.SetLabel("style", "flexvol")
+			i.SetLabel(v.styleType, "flexvol")
 			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
 			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
 			if err != nil {
-				me.Logger.Error().Err(err).Str("key", key).Msg("Failed to create new instance")
+				v.Logger.Error().Err(err).Str("key", key).Msg("Failed to create new instance")
 				continue
 			}
 			flexvolInstance.SetLabels(i.GetLabels().Copy())
-			flexvolInstance.SetLabel("style", "flexvol")
+			flexvolInstance.SetLabel(v.styleType, "flexvol")
 			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
-				me.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+				v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 			}
 		}
 
 	}
 
-	me.Logger.Debug().Msgf("extracted %d flexgroup volumes", len(cache.GetInstances()))
+	v.Logger.Debug().Msgf("extracted %d flexgroup volumes", len(cache.GetInstances()))
 
 	//cache.Reset()
 
@@ -118,7 +137,7 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 
 			fg := cache.GetInstance(key)
 			if fg == nil {
-				me.Logger.Error().Err(nil).Msgf("instance [%s] not in local cache", key)
+				v.Logger.Error().Err(nil).Msgf("instance [%s] not in local cache", key)
 				continue
 			}
 
@@ -130,11 +149,11 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 
 				fgm := cache.GetMetric(mkey)
 				if fgm == nil {
-					me.Logger.Error().Err(nil).Msgf("metric [%s] not in local cache", mkey)
+					v.Logger.Error().Err(nil).Msgf("metric [%s] not in local cache", mkey)
 					continue
 				}
 
-				me.Logger.Trace().Msgf("(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
+				v.Logger.Trace().Msgf("(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
 
 				if value, ok := m.GetValueFloat64(i); ok {
 
@@ -145,12 +164,12 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 
 						err := fgm.SetValueFloat64(fg, fgv+value)
 						if err != nil {
-							me.Logger.Error().Err(err).Msg("error")
+							v.Logger.Error().Err(err).Msg("error")
 						}
 						// just for debugging
 						fgv2, _ := fgm.GetValueFloat64(fg)
 
-						me.Logger.Trace().Msgf("   > simple increment %f + %f = %f", fgv, value, fgv2)
+						v.Logger.Trace().Msgf("   > simple increment %f + %f = %f", fgv, value, fgv2)
 						continue
 					}
 
@@ -159,7 +178,7 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 					if strings.Contains(mkey, "_latency") {
 						opsKey = m.GetComment()
 					}
-					me.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, opsKey)
+					v.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, opsKey)
 
 					if ops := data.GetMetric(opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok {
@@ -183,20 +202,20 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 							if value != 0 {
 								err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 								if err != nil {
-									me.Logger.Error().Err(err).Msg("error")
+									v.Logger.Error().Err(err).Msg("error")
 								}
 							}
 							err = fgm.SetValueFloat64(fg, fgv+prod)
 							if err != nil {
-								me.Logger.Error().Err(err).Msg("error")
+								v.Logger.Error().Err(err).Msg("error")
 							}
 
 							// debugging
 							fgv2, _ := fgm.GetValueFloat64(fg)
 
-							me.Logger.Trace().Msgf("       %f + (%f * %f) (=%f) = %f", fgv, value, opsValue, prod, fgv2)
+							v.Logger.Trace().Msgf("       %f + (%f * %f) (=%f) = %f", fgv, value, opsValue, prod, fgv2)
 						} else {
-							me.Logger.Trace().Msg("       no ops value SKIP")
+							v.Logger.Trace().Msg("       no ops value SKIP")
 						}
 					}
 				}
@@ -222,7 +241,7 @@ func (me *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
-								me.Logger.Error().Err(err).Msgf("error")
+								v.Logger.Error().Err(err).Msgf("error")
 							}
 						} else {
 							m.SetValueNAN(i)
