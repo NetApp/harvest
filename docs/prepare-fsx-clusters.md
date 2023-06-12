@@ -17,4 +17,3 @@ The dashboards that work with FSx are tagged with `fsx` and listed below:
 * ONTAP: Security
 * ONTAP: Data Protection Snapshots
 * ONTAP: Compliance
-* ONTAP: Headroom (Only works for Rest Collector)
