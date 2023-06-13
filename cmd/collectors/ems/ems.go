@@ -25,6 +25,7 @@ const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
 const Hyphen = "-"
+const AutoResolved = "autoresolved"
 
 type Ems struct {
 	*rest2.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -340,11 +341,11 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		count        uint64
-		apiD, parseD time.Duration
-		startTime    time.Time
-		err          error
-		records      []gjson.Result
+		count, instanceCount uint64
+		apiD, parseD         time.Duration
+		startTime            time.Time
+		err                  error
+		records              []gjson.Result
 	)
 
 	e.Logger.Debug().Msg("starting data poll")
@@ -395,29 +396,15 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	apiD = time.Since(startTime)
 
-	if len(records) == 0 {
-		e.lastFilterTime = toTime
-		_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-		_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-		_ = e.Metadata.LazySetValueUint64("metrics", "data", 0)
-		_ = e.Metadata.LazySetValueUint64("instances", "data", 0)
-		return nil, nil
-	}
-
 	startTime = time.Now()
-	_, count = e.HandleResults(records, e.emsProp)
+	_, count, instanceCount = e.HandleResults(records, e.emsProp)
 
 	parseD = time.Since(startTime)
-
-	var instanceCount int
-	for _, v := range e.Matrix {
-		instanceCount += len(v.GetInstances())
-	}
 
 	_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = e.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = e.Metadata.LazySetValueUint64("instances", "data", uint64(instanceCount))
+	_ = e.Metadata.LazySetValueUint64("instances", "data", instanceCount)
 
 	e.AddCollectCount(count)
 
@@ -464,11 +451,11 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 }
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
-func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64) {
+func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (map[string]*matrix.Matrix, uint64, uint64) {
 	var (
-		err   error
-		count uint64
-		mx    *matrix.Matrix
+		err                  error
+		count, instanceCount uint64
+		mx                   *matrix.Matrix
 	)
 
 	var m = e.Matrix
@@ -568,6 +555,10 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 					instance.SetExportable(true)
 
 					for label, display := range p.InstanceLabels {
+						if label == AutoResolved {
+							instance.SetLabel(display, "")
+							continue
+						}
 						value := parseProperties(instanceData, label)
 						if value.Exists() {
 							if value.IsArray() {
@@ -652,7 +643,16 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			count += instanceLabelCount
 		}
 	}
-	return m, count
+
+	for _, v := range e.Matrix {
+		for _, i := range v.GetInstances() {
+			if i.IsExportable() {
+				instanceCount++
+			}
+		}
+	}
+
+	return m, count, instanceCount
 }
 
 func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
@@ -671,12 +671,6 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 }
 
 func (e *Ems) updateMatrix() {
-	var (
-		ok                           bool
-		val                          float64
-		eventMetric, timestampMetric *matrix.Metric
-	)
-
 	tempMap := make(map[string]*matrix.Matrix)
 	// store the bookend ems metric in tempMap
 	for _, issuingEmsList := range e.bookendEmsMap {
@@ -693,7 +687,8 @@ func (e *Ems) updateMatrix() {
 	e.Matrix[e.Object] = mat
 
 	for issuingEms, mx := range tempMap {
-		if eventMetric, ok = mx.GetMetrics()["events"]; !ok {
+		eventMetric, ok := mx.GetMetrics()["events"]
+		if !ok {
 			e.Logger.Error().
 				Str("issuingEms", issuingEms).
 				Str("name", "events").
@@ -701,7 +696,8 @@ func (e *Ems) updateMatrix() {
 			continue
 		}
 
-		if timestampMetric, ok = mx.GetMetrics()["timestamp"]; !ok {
+		timestampMetric, ok := mx.GetMetrics()["timestamp"]
+		if !ok {
 			e.Logger.Error().
 				Str("issuingEms", issuingEms).
 				Str("name", "timestamp").
@@ -712,14 +708,22 @@ func (e *Ems) updateMatrix() {
 			// set export to false
 			instance.SetExportable(false)
 
-			if val, ok = eventMetric.GetValueFloat64(instance); ok && val == 0 {
+			if val, exist := eventMetric.GetValueFloat64(instance); exist && val == 0 {
 				mx.RemoveInstance(instanceKey)
 				continue
 			}
+
 			// check instance timestamp and remove it after given resolve_after duration
 			if metricTimestamp, ok := timestampMetric.GetValueFloat64(instance); ok {
 				if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter[issuingEms]) {
-					mx.RemoveInstance(instanceKey)
+					// Set events metric value as 0 and export instance to true with label autoresolved as true.
+					if err := eventMetric.SetValueFloat64(instance, 0); err != nil {
+						e.Logger.Error().Err(err).Str("key", "events").
+							Msg("Unable to set float key on metric")
+						continue
+					}
+					instance.SetExportable(true)
+					instance.SetLabel(AutoResolved, "true")
 				}
 			}
 		}

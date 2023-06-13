@@ -4,7 +4,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"gopkg.in/yaml.v3"
 	"strings"
@@ -56,7 +55,7 @@ func (t *JoinRest) Init() error {
 	var tm translatePlugin
 	err = decoder.Decode(&tm)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to decode joinTemplate")
+		t.Logger.Error().Err(err).Msg("Failed to decode joinTemplate")
 		return err
 	}
 	for _, p := range tm.Plugins {
@@ -84,7 +83,7 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		for _, model := range t.translateMap {
 			bytes, err := t.client.GetGridRest(model.Rest)
 			if err != nil {
-				log.Error().Err(err).Str("rest", model.Rest).Msg("Failed to collect records from REST")
+				t.Logger.Error().Err(err).Str("rest", model.Rest).Msg("Failed to collect records from REST")
 				continue
 			}
 			t.updateCache(model, &bytes)
@@ -98,7 +97,7 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		}
 		cache, ok := t.resourcesMap[model.Rest]
 		if !ok {
-			log.Warn().
+			t.Logger.Warn().
 				Str("metricName", metricName).
 				Str("rest", model.Rest).
 				Msg("Cache does not have resources for REST")
@@ -107,7 +106,7 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		for _, instance := range m.GetInstances() {
 			label := instance.GetLabel(model.WithProm)
 			if label == "" {
-				log.Debug().
+				t.Logger.Debug().
 					Str("metricName", metricName).
 					Str("withProm", model.WithProm).
 					Str("rest", model.Rest).
@@ -116,7 +115,7 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 			}
 			newLabel, ok := cache[label]
 			if !ok {
-				log.Debug().
+				t.Logger.Debug().
 					Str("metricName", metricName).
 					Str("withProm", model.WithProm).
 					Str("label", label).
