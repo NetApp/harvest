@@ -70,6 +70,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	// create flexgroup instance cache
 	for _, i := range data.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			// instance key is svm.flexgroup-volume
 			key := i.GetLabel("svm") + "." + match[1]
@@ -121,6 +124,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	// create summary
 	for _, i := range data.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			// instance key is svm.flexgroup-volume
 			key := i.GetLabel("svm") + "." + match[1]
@@ -224,6 +230,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	// normalize latency values
 	for _, i := range cache.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		for mkey, m := range cache.GetMetrics() {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_latency") {
 

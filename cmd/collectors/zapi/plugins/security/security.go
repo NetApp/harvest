@@ -73,6 +73,9 @@ func (my *Security) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 		// update instance based on the above zapi response
 		for _, securityInstance := range data.GetInstances() {
+			if !securityInstance.IsExportable() {
+				continue
+			}
 			// Update fips_enabled label in instance
 			securityInstance.SetLabel("fips_enabled", my.fipsEnabled)
 

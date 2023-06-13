@@ -55,9 +55,9 @@ func (i *Instance) SetExportable(b bool) {
 	i.exportable = b
 }
 
-func (i *Instance) Clone() *Instance {
+func (i *Instance) Clone(isExportable bool) *Instance {
 	clone := NewInstance(i.index)
 	clone.labels = i.labels.Copy()
-	clone.exportable = i.exportable
+	clone.exportable = isExportable
 	return clone
 }

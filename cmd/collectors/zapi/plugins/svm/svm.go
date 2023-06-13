@@ -225,6 +225,9 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 	// update svm instance based on the above zapi response
 	for _, svmInstance := range data.GetInstances() {
+		if !svmInstance.IsExportable() {
+			continue
+		}
 		svmName := svmInstance.GetLabel("svm")
 
 		// Update audit_protocol_enabled label in svm

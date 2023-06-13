@@ -206,8 +206,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	z.Logger.Trace().Msg("updating data cache")
 	prevMat := z.Matrix[z.Object]
-	// clone matrix without numeric data
-	curMat := prevMat.Clone(false, true, true)
+	// clone matrix without numeric data and non-exportable all instances
+	curMat := prevMat.CloneWithNonExportableInstances(false, true, true)
 	curMat.Reset()
 
 	timestamp := curMat.GetMetric("timestamp")
@@ -374,6 +374,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				continue
 			}
 
+			// Set instance to exportable
+			instance.SetExportable(true)
 			counters := i.GetChildS("counters")
 			if counters == nil {
 				z.Logger.Debug().

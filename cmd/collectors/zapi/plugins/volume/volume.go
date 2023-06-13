@@ -91,6 +91,9 @@ func (my *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 
 func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	for _, volume := range data.GetInstances() {
+		if !volume.IsExportable() {
+			continue
+		}
 		aggrUUID := volume.GetLabel("aggrUuid")
 		_, exist := my.aggrsMap[aggrUUID]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))

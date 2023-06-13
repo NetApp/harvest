@@ -73,6 +73,9 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 	// we would not use getInstance() as key would be `sti8300mcc-215:kernel:fcvi_device_1`
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		if port, ok := adapterPortMap[instance.GetLabel("node")+instance.GetLabel("fcvi")]; ok {
 			instance.SetLabel("port", port)
 		}
