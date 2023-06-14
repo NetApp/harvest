@@ -198,16 +198,14 @@ func (z *ZapiPerf) loadParamInt(name string, defaultValue int) int {
 func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
-		instanceKeys    []string
-		resourceLatency *matrix.Metric // for workload* objects
-		err             error
-		skips           int
+		instanceKeys []string
+		err          error
 	)
 
 	z.Logger.Trace().Msg("updating data cache")
 	prevMat := z.Matrix[z.Object]
 	// clone matrix without numeric data and non-exportable all instances
-	curMat := prevMat.CloneWithNonExportableInstances(false, true, true)
+	curMat := prevMat.Clone(false, true, true, false)
 	curMat.Reset()
 
 	timestamp := curMat.GetMetric("timestamp")
@@ -314,216 +312,9 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		parseT += pd
 		batchCount++
 
-		// fetch instances
-		instances := response.GetChildS("instances")
-		if instances == nil || len(instances.GetChildren()) == 0 {
+		if err = z.pollData(response, curMat, timestamp, &count); err != nil && errors.Is(err, errs.ErrNoInstance) {
 			break
 		}
-
-		z.Logger.Debug().
-			Int("instances", len(instances.GetChildren())).
-			Msg("Fetched batch with instances")
-
-		// timestamp for batch instances
-		// ignore timestamp from ZAPI which is always integer
-		// we want float, since our poll interval can be a float
-		ts := float64(time.Now().UnixNano()) / BILLION
-
-		for instIndex, i := range instances.GetChildren() {
-
-			key := i.GetChildContentS(z.instanceKey)
-
-			// special case for these two objects
-			// we need to process each latency layer for each instance/counter
-			if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-
-				layer := "" // latency layer (resource) for workloads
-
-				if x := strings.Split(key, "."); len(x) == 2 {
-					key = x[0]
-					layer = x[1]
-				} else {
-					z.Logger.Warn().
-						Str("key", key).
-						Msg("Instance key has unexpected format")
-					continue
-				}
-
-				if resourceLatency = curMat.GetMetric(layer); resourceLatency == nil {
-					z.Logger.Warn().
-						Str("layer", layer).
-						Msg("Resource-latency metric missing in cache")
-					continue
-				}
-			}
-
-			if key == "" {
-				z.Logger.Debug().
-					Str("instanceKey", z.instanceKey).
-					Str("name", i.GetChildContentS("name")).
-					Str("uuid", i.GetChildContentS("uuid")).
-					Msg("Skip instance, key is empty")
-				continue
-			}
-
-			instance := curMat.GetInstance(key)
-			if instance == nil {
-				z.Logger.Debug().
-					Str("key", key).
-					Msg("Skip instance key, not found in cache")
-				continue
-			}
-
-			// Set instance to exportable
-			instance.SetExportable(true)
-			counters := i.GetChildS("counters")
-			if counters == nil {
-				z.Logger.Debug().
-					Str("key", key).
-					Msg("Skip instance key, no data counters")
-				continue
-			}
-
-			z.Logger.Trace().
-				Str("key", key).
-				Msg("Fetching data of instance")
-
-			// add batch timestamp as custom counter
-			if err := timestamp.SetValueFloat64(instance, ts); err != nil {
-				z.Logger.Error().Err(err).Msg("set timestamp value: ")
-			}
-
-			for _, cnt := range counters.GetChildren() {
-
-				name := cnt.GetChildContentS("name")
-				value := cnt.GetChildContentS("value")
-
-				// sanity check
-				if name == "" || value == "" {
-					z.Logger.Debug().
-						Str("counter", name).
-						Str("value", value).
-						Msg("Skipping incomplete counter")
-					continue
-				}
-
-				// ZAPI counter for us is either instance label (string)
-				// or numeric metric (scalar or histogram)
-
-				// store as instance label
-				if display, has := z.instanceLabels[name]; has {
-					instance.SetLabel(display, value)
-					z.Logger.Trace().
-						Str("display", display).
-						Int("instIndex", instIndex).
-						Str("value", value).
-						Msg("SetLabel")
-					continue
-				}
-
-				// store as array counter / histogram
-				if labels, has := z.histogramLabels[name]; has {
-
-					values := strings.Split(value, ",")
-
-					if len(labels) != len(values) {
-						// warn & skip
-						z.Logger.Error().
-							Stack().
-							Str("labels", name).
-							Str("value", value).
-							Int("instIndex", instIndex).
-							Msg("Histogram labels don't match parsed values")
-						continue
-					}
-
-					for i, label := range labels {
-						if metric := curMat.GetMetric(name + "." + label); metric != nil {
-							if err = metric.SetValueString(instance, values[i]); err != nil {
-								z.Logger.Error().
-									Stack().
-									Err(err).
-									Str("name", name).
-									Str("label", label).
-									Str("value", values[i]).
-									Int("instIndex", instIndex).
-									Msg("Set histogram value failed")
-							} else {
-								z.Logger.Trace().
-									Str("name", name).
-									Str("label", label).
-									Str("value", values[i]).
-									Int("instIndex", instIndex).
-									Msg("Set histogram name.label = value")
-								count++
-							}
-						} else {
-							z.Logger.Warn().
-								Str("name", name).
-								Str("label", label).
-								Str("value", value).
-								Int("instIndex", instIndex).
-								Msg("Histogram name. Label not in cache")
-						}
-					}
-					continue
-				}
-
-				// special case for workload_detail
-				if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-					if name == "wait_time" || name == "service_time" {
-						if err := resourceLatency.AddValueString(instance, value); err != nil {
-							z.Logger.Error().
-								Stack().
-								Err(err).
-								Str("name", name).
-								Str("value", value).
-								Int("instIndex", instIndex).
-								Msg("Add resource-latency failed")
-						} else {
-							z.Logger.Trace().
-								Str("name", name).
-								Str("value", value).
-								Int("instIndex", instIndex).
-								Msg("Add resource-latency")
-							count++
-						}
-						continue
-					}
-					// "visits" are ignored
-					if name == "visits" {
-						continue
-					}
-				}
-
-				// store as scalar metric
-				if metric := curMat.GetMetric(name); metric != nil {
-					if err = metric.SetValueString(instance, value); err != nil {
-						z.Logger.Error().
-							Err(err).
-							Str("name", name).
-							Str("value", value).
-							Int("instIndex", instIndex).
-							Msg("Set metric failed")
-					} else {
-						z.Logger.Trace().
-							Int("instIndex", instIndex).
-							Str("key", key).
-							Str("counter", name).
-							Str("value", value).
-							Msg("Set metric")
-						count++
-					}
-					continue
-				}
-
-				z.Logger.Warn().
-					Int("instIndex", instIndex).
-					Str("counter", name).
-					Str("value", value).
-					Msg("Counter not found in cache")
-			} // end loop over counters
-		} // end loop over instances
 	} // end batch request
 
 	z.Logger.Trace().
@@ -531,10 +322,232 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		Int("batchCount", batchCount).
 		Msg("Collected data points in batch polls")
 
+	return z.processData(&apiT, &parseT, curMat, prevMat, keyName, count, uint64(len(instanceKeys)))
+}
+
+func (z *ZapiPerf) pollData(response *node.Node, curMat *matrix.Matrix, timestamp *matrix.Metric, count *uint64) error {
+	var resourceLatency matrix.Metric
+	// fetch instances
+	instances := response.GetChildS("instances")
+	if instances == nil || len(instances.GetChildren()) == 0 {
+		return errs.ErrNoInstance
+	}
+
+	z.Logger.Debug().
+		Int("instances", len(instances.GetChildren())).
+		Msg("Fetched batch with instances")
+
+	// timestamp for batch instances
+	// ignore timestamp from ZAPI which is always integer
+	// we want float, since our poll interval can be a float
+	ts := float64(time.Now().UnixNano()) / BILLION
+
+	for instIndex, i := range instances.GetChildren() {
+
+		key := i.GetChildContentS(z.instanceKey)
+
+		// special case for these two objects
+		// we need to process each latency layer for each instance/counter
+		if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+
+			layer := "" // latency layer (resource) for workloads
+
+			if x := strings.Split(key, "."); len(x) == 2 {
+				key = x[0]
+				layer = x[1]
+			} else {
+				z.Logger.Warn().
+					Str("key", key).
+					Msg("Instance key has unexpected format")
+				continue
+			}
+
+			if resourceLatency := curMat.GetMetric(layer); resourceLatency == nil {
+				z.Logger.Warn().
+					Str("layer", layer).
+					Msg("Resource-latency metric missing in cache")
+				continue
+			}
+		}
+
+		if key == "" {
+			z.Logger.Debug().
+				Str("instanceKey", z.instanceKey).
+				Str("name", i.GetChildContentS("name")).
+				Str("uuid", i.GetChildContentS("uuid")).
+				Msg("Skip instance, key is empty")
+			continue
+		}
+
+		instance := curMat.GetInstance(key)
+		if instance == nil {
+			z.Logger.Debug().
+				Str("key", key).
+				Msg("Skip instance key, not found in cache")
+			continue
+		}
+
+		instance.SetExportable(true)
+		counters := i.GetChildS("counters")
+		if counters == nil {
+			z.Logger.Debug().
+				Str("key", key).
+				Msg("Skip instance key, no data counters")
+			continue
+		}
+
+		z.Logger.Trace().
+			Str("key", key).
+			Msg("Fetching data of instance")
+
+		// add batch timestamp as custom counter
+		if err := timestamp.SetValueFloat64(instance, ts); err != nil {
+			z.Logger.Error().Err(err).Msg("set timestamp value: ")
+		}
+
+		for _, cnt := range counters.GetChildren() {
+
+			name := cnt.GetChildContentS("name")
+			value := cnt.GetChildContentS("value")
+
+			// sanity check
+			if name == "" || value == "" {
+				z.Logger.Debug().
+					Str("counter", name).
+					Str("value", value).
+					Msg("Skipping incomplete counter")
+				continue
+			}
+
+			// ZAPI counter for us is either instance label (string)
+			// or numeric metric (scalar or histogram)
+
+			// store as instance label
+			if display, has := z.instanceLabels[name]; has {
+				instance.SetLabel(display, value)
+				z.Logger.Trace().
+					Str("display", display).
+					Int("instIndex", instIndex).
+					Str("value", value).
+					Msg("SetLabel")
+				continue
+			}
+
+			// store as array counter / histogram
+			if labels, has := z.histogramLabels[name]; has {
+
+				values := strings.Split(value, ",")
+
+				if len(labels) != len(values) {
+					// warn & skip
+					z.Logger.Error().
+						Stack().
+						Str("labels", name).
+						Str("value", value).
+						Int("instIndex", instIndex).
+						Msg("Histogram labels don't match parsed values")
+					continue
+				}
+
+				for i, label := range labels {
+					if metric := curMat.GetMetric(name + "." + label); metric != nil {
+						if err := metric.SetValueString(instance, values[i]); err != nil {
+							z.Logger.Error().
+								Stack().
+								Err(err).
+								Str("name", name).
+								Str("label", label).
+								Str("value", values[i]).
+								Int("instIndex", instIndex).
+								Msg("Set histogram value failed")
+						} else {
+							z.Logger.Trace().
+								Str("name", name).
+								Str("label", label).
+								Str("value", values[i]).
+								Int("instIndex", instIndex).
+								Msg("Set histogram name.label = value")
+							*count++
+						}
+					} else {
+						z.Logger.Warn().
+							Str("name", name).
+							Str("label", label).
+							Str("value", value).
+							Int("instIndex", instIndex).
+							Msg("Histogram name. Label not in cache")
+					}
+				}
+				continue
+			}
+
+			// special case for workload_detail
+			if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+				if name == "wait_time" || name == "service_time" {
+					if err := resourceLatency.AddValueString(instance, value); err != nil {
+						z.Logger.Error().
+							Stack().
+							Err(err).
+							Str("name", name).
+							Str("value", value).
+							Int("instIndex", instIndex).
+							Msg("Add resource-latency failed")
+					} else {
+						z.Logger.Trace().
+							Str("name", name).
+							Str("value", value).
+							Int("instIndex", instIndex).
+							Msg("Add resource-latency")
+						*count++
+					}
+					continue
+				}
+				// "visits" are ignored
+				if name == "visits" {
+					continue
+				}
+			}
+
+			// store as scalar metric
+			if metric := curMat.GetMetric(name); metric != nil {
+				if err := metric.SetValueString(instance, value); err != nil {
+					z.Logger.Error().
+						Err(err).
+						Str("name", name).
+						Str("value", value).
+						Int("instIndex", instIndex).
+						Msg("Set metric failed")
+				} else {
+					z.Logger.Trace().
+						Int("instIndex", instIndex).
+						Str("key", key).
+						Str("counter", name).
+						Str("value", value).
+						Msg("Set metric")
+					*count++
+				}
+				continue
+			}
+
+			z.Logger.Warn().
+				Int("instIndex", instIndex).
+				Str("counter", name).
+				Str("value", value).
+				Msg("Counter not found in cache")
+		} // end loop over counters
+	}
+	return nil
+}
+
+func (z *ZapiPerf) processData(apiT, parseT *time.Duration, curMat, prevMat *matrix.Matrix, keyName string, count uint64, instanceKeyCount uint64) (map[string]*matrix.Matrix, error) {
+	var (
+		skips int
+		err   error
+	)
 	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 		if rd, pd, err := z.getParentOpsCounters(curMat, keyName); err == nil {
-			apiT += rd
-			parseT += pd
+			*apiT += rd
+			*parseT += pd
 		} else {
 			// no point to continue as we can't calculate the other counters
 			return nil, err
@@ -542,10 +555,10 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// update metadata
-	_ = z.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
-	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
+	_ = z.Metadata.LazySetValueInt64("api_time", "data", (*apiT).Microseconds())
+	_ = z.Metadata.LazySetValueInt64("parse_time", "data", (*parseT).Microseconds())
 	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instanceKeys)))
+	_ = z.Metadata.LazySetValueUint64("instances", "data", instanceKeyCount)
 	z.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
@@ -561,7 +574,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	z.Logger.Debug().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(true, true, true) // @TODO implement copy data
+	cachedData := curMat.Clone(true, true, true, true) // @TODO implement copy data
 
 	// order metrics, such that those requiring base counters are processed last
 	orderedMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
@@ -582,7 +595,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta("timestamp", prevMat, z.Logger); err != nil {
+	if _, err := curMat.Delta("timestamp", prevMat, z.Logger); err != nil {
 		z.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -827,21 +840,42 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	var (
-		err                                      error
-		request, response, counterList           *node.Node
-		oldMetrics, oldLabels, replaced, missing *set.Set
-		wanted                                   *dict.Dict
-		oldMetricsSize, oldLabelsSize            int
-		counters                                 map[string]*node.Node
+		err               error
+		request, response *node.Node
+	)
+
+	wanted, oldLabels, oldMetrics, mat, oldLabelsSize, oldMetricsSize, err := z.parseCounters()
+	if err != nil {
+		return nil, errs.New(errs.ErrMissingParam, "counters")
+	}
+
+	// build request
+	request = node.NewXMLS("perf-object-counter-list-info")
+	request.NewChildS("objectname", z.Query)
+
+	if err = z.Client.BuildRequest(request); err != nil {
+		return nil, err
+	}
+
+	if response, err = z.Client.Invoke(); err != nil {
+		return nil, err
+	}
+
+	return z.pollCounter(response, wanted, oldLabels, oldMetrics, mat, oldLabelsSize, oldMetricsSize)
+}
+
+func (z *ZapiPerf) parseCounters() (*dict.Dict, *set.Set, *set.Set, *matrix.Matrix, int, int, error) {
+	var (
+		counterList                   *node.Node
+		oldMetrics, oldLabels         *set.Set
+		wanted                        *dict.Dict
+		oldMetricsSize, oldLabelsSize int
 	)
 
 	z.scalarCounters = make([]string, 0)
-	counters = make(map[string]*node.Node)
 	oldMetrics = set.New() // current set of metrics, so we can remove from matrix if not updated
 	oldLabels = set.New()  // current set of labels
 	wanted = dict.New()    // counters listed in template, maps raw name to display name
-	missing = set.New()    // required base counters, missing in template
-	replaced = set.New()   // deprecated and replaced counters
 
 	mat := z.Matrix[z.Object]
 	for key := range mat.GetMetrics() {
@@ -871,25 +905,25 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			}
 		}
 	} else {
-		return nil, errs.New(errs.ErrMissingParam, "counters")
+		return nil, nil, nil, nil, 0, 0, errs.New(errs.ErrMissingParam, "counters")
 	}
 
 	z.Logger.Debug().
 		Int("oldMetrics", oldMetricsSize).
 		Int("oldLabels", oldLabelsSize).
 		Msg("Updating metric cache")
+	return wanted, oldLabels, oldMetrics, mat, oldLabelsSize, oldMetricsSize, nil
+}
 
-	// build request
-	request = node.NewXMLS("perf-object-counter-list-info")
-	request.NewChildS("objectname", z.Query)
-
-	if err = z.Client.BuildRequest(request); err != nil {
-		return nil, err
-	}
-
-	if response, err = z.Client.Invoke(); err != nil {
-		return nil, err
-	}
+func (z *ZapiPerf) pollCounter(response *node.Node, wanted *dict.Dict, oldLabels *set.Set, oldMetrics *set.Set, mat *matrix.Matrix, oldLabelsSize, oldMetricsSize int) (map[string]*matrix.Matrix, error) {
+	var (
+		counters          map[string]*node.Node
+		replaced, missing *set.Set
+		err               error
+	)
+	counters = make(map[string]*node.Node)
+	missing = set.New()  // required base counters, missing in template
+	replaced = set.New() // deprecated and replaced counters
 
 	// fetch counter elements
 	if elems := response.GetChildS("counters"); elems != nil && len(elems.GetChildren()) != 0 {
@@ -1368,43 +1402,8 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 			break
 		}
 
-		if results == nil {
+		if err := z.pollInstance(results, instancesAttr, keyAttr, nameAttr, uuidAttr, oldInstances, mat); err != nil && errors.Is(err, errs.ErrNoInstance) {
 			break
-		}
-
-		// fetch instances
-		instances := results.GetChildS(instancesAttr)
-		if instances == nil || len(instances.GetChildren()) == 0 {
-			break
-		}
-
-		for _, i := range instances.GetChildren() {
-
-			if key := i.GetChildContentS(keyAttr); key == "" {
-				// instance key missing
-				name := i.GetChildContentS(nameAttr)
-				uuid := i.GetChildContentS(uuidAttr)
-				z.Logger.Debug().Msgf("skip instance, missing key [%s] (name=%s, uuid=%s)", z.instanceKey, name, uuid)
-			} else if oldInstances.Has(key) {
-				// instance already in cache
-				oldInstances.Remove(key)
-				z.Logger.Trace().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
-				continue
-			} else if instance, err := mat.NewInstance(key); err != nil {
-				z.Logger.Error().Err(err).Msg("add instance")
-			} else {
-				z.Logger.Trace().
-					Str("key", key).
-					Msg("Added new instance")
-				if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
-					for label, display := range z.qosLabels {
-						if value := i.GetChildContentS(label); value != "" {
-							instance.SetLabel(display, value)
-						}
-					}
-					z.Logger.Debug().Msgf("(%s) [%s] added QOS labels: %s", z.Query, key, instance.GetLabels().String())
-				}
-			}
 		}
 	}
 
@@ -1424,6 +1423,47 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	return nil, err
+}
+
+func (z *ZapiPerf) pollInstance(results *node.Node, instancesAttr, keyAttr, nameAttr, uuidAttr string, oldInstances *set.Set, mat *matrix.Matrix) error {
+	if results == nil {
+		return errs.ErrNoInstance
+	}
+
+	// fetch instances
+	instances := results.GetChildS(instancesAttr)
+	if instances == nil || len(instances.GetChildren()) == 0 {
+		return errs.ErrNoInstance
+	}
+
+	for _, i := range instances.GetChildren() {
+		if key := i.GetChildContentS(keyAttr); key == "" {
+			// instance key missing
+			name := i.GetChildContentS(nameAttr)
+			uuid := i.GetChildContentS(uuidAttr)
+			z.Logger.Debug().Msgf("skip instance, missing key [%s] (name=%s, uuid=%s)", z.instanceKey, name, uuid)
+		} else if oldInstances.Has(key) {
+			// instance already in cache
+			oldInstances.Remove(key)
+			z.Logger.Trace().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
+			continue
+		} else if instance, err := mat.NewInstance(key); err != nil {
+			z.Logger.Error().Err(err).Msg("add instance")
+		} else {
+			z.Logger.Trace().
+				Str("key", key).
+				Msg("Added new instance")
+			if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+				for label, display := range z.qosLabels {
+					if value := i.GetChildContentS(label); value != "" {
+						instance.SetLabel(display, value)
+					}
+				}
+				z.Logger.Debug().Msgf("(%s) [%s] added QOS labels: %s", z.Query, key, instance.GetLabels().String())
+			}
+		}
+	}
+	return nil
 }
 
 // Interface guards

@@ -595,3 +595,8 @@ func (c *Client) tlsVersion(version string) uint16 {
 	}
 	return 0
 }
+
+// It's used for unit test only
+func NewTestClient() *Client {
+	return &Client{system: &system{name: "testCluster"}}
+}
