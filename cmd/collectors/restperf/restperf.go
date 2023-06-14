@@ -19,6 +19,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"path"
@@ -28,9 +29,11 @@ import (
 )
 
 const (
-	latencyIoReqd = 10
-	BILLION       = 1_000_000_000
-	arrayKeyToken = "#"
+	latencyIoReqd          = 10
+	BILLION                = 1_000_000_000
+	arrayKeyToken          = "#"
+	objWorkloadClass       = "user_defined|system_defined"
+	objWorkloadVolumeClass = "autovolume"
 )
 
 var qosQuery = "api/cluster/counter/tables/qos"
@@ -169,6 +172,27 @@ func (r *RestPerf) InitMatrix() error {
 	// Add metadata metric for skips
 	_, _ = r.Metadata.NewMetricUint64("skips")
 	return nil
+}
+
+// load workload_class or use defaultValue
+func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
+
+	var x *node.Node
+
+	name := "workload_class"
+
+	if x = r.Params.GetChildS(name); x != nil {
+		v := x.GetAllChildContentS()
+		if len(v) == 0 {
+			r.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+			return defaultValue
+		}
+		s := strings.Join(v, "|")
+		r.Logger.Debug().Msgf("using %s = [%s]", name, s)
+		return s
+	}
+	r.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	return defaultValue
 }
 
 // load an int parameter or use defaultValue
@@ -1255,9 +1279,9 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		fields = "*"
 		dataQuery = qosWorkloadQuery
 		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
-			filter = append(filter, "workload-class=autovolume")
+			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
 		} else {
-			filter = append(filter, "workload-class=user_defined|system_defined")
+			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadClass))
 		}
 	}
 

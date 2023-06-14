@@ -6,6 +6,10 @@ object:                   qos
 
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s
+workload_class:
+  - user_defined
+  - system_defined
+
 schedule:
   - counter:  1200s
   - instance: 600s

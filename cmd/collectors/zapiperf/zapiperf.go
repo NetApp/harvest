@@ -60,6 +60,8 @@ const (
 	objWorkloadDetail       = "workload_detail"
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
+	objWorkloadClass        = "user_defined|system_defined"
+	objWorkloadVolumeClass  = "autovolume"
 	BILLION                 = 1_000_000_000
 )
 
@@ -167,6 +169,27 @@ func (z *ZapiPerf) loadParamStr(name, defaultValue string) string {
 	if x = z.Params.GetChildContentS(name); x != "" {
 		z.Logger.Debug().Msgf("using %s = [%s]", name, x)
 		return x
+	}
+	z.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	return defaultValue
+}
+
+// load workload_class or use defaultValue
+func (z *ZapiPerf) loadWorkloadClassQuery(defaultValue string) string {
+
+	var x *node.Node
+
+	name := "workload_class"
+
+	if x = z.Params.GetChildS(name); x != nil {
+		v := x.GetAllChildContentS()
+		if len(v) == 0 {
+			z.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+			return defaultValue
+		}
+		s := strings.Join(v, "|")
+		z.Logger.Debug().Msgf("using %s = [%s]", name, s)
+		return s
 	}
 	z.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
 	return defaultValue
@@ -1318,9 +1341,9 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
 		if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
-			infoElem.NewChildS("workload-class", "autovolume|user_defined|system_defined")
+			infoElem.NewChildS("workload-class", z.loadWorkloadClassQuery(objWorkloadVolumeClass))
 		} else {
-			infoElem.NewChildS("workload-class", "user_defined|system_defined")
+			infoElem.NewChildS("workload-class", z.loadWorkloadClassQuery(objWorkloadClass))
 		}
 
 		instancesAttr = "attributes-list"

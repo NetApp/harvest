@@ -6,6 +6,9 @@ query:                    workload
 object:                   qos
 
 instance_key:             uuid
+workload_class:
+  - user_defined
+  - system_defined
 
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s
