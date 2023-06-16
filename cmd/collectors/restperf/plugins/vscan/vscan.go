@@ -65,7 +65,7 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 	// 		scan_request_dispatched_rate
 
 	// create per scanner instance cache
-	cache := data.Clone(false, true, false, true)
+	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".Vscan"
 
 	for _, i := range data.GetInstances() {

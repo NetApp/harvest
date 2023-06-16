@@ -364,11 +364,43 @@ func (c *Client) InvokeZapiCall(request *node.Node) ([]*node.Node, error) {
 	return output, nil
 }
 
+// InvokeWithTestFile use for 2 purposes
+// If testFilePath is non-empty -> Used only from unit test
+// Else --> will issue the API request and return server response
+// this method should only be called after building the request
+func (c *Client) InvokeWithTestFile(testFilePath string) (*node.Node, error) {
+	var err error
+	if testFilePath != "" {
+		if testData, err := tree.ImportXML(testFilePath); err == nil {
+			return testData, nil
+		}
+		return nil, err
+	} else {
+		return c.Invoke()
+	}
+}
+
 // Invoke will issue the API request and return server response
 // this method should only be called after building the request
 func (c *Client) Invoke() (*node.Node, error) {
 	result, _, _, err := c.invoke(false)
 	return result, err
+}
+
+// InvokeBatchRequestWithTestFile used for 2 purposes
+// If testFilePath is non-empty -> Used only from unit test
+// Else --> Will issue API requests in series, once there are no more instances returned by the server, returned results will be nil
+// Use the returned tag for subsequent calls to this method
+func (c *Client) InvokeBatchRequestWithTestFile(request *node.Node, tag string, testFilePath string) (*node.Node, string, error) {
+	var err error
+	if testFilePath != "" && tag != "" {
+		if testData, err := tree.ImportXML(testFilePath); err == nil {
+			return testData, "", nil
+		}
+		return nil, "", err
+	} else {
+		return c.InvokeBatchRequest(request, tag)
+	}
 }
 
 // InvokeBatchRequest will issue API requests in series, once there
@@ -433,6 +465,22 @@ func (c *Client) InvokeRequest(request *node.Node) (*node.Node, error) {
 		return c.Invoke()
 	}
 	return nil, err
+}
+
+// InvokeWithTimersWithTestFile used for 2 purposes
+// If testFilePath is non-empty -> Used only from unit test
+// Else --> invokes the request and returns parsed XML response and timers: API wait time and XML parse time.
+// This method should only be called after building the request
+func (c *Client) InvokeWithTimersWithTestFile(testFilePath string) (*node.Node, time.Duration, time.Duration, error) {
+	var err error
+	if testFilePath != "" {
+		if testData, err := tree.ImportXML(testFilePath); err == nil {
+			return testData, 0, 0, nil
+		}
+		return nil, 0, 0, err
+	} else {
+		return c.InvokeWithTimers()
+	}
 }
 
 // InvokeWithTimers invokes the request and returns parsed XML response and timers:
@@ -596,7 +644,7 @@ func (c *Client) tlsVersion(version string) uint16 {
 	return 0
 }
 
-// It's used for unit test only
+// NewTestClient It's used for unit test only
 func NewTestClient() *Client {
-	return &Client{system: &system{name: "testCluster"}}
+	return &Client{system: &system{name: "testCluster", clustered: true}, request: &http.Request{}}
 }

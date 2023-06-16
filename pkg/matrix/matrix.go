@@ -31,6 +31,13 @@ type Matrix struct {
 	exportable     bool
 }
 
+type With struct {
+	Data            bool
+	Metrics         bool
+	Instances       bool
+	ExportInstances bool
+}
+
 func New(uuid, object string, identifier string) *Matrix {
 	me := Matrix{UUID: uuid, Object: object, Identifier: identifier}
 	me.globalLabels = dict.New()
@@ -66,17 +73,17 @@ func (m *Matrix) SetExportable(b bool) {
 	m.exportable = b
 }
 
-func (m *Matrix) Clone(withData, withMetrics, withInstances, withExport bool) *Matrix {
+func (m *Matrix) Clone(with With) *Matrix {
 	clone := &Matrix{UUID: m.UUID, Object: m.Object, Identifier: m.Identifier}
 	clone.globalLabels = m.globalLabels
 	clone.exportOptions = m.exportOptions
 	clone.exportable = m.exportable
 	clone.displayMetrics = make(map[string]string, 0)
 
-	if withInstances {
+	if with.Instances {
 		clone.instances = make(map[string]*Instance, len(m.GetInstances()))
 		for key, instance := range m.GetInstances() {
-			if withExport {
+			if with.ExportInstances {
 				clone.instances[key] = instance.Clone(instance.IsExportable())
 			} else {
 				clone.instances[key] = instance.Clone(false)
@@ -86,10 +93,10 @@ func (m *Matrix) Clone(withData, withMetrics, withInstances, withExport bool) *M
 		clone.instances = make(map[string]*Instance, 0)
 	}
 
-	if withMetrics {
+	if with.Metrics {
 		clone.metrics = make(map[string]*Metric, len(m.GetMetrics()))
 		for key, metric := range m.GetMetrics() {
-			c := metric.Clone(withData)
+			c := metric.Clone(with.Data)
 			clone.metrics[key] = c
 			clone.displayMetrics[c.GetName()] = key
 		}
