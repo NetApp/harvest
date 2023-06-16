@@ -131,13 +131,13 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 
 			var splitEstimateBytes float64
 			if splitEstimateBytes, err = strconv.ParseFloat(vc.splitEstimate, 64); err != nil {
-				v.Logger.Error().Err(err).Str("metric", "clone_split_estimate").Str("value", vc.splitEstimate).Msg("parse metric")
+				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("parse clone_split_estimate")
 				continue
 			} else {
 				splitEstimateBytes = splitEstimateBytes * 4 * 1024
 			}
 			if err = splitEstimate.SetValueFloat64(volume, splitEstimateBytes); err != nil {
-				v.Logger.Error().Err(err).Str("metric", "clone_split_estimate").Str("value", vc.splitEstimate).Msg("set metric")
+				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("set clone_split_estimate")
 				continue
 			}
 		}
