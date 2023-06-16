@@ -124,9 +124,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	// create summary
 	for _, i := range data.GetInstances() {
-		if !i.IsExportable() {
-			continue
-		}
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			// instance key is svm.flexgroup-volume
 			key := i.GetLabel("svm") + "." + match[1]

@@ -87,9 +87,6 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 	counts := make(map[string]map[string]int) // map[scanner][counter] => value
 
 	for _, i := range data.GetInstances() {
-		if !i.IsExportable() {
-			continue
-		}
 		scanner := i.GetLabel("scanner")
 		ps := cache.GetInstance(scanner)
 		if ps == nil {
