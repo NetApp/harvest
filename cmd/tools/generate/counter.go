@@ -315,7 +315,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		return nil
 	}
 
-	if response, err = client.Invoke(); err != nil {
+	if response, err = client.Invoke(""); err != nil {
 		fmt.Printf("error while invoking api %+v\n", err)
 		return nil
 	}

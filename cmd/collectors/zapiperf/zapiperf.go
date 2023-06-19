@@ -300,7 +300,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			return nil, err
 		}
 
-		response, rd, pd, err := z.Client.InvokeWithTimersWithTestFile(z.testFilePath)
+		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath)
 		if err != nil {
 			// if ONTAP complains about batch size, use a smaller batch size
 			if strings.Contains(err.Error(), "resource limit exceeded") && z.batchSize > 100 {
@@ -769,7 +769,7 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 			return apiT, parseT, err
 		}
 
-		response, rt, pt, err := z.Client.InvokeWithTimers()
+		response, rt, pt, err := z.Client.InvokeWithTimers("")
 		if err != nil {
 			return apiT, parseT, err
 		}
@@ -890,7 +890,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	if response, err = z.Client.InvokeWithTestFile(z.testFilePath); err != nil {
+	if response, err = z.Client.Invoke(z.testFilePath); err != nil {
 		return nil, err
 	}
 
@@ -1355,7 +1355,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	batchTag := "initial"
 
 	for {
-		if results, batchTag, err = z.Client.InvokeBatchRequestWithTestFile(request, batchTag, z.testFilePath); err != nil {
+		if results, batchTag, err = z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath); err != nil {
 			if errors.Is(err, errs.ErrAPIRequestRejected) {
 				z.Logger.Info().
 					Str("request", request.GetNameS()).
