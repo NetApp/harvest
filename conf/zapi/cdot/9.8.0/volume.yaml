@@ -81,7 +81,7 @@ plugins:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
       - new_status state online online `0`
-    # To prevent visibility of transient volumes, uncomment the following lines
+# To prevent visibility of transient volumes, uncomment the following lines
 #    exclude_regex:
 #      # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
 #      - volume `.+_CVclone`
@@ -102,7 +102,7 @@ plugins:
       - node_root root_volume `true` `Yes`
       - svm_root root_volume `true` `Yes`
   - Aggregator:
-    - volume<style=flexgroup>volume node,svm,aggr,style
+      - volume<style=flexgroup>volume node,svm,aggr,style
 
 export_options:
   instance_keys:
@@ -112,6 +112,9 @@ export_options:
     - svm
     - volume
   instance_labels:
+    - clone_parent_snapshot
+    - clone_parent_svm
+    - clone_parent_volume
     - isEncrypted
     - isHardwareEncrypted
     - is_sis_volume
