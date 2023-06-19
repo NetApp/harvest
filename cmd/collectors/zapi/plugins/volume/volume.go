@@ -20,87 +20,174 @@ type Volume struct {
 }
 
 type aggrData struct {
-	aggrUUID string
-	aggrName string
+	uuid string
+	name string
+}
+
+type volumeClone struct {
+	name           string
+	svm            string
+	parentSnapshot string
+	parentVolume   string
+	parentSvm      string
+	splitEstimate  string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
 
-func (my *Volume) Init() error {
+func (v *Volume) Init() error {
 
 	var err error
 
-	if err = my.InitAbc(); err != nil {
+	if err = v.InitAbc(); err != nil {
 		return err
 	}
 
-	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
-		my.Logger.Error().Stack().Err(err).Msg("connecting")
+	if v.client, err = zapi.New(conf.ZapiPoller(v.ParentParams), v.Auth); err != nil {
+		v.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err = v.client.Init(5); err != nil {
 		return err
 	}
 
-	my.aggrsMap = make(map[string]string)
+	v.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	my.currentVal = my.SetPluginInterval()
+	v.currentVal = v.SetPluginInterval()
 
 	return nil
 }
 
-func (my *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	data := dataMap[my.Object]
-	if my.currentVal >= my.PluginInvocationRate {
-		my.currentVal = 0
+	data := dataMap[v.Object]
+	if v.currentVal >= v.PluginInvocationRate {
+		v.currentVal = 0
 
 		// invoke disk-encrypt-get-iter zapi and populate disk info
-		disks, err1 := my.getEncryptedDisks()
+		disks, err1 := v.getEncryptedDisks()
 		// invoke aggr-status-get-iter zapi and populate aggr disk mapping info
-		aggrDiskMap, err2 := my.getAggrDiskMapping()
+		aggrDiskMap, err2 := v.getAggrDiskMapping()
 
 		if err1 != nil {
 			if errors.Is(err1, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err1).Msg("Failed to collect disk data")
+				v.Logger.Debug().Err(err1).Msg("Failed to collect disk data")
 			} else {
-				my.Logger.Error().Err(err1).Msg("Failed to collect disk data")
+				v.Logger.Error().Err(err1).Msg("Failed to collect disk data")
 			}
 		}
 		if err2 != nil {
 			if errors.Is(err2, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+				v.Logger.Debug().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
 			} else {
-				my.Logger.Error().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
+				v.Logger.Error().Err(err2).Msg("Failed to collect aggregate-disk mapping data")
 			}
 		}
 		// update aggrsMap based on disk data and addr disk mapping
-		my.updateAggrMap(disks, aggrDiskMap)
+		v.updateAggrMap(disks, aggrDiskMap)
+	}
+
+	volumeCloneMap, err := v.getVolumeCloneInfo()
+
+	if err != nil {
+		v.Logger.Error().Err(err).Msg("Failed to update clone data")
 	}
 
 	// update volume instance labels
-	my.updateVolumeLabels(data)
+	v.updateVolumeLabels(data, volumeCloneMap)
 
-	my.currentVal++
+	v.currentVal++
 	return nil, nil
 }
 
-func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
+func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone) {
+	var err error
 	for _, volume := range data.GetInstances() {
 		if !volume.IsExportable() {
 			continue
 		}
 		aggrUUID := volume.GetLabel("aggrUuid")
-		_, exist := my.aggrsMap[aggrUUID]
+		_, exist := v.aggrsMap[aggrUUID]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+
+		name := volume.GetLabel("volume")
+		svm := volume.GetLabel("svm")
+		key := name + svm
+
+		if vc, ok := volumeCloneMap[key]; ok {
+			volume.SetLabel("clone_parent_snapshot", vc.parentSnapshot)
+			volume.SetLabel("clone_parent_volume", vc.parentVolume)
+			volume.SetLabel("clone_parent_svm", vc.parentSvm)
+			splitEstimate := data.GetMetric("clone_split_estimate")
+			if splitEstimate == nil {
+				if splitEstimate, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
+					v.Logger.Error().Err(err).Str("metric", "clone_split_estimate").Msg("add metric")
+					continue
+				}
+			}
+
+			// splitEstimate is 4KB blocks, Convert to bytes as in REST
+
+			var splitEstimateBytes float64
+			if splitEstimateBytes, err = strconv.ParseFloat(vc.splitEstimate, 64); err != nil {
+				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("parse clone_split_estimate")
+				continue
+			} else {
+				splitEstimateBytes = splitEstimateBytes * 4 * 1024
+			}
+			if err = splitEstimate.SetValueFloat64(volume, splitEstimateBytes); err != nil {
+				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("set clone_split_estimate")
+				continue
+			}
+		}
 	}
 }
 
-func (my *Volume) getEncryptedDisks() ([]string, error) {
+func (v *Volume) getVolumeCloneInfo() (map[string]volumeClone, error) {
+	var (
+		result         []*node.Node
+		volumeCloneMap map[string]volumeClone
+		err            error
+	)
+
+	volumeCloneMap = make(map[string]volumeClone)
+	request := node.NewXMLS("volume-clone-get-iter")
+	request.NewChildS("max-records", collectors.DefaultBatchSize)
+	if result, err = v.client.InvokeZapiCall(request); err != nil {
+		return volumeCloneMap, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return volumeCloneMap, nil
+	}
+
+	for _, clone := range result {
+		name := clone.GetChildContentS("volume")
+		vserver := clone.GetChildContentS("vserver")
+		parentSnapshot := clone.GetChildContentS("parent-snapshot")
+		parentVolume := clone.GetChildContentS("parent-volume")
+		parentSvm := clone.GetChildContentS("parent-vserver")
+		splitEstimate := clone.GetChildContentS("split-estimate")
+		volC := volumeClone{
+			name:           name,
+			svm:            vserver,
+			parentSnapshot: parentSnapshot,
+			parentVolume:   parentVolume,
+			parentSvm:      parentSvm,
+			splitEstimate:  splitEstimate,
+		}
+		key := volC.name + volC.svm
+		volumeCloneMap[key] = volC
+	}
+
+	return volumeCloneMap, nil
+}
+
+func (v *Volume) getEncryptedDisks() ([]string, error) {
 	var (
 		result    []*node.Node
 		diskNames []string
@@ -116,7 +203,7 @@ func (my *Volume) getEncryptedDisks() ([]string, error) {
 	encryptInfoQuery.NewChildS("protection-mode", "open|part|miss")
 
 	// fetching only disks whose protection-mode is open/part/miss
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = v.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -131,19 +218,19 @@ func (my *Volume) getEncryptedDisks() ([]string, error) {
 	return diskNames, nil
 }
 
-func (my *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]aggrData) {
+func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]aggrData) {
 	if disks != nil && aggrDiskMap != nil {
 		// Clean aggrsMap map
-		my.aggrsMap = make(map[string]string)
+		v.aggrsMap = make(map[string]string)
 
 		for _, disk := range disks {
 			aggr := aggrDiskMap[disk]
-			my.aggrsMap[aggr.aggrUUID] = aggr.aggrName
+			v.aggrsMap[aggr.uuid] = aggr.name
 		}
 	}
 }
 
-func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
+func (v *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	var (
 		result        []*node.Node
 		aggrsDisksMap map[string]aggrData
@@ -155,7 +242,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
 	aggrsDisksMap = make(map[string]aggrData)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = v.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -169,7 +256,7 @@ func (my *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
 		for _, aggrDisk := range aggrDiskList {
 			diskName = aggrDisk.GetChildContentS("disk")
-			aggrsDisksMap[diskName] = aggrData{aggrUUID: aggrUUID, aggrName: aggrName}
+			aggrsDisksMap[diskName] = aggrData{uuid: aggrUUID, name: aggrName}
 		}
 	}
 	return aggrsDisksMap, nil
