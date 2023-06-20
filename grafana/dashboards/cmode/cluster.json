@@ -7,13 +7,6 @@
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
-    },
-    {
-      "name": "VAR_CPU_BUSY",
-      "type": "constant",
-      "label": "CPU_BUSY",
-      "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
-      "description": ""
     }
   ],
   "__requires": [
@@ -78,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680011140355,
+  "iteration": 1687261843042,
   "links": [
     {
       "asDropdown": true,
@@ -3102,6 +3095,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3112,8 +3106,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3185,6 +3178,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3195,8 +3189,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3268,6 +3261,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3278,8 +3272,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3351,6 +3344,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3361,8 +3355,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3435,6 +3428,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3445,8 +3439,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3518,6 +3511,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3528,8 +3522,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -4159,26 +4152,26 @@
         "type": "query"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+          "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first."
+        },
         "description": "",
         "error": null,
         "hide": 2,
         "label": null,
         "name": "CPU_BUSY",
-        "query": "${VAR_CPU_BUSY}",
-        "skipUrlSync": false,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_CPU_BUSY}",
-          "text": "${VAR_CPU_BUSY}",
-          "selected": false
-        },
         "options": [
           {
-            "value": "${VAR_CPU_BUSY}",
-            "text": "${VAR_CPU_BUSY}",
-            "selected": false
+            "selected": true,
+            "text": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+            "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first."
           }
-        ]
+        ],
+        "query": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },
@@ -4202,5 +4195,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 17
+  "version": 18
 }
