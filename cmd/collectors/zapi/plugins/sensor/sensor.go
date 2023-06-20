@@ -95,6 +95,9 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 	excludedSensors := make(map[string][]sensorValue)
 
 	for k, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		iKey := instance.GetLabel("node")
 		if iKey == "" {
 			my.Logger.Warn().Str("key", k).Msg("missing node label for instance")

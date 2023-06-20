@@ -74,6 +74,7 @@ type ZapiPerf struct {
 	scalarCounters  []string
 	qosLabels       map[string]string
 	isCacheEmpty    bool
+	testFilePath    string // Used only from unit test
 }
 
 func init() {
@@ -206,8 +207,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	z.Logger.Trace().Msg("updating data cache")
 	prevMat := z.Matrix[z.Object]
-	// clone matrix without numeric data
-	curMat := prevMat.Clone(false, true, true)
+	// clone matrix without numeric data and non-exportable all instances
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: false})
 	curMat.Reset()
 
 	timestamp := curMat.GetMetric("timestamp")
@@ -271,6 +272,10 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// update batch indices
 		endIndex += z.batchSize
+		// In case of unit test, for loop should run once
+		if z.testFilePath != "" {
+			endIndex = len(instanceKeys)
+		}
 		if endIndex > len(instanceKeys) {
 			endIndex = len(instanceKeys)
 		}
@@ -295,7 +300,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			return nil, err
 		}
 
-		response, rd, pd, err := z.Client.InvokeWithTimers()
+		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath)
 		if err != nil {
 			// if ONTAP complains about batch size, use a smaller batch size
 			if strings.Contains(err.Error(), "resource limit exceeded") && z.batchSize > 100 {
@@ -374,6 +379,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				continue
 			}
 
+			instance.SetExportable(true)
 			counters := i.GetChildS("counters")
 			if counters == nil {
 				z.Logger.Debug().
@@ -559,7 +565,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	z.Logger.Debug().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(true, true, true) // @TODO implement copy data
+	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true}) // @TODO implement copy data
 
 	// order metrics, such that those requiring base counters are processed last
 	orderedMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
@@ -763,7 +769,7 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 			return apiT, parseT, err
 		}
 
-		response, rt, pt, err := z.Client.InvokeWithTimers()
+		response, rt, pt, err := z.Client.InvokeWithTimers("")
 		if err != nil {
 			return apiT, parseT, err
 		}
@@ -823,7 +829,6 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 }
 
 func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
-
 	var (
 		err                                      error
 		request, response, counterList           *node.Node
@@ -885,7 +890,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	if response, err = z.Client.Invoke(); err != nil {
+	if response, err = z.Client.Invoke(z.testFilePath); err != nil {
 		return nil, err
 	}
 
@@ -1350,8 +1355,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	batchTag := "initial"
 
 	for {
-
-		if results, batchTag, err = z.Client.InvokeBatchRequest(request, batchTag); err != nil {
+		if results, batchTag, err = z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath); err != nil {
 			if errors.Is(err, errs.ErrAPIRequestRejected) {
 				z.Logger.Info().
 					Str("request", request.GetNameS()).

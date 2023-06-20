@@ -136,6 +136,9 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	}
 
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		instance.SetLabel("shelf", instance.GetLabel("shelf_id"))
 	}
 

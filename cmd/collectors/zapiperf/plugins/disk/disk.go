@@ -317,6 +317,9 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 
 	// calculate power for returned disks in zapiperf response
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
 			diskUUID := instance.GetLabel("disk_uuid")
 			aggrName := instance.GetLabel("aggr")
@@ -414,6 +417,9 @@ func (d *Disk) populateShelfIOPS(data *matrix.Matrix) error {
 	}
 
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
 			diskUUID := instance.GetLabel("disk_uuid")
 			di, ok := d.diskMap[diskUUID]
@@ -461,7 +467,7 @@ func (d *Disk) getDisks() error {
 	request.AddChild(desired)
 
 	for {
-		if result, tag, err = d.client.InvokeBatchRequest(request, tag); err != nil {
+		if result, tag, err = d.client.InvokeBatchRequest(request, tag, ""); err != nil {
 			return err
 		}
 
@@ -554,7 +560,7 @@ func (d *Disk) getAggregates() error {
 	request.AddChild(desired)
 
 	for {
-		if result, tag, err = d.client.InvokeBatchRequest(request, tag); err != nil {
+		if result, tag, err = d.client.InvokeBatchRequest(request, tag, ""); err != nil {
 			return err
 		}
 
@@ -662,6 +668,9 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
 	for _, o := range d.shelfData {
 		for k, instance := range o.GetInstances() {
+			if !instance.IsExportable() {
+				continue
+			}
 			lastInd := strings.LastIndex(k, "#")
 			iKey := k[:lastInd]
 			iKey2 := k[lastInd+1:]

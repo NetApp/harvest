@@ -1,0 +1,308 @@
+<results status="passed">
+    <counters>
+        <counter-info>
+            <base-counter>access_ops</base-counter>
+            <desc>Average latency in microseconds for the WAFL filesystem to process access request to the volume; not including request processing or network communication time</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>access_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of access ops per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>access_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>A count of the total number of insertion requests completed on behalf of the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_insertions</name>
+            <privilege-level>diag</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_merge_sorts</base-counter>
+            <desc>The average amount of time spent waiting per merge sort request serviced by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_merge_sort_queuetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_merge_sorts</base-counter>
+            <desc>The average amount of time spent servicing merge sort requests completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_merge_sort_servicetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_merge_sorts</base-counter>
+            <desc>The average number of suspensions incurred per merge sort request serviced by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_merge_sort_suspensions</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_merge_sorts</base-counter>
+            <desc>A count of the average number of 4KiB blocks sorted per merge sort request completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_merge_sorted_blocks</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>A count of the total number of merge sort requests completed on behalf of the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_merge_sorts</name>
+            <privilege-level>diag</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average amount of time waiting to run the load phase of quick sort per quick sort request completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_load_queuetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average amount of time spent during the load phase of quick sort per quick sort request completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_load_servicetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average number of suspensions incurred during the load phase of quick sort per quick sort request serviced by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_load_suspensions</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average amount of time spent waiting per quick sort request serviced by the batched free log, excluding the load and write queuetimes.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_other_queuetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average amount of time spent servicing quick sort requests completed by the batched free log, excluding the load and write service times.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_other_servicetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average amount of time waiting to run the write phase of quick sort per quick sort request completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_write_queuetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average amount of time spent during the write phase of quick sort per quick sort request completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_write_servicetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>The average number of suspensions incurred during the write phase of quick sort per quick sort request serviced by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sort_write_suspensions</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_quick_sorts</base-counter>
+            <desc>A count of the average number of 4KiB blocks sorted per quick sort request completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sorted_blocks</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>A count of the total number of quick sort requests completed on behalf of the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sorts</name>
+            <privilege-level>diag</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_inactive_logs_quick_sorted</base-counter>
+            <desc>A count of the average number of quick sort requests completed by the batched free log before a merge request was started.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_quick_sorts_before_merge</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_truncations</base-counter>
+            <desc>The average amount of time spent waiting per truncation request serviced by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_truncation_queuetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_truncations</base-counter>
+            <desc>The average amount of time spent servicing truncation requests completed by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_truncation_servicetime</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>batched_free_log_truncations</base-counter>
+            <desc>The average number of suspensions incurred per truncation request serviced by the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_truncation_suspensions</name>
+            <privilege-level>diag</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>A count of the total number of truncation requests completed on behalf of the batched free log.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>batched_free_log_truncations</name>
+            <privilege-level>diag</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Blocks re-keyed due to client IO.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>blks_rekeyed_by_client_io</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Blocks re-keyed by scanner.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>blks_rekeyed_by_scanner</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>A count of the number of 4KiB blocks inserted into the batched free log for vbn ranges per volume.</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15</label-info>
+            </labels>
+            <name>blocks_inserted_range</name>
+            <privilege-level>admin</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <type>array</type>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of entries deleted from clone autodelete metafile which are inserted through autodelete api when autodelete is disabled.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cad_cli_deletes</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of entries inserted in to clone autodelete metafile through autodelete api.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cad_cli_inserts</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of entries updated in clone autodelete metafile through autodelete api.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cad_cli_updates</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Bytes hole-punched per second via CIFS to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cifs_punch_hole_data</name>
+            <privilege-level>diag</privilege-level>
+            <properties>rate</properties>
+            <unit>b_per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>cifs_punch_hole_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process CIFS protocol hole-punch requests to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cifs_punch_hole_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of CIFS hole-punch requests per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cifs_punch_hole_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Bytes read per second via CIFS from the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cifs_read_data</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>b_per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>cifs_read_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process CIFS read requests to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cifs_read_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of CIFS reads per second from the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cifs_read_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+    </counters>
+</results>
