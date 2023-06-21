@@ -15,6 +15,7 @@ import (
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/process"
+	"golang.org/x/sys/unix"
 	"os"
 	"os/exec"
 	"path"
@@ -299,7 +300,11 @@ func attachMemory(msg *Payload) {
 	for _, p := range processes {
 		name, err := p.Name()
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get name")
+			if errors.Is(err, unix.EINVAL) || errors.Is(err, unix.ENOENT) {
+				// we do not have permissions. That's OK, skip this one
+			} else {
+				logging.Get().Error().Err(err).Msg("Unable to get name")
+			}
 			continue
 		}
 		pp := Process{
@@ -307,7 +312,11 @@ func attachMemory(msg *Payload) {
 		}
 		memInfo, err := p.MemoryInfo()
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get memory")
+			if errors.Is(err, unix.EPERM) {
+				// we do not have permissions. That's OK, skip this one
+			} else {
+				logging.Get().Error().Err(err).Msg("Unable to get memory")
+			}
 		} else {
 			pp.RssBytes = memInfo.RSS
 		}
