@@ -315,8 +315,10 @@ func attachMemory(msg *Payload) {
 		// Ignore processes that:
 		//   - don't pass the allowList, unless the process is using more that 100MB of memory
 		//   - have no cmdline (these are not interesting)
-		if pp.RssBytes < HundredMB && !psAllowListRe.MatchString(name) {
-			continue
+		if !psAllowListRe.MatchString(name) {
+			if pp.RssBytes < HundredMB {
+				continue
+			}
 		}
 
 		cmdline, err := p.Cmdline()
