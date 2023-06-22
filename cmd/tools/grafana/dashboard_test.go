@@ -3,6 +3,9 @@ package grafana
 import (
 	"fmt"
 	"github.com/tidwall/gjson"
+	"github.com/tidwall/pretty"
+	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -992,4 +995,46 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 				dashPath, path, value.Get("title").String(), decimals)
 		}
 	})
+}
+
+func TestDashboardKeysAreSorted(t *testing.T) {
+	visitDashboards(
+		dashboards,
+		func(path string, data []byte) {
+			path = shortPath(path)
+			sorted := pretty.PrettyOptions(data, &pretty.Options{
+				SortKeys: true,
+				Indent:   "  ",
+			})
+			if string(sorted) != string(data) {
+				sortedPath := writeSorted(t, path, sorted)
+				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s",
+					path, sortedPath)
+			}
+		})
+}
+
+func writeSorted(t *testing.T, path string, sorted []byte) string {
+	dir, file := filepath.Split(path)
+	dir = filepath.Dir(dir)
+	dest := filepath.Join("/tmp", dir, file)
+	destDir := filepath.Dir(dest)
+	err := os.MkdirAll(destDir, 0750)
+	if err != nil {
+		t.Errorf("failed to create dir=%s err=%v", destDir, err)
+		return ""
+	}
+	create, err := os.Create(dest)
+
+	if err != nil {
+		t.Errorf("failed to create file=%s err=%v", dest, err)
+		return ""
+	}
+	_, err = create.Write(sorted)
+	if err != nil {
+		t.Errorf("failed to write sorted json to file=%s err=%v", dest, err)
+		return ""
+	}
+	create.Close()
+	return dest
 }
