@@ -2,6 +2,7 @@ package grafana
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"regexp"
 	"sort"
@@ -12,8 +13,80 @@ import (
 
 var dashboards = []string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"}
 
+func TestThreshold(t *testing.T) {
+	visitDashboards(dashboards, func(path string, data []byte) {
+		checkThreshold(t, path, data)
+	})
+}
+
+func checkThreshold(t *testing.T, path string, data []byte) {
+	path = shortPath(path)
+	var thresholdMap = map[string][]string{
+		"_latency": {
+			"[\"green\",\"orange\",\"red\"]",
+			"[null,20,30]",
+		},
+		"_busy": {
+			"[\"green\",\"orange\",\"red\"]",
+			"[null,60,80]",
+		},
+	}
+	// visit all panel for datasource test
+	visitAllPanels(data, func(p string, key, value gjson.Result) {
+		panelTitle := value.Get("title").String()
+		kind := value.Get("type").String()
+		if kind == "table" {
+			targetsSlice := value.Get("targets").Array()
+			for _, targetN := range targetsSlice {
+				expr := targetN.Get("expr").String()
+				if strings.Contains(expr, "_latency") || strings.Contains(expr, "_busy") {
+					var th []string
+					if strings.Contains(expr, "_latency") {
+						th = thresholdMap["_latency"]
+					} else if strings.Contains(expr, "_busy") {
+						th = thresholdMap["_busy"]
+					}
+					isThresholdSet := false
+					isColorBackgroundSet := false
+					expectedColorBackground := []string{"color-background", "lcd-gauge"}
+					// check if any override has threshold set
+					overridesSlice := value.Get("fieldConfig.overrides").Array()
+					for _, overrideN := range overridesSlice {
+						propertiesSlice := overrideN.Get("properties").Array()
+						for _, propertiesN := range propertiesSlice {
+							id := propertiesN.Get("id").String()
+							if id == "thresholds" {
+								color := propertiesN.Get("value.steps.#.color")
+								v := propertiesN.Get("value.steps.#.value")
+								if color.String() == th[0] {
+									if v.String() == th[1] {
+										isThresholdSet = true
+									}
+								}
+							} else if id == "custom.displayMode" {
+								v := propertiesN.Get("value")
+								if !util.Contains(expectedColorBackground, v.String()) {
+									t.Errorf("dashboard=%s panel=%s don't have correct displaymode expected %s found %s", path, panelTitle, expectedColorBackground, v.String())
+								} else {
+									isColorBackgroundSet = true
+								}
+							}
+						}
+					}
+					if !isThresholdSet {
+						t.Errorf("dashboard=%s panel=%s don't have correct latency threshold set. expected threshold %s %s", path, panelTitle, th[0], th[1])
+					}
+					if !isColorBackgroundSet {
+						t.Errorf("dashboard=%s panel=%s don't have displaymode expected %s", path, panelTitle, expectedColorBackground)
+					}
+				}
+			}
+		}
+	})
+}
+
 func TestDatasource(t *testing.T) {
-	visitDashboards([]string{"../../../grafana/dashboards"}, func(path string, data []byte) {
+	visitDashboards(dashboards, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
 	})
 }
