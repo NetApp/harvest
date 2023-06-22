@@ -58,11 +58,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 							if id == "thresholds" {
 								color := propertiesN.Get("value.steps.#.color")
 								v := propertiesN.Get("value.steps.#.value")
-								if color.String() == th[0] {
-									if v.String() == th[1] {
-										isThresholdSet = true
-									}
-								}
+								isThresholdSet = color.String() == th[0] && v.String() == th[1]
 							} else if id == "custom.displayMode" {
 								v := propertiesN.Get("value")
 								if !util.Contains(expectedColorBackground, v.String()) {
