@@ -12,6 +12,7 @@ require (
 	github.com/shirou/gopsutil/v3 v3.23.5
 	github.com/spf13/cobra v1.7.0
 	github.com/tidwall/gjson v1.14.4
+	github.com/tidwall/pretty v1.2.1
 	github.com/tidwall/sjson v1.2.5
 	github.com/zekroTJA/timedmap v1.5.1
 	golang.org/x/sys v0.9.0
@@ -38,7 +39,6 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
-	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.11 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
