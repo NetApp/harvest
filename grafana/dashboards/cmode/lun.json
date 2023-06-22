@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1678897124924,
+  "iteration": 1687428040723,
   "links": [
     {
       "asDropdown": true,
@@ -471,11 +471,12 @@
           "fieldConfig": {
             "defaults": {
               "color": {
+                "fixedColor": "red",
                 "mode": "thresholds"
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid",
+                "displayMode": "auto",
                 "filterable": true,
                 "width": 0
               },
@@ -486,20 +487,45 @@
                   {
                     "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "#EAB839",
-                    "value": 20
-                  },
-                  {
-                    "color": "red",
-                    "value": 30
                   }
                 ]
               },
               "unit": "ms"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "red",
+                          "value": 30
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
@@ -524,7 +550,7 @@
               }
             ]
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -628,7 +654,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -732,7 +758,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -801,7 +827,7 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "color-background-solid",
+                "displayMode": "auto",
                 "filterable": true
               },
               "mappings": [],
@@ -811,20 +837,45 @@
                   {
                     "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "#EAB839",
-                    "value": 20
-                  },
-                  {
-                    "color": "red",
-                    "value": 30
                   }
                 ]
               },
               "unit": "ms"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "red",
+                          "value": 30
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
@@ -844,7 +895,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -948,7 +999,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -1052,7 +1103,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -1261,7 +1312,7 @@
               }
             ]
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -3325,6 +3376,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3338,9 +3391,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -3416,6 +3467,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3429,9 +3482,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -3507,6 +3558,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3520,9 +3573,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -3598,6 +3649,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3611,9 +3664,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -3689,6 +3740,8 @@
                 }
               },
               "mappings": [],
+              "max": 1,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3702,9 +3755,7 @@
                   }
                 ]
               },
-              "unit": "percentunit",
-              "min": 0,
-              "max": 1
+              "unit": "percentunit"
             },
             "overrides": []
           },
@@ -3782,6 +3833,8 @@
                 }
               },
               "mappings": [],
+              "max": 1,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3795,9 +3848,7 @@
                   }
                 ]
               },
-              "unit": "percentunit",
-              "min": 0,
-              "max": 1
+              "unit": "percentunit"
             },
             "overrides": []
           },
@@ -4414,6 +4465,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -4428,8 +4480,7 @@
                   }
                 ]
               },
-              "unit": "deckbytes",
-              "decimals": 2
+              "unit": "deckbytes"
             },
             "overrides": []
           },
@@ -5327,5 +5378,5 @@
   "timezone": "",
   "title": "ONTAP: LUN",
   "uid": "",
-  "version": 6
+  "version": 7
 }
