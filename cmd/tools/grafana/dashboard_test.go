@@ -218,10 +218,10 @@ func TestUnitsAndExprMatch(t *testing.T) {
 			var expectedGrafanaUnit string
 
 			if v, ok := expectedMt[metric]; ok {
-				expectedGrafanaUnit = v.GrafanaJson
-				if v.GrafanaJson != unit && !v.skipValidate {
+				expectedGrafanaUnit = v.GrafanaJSON
+				if v.GrafanaJSON != unit && !v.skipValidate {
 					t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
-						metric, unit, v.GrafanaJson, location[0].dashboard, location[0].path, location[0].title)
+						metric, unit, v.GrafanaJSON, location[0].dashboard, location[0].path, location[0].title)
 				}
 			} else {
 				// special case latency that dashboard uses unit microseconds µs

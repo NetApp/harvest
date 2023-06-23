@@ -10,7 +10,7 @@ import (
 type Metric struct {
 	Metric         string `yaml:"metric"`
 	OntapUnit      string `yaml:"ontapUnit"`
-	GrafanaJson    string `yaml:"grafanaJson"`
+	GrafanaJSON    string `yaml:"grafanaJson"`
 	GrafanaDisplay string `yaml:"grafanaDisplay"`
 	Comment        string `yaml:"comment"`
 	skipValidate   bool
