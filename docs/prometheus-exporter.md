@@ -331,24 +331,24 @@ Edit your `harvest.yml` and add a TLS section to your exporter block like this:
 
 ```yaml
 Exporters:
-    my-exporter:
-        local_http_addr: localhost
-        exporter: Prometheus
-        port: 16001
-        tls:
-            cert_file: cert/prom-cert.pem
-            key_file: cert/prom-key.pem
+  my-exporter:
+    local_http_addr: localhost
+    exporter: Prometheus
+    port: 16001
+    tls:
+      cert_file: cert/prom-cert.pem
+      key_file: cert/prom-key.pem
 ```
 
 Update one of your Pollers to use this exporter and start the poller.
 
 ```yaml
 Pollers:
-    my-cluster:
-        datacenter: dc-1
-        addr: 10.193.48.11
-        exporters:
-            - my-exporter     # Use TLS exporter we created above
+  my-cluster:
+    datacenter: dc-1
+    addr: 10.193.48.11
+    exporters:
+      - my-exporter     # Use TLS exporter we created above
 ```
 
 When the poller is started, it will log whether `https` or `http` is being used as part of the `url` like so:
