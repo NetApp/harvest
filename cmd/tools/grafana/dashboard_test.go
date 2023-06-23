@@ -689,7 +689,6 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
 		"cmode/shelf.json":            2,
-		"cmode/security.json":         3,
 		"cmode/fsa.json":              2,
 		"cmode/workload.json":         2,
 		"cmode/smb.json":              2,

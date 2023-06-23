@@ -84,13 +84,31 @@
   ],
   "panels": [
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 174,
+      "options": {
+        "content": "View ONTAP Security Hardening Guide https://www.netapp.com/media/10674-tr4569.pdf for more details.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Important Information about Compliance dashboard",
+      "type": "text"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 152,
       "panels": [
@@ -177,7 +195,7 @@
             "h": 3,
             "w": 16,
             "x": 0,
-            "y": 1
+            "y": 3
           },
           "id": 161,
           "options": {
@@ -350,7 +368,7 @@
             "h": 3,
             "w": 4,
             "x": 16,
-            "y": 1
+            "y": 3
           },
           "id": 166,
           "links": [],
@@ -458,7 +476,7 @@
             "h": 3,
             "w": 4,
             "x": 20,
-            "y": 1
+            "y": 3
           },
           "id": 167,
           "links": [],
@@ -1343,7 +1361,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 6
           },
           "id": 170,
           "options": {
@@ -1440,7 +1458,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1450,7 +1468,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1460,7 +1478,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1470,7 +1488,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1480,7 +1498,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1597,7 +1615,6 @@
                   "Value #C": "Default Admin User",
                   "Value #D": "MD5 in use",
                   "Value #E": "Insecure SSH Settings",
-                  "Value #F": "Login Banner",
                   "Value #G": "Network Time Protocol",
                   "Value #I": "Saml Users",
                   "Value #J": "Cluster Peering",
@@ -1644,7 +1661,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 3
       },
       "id": 15,
       "panels": [
@@ -1702,7 +1719,7 @@
             "h": 3,
             "w": 16,
             "x": 0,
-            "y": 2
+            "y": 4
           },
           "id": 165,
           "options": {
@@ -1850,7 +1867,7 @@
             "h": 3,
             "w": 4,
             "x": 16,
-            "y": 2
+            "y": 4
           },
           "id": 168,
           "links": [],
@@ -1954,7 +1971,7 @@
             "h": 3,
             "w": 4,
             "x": 20,
-            "y": 2
+            "y": 4
           },
           "id": 164,
           "links": [],
@@ -2568,7 +2585,7 @@
             "h": 13,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 7
           },
           "id": 172,
           "options": {
@@ -2733,10 +2750,8 @@
                 "renameByName": {
                   "Value #A": "Autosupport Https Transport",
                   "Value #B": "Compliant",
-                  "Value #C": "Login Banner",
                   "Value #D": "MD5 in use",
                   "Value #E": "",
-                  "Value #F": "Login Banner",
                   "Value #G": "LDAP Payload Signing",
                   "Value #I": "LDAP Encryption",
                   "activediruser": "Active Directory Users",
