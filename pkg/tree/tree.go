@@ -74,3 +74,11 @@ func LoadXML(data []byte) (*node.Node, error) {
 func DumpXML(n *node.Node) ([]byte, error) {
 	return xml.Dump(n)
 }
+
+func ImportXML(filepath string) (*node.Node, error) {
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return nil, err
+	}
+	return LoadXML(data)
+}

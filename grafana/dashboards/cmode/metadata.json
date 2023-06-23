@@ -1,55 +1,55 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
       "description": "",
-      "type": "datasource",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
-      "pluginName": "Prometheus"
+      "pluginName": "Prometheus",
+      "type": "datasource"
     }
   ],
   "__requires": [
     {
-      "type": "panel",
       "id": "bargauge",
       "name": "Bar gauge",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "gauge",
       "name": "Gauge",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
+      "type": "grafana",
       "version": "8.1.8"
     },
     {
-      "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
+      "type": "datasource",
       "version": "1.0.0"
     },
     {
-      "type": "panel",
       "id": "stat",
       "name": "Stat",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "table",
       "name": "Table",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
+      "type": "panel",
       "version": ""
     }
   ],
@@ -1085,11 +1085,11 @@
                 "value": [
                   {
                     "options": {
-                      "1": {
-                        "text": "RUNNING"
-                      },
                       "-1": {
                         "text": "Unknown"
+                      },
+                      "1": {
+                        "text": "RUNNING"
                       }
                     },
                     "type": "value"
@@ -2074,6 +2074,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2087,9 +2089,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2168,6 +2168,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2181,9 +2183,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -2354,6 +2354,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2368,8 +2369,7 @@
                   }
                 ]
               },
-              "unit": "deckbytes",
-              "decimals": 2
+              "unit": "deckbytes"
             },
             "overrides": [
               {
@@ -2480,6 +2480,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -2495,8 +2496,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -2803,6 +2803,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -2818,8 +2819,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },

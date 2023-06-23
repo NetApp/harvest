@@ -188,7 +188,7 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 		err      error
 	)
 
-	mat := s.Matrix[s.Object].Clone(false, false, false)
+	mat := s.Matrix[s.Object].Clone(matrix.With{Data: false, Metrics: false, Instances: false, ExportInstances: true})
 	mat.SetExportOptions(matrix.DefaultExportOptions())
 	mat.Object = s.Props.Object
 	mat.UUID += "." + metricName

@@ -40,6 +40,9 @@ func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	}
 
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		policyClass := instance.GetLabel("class")
 		if policyClass != "user_defined" {
 			// Only export user_defined policy classes - ignore all others

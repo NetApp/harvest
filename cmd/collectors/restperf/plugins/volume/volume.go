@@ -57,7 +57,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	}
 	v.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
 
-	cache := data.Clone(false, true, false)
+	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".Volume"
 
 	// create flexgroup instance cache

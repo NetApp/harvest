@@ -1,56 +1,49 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
       "description": "",
-      "type": "datasource",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    },
-    {
-      "name": "VAR_CPU_BUSY",
-      "type": "constant",
-      "label": "CPU_BUSY",
-      "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
-      "description": ""
+      "pluginName": "Prometheus",
+      "type": "datasource"
     }
   ],
   "__requires": [
     {
-      "type": "panel",
       "id": "bargauge",
       "name": "Bar gauge",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
+      "type": "grafana",
       "version": "8.1.8"
     },
     {
-      "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
+      "type": "datasource",
       "version": "1.0.0"
     },
     {
-      "type": "panel",
       "id": "stat",
       "name": "Stat",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "table",
       "name": "Table",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
+      "type": "panel",
       "version": ""
     }
   ],
@@ -78,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1680011140355,
+  "iteration": 1687422677620,
   "links": [
     {
       "asDropdown": true,
@@ -145,6 +138,30 @@
               {
                 "id": "custom.width",
                 "value": null
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           }
@@ -243,6 +260,30 @@
               {
                 "id": "custom.width",
                 "value": null
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           }
@@ -538,6 +579,30 @@
               {
                 "id": "custom.width",
                 "value": null
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 60
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           }
@@ -637,6 +702,30 @@
               {
                 "id": "custom.width",
                 "value": null
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 60
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           }
@@ -1008,6 +1097,30 @@
               {
                 "id": "custom.width",
                 "value": null
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 60
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           }
@@ -3102,6 +3215,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3112,8 +3226,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3185,6 +3298,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3195,8 +3309,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3268,6 +3381,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3278,8 +3392,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3351,6 +3464,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3361,8 +3475,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3435,6 +3548,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3445,8 +3559,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -3518,6 +3631,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3528,8 +3642,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -4159,26 +4272,26 @@
         "type": "query"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+          "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first."
+        },
         "description": "",
         "error": null,
         "hide": 2,
         "label": null,
         "name": "CPU_BUSY",
-        "query": "${VAR_CPU_BUSY}",
-        "skipUrlSync": false,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_CPU_BUSY}",
-          "text": "${VAR_CPU_BUSY}",
-          "selected": false
-        },
         "options": [
           {
-            "value": "${VAR_CPU_BUSY}",
-            "text": "${VAR_CPU_BUSY}",
-            "selected": false
+            "selected": true,
+            "text": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+            "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first."
           }
-        ]
+        ],
+        "query": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },
@@ -4202,5 +4315,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 17
+  "version": 19
 }

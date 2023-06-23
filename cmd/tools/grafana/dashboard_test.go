@@ -2,7 +2,11 @@ package grafana
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"github.com/tidwall/pretty"
+	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -12,8 +16,76 @@ import (
 
 var dashboards = []string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"}
 
+func TestThreshold(t *testing.T) {
+	visitDashboards(dashboards, func(path string, data []byte) {
+		checkThreshold(t, path, data)
+	})
+}
+
+func checkThreshold(t *testing.T, path string, data []byte) {
+	path = shortPath(path)
+	var thresholdMap = map[string][]string{
+		"_latency": {
+			"[\"green\",\"orange\",\"red\"]",
+			"[null,20,30]",
+		},
+		"_busy": {
+			"[\"green\",\"orange\",\"red\"]",
+			"[null,60,80]",
+		},
+	}
+	// visit all panel for datasource test
+	visitAllPanels(data, func(p string, key, value gjson.Result) {
+		panelTitle := value.Get("title").String()
+		kind := value.Get("type").String()
+		if kind == "table" {
+			targetsSlice := value.Get("targets").Array()
+			for _, targetN := range targetsSlice {
+				expr := targetN.Get("expr").String()
+				if strings.Contains(expr, "_latency") || strings.Contains(expr, "_busy") {
+					var th []string
+					if strings.Contains(expr, "_latency") {
+						th = thresholdMap["_latency"]
+					} else if strings.Contains(expr, "_busy") {
+						th = thresholdMap["_busy"]
+					}
+					isThresholdSet := false
+					isColorBackgroundSet := false
+					expectedColorBackground := []string{"color-background", "lcd-gauge"}
+					// check if any override has threshold set
+					overridesSlice := value.Get("fieldConfig.overrides").Array()
+					for _, overrideN := range overridesSlice {
+						propertiesSlice := overrideN.Get("properties").Array()
+						for _, propertiesN := range propertiesSlice {
+							id := propertiesN.Get("id").String()
+							if id == "thresholds" {
+								color := propertiesN.Get("value.steps.#.color")
+								v := propertiesN.Get("value.steps.#.value")
+								isThresholdSet = color.String() == th[0] && v.String() == th[1]
+							} else if id == "custom.displayMode" {
+								v := propertiesN.Get("value")
+								if !util.Contains(expectedColorBackground, v.String()) {
+									t.Errorf("dashboard=%s panel=%s don't have correct displaymode expected %s found %s", path, panelTitle, expectedColorBackground, v.String())
+								} else {
+									isColorBackgroundSet = true
+								}
+							}
+						}
+					}
+					if !isThresholdSet {
+						t.Errorf("dashboard=%s panel=%s don't have correct latency threshold set. expected threshold %s %s", path, panelTitle, th[0], th[1])
+					}
+					if !isColorBackgroundSet {
+						t.Errorf("dashboard=%s panel=%s don't have displaymode expected %s", path, panelTitle, expectedColorBackground)
+					}
+				}
+			}
+		}
+	})
+}
+
 func TestDatasource(t *testing.T) {
-	visitDashboards([]string{"../../../grafana/dashboards"}, func(path string, data []byte) {
+	visitDashboards(dashboards, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
 	})
 }
@@ -992,4 +1064,46 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 				dashPath, path, value.Get("title").String(), decimals)
 		}
 	})
+}
+
+func TestDashboardKeysAreSorted(t *testing.T) {
+	visitDashboards(
+		dashboards,
+		func(path string, data []byte) {
+			path = shortPath(path)
+			sorted := pretty.PrettyOptions(data, &pretty.Options{
+				SortKeys: true,
+				Indent:   "  ",
+			})
+			if string(sorted) != string(data) {
+				sortedPath := writeSorted(t, path, sorted)
+				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s",
+					path, sortedPath)
+			}
+		})
+}
+
+func writeSorted(t *testing.T, path string, sorted []byte) string {
+	dir, file := filepath.Split(path)
+	dir = filepath.Dir(dir)
+	dest := filepath.Join("/tmp", dir, file)
+	destDir := filepath.Dir(dest)
+	err := os.MkdirAll(destDir, 0750)
+	if err != nil {
+		t.Errorf("failed to create dir=%s err=%v", destDir, err)
+		return ""
+	}
+	create, err := os.Create(dest)
+
+	if err != nil {
+		t.Errorf("failed to create file=%s err=%v", dest, err)
+		return ""
+	}
+	_, err = create.Write(sorted)
+	if err != nil {
+		t.Errorf("failed to write sorted json to file=%s err=%v", dest, err)
+		return ""
+	}
+	create.Close()
+	return dest
 }

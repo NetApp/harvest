@@ -8,14 +8,19 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/harvest/version"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
+	"github.com/shirou/gopsutil/v3/process"
+	"golang.org/x/sys/unix"
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
+	"sort"
 	"time"
 )
 
@@ -53,6 +58,16 @@ type InstanceInfo struct {
 	Ids        []ID `json:"Ids,omitempty"`
 }
 
+type Process struct {
+	Pid      int32
+	User     string
+	Ppid     int32
+	Ctime    int64
+	RssBytes uint64
+	Threads  int32
+	Cmdline  string
+}
+
 type platformInfo struct {
 	OS     string
 	Arch   string
@@ -61,17 +76,22 @@ type platformInfo struct {
 		AvailableKb uint64
 		UsedKb      uint64
 	}
-	CPUs uint8
+	CPUs         uint8
+	NumProcesses uint64
+	Processes    []Process
 }
 
 type harvestInfo struct {
-	HostHash    string
-	UUID        string
-	Version     string
-	Release     string
-	Commit      string
-	BuildDate   string
-	NumClusters uint8
+	HostHash     string
+	UUID         string
+	Version      string
+	Release      string
+	Commit       string
+	BuildDate    string
+	NumClusters  uint8
+	NumPollers   uint64
+	NumExporters uint64
+	NumPortRange uint64
 }
 
 type Counters struct {
@@ -94,7 +114,10 @@ type AsupCollector struct {
 	Counters      Counters
 }
 
-const workingDir = "asup"
+const (
+	workingDir = "asup"
+	HundredMB  = 104_857_600
+)
 
 func (p *Payload) AddCollectorAsup(a AsupCollector) {
 	if p.Collectors == nil {
@@ -172,12 +195,13 @@ func sendAsupVia(msg *Payload, asupExecPath string) error {
 func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pollerName string) (*Payload, error) {
 
 	var (
-		msg  *Payload
-		arch string
-		cpus uint8
+		msg          *Payload
+		arch         string
+		cpus         uint8
+		numPortRange uint64
 	)
 
-	// add info about platform (where Harvest is running)
+	// add info about the platform (where Harvest is running)
 	arch, cpus = getCPUInfo()
 	msg = &Payload{
 		Platform: &platformInfo{
@@ -196,17 +220,26 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 		c.CollectAutoSupport(msg)
 	}
 
+	// count the number of Prometheus exporters with portRange
+	for _, e := range conf.Config.Exporters {
+		if e.PortRange != nil {
+			numPortRange++
+		}
+	}
 	hostname, _ := os.Hostname()
 	// add harvest release info
 	msg.Harvest = &harvestInfo{
 		// harvest uuid creation from sha1 of cluster uuid
-		UUID:        sha1Sum(msg.Target.ClusterUUID),
-		Version:     version.VERSION,
-		Release:     version.Release,
-		Commit:      version.Commit,
-		BuildDate:   version.BuildDate,
-		HostHash:    sha1Sum(hostname),
-		NumClusters: 1,
+		UUID:         sha1Sum(msg.Target.ClusterUUID),
+		Version:      version.VERSION,
+		Release:      version.Release,
+		Commit:       version.Commit,
+		BuildDate:    version.BuildDate,
+		HostHash:     sha1Sum(hostname),
+		NumClusters:  1,
+		NumPollers:   uint64(len(conf.Config.Pollers)),
+		NumExporters: uint64(len(conf.Config.Exporters)),
+		NumPortRange: numPortRange,
 	}
 	payloadPath, err := writeAutoSupport(msg, pollerName)
 	if err != nil {
@@ -242,6 +275,8 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 	return payloadPath, nil
 }
 
+var psAllowListRe = regexp.MustCompile(`harvest|poller|grafana|prometheus|influxdb|netapp`)
+
 func attachMemory(msg *Payload) {
 	virtualMemory, err := mem.VirtualMemory()
 	if err != nil {
@@ -250,6 +285,94 @@ func attachMemory(msg *Payload) {
 	msg.Platform.Memory.TotalKb = virtualMemory.Total / 1024
 	msg.Platform.Memory.AvailableKb = virtualMemory.Available / 1024
 	msg.Platform.Memory.UsedKb = virtualMemory.Used / 1024
+
+	// Include basic ps information for processes that pass the allow list
+	// This is similar to ps -ww -eo user,pid,ppid,stime,nlwp,rss,cmd
+	processes, err := process.Processes()
+	if err != nil {
+		logging.Get().Error().Err(err).Msg("Unable to get processes")
+		return
+	}
+
+	msg.Platform.NumProcesses = uint64(len(processes))
+	msg.Platform.Processes = make([]Process, 0)
+
+	for _, p := range processes {
+		name, err := p.Name()
+		if err != nil {
+			if errors.Is(err, unix.EINVAL) || errors.Is(err, unix.ENOENT) {
+				// we do not have permissions. That's OK, skip this one
+			} else {
+				logging.Get().Error().Err(err).Msg("Unable to get name")
+			}
+			continue
+		}
+		pp := Process{
+			Pid: p.Pid,
+		}
+		memInfo, err := p.MemoryInfo()
+		if err != nil {
+			if errors.Is(err, unix.EPERM) {
+				// we do not have permissions. That's OK, skip this one
+			} else {
+				logging.Get().Error().Err(err).Msg("Unable to get memory")
+			}
+		} else {
+			pp.RssBytes = memInfo.RSS
+		}
+
+		// Ignore processes that:
+		//   - don't pass the allowList, unless the process is using more that 100MB of memory
+		//   - have no cmdline (these are not interesting)
+		if !psAllowListRe.MatchString(name) {
+			if pp.RssBytes < HundredMB {
+				continue
+			}
+		}
+
+		cmdline, err := p.Cmdline()
+		if err != nil {
+			logging.Get().Error().Err(err).Msg("Unable to get cmdline")
+		} else {
+			pp.Cmdline = cmdline
+		}
+		if len(cmdline) == 0 {
+			continue
+		}
+
+		username, err := p.Username()
+		if err != nil {
+			logging.Get().Error().Err(err).Msg("Unable to get username")
+		} else {
+			pp.User = username
+		}
+		ppid, err := p.Ppid()
+		if err != nil {
+			logging.Get().Error().Err(err).Msg("Unable to get parent pid")
+		} else {
+			pp.Ppid = ppid
+		}
+		ctime, err := p.CreateTime()
+		if err != nil {
+			logging.Get().Error().Err(err).Msg("Unable to get createTime")
+		} else {
+			pp.Ctime = ctime
+		}
+		threads, err := p.NumThreads()
+		if err != nil {
+			logging.Get().Error().Err(err).Msg("Unable to get numThreads")
+		} else {
+			pp.Threads = threads
+		}
+		msg.Platform.Processes = append(msg.Platform.Processes, pp)
+	}
+
+	// sort processes by pid
+	sort.Slice(msg.Platform.Processes, func(i, j int) bool {
+		a := msg.Platform.Processes[i]
+		b := msg.Platform.Processes[j]
+		return a.Pid < b.Pid
+	})
 }
 
 func getCPUInfo() (string, uint8) {
