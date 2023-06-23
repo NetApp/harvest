@@ -11,12 +11,12 @@
 The Prometheus exporter is responsible for:
 
 - formatting metrics into the Prometheus [line protocol](https://prometheus.io/docs/instrumenting/exposition_formats/)
-- creating a web-endpoint on `http://<ADDR>:<PORT>/metrics` for Prometheus to scrape
+- creating a web-endpoint on `http://<ADDR>:<PORT>/metrics` (or `https:` if TLS is enabled) for Prometheus to scrape
 
 A web end-point is required because Prometheus scrapes Harvest by polling that end-point.
 
 In addition to the `/metrics` end-point, the Prometheus exporter also serves an overview of all metrics and collectors
-available on its root address `http://<ADDR>:<PORT>/`.
+available on its root address `scheme://<ADDR>:<PORT>/`.
 
 Because Prometheus polls Harvest, don't forget
 to [update your Prometheus configuration](#configure-prometheus-to-scrape-harvest-pollers) and tell Prometheus how to
@@ -33,17 +33,19 @@ All parameters of the exporter are defined in the `Exporters` section of `harves
 
 An overview of all parameters:
 
-| parameter           | type                                           | description                                                                                                                                                                                                     | default   |
-|---------------------|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
-| `port_range`        | int-int (range), overrides `port` if specified | lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.             |           |
-| `port`              | int, required if port_range is not specified   | port of the HTTP end-point                                                                                                                                                                                      |           |
-| `local_http_addr`   | string, optional                               | address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine        | `0.0.0.0` |
-| `global_prefix`     | string, optional                               | add a prefix to all metrics (e.g. `netapp_`)                                                                                                                                                                    |           |
-| `allow_addrs`       | list of strings, optional                      | allow access only if host matches any of the provided addresses                                                                                                                                                 |           |
-| `allow_addrs_regex` | list of strings, optional                      | allow access only if host address matches at least one of the regular expressions                                                                                                                               |           |
-| `cache_max_keep`    | string (Go duration format), optional          | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)                                                                                                              | `300s`    |
-| `add_meta_tags`     | bool, optional                                 | add `HELP` and `TYPE` [metatags](https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information) to metrics (currently no useful information, but required by some tools) | `false`   |
-| `sort_labels`       | bool, optional                                 | sort metric labels before exporting. Some [open-metrics scrapers report](https://github.com/NetApp/harvest/issues/756) stale metrics when labels are not sorted.                                                | `false`   |
+| parameter                   | type                                           | description                                                                                                                                                                                                                   | default                                                                                                                                        |
+|-----------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| `port_range`                | int-int (range), overrides `port` if specified | lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.                           |                                                                                                                                                |
+| `port`                      | int, required if port_range is not specified   | port of the HTTP end-point                                                                                                                                                                                                    |                                                                                                                                                |
+| `local_http_addr`           | string, optional                               | address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine                      | `0.0.0.0`                                                                                                                                      |
+| `global_prefix`             | string, optional                               | add a prefix to all metrics (e.g. `netapp_`)                                                                                                                                                                                  |                                                                                                                                                |
+| `allow_addrs`               | list of strings, optional                      | allow access only if host matches any of the provided addresses                                                                                                                                                               |                                                                                                                                                |
+| `allow_addrs_regex`         | list of strings, optional                      | allow access only if host address matches at least one of the regular expressions                                                                                                                                             |                                                                                                                                                |
+| `cache_max_keep`            | string (Go duration format), optional          | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)                                                                                                                            | `300s`                                                                                                                                         |
+| `add_meta_tags`             | bool, optional                                 | add `HELP` and `TYPE` [metatags](https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information) to metrics (currently no useful information, but required by some tools)               | `false`                                                                                                                                        |
+| `sort_labels`               | bool, optional                                 | sort metric labels before exporting. Some [open-metrics scrapers report](https://github.com/NetApp/harvest/issues/756) stale metrics when labels are not sorted.                                                              | `false`                                                                                                                                        |
+| `tls`                       | `tls`                                          | optional                                                                                                                                                                                                                      | If present, enables TLS transport. If running in a container, see [note](https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589) |         
+| tls `cert_file`, `key_file` | **required** child of `tls`                    | Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with `bin/harvest admin tls create server`, `openssl`, `mkcert`, etc. |                                                                                                                                                |
 
 A few examples:
 
@@ -297,7 +299,100 @@ Harvest machine. Also note the scrape interval above is set to 60s. That matches
 Harvest collectors. If you change the polling frequency of a Harvest collector to a lower value, you should also change
 the scrape interval.
 
-# Prometheus Alerts
+## Prometheus Exporter and TLS
+
+The Harvest Prometheus exporter can be configured to serve its metrics via `HTTPS` by configuring the `tls` section in
+the `Exporters` section of `harvest.yml`.
+
+Let's walk through an example of how to set up Harvest's Prometheus exporter and how to configure Prometheus to use TLS.
+
+### Generate TLS Certificates
+
+We'll use Harvest's admin command line tool to create a self-signed TLS certificate key/pair for the exporter and Prometheus.
+Note: If running in a container, see [note](https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589).
+
+```bash
+cd $Harvest_Install_Directory
+bin/harvest admin tls create server
+2023/06/23 09:39:48 wrote cert/admin-cert.pem
+2023/06/23 09:39:48 wrote cert/admin-key.pem
+```
+
+Two files are created. Since we want to use these certificates for our Prometheus exporter, let's rename them to make that clearer.
+
+```bash
+mv cert/admin-cert.pem cert/prom-cert.pem
+mv cert/admin-key.pem cert/prom-key.pem
+```
+
+### Configure Harvest Prometheus Exporter to use TLS
+
+Edit your `harvest.yml` and add a TLS section to your exporter block like this:
+
+```yaml
+Exporters:
+    my-exporter:
+        local_http_addr: localhost
+        exporter: Prometheus
+        port: 16001
+        tls:
+            cert_file: cert/prom-cert.pem
+            key_file: cert/prom-key.pem
+```
+
+Update one of your Pollers to use this exporter and start the poller.
+
+```yaml
+Pollers:
+    my-cluster:
+        datacenter: dc-1
+        addr: 10.193.48.11
+        exporters:
+            - my-exporter     # Use TLS exporter we created above
+```
+
+When the poller is started, it will log whether `https` or `http` is being used as part of the `url` like so:
+
+```bash
+bin/harvest start -f my-cluster
+2023-06-23T10:02:03-04:00 INF prometheus/httpd.go:40 > server listen Poller=my-cluster exporter=my-exporter url=https://localhost:16001/metrics
+```
+
+If the `url` schema is `https`, TLS is being used.
+
+You can use curl to scrape the Prometheus exporter and verify that TLS is being used like so:
+
+```bash
+curl --cacert cert/prom-cert.pem https://localhost:16001/metrics
+
+# or use --insecure to tell curl to skip certificate validation
+# curl --insecure cert/prom-cert.pem https://localhost:16001/metrics  
+```
+
+### Configure Prometheus to use TLS
+
+Let's configure Prometheus to use `HTTPs` to communicate with the exporter setup above.
+
+Edit your `prometheus.yml` and add or adapt your `scrape_configs` job. You need to add `scheme: https` and setup a `tls_config`
+block to point to the earlier created `prom-cert.pem` like so:
+
+```yaml
+scrape_configs:
+  - job_name: 'harvest-https'
+    scheme: https
+    tls_config:
+      ca_file: /path/to/prom-cert.pem
+    static_configs:
+    - targets:
+        - 'localhost:16001'
+```
+
+Start Prometheus and visit http://localhost:9090/targets with your browser. 
+You should see https://localhost:16001/metrics in the list of targets. 
+
+![Prometheus Targets](assets/prometheus/PrometheusTLS.png)
+
+## Prometheus Alerts
 
 Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your `prometheus.yml`
 file. Setup and details can be found in the Prometheus
@@ -308,7 +403,7 @@ and [sample alerts](https://github.com/NetApp/harvest/blob/main/container/promet
 Refer [EMS Collector](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) for more details about
 EMS events.
 
-## Alertmanager
+### Alertmanager
 
 Prometheus's builtin alerts are good for simple workflows. They do a nice job telling you what's happening at the
 moment.

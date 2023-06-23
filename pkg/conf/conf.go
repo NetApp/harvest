@@ -504,6 +504,7 @@ type Exporter struct {
 	// Prometheus specific
 	HeartBeatURL string `yaml:"heart_beat_url,omitempty"`
 	SortLabels   bool   `yaml:"sort_labels,omitempty"`
+	TLS          TLS    `yaml:"tls,omitempty"`
 
 	// InfluxDB specific
 	Bucket        *string `yaml:"bucket,omitempty"`
