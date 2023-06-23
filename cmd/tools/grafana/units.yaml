@@ -77,6 +77,12 @@
   grafanaDisplay: microseconds(µs)
   comment: ""
 
+- metric: disk_stats_average_latency
+  ontapUnit: millisec
+  grafanaJson: ms
+  grafanaDisplay: milliseconds(ms)
+  comment: "Used in disk Config Template"
+
 - metric: volume_write_latency
   ontapUnit: microsec
   grafanaJson: µs

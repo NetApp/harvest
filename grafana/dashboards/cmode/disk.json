@@ -1502,11 +1502,11 @@
                         },
                         {
                           "color": "orange",
-                          "value": 20
+                          "value": 20000
                         },
                         {
                           "color": "red",
-                          "value": 30
+                          "value": 30000
                         }
                       ]
                     }

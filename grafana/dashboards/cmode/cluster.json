@@ -126,7 +126,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": [
           {
@@ -150,11 +150,11 @@
                     },
                     {
                       "color": "orange",
-                      "value": 20
+                      "value": 20000
                     },
                     {
                       "color": "red",
-                      "value": 30
+                      "value": 30000
                     }
                   ]
                 }
@@ -190,7 +190,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)) / 1000",
+          "expr": "topk($TopResources, sum(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -248,7 +248,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": [
           {
@@ -272,11 +272,11 @@
                     },
                     {
                       "color": "orange",
-                      "value": 20
+                      "value": 20000
                     },
                     {
                       "color": "red",
-                      "value": 30
+                      "value": 30000
                     }
                   ]
                 }
@@ -312,7 +312,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)) / 1000",
+          "expr": "topk($TopResources, sum(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
           "format": "table",
           "instant": true,
           "interval": "",

@@ -22,12 +22,14 @@ func TestThreshold(t *testing.T) {
 	})
 }
 
+var aggregationPattern = regexp.MustCompile(`\b(sum|count|min|max)\b`)
+
 func checkThreshold(t *testing.T, path string, data []byte) {
 	path = shortPath(path)
 	var thresholdMap = map[string][]string{
 		"_latency": {
 			"[\"green\",\"orange\",\"red\"]",
-			"[null,20,30]",
+			"[null,20000,30000]",
 		},
 		"_busy": {
 			"[\"green\",\"orange\",\"red\"]",
@@ -38,10 +40,14 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 	visitAllPanels(data, func(p string, key, value gjson.Result) {
 		panelTitle := value.Get("title").String()
 		kind := value.Get("type").String()
-		if kind == "table" {
+		if kind == "table" || kind == "stat" {
 			targetsSlice := value.Get("targets").Array()
 			for _, targetN := range targetsSlice {
 				expr := targetN.Get("expr").String()
+				// Check if the metric matches the aggregation pattern
+				if aggregationPattern.MatchString(expr) {
+					continue
+				}
 				if strings.Contains(expr, "_latency") || strings.Contains(expr, "_busy") {
 					var th []string
 					if strings.Contains(expr, "_latency") {
@@ -51,7 +57,19 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 					}
 					isThresholdSet := false
 					isColorBackgroundSet := false
-					expectedColorBackground := []string{"color-background", "lcd-gauge"}
+					expectedColorBackground := map[string][]string{
+						"table": {"color-background", "lcd-gauge"},
+						"stat":  {"background"},
+					}
+					// check in default also for stat. For table we only want relevant column background and override settings
+					if kind == "stat" {
+						dS := value.Get("fieldConfig.defaults")
+						tSlice := dS.Get("thresholds")
+						color := tSlice.Get("steps.#.color")
+						v := tSlice.Get("steps.#.value")
+						isThresholdSet = color.String() == th[0] && v.String() == th[1]
+					}
+
 					// check if any override has threshold set
 					overridesSlice := value.Get("fieldConfig.overrides").Array()
 					for _, overrideN := range overridesSlice {
@@ -62,21 +80,30 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 								color := propertiesN.Get("value.steps.#.color")
 								v := propertiesN.Get("value.steps.#.value")
 								isThresholdSet = color.String() == th[0] && v.String() == th[1]
-							} else if id == "custom.displayMode" {
+							} else if id == "custom.displayMode" && kind == "table" {
 								v := propertiesN.Get("value")
-								if !util.Contains(expectedColorBackground, v.String()) {
-									t.Errorf("dashboard=%s panel=%s don't have correct displaymode expected %s found %s", path, panelTitle, expectedColorBackground, v.String())
+								if !util.Contains(expectedColorBackground[kind], v.String()) {
+									t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct displaymode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], v.String())
 								} else {
 									isColorBackgroundSet = true
 								}
 							}
 						}
 					}
+
+					if kind == "stat" {
+						colorMode := value.Get("options.colorMode")
+						if !util.Contains(expectedColorBackground[kind], colorMode.String()) {
+							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct colorMode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], colorMode.String())
+						} else {
+							isColorBackgroundSet = true
+						}
+					}
 					if !isThresholdSet {
-						t.Errorf("dashboard=%s panel=%s don't have correct latency threshold set. expected threshold %s %s", path, panelTitle, th[0], th[1])
+						t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct latency threshold set. expected threshold %s %s", path, panelTitle, kind, expr, th[0], th[1])
 					}
 					if !isColorBackgroundSet {
-						t.Errorf("dashboard=%s panel=%s don't have displaymode expected %s", path, panelTitle, expectedColorBackground)
+						t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have displaymode expected %s", path, panelTitle, kind, expr, expectedColorBackground[kind])
 					}
 				}
 			}
@@ -135,7 +162,11 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 }
 
 func TestUnitsAndExprMatch(t *testing.T) {
+	defaultLatencyUnit := "µs"
+	pattern := `\/\d+` // Regular expression pattern to match division by a number
+	reg := regexp.MustCompile(pattern)
 	mt := newMetricsTable()
+	expectedMt := parseUnits()
 	visitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkUnits(t, path, mt, data)
@@ -183,6 +214,35 @@ func TestUnitsAndExprMatch(t *testing.T) {
 				t.Errorf(`%s should not have unit=none %s path=%s title="%s"`,
 					metric, location[0].dashboard, location[0].path, location[0].title)
 			}
+
+			var expectedGrafanaUnit string
+
+			if v, ok := expectedMt[metric]; ok {
+				expectedGrafanaUnit = v.GrafanaJson
+				if v.GrafanaJson != unit && !v.skipValidate {
+					t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
+						metric, unit, v.GrafanaJson, location[0].dashboard, location[0].path, location[0].title)
+				}
+			} else {
+				// special case latency that dashboard uses unit microseconds µs
+				if strings.HasSuffix(metric, "_latency") {
+					expectedGrafanaUnit = defaultLatencyUnit
+					if unit != expectedGrafanaUnit {
+						t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
+							metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
+					}
+				}
+			}
+
+			for _, l := range location {
+				match := reg.FindString(l.expr)
+				if match != "" {
+					if expectedGrafanaUnit == unit {
+						t.Errorf(`%s should not have unit=%s because there is a division by a number %s path=%s title="%s"`,
+							metric, unit, l.dashboard, l.path, l.title)
+					}
+				}
+			}
 			if numUnits == 1 {
 				continue
 			}
@@ -223,12 +283,13 @@ type expression struct {
 	metric string
 	refID  string
 	kind   string
+	expr   string
 }
 type units struct {
 	units map[string][]*metricLoc
 }
 
-func (u *units) addUnit(unit string, path string, dashboard string, title string) {
+func (u *units) addUnit(unit string, path string, dashboard string, title string, expr string) {
 	locs, ok := u.units[unit]
 	if !ok {
 		locs = make([]*metricLoc, 0)
@@ -237,11 +298,12 @@ func (u *units) addUnit(unit string, path string, dashboard string, title string
 		path:      path,
 		dashboard: dashboard,
 		title:     title,
+		expr:      expr,
 	})
 	u.units[unit] = locs
 }
 
-func (t *metricsTable) addMetric(metric string, unit string, path string, dashboard string, title string) {
+func (t *metricsTable) addMetric(metric string, unit string, path string, dashboard string, title string, expr string) {
 	u, ok := t.metricsByUnit[metric]
 	if !ok {
 		u = &units{
@@ -249,13 +311,14 @@ func (t *metricsTable) addMetric(metric string, unit string, path string, dashbo
 		}
 		t.metricsByUnit[metric] = u
 	}
-	u.addUnit(unit, path, dashboard, title)
+	u.addUnit(unit, path, dashboard, title, expr)
 }
 
 type metricLoc struct {
 	path      string
 	dashboard string
 	title     string
+	expr      string
 }
 
 func newMetricsTable() *metricsTable {
@@ -375,6 +438,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 		expressions = append(expressions, expression{
 			metric: metric,
 			refID:  exprRefID,
+			expr:   expr,
 		})
 	}
 	for _, transformN := range transformationsSlice {
@@ -393,7 +457,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 			continue
 		}
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
-		mt.addMetric(e.metric, unit, path, sPath, title)
+		mt.addMetric(e.metric, unit, path, sPath, title, e.expr)
 	}
 }
 
