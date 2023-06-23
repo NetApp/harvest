@@ -1280,6 +1280,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
       "fieldConfig": {
         "defaults": {
           "color": {
