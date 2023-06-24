@@ -677,6 +677,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prometheus-exporter-and-tls" class="md-nav__link">
+    Prometheus Exporter and TLS
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Exporter and TLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-tls-certificates" class="md-nav__link">
+    Generate TLS Certificates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-harvest-prometheus-exporter-to-use-tls" class="md-nav__link">
+    Configure Harvest Prometheus Exporter to use TLS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-prometheus-to-use-tls" class="md-nav__link">
+    Configure Prometheus to use TLS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-alerts" class="md-nav__link">
+    Prometheus Alerts
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Alerts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alertmanager" class="md-nav__link">
+    Alertmanager
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    Reference
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1212,6 +1273,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prometheus-exporter-and-tls" class="md-nav__link">
+    Prometheus Exporter and TLS
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Exporter and TLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-tls-certificates" class="md-nav__link">
+    Generate TLS Certificates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-harvest-prometheus-exporter-to-use-tls" class="md-nav__link">
+    Configure Harvest Prometheus Exporter to use TLS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-prometheus-to-use-tls" class="md-nav__link">
+    Configure Prometheus to use TLS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-alerts" class="md-nav__link">
+    Prometheus Alerts
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Alerts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alertmanager" class="md-nav__link">
+    Alertmanager
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    Reference
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1238,11 +1360,11 @@ out <a href="https://prometheus.io/docs/prometheus/latest/getting_started/">thei
 <p>The Prometheus exporter is responsible for:</p>
 <ul>
 <li>formatting metrics into the Prometheus <a href="https://prometheus.io/docs/instrumenting/exposition_formats/">line protocol</a></li>
-<li>creating a web-endpoint on <code>http://&lt;ADDR&gt;:&lt;PORT&gt;/metrics</code> for Prometheus to scrape</li>
+<li>creating a web-endpoint on <code>http://&lt;ADDR&gt;:&lt;PORT&gt;/metrics</code> (or <code>https:</code> if TLS is enabled) for Prometheus to scrape</li>
 </ul>
 <p>A web end-point is required because Prometheus scrapes Harvest by polling that end-point.</p>
 <p>In addition to the <code>/metrics</code> end-point, the Prometheus exporter also serves an overview of all metrics and collectors
-available on its root address <code>http://&lt;ADDR&gt;:&lt;PORT&gt;/</code>.</p>
+available on its root address <code>scheme://&lt;ADDR&gt;:&lt;PORT&gt;/</code>.</p>
 <p>Because Prometheus polls Harvest, don't forget
 to <a href="#configure-prometheus-to-scrape-harvest-pollers">update your Prometheus configuration</a> and tell Prometheus how to
 scrape each poller.</p>
@@ -1315,6 +1437,18 @@ of Prometheus. Both options are explained below.</p>
 <td>bool, optional</td>
 <td>sort metric labels before exporting. Some <a href="https://github.com/NetApp/harvest/issues/756">open-metrics scrapers report</a> stale metrics when labels are not sorted.</td>
 <td><code>false</code></td>
+</tr>
+<tr>
+<td><code>tls</code></td>
+<td><code>tls</code></td>
+<td>optional</td>
+<td>If present, enables TLS transport. If running in a container, see <a href="https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589">note</a></td>
+</tr>
+<tr>
+<td>tls <code>cert_file</code>, <code>key_file</code></td>
+<td><strong>required</strong> child of <code>tls</code></td>
+<td>Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with <code>bin/harvest admin tls create server</code>, <code>openssl</code>, <code>mkcert</code>, etc.</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1563,7 +1697,69 @@ your <code>prometheus.yml</code>.</p>
 Harvest machine. Also note the scrape interval above is set to 60s. That matches the polling frequency of the default
 Harvest collectors. If you change the polling frequency of a Harvest collector to a lower value, you should also change
 the scrape interval.</p>
-<h1 id="prometheus-alerts">Prometheus Alerts<a class="headerlink" href="#prometheus-alerts" title="Permanent link">&para;</a></h1>
+<h2 id="prometheus-exporter-and-tls">Prometheus Exporter and TLS<a class="headerlink" href="#prometheus-exporter-and-tls" title="Permanent link">&para;</a></h2>
+<p>The Harvest Prometheus exporter can be configured to serve its metrics via <code>HTTPS</code> by configuring the <code>tls</code> section in
+the <code>Exporters</code> section of <code>harvest.yml</code>.</p>
+<p>Let's walk through an example of how to set up Harvest's Prometheus exporter and how to configure Prometheus to use TLS.</p>
+<h3 id="generate-tls-certificates">Generate TLS Certificates<a class="headerlink" href="#generate-tls-certificates" title="Permanent link">&para;</a></h3>
+<p>We'll use Harvest's admin command line tool to create a self-signed TLS certificate key/pair for the exporter and Prometheus.
+Note: If running in a container, see <a href="https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589">note</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$Harvest_Install_Directory</span>
+bin/harvest<span class="w"> </span>admin<span class="w"> </span>tls<span class="w"> </span>create<span class="w"> </span>server
+<span class="m">2023</span>/06/23<span class="w"> </span><span class="m">09</span>:39:48<span class="w"> </span>wrote<span class="w"> </span>cert/admin-cert.pem
+<span class="m">2023</span>/06/23<span class="w"> </span><span class="m">09</span>:39:48<span class="w"> </span>wrote<span class="w"> </span>cert/admin-key.pem
+</code></pre></div>
+<p>Two files are created. Since we want to use these certificates for our Prometheus exporter, let's rename them to make that clearer.</p>
+<div class="highlight"><pre><span></span><code>mv<span class="w"> </span>cert/admin-cert.pem<span class="w"> </span>cert/prom-cert.pem
+mv<span class="w"> </span>cert/admin-key.pem<span class="w"> </span>cert/prom-key.pem
+</code></pre></div>
+<h3 id="configure-harvest-prometheus-exporter-to-use-tls">Configure Harvest Prometheus Exporter to use TLS<a class="headerlink" href="#configure-harvest-prometheus-exporter-to-use-tls" title="Permanent link">&para;</a></h3>
+<p>Edit your <code>harvest.yml</code> and add a TLS section to your exporter block like this:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my-exporter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">local_http_addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16001</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cert_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert/prom-cert.pem</span>
+<span class="w">      </span><span class="nt">key_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert/prom-key.pem</span>
+</code></pre></div>
+<p>Update one of your Pollers to use this exporter and start the poller.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my-cluster</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.193.48.11</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-exporter</span><span class="w">     </span><span class="c1"># Use TLS exporter we created above</span>
+</code></pre></div>
+<p>When the poller is started, it will log whether <code>https</code> or <code>http</code> is being used as part of the <code>url</code> like so:</p>
+<div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>start<span class="w"> </span>-f<span class="w"> </span>my-cluster
+<span class="m">2023</span>-06-23T10:02:03-04:00<span class="w"> </span>INF<span class="w"> </span>prometheus/httpd.go:40<span class="w"> </span>&gt;<span class="w"> </span>server<span class="w"> </span>listen<span class="w"> </span><span class="nv">Poller</span><span class="o">=</span>my-cluster<span class="w"> </span><span class="nv">exporter</span><span class="o">=</span>my-exporter<span class="w"> </span><span class="nv">url</span><span class="o">=</span>https://localhost:16001/metrics
+</code></pre></div>
+<p>If the <code>url</code> schema is <code>https</code>, TLS is being used.</p>
+<p>You can use curl to scrape the Prometheus exporter and verify that TLS is being used like so:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>--cacert<span class="w"> </span>cert/prom-cert.pem<span class="w"> </span>https://localhost:16001/metrics
+
+<span class="c1"># or use --insecure to tell curl to skip certificate validation</span>
+<span class="c1"># curl --insecure cert/prom-cert.pem https://localhost:16001/metrics  </span>
+</code></pre></div>
+<h3 id="configure-prometheus-to-use-tls">Configure Prometheus to use TLS<a class="headerlink" href="#configure-prometheus-to-use-tls" title="Permanent link">&para;</a></h3>
+<p>Let's configure Prometheus to use <code>HTTPs</code> to communicate with the exporter setup above.</p>
+<p>Edit your <code>prometheus.yml</code> and add or adapt your <code>scrape_configs</code> job. You need to add <code>scheme: https</code> and setup a <code>tls_config</code>
+block to point to the earlier created <code>prom-cert.pem</code> like so:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">scrape_configs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;harvest-https&#39;</span>
+<span class="w">    </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span>
+<span class="w">    </span><span class="nt">tls_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ca_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/prom-cert.pem</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;localhost:16001&#39;</span>
+</code></pre></div>
+<p>Start Prometheus and visit http://localhost:9090/targets with your browser. 
+You should see https://localhost:16001/metrics in the list of targets. </p>
+<p><img alt="Prometheus Targets" src="../assets/prometheus/PrometheusTLS.png" /></p>
+<h2 id="prometheus-alerts">Prometheus Alerts<a class="headerlink" href="#prometheus-alerts" title="Permanent link">&para;</a></h2>
 <p>Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your <code>prometheus.yml</code>
 file. Setup and details can be found in the Prometheus
 guide on <a href="https://prometheus.io/docs/practices/alerting/">alerting</a>.</p>
@@ -1571,7 +1767,7 @@ guide on <a href="https://prometheus.io/docs/practices/alerting/">alerting</a>.<
 and <a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml">sample alerts</a> for reference.
 Refer <a href="https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md">EMS Collector</a> for more details about
 EMS events.</p>
-<h2 id="alertmanager">Alertmanager<a class="headerlink" href="#alertmanager" title="Permanent link">&para;</a></h2>
+<h3 id="alertmanager">Alertmanager<a class="headerlink" href="#alertmanager" title="Permanent link">&para;</a></h3>
 <p>Prometheus's builtin alerts are good for simple workflows. They do a nice job telling you what's happening at the
 moment.
 If you need a richer solution that includes summarization, notification, advanced delivery, deduplication, etc.
