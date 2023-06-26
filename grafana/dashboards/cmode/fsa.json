@@ -83,7 +83,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1675075078463,
+  "iteration": 1687796580387,
   "links": [
     {
       "asDropdown": true,
@@ -118,17 +118,17 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 99,
       "options": {
-        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Two actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On your ONTAP cluster, enable File System Analytics for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details",
+        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Two actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On your ONTAP cluster, enable File System Analytics for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details. <br><br> Note: Prior to version 9.13.1, ONTAP requires you to enable file system analytics (FSA) individually for each volume. Harvest only collects FSA metrics from FSA-enabled volumes on the cluster. By default, Harvest keeps track of the 20 largest volumes for File System Analytics (FSA). If you wish to customize this, please see : https://github.com/NetApp/harvest/blob/main/conf/rest/9.12.0/volume_analytics.yaml.",
         "mode": "markdown"
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "type": "text"
     },
     {
@@ -138,7 +138,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 5
       },
       "id": 20,
       "panels": [],
@@ -168,7 +168,7 @@
         "h": 4,
         "w": 8,
         "x": 0,
-        "y": 2
+        "y": 6
       },
       "id": 95,
       "options": {
@@ -236,7 +236,7 @@
         "h": 4,
         "w": 8,
         "x": 8,
-        "y": 2
+        "y": 6
       },
       "id": 96,
       "options": {
@@ -293,7 +293,7 @@
         "h": 4,
         "w": 8,
         "x": 16,
-        "y": 2
+        "y": 6
       },
       "id": 97,
       "options": {
@@ -359,7 +359,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 10
       },
       "id": 103,
       "options": {
@@ -414,7 +414,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 9
+        "y": 13
       },
       "id": 22,
       "options": {
@@ -504,7 +504,7 @@
         "h": 10,
         "w": 20,
         "x": 4,
-        "y": 9
+        "y": 13
       },
       "id": 86,
       "options": {
@@ -559,7 +559,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 14
+        "y": 18
       },
       "id": 23,
       "options": {
@@ -658,7 +658,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 23
       },
       "id": 25,
       "options": {
@@ -769,7 +769,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 33
       },
       "id": 90,
       "panels": [
@@ -1644,8 +1644,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\",}[${__range}])))",
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": true,
+        "label": null,
         "multi": false,
         "name": "TopDirUsed",
         "options": [],
