@@ -260,8 +260,16 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgb(138, 204, 51)",
+                "color": "green",
                 "value": null
+              },
+              {
+                "color": "orange",
+                "value": 20000
+              },
+              {
+                "color": "red",
+                "value": 30000
               }
             ]
           },
@@ -277,7 +285,7 @@
       },
       "id": 4,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
@@ -295,7 +303,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})/1000",
+          "expr": "avg(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1725,7 +1733,7 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "µs"
             },
             "overrides": []
           },
@@ -1754,21 +1762,21 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) / 1000",
+              "expr": "avg(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) / 1000",
+              "expr": "avg(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg(node_volume_other_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) / 1000",
+              "expr": "avg(node_volume_other_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Other",
               "refId": "C"
@@ -2384,20 +2392,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "semi-dark-green",
+                    "color": "green",
                     "value": null
                   },
                   {
-                    "color": "semi-dark-yellow",
-                    "value": 1000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "semi-dark-orange",
-                    "value": 2500
-                  },
-                  {
-                    "color": "semi-dark-red",
-                    "value": 5000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -2453,20 +2457,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "semi-dark-green",
+                    "color": "green",
                     "value": null
                   },
                   {
-                    "color": "semi-dark-yellow",
-                    "value": 1000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "semi-dark-orange",
-                    "value": 2500
-                  },
-                  {
-                    "color": "semi-dark-red",
-                    "value": 5000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -2521,20 +2521,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "semi-dark-green",
+                    "color": "green",
                     "value": null
                   },
                   {
-                    "color": "semi-dark-yellow",
-                    "value": 1000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "semi-dark-orange",
-                    "value": 2500
-                  },
-                  {
-                    "color": "semi-dark-red",
-                    "value": 5000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -3142,8 +3138,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(31, 176, 196)",
+                    "color": "green",
                     "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 20000
+                  },
+                  {
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -3159,7 +3163,7 @@
           },
           "id": 68,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -3478,8 +3482,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(31, 176, 196)",
+                    "color": "green",
                     "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 20000
+                  },
+                  {
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -3495,7 +3507,7 @@
           },
           "id": 84,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -3884,8 +3896,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(31, 176, 196)",
+                    "color": "green",
                     "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 20000
+                  },
+                  {
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -3901,7 +3921,7 @@
           },
           "id": 122,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -4292,8 +4312,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(31, 176, 196)",
+                    "color": "green",
                     "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 20000
+                  },
+                  {
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -4309,7 +4337,7 @@
           },
           "id": 77,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",

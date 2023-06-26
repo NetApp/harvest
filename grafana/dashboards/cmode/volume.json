@@ -117,12 +117,12 @@
                 "value": null
               },
               {
-                "color": "#EAB839",
-                "value": 20
+                "color": "orange",
+                "value": 20000
               },
               {
                 "color": "red",
-                "value": 30
+                "value": 30000
               }
             ]
           },
@@ -156,7 +156,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(topk($TopResources, volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))/1000",
+          "expr": "avg(topk($TopResources, volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -996,11 +996,11 @@
                         },
                         {
                           "color": "orange",
-                          "value": 20
+                          "value": 20000
                         },
                         {
                           "color": "red",
-                          "value": 30
+                          "value": 30000
                         }
                       ]
                     }
@@ -1027,7 +1027,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeReadLatency\"})/1000",
+              "expr": "topk($TopResources, volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeReadLatency\"})",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1360,11 +1360,11 @@
                         },
                         {
                           "color": "orange",
-                          "value": 20
+                          "value": 20000
                         },
                         {
                           "color": "red",
-                          "value": 30
+                          "value": 30000
                         }
                       ]
                     }
@@ -1391,7 +1391,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeWriteLatency\"})/1000",
+              "expr": "topk($TopResources, volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeWriteLatency\"})",
               "format": "table",
               "instant": true,
               "interval": "",
