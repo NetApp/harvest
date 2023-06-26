@@ -3,10 +3,10 @@ module github.com/netapp/harvest/v2
 go 1.20
 
 require (
+	dario.cat/mergo v1.0.0
 	github.com/bbrks/wrap/v2 v2.5.0
 	github.com/go-openapi/spec v0.20.9
 	github.com/hashicorp/go-version v1.6.0
-	github.com/imdario/mergo v0.3.16
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/rs/zerolog v1.29.1
 	github.com/shirou/gopsutil/v3 v3.23.5
