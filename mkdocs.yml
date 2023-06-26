@@ -12,8 +12,9 @@ nav:
       - 'Package Managers': 'install/package-managers.md'
       - 'Containers':
           - 'Docker': 'install/containers.md'
-          - 'Podman': 'install/podman.md'
           - 'K8': 'install/k8.md'
+          - 'Podman': 'install/podman.md'
+          - 'Containerd': 'install/containerd.md'
       - 'Native': 'install/native.md'
   - System Requirements: 'system-requirements.md'
   - Upgrade: 'upgrade.md'
