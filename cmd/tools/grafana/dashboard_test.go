@@ -27,6 +27,7 @@ var aggregationPattern = regexp.MustCompile(`\b(sum|count|min|max)\b`)
 func checkThreshold(t *testing.T, path string, data []byte) {
 	path = shortPath(path)
 	var thresholdMap = map[string][]string{
+		// _latency are in microseconds
 		"_latency": {
 			"[\"green\",\"orange\",\"red\"]",
 			"[null,20000,30000]",
@@ -235,8 +236,8 @@ func TestUnitsAndExprMatch(t *testing.T) {
 			}
 
 			for _, l := range location {
-				match := reg.FindString(l.expr)
-				if match != "" {
+				matchString := reg.FindString(l.expr)
+				if matchString != "" {
 					if expectedGrafanaUnit == unit {
 						t.Errorf(`%s should not have unit=%s because there is a division by a number %s path=%s title="%s"`,
 							metric, unit, l.dashboard, l.path, l.title)

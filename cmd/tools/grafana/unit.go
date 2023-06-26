@@ -27,7 +27,7 @@ func parseUnits() map[string]Metric {
 		"svm_nfs_throughput":            {},
 		"svm_nfs_write_throughput":      {},
 	}
-	filePath := "units.yaml" // Replace with the actual file path
+	filePath := "units.yaml"
 
 	// Read the YAML file
 	yamlData, err := os.ReadFile(filePath)
@@ -48,9 +48,7 @@ func parseUnits() map[string]Metric {
 
 	// Populate the map using the metric name as the key
 	for _, metric := range metrics {
-		if _, ok := excludeValidationMap[metric.Metric]; ok {
-			metric.skipValidate = true
-		}
+		_, metric.skipValidate = excludeValidationMap[metric.Metric]
 		metricsMap[metric.Metric] = metric
 	}
 	return metricsMap
