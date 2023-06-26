@@ -130,11 +130,11 @@ or [ask the Harvest team on Discord](#a-counter-is-missing-from-rest-what-do-i-d
 
 ### I'm using ONTAP version 9.12.X, but I want to continue using ZAPIs. How do I do that?
 
-There are two options:
+You can tell Harvest to continue using the ZAPI protocol by picking one of these options:
 
-1. Set the environment variable `HARVEST_NO_COLLECTOR_UPGRADE=1` and Harvest will not 
+- Edit your `harvest.yml` config file and add the [`prefer_zapi: true`](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) option to the poller section. See [configure Harvest](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) for details.
+- Set the environment variable `HARVEST_NO_COLLECTOR_UPGRADE=1` and Harvest will not 
 upgrade your collector from ZAPI to REST.
-2. Edit your `harvest.yml` config file and add the [`prefer_zapi`](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) option to the poller section. See [configure Harvest](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) for details.
 
 ## Reference
 
