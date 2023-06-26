@@ -125,7 +125,7 @@
       },
       "id": 99,
       "options": {
-        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Two actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On your ONTAP cluster, enable File System Analytics for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details. <br><br> Note: Prior to version 9.13.1, ONTAP requires you to enable file system analytics (FSA) individually for each volume. Harvest only collects FSA metrics from FSA-enabled volumes on the cluster. By default, Harvest keeps track of the 20 largest volumes for File System Analytics (FSA). If you wish to customize this, please see : https://github.com/NetApp/harvest/blob/main/conf/rest/9.12.0/volume_analytics.yaml.",
+        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Two actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On your ONTAP cluster, enable File System Analytics (FSA) for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details. <br><br> Note: Prior to version 9.13.1, ONTAP requires you to enable FSA individually for each volume. Harvest only collects FSA metrics from FSA-enabled volumes on the cluster. By default, Harvest keeps track of the 20 largest volumes for FSA. If you wish to customize this, please see: https://github.com/NetApp/harvest/blob/main/conf/rest/9.12.0/volume_analytics.yaml.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
