@@ -8,19 +8,19 @@
       
       
       
-      <link rel="icon" href="../assets/harvest.svg">
+      <link rel="icon" href="../../assets/harvest.svg">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.9">
     
     
       
-        <title>StorageGRID - Harvest</title>
+        <title>Podman - Harvest</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.08040f6c.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.08040f6c.min.css">
         
       
       
@@ -37,9 +37,9 @@
       
     
     
-      <link rel="stylesheet" href="../assets/extra.css">
+      <link rel="stylesheet" href="../../assets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#storagegrid-collector" class="md-skip">
+        <a href="#containerized-harvest-on-linux-using-rootless-podman" class="md-skip">
           Skip to content
         </a>
       
@@ -86,9 +86,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../assets/harvest.svg" alt="logo">
+  <img src="../../assets/harvest.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              StorageGRID
+              Podman
             
           </span>
         </div>
@@ -217,9 +217,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../assets/harvest.svg" alt="logo">
+  <img src="../../assets/harvest.svg" alt="logo">
 
     </a>
     Harvest
@@ -247,7 +247,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         What is Harvest?
       </a>
     </li>
@@ -262,7 +262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quickstart/" class="md-nav__link">
+      <a href="../../quickstart/" class="md-nav__link">
         Quickstart
       </a>
     </li>
@@ -275,12 +275,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
       
       
       
@@ -303,7 +305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/overview/" class="md-nav__link">
+      <a href="../overview/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -317,7 +319,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/package-managers/" class="md-nav__link">
+      <a href="../package-managers/" class="md-nav__link">
         Package Managers
       </a>
     </li>
@@ -329,12 +331,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
       
       
       
@@ -357,7 +361,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/containers/" class="md-nav__link">
+      <a href="../containers/" class="md-nav__link">
         Docker
       </a>
     </li>
@@ -371,7 +375,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/k8/" class="md-nav__link">
+      <a href="../k8/" class="md-nav__link">
         K8
       </a>
     </li>
@@ -383,11 +387,114 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../install/podman/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Podman
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Podman
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#containerized-harvest-on-linux-using-rootful-podman" class="md-nav__link">
+    Containerized Harvest on Linux using Rootful Podman
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#containerized-harvest-on-linux-using-rootless-podman_1" class="md-nav__link">
+    Containerized Harvest on Linux using Rootless Podman
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-harvest" class="md-nav__link">
+    Running Harvest
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    Troubleshooting
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nothing-works" class="md-nav__link">
+    Nothing works
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errors-after-rebooting" class="md-nav__link">
+    Errors after rebooting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linger-errors" class="md-nav__link">
+    Linger errors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versions" class="md-nav__link">
+    Versions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -399,7 +506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/containerd/" class="md-nav__link">
+      <a href="../containerd/" class="md-nav__link">
         Containerd
       </a>
     </li>
@@ -420,7 +527,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/native/" class="md-nav__link">
+      <a href="../native/" class="md-nav__link">
         Native
       </a>
     </li>
@@ -442,7 +549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-requirements/" class="md-nav__link">
+      <a href="../../system-requirements/" class="md-nav__link">
         System Requirements
       </a>
     </li>
@@ -457,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../upgrade/" class="md-nav__link">
+      <a href="../../upgrade/" class="md-nav__link">
         Upgrade
       </a>
     </li>
@@ -498,7 +605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
         ONTAP cDOT
       </a>
     </li>
@@ -512,7 +619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
         Amazon FSx for ONTAP
       </a>
     </li>
@@ -526,7 +633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
         ONTAP 7mode
       </a>
     </li>
@@ -540,7 +647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
         StorageGRID
       </a>
     </li>
@@ -562,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-harvest-basic/" class="md-nav__link">
+      <a href="../../configure-harvest-basic/" class="md-nav__link">
         Configure Harvest (basic)
       </a>
     </li>
@@ -603,7 +710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prometheus-exporter/" class="md-nav__link">
+      <a href="../../prometheus-exporter/" class="md-nav__link">
         Prometheus
       </a>
     </li>
@@ -617,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../influxdb-exporter/" class="md-nav__link">
+      <a href="../../influxdb-exporter/" class="md-nav__link">
         InfluxDB
       </a>
     </li>
@@ -639,7 +746,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-grafana/" class="md-nav__link">
+      <a href="../../configure-grafana/" class="md-nav__link">
         Configure Grafana
       </a>
     </li>
@@ -652,14 +759,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
       
       
       
@@ -682,7 +787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-zapi/" class="md-nav__link">
+      <a href="../../configure-zapi/" class="md-nav__link">
         ZAPI
       </a>
     </li>
@@ -696,7 +801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-rest/" class="md-nav__link">
+      <a href="../../configure-rest/" class="md-nav__link">
         REST
       </a>
     </li>
@@ -710,7 +815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-ems/" class="md-nav__link">
+      <a href="../../configure-ems/" class="md-nav__link">
         EMS
       </a>
     </li>
@@ -722,129 +827,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          StorageGRID
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../configure-storagegrid/" class="md-nav__link">
         StorageGRID
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#storagegrid-collector" class="md-nav__link">
-    StorageGRID Collector
-  </a>
-  
-    <nav class="md-nav" aria-label="StorageGRID Collector">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#target-system" class="md-nav__link">
-    Target System
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    Requirements
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#metrics" class="md-nav__link">
-    Metrics
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#harvest-configuration-file" class="md-nav__link">
-    Harvest configuration file
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#storagegrid-configuration-file" class="md-nav__link">
-    StorageGRID configuration file
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#object-configuration-file" class="md-nav__link">
-    Object configuration file
-  </a>
-  
-    <nav class="md-nav" aria-label="Object configuration file">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
-    counters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#export_options" class="md-nav__link">
-    export_options
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -856,7 +843,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-unix/" class="md-nav__link">
+      <a href="../../configure-unix/" class="md-nav__link">
         Unix
       </a>
     </li>
@@ -878,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-templates/" class="md-nav__link">
+      <a href="../../configure-templates/" class="md-nav__link">
         Templates
       </a>
     </li>
@@ -893,7 +880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dashboards/" class="md-nav__link">
+      <a href="../../dashboards/" class="md-nav__link">
         Dashboards
       </a>
     </li>
@@ -908,7 +895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../manage-harvest/" class="md-nav__link">
+      <a href="../../manage-harvest/" class="md-nav__link">
         Manage Harvest Pollers
       </a>
     </li>
@@ -923,7 +910,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-harvest-advanced/" class="md-nav__link">
+      <a href="../../configure-harvest-advanced/" class="md-nav__link">
         Configure Harvest (advanced)
       </a>
     </li>
@@ -938,7 +925,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../monitor-harvest/" class="md-nav__link">
+      <a href="../../monitor-harvest/" class="md-nav__link">
         Monitor Harvest
       </a>
     </li>
@@ -953,7 +940,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../troubleshooting/" class="md-nav__link">
+      <a href="../../troubleshooting/" class="md-nav__link">
         Troubleshoot
       </a>
     </li>
@@ -994,7 +981,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../plugins/" class="md-nav__link">
+      <a href="../../plugins/" class="md-nav__link">
         Plugins
       </a>
     </li>
@@ -1008,7 +995,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/matrix/" class="md-nav__link">
+      <a href="../../resources/matrix/" class="md-nav__link">
         Matrix
       </a>
     </li>
@@ -1022,7 +1009,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ontap-metrics/" class="md-nav__link">
+      <a href="../../ontap-metrics/" class="md-nav__link">
         ONTAP Metrics
       </a>
     </li>
@@ -1036,7 +1023,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+      <a href="../../resources/templates-and-metrics/" class="md-nav__link">
         Templates And Metrics
       </a>
     </li>
@@ -1050,7 +1037,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+      <a href="../../resources/rest-perf-metrics/" class="md-nav__link">
         REST Perf Metrics
       </a>
     </li>
@@ -1098,7 +1085,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../license/" class="md-nav__link">
+      <a href="../../license/" class="md-nav__link">
         License
       </a>
     </li>
@@ -1112,7 +1099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../release-notes/" class="md-nav__link">
+      <a href="../../release-notes/" class="md-nav__link">
         Release Notes
       </a>
     </li>
@@ -1143,6 +1130,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1151,30 +1140,58 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#storagegrid-collector" class="md-nav__link">
-    StorageGRID Collector
+  <a href="#setup" class="md-nav__link">
+    Setup
   </a>
   
-    <nav class="md-nav" aria-label="StorageGRID Collector">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#containerized-harvest-on-linux-using-rootful-podman" class="md-nav__link">
+    Containerized Harvest on Linux using Rootful Podman
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#containerized-harvest-on-linux-using-rootless-podman_1" class="md-nav__link">
+    Containerized Harvest on Linux using Rootless Podman
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-harvest" class="md-nav__link">
+    Running Harvest
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    Troubleshooting
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#target-system" class="md-nav__link">
-    Target System
+  <a href="#nothing-works" class="md-nav__link">
+    Nothing works
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    Requirements
+  <a href="#errors-after-rebooting" class="md-nav__link">
+    Errors after rebooting
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#metrics" class="md-nav__link">
-    Metrics
+  <a href="#linger-errors" class="md-nav__link">
+    Linger errors
   </a>
   
 </li>
@@ -1185,56 +1202,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    Parameters
+  <a href="#versions" class="md-nav__link">
+    Versions
   </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#harvest-configuration-file" class="md-nav__link">
-    Harvest configuration file
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#storagegrid-configuration-file" class="md-nav__link">
-    StorageGRID configuration file
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#object-configuration-file" class="md-nav__link">
-    Object configuration file
-  </a>
-  
-    <nav class="md-nav" aria-label="Object configuration file">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
-    counters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#export_options" class="md-nav__link">
-    export_options
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1253,207 +1223,112 @@
                   
 
 
-  <h1>StorageGRID</h1>
+<h1 id="containerized-harvest-on-linux-using-rootless-podman">Containerized Harvest on Linux using Rootless Podman<a class="headerlink" href="#containerized-harvest-on-linux-using-rootless-podman" title="Permanent link">&para;</a></h1>
+<p>RHEL 8 ships with <a href="https://github.com/containers/podman">Podman</a> instead of Docker. There are two ways to run containers with Podman: rootless or with root. Both setups are outlined below. The Podman ecosystem is changing rapidly so the shelf life of these instructions may be short. Make sure you have at least the same <a href="#versions">versions</a> of the tools listed below. </p>
+<p>If you don't want to bother with Podman, you can also install Docker on RHEL 8 and use it to run <a href="../containers/">Harvest per normal</a></p>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
+<p>Make sure your OS is up-to-date with <code>yum update</code>. Podman's dependencies are updated frequently.</p>
+<div class="highlight"><pre><span></span><code>sudo yum remove docker-ce
+sudo yum module <span class="nb">enable</span> -y container-tools:rhel8
+sudo yum module install -y container-tools:rhel8
+sudo yum install podman podman-docker podman-plugins
+</code></pre></div>
+<p>We also need to install Docker Compose since Podman uses it for compose workflows. Install <code>docker-compose</code> like this:
+<div class="highlight"><pre><span></span><code><span class="nv">VERSION</span><span class="o">=</span><span class="m">1</span>.29.2
+sudo curl -L <span class="s2">&quot;https://github.com/docker/compose/releases/download/</span><span class="nv">$VERSION</span><span class="s2">/docker-compose-</span><span class="k">$(</span>uname -s<span class="k">)</span><span class="s2">-</span><span class="k">$(</span>uname -m<span class="k">)</span><span class="s2">&quot;</span> -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+</code></pre></div></p>
+<p>After all the packages are installed, start the Podman systemd socket-activated service:</p>
+<div class="highlight"><pre><span></span><code>sudo systemctl start podman.socket
+</code></pre></div>
+<h2 id="containerized-harvest-on-linux-using-rootful-podman">Containerized Harvest on Linux using Rootful Podman<a class="headerlink" href="#containerized-harvest-on-linux-using-rootful-podman" title="Permanent link">&para;</a></h2>
+<p>Make sure you're able to curl the endpoint.</p>
+<div class="highlight"><pre><span></span><code>sudo curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> --unix-socket /var/run/docker.sock http://localhost/_ping
+</code></pre></div>
+<p>If the <code>sudo curl</code> does not print <code>OK⏎</code> troubleshoot before continuing.</p>
+<p>Proceed to <a href="#running-harvest">Running Harvest</a></p>
+<h2 id="containerized-harvest-on-linux-using-rootless-podman_1">Containerized Harvest on Linux using Rootless Podman<a class="headerlink" href="#containerized-harvest-on-linux-using-rootless-podman_1" title="Permanent link">&para;</a></h2>
+<p>To run Podman rootless, we'll create a non-root user named: <code>harvest</code> to run Harvest.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># as root or sudo</span>
+usermod --append --groups wheel harvest
+</code></pre></div>
+<p>Login with the harvest user, setup the podman.socket, and make sure the curl below works. <code>su</code> or <code>sudo</code> aren't sufficient, you need to <code>ssh</code> into the machine as the harvest user or use <code>machinectl login</code>. See <a href="https://www.redhat.com/sysadmin/sudo-rootless-podman">sudo-rootless-podman</a> for details.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># these must be run as the harvest user</span>
+systemctl --user <span class="nb">enable</span> podman.socket
+systemctl --user start podman.socket
+systemctl --user status podman.socket
+<span class="nb">export</span> <span class="nv">DOCKER_HOST</span><span class="o">=</span>unix:///run/user/<span class="nv">$UID</span>/podman/podman.sock
 
-<h2 id="storagegrid-collector">StorageGRID Collector<a class="headerlink" href="#storagegrid-collector" title="Permanent link">&para;</a></h2>
-<p>The StorageGRID collector uses REST calls to collect data from StorageGRID systems.</p>
-<h3 id="target-system">Target System<a class="headerlink" href="#target-system" title="Permanent link">&para;</a></h3>
-<p>All StorageGRID versions are supported, however the default configuration files may not completely match with older
-systems.</p>
-<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
-<p>No SDK or other requirements. It is recommended to create a read-only user for Harvest on the StorageGRID system (see
-<a href="../prepare-storagegrid-clusters/">prepare monitored clusters</a> for details)</p>
-<h3 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
-<p>The collector collects a dynamic set of metrics via StorageGRID's REST API. StorageGRID returns JSON documents and
-Harvest allows you to define templates to extract values from the JSON document via a dot notation path. You can view
-StorageGRID's full set of REST APIs by visiting <code>https://$STORAGE_GRID_HOSTNAME/grid/apidocs.html</code></p>
-<p>As an example, the <code>/grid/accounts-cache</code> endpoint, lists the tenant accounts in the cache and includes additional
-information, such as objectCount and dataBytes. Below is an example response from this endpoint:</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;95245224059574669217&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foople&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;quotaObjectBytes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000000000</span><span class="w"></span>
-<span class="w">      </span><span class="p">},</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;objectCount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;dataBytes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10473454261</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">]</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+sudo curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> --unix-socket /var/run/docker.sock http://localhost/_ping
 </code></pre></div>
-<p>The StorageGRID collector will take this document, extract the <code>data</code> section and convert the metrics above
-into: <code>name</code>, <code>policy.quotaObjectBytes</code>, <code>objectCount</code>, and <code>dataBytes</code>. Metric names will be taken, as is, unless you
-specify a short display name. See <a href="../configure-templates/#counters">counters</a> for more details.</p>
-<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
-<p>The parameters of the collector are distributed across three files:</p>
-<ul>
-<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
-<li>StorageGRID configuration file (default: <code>conf/storagegrid/default.yaml</code>)</li>
-<li>Each object has its own configuration file (located in <code>conf/storagegrid/$version/</code>)</li>
-</ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the StorageGRID collector can be
-defined in either of these three files. Parameters defined in the lower-level file, override parameters in the
-higher-level ones. This allows you to configure each object individually, or use the same parameters for all
-objects.</p>
-<p>The full set of parameters are described <a href="#harvest-configuration-file">below</a>.</p>
-<h3 id="harvest-configuration-file">Harvest configuration file<a class="headerlink" href="#harvest-configuration-file" title="Permanent link">&para;</a></h3>
-<p>Parameters in the poller section should define the following required parameters.</p>
-<table>
-<thead>
-<tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Poller name (header)</td>
-<td>string, <strong>required</strong></td>
-<td>Poller name, user-defined value</td>
-<td></td>
-</tr>
-<tr>
-<td><code>addr</code></td>
-<td>string, <strong>required</strong></td>
-<td>address (IP or FQDN) of the ONTAP system</td>
-<td></td>
-</tr>
-<tr>
-<td><code>datacenter</code></td>
-<td>string, <strong>required</strong></td>
-<td>Datacenter name, user-defined value</td>
-<td></td>
-</tr>
-<tr>
-<td><code>username</code>, <code>password</code></td>
-<td>string, <strong>required</strong></td>
-<td>StorageGRID username and password with at least <code>Tenant accounts</code> permissions</td>
-<td></td>
-</tr>
-<tr>
-<td><code>collectors</code></td>
-<td>list, <strong>required</strong></td>
-<td>Name of collector to run for this poller, use <code>StorageGrid</code> for this collector</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="storagegrid-configuration-file">StorageGRID configuration file<a class="headerlink" href="#storagegrid-configuration-file" title="Permanent link">&para;</a></h3>
-<p>This configuration file contains a list of objects that should be collected and the filenames of their templates (
-explained in the next section).</p>
-<p>Additionally, this file contains the parameters that are applied as defaults to all objects. As mentioned before, any
-of these parameters can be defined in the Harvest or object configuration files as well.</p>
-<table>
-<thead>
-<tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>client_timeout</code></td>
-<td>duration (Go-syntax)</td>
-<td>how long to wait for server responses</td>
-<td>30s</td>
-</tr>
-<tr>
-<td><code>schedule</code></td>
-<td>list, <strong>required</strong></td>
-<td>how frequently to retrieve metrics from StorageGRID</td>
-<td></td>
-</tr>
-<tr>
-<td>- <code>data</code></td>
-<td>duration (Go-syntax)</td>
-<td>how frequently this collector/object should retrieve metrics from StorageGRID</td>
-<td>5 minutes</td>
-</tr>
-</tbody>
-</table>
-<p>The template should define objects in the <code>objects</code> section. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Tenant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tenant.yaml</span><span class="w"></span>
+<p>If the <code>sudo curl</code> does not print <code>OK⏎</code> troubleshoot before continuing.</p>
+<p>Run podman info and make sure <code>runRoot</code> points to <code>/run/user/$UID/containers</code> (see below). If it doesn't, you'll probably run into problems when restarting the machine. See <a href="#errors-after-rebooting">errors after rebooting</a>.</p>
+<div class="highlight"><pre><span></span><code>podman info <span class="p">|</span> grep runRoot
+  runRoot: /run/user/1001/containers
 </code></pre></div>
-<p>For each object, we define the filename of the object configuration file. The object configuration files
-are located in subdirectories matching the StorageGRID version that was used to create these files. It is possible to
-have multiple version-subdirectories for multiple StorageGRID versions. At runtime, the collector will select the object
-configuration file that closest matches the version of the target StorageGRID system.</p>
-<h3 id="object-configuration-file">Object configuration file<a class="headerlink" href="#object-configuration-file" title="Permanent link">&para;</a></h3>
-<p>The Object configuration file ("subtemplate") should contain the following parameters:</p>
-<table>
-<thead>
-<tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>name</code></td>
-<td>string, <strong>required</strong></td>
-<td>display name of the collector that will collect this object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>query</code></td>
-<td>string, <strong>required</strong></td>
-<td>REST endpoint used to issue a REST request</td>
-<td></td>
-</tr>
-<tr>
-<td><code>object</code></td>
-<td>string, <strong>required</strong></td>
-<td>short name of the object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>api</code></td>
-<td>string</td>
-<td>StorageGRID REST endpoint version to use, overrides default management API version</td>
-<td>3</td>
-</tr>
-<tr>
-<td><code>counters</code></td>
-<td>list</td>
-<td>list of counters to collect (see notes below)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>plugins</code></td>
-<td>list</td>
-<td>plugins and their parameters to run on the collected data</td>
-<td></td>
-</tr>
-<tr>
-<td><code>export_options</code></td>
-<td>list</td>
-<td>parameters to pass to exporters (see notes below)</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h4 id="counters"><code>counters</code><a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
-<p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
-histograms. The exact property of each counter is fetched from StorageGRID and updated periodically.</p>
-<p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>policy.quotaObjectBytes =&gt; logical_quota</code>).</p>
-<p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
-<h4 id="export_options"><code>export_options</code><a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
-<p>Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
-exporter. For <a href="../prometheus-exporter/">Prometheus</a> and <a href="../influxdb-exporter/">InfluxDB</a>
-exporters, the following parameters can be defined:</p>
+<h2 id="running-harvest">Running Harvest<a class="headerlink" href="#running-harvest" title="Permanent link">&para;</a></h2>
+<p>By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091 so we can run both Cockpit and Prometheus. Line <code>2</code> below does that.</p>
+<p>With these changes, the <a href="../containers/#docker-compose">standard Harvest compose instructions</a> can be followed as normal now. In summary,
+1. Add the clusters, exporters, etc. to your <code>harvest.yml</code> file
+2. Generate a compose file from your <code>harvest.yml</code> by running <code>bin/harvest generate docker full --port --output harvest-compose.yml --promPort 9091</code>
+3. Bring everything up with <code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans</code></p>
+<p>After starting the containers, you can view them with <code>podman ps -a</code> or using Cockpit <code>https://host-ip:9090/podman</code>.</p>
+<div class="highlight"><pre><span></span><code>podman ps -a
+CONTAINER ID  IMAGE                                   COMMAND               CREATED        STATUS            PORTS                     NAMES
+45fd00307d0a  ghcr.io/netapp/harvest:latest           --poller unix --p...  <span class="m">5</span> seconds ago  Up <span class="m">5</span> seconds ago  <span class="m">0</span>.0.0.0:12990-&gt;12990/tcp  poller_unix_v21.11.0
+d40585bb903c  localhost/prom/prometheus:latest        --config.file<span class="o">=</span>/et...  <span class="m">5</span> seconds ago  Up <span class="m">5</span> seconds ago  <span class="m">0</span>.0.0.0:9091-&gt;9090/tcp    prometheus
+17a2784bc282  localhost/grafana/grafana:latest                              <span class="m">4</span> seconds ago  Up <span class="m">5</span> seconds ago  <span class="m">0</span>.0.0.0:3000-&gt;3000/tcp    grafana
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<p>Check <a href="https://github.com/containers/podman/blob/main/troubleshooting.md">Podman's troubleshooting docs</a></p>
+<h3 id="nothing-works">Nothing works<a class="headerlink" href="#nothing-works" title="Permanent link">&para;</a></h3>
+<p>Make sure the <code>DOCKER_HOST</code> <a href="#setup">env variable is set</a> and that this curl works.
+<div class="highlight"><pre><span></span><code>sudo curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> --unix-socket /var/run/docker.sock http://localhost/_ping
+</code></pre></div></p>
+<p>Make sure your containers can talk to each other.</p>
+<div class="highlight"><pre><span></span><code>ping prometheus
+PING prometheus <span class="o">(</span><span class="m">10</span>.88.2.3<span class="o">)</span>: <span class="m">56</span> data bytes
+<span class="m">64</span> bytes from <span class="m">10</span>.88.2.3: <span class="nv">seq</span><span class="o">=</span><span class="m">0</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">42</span> <span class="nv">time</span><span class="o">=</span><span class="m">0</span>.059 ms
+<span class="m">64</span> bytes from <span class="m">10</span>.88.2.3: <span class="nv">seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">42</span> <span class="nv">time</span><span class="o">=</span><span class="m">0</span>.065 ms
+</code></pre></div>
+<h3 id="errors-after-rebooting">Errors after rebooting<a class="headerlink" href="#errors-after-rebooting" title="Permanent link">&para;</a></h3>
+<p>After restarting the machine, I see errors like these when running <code>podman ps</code>.</p>
+<div class="highlight"><pre><span></span><code>podman ps -a
+ERRO[0000] error joining network namespace for container 424df6c: error retrieving network namespace at /run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09: failed to Statfs &quot;/run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09&quot;: no such file or directory
+</code></pre></div>
+<p>Run <code>podman info</code> and make sure <code>runRoot</code> points to <code>/run/user/$UID/containers</code> (see below). If it instead points to <code>/tmp/podman-run-$UID</code> you will likely have problems when restarting the machine. Typically this happens because you used su to become the harvest user or ran podman as root. You can fix this by logging in as the <code>harvest</code> user and running <code>podman system reset</code>.</p>
+<div class="highlight"><pre><span></span><code>podman info <span class="p">|</span> grep runRoot
+  runRoot: /run/user/1001/containers
+</code></pre></div>
+<h3 id="linger-errors">Linger errors<a class="headerlink" href="#linger-errors" title="Permanent link">&para;</a></h3>
+<p>When you logout, <a href="https://github.com/containers/podman/blob/main/troubleshooting.md#21-a-rootless-container-running-in-detached-mode-is-closed-at-logout">systemd</a> may remove some temp files and tear down Podman's rootless network. <strong>Workaround</strong> is to run the following as the harvest user. Details <a href="https://github.com/containers/podman/issues/6800">here</a></p>
+<div class="highlight"><pre><span></span><code>loginctl enable-linger
+</code></pre></div>
+<h2 id="versions">Versions<a class="headerlink" href="#versions" title="Permanent link">&para;</a></h2>
+<p>The following versions were used to validate this workflow.</p>
+<div class="highlight"><pre><span></span><code>podman version
+
+Version:      <span class="m">3</span>.2.3
+API Version:  <span class="m">3</span>.2.3
+Go Version:   go1.15.7
+Built:        Thu Jul <span class="m">29</span> <span class="m">11</span>:02:43 <span class="m">2021</span>
+OS/Arch:      linux/amd64
+
+docker-compose -v
+docker-compose version <span class="m">1</span>.29.2, build 5becea4c
+
+cat /etc/redhat-release
+Red Hat Enterprise Linux release <span class="m">8</span>.4 <span class="o">(</span>Ootpa<span class="o">)</span>
+</code></pre></div>
+<h1 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h1>
 <ul>
-<li><code>instances_keys</code> (list): display names of labels to export with each data-point</li>
-<li><code>instance_labels</code> (list): display names of labels to export as a separate <code>_label</code> metric</li>
-<li><code>include_all_labels</code> (bool): export all labels with each data-point (overrides previous two parameters)</li>
+<li>https://github.com/containers/podman</li>
+<li>https://www.redhat.com/sysadmin/sudo-rootless-podman</li>
+<li>https://www.redhat.com/sysadmin/podman-docker-compose</li>
+<li>https://fedoramagazine.org/use-docker-compose-with-podman-to-orchestrate-containers-on-fedora/</li>
+<li>https://podman.io/getting-started/network.html mentions the need for <code>podman-plugins</code>, otherwise rootless containers running in separate containers cannot see each other</li>
+<li><a href="https://github.com/containers/podman/blob/main/troubleshooting.md">Troubleshoot Podman</a></li>
 </ul>
 
 
@@ -1475,7 +1350,7 @@ exporters, the following parameters can be defined:</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../configure-ems/" class="md-footer__link md-footer__link--prev" aria-label="Previous: EMS" rel="prev">
+        <a href="../k8/" class="md-footer__link md-footer__link--prev" aria-label="Previous: K8" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1484,20 +1359,20 @@ exporters, the following parameters can be defined:</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              EMS
+              K8
             </div>
           </div>
         </a>
       
       
         
-        <a href="../configure-unix/" class="md-footer__link md-footer__link--next" aria-label="Next: Unix" rel="next">
+        <a href="../containerd/" class="md-footer__link md-footer__link--next" aria-label="Next: Containerd" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Unix
+              Containerd
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -1554,10 +1429,10 @@ exporters, the following parameters can be defined:</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
       
     
   </body>
