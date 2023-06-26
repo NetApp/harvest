@@ -5,8 +5,8 @@
 package conf
 
 import (
+	"dario.cat/mergo"
 	"fmt"
-	"github.com/imdario/mergo"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
