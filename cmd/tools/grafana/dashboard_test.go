@@ -236,8 +236,8 @@ func TestUnitsAndExprMatch(t *testing.T) {
 			}
 
 			for _, l := range location {
-				matchString := reg.FindString(l.expr)
-				if matchString != "" {
+				match := reg.MatchString(l.expr)
+				if match {
 					if expectedGrafanaUnit == unit {
 						t.Errorf(`%s should not have unit=%s because there is a division by a number %s path=%s title="%s"`,
 							metric, unit, l.dashboard, l.path, l.title)
