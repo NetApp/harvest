@@ -1260,12 +1260,12 @@ available via REST.</p>
 You can <a href="https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#discover-the-available-performance-counter-tables">check if the performance counter is available</a> 
 or <a href="#a-counter-is-missing-from-rest-what-do-i-do">ask the Harvest team on Discord</a>.</p>
 <h3 id="im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that">I'm using ONTAP version 9.12.X, but I want to continue using ZAPIs. How do I do that?<a class="headerlink" href="#im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that" title="Permanent link">&para;</a></h3>
-<p>There are two options:</p>
-<ol>
+<p>You can tell Harvest to continue using the ZAPI protocol by picking one of these options:</p>
+<ul>
+<li>Edit your <code>harvest.yml</code> config file and add the <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers"><code>prefer_zapi: true</code></a> option to the poller section. See <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers">configure Harvest</a> for details.</li>
 <li>Set the environment variable <code>HARVEST_NO_COLLECTOR_UPGRADE=1</code> and Harvest will not 
 upgrade your collector from ZAPI to REST.</li>
-<li>Edit your <code>harvest.yml</code> config file and add the <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers"><code>prefer_zapi</code></a> option to the poller section. See <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers">configure Harvest</a> for details.</li>
-</ol>
+</ul>
 <h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <p>Table of ONTAP versions, dates and API notes.</p>
 <table>
