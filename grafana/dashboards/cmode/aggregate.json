@@ -3726,7 +3726,6 @@
                   "mode": "off"
                 }
               },
-              "decimals": 3,
               "mappings": [],
               "min": 0,
               "thresholds": {
