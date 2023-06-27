@@ -3692,7 +3692,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of read-cache/write-cache blocks per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3738,7 +3738,7 @@
                   }
                 ]
               },
-              "unit": "short"
+              "unit": "ops"
             },
             "overrides": [
               {
@@ -3804,7 +3804,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of block destage/free per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3849,7 +3849,7 @@
                   }
                 ]
               },
-              "unit": "short"
+              "unit": "ops"
             },
             "overrides": [
               {
