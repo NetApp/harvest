@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -68,7 +69,7 @@ func (a *Admin) startServer() {
 		Msg("Admin node started")
 
 	if a.httpSD.TLS.KeyFile != "" {
-		if err := server.ListenAndServeTLS(a.httpSD.TLS.CertFile, a.httpSD.TLS.KeyFile); err != nil && err != http.ErrServerClosed {
+		if err := server.ListenAndServeTLS(a.httpSD.TLS.CertFile, a.httpSD.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			a.logger.Fatal().Err(err).
 				Str("listen", a.listen).
 				Str("ssl_cert", a.httpSD.TLS.CertFile).
@@ -76,7 +77,7 @@ func (a *Admin) startServer() {
 				Msg("Admin node could not listen")
 		}
 	} else {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			a.logger.Fatal().Err(err).
 				Str("listen", a.listen).
 				Msg("Admin node could not listen")

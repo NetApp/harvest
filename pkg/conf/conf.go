@@ -5,8 +5,8 @@
 package conf
 
 import (
+	"dario.cat/mergo"
 	"fmt"
-	"github.com/imdario/mergo"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -504,6 +504,7 @@ type Exporter struct {
 	// Prometheus specific
 	HeartBeatURL string `yaml:"heart_beat_url,omitempty"`
 	SortLabels   bool   `yaml:"sort_labels,omitempty"`
+	TLS          TLS    `yaml:"tls,omitempty"`
 
 	// InfluxDB specific
 	Bucket        *string `yaml:"bucket,omitempty"`

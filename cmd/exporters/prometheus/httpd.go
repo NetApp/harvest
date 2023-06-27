@@ -8,9 +8,12 @@ package prometheus
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -26,10 +29,30 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 		Handler:           mux,
 		ReadHeaderTimeout: 60 * time.Second,
 	}
-	p.Logger.Info().Str("addr", addr).Int("port", port).Msg("http server listen")
 
-	if err := server.ListenAndServe(); err != nil {
-		p.Logger.Fatal().Err(err).Msg("Failed to start server")
+	var url string
+	if p.Params.TLS.KeyFile != "" {
+		url = fmt.Sprintf("https://%s/metrics", net.JoinHostPort(addr, strconv.Itoa(port)))
+	} else {
+		url = fmt.Sprintf("%s://%s/metrics", "http", net.JoinHostPort(addr, strconv.Itoa(port)))
+	}
+
+	p.Logger.Info().Str("url", url).Msg("server listen")
+
+	if p.Params.TLS.KeyFile != "" {
+		if err := server.ListenAndServeTLS(p.Params.TLS.CertFile, p.Params.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			p.Logger.Fatal().Err(err).
+				Str("url", url).
+				Str("cert_file", p.Params.TLS.CertFile).
+				Str("key_file", p.Params.TLS.KeyFile).
+				Msg("Failed to start server")
+		}
+	} else {
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			p.Logger.Fatal().Err(err).
+				Str("url", url).
+				Msg("Failed to start server")
+		}
 	}
 }
 
