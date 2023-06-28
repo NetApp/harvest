@@ -17,7 +17,7 @@ In most cases, no action is required on your part.
 Harvest tries to use the protocol you specify in your `harvest.yml` config file.
 
 When specifying the ZAPI collector, Harvest will use the ZAPI protocol unless the cluster no longer speaks Zapi,
-in which cause, Harvest will switch to REST.
+in which case, Harvest will switch to REST.
 
 If you specify the REST collector, Harvest will use the REST protocol.
 
