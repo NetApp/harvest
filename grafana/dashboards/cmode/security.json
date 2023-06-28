@@ -1288,18 +1288,6 @@
                     ]
                   }
                 ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "State"
-                },
-                "properties": [
-                  {
-                    "id": "custom.filterable",
-                    "value": true
-                  }
-                ]
               }
             ]
           },
@@ -1333,37 +1321,14 @@
               "options": {
                 "include": {
                   "names": [
-                    "cluster",
+                    "aggr",
                     "isEncrypted",
                     "isHardwareEncrypted",
+                    "node",
+                    "state",
                     "svm",
-                    "volume",
-                    "state"
+                    "volume"
                   ]
-                }
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "isEncrypted": false,
-                  "isHardwareEncrypted": false
-                },
-                "indexByName": {
-                  "cluster": 2,
-                  "isEncrypted": 3,
-                  "isHardwareEncrypted": 4,
-                  "svm": 1,
-                  "volume": 0
-                },
-                "renameByName": {
-                  "cluster": "Cluster",
-                  "isEncrypted": "",
-                  "isHardwareEncrypted": "",
-                  "state": "State",
-                  "svm": "SVM",
-                  "volume": "Volume"
                 }
               }
             },
@@ -1395,8 +1360,26 @@
                   "isEncrypted": true,
                   "isHardwareEncrypted": true
                 },
-                "indexByName": {},
-                "renameByName": {}
+                "indexByName": {
+                  "Encryption Type": 4,
+                  "aggr": 2,
+                  "isEncrypted": 6,
+                  "isHardwareEncrypted": 7,
+                  "node": 3,
+                  "state": 5,
+                  "svm": 1,
+                  "volume": 0
+                },
+                "renameByName": {
+                  "aggr": "Aggregate",
+                  "cluster": "Cluster",
+                  "isEncrypted": "",
+                  "isHardwareEncrypted": "",
+                  "node": "Node",
+                  "state": "State",
+                  "svm": "SVM",
+                  "volume": "Volume"
+                }
               }
             }
           ],
@@ -1553,8 +1536,10 @@
                   "names": [
                     "anti_ransomware_state",
                     "cluster",
+                    "state",
                     "svm",
-                    "Value #B"
+                    "Value #B",
+                    "type"
                   ]
                 }
               }
@@ -1571,10 +1556,12 @@
                   "isHardwareEncrypted": false
                 },
                 "indexByName": {
-                  "Value #B": 2,
-                  "anti_ransomware_state": 3,
+                  "Value #B": 3,
+                  "anti_ransomware_state": 2,
                   "cluster": 1,
-                  "svm": 0
+                  "state": 5,
+                  "svm": 0,
+                  "type": 4
                 },
                 "renameByName": {
                   "Value #B": "Volume Count",
@@ -1585,6 +1572,7 @@
                   "isHardwareEncrypted": "",
                   "state": "State",
                   "svm": "SVM",
+                  "type": "Type",
                   "volume": "Volume"
                 }
               }
@@ -1688,18 +1676,6 @@
                     ]
                   }
                 ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "SVM"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": null
-                  }
-                ]
               }
             ]
           },
@@ -1733,10 +1709,12 @@
               "options": {
                 "include": {
                   "names": [
-                    "cluster",
+                    "aggr",
+                    "antiRansomwareState",
+                    "node",
+                    "state",
                     "svm",
-                    "volume",
-                    "antiRansomwareState"
+                    "volume"
                   ]
                 }
               }
@@ -1749,17 +1727,20 @@
                   "isHardwareEncrypted": false
                 },
                 "indexByName": {
-                  "cluster": 2,
-                  "isEncrypted": 3,
-                  "isHardwareEncrypted": 4,
+                  "aggr": 2,
+                  "antiRansomwareState": 4,
+                  "node": 3,
+                  "state": 5,
                   "svm": 1,
                   "volume": 0
                 },
                 "renameByName": {
+                  "aggr": "Aggregate",
                   "antiRansomwareState": "Anti-ransomware Status",
                   "cluster": "Cluster",
                   "isEncrypted": "",
                   "isHardwareEncrypted": "",
+                  "node": "Node",
                   "state": "State",
                   "svm": "SVM",
                   "volume": "Volume"
