@@ -14,11 +14,15 @@ In most cases, no action is required on your part.
 
 ## Harvest API Transition
 
-By default, Harvest will use ZAPIs until ONTAP version `9.12.1`.
-Beginning with ONTAP `9.12.1` and after, Harvest will default to REST.
+Harvest attempts to use the collector defined in your `harvest.yml` config file.
+
+When specifying the ZAPI collector, Harvest will use the ZAPI protocol unless the cluster no longer speaks Zapi,
+in which cause, Harvest will switch to REST.
+
+If you specify the REST collector, Harvest will use the REST protocol.
 
 Harvest includes a full set of REST templates that export identical metrics as the included ZAPI templates.
-No changes to dashboards or downstream metric-consumers will be required. 
+No changes to dashboards or downstream metric-consumers should be required. 
 See [below](#ive-added-counters-to-existing-zapi-templates-will-those-counters-work-in-rest) if you have 
 added metrics to the Harvest out-of-the-box templates.
 
@@ -28,51 +32,39 @@ Read on if you want to know how you can use REST sooner, or you want to take adv
 
 ### How does Harvest decide whether to use REST or ZAPI APIs?
 
-Harvest asks the cluster for its ONTAP version:
+Harvest attempts to use the collector defined in your `harvest.yml` config file.
+ 
+- If you specify the ZAPI collector, Harvest will use the ZAPI protocol as long as the cluster still speaks Zapi. 
+  If the cluster no longer understands Zapi, Harvest will switch to Rest.
 
-* If the version is earlier than `9.12.1`, Harvest will use the collector(s) defined in your `harvest.yml`.
-* If the version is `9.12.1` or later, Harvest will use REST, unless the [HARVEST_NO_COLLECTOR_UPGRADE](#im-using-ontap-version-912x-but-i-want-to-continue-using-zapis-how-do-i-do-that) environment variable is set or 
-  the [`prefer_zapi`](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) poller option is true.
-  When the environment variable or `prefer_zapi` option are set, Harvest will use ZAPIs unless the cluster no longer talks ZAPI. 
+- If you specify the REST collector, Harvest will use REST.
 
-```mermaid
-graph TD
-A(Harvest asks the cluster<br>for its ONTAP version) --> B(Version before<br>9.12.X?)
-A --> C(9.12.X)
-A --> D(9.13.X)
+Earlier versions of Harvest included a `prefer_zapi` poller option and a `HARVEST_NO_COLLECTOR_UPGRADE` environment variable.
+Both of these options are ignored in Harvest versions `23.08` onwards.
 
-B --> AA{Does your harvest.yml<br>specify a REST collector?}
-AA -->|No| F(Use ZAPI) 
-AA -->|Yes|G(Use REST)
-
-C --> CC{Is HARVEST_NO_COLLECTOR_UPGRADE<br>environment variable set?<br><br>Or is the prefer_zapi poller option setset?}
-CC --> |No| G
-CC --> |Yes|CZ(Use ZAPI) 
-
-D --> X(Use REST)
-```
 ### Why would I switch to REST before `9.13.1`?
 
-- You have advanced use cases to validate before ONTAP removes ZAPIs in `9.13.1`
-- You want to take advantage of new ONTAP features that are only available via REST (e.g. cloud features, event remediation's, name services, cluster peers, etc.)
+- You have advanced use cases to validate before ONTAP removes ZAPIs
+- You want to take advantage of new ONTAP features that are only available via REST (e.g., cloud features, event remediation, name services, cluster peers, etc.)
 - You want to collect a metric that is not available via ZAPI
 - You want to collect a metric from the ONTAP CLI. The REST API includes a private CLI pass-through to access any ONTAP CLI command
 
 ### Can I start using REST before `9.13.1`?
 
-Yes. Several customers already are. Be aware of the following limitations:
+Yes. Many customers do. Be aware of the following limitations:
 
-1. Harvest collects config counters via REST by enabling the `Rest` collector in your `harvest.yml`,
-   but ONTAP did not include performance counters via REST until [9.11.1](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#accessing-performance-counters-using-the-ontap-rest-api).
-   That means Harvest's `RestPerf` collector won't work until `9.11.1`.
-   ONTAP supports a subset of performance counters in `9.11.1`. The full set is available in `9.12.1`.
-
+1. ONTAP includes a subset of performance counters via REST beginning in ONTAP [9.11.1](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#accessing-performance-counters-using-the-ontap-rest-api).
 2. There may be performance metrics missing from versions of ONTAP earlier than `9.11.1`.
+
+Where performance metrics are concerned, because of point #2,
+our recommendation is to wait until at least ONTAP `9.12.1` before switching to the `RestPerf` collector.
+You can continue using the `ZapiPerf` collector until you switch.
 
 ### A counter is missing from REST. What do I do?
 
-The Harvest team has ensured that all the out-of-the-box ZAPI templates have matching REST templates with the same metrics.
-Any additional counters you have added may be missing in REST. 
+The Harvest team has ensured
+that all the out-of-the-box ZAPI templates have matching REST templates with identical metrics as of Harvest `22.11` and ONTAP `9.12.1`.
+Any additional ZAPI Perf counters you have added may be missing from ONTAP REST Perf. 
 
 Join the [Harvest discord channel](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help) and ask us about the counter.
 Sometimes we may know which release the missing counter is coming in, otherwise we can point you to the ONTAP
@@ -101,47 +93,35 @@ cluster-1:
   listed first in the list of `collectors`. When collecting a REST-only resource like, `nfs_client`, the Rest collector will be used
   since `nfs_client` objects are only available via REST.
 
-- When `cluster-1` is running ONTAP `9.12.1` (ONTAP still supports ZAPIs), the Rest collector will be used since
-  Harvest [automatically uses REST](#how-does-harvest-decide-whether-to-use-rest-or-zapi-apis) for clusters at `9.12.1`
-  or later.
+- When `cluster-1` is running ONTAP `9.18.1` (ONTAP no longer supports ZAPIs),
+  the Rest collector will be used since ONTAP can no longer speak the ZAPI protocol.
 
-- When `cluster-1` is running ONTAP `9.12.1` (ONTAP still supports ZAPIs) and the environment
-  variable `HARVEST_NO_COLLECTOR_UPGRADE` is set, the Zapi collector will be used because of the included environment
-  variable.
-
-- When `cluster-1` is running ONTAP `9.15.1` (ONTAP removed ZAPIs) and the environment
-  variable `HARVEST_NO_COLLECTOR_UPGRADE` is set, the Rest collector will be used since Harvest asks the cluster if it
-  speaks ZAPI and the cluster answers no.
-
-If you want the REST collector to be preferred over the ZAPI one, change the order in
+If you want the REST collector to be used in all cases, change the order in
 the `collectors` section so `Rest` comes before `Zapi`.
 
-If the resource does not exist for the first collector, the next collector will be tried. For example, when
-collecting `VolumeAnalytics` resources, the Zapi collector will not run because `VolumeAnalytics` objects are only
-available via REST.
+If the resource does not exist for the first collector, the next collector will be tried.
+Using the example above, when collecting `VolumeAnalytics` resources,
+the Zapi collector will not run for `VolumeAnalytics` objects since that resource is only available via REST.
+The Rest collector will run and collect the `VolumeAnalytics` objects.
 
 ### I've added counters to existing ZAPI templates. Will those counters work in REST?
 
 `ZAPI` config metrics often have a REST equivalent that can be found in ONTAP's [ONTAPI to REST mapping document](https://library.netapp.com/ecm/ecm_download_file/ECMLP2882104).
 
-ZAPI performance metrics may be missing in REST. If you have added new metrics or templates to the `ZAPIPerf` collector, those metrics likely aren't available via REST. 
-You can [check if the performance counter is available](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#discover-the-available-performance-counter-tables) 
-or [ask the Harvest team on Discord](#a-counter-is-missing-from-rest-what-do-i-do).
-
-### I'm using ONTAP version 9.12.X, but I want to continue using ZAPIs. How do I do that?
-
-You can tell Harvest to continue using the ZAPI protocol by picking one of these options:
-
-- Edit your `harvest.yml` config file and add the [`prefer_zapi: true`](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) option to the poller section. See [configure Harvest](https://netapp.github.io/harvest/latest/configure-harvest-basic/#pollers) for details.
-- Set the environment variable `HARVEST_NO_COLLECTOR_UPGRADE=1` and Harvest will not 
-upgrade your collector from ZAPI to REST.
+ZAPI performance metrics may be missing in REST.
+If you have added new metrics or templates to the `ZapiPerf` collector, those metrics likely aren't available via REST. 
+You can [check if the performance counter is available](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#discover-the-available-performance-counter-tables), [ask the Harvest team on Discord](#a-counter-is-missing-from-rest-what-do-i-do),
+or [ask ONTAP to add the counter](https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/How_to_request_a_feature_for_ONTAP_REST_API) you need.
 
 ## Reference
 
 Table of ONTAP versions, dates and API notes.
 
-| ONTAP<br/>version | Release<br/>Date | ONTAP<br/>Notes                                                                                                                                                                         |
-|------------------:|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|          `9.11.1` | Q2 2022          | First version with [REST performance metrics](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#accessing-performance-counters-using-the-ontap-rest-api) |
-|          `9.12.1` | Q4 2022          | ZAPIs still supported - REST performance metrics have parity with Harvest collected ZAPI performance metrics                                                                            |
-|          `9.13.1` | Q2 2023          | ZAPIs removed. REST only release - REST config and performance parity with ZAPIs                                                                                                        |
+| ONTAP<br/>version | Release<br/>Date | ONTAP<br/>Notes                                                                                                                                                                                                     |
+|------------------:|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|          `9.11.1` | Q2 2022          | First version of ONTAP with [REST performance metrics](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#accessing-performance-counters-using-the-ontap-rest-api)                    |
+|          `9.12.1` | Q4 2022          | ZAPIs still supported - REST performance metrics have parity with Harvest `22.11` collected ZAPI performance metrics                                                                                                |
+| `9.14.1`-`9.15.1` |                  | ZAPIs enabled if ONTAP upgrade detects they were being used earlier. New ONTAP installs default to REST only. ZAPIs may be enabled via CLI                                                                          |
+| `9.16.1`-`9.17.1` |                  | ZAPIs disabled. See [ONTAP communique](https://kb.netapp.com/onprem/ontap/dm/REST_API/FAQs_on_ZAPI_to_ONTAP_REST_API_transformation_for_CPC_(Customer_Product_Communiques)_notification) for details on re-enabling |
+|          `9.18.1` |                  | ZAPIs removed. No way to re-enable                                                                                                                                                                                  |
+
