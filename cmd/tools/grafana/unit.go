@@ -19,13 +19,9 @@ type Metric struct {
 func parseUnits() map[string]Metric {
 
 	excludeValidationMap := map[string]struct{}{
-		"flashpool_evict_destage_rate":  {},
-		"flashpool_evict_remove_rate":   {},
-		"flashpool_read_cache_ins_rate": {},
-		"flashpool_wc_write_blks_total": {},
-		"svm_nfs_read_throughput":       {},
-		"svm_nfs_throughput":            {},
-		"svm_nfs_write_throughput":      {},
+		"svm_nfs_read_throughput":  {},
+		"svm_nfs_throughput":       {},
+		"svm_nfs_write_throughput": {},
 	}
 	filePath := "units.yaml"
 
