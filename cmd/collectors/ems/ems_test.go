@@ -83,12 +83,8 @@ func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
 
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
-	if _, emsCount, _ := e.HandleResults(results, e.emsProp); emsCount == 0 {
-		t.Fatal("Failed to fetch data")
-	} else {
-		if emsCount != expectedInstanceLabelCount {
-			t.Fatalf("Instance labels count mismatch detected. Expected labels: %d actual labels: %d", expectedInstanceLabelCount, emsCount)
-		}
+	if _, emsCount, _ := e.HandleResults(results, e.emsProp); emsCount != expectedInstanceLabelCount {
+		t.Fatalf("Instance labels count mismatch detected. Expected labels: %d actual labels: %d", expectedInstanceLabelCount, emsCount)
 	}
 
 	// Check and evaluate ems events

@@ -643,7 +643,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 								Msg("Unable to find metric")
 						}
 					}
-					instanceLabelCount = +instanceLabelCountPs
+					instanceLabelCount += instanceLabelCountPs
 					isMatch = isMatch || isMatchPs
 				}
 			}
