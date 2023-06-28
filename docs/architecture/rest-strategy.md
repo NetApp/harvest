@@ -14,7 +14,7 @@ In most cases, no action is required on your part.
 
 ## Harvest API Transition
 
-Harvest attempts to use the collector defined in your `harvest.yml` config file.
+Harvest tries to use the protocol you specify in your `harvest.yml` config file.
 
 When specifying the ZAPI collector, Harvest will use the ZAPI protocol unless the cluster no longer speaks Zapi,
 in which cause, Harvest will switch to REST.
@@ -121,6 +121,7 @@ Table of ONTAP versions, dates and API notes.
 |------------------:|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |          `9.11.1` | Q2 2022          | First version of ONTAP with [REST performance metrics](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#accessing-performance-counters-using-the-ontap-rest-api)                    |
 |          `9.12.1` | Q4 2022          | ZAPIs still supported - REST performance metrics have parity with Harvest `22.11` collected ZAPI performance metrics                                                                                                |
+|          `9.13.1` |                  | ZAPIs still supported                                                                                                                                                                                               |
 | `9.14.1`-`9.15.1` |                  | ZAPIs enabled if ONTAP upgrade detects they were being used earlier. New ONTAP installs default to REST only. ZAPIs may be enabled via CLI                                                                          |
 | `9.16.1`-`9.17.1` |                  | ZAPIs disabled. See [ONTAP communique](https://kb.netapp.com/onprem/ontap/dm/REST_API/FAQs_on_ZAPI_to_ONTAP_REST_API_transformation_for_CPC_(Customer_Product_Communiques)_notification) for details on re-enabling |
 |          `9.18.1` |                  | ZAPIs removed. No way to re-enable                                                                                                                                                                                  |

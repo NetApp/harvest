@@ -30,9 +30,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	goversion "github.com/hashicorp/go-version"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/simple"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/storagegrid"
@@ -47,7 +45,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/schedule"
-	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -1131,88 +1128,33 @@ func (p *Poller) createClient() {
 }
 
 // upgradeCollector checks if the collector c should be upgraded to a REST collector.
-// If an upgrade is possible, a new collector will be returned, otherwise the original will be.
-//
-// ZAPI collectors should be upgraded to REST collectors when the ONTAP version is >= 9.12.1 unless
-// the HARVEST_NO_COLLECTOR_UPGRADE ENVVAR is set.
-// The check is performed by:
-//   - use the REST API to query the cluster version
-//   - compare the cluster version with the upgradeAfter version
-//
+// ZAPI collectors should be upgraded to REST collectors when the cluster no longer speaks Zapi
 // If any error happens during the REST query, the upgrade is aborted and the original collector c returned.
 func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
-	// Only attempt to upgrade Zapi* collectors
+	// If REST is desired, use REST
+	// If ZAPI is desired, check that the cluster speaks ZAPI and if so, use ZAPI otherwise use REST
+	// EMS and StorageGRID are will be ignored
+
 	if !strings.HasPrefix(c.Name, "Zapi") {
 		return c
 	}
 
-	r, err := p.newRestClient()
-	if err != nil {
-		logger.Debug().Err(err).Str("collector", c.Name).Msg("Failed to upgrade to Rest. Use collector")
-		return c
-	}
-	verWithDots := r.Client.Cluster().GetVersion()
-
-	return p.negotiateAPI(c, verWithDots, p.doZAPIsExist)
+	return p.negotiateAPI(c, p.doZAPIsExist)
 }
 
 // clusterVersion should be of the form 9.12.1
-func (p *Poller) negotiateAPI(c conf.Collector, clusterVersion string, checkZAPIs func() error) conf.Collector {
-	var (
-		ontapVersion *goversion.Version
-		noUpgrade    string
-		err          error
-	)
-	const (
-		upgradeVersion = "9.12.1"
-	)
-	ontapVersion, err = goversion.NewVersion(clusterVersion)
-	if err != nil {
-		logger.Error().Err(err).
-			Str("v", clusterVersion).
-			Str("collector", c.Name).
-			Msg("Failed to parse version")
-		return c
-	}
-
-	upgradeAfter, _ := goversion.NewVersion(upgradeVersion)
-	if ontapVersion.LessThan(upgradeAfter) {
-		logger.Debug().
-			Str("collector", c.Name).
-			Str("v", clusterVersion).
-			Str("upgradeVersion", upgradeVersion).
-			Msg("Do not upgrade collector")
-		return c
-	}
-
-	// For ONTAP versions 9.12.1+ use REST unless the HARVEST_NO_COLLECTOR_UPGRADE environment variable is set.
-	// When the environment variable is set, honor that request unless the cluster no longer speaks ZAPI.
-	noUpgrade = os.Getenv(NoUpgrade)
-	if noUpgrade == "" && !p.params.PreferZAPI {
-		logger.Info().Str("collector", c.Name).Str("v", clusterVersion).Msg("Use REST")
-		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
-		return conf.Collector{
-			Name:      upgradeCollector,
-			Templates: c.Templates,
-		}
-	}
-
-	err = checkZAPIs()
+func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Collector {
+	err := checkZAPIs()
 	// if there is an error talking to ONTAP, assume that is because ZAPIs no longer exist and use REST
 	if err != nil {
-		logger.Warn().Err(err).Str("collector", c.Name).Str("v", clusterVersion).Msg("ZAPI EOA. Use REST")
+		logger.Warn().Err(err).Str("collector", c.Name).Msg("ZAPI EOA. Use REST")
 		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
 		return conf.Collector{
 			Name:      upgradeCollector,
 			Templates: c.Templates,
 		}
 	}
-	logger.Info().
-		Str("collector", c.Name).
-		Str("v", clusterVersion).
-		Str(NoUpgrade, noUpgrade).
-		Bool("preferZAPI", p.params.PreferZAPI).
-		Msg("Use ZAPIs")
+
 	return c
 }
 
@@ -1235,19 +1177,6 @@ func (p *Poller) doZAPIsExist() error {
 		return err
 	}
 	return nil
-}
-
-func (p *Poller) newRestClient() (*rest.Rest, error) {
-	params := node.NewS("")
-	// Set client_timeout to suppress logging a msg about the default client_timeout during Rest client creation
-	params.NewChildS("client_timeout", rest2.DefaultTimeout)
-	Union2(params, p.params)
-	delegate := collector.New("Rest", "", p.options, params, p.auth)
-	r := &rest.Rest{
-		AbstractCollector: delegate,
-	}
-	err := r.InitClient()
-	return r, err
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
