@@ -144,10 +144,10 @@ func TestCollectorUpgrade(t *testing.T) {
 	tests := []test{
 		{name: "9.11 use ZAPI", clusterVersion: "9.11.1", askFor: "Zapi", wantCollector: "Zapi"},
 		{name: "9.11 use REST", clusterVersion: "9.11.1", askFor: "Rest", wantCollector: "Rest"},
-		{name: "9.12 upgrade", clusterVersion: "9.12.1", askFor: "Zapi", wantCollector: "Rest"},
+		{name: "9.12 upgrade", clusterVersion: "9.12.1", askFor: "Zapi", wantCollector: "Zapi"},
 		{name: "9.12 w/ envar", clusterVersion: "9.12.1", askFor: "Zapi", wantCollector: "Zapi", setEnvVar: true},
 		{name: "9.12 REST", clusterVersion: "9.12.3", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
-		{name: "9.13 RestPerf", clusterVersion: "9.13.1", askFor: "ZapiPerf", wantCollector: "RestPerf"},
+		{name: "9.13 RestPerf", clusterVersion: "9.13.1", askFor: "ZapiPerf", wantCollector: "ZapiPerf"},
 		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
 		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Zapi", wantCollector: "Zapi", setEnvVar: true},
 		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest", setEnvVar: true,
@@ -168,7 +168,7 @@ func TestCollectorUpgrade(t *testing.T) {
 			if tt.check == nil {
 				tt.check = zapisExist
 			}
-			newCollector := poller.negotiateAPI(collector, tt.clusterVersion, tt.check)
+			newCollector := poller.negotiateAPI(collector, tt.check)
 			if newCollector.Name != tt.wantCollector {
 				t.Errorf("got = [%s] want [%s]", newCollector.Name, tt.wantCollector)
 			}
