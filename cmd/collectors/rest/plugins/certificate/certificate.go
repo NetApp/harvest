@@ -139,6 +139,8 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 				// Any verification exception means it is not signed with the give key. i.e. not self-signed
 				instance.SetLabel("certificateIssuerType", "ca_signed")
 			}
+		} else {
+			instance.SetLabel("certificateIssuerType", "ca_signed")
 		}
 	}
 }

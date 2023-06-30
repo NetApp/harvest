@@ -92,109 +92,355 @@
         "x": 0,
         "y": 0
       },
-      "id": 153,
+      "id": 185,
       "panels": [],
-      "title": "Cluster Authentication And Certificates",
+      "title": "Highlights",
       "type": "row"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "blue",
-            "mode": "fixed"
+            "mode": "thresholds"
           },
+          "decimals": 0,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue",
+                "color": "green",
                 "value": null
               }
             ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 18,
+        "h": 3,
+        "w": 5,
         "x": 0,
         "y": 1
       },
-      "id": 154,
+      "id": 207,
       "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showUnfilled": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "count(count by (datacenter, cluster)(security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
+          "expr": "(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0))\n+\n(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0) )",
+          "instant": true,
           "interval": "",
-          "legendFormat": "Saml",
+          "legendFormat": "encrypted",
           "refId": "A"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "count(count by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
-          "format": "time_series",
+          "expr": "(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (1) )",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
-          "legendFormat": "Certificate",
+          "legendFormat": "total",
           "refId": "B"
-        },
-        {
-          "exemplar": false,
-          "expr": "count(count by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "Local",
-          "refId": "C"
-        },
-        {
-          "exemplar": false,
-          "expr": "count(count by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Ldap",
-          "refId": "D"
-        },
-        {
-          "exemplar": false,
-          "expr": "count(count by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \u003e 0)) or vector (0)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Active Directory",
-          "refId": "E"
         }
       ],
-      "title": "Authentication Methods",
-      "transformations": [],
-      "type": "bargauge"
+      "title": "Volume Encryption %",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "total"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted / total",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 5,
+        "y": 1
+      },
+      "id": 208,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "((count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"enabled|dry_run\"}) or vector (0)) / (count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\"}) or vector (1))) * 100",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Volume Anti-ransomware Status %",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "total"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted / total",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 10,
+        "y": 1
+      },
+      "id": 210,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "((count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0))\n/\n(count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\"}) or vector (1))) * 100",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "SVM Anti-ransomware Status %",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "total"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted / total",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 9,
+        "x": 15,
+        "y": 1
+      },
+      "id": 201,
+      "options": {
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.3.4",
+      "title": "Cluster Authentication Methods",
+      "type": "text"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 6,
+        "x": 15,
+        "y": 2
+      },
+      "id": 211,
+      "options": {
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.3.4",
+      "title": "Authentication Methods",
+      "type": "text"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 3,
+        "x": 21,
+        "y": 2
+      },
+      "id": 202,
+      "options": {
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.3.4",
+      "title": "Certificates",
+      "type": "text"
+    },
+    {
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
@@ -208,20 +454,20 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
+                "color": "blue",
                 "value": null
               }
             ]
           },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 3,
-        "x": 18,
-        "y": 1
+        "x": 15,
+        "y": 3
       },
       "id": 158,
       "links": [],
@@ -240,20 +486,174 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "exemplar": false,
-          "expr": "security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"}",
+          "expr": "count(count by (datacenter, cluster)(security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
           "format": "table",
-          "hide": true,
+          "hide": false,
           "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
           "refId": "A"
+        }
+      ],
+      "title": "SAML",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
         },
         {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 18,
+        "y": 3
+      },
+      "id": 192,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "(count(count by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) + count(count by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0))) or vector (0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "AD/LDAP",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 21,
+        "y": 3
+      },
+      "id": 193,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"})",
           "format": "time_series",
@@ -264,8 +664,6 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Expiring in < 60 days",
       "transformations": [
         {
@@ -289,157 +687,72 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
           "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-red",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 3,
-        "x": 21,
-        "y": 1
+        "h": 13,
+        "w": 5,
+        "x": 0,
+        "y": 4
       },
-      "id": 159,
-      "links": [],
+      "id": 204,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
         },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "count(security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expired\"})",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
+        "tooltip": {
+          "mode": "single"
         }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Expired",
-      "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 7
-      },
-      "id": 12,
-      "panels": [],
-      "title": "Volume Encryption",
-      "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "gradient-gauge",
-            "filterable": true
-          },
-          "decimals": 0,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Encrypted"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "max",
-                "value": 100
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 8
-      },
-      "id": 178,
-      "options": {
-        "showHeader": true
       },
       "pluginVersion": "8.1.2",
       "targets": [
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "Software",
           "refId": "A"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0) ",
-          "format": "time_series",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -447,989 +760,267 @@
           "refId": "B"
         },
         {
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (1) ",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Total",
-          "refId": "C"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Both",
-            "binary": {
-              "left": "Software",
-              "operator": "+",
-              "reducer": "sum",
-              "right": "Hardware"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "",
-            "binary": {
-              "left": "Both",
-              "operator": "/",
-              "reducer": "sum",
-              "right": "Total"
-            },
-            "mode": "binary",
-            "reduce": {
-              "include": [
-                "Saml",
-                "Certificate"
-              ],
-              "reducer": "sum"
-            }
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Encrypted",
-            "binary": {
-              "left": "Both / Total",
-              "operator": "*",
-              "reducer": "sum",
-              "right": "100"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Both": true,
-              "Both / Total": true,
-              "Certificate": true,
-              "Compliant": false,
-              "Compliant / Total": false,
-              "CompliantCluster": true,
-              "CompliantCluster / TotalCluster": true,
-              "Hardware": true,
-              "Saml": true,
-              "Saml / Certificate": false,
-              "Software": true,
-              "Time": true,
-              "Total": true,
-              "TotalCluster": true,
-              "perc": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "PercentCompliant": "",
-              "Saml / Certificate": "perc",
-              "Time": ""
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 0,
-        "y": 11
-      },
-      "id": 163,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Software Encrypted",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 6,
-        "y": 11
-      },
-      "id": 170,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Hardware Encrypted",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 12,
-        "y": 11
-      },
-      "id": 169,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\", isHardwareEncrypted=\"true\"}) or vector (0)",
-          "format": "time_series",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Software and Hardware Encrypted",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
+          "legendFormat": "Hardware and Software",
+          "refId": "D"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 18,
-        "y": 11
-      },
-      "id": 171,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"false\", isHardwareEncrypted=\"false\"}) or vector (0)",
-          "format": "time_series",
           "hide": false,
           "instant": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Not Encrypted",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "transparent",
-            "mode": "fixed"
-          },
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Encryption Type"
-            },
-            "properties": [
-              {
-                "id": "custom.filterable",
-                "value": true
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "falsefalse": {
-                        "index": 0,
-                        "text": "None"
-                      },
-                      "falsetrue": {
-                        "index": 1,
-                        "text": "Software"
-                      },
-                      "truefalse": {
-                        "index": 2,
-                        "text": "Hardware"
-                      },
-                      "truetrue": {
-                        "index": 3,
-                        "text": "Both"
-                      }
-                    },
-                    "type": "value"
-                  },
-                  {
-                    "options": {
-                      "match": "empty",
-                      "result": {
-                        "index": 4,
-                        "text": "None"
-                      }
-                    },
-                    "type": "special"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "State"
-            },
-            "properties": [
-              {
-                "id": "custom.filterable",
-                "value": true
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 14
-      },
-      "id": 155,
-      "options": {
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
+          "legendFormat": "Not Encrypted",
+          "refId": "E"
         }
       ],
       "title": "Volume Encryption",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "cluster",
-                "isEncrypted",
-                "isHardwareEncrypted",
-                "svm",
-                "volume",
-                "state"
-              ]
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "isEncrypted": false,
-              "isHardwareEncrypted": false
-            },
-            "indexByName": {
-              "cluster": 2,
-              "isEncrypted": 3,
-              "isHardwareEncrypted": 4,
-              "svm": 1,
-              "volume": 0
-            },
-            "renameByName": {
-              "cluster": "Cluster",
-              "isEncrypted": "",
-              "isHardwareEncrypted": "",
-              "state": "State",
-              "svm": "SVM",
-              "volume": "Volume"
-            }
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Encryption Type",
-            "binary": {
-              "left": "isHardwareEncrypted",
-              "operator": "+",
-              "reducer": "sum",
-              "right": "isEncrypted"
-            },
-            "mode": "binary",
-            "reduce": {
-              "include": [
-                "isEncrypted",
-                "isHardwareEncrypted"
-              ],
-              "reducer": "sum"
-            },
-            "replaceFields": false
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "isEncrypted": true,
-              "isHardwareEncrypted": true
-            },
-            "indexByName": {},
-            "renameByName": {}
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 21
-      },
-      "id": 16,
-      "panels": [],
-      "title": "Storage VM and Volume Anti-ransomware Status",
-      "type": "row"
+      "transformations": [],
+      "type": "piechart"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
+            "mode": "palette-classic"
           },
           "custom": {
-            "align": "auto",
-            "displayMode": "gradient-gauge",
-            "filterable": true
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
           },
           "decimals": 0,
           "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
+          "unit": "locale"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ENABLED"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              },
-              {
-                "id": "max",
-                "value": 100
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 18,
-        "x": 0,
-        "y": 22
+        "h": 13,
+        "w": 5,
+        "x": 5,
+        "y": 4
       },
-      "id": 179,
+      "id": 205,
       "options": {
-        "showHeader": true
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
       },
       "pluginVersion": "8.1.2",
       "targets": [
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"enabled\"}) or vector (0)",
           "instant": true,
           "interval": "",
-          "legendFormat": "Anti-ransomware Enabled",
+          "legendFormat": "Enabled in active mode",
           "refId": "A"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\"}) or vector (1)",
-          "format": "time_series",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"dry_run\"}) or vector (0)",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Anti-ransomware Supported",
+          "legendFormat": "Enabled in learning mode",
           "refId": "B"
-        }
-      ],
-      "title": "Storage VM Status",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "",
-            "binary": {
-              "left": "Anti-ransomware Enabled",
-              "operator": "/",
-              "reducer": "sum",
-              "right": "Anti-ransomware Supported"
-            },
-            "mode": "binary",
-            "reduce": {
-              "include": [
-                "Saml",
-                "Certificate"
-              ],
-              "reducer": "sum"
-            }
-          }
         },
         {
-          "id": "calculateField",
-          "options": {
-            "alias": "ENABLED",
-            "binary": {
-              "left": "Anti-ransomware Enabled / Anti-ransomware Supported",
-              "operator": "*",
-              "reducer": "sum",
-              "right": "100"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Anti-ransomware Enabled": true,
-              "Anti-ransomware Enabled / Anti-ransomware Supported": true,
-              "Anti-ransomware Supported": true,
-              "Certificate": true,
-              "Compliant": false,
-              "Compliant / Total": false,
-              "CompliantCluster": true,
-              "CompliantCluster / TotalCluster": true,
-              "Saml": true,
-              "Saml / Certificate": false,
-              "Time": true,
-              "Total": true,
-              "TotalCluster": true,
-              "perc": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "ENABLED": "",
-              "PercentCompliant": "",
-              "Saml / Certificate": "perc",
-              "Time": ""
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 18,
-        "y": 22
-      },
-      "id": 173,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
-          "format": "time_series",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\".*paused.*\"}) or vector (0)",
           "hide": false,
           "instant": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
+          "legendFormat": "Paused",
+          "refId": "D"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"disabled\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Disabled",
+          "refId": "E"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Enabled",
-      "type": "stat"
+      "title": "Volume Anti-ransomware Status",
+      "transformations": [],
+      "type": "piechart"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 21,
-        "y": 22
-      },
-      "id": 182,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"disabled\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disabled",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "transparent",
-            "mode": "fixed"
+            "mode": "palette-classic"
           },
           "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": true
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
           },
+          "decimals": 0,
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
+          "unit": "locale"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Anti-ransomware Status"
-            },
-            "properties": [
-              {
-                "id": "custom.filterable",
-                "value": true
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "disabled": {
-                        "index": 2,
-                        "text": "Disabled"
-                      },
-                      "dry_run": {
-                        "index": 1,
-                        "text": "Enabled (Learning mode)"
-                      },
-                      "enabled": {
-                        "index": 0,
-                        "text": "Enabled (Active mode)"
-                      }
-                    },
-                    "type": "value"
-                  },
-                  {
-                    "options": {
-                      "match": "empty",
-                      "result": {
-                        "index": 3,
-                        "text": "Disabled"
-                      }
-                    },
-                    "type": "special"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Volume Count"
-            },
-            "properties": [
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "match": "null",
-                      "result": {
-                        "index": 0,
-                        "text": "0"
-                      }
-                    },
-                    "type": "special"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 25
+        "h": 13,
+        "w": 5,
+        "x": 10,
+        "y": 4
       },
-      "id": 160,
+      "id": 209,
       "options": {
-        "showHeader": true,
-        "sortBy": []
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
       },
       "pluginVersion": "8.1.2",
       "targets": [
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
-          "format": "table",
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
           "instant": true,
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "Enabled",
           "refId": "A"
         },
         {
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "count by (svm)(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})",
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"disabled\"}) or vector (0)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Disabled",
+          "refId": "B"
+        }
+      ],
+      "title": "SVM Anti-ransomware Status",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 15,
+        "y": 8
+      },
+      "id": 190,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(count by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "",
-          "refId": "B"
+          "refId": "A"
         }
       ],
-      "title": "Storage VMs Anti-ransomware Status",
+      "title": "Certificate",
       "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "anti_ransomware_state",
-                "cluster",
-                "svm",
-                "Value #B"
-              ]
-            }
-          }
-        },
         {
           "id": "merge",
           "options": {}
@@ -1438,186 +1029,101 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "isEncrypted": false,
-              "isHardwareEncrypted": false
+              "Value #A": true
             },
-            "indexByName": {
-              "Value #B": 2,
-              "anti_ransomware_state": 3,
-              "cluster": 1,
-              "svm": 0
-            },
+            "indexByName": {},
             "renameByName": {
-              "Value #B": "Volume Count",
-              "antiRansomwareState": "Anti-ransomware Status",
-              "anti_ransomware_state": "Anti-ransomware Status",
               "cluster": "Cluster",
-              "isEncrypted": "",
-              "isHardwareEncrypted": "",
-              "state": "State",
-              "svm": "SVM",
-              "volume": "Volume"
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
             }
           }
         }
       ],
-      "type": "table"
+      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
+            "mode": "thresholds"
           },
-          "custom": {
-            "align": "auto",
-            "displayMode": "gradient-gauge",
-            "filterable": true,
-            "minWidth": 50
-          },
-          "decimals": 0,
           "mappings": [],
-          "max": 100,
-          "min": 0,
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "blue",
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "locale"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ENABLED"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              },
-              {
-                "id": "max",
-                "value": 100
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 32
+        "h": 5,
+        "w": 3,
+        "x": 18,
+        "y": 8
       },
-      "id": 180,
+      "id": 194,
+      "links": [],
       "options": {
-        "showHeader": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"enabled|dry_run\"}) or vector (0)",
-          "format": "time_series",
+          "expr": "count(count by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "antiRansomwareEnabled",
+          "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\"}) or vector (1)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "antiRansomwareSupported",
-          "refId": "B"
         }
       ],
-      "title": "Volume Status",
+      "title": "Local",
       "transformations": [
         {
-          "id": "calculateField",
-          "options": {
-            "alias": "",
-            "binary": {
-              "left": "antiRansomwareEnabled",
-              "operator": "/",
-              "reducer": "sum",
-              "right": "antiRansomwareSupported"
-            },
-            "mode": "binary",
-            "reduce": {
-              "include": [
-                "Saml",
-                "Certificate"
-              ],
-              "reducer": "sum"
-            }
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "ENABLED",
-            "binary": {
-              "left": "antiRansomwareEnabled / antiRansomwareSupported",
-              "operator": "*",
-              "reducer": "sum",
-              "right": "100"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
+          "id": "merge",
+          "options": {}
         },
         {
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Certificate": true,
-              "Compliant": false,
-              "Compliant / Total": false,
-              "CompliantCluster": true,
-              "CompliantCluster / TotalCluster": true,
-              "Saml": true,
-              "Saml / Certificate": false,
-              "Time": true,
-              "Total": true,
-              "TotalCluster": true,
-              "antiRansomwareEnabled": true,
-              "antiRansomwareEnabled / antiRansomwareSupported": true,
-              "antiRansomwareSupported": true,
-              "perc": true
+              "Value #A": true
             },
             "indexByName": {},
             "renameByName": {
-              "PercentCompliant": "",
-              "Saml / Certificate": "perc",
-              "Time": ""
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
             }
           }
         }
       ],
-      "type": "table"
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
@@ -1631,28 +1137,28 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-green",
+                "color": "dark-red",
                 "value": null
               }
             ]
           },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 0,
-        "y": 35
+        "h": 5,
+        "w": 3,
+        "x": 21,
+        "y": 8
       },
-      "id": 172,
+      "id": 191,
       "links": [],
       "options": {
         "colorMode": "value",
         "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
+        "justifyMode": "auto",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1663,12 +1169,12 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"enabled\"}) or vector (0)",
-          "format": "time_series",
+          "expr": "count(security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expired\"})",
+          "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -1677,370 +1183,576 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Enabled in active mode",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 6,
-        "y": 35
-      },
-      "id": 181,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
+      "title": "Expired",
+      "transformations": [
         {
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"dry_run\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Enabled in learning mode",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
+          "id": "merge",
+          "options": {}
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 12,
-        "y": 35
-      },
-      "id": 175,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
         {
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\".*paused.*\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Paused",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 18,
-        "y": 35
-      },
-      "id": 176,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"disabled\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disabled",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "transparent",
-            "mode": "fixed"
-          },
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Anti-ransomware Status"
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
             },
-            "properties": [
-              {
-                "id": "custom.filterable",
-                "value": true
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 12,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
               },
-              {
-                "id": "mappings",
-                "value": [
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
                   {
-                    "options": {
-                      "disable_in_progress": {
-                        "index": 3,
-                        "text": "Disabling"
-                      },
-                      "disabled": {
-                        "index": 2,
-                        "text": "Disabled"
-                      },
-                      "dry_run": {
-                        "index": 1,
-                        "text": "Enabled (Learning mode)"
-                      },
-                      "dry_run_paused": {
-                        "index": 5,
-                        "text": "Paused (Learning mode)"
-                      },
-                      "enable_paused": {
-                        "index": 4,
-                        "text": "Paused (Active mode)"
-                      },
-                      "enabled": {
-                        "index": 0,
-                        "text": "Enabled (Active mode)"
-                      }
-                    },
-                    "type": "value"
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Encryption Type"
+                },
+                "properties": [
+                  {
+                    "id": "custom.filterable",
+                    "value": true
                   },
                   {
-                    "options": {
-                      "match": "empty",
-                      "result": {
-                        "index": 6,
-                        "text": "Disabled"
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "falsefalse": {
+                            "index": 0,
+                            "text": "None"
+                          },
+                          "falsetrue": {
+                            "index": 1,
+                            "text": "Software"
+                          },
+                          "truefalse": {
+                            "index": 2,
+                            "text": "Hardware"
+                          },
+                          "truetrue": {
+                            "index": 3,
+                            "text": "Both"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "empty",
+                          "result": {
+                            "index": 4,
+                            "text": "None"
+                          }
+                        },
+                        "type": "special"
                       }
-                    },
-                    "type": "special"
+                    ]
                   }
                 ]
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "SVM"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": null
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 155,
+          "options": {
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Volume Encryption",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "aggr",
+                    "isEncrypted",
+                    "isHardwareEncrypted",
+                    "node",
+                    "state",
+                    "svm",
+                    "volume"
+                  ]
+                }
               }
-            ]
-          }
-        ]
-      },
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "Encryption Type",
+                "binary": {
+                  "left": "isHardwareEncrypted",
+                  "operator": "+",
+                  "reducer": "sum",
+                  "right": "isEncrypted"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "include": [
+                    "isEncrypted",
+                    "isHardwareEncrypted"
+                  ],
+                  "reducer": "sum"
+                },
+                "replaceFields": false
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "isEncrypted": true,
+                  "isHardwareEncrypted": true
+                },
+                "indexByName": {
+                  "Encryption Type": 4,
+                  "aggr": 2,
+                  "isEncrypted": 6,
+                  "isHardwareEncrypted": 7,
+                  "node": 3,
+                  "state": 5,
+                  "svm": 1,
+                  "volume": 0
+                },
+                "renameByName": {
+                  "aggr": "Aggregate",
+                  "cluster": "Cluster",
+                  "isEncrypted": "",
+                  "isHardwareEncrypted": "",
+                  "node": "Node",
+                  "state": "State",
+                  "svm": "SVM",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Volume Encryption",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 7,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 18
       },
-      "id": 183,
-      "options": {
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.1.2",
-      "targets": [
+      "id": 16,
+      "panels": [
         {
-          "exemplar": false,
-          "expr": "volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Anti-ransomware Status"
+                },
+                "properties": [
+                  {
+                    "id": "custom.filterable",
+                    "value": true
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "disabled": {
+                            "index": 2,
+                            "text": "Disabled"
+                          },
+                          "dry_run": {
+                            "index": 1,
+                            "text": "Enabled (Learning mode)"
+                          },
+                          "enabled": {
+                            "index": 0,
+                            "text": "Enabled (Active mode)"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "empty",
+                          "result": {
+                            "index": 3,
+                            "text": "Disabled"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volume Count"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 0,
+                            "text": "0"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 11
+          },
+          "id": 160,
+          "options": {
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count by (svm)(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "Storage VMs Anti-ransomware Status",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "anti_ransomware_state",
+                    "cluster",
+                    "state",
+                    "svm",
+                    "Value #B",
+                    "type"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "isEncrypted": false,
+                  "isHardwareEncrypted": false
+                },
+                "indexByName": {
+                  "Value #B": 3,
+                  "anti_ransomware_state": 2,
+                  "cluster": 1,
+                  "state": 5,
+                  "svm": 0,
+                  "type": 4
+                },
+                "renameByName": {
+                  "Value #B": "Volume Count",
+                  "antiRansomwareState": "Anti-ransomware Status",
+                  "anti_ransomware_state": "Anti-ransomware Status",
+                  "cluster": "Cluster",
+                  "isEncrypted": "",
+                  "isHardwareEncrypted": "",
+                  "state": "State",
+                  "svm": "SVM",
+                  "type": "Type",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Storage VM Anti-ransomware Status",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 196,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Anti-ransomware Status"
+                },
+                "properties": [
+                  {
+                    "id": "custom.filterable",
+                    "value": true
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "disable_in_progress": {
+                            "index": 3,
+                            "text": "Disabling"
+                          },
+                          "disabled": {
+                            "index": 2,
+                            "text": "Disabled"
+                          },
+                          "dry_run": {
+                            "index": 1,
+                            "text": "Enabled (Learning mode)"
+                          },
+                          "dry_run_paused": {
+                            "index": 5,
+                            "text": "Paused (Learning mode)"
+                          },
+                          "enable_paused": {
+                            "index": 4,
+                            "text": "Paused (Active mode)"
+                          },
+                          "enabled": {
+                            "index": 0,
+                            "text": "Enabled (Active mode)"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "empty",
+                          "result": {
+                            "index": 6,
+                            "text": "Disabled"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 21
+          },
+          "id": 183,
+          "options": {
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Volume Anti-ransomware Status",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "aggr",
+                    "antiRansomwareState",
+                    "node",
+                    "state",
+                    "svm",
+                    "volume"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "isEncrypted": false,
+                  "isHardwareEncrypted": false
+                },
+                "indexByName": {
+                  "aggr": 2,
+                  "antiRansomwareState": 4,
+                  "node": 3,
+                  "state": 5,
+                  "svm": 1,
+                  "volume": 0
+                },
+                "renameByName": {
+                  "aggr": "Aggregate",
+                  "antiRansomwareState": "Anti-ransomware Status",
+                  "cluster": "Cluster",
+                  "isEncrypted": "",
+                  "isHardwareEncrypted": "",
+                  "node": "Node",
+                  "state": "State",
+                  "svm": "SVM",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
         }
       ],
       "title": "Volume Anti-ransomware Status",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "cluster",
-                "svm",
-                "volume",
-                "antiRansomwareState"
-              ]
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "isEncrypted": false,
-              "isHardwareEncrypted": false
-            },
-            "indexByName": {
-              "cluster": 2,
-              "isEncrypted": 3,
-              "isHardwareEncrypted": 4,
-              "svm": 1,
-              "volume": 0
-            },
-            "renameByName": {
-              "antiRansomwareState": "Anti-ransomware Status",
-              "cluster": "Cluster",
-              "isEncrypted": "",
-              "isHardwareEncrypted": "",
-              "state": "State",
-              "svm": "SVM",
-              "volume": "Volume"
-            }
-          }
-        }
-      ],
-      "type": "table"
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -2076,7 +1788,17 @@
       },
       {
         "allValue": null,
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": [
+            "rest",
+            "zapi"
+          ],
+          "value": [
+            "rest",
+            "zapi"
+          ]
+        },
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\"},datacenter)",
         "description": null,
@@ -2102,7 +1824,15 @@
       },
       {
         "allValue": null,
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
         "description": null,
@@ -2128,7 +1858,15 @@
       },
       {
         "allValue": null,
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"},svm)",
         "description": null,
@@ -2171,5 +1909,5 @@
   "timezone": "",
   "title": "ONTAP: Security",
   "uid": "",
-  "version": 2
+  "version": 3
 }
