@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/rs/zerolog v1.29.1
-	github.com/shirou/gopsutil/v3 v3.23.5
+	github.com/shirou/gopsutil/v3 v3.23.6
 	github.com/spf13/cobra v1.7.0
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/pretty v1.2.1
