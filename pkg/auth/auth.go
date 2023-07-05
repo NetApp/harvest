@@ -36,6 +36,19 @@ func (c *Credentials) Password() string {
 	return c.password(c.poller)
 }
 
+// Expire will reset the credential schedule if the receiver has a CredentialsScript
+// Otherwise it will do nothing.
+// Resetting the schedule will cause the next call to Password to fetch the credentials
+func (c *Credentials) Expire() {
+	if c.poller.CredentialsScript.Path == "" {
+		return
+	}
+	c.authMu.Lock()
+	defer c.authMu.Unlock()
+	c.nextUpdate = time.Time{}
+	c.poller.Password = ""
+}
+
 func (c *Credentials) password(poller *conf.Poller) string {
 	if poller.CredentialsScript.Path == "" {
 		return poller.Password
@@ -168,6 +181,10 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 	c.poller.Username = defaultAuth.Username
 	c.poller.Password = defaultAuth.Password
 	return defaultAuth, nil
+}
+
+func (c *Credentials) HasCredentialScript() bool {
+	return c.poller.CredentialsScript.Path != ""
 }
 
 func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
