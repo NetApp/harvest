@@ -12,6 +12,17 @@ import (
 	"testing"
 )
 
+// Skip aggr_efficiency template metrics since the Rest collector does not have a separate template
+
+var skipDuplicates = map[string]bool{
+	"aggr_logical_used_wo_snapshots":             true,
+	"aggr_logical_used_wo_snapshots_flexclones":  true,
+	"aggr_physical_used_wo_snapshots":            true,
+	"aggr_physical_used_wo_snapshots_flexclones": true,
+	"aggr_total_logical_used":                    true,
+	"aggr_total_physical_used":                   true,
+}
+
 func TestPollerMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
 	err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
@@ -58,15 +69,16 @@ func TestPollerMetrics(t *testing.T) {
 
 			if openBracket > 0 && closeBracket > 0 && firstSpace > 0 {
 				// Turn metric and labels into a unique key
-				key := metricAndLabelKey(row[:openBracket], row[openBracket+1:])
+				metricName := row[:openBracket]
+				key := metricAndLabelKey(metricName, row[openBracket+1:])
 				if uniqueSetOfMetricLabels[key] {
-					if shouldSkipMetric(key) {
+					_, ok := skipDuplicates[metricName]
+					if ok {
 						log.Trace().Str("metric", key).Msg("Ignore duplicate")
 						continue
-					} else {
-						duplicateMetrics = append(duplicateMetrics,
-							fmt.Sprintf("Duplicate metric poller=%s, got >1 want 1 of %s", pollerName, key))
 					}
+					duplicateMetrics = append(duplicateMetrics,
+						fmt.Sprintf("Duplicate metric poller=%s, got >1 want 1 of %s", pollerName, key))
 				}
 				uniqueSetOfMetricLabels[key] = true
 				metricValue, _ := strconv.Atoi(strings.TrimSpace(row[(closeBracket + 1):]))
@@ -142,15 +154,4 @@ func readLabel(sample string, i int) (string, int) {
 	}
 	end := i + equalsIndex
 	return sample[i:end], end
-}
-
-func shouldSkipMetric(dupMetric string) bool {
-	// Skip metrics that are belongs to aggr_efficiency template as Rest collector don't have separate template
-	skip := []string{"aggr_logical_used_wo_snapshots", "aggr_logical_used_wo_snapshots_flexclones", "aggr_physical_used_wo_snapshots", "aggr_physical_used_wo_snapshots_flexclones", "aggr_total_logical_used", "aggr_total_physical_used"}
-	for _, s := range skip {
-		if strings.HasPrefix(dupMetric, s) {
-			return true
-		}
-	}
-	return false
 }
