@@ -57,8 +57,8 @@ func TestChangeLogModified(t *testing.T) {
 			t.Errorf("ChangeLog instances size expected %d, actual %d", 2, len(cl.GetInstances()))
 		} else {
 			for _, i := range cl.GetInstances() {
-				if i.GetLabel(changeTypeLabel) != modify {
-					t.Errorf("ChangeLog %s label expected %s, actual %s", changeTypeLabel, modify, i.GetLabel(changeTypeLabel))
+				if i.GetLabel(opLabel) != update {
+					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, update, i.GetLabel(opLabel))
 				}
 			}
 		}
@@ -102,8 +102,8 @@ func TestChangeLogCreated(t *testing.T) {
 			t.Errorf("ChangeLog instances size expected %d, actual %d", 1, len(cl.GetInstances()))
 		} else {
 			for _, i := range cl.GetInstances() {
-				if i.GetLabel(changeTypeLabel) != create {
-					t.Errorf("ChangeLog %s label expected %s, actual %s", changeTypeLabel, create, i.GetLabel(changeTypeLabel))
+				if i.GetLabel(opLabel) != create {
+					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, create, i.GetLabel(opLabel))
 				}
 			}
 		}
@@ -138,8 +138,8 @@ func TestChangeLogDeleted(t *testing.T) {
 			t.Errorf("ChangeLog instances size expected %d, actual %d", 1, len(cl.GetInstances()))
 		} else {
 			for _, i := range cl.GetInstances() {
-				if i.GetLabel(changeTypeLabel) != del {
-					t.Errorf("ChangeLog %s label expected %s, actual %s", changeTypeLabel, del, i.GetLabel(changeTypeLabel))
+				if i.GetLabel(opLabel) != del {
+					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, del, i.GetLabel(opLabel))
 				}
 			}
 		}

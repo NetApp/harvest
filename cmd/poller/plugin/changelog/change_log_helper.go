@@ -9,7 +9,7 @@ import (
 // Entry represents a single ChangeLog entry
 type Entry struct {
 	Object        string   `yaml:"object"`
-	TrackLabels   []string `yaml:"track_labels"`
+	Track         []string `yaml:"track"`
 	PublishLabels []string `yaml:"publish_labels"`
 }
 
@@ -22,20 +22,20 @@ type Config struct {
 const defaultChangeLogTemplate = `
 ChangeLog:
   - object: svm
-    track_labels:
+    track:
       - svm
       - state
       - type
     publish_labels:
       - svm
   - object: node
-    track_labels:
+    track:
       - node
       - location
     publish_labels:
       - node
   - object: volume
-    track_labels:
+    track:
       - node
       - volume
       - svm

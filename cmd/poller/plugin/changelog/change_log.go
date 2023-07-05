@@ -9,15 +9,15 @@ import (
 
 // Constants for ChangeLog metrics and labels
 const (
-	changeLog       = "change"
-	objectTpeLabel  = "object_type"
-	changeTypeLabel = "change_type"
-	create          = "create"
-	modify          = "modify"
-	del             = "delete"
-	labelName       = "label_name"
-	oldLabelValue   = "old_label_value"
-	newLabelValue   = "new_label_value"
+	changeLog     = "change"
+	objectLabel   = "object"
+	opLabel       = "op"
+	create        = "create"
+	update        = "update"
+	del           = "delete"
+	track         = "track"
+	oldLabelValue = "old_value"
+	newLabelValue = "new_value"
 )
 
 // Metrics to be used in ChangeLog
@@ -36,13 +36,13 @@ type ChangeLog struct {
 
 // Change represents a single change entry in the ChangeLog
 type Change struct {
-	key           string
-	object        string
-	changeType    string
-	labels        map[string]string
-	labelName     string
-	oldLabelValue string
-	newLabelValue string
+	key      string
+	object   string
+	op       string
+	labels   map[string]string
+	track    string
+	oldValue string
+	newValue string
 }
 
 // New initializes a new instance of the ChangeLog plugin
@@ -168,10 +168,10 @@ func (c *ChangeLog) Run(data map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				if prevInstance == nil {
 					//instance created
 					change := &Change{
-						key:        uuid + "_" + object,
-						object:     object,
-						changeType: create,
-						labels:     make(map[string]string),
+						key:    uuid + "_" + object,
+						object: object,
+						op:     create,
+						labels: make(map[string]string),
 					}
 					for _, l := range c.changeLogConfig[object].PublishLabels {
 						labelValue := instance.GetLabel(l)
@@ -184,17 +184,17 @@ func (c *ChangeLog) Run(data map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 					c.createChangeLogInstance(changeMat, change)
 				} else {
 					// check for any modification
-					cur, old := instance.GetLabels().CompareLabels(prevInstance.GetLabels(), c.changeLogConfig[object].TrackLabels)
+					cur, old := instance.GetLabels().CompareLabels(prevInstance.GetLabels(), c.changeLogConfig[object].Track)
 					if !cur.IsEmpty() {
 						for currentLabel, newLabel := range cur.Iter() {
 							change := &Change{
-								key:           uuid + "_" + object + "_" + currentLabel,
-								object:        object,
-								changeType:    modify,
-								labels:        make(map[string]string),
-								labelName:     currentLabel,
-								oldLabelValue: old.Get(currentLabel),
-								newLabelValue: newLabel,
+								key:      uuid + "_" + object + "_" + currentLabel,
+								object:   object,
+								op:       update,
+								labels:   make(map[string]string),
+								track:    currentLabel,
+								oldValue: old.Get(currentLabel),
+								newValue: newLabel,
 							}
 							for _, l := range c.changeLogConfig[object].PublishLabels {
 								labelValue := instance.GetLabel(l)
@@ -205,9 +205,9 @@ func (c *ChangeLog) Run(data map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 								}
 							}
 							// add changed labelname and its old, new value
-							change.labels[labelName] = currentLabel
+							change.labels[track] = currentLabel
 							change.labels[oldLabelValue] = old.Get(currentLabel)
-							change.labels[newLabelValue] = newLabelValue
+							change.labels[newLabelValue] = newLabel
 							c.createChangeLogInstance(changeMat, change)
 						}
 					}
@@ -223,10 +223,10 @@ func (c *ChangeLog) Run(data map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				}
 				if prevInstance != nil {
 					change := &Change{
-						key:        uuid + "_" + object,
-						object:     object,
-						changeType: del,
-						labels:     make(map[string]string),
+						key:    uuid + "_" + object,
+						object: object,
+						op:     del,
+						labels: make(map[string]string),
 					}
 					for _, l := range c.changeLogConfig[object].PublishLabels {
 						labelValue := prevInstance.GetLabel(l)
@@ -268,8 +268,8 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 		return
 	}
 	// copy keys
-	cInstance.SetLabel(objectTpeLabel, change.object)
-	cInstance.SetLabel(changeTypeLabel, change.changeType)
+	cInstance.SetLabel(objectLabel, change.object)
+	cInstance.SetLabel(opLabel, change.op)
 	for k, v := range change.labels {
 		cInstance.SetLabel(k, v)
 	}
