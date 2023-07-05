@@ -1,6 +1,6 @@
 
 
-name:                     Fcp
+name:                     FcpPort
 query:                    fcp_port
 object:                   fcp
 
