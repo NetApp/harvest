@@ -12,6 +12,7 @@ counters:
   - ^model
   - ^serial_number                                    => serial
   - ^state
+  - ^uuid
   - ^version.full                                     => version
   - controller.failed_fan.count                       => failed_fan
   - controller.failed_power_supply.count              => failed_power
@@ -34,6 +35,7 @@ plugins:
         - new_status healthy true up `0`
       join:
         - warnings `; ` failed_fan_message,failed_power_message,over_temperature
+  - ChangeLog
 
 export_options:
   instance_keys:

@@ -13,6 +13,7 @@ counters:
     - ^home-port                    => home_port
     - ^ipspace                      => ipspace
     - ^is-home                      => is_home
+    - ^lif-uuid                     => uuid
     - ^operational-status           => status
     - ^subnet-name                  => subnet
     - data-protocols:

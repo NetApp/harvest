@@ -12,7 +12,7 @@ counters:
         - grow-threshold-percent
         - maximum-size
     - volume-id-attributes:
-        - ^^instance-uuid                       => instance_uuid
+        - ^^instance-uuid                       => uuid
         - ^containing-aggregate-uuid            => aggrUuid
         - ^name                                 => volume
         - ^owning-vserver-name                  => svm
@@ -100,6 +100,7 @@ plugins:
         - svm_root root_volume `false` `No`
         - node_root root_volume `true` `Yes`
         - svm_root root_volume `true` `Yes`
+  - ChangeLog
 
 export_options:
   instance_keys:

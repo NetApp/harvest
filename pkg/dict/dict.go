@@ -4,7 +4,11 @@
 
 package dict
 
-import "strings"
+import (
+	"github.com/netapp/harvest/v2/pkg/util"
+	"reflect"
+	"strings"
+)
 
 type Dict struct {
 	dict map[string]string
@@ -107,4 +111,17 @@ func (d *Dict) IsEmpty() bool {
 
 func (d *Dict) Size() int {
 	return len(d.dict)
+}
+
+func (d *Dict) CompareLabels(prev *Dict, labels []string) (*Dict, *Dict) {
+	cur := New()
+	old := New()
+	for key, val1 := range d.dict {
+		val2, ok := prev.dict[key]
+		if util.Contains(labels, key) && (!ok || !reflect.DeepEqual(val1, val2)) {
+			cur.dict[key] = val1
+			old.dict[key] = val2
+		}
+	}
+	return cur, old
 }

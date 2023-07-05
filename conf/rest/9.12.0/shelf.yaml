@@ -10,6 +10,7 @@ counters:
   - ^module_type          => module_type
   - ^name                 => shelf
   - ^state                => state
+  - ^uid                  => uuid
   - disk_count            => disk_count
 
 endpoints:

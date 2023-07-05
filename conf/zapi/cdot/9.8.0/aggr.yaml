@@ -5,7 +5,7 @@ object:             aggr
 
 counters:
   aggr-attributes:
-    - ^^aggregate-uuid
+    - ^^aggregate-uuid                           => uuid
     - ^aggregate-name                            => aggr
     - aggr-inode-attributes:
         - files-private-used
@@ -63,11 +63,12 @@ counters:
 plugins:
   - Aggregate
   - LabelAgent:
-    exclude_equals:
-      - root_aggr `true`
-    # metric label zapi_value rest_value `default_value`
-    value_to_num:
-      - new_status state online online `0`
+      exclude_equals:
+        - root_aggr `true`
+      # metric label zapi_value rest_value `default_value`
+      value_to_num:
+        - new_status state online online `0`
+  - ChangeLog
 
 export_options:
   instance_keys:

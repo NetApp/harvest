@@ -5,7 +5,7 @@ object:     svm
 
 counters:
   vserver-info:
-    - ^^uuid                                  => svm_uuid
+    - ^^uuid                                  => uuid
     - ^anti-ransomware-default-volume-state   => anti_ransomware_state
     - ^state                                  => state
     - ^vserver-name                           => svm
@@ -29,6 +29,7 @@ plugins:
         - new_status state online online `0`
         - ldap_signed ldap_session_security sign sign `0`
         - ldap_encrypted ldap_session_security seal seal `0`
+  - ChangeLog
 
 export_options:
   instance_keys:
@@ -55,4 +56,3 @@ export_options:
     - smb_signing_required
     - state
     - type
-

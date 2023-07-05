@@ -6,11 +6,11 @@ object:                     shelf
 
 counters:
   storage-shelf-info:
-    - ^^shelf-uid
+    - ^^shelf-uid              => uuid
     - ^module-type
     - ^op-status
     - ^serial-number
-    - ^shelf => shelf
+    - ^shelf                   => shelf
     - ^shelf-model
     - ^state
     - ^vendor-name

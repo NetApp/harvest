@@ -17,6 +17,7 @@ counters:
   - ^state                                        => state
   - ^style                                        => style
   - ^type                                         => type
+  - ^uuid                                         => uuid
   - autosize.grow_threshold                       => autosize_grow_threshold_percent
   - autosize.maximum                              => autosize_maximum_size
   - snapshot_count
@@ -119,6 +120,7 @@ plugins:
 #        - volume `MDV_CRS_.+`
 #        # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
 #        - volume `MDV_aud_.+`
+  - ChangeLog
 
 export_options:
   instance_keys:

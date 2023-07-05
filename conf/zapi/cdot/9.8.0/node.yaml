@@ -25,6 +25,7 @@ counters:
     - ^node-location                        => location
     - ^node-model                           => model
     - ^node-serial-number                   => serial
+    - ^node-uuid                            => uuid
 #    - ^node-storage-configuration          => storage_configuration
     - ^node-vendor                          => vendor
     - ^product-version                      => version
@@ -46,6 +47,7 @@ plugins:
       - new_status healthy true up `0`
     join:
       - warnings `; ` failed_fan_message,failed_power_message,over_temperature
+  - ChangeLog
 
 export_options:
   instance_keys:

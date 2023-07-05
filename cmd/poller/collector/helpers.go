@@ -19,6 +19,7 @@ import (
 	"github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/max"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
@@ -209,6 +210,10 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 
 	if name == "MetricAgent" {
 		return metricagent.New(abc)
+	}
+
+	if name == "ChangeLog" {
+		return changelog.New(abc)
 	}
 
 	return nil

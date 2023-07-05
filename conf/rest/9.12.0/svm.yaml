@@ -9,6 +9,7 @@ counters:
   - ^anti_ransomware_default_volume_state   => anti_ransomware_state
   - ^operational_state                      => state
   - ^type                                   => type
+  - ^uuid                                   => uuid
 
 endpoints:
   - query: api/svm/svms
@@ -58,6 +59,7 @@ plugins:
         - new_status state online online `0`
         - ldap_signed ldap_session_security sign sign `0`
         - ldap_encrypted ldap_session_security seal seal `0`
+  - ChangeLog
 
 export_options:
   instance_keys:

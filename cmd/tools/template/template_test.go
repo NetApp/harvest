@@ -595,6 +595,7 @@ func findCustomPlugins(path string, template *node.Node, model *TemplateModel) e
 		"Aggregator":  true,
 		"Max":         true,
 		"Tenant":      true,
+		"ChangeLog":   true,
 	}
 	for _, child := range plug[0].Children {
 		name := child.GetNameS()

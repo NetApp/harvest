@@ -6,7 +6,7 @@ object:           disk
 counters:
   storage-disk-info:
     - ^^disk-name                 => disk
-    - ^^disk-uid
+    - ^^disk-uid                  => uuid
     - disk-inventory-info:
         - ^disk-type              => type
         - ^is-shared              => shared
