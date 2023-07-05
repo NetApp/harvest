@@ -79,7 +79,7 @@ func emsParams(emsConfigPath string) *node.Node {
 }
 
 func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
@@ -117,7 +117,7 @@ func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
 }
 
 func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	// Simulated bookend resolving ems "wafl.vvol.online" and ems "hm.alert.cleared" with alert_id value as "RaidLeftBehindAggrAlert"
 	results := collectors.JSONToGson(path, true)
@@ -159,7 +159,7 @@ func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
 
 func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 	var notGeneratedEmsNames, notAutoResolvedEmsNames []string
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
@@ -187,9 +187,8 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 	}
 
 	// Evaluate the cache for existence of these auto resolve ems.
-	// Sleep for 1 second and check LUN.offline ems got auto resolved
-	time.Sleep(1 * time.Second)
-	e.updateMatrix()
+	// Simulate one second in the future and check that the LUN.offline ems event is auto resolved
+	e.updateMatrix(time.Now().Add(1 * time.Second))
 	// Check and evaluate bookend ems events got auto resolved successfully.
 	for generatedEmsName, mx := range e.Matrix {
 		if util.Contains(autoresolveEmsNames, generatedEmsName) {
@@ -209,9 +208,9 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 		t.Fatalf("These Bookend Ems haven't been auto resolved: %s", notAutoResolvedEmsNames)
 	}
 
-	// Sleep for another 1 second and check "LUN.offline" ems got removed from cache and "monitor.fan.critical" got auto resolved
-	time.Sleep(1 * time.Second)
-	e.updateMatrix()
+	// Simulate two seconds in future and check that the "LUN.offline" ems event was removed from the cache and
+	// "monitor.fan.critical" is auto resolved
+	e.updateMatrix(time.Now().Add(2 * time.Second))
 	notAutoResolvedEmsNames = make([]string, 0)
 	// Check bookend ems event got removed from cache successfully.
 	if e.Matrix["LUN.offline"] != nil {
