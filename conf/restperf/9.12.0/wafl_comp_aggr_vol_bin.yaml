@@ -4,6 +4,7 @@ object:                   fabricpool
 
 counters:
   - ^^id
+  - ^cloud_target.name           => cloud_target
   - ^svm.name                    => svm
   - ^volume.name                 => volume
   - cloud_bin_op                 => cloud_bin_operation
@@ -14,6 +15,7 @@ plugins:
 
 export_options:
   instance_keys:
+    - cloud_target
     - svm
     - volume
 
