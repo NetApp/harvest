@@ -79,6 +79,10 @@ func TestPollerMetrics(t *testing.T) {
 	}
 	sort.Strings(duplicateMetrics)
 	for _, dupMetric := range duplicateMetrics {
+		if shouldSkipMetric(dupMetric) {
+			log.Info().Str("metric", dupMetric).Msg("Skip")
+			continue
+		}
 		t.Errorf(dupMetric)
 	}
 }
@@ -137,4 +141,15 @@ func readLabel(sample string, i int) (string, int) {
 	}
 	end := i + equalsIndex
 	return sample[i:end], end
+}
+
+func shouldSkipMetric(dupMetric string) bool {
+	// Skip metrics that are belongs to aggr_efficiency template as Rest collector don't have separate template
+	skip := []string{"logical_used_wo_snapshots", "logical_used_wo_snapshots_flexclones", "physical_used_wo_snapshots", "physical_used_wo_snapshots_flexclones", "total_logical_used", "total_physical_used"}
+	for _, s := range skip {
+		if strings.Contains(dupMetric, s) {
+			return true
+		}
+	}
+	return false
 }
