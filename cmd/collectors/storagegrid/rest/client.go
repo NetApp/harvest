@@ -250,7 +250,7 @@ func (c *Client) invoke() ([]byte, error) {
 		var storageGridErr errs.StorageGridError
 		if errors.As(err, &storageGridErr) {
 			if storageGridErr.IsAuthErr() {
-				err2 := c.fetchToken()
+				err2 := c.fetchTokenWithAuthRetry()
 				if err2 != nil {
 					return nil, err2
 				}
@@ -365,6 +365,26 @@ func (c *Client) SetVersion(v string) error {
 type authBody struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+func (c *Client) fetchTokenWithAuthRetry() error {
+	err := c.fetchToken()
+	if err != nil {
+		var storageGridErr errs.StorageGridError
+		if errors.As(err, &storageGridErr) {
+			// If this is an auth failure and the client is using a credential script,
+			// expire the current credentials, call the script again, and try again
+			if storageGridErr.IsAuthErr() && c.auth.HasCredentialScript() {
+				c.auth.Expire()
+				_, err2 := c.auth.GetPollerAuth()
+				if err2 != nil {
+					return err2
+				}
+				return c.fetchToken()
+			}
+		}
+	}
+	return err
 }
 
 func (c *Client) fetchToken() error {

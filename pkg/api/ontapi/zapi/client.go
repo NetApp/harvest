@@ -377,7 +377,7 @@ func (c *Client) Invoke(testFilePath string) (*node.Node, error) {
 			return nil, err
 		}
 	}
-	result, _, _, err := c.invoke(false)
+	result, _, _, err := c.invokeWithAuthRetry(false)
 	return result, err
 }
 
