@@ -103,7 +103,6 @@ plugins:
       value_to_num:
         - new_status state online online `0`
       replace:
-        - style style `flexgroup_constituent` `flexgroup`
         - svm_root root_volume `false` `No`
         - svm_root root_volume `true` `Yes`
       # To prevent visibility of transient volumes, uncomment the following lines
@@ -120,8 +119,6 @@ plugins:
 #        - volume `MDV_CRS_.+`
 #        # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
 #        - volume `MDV_aud_.+`
-  - Aggregator:
-      - volume<style=flexgroup>volume node,svm,aggr,style
 
 export_options:
   instance_keys:
