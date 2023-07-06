@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -201,8 +202,36 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 		return nil, err
 	}
 
-	result, err := c.invoke()
+	result, err := c.invokeWithAuthRetry()
 	return result, err
+}
+
+func (c *Client) invokeWithAuthRetry() ([]byte, error) {
+	var (
+		body []byte
+		err  error
+	)
+
+	body, err = c.invoke()
+
+	if err != nil {
+		var he errs.HarvestError
+		if errors.As(err, &he) {
+			// If this is an auth failure and the client is using a credential script,
+			// expire the current credentials, call the script again, update the client's password,
+			// and try again
+			if errors.Is(he, errs.ErrAuthFailed) && c.auth.HasCredentialScript() {
+				c.auth.Expire()
+				pollerAuth, err2 := c.auth.GetPollerAuth()
+				if err2 != nil {
+					return nil, err2
+				}
+				c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
+				return c.invoke()
+			}
+		}
+	}
+	return body, err
 }
 
 func (c *Client) invoke() ([]byte, error) {
@@ -213,7 +242,8 @@ func (c *Client) invoke() ([]byte, error) {
 	)
 
 	if c.request.Body != nil {
-		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
+		//goland:noinspection GoUnhandledErrorResult
+		defer response.Body.Close()
 	}
 	if c.buffer != nil {
 		defer c.buffer.Reset()
@@ -229,17 +259,23 @@ func (c *Client) invoke() ([]byte, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
-		if body, err = io.ReadAll(response.Body); err == nil {
-			result := gjson.GetBytes(body, "error")
-			if result.Exists() {
-				message := result.Get("message").String()
-				code := result.Get("code").Int()
-				target := result.Get("target").String()
-				return nil, errs.Rest(response.StatusCode, message, code, target)
-			}
-			return nil, errs.Rest(response.StatusCode, "", 0, "")
+		body, err2 := io.ReadAll(response.Body)
+		if err2 != nil {
+			return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
 		}
-		return nil, errs.Rest(response.StatusCode, err.Error(), 0, "")
+
+		if response.StatusCode == 401 {
+			return nil, errs.New(errs.ErrAuthFailed, response.Status)
+		}
+
+		result := gjson.GetBytes(body, "error")
+		if result.Exists() {
+			message := result.Get("message").String()
+			code := result.Get("code").Int()
+			target := result.Get("target").String()
+			return nil, errs.Rest(response.StatusCode, message, code, target)
+		}
+		return nil, errs.Rest(response.StatusCode, "", 0, "")
 	}
 
 	// read response body
