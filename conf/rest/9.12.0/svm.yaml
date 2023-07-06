@@ -70,6 +70,7 @@ export_options:
     - ciphers
     - fpolicy_enabled
     - fpolicy_name
+    - insecured
     - iscsi_authentication_type
     - iscsi_service_enabled
     - ldap_session_security

@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -31,7 +32,7 @@ type SVM struct {
 	nisInfo        map[string]string
 	cifsEnabled    map[string]bool
 	nfsEnabled     map[string]string
-	sshData        map[string]string
+	sshData        map[string]ciphers
 	iscsiAuth      map[string]string
 	iscsiService   map[string]string
 	fpolicyData    map[string]fpolicy
@@ -53,6 +54,11 @@ type cifsSecurity struct {
 	cifsNtlmEnabled string
 	smbEncryption   string
 	smbSigning      string
+}
+
+type ciphers struct {
+	value     string
+	insecured string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -82,7 +88,7 @@ func (my *SVM) Init() error {
 	my.nisInfo = make(map[string]string)
 	my.cifsEnabled = make(map[string]bool)
 	my.nfsEnabled = make(map[string]string)
-	my.sshData = make(map[string]string)
+	my.sshData = make(map[string]ciphers)
 	my.iscsiAuth = make(map[string]string)
 	my.iscsiService = make(map[string]string)
 	my.fpolicyData = make(map[string]fpolicy)
@@ -267,7 +273,8 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 		// Update ciphers label in svm
 		if sshInfo, ok := my.sshData[svmName]; ok {
-			svmInstance.SetLabel("ciphers", sshInfo)
+			svmInstance.SetLabel("ciphers", sshInfo.value)
+			svmInstance.SetLabel("insecured", sshInfo.insecured)
 		}
 
 		// Update iscsi_authentication_type label in svm
@@ -487,15 +494,15 @@ func (my *SVM) GetNfsEnabled() (map[string]string, error) {
 	return vserverNfsMap, nil
 }
 
-func (my *SVM) GetSSHData() (map[string]string, error) {
+func (my *SVM) GetSSHData() (map[string]ciphers, error) {
 	var (
 		result  []*node.Node
 		request *node.Node
-		sshMap  map[string]string
+		sshMap  map[string]ciphers
 		err     error
 	)
 
-	sshMap = make(map[string]string)
+	sshMap = make(map[string]ciphers)
 
 	request = node.NewXMLS("security-ssh-get-iter")
 	request.NewChildS("max-records", my.batchSize)
@@ -508,10 +515,17 @@ func (my *SVM) GetSSHData() (map[string]string, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
+	compile, err := regexp.Compile("(.*)_cbc.*")
+	if err != nil {
+		my.Logger.Error().Err(err).Msg("Failed to compile regex: (.*)_cbc.*")
+	}
+
 	for _, sshData := range result {
 		svmName := sshData.GetChildContentS("vserver-name")
 		sshList := sshData.GetChildS("ciphers").GetAllChildContentS()
-		sshMap[svmName] = strings.Join(sshList, ",")
+		ciphersVal := strings.Join(sshList, ",")
+		insecured := compile.MatchString(ciphersVal)
+		sshMap[svmName] = ciphers{value: ciphersVal, insecured: strconv.FormatBool(insecured)}
 	}
 	return sshMap, nil
 }

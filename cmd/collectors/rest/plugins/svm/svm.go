@@ -12,7 +12,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
+	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -118,6 +120,10 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		}
 	}
 
+	compile, err := regexp.Compile("(.*)_cbc.*")
+	if err != nil {
+		my.Logger.Error().Err(err).Msg("Failed to compile regex: (.*)_cbc.*")
+	}
 	// update svm instance based on the above zapi response
 	for _, svmInstance := range data.GetInstances() {
 		svmName := svmInstance.GetLabel("svm")
@@ -154,6 +160,10 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		if iscsiAuthenticationType, ok := my.iscsiCredentialInfo[svmName]; ok {
 			svmInstance.SetLabel("iscsi_authentication_type", iscsiAuthenticationType)
 		}
+
+		ciphersVal := svmInstance.GetLabel("ciphers")
+		insecured := compile.MatchString(ciphersVal)
+		svmInstance.SetLabel("insecured", strconv.FormatBool(insecured))
 	}
 	return nil, nil
 }

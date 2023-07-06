@@ -820,19 +820,19 @@
                     "value": [
                       {
                         "options": {
-                          " ": {
+                          "true": {
                             "index": 0,
-                            "text": "No"
+                            "text": "❌   Yes"
                           }
                         },
                         "type": "value"
                       },
                       {
                         "options": {
-                          "match": "nan",
+                          "match": "null",
                           "result": {
                             "index": 1,
-                            "text": "❌   Yes"
+                            "text": "No"
                           }
                         },
                         "type": "special"
@@ -1418,7 +1418,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster, secured)(label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc.*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\"))",
+              "expr": "count by (datacenter, cluster, insecured)(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", insecured=\"true\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1541,7 +1541,7 @@
                     "telnet_enabled",
                     "locked",
                     "Value #D",
-                    "secured",
+                    "insecured",
                     "banner",
                     "Value #G",
                     "Value #K",
@@ -1605,16 +1605,15 @@
                   "certificateIssuerType": 18,
                   "cluster": 1,
                   "fips_enabled": 3,
+                  "insecured": 5,
                   "locked": 9,
                   "rsh_enabled": 10,
-                  "secured": 5,
                   "telnet_enabled": 4
                 },
                 "renameByName": {
                   "Value #A": "Autosupport Https Transport",
                   "Value #C": "Default Admin User",
                   "Value #D": "MD5 in use",
-                  "Value #E": "Insecure SSH Settings",
                   "Value #G": "Network Time Protocol",
                   "Value #I": "Saml Users",
                   "Value #J": "Cluster Peering",
@@ -1631,18 +1630,16 @@
                   "certificateExpiryStatus": "Cluster Certificate Validity",
                   "certificateIssuerType": "Certificate Issuer Type",
                   "certificateuser": "Certificate Users",
-                  "ciphers": "Insecure SSH Settings1",
                   "cluster": "Cluster",
                   "encryption_state": "Cluster Peering",
                   "fips_enabled": "Global FIPS",
-                  "insecure": "Insecure SSH Settings",
+                  "insecured": "Insecure SSH Settings",
                   "ldapuser": "Ldap Users",
                   "localuser": "Local Users",
                   "locked": "Default Admin User",
                   "ntp": "Network Time Protocol",
                   "rsh_enabled": "Remote Shell",
                   "samluser": "Saml Users",
-                  "secured": "Insecure SSH Settings",
                   "telnet_enabled": "Telnet"
                 }
               }
@@ -2181,19 +2178,19 @@
                     "value": [
                       {
                         "options": {
-                          " ": {
-                            "index": 1,
-                            "text": "No"
+                          "true": {
+                            "index": 0,
+                            "text": "❌   Yes"
                           }
                         },
                         "type": "value"
                       },
                       {
                         "options": {
-                          "match": "nan",
+                          "match": "null",
                           "result": {
-                            "index": 0,
-                            "text": "❌   Yes"
+                            "index": 1,
+                            "text": "No"
                           }
                         },
                         "type": "special"
@@ -2627,7 +2624,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc.*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\")",
+              "expr": "count by (datacenter, cluster, insecured)(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", insecured=\"true\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2683,7 +2680,7 @@
                     "smb_signing_required",
                     "svm",
                     "banner",
-                    "secured",
+                    "insecured",
                     "Value #G",
                     "Value #I",
                     "Value #B"
@@ -2739,10 +2736,10 @@
                   "banner": 3,
                   "cifs_ntlm_enabled": 7,
                   "cluster": 1,
+                  "insecured": 5,
                   "iscsi_authentication_type": 10,
                   "nfs_kerberos_protocol_enabled": 11,
                   "nis_authentication_enabled": 6,
-                  "secured": 5,
                   "smb_encryption_required": 12,
                   "smb_signing_required": 13,
                   "svm": 2
@@ -2761,11 +2758,10 @@
                   "banner": "Login Banner",
                   "certificateuser": "Certificate Users",
                   "cifs_ntlm_enabled": "NTML Authentication",
-                  "ciphers": "Insecure SSH Settings",
                   "cluster": "",
                   "fips_enabled": "Global FIPS",
                   "fpolicy_enabled": "Fpolicy Status Active",
-                  "insecure": "Insecure SSH Settings",
+                  "insecured": "Insecure SSH Settings",
                   "iscsi_authentication_type": "CHAP Settings",
                   "ldapuser": "Ldap Users",
                   "localuser": "Local Users",
@@ -2775,7 +2771,6 @@
                   "ntp": "Network Time Protocol",
                   "rsh_enabled": "Remote Shell",
                   "samluser": "Saml Users",
-                  "secured": "Insecure SSH Settings",
                   "smb_encryption_required": "SMB Encryption Enabled",
                   "smb_signing_required": "SMB Signing Enabled",
                   "svm": "SVM",
