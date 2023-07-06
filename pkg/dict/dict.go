@@ -20,11 +20,20 @@ func New() *Dict {
 	return &d
 }
 
-func (d *Dict) Copy() *Dict {
+func (d *Dict) Copy(labels ...string) *Dict {
 	c := &Dict{}
-	c.dict = make(map[string]string, len(d.dict))
-	for k, v := range d.dict {
-		c.dict[k] = v
+	if len(labels) == 0 {
+		c.dict = make(map[string]string, len(d.dict))
+		for k, v := range d.dict {
+			c.dict[k] = v
+		}
+	} else {
+		c.dict = make(map[string]string, len(labels))
+		for _, k := range labels {
+			if v, ok := d.dict[k]; ok {
+				c.dict[k] = v
+			}
+		}
 	}
 	return c
 }

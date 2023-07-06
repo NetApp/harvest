@@ -2,7 +2,9 @@ package changelog
 
 import (
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"gopkg.in/yaml.v3"
+	"strconv"
 	"strings"
 )
 
@@ -11,6 +13,7 @@ type Entry struct {
 	Object        string   `yaml:"object"`
 	Track         []string `yaml:"track"`
 	PublishLabels []string `yaml:"publish_labels"`
+	includeAll    bool
 }
 
 // Config represents the structure of the ChangeLog configuration
@@ -26,14 +29,10 @@ ChangeLog:
       - svm
       - state
       - type
-    publish_labels:
-      - svm
   - object: node
     track:
       - node
       - location
-    publish_labels:
-      - node
   - object: volume
     track:
       - node
@@ -41,14 +40,13 @@ ChangeLog:
       - svm
       - style
       - type
-    publish_labels:
-      - volume
-      - svm
 `
 
 // getChangeLogConfig returns a map of ChangeLog entries for the given object
-func getChangeLogConfig(object string, s string, logger *logging.Logger) (map[string]Entry, error) {
+func getChangeLogConfig(parentParams *node.Node, s string, logger *logging.Logger) (Entry, error) {
 	var config Config
+	object := parentParams.GetChildS("object").GetContentS()
+
 	temp := defaultChangeLogTemplate
 	if s != "" {
 		temp = preprocessOverwrite(object, s)
@@ -60,17 +58,32 @@ func getChangeLogConfig(object string, s string, logger *logging.Logger) (map[st
 	}
 	err := yaml.Unmarshal([]byte(temp), &config)
 	if err != nil {
-		return nil, err
+		return Entry{}, err
 	}
 
-	objectMap := make(map[string]Entry)
 	for _, obj := range config.ChangeLogs {
 		if obj.Object == object {
-			objectMap[obj.Object] = obj
+			// populate publish_labels if they are empty
+			if obj.PublishLabels == nil {
+				if exportOption := parentParams.GetChildS("export_options"); exportOption != nil {
+					if exportedKeys := exportOption.GetChildS("instance_keys"); exportedKeys != nil {
+						obj.PublishLabels = append(obj.PublishLabels, exportedKeys.GetAllChildContentS()...)
+					} else if x := exportOption.GetChildContentS("include_all_labels"); x != "" {
+						if includeAllLabels, err := strconv.ParseBool(x); err != nil {
+							logger.Logger.Error().Err(err).Msg("parameter: include_all_labels")
+						} else {
+							if includeAllLabels {
+								obj.includeAll = true
+							}
+						}
+					}
+				}
+			}
+			return obj, nil
 		}
 	}
 
-	return objectMap, nil
+	return Entry{}, nil
 }
 
 // preprocessOverwrite updates the ChangeLog configuration by adding the given object and its properties

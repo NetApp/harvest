@@ -8,11 +8,11 @@ import (
 	"testing"
 )
 
-func newChangeLog() *ChangeLog {
+func newChangeLog(object string) *ChangeLog {
 
 	params := node.NewS("ChangeLog")
 	parentParams := node.NewS("parent")
-	parentParams.NewChildS("object", "svm")
+	parentParams.NewChildS("object", object)
 
 	abc := plugin.New("Test", nil, params, parentParams, "", nil)
 	p := &ChangeLog{AbstractPlugin: abc}
@@ -28,7 +28,7 @@ func newChangeLog() *ChangeLog {
 }
 
 func TestChangeLogModified(t *testing.T) {
-	p := newChangeLog()
+	p := newChangeLog("svm")
 	m := matrix.New("TestChangeLog", "svm", "svm")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -65,10 +65,14 @@ func TestChangeLogModified(t *testing.T) {
 	} else {
 		t.Error("ChangeLog slice size is wrong")
 	}
+
+	//TODO add test case of published labels are correct
+
+	// TODO test includealllabels
 }
 
 func TestChangeLogCreated(t *testing.T) {
-	p := newChangeLog()
+	p := newChangeLog("svm")
 	m := matrix.New("TestChangeLog", "svm", "svm")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -113,7 +117,7 @@ func TestChangeLogCreated(t *testing.T) {
 }
 
 func TestChangeLogDeleted(t *testing.T) {
-	p := newChangeLog()
+	p := newChangeLog("svm")
 	m := matrix.New("TestChangeLog", "svm", "svm")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -149,7 +153,7 @@ func TestChangeLogDeleted(t *testing.T) {
 }
 
 func TestChangeLogUnsupported(t *testing.T) {
-	p := newChangeLog()
+	p := newChangeLog("lun")
 	m := matrix.New("TestChangeLog", "lun", "lun")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -175,6 +179,6 @@ func TestChangeLogUnsupported(t *testing.T) {
 	o, _ := p.Run(data1)
 
 	if len(o) != 0 {
-		t.Errorf("ChangeLog matric size expected %d, actual %d", 0, len(o))
+		t.Errorf("ChangeLog mEtric size expected %d, actual %d", 0, len(o))
 	}
 }

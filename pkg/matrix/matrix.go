@@ -36,6 +36,7 @@ type With struct {
 	Metrics         bool
 	Instances       bool
 	ExportInstances bool
+	Labels          []string
 }
 
 func New(uuid, object string, identifier string) *Matrix {
@@ -84,9 +85,9 @@ func (m *Matrix) Clone(with With) *Matrix {
 		clone.instances = make(map[string]*Instance, len(m.GetInstances()))
 		for key, instance := range m.GetInstances() {
 			if with.ExportInstances {
-				clone.instances[key] = instance.Clone(instance.IsExportable())
+				clone.instances[key] = instance.Clone(instance.IsExportable(), with.Labels...)
 			} else {
-				clone.instances[key] = instance.Clone(false)
+				clone.instances[key] = instance.Clone(false, with.Labels...)
 			}
 		}
 	} else {
