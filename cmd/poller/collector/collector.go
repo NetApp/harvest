@@ -41,7 +41,7 @@ import (
 )
 
 // Collector defines the attributes of a collector
-// The poll functions (PollData, PollInstance, etc)
+// The poll functions (PollData, PollInstance, etc.)
 // are not part of the interface and are linked dynamically
 // All required functions are implemented by AbstractCollector
 //
@@ -358,7 +358,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 					// API was rejected, this happens when a resource is not available or does not exist
 					if errors.Is(err, errs.ErrAPIRequestRejected) {
-						c.Schedule.SetStandByMode(task, 24*time.Hour)
+						c.Schedule.SetStandByMode(task, 1*time.Hour)
 						c.Logger.Info().
 							Err(err).
 							Str("task", task.Name).
@@ -556,7 +556,7 @@ func (c *AbstractCollector) WantedExporters(exporters []string) []string {
 	return conf.GetUniqueExporters(exporters)
 }
 
-// LinkExporter appends exporter e to the list of exporters of the collector
+// LinkExporter appends exporter e to the receiver's list of exporters
 func (c *AbstractCollector) LinkExporter(e exporter.Exporter) {
 	// @TODO: add lock if we want to add exporters while collector is running
 	c.Exporters = append(c.Exporters, e)
