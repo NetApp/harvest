@@ -8,11 +8,13 @@ counters:
   - cloud_bin_op_latency_average
   - cloud_bin_operation
   - instance_name
+  - object_store_name       => cloud_target
   - vol_name                => volume
   - vserver_name            => svm
 
 export_options:
   instance_keys:
+    - cloud_target
     - svm
     - volume
 
