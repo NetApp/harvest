@@ -169,8 +169,9 @@ func SetNameservice(nsDB, nsSource, nisDomain string, instance *matrix.Instance)
 }
 
 // IsTimestampOlderThanDuration - timestamp units are micro seconds
-func IsTimestampOlderThanDuration(timestamp float64, duration time.Duration) bool {
-	return time.Since(time.UnixMicro(int64(timestamp))) > duration
+// The `begin` argument lets us virtualize time without requiring sleeps in test code
+func IsTimestampOlderThanDuration(nowish time.Time, timestamp float64, duration time.Duration) bool {
+	return nowish.Sub(time.UnixMicro(int64(timestamp))) > duration
 }
 
 func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, lagTime *matrix.Metric, logger *logging.Logger) {
