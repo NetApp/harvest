@@ -1,4 +1,4 @@
-name:                     Fcp
+name:                     FcpPort
 query:                    api/cluster/counter/tables/fcp
 object:                   fcp
 
