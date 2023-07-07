@@ -486,10 +486,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "EO6UabnVz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
           "hide": false,
@@ -607,10 +604,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "EO6UabnVz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
           "hide": false,
