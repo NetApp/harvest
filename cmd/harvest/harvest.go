@@ -439,7 +439,10 @@ func startPoller(pollerName string, promPort int, opts *options) {
 		os.Exit(0)
 	}
 
-	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...) //nolint:gosec
+	cmd := exec.Command(argv[0], argv[1:]...) //nolint:gosec
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setsid: true,
+	}
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
