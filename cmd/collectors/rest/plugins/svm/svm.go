@@ -19,6 +19,8 @@ import (
 	"time"
 )
 
+var weakCiphers = regexp.MustCompile("(.*)_cbc.*")
+
 type SVM struct {
 	*plugin.AbstractPlugin
 	nsswitchInfo        map[string]nsswitch
@@ -120,10 +122,6 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		}
 	}
 
-	compile, err := regexp.Compile("(.*)_cbc.*")
-	if err != nil {
-		my.Logger.Error().Err(err).Msg("Failed to compile regex: (.*)_cbc.*")
-	}
 	// update svm instance based on the above zapi response
 	for _, svmInstance := range data.GetInstances() {
 		svmName := svmInstance.GetLabel("svm")
@@ -162,7 +160,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		}
 
 		ciphersVal := svmInstance.GetLabel("ciphers")
-		insecured := compile.MatchString(ciphersVal)
+		insecured := weakCiphers.MatchString(ciphersVal)
 		svmInstance.SetLabel("insecured", strconv.FormatBool(insecured))
 	}
 	return nil, nil
