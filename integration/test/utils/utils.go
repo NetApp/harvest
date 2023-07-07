@@ -257,7 +257,7 @@ func WriteToken(token string) {
 			return
 		}
 	}
-	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
+	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0600)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to open file")
 	}

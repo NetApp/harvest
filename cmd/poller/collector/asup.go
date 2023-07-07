@@ -260,7 +260,7 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 	}
 
 	// name of the file: {poller_name}_payload.json
-	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
 		return "", fmt.Errorf("autosupport failed to open payloadPath:%s %w", payloadPath, err)
 	}
@@ -416,7 +416,7 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {
-		if err = os.MkdirAll(payloadDir, 0777); err != nil {
+		if err = os.MkdirAll(payloadDir, 0750); err != nil {
 			return "", fmt.Errorf("could not create asup payload directory %s: %w", payloadDir, err)
 		}
 	}
