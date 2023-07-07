@@ -151,7 +151,7 @@ func exportFiles(dir string, folder *Folder) error {
 		}
 	}
 
-	if err = os.MkdirAll(dir, 0755); err != nil {
+	if err = os.MkdirAll(dir, 0750); err != nil {
 		fmt.Printf("error makedir [%s]: %v\n", dir, err)
 		return err
 	}
