@@ -520,6 +520,7 @@ func (my *SVM) GetSSHData() (map[string]sshInfo, error) {
 	for _, sshData := range result {
 		svmName := sshData.GetChildContentS("vserver-name")
 		sshList := sshData.GetChildS("ciphers").GetAllChildContentS()
+		sort.Strings(sshList)
 		ciphersVal := strings.Join(sshList, ",")
 		insecured := weakCiphers.MatchString(ciphersVal)
 		sshMap[svmName] = sshInfo{ciphers: ciphersVal, isInsecure: strconv.FormatBool(insecured)}
