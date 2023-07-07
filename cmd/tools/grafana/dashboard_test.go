@@ -120,7 +120,7 @@ func TestDatasource(t *testing.T) {
 
 func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	path = shortPath(path)
-	// visit all panel for datasource test
+	// visit all panels for datasource test
 	visitAllPanels(data, func(p string, key, value gjson.Result) {
 		dsResult := value.Get("datasource")
 		panelTitle := value.Get("title").String()
@@ -138,6 +138,27 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		}
 		if dsResult.String() != "${DS_PROMETHEUS}" {
 			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", path, panelTitle, dsResult.String())
+		}
+
+		// Later versions of Grafana introduced a different datasource shape which causes errors
+		// when used in older versions. Detect that here
+		// GOOD "datasource": "${DS_PROMETHEUS}",
+		// BAD  "datasource": {
+		//            "type": "prometheus",
+		//            "uid": "EO6UabnVz"
+		//          },
+		dses := value.Get("targets.#.datasource").Array()
+		for i, ds := range dses {
+			if ds.String() != "${DS_PROMETHEUS}" {
+				targetPath := fmt.Sprintf("%s.target[%d].datasource", p, i)
+				t.Errorf(
+					"dashboard=%s path=%s panel=%s has %s datasource shape that breaks older versions of Grafana",
+					path,
+					targetPath,
+					panelTitle,
+					dsResult.String(),
+				)
+			}
 		}
 	})
 
