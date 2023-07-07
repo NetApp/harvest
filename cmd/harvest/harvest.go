@@ -443,6 +443,23 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setsid: true,
 	}
+
+	// Redirect standard file descriptors to /dev/null
+	devNull, err := os.OpenFile(os.DevNull, os.O_RDWR, 0)
+	if err != nil {
+		fmt.Println("Error opening /dev/null:", err)
+		os.Exit(1)
+	}
+	defer func() {
+		if err := devNull.Close(); err != nil {
+			fmt.Println("Error closing /dev/null:", err)
+		}
+	}()
+
+	cmd.Stdin = devNull
+	cmd.Stdout = devNull
+	cmd.Stderr = devNull
+
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
