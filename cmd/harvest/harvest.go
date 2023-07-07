@@ -439,6 +439,8 @@ func startPoller(pollerName string, promPort int, opts *options) {
 		os.Exit(0)
 	}
 
+	// Set the Setsid attribute to true, which creates a new session for the child process
+	// This effectively detaches the child process from the parent process
 	cmd := exec.Command(argv[0], argv[1:]...) //nolint:gosec
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setsid: true,
@@ -460,6 +462,7 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	cmd.Stdout = devNull
 	cmd.Stderr = devNull
 
+	// Start the poller process in the background
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
