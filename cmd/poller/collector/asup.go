@@ -416,7 +416,7 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {
-		if err = os.MkdirAll(payloadDir, 0700); err != nil {
+		if err = os.MkdirAll(payloadDir, 0750); err != nil {
 			return "", fmt.Errorf("could not create asup payload directory %s: %w", payloadDir, err)
 		}
 	}
