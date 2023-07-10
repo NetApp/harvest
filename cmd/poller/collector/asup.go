@@ -260,11 +260,9 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 	}
 
 	// name of the file: {poller_name}_payload.json
-	err = checkAndDeleteIfPermissionsMismatch(payloadPath, 0600)
-	if err != nil {
-		logging.Get().Warn().Err(err).Send()
-	}
-	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
+	var perm os.FileMode = 0600
+
+	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, perm)
 	if err != nil {
 		return "", fmt.Errorf("autosupport failed to open payloadPath:%s %w", payloadPath, err)
 	}
@@ -419,13 +417,18 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 	payloadDir := path.Join(asupDir, "payload")
 
 	// name of the file: {poller_name}_payload.json
-	err := checkAndDeleteIfPermissionsMismatch(workingDir, 0750)
+	var perm os.FileMode = 0750
+	err := checkAndDeleteIfPermissionsMismatch(workingDir, perm)
+	if err != nil {
+		logging.Get().Warn().Err(err).Send()
+	}
+	err = checkAndDeleteIfPermissionsMismatch(payloadDir, perm)
 	if err != nil {
 		logging.Get().Warn().Err(err).Send()
 	}
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {
-		if err = os.MkdirAll(payloadDir, 0750); err != nil {
+		if err = os.MkdirAll(payloadDir, perm); err != nil {
 			return "", fmt.Errorf("could not create asup payload directory %s: %w", payloadDir, err)
 		}
 	}
