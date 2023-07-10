@@ -263,9 +263,7 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 	// name of the file: {poller_name}_payload.json
 	err = util.CheckAndDeleteIfPermissionsMismatch(payloadPath, "0600")
 	if err != nil {
-		logging.Get().Warn().
-			Err(err).
-			Send()
+		logging.Get().Warn().Err(err).Send()
 	}
 	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
@@ -425,15 +423,11 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 	// check workingdir also
 	err := util.CheckAndDeleteIfPermissionsMismatch(workingDir, "0750")
 	if err != nil {
-		logging.Get().Warn().
-			Err(err).
-			Send()
+		logging.Get().Warn().Err(err).Send()
 	}
 	err = util.CheckAndDeleteIfPermissionsMismatch(payloadDir, "0750")
 	if err != nil {
-		logging.Get().Warn().
-			Err(err).
-			Send()
+		logging.Get().Warn().Err(err).Send()
 	}
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {

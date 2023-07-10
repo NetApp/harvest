@@ -424,7 +424,6 @@ func CheckAndDeleteIfPermissionsMismatch(path string, requiredPermissions string
 		return fmt.Errorf("error parsing permissions: %w", err)
 	}
 	requiredFileMode := os.FileMode(permissionsInt)
-
 	// Get the file or directory information
 	fileInfo, err := os.Stat(path)
 	if err != nil {
@@ -433,7 +432,6 @@ func CheckAndDeleteIfPermissionsMismatch(path string, requiredPermissions string
 		}
 		return fmt.Errorf("error checking permissions: %w", err)
 	}
-
 	// Check if the current permissions match the required permissions
 	currentPermissions := fileInfo.Mode().Perm()
 	if currentPermissions != requiredFileMode {
@@ -442,6 +440,5 @@ func CheckAndDeleteIfPermissionsMismatch(path string, requiredPermissions string
 			return fmt.Errorf("error deleting file or directory: %w", err)
 		}
 	}
-
 	return nil
 }
