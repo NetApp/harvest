@@ -12,10 +12,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
+	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
+
+var weakCiphers = regexp.MustCompile("(.*)_cbc.*")
 
 type SVM struct {
 	*plugin.AbstractPlugin
@@ -154,6 +158,10 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		if iscsiAuthenticationType, ok := my.iscsiCredentialInfo[svmName]; ok {
 			svmInstance.SetLabel("iscsi_authentication_type", iscsiAuthenticationType)
 		}
+
+		ciphersVal := svmInstance.GetLabel("ciphers")
+		insecured := weakCiphers.MatchString(ciphersVal)
+		svmInstance.SetLabel("insecured", strconv.FormatBool(insecured))
 	}
 	return nil, nil
 }
