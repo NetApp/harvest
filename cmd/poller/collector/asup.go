@@ -11,7 +11,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
@@ -261,7 +260,7 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 	}
 
 	// name of the file: {poller_name}_payload.json
-	err = util.CheckAndDeleteIfPermissionsMismatch(payloadPath, "0600")
+	err = checkAndDeleteIfPermissionsMismatch(payloadPath, 0600)
 	if err != nil {
 		logging.Get().Warn().Err(err).Send()
 	}
@@ -420,12 +419,7 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 	payloadDir := path.Join(asupDir, "payload")
 
 	// name of the file: {poller_name}_payload.json
-	// check workingdir also
-	err := util.CheckAndDeleteIfPermissionsMismatch(workingDir, "0750")
-	if err != nil {
-		logging.Get().Warn().Err(err).Send()
-	}
-	err = util.CheckAndDeleteIfPermissionsMismatch(payloadDir, "0750")
+	err := checkAndDeleteIfPermissionsMismatch(workingDir, 0750)
 	if err != nil {
 		logging.Get().Warn().Err(err).Send()
 	}
@@ -443,4 +437,26 @@ func sha1Sum(s string) string {
 	hash := sha1.New() //nolint:gosec // using sha1 for a hash, not a security risk
 	hash.Write([]byte(s))
 	return hex.EncodeToString(hash.Sum(nil))
+}
+
+// checkAndDeleteIfPermissionsMismatch checks if the permissions of the file or directory at the given path
+// match the required permissions. If they don't match, it deletes the file or directory.
+func checkAndDeleteIfPermissionsMismatch(path string, requiredFileMode os.FileMode) error {
+	// Get the file or directory information
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return fmt.Errorf("error checking permissions: %w", err)
+	}
+	// Check if the current permissions match the required permissions
+	currentPermissions := fileInfo.Mode().Perm()
+	if currentPermissions != requiredFileMode {
+		err = os.RemoveAll(path)
+		if err != nil {
+			return fmt.Errorf("error deleting file or directory: %w", err)
+		}
+	}
+	return nil
 }
