@@ -28,6 +28,8 @@ linters:
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
+  include:
+    - EXC0009
 
 output:
   format: github-actions
