@@ -414,3 +414,34 @@ func GetSortedKeys(m map[string]string) []string {
 	sort.Strings(sortedKeys)
 	return sortedKeys
 }
+
+// CheckAndDeleteIfPermissionsMismatch checks if the permissions of the file or directory at the given path
+// match the required permissions. If they don't match, it deletes the file or directory.
+func CheckAndDeleteIfPermissionsMismatch(path string, requiredPermissions string) error {
+	// Convert the required permissions from string to os.FileMode
+	permissionsInt, err := strconv.ParseUint(requiredPermissions, 8, 32)
+	if err != nil {
+		return fmt.Errorf("error parsing permissions: %w", err)
+	}
+	requiredFileMode := os.FileMode(permissionsInt)
+
+	// Get the file or directory information
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return fmt.Errorf("error checking permissions: %w", err)
+	}
+
+	// Check if the current permissions match the required permissions
+	currentPermissions := fileInfo.Mode().Perm()
+	if currentPermissions != requiredFileMode {
+		err := os.RemoveAll(path)
+		if err != nil {
+			return fmt.Errorf("error deleting file or directory: %w", err)
+		}
+	}
+
+	return nil
+}

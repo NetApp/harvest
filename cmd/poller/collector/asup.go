@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
@@ -260,6 +261,12 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 	}
 
 	// name of the file: {poller_name}_payload.json
+	err = util.CheckAndDeleteIfPermissionsMismatch(payloadPath, "0600")
+	if err != nil {
+		logging.Get().Warn().
+			Err(err).
+			Send()
+	}
 	file, err := os.OpenFile(payloadPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
 		return "", fmt.Errorf("autosupport failed to open payloadPath:%s %w", payloadPath, err)
@@ -414,6 +421,20 @@ func getOSName() string {
 func getPayloadPath(asupDir string, pollerName string) (string, error) {
 	payloadDir := path.Join(asupDir, "payload")
 
+	// name of the file: {poller_name}_payload.json
+	// check workingdir also
+	err := util.CheckAndDeleteIfPermissionsMismatch(workingDir, "0750")
+	if err != nil {
+		logging.Get().Warn().
+			Err(err).
+			Send()
+	}
+	err = util.CheckAndDeleteIfPermissionsMismatch(payloadDir, "0750")
+	if err != nil {
+		logging.Get().Warn().
+			Err(err).
+			Send()
+	}
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {
 		if err = os.MkdirAll(payloadDir, 0750); err != nil {
