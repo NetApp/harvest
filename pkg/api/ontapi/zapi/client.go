@@ -514,7 +514,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		start             time.Time
 		responseT, parseT time.Duration
 		body              []byte
-		status, reason    string
+		status            string
+		reason            string
+		errNum            string
 		found             bool
 		err               error
 	)
@@ -545,9 +547,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 
 	if response.StatusCode != 200 {
 		if response.StatusCode == 401 {
-			return result, responseT, parseT, errs.New(errs.ErrAuthFailed, response.Status)
+			return result, responseT, parseT, errs.New(errs.ErrAuthFailed, response.Status, errs.WithStatus(response.StatusCode))
 		}
-		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status)
+		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status, errs.WithStatus(response.StatusCode))
 	}
 
 	// read response body
@@ -581,7 +583,8 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		if reason == "" {
 			reason = "no reason"
 		}
-		err = errs.New(errs.ErrAPIRequestRejected, reason)
+		errNum, _ = result.GetAttrValueS("errno")
+		err = errs.New(errs.ErrAPIRequestRejected, reason, errs.WithErrorNum(errNum))
 		return result, responseT, parseT, err
 	}
 
