@@ -374,13 +374,15 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 		if errors.As(err, &storageGridErr) {
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, and try again
-			if storageGridErr.IsAuthErr() && c.auth.HasCredentialScript() {
-				c.auth.Expire()
-				_, err2 := c.auth.GetPollerAuth()
+			if storageGridErr.IsAuthErr() {
+				pollerAuth, err2 := c.auth.GetPollerAuth()
 				if err2 != nil {
 					return err2
 				}
-				return c.fetchToken()
+				if pollerAuth.HasCredentialScript {
+					c.auth.Expire()
+					return c.fetchToken()
+				}
 			}
 		}
 	}
@@ -398,9 +400,13 @@ func (c *Client) fetchToken() error {
 	if err != nil {
 		return fmt.Errorf("failed to create auth URL err: %w", err)
 	}
+	password, err := c.auth.Password()
+	if err != nil {
+		return err
+	}
 	authB := authBody{
 		Username: c.username,
-		Password: c.auth.Password(),
+		Password: password,
 	}
 	postBody, err := json.Marshal(authB)
 	if err != nil {

@@ -191,7 +191,11 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	}
 	c.request.Header.Set("accept", "application/json")
 	if c.username != "" {
-		c.request.SetBasicAuth(c.username, c.auth.Password())
+		password, err2 := c.auth.Password()
+		if err2 != nil {
+			return nil, err2
+		}
+		c.request.SetBasicAuth(c.username, password)
 	}
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
@@ -220,14 +224,20 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, update the client's password,
 			// and try again
-			if errors.Is(he, errs.ErrAuthFailed) && c.auth.HasCredentialScript() {
-				c.auth.Expire()
+			if errors.Is(he, errs.ErrAuthFailed) {
 				pollerAuth, err2 := c.auth.GetPollerAuth()
 				if err2 != nil {
 					return nil, err2
 				}
-				c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
-				return c.invoke()
+				if pollerAuth.HasCredentialScript {
+					c.auth.Expire()
+					password, err2 := c.auth.Password()
+					if err2 != nil {
+						return nil, err2
+					}
+					c.request.SetBasicAuth(pollerAuth.Username, password)
+					return c.invoke()
+				}
 			}
 		}
 	}
@@ -310,7 +320,11 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 
 	downClient := &http.Client{Transport: restClient.client.Transport, Timeout: restClient.client.Timeout}
 	if restClient.username != "" {
-		request.SetBasicAuth(restClient.username, restClient.auth.Password())
+		password, err2 := restClient.auth.Password()
+		if err2 != nil {
+			return 0, err2
+		}
+		request.SetBasicAuth(restClient.username, password)
 	}
 	if verbose {
 		requestOut, _ := httputil.DumpRequestOut(request, false)

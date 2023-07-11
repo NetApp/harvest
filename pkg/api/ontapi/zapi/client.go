@@ -472,7 +472,11 @@ func (c *Client) InvokeWithTimers(testFilePath string) (*node.Node, time.Duratio
 
 func (c *Client) invokeWithAuthRetry(withTimers bool) (*node.Node, time.Duration, time.Duration, error) {
 	var buffer bytes.Buffer
-	if c.auth.HasCredentialScript() {
+	pollerAuth, err := c.auth.GetPollerAuth()
+	if err != nil {
+		return nil, 0, 0, err
+	}
+	if pollerAuth.HasCredentialScript {
 		// Save the buffer in case it needs to be replayed after an auth failure
 		// This is required because Go clears the buffer when making a POST request
 		buffer = *c.buffer
@@ -486,13 +490,13 @@ func (c *Client) invokeWithAuthRetry(withTimers bool) (*node.Node, time.Duration
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, update the client's password,
 			// and try again
-			if errors.Is(he, errs.ErrAuthFailed) && c.auth.HasCredentialScript() {
+			if errors.Is(he, errs.ErrAuthFailed) && pollerAuth.HasCredentialScript {
 				c.auth.Expire()
-				pollerAuth, err2 := c.auth.GetPollerAuth()
-				if err2 != nil {
-					return nil, t1, t2, err2
+				password, err := c.auth.Password()
+				if err != nil {
+					return nil, 0, 0, err
 				}
-				c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
+				c.request.SetBasicAuth(pollerAuth.Username, password)
 				c.request.Body = io.NopCloser(&buffer)
 				c.request.ContentLength = int64(buffer.Len())
 				result2, s1, s2, err3 := c.invoke(withTimers)
