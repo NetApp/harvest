@@ -53,6 +53,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -1129,11 +1130,10 @@ func (p *Poller) createClient() {
 
 // upgradeCollector checks if the collector c should be upgraded to a REST collector.
 // ZAPI collectors should be upgraded to REST collectors when the cluster no longer speaks Zapi
-// If any error happens during the REST query, the upgrade is aborted and the original collector c returned.
 func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
 	// If REST is desired, use REST
-	// If ZAPI is desired, check that the cluster speaks ZAPI and if so, use ZAPI otherwise use REST
-	// EMS and StorageGRID are will be ignored
+	// If ZAPI is desired, check that the cluster speaks ZAPI and if so, use ZAPI, otherwise use REST
+	// EMS and StorageGRID are ignored
 
 	if !strings.HasPrefix(c.Name, "Zapi") {
 		return c
@@ -1142,17 +1142,34 @@ func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
 	return p.negotiateAPI(c, p.doZAPIsExist)
 }
 
-// clusterVersion should be of the form 9.12.1
+// Harvest will upgrade ZAPI conversations to REST in two cases:
+//   - if ONTAP returns a ZAPI error with errno=61253
+//   - if ONTAP returns an HTTP status code of 400
 func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Collector {
+	var switchToRest bool
 	err := checkZAPIs()
-	// if there is an error talking to ONTAP, assume that is because ZAPIs no longer exist and use REST
+
 	if err != nil {
-		logger.Warn().Err(err).Str("collector", c.Name).Msg("ZAPI EOA. Use REST")
-		upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
-		return conf.Collector{
-			Name:      upgradeCollector,
-			Templates: c.Templates,
+		var he errs.HarvestError
+		if errors.As(err, &he) {
+			if he.ErrNum == errs.ErrNumZAPISuspended {
+				logger.Warn().Str("collector", c.Name).Msg("ZAPIs suspended. Use REST")
+				switchToRest = true
+			}
+
+			if he.StatusCode == 400 {
+				logger.Warn().Str("collector", c.Name).Msg("ZAPIs EOA. Use REST")
+				switchToRest = true
+			}
 		}
+		if switchToRest {
+			upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
+			return conf.Collector{
+				Name:      upgradeCollector,
+				Templates: c.Templates,
+			}
+		}
+		log.Error().Err(err).Str("collector", c.Name).Msg("Failed to negotiateAPI")
 	}
 
 	return c
