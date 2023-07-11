@@ -42,6 +42,20 @@ type HarvestError struct {
 	StatusCode int
 }
 
+type Option func(*HarvestError)
+
+func WithStatus(statusCode int) Option {
+	return func(e *HarvestError) {
+		e.StatusCode = statusCode
+	}
+}
+
+func WithErrorNum(errNum string) Option {
+	return func(e *HarvestError) {
+		e.ErrNum = errNum
+	}
+}
+
 func (e HarvestError) Error() string {
 	if e.Inner == nil {
 		return e.Message
@@ -59,14 +73,10 @@ func (e HarvestError) Unwrap() error {
 	return e.Inner
 }
 
-func New(err error, message string) error {
-	return HarvestError{Message: message, Inner: err}
-}
-
-func NewWithStatus(err error, message string, statusCode int) error {
-	return HarvestError{Message: message, Inner: err, StatusCode: statusCode}
-}
-
-func NewWithErrorNum(err error, message string, errNum string) error {
-	return HarvestError{Message: message, Inner: err, ErrNum: errNum}
+func New(innerError error, message string, opts ...Option) error {
+	err := HarvestError{Message: message, Inner: innerError}
+	for _, opt := range opts {
+		opt(&err)
+	}
+	return err
 }
