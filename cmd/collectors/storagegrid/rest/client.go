@@ -367,8 +367,13 @@ type authBody struct {
 	Password string `json:"password"`
 }
 
+type clientInternal struct {
+	client *Client
+}
+
 func (c *Client) fetchTokenWithAuthRetry() error {
-	err := c.fetchToken()
+	ci := &clientInternal{client: c}
+	err := ci.fetchToken()
 	if err != nil {
 		var storageGridErr errs.StorageGridError
 		if errors.As(err, &storageGridErr) {
@@ -380,27 +385,28 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 				if err2 != nil {
 					return err2
 				}
-				return c.fetchToken()
+				return ci.fetchToken()
 			}
 		}
 	}
 	return err
 }
 
-func (c *Client) fetchToken() error {
+// fetchToken should not be used directly. Use fetchTokenWithAuthRetry instead.
+func (ci *clientInternal) fetchToken() error {
 	var (
 		err      error
 		req      *http.Request
 		response *http.Response
 		body     []byte
 	)
-	u, err := url.JoinPath(c.baseURL, c.APIPath, "authorize")
+	u, err := url.JoinPath(ci.client.baseURL, ci.client.APIPath, "authorize")
 	if err != nil {
 		return fmt.Errorf("failed to create auth URL err: %w", err)
 	}
 	authB := authBody{
-		Username: c.username,
-		Password: c.auth.Password(),
+		Username: ci.client.username,
+		Password: ci.client.auth.Password(),
 	}
 	postBody, err := json.Marshal(authB)
 	if err != nil {
@@ -415,8 +421,8 @@ func (c *Client) fetchToken() error {
 
 	// send request to server
 	client := &http.Client{
-		Transport: c.client.Transport,
-		Timeout:   c.client.Timeout,
+		Transport: ci.client.client.Transport,
+		Timeout:   ci.client.client.Timeout,
 	}
 	if response, err = client.Do(req); err != nil {
 		return fmt.Errorf("connection error %w", err)
@@ -439,8 +445,8 @@ func (c *Client) fetchToken() error {
 	errorMsg := results[1]
 
 	if token.Exists() {
-		c.token = token.String()
-		c.request.Header.Set("Authorization", "Bearer "+c.token)
+		ci.client.token = token.String()
+		ci.client.request.Header.Set("Authorization", "Bearer "+ci.client.token)
 	} else {
 		return errs.New(errs.ErrAuthFailed, errorMsg.String())
 	}
