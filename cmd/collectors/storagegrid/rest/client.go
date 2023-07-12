@@ -400,13 +400,14 @@ func (ci *clientInternal) fetchToken() error {
 		response *http.Response
 		body     []byte
 	)
-	u, err := url.JoinPath(ci.client.baseURL, ci.client.APIPath, "authorize")
+	c := ci.client
+	u, err := url.JoinPath(c.baseURL, c.APIPath, "authorize")
 	if err != nil {
 		return fmt.Errorf("failed to create auth URL err: %w", err)
 	}
 	authB := authBody{
-		Username: ci.client.username,
-		Password: ci.client.auth.Password(),
+		Username: c.username,
+		Password: c.auth.Password(),
 	}
 	postBody, err := json.Marshal(authB)
 	if err != nil {
@@ -421,8 +422,8 @@ func (ci *clientInternal) fetchToken() error {
 
 	// send request to server
 	client := &http.Client{
-		Transport: ci.client.client.Transport,
-		Timeout:   ci.client.client.Timeout,
+		Transport: c.client.Transport,
+		Timeout:   c.client.Timeout,
 	}
 	if response, err = client.Do(req); err != nil {
 		return fmt.Errorf("connection error %w", err)
@@ -445,8 +446,8 @@ func (ci *clientInternal) fetchToken() error {
 	errorMsg := results[1]
 
 	if token.Exists() {
-		ci.client.token = token.String()
-		ci.client.request.Header.Set("Authorization", "Bearer "+ci.client.token)
+		c.token = token.String()
+		c.request.Header.Set("Authorization", "Bearer "+c.token)
 	} else {
 		return errs.New(errs.ErrAuthFailed, errorMsg.String())
 	}
