@@ -216,7 +216,63 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		err  error
 	)
 
-	body, err = c.invoke()
+	doInvoke := func() ([]byte, error) {
+		var (
+			response *http.Response
+			body     []byte
+			err      error
+		)
+
+		if c.request.Body != nil {
+			//goland:noinspection GoUnhandledErrorResult
+			defer response.Body.Close()
+		}
+		if c.buffer != nil {
+			defer c.buffer.Reset()
+		}
+
+		restReq := c.request.URL.String()
+
+		// send request to server
+		if response, err = c.client.Do(c.request); err != nil {
+			return nil, fmt.Errorf("connection error %w", err)
+		}
+		//goland:noinspection GoUnhandledErrorResult
+		defer response.Body.Close()
+
+		if response.StatusCode != 200 {
+			body, err2 := io.ReadAll(response.Body)
+			if err2 != nil {
+				return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
+			}
+
+			if response.StatusCode == 401 {
+				return nil, errs.New(errs.ErrAuthFailed, response.Status)
+			}
+
+			result := gjson.GetBytes(body, "error")
+			if result.Exists() {
+				message := result.Get("message").String()
+				code := result.Get("code").Int()
+				target := result.Get("target").String()
+				return nil, errs.Rest(response.StatusCode, message, code, target)
+			}
+			return nil, errs.Rest(response.StatusCode, "", 0, "")
+		}
+
+		// read response body
+		if body, err = io.ReadAll(response.Body); err != nil {
+			return nil, err
+		}
+		defer c.printRequestAndResponse(restReq, body)
+
+		if err != nil {
+			return nil, err
+		}
+		return body, nil
+	}
+
+	body, err = doInvoke()
 
 	if err != nil {
 		var he errs.HarvestError
@@ -236,68 +292,12 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 						return nil, err2
 					}
 					c.request.SetBasicAuth(pollerAuth.Username, password)
-					return c.invoke()
+					return doInvoke()
 				}
 			}
 		}
 	}
 	return body, err
-}
-
-func (c *Client) invoke() ([]byte, error) {
-	var (
-		response *http.Response
-		body     []byte
-		err      error
-	)
-
-	if c.request.Body != nil {
-		//goland:noinspection GoUnhandledErrorResult
-		defer response.Body.Close()
-	}
-	if c.buffer != nil {
-		defer c.buffer.Reset()
-	}
-
-	restReq := c.request.URL.String()
-
-	// send request to server
-	if response, err = c.client.Do(c.request); err != nil {
-		return nil, fmt.Errorf("connection error %w", err)
-	}
-	//goland:noinspection GoUnhandledErrorResult
-	defer response.Body.Close()
-
-	if response.StatusCode != 200 {
-		body, err2 := io.ReadAll(response.Body)
-		if err2 != nil {
-			return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
-		}
-
-		if response.StatusCode == 401 {
-			return nil, errs.New(errs.ErrAuthFailed, response.Status)
-		}
-
-		result := gjson.GetBytes(body, "error")
-		if result.Exists() {
-			message := result.Get("message").String()
-			code := result.Get("code").Int()
-			target := result.Get("target").String()
-			return nil, errs.Rest(response.StatusCode, message, code, target)
-		}
-		return nil, errs.Rest(response.StatusCode, "", 0, "")
-	}
-
-	// read response body
-	if body, err = io.ReadAll(response.Body); err != nil {
-		return nil, err
-	}
-	defer c.printRequestAndResponse(restReq, body)
-
-	if err != nil {
-		return nil, err
-	}
-	return body, nil
 }
 
 func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool) (int64, error) {

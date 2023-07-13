@@ -368,7 +368,71 @@ type authBody struct {
 }
 
 func (c *Client) fetchTokenWithAuthRetry() error {
-	err := c.fetchToken()
+	fetchToken := func() error {
+		var (
+			err      error
+			req      *http.Request
+			response *http.Response
+			body     []byte
+		)
+		u, err := url.JoinPath(c.baseURL, c.APIPath, "authorize")
+		if err != nil {
+			return fmt.Errorf("failed to create auth URL err: %w", err)
+		}
+		password, err := c.auth.Password()
+		if err != nil {
+			return err
+		}
+		authB := authBody{
+			Username: c.username,
+			Password: password,
+		}
+		postBody, err := json.Marshal(authB)
+		if err != nil {
+			return err
+		}
+
+		req, err = http.NewRequest("POST", u, bytes.NewBuffer(postBody))
+		if err != nil {
+			return err
+		}
+		req.Header.Set("accept", "application/json")
+
+		// send request to server
+		client := &http.Client{
+			Transport: c.client.Transport,
+			Timeout:   c.client.Timeout,
+		}
+		if response, err = client.Do(req); err != nil {
+			return fmt.Errorf("connection error %w", err)
+		}
+
+		//goland:noinspection GoUnhandledErrorResult
+		defer response.Body.Close()
+
+		// read response body
+		if body, err = io.ReadAll(response.Body); err != nil {
+			return err
+		}
+
+		if response.StatusCode != 200 {
+			return errs.NewStorageGridErr(response.StatusCode, body)
+		}
+
+		results := gjson.GetManyBytes(body, "data", "message.text")
+		token := results[0]
+		errorMsg := results[1]
+
+		if token.Exists() {
+			c.token = token.String()
+			c.request.Header.Set("Authorization", "Bearer "+c.token)
+		} else {
+			return errs.New(errs.ErrAuthFailed, errorMsg.String())
+		}
+		return nil
+	}
+
+	err := fetchToken()
 	if err != nil {
 		var storageGridErr errs.StorageGridError
 		if errors.As(err, &storageGridErr) {
@@ -381,76 +445,12 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 				}
 				if pollerAuth.HasCredentialScript {
 					c.auth.Expire()
-					return c.fetchToken()
+					return fetchToken()
 				}
 			}
 		}
 	}
 	return err
-}
-
-func (c *Client) fetchToken() error {
-	var (
-		err      error
-		req      *http.Request
-		response *http.Response
-		body     []byte
-	)
-	u, err := url.JoinPath(c.baseURL, c.APIPath, "authorize")
-	if err != nil {
-		return fmt.Errorf("failed to create auth URL err: %w", err)
-	}
-	password, err := c.auth.Password()
-	if err != nil {
-		return err
-	}
-	authB := authBody{
-		Username: c.username,
-		Password: password,
-	}
-	postBody, err := json.Marshal(authB)
-	if err != nil {
-		return err
-	}
-
-	req, err = http.NewRequest("POST", u, bytes.NewBuffer(postBody))
-	if err != nil {
-		return err
-	}
-	req.Header.Set("accept", "application/json")
-
-	// send request to server
-	client := &http.Client{
-		Transport: c.client.Transport,
-		Timeout:   c.client.Timeout,
-	}
-	if response, err = client.Do(req); err != nil {
-		return fmt.Errorf("connection error %w", err)
-	}
-
-	//goland:noinspection GoUnhandledErrorResult
-	defer response.Body.Close()
-
-	// read response body
-	if body, err = io.ReadAll(response.Body); err != nil {
-		return err
-	}
-
-	if response.StatusCode != 200 {
-		return errs.NewStorageGridErr(response.StatusCode, body)
-	}
-
-	results := gjson.GetManyBytes(body, "data", "message.text")
-	token := results[0]
-	errorMsg := results[1]
-
-	if token.Exists() {
-		c.token = token.String()
-		c.request.Header.Set("Authorization", "Bearer "+c.token)
-	} else {
-		return errs.New(errs.ErrAuthFailed, errorMsg.String())
-	}
-	return nil
 }
 
 func (c *Client) sniffAPIVersion(retries int) error {
