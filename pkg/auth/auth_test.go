@@ -91,6 +91,25 @@ Pollers:
 		},
 
 		{
+			name:           "default username",
+			pollerName:     "test",
+			want:           PollerAuth{Username: "me", Password: "pass2"},
+			defaultDefined: true,
+			yaml: `
+Defaults:
+	auth_style: certificate_auth
+	credentials_file: secrets/openlab
+	username: me
+	password: pass
+	credentials_script:
+		path: ../get_pass
+Pollers:
+	test:
+		addr: a.b.c
+		password: pass2`,
+		},
+
+		{
 			name:       "default credentials_script",
 			pollerName: "test",
 			want: PollerAuth{

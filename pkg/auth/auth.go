@@ -163,7 +163,6 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 		return auth, nil
 	}
 	if auth.Password != "" {
-		c.poller.Username = auth.Username
 		return auth, nil
 	}
 
@@ -187,7 +186,6 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 	if auth.Username != "" {
 		defaultAuth.Username = auth.Username
 	}
-	c.poller.Username = defaultAuth.Username
 	return defaultAuth, nil
 }
 
