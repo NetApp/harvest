@@ -14,9 +14,11 @@ counters:
   - ^is_svm_root                                  => svm_root
   - ^snaplock.type                                => snaplock_type
   - ^snapshot_policy.name                         => snapshot_policy
+  - ^space.snapshot.autodelete.enabled            => snapshot_autodelete
   - ^state                                        => state
   - ^style                                        => style
   - ^type                                         => type
+  - anti_ransomware.dry_run_start_time(timestamp) => anti_ransomware_start_time
   - autosize.grow_threshold                       => autosize_grow_threshold_percent
   - autosize.maximum                              => autosize_maximum_size
   - snapshot_count
@@ -43,6 +45,7 @@ counters:
   - space.snapshot.used                           => snapshots_size_used
   - space.used                                    => size_used
   - hidden_fields:
+      - anti_ransomware.dry_run_start_time
       - anti_ransomware.state
       - autosize
       - encryption.enabled
@@ -137,6 +140,7 @@ export_options:
     - is_sis_volume
     - root_volume
     - snaplock_type
+    - snapshot_autodelete
     - snapshot_policy
     - state
     - svm_root
