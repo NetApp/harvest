@@ -52,6 +52,36 @@ Pollers:
 		},
 
 		{
+			name:           "poller username from credentials_file defaults",
+			pollerName:     "test",
+			want:           PollerAuth{Username: "default-user", Password: "from-secrets-file"},
+			defaultDefined: true,
+			yaml: `
+Defaults:
+	auth_style: certificate_auth
+	credentials_file: secrets/openlab
+Pollers:
+	test:
+		addr: a.b.c
+		credentials_file: testdata/secrets.yaml`,
+		},
+
+		{
+			name:           "poller username from credentials_file",
+			pollerName:     "test2",
+			want:           PollerAuth{Username: "test2-user", Password: "from-secrets-file"},
+			defaultDefined: true,
+			yaml: `
+Defaults:
+	auth_style: certificate_auth
+	credentials_file: secrets/openlab
+Pollers:
+	test2:
+		addr: a.b.c
+		credentials_file: testdata/secrets.yaml`,
+		},
+
+		{
 			name:           "default cert_auth",
 			pollerName:     "test",
 			want:           PollerAuth{Username: "username", Password: "", IsCert: true},

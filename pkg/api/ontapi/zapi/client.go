@@ -147,13 +147,13 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		}
 	} else {
 		password := pollerAuth.Password
-		if poller.Username == "" {
+		if pollerAuth.Username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {
 			return nil, errs.New(errs.ErrMissingParam, "password")
 		}
 
-		request.SetBasicAuth(poller.Username, password)
+		request.SetBasicAuth(pollerAuth.Username, password)
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
