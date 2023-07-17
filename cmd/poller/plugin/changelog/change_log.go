@@ -5,6 +5,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
+	"strconv"
+	"time"
 )
 
 /*The changelog feature is only applicable to labels and requires a UUID for the label name to exist.
@@ -23,6 +25,7 @@ const (
 	track         = "track"
 	oldLabelValue = "old_value"
 	newLabelValue = "new_value"
+	indexLabel    = "index"
 )
 
 // Metrics to be used in ChangeLog
@@ -37,6 +40,7 @@ type ChangeLog struct {
 	previousData    *matrix.Matrix
 	changeLogMap    map[string]*matrix.Matrix
 	changeLogConfig Entry
+	index           int
 }
 
 // Change represents a single change entry in the ChangeLog
@@ -48,6 +52,7 @@ type Change struct {
 	track    string
 	oldValue string
 	newValue string
+	time     int64
 }
 
 // New initializes a new instance of the ChangeLog plugin
@@ -152,6 +157,9 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		prevInstancesUUIDKey[uuid] = key
 		oldInstances.Add(key)
 	}
+
+	currentTime := time.Now().Unix()
+
 	// check if prev exists
 	if c.previousData != nil {
 		// loop over current instances
@@ -177,6 +185,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 					object: object,
 					op:     create,
 					labels: make(map[string]string),
+					time:   currentTime,
 				}
 				c.updateChangeLogLabels(object, instance, change)
 				c.createChangeLogInstance(changeMat, change)
@@ -193,6 +202,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 							track:    currentLabel,
 							oldValue: old.Get(currentLabel),
 							newValue: newLabel,
+							time:     currentTime,
 						}
 						c.updateChangeLogLabels(object, instance, change)
 						// add changed track and its old, new value
@@ -218,6 +228,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 					object: object,
 					op:     del,
 					labels: make(map[string]string),
+					time:   currentTime,
 				}
 				c.updateChangeLogLabels(object, prevInstance, change)
 				c.createChangeLogInstance(changeMat, change)
@@ -231,6 +242,11 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	matricesArray = append(matricesArray, changeMat)
 
 	c.copyPreviousData(data)
+	if len(changeMat.GetInstances()) > 0 {
+		// The `index` variable is used to differentiate between changes to the same label in a Grafana dashboard.
+		// It has a value between 0 and 100 and is used in the `change_log` query as `last_over_time`.
+		c.index = (c.index + 1) % 100
+	}
 
 	return matricesArray, nil
 }
@@ -252,6 +268,7 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 	// copy keys
 	cInstance.SetLabel(objectLabel, change.object)
 	cInstance.SetLabel(opLabel, change.op)
+	cInstance.SetLabel(indexLabel, strconv.Itoa(c.index))
 	for k, v := range change.labels {
 		cInstance.SetLabel(k, v)
 	}
@@ -262,7 +279,7 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 			return
 		}
 	}
-	if err = m.SetValueFloat64(cInstance, 1); err != nil {
+	if err = m.SetValueInt64(cInstance, change.time); err != nil {
 		c.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
 		return
 	}
