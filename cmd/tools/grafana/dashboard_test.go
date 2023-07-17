@@ -760,6 +760,32 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	}
 
 	for _, v := range variables {
+		if v.name == "TopResources" {
+			for _, optionVal := range v.options {
+				selected := optionVal.Get("selected").Bool()
+				text := optionVal.Get("text").String()
+				value := optionVal.Get("value").String()
+
+				// Testing text and value
+				if text != value {
+					if text == "All" && value == "$__all" {
+						// special case with all values
+					} else {
+						t.Errorf("dashboard=%s name=%s use topk, text %s haven't matched with value %s",
+							shortPath(path), v.name, text, value)
+					}
+				}
+
+				// Testing text with selected
+				if text == "5" && selected != true {
+					t.Errorf("dashboard=%s name=%s use topk, text %s should not have selected %t",
+						shortPath(path), v.name, text, selected)
+				} else if text != "5" && selected == true {
+					t.Errorf("dashboard=%s name=%s use topk, text %s should not have selected %t",
+						shortPath(path), v.name, text, selected)
+				}
+			}
+		}
 		if !strings.Contains(v.query, "topk") || !strings.Contains(v.query, "__range") {
 			continue
 		}
