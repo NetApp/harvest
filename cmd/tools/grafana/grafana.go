@@ -757,7 +757,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 		opts.client.Transport = &http.Transport{TLSClientConfig: tlsConfig}
 	}
 	// send random request to validate token
-	result, status, code, err := sendRequest(opts, "GET", "/api/folders/aaaaaaa", nil)
+	result, status, code, err := sendRequest(opts, "GET", "/api/org", nil)
 	if err != nil {
 		return err
 	} else if code != 200 && code != 404 {

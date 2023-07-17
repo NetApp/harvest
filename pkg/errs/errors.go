@@ -31,9 +31,29 @@ const (
 	ErrWrongTemplate      = harvestError("wrong template")
 )
 
+const (
+	ErrNumZAPISuspended = "61253"
+)
+
 type HarvestError struct {
-	Message string
-	Inner   error
+	Message    string
+	Inner      error
+	ErrNum     string
+	StatusCode int
+}
+
+type Option func(*HarvestError)
+
+func WithStatus(statusCode int) Option {
+	return func(e *HarvestError) {
+		e.StatusCode = statusCode
+	}
+}
+
+func WithErrorNum(errNum string) Option {
+	return func(e *HarvestError) {
+		e.ErrNum = errNum
+	}
 }
 
 func (e HarvestError) Error() string {
@@ -43,13 +63,20 @@ func (e HarvestError) Error() string {
 	if e.Message == "" {
 		return e.Inner.Error()
 	}
-	return fmt.Sprintf("%s => %s", e.Inner.Error(), e.Message)
+	if e.ErrNum == "" && e.StatusCode == 0 {
+		return fmt.Sprintf("%s => %s", e.Inner.Error(), e.Message)
+	}
+	return fmt.Sprintf(`%s => %s errNum="%s" statusCode="%d"`, e.Inner.Error(), e.Message, e.ErrNum, e.StatusCode)
 }
 
 func (e HarvestError) Unwrap() error {
 	return e.Inner
 }
 
-func New(err error, message string) error {
-	return HarvestError{Message: message, Inner: err}
+func New(innerError error, message string, opts ...Option) error {
+	err := HarvestError{Message: message, Inner: innerError}
+	for _, opt := range opts {
+		opt(&err)
+	}
+	return err
 }

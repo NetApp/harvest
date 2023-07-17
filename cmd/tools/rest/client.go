@@ -191,7 +191,11 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	}
 	c.request.Header.Set("accept", "application/json")
 	if c.username != "" {
-		c.request.SetBasicAuth(c.username, c.auth.Password())
+		password, err2 := c.auth.Password()
+		if err2 != nil {
+			return nil, err2
+		}
+		c.request.SetBasicAuth(c.username, password)
 	}
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
@@ -212,7 +216,63 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		err  error
 	)
 
-	body, err = c.invoke()
+	doInvoke := func() ([]byte, error) {
+		var (
+			response *http.Response
+			body     []byte
+			err      error
+		)
+
+		if c.request.Body != nil {
+			//goland:noinspection GoUnhandledErrorResult
+			defer response.Body.Close()
+		}
+		if c.buffer != nil {
+			defer c.buffer.Reset()
+		}
+
+		restReq := c.request.URL.String()
+
+		// send request to server
+		if response, err = c.client.Do(c.request); err != nil {
+			return nil, fmt.Errorf("connection error %w", err)
+		}
+		//goland:noinspection GoUnhandledErrorResult
+		defer response.Body.Close()
+
+		if response.StatusCode != 200 {
+			body, err2 := io.ReadAll(response.Body)
+			if err2 != nil {
+				return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
+			}
+
+			if response.StatusCode == 401 {
+				return nil, errs.New(errs.ErrAuthFailed, response.Status)
+			}
+
+			result := gjson.GetBytes(body, "error")
+			if result.Exists() {
+				message := result.Get("message").String()
+				code := result.Get("code").Int()
+				target := result.Get("target").String()
+				return nil, errs.Rest(response.StatusCode, message, code, target)
+			}
+			return nil, errs.Rest(response.StatusCode, "", 0, "")
+		}
+
+		// read response body
+		if body, err = io.ReadAll(response.Body); err != nil {
+			return nil, err
+		}
+		defer c.printRequestAndResponse(restReq, body)
+
+		if err != nil {
+			return nil, err
+		}
+		return body, nil
+	}
+
+	body, err = doInvoke()
 
 	if err != nil {
 		var he errs.HarvestError
@@ -220,74 +280,24 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, update the client's password,
 			// and try again
-			if errors.Is(he, errs.ErrAuthFailed) && c.auth.HasCredentialScript() {
-				c.auth.Expire()
+			if errors.Is(he, errs.ErrAuthFailed) {
 				pollerAuth, err2 := c.auth.GetPollerAuth()
 				if err2 != nil {
 					return nil, err2
 				}
-				c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
-				return c.invoke()
+				if pollerAuth.HasCredentialScript {
+					c.auth.Expire()
+					password, err2 := c.auth.Password()
+					if err2 != nil {
+						return nil, err2
+					}
+					c.request.SetBasicAuth(pollerAuth.Username, password)
+					return doInvoke()
+				}
 			}
 		}
 	}
 	return body, err
-}
-
-func (c *Client) invoke() ([]byte, error) {
-	var (
-		response *http.Response
-		body     []byte
-		err      error
-	)
-
-	if c.request.Body != nil {
-		//goland:noinspection GoUnhandledErrorResult
-		defer response.Body.Close()
-	}
-	if c.buffer != nil {
-		defer c.buffer.Reset()
-	}
-
-	restReq := c.request.URL.String()
-
-	// send request to server
-	if response, err = c.client.Do(c.request); err != nil {
-		return nil, fmt.Errorf("connection error %w", err)
-	}
-	//goland:noinspection GoUnhandledErrorResult
-	defer response.Body.Close()
-
-	if response.StatusCode != 200 {
-		body, err2 := io.ReadAll(response.Body)
-		if err2 != nil {
-			return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
-		}
-
-		if response.StatusCode == 401 {
-			return nil, errs.New(errs.ErrAuthFailed, response.Status)
-		}
-
-		result := gjson.GetBytes(body, "error")
-		if result.Exists() {
-			message := result.Get("message").String()
-			code := result.Get("code").Int()
-			target := result.Get("target").String()
-			return nil, errs.Rest(response.StatusCode, message, code, target)
-		}
-		return nil, errs.Rest(response.StatusCode, "", 0, "")
-	}
-
-	// read response body
-	if body, err = io.ReadAll(response.Body); err != nil {
-		return nil, err
-	}
-	defer c.printRequestAndResponse(restReq, body)
-
-	if err != nil {
-		return nil, err
-	}
-	return body, nil
 }
 
 func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool) (int64, error) {
@@ -310,7 +320,11 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 
 	downClient := &http.Client{Transport: restClient.client.Transport, Timeout: restClient.client.Timeout}
 	if restClient.username != "" {
-		request.SetBasicAuth(restClient.username, restClient.auth.Password())
+		password, err2 := restClient.auth.Password()
+		if err2 != nil {
+			return 0, err2
+		}
+		request.SetBasicAuth(restClient.username, password)
 	}
 	if verbose {
 		requestOut, _ := httputil.DumpRequestOut(request, false)
