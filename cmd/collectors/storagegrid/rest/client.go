@@ -128,7 +128,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	} else {
-		username := poller.Username
+		username := pollerAuth.Username
 		password := pollerAuth.Password
 		client.username = username
 		if username == "" {
