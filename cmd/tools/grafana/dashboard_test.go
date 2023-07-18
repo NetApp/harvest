@@ -766,22 +766,15 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				text := optionVal.Get("text").String()
 				value := optionVal.Get("value").String()
 
-				// Testing text and value
-				if text != value {
-					if text == "All" && value == "$__all" {
-						// special case with all values
-					} else {
-						t.Errorf("dashboard=%s name=%s use topk, text %s haven't matched with value %s",
-							shortPath(path), v.name, text, value)
-					}
+				// Test if text and value match, except for the special case with "All" and "$__all"
+				if text != value && !(text == "All" && value == "$__all") {
+					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' does not match value '%s'",
+						shortPath(path), v.name, text, value)
 				}
 
-				// Testing text with selected
-				if text == "5" && selected != true {
-					t.Errorf("dashboard=%s name=%s use topk, text %s should not have selected %t",
-						shortPath(path), v.name, text, selected)
-				} else if text != "5" && selected == true {
-					t.Errorf("dashboard=%s name=%s use topk, text %s should not have selected %t",
+				// Test if the selected value matches the expected text "5"
+				if (text == "5") != selected {
+					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
 						shortPath(path), v.name, text, selected)
 				}
 			}
