@@ -254,6 +254,20 @@ Pollers:
 			path: testdata/get_pass
 `,
 		},
+
+		{
+			name:         "password with space",
+			pollerName:   "test",
+			want:         PollerAuth{Username: "flo", Password: "abc def"},
+			wantSchedule: "42m",
+			yaml: `
+Pollers:
+	test:
+		addr: a.b.c
+		username: flo
+		password: abc def
+`,
+		},
 	}
 
 	for _, tt := range tests {
