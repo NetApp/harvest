@@ -29,10 +29,12 @@ ChangeLog:
       - svm
       - state
       - type
+      - anti_ransomware_state
   - object: node
     track:
       - node
       - location
+      - healthy
   - object: volume
     track:
       - node
@@ -40,6 +42,9 @@ ChangeLog:
       - svm
       - style
       - type
+      - aggr
+      - state
+      - status
 `
 
 // getChangeLogConfig returns a map of ChangeLog entries for the given object

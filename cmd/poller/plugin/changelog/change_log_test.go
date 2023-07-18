@@ -8,12 +8,22 @@ import (
 	"testing"
 )
 
-func newChangeLog(object string) *ChangeLog {
-
+func newChangeLog(object string, includeAll bool) *ChangeLog {
 	params := node.NewS("ChangeLog")
 	parentParams := node.NewS("parent")
 	parentParams.NewChildS("object", object)
+	exportOptions := parentParams.NewChildS("export_options", "")
+	if includeAll {
+		exportOptions.NewChildS("include_all_labels", "true")
+	} else {
+		instanceKeys := exportOptions.NewChildS("instance_keys", "")
+		instanceKeys.NewChildS("", "svm")
+	}
 
+	return createChangeLog(params, parentParams)
+}
+
+func createChangeLog(params, parentParams *node.Node) *ChangeLog {
 	abc := plugin.New("Test", nil, params, parentParams, "", nil)
 	p := &ChangeLog{AbstractPlugin: abc}
 	p.Options = &options.Options{
@@ -27,8 +37,38 @@ func newChangeLog(object string) *ChangeLog {
 	return p
 }
 
+func newChangeLogUnsupportedTrack(object string) *ChangeLog {
+	params := node.NewS("ChangeLog")
+	t := params.NewChildS("Track", "")
+	t.NewChildS("", "abcd")
+	parentParams := node.NewS("parent")
+	parentParams.NewChildS("object", object)
+
+	return createChangeLog(params, parentParams)
+}
+
+func checkChangeLogInstances(t *testing.T, o []*matrix.Matrix, expectedInstances, expectedLabels int, expectedOpLabel, opLabel string) {
+	if len(o) == 1 {
+		cl := o[0]
+		if len(cl.GetInstances()) != expectedInstances {
+			t.Errorf("ChangeLog instances size expected %d, actual %d", expectedInstances, len(cl.GetInstances()))
+		} else {
+			for _, i := range cl.GetInstances() {
+				if i.GetLabel(opLabel) != expectedOpLabel {
+					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, expectedOpLabel, i.GetLabel(opLabel))
+				}
+				if i.GetLabels().Size() != expectedLabels {
+					t.Errorf("ChangeLog number of labels expected %d, actual %d", expectedLabels, i.GetLabels().Size())
+				}
+			}
+		}
+	} else {
+		t.Error("ChangeLog slice size is wrong")
+	}
+}
+
 func TestChangeLogModified(t *testing.T) {
-	p := newChangeLog("svm")
+	p := newChangeLog("svm", true)
 	m := matrix.New("TestChangeLog", "svm", "svm")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -51,28 +91,11 @@ func TestChangeLogModified(t *testing.T) {
 
 	o, _ := p.Run(data1)
 
-	if len(o) == 1 {
-		cl := o[0]
-		if len(cl.GetInstances()) != 2 {
-			t.Errorf("ChangeLog instances size expected %d, actual %d", 2, len(cl.GetInstances()))
-		} else {
-			for _, i := range cl.GetInstances() {
-				if i.GetLabel(opLabel) != update {
-					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, update, i.GetLabel(opLabel))
-				}
-			}
-		}
-	} else {
-		t.Error("ChangeLog slice size is wrong")
-	}
-
-	//TODO add test case of published labels are correct
-
-	// TODO test includealllabels
+	checkChangeLogInstances(t, o, 2, 9, update, opLabel)
 }
 
 func TestChangeLogCreated(t *testing.T) {
-	p := newChangeLog("svm")
+	p := newChangeLog("svm", false)
 	m := matrix.New("TestChangeLog", "svm", "svm")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -100,24 +123,11 @@ func TestChangeLogCreated(t *testing.T) {
 
 	o, _ := p.Run(data1)
 
-	if len(o) == 1 {
-		cl := o[0]
-		if len(cl.GetInstances()) != 1 {
-			t.Errorf("ChangeLog instances size expected %d, actual %d", 1, len(cl.GetInstances()))
-		} else {
-			for _, i := range cl.GetInstances() {
-				if i.GetLabel(opLabel) != create {
-					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, create, i.GetLabel(opLabel))
-				}
-			}
-		}
-	} else {
-		t.Error("ChangeLog slice size is wrong")
-	}
+	checkChangeLogInstances(t, o, 1, 4, create, opLabel)
 }
 
 func TestChangeLogDeleted(t *testing.T) {
-	p := newChangeLog("svm")
+	p := newChangeLog("svm", false)
 	m := matrix.New("TestChangeLog", "svm", "svm")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -136,24 +146,11 @@ func TestChangeLogDeleted(t *testing.T) {
 
 	o, _ := p.Run(data1)
 
-	if len(o) == 1 {
-		cl := o[0]
-		if len(cl.GetInstances()) != 1 {
-			t.Errorf("ChangeLog instances size expected %d, actual %d", 1, len(cl.GetInstances()))
-		} else {
-			for _, i := range cl.GetInstances() {
-				if i.GetLabel(opLabel) != del {
-					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, del, i.GetLabel(opLabel))
-				}
-			}
-		}
-	} else {
-		t.Error("ChangeLog slice size is wrong")
-	}
+	checkChangeLogInstances(t, o, 1, 4, del, opLabel)
 }
 
 func TestChangeLogUnsupported(t *testing.T) {
-	p := newChangeLog("lun")
+	p := newChangeLog("lun", false)
 	m := matrix.New("TestChangeLog", "lun", "lun")
 	data := map[string]*matrix.Matrix{
 		"svm": m,
@@ -181,4 +178,31 @@ func TestChangeLogUnsupported(t *testing.T) {
 	if len(o) != 0 {
 		t.Errorf("ChangeLog mEtric size expected %d, actual %d", 0, len(o))
 	}
+}
+
+func TestChangeLogModifiedUnsupportedTrack(t *testing.T) {
+	p := newChangeLogUnsupportedTrack("svm")
+
+	m := matrix.New("TestChangeLog", "svm", "svm")
+	data := map[string]*matrix.Matrix{
+		"svm": m,
+	}
+	instance, _ := m.NewInstance("0")
+	instance.SetLabel("uuid", "u1")
+	instance.SetLabel("svm", "s1")
+
+	_, _ = p.Run(data)
+
+	m1 := matrix.New("TestChangeLog", "svm", "svm")
+	data1 := map[string]*matrix.Matrix{
+		"svm": m1,
+	}
+
+	instance1, _ := m1.NewInstance("0")
+	instance1.SetLabel("uuid", "u1")
+	instance1.SetLabel("svm", "s2")
+
+	o, _ := p.Run(data1)
+
+	checkChangeLogInstances(t, o, 0, 0, "", "")
 }

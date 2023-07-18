@@ -122,6 +122,8 @@ func (d *Dict) Size() int {
 	return len(d.dict)
 }
 
+// CompareLabels The function compares the labels in the current Dict with the previous Dict.
+// returns current and previous value of a label if values are different. label should exist in []labels
 func (d *Dict) CompareLabels(prev *Dict, labels []string) (*Dict, *Dict) {
 	cur := New()
 	old := New()
