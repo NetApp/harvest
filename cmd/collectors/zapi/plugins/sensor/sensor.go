@@ -6,6 +6,7 @@ package sensor
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -160,7 +161,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 
 				if isPowerMatch {
 					if value, ok := metric.GetValueFloat64(instance); ok {
-						if sensorUnit != "mW" && sensorUnit != "W" {
+						if !collectors.IsValidUnit(sensorUnit) {
 							my.Logger.Warn().Str("unit", sensorUnit).Float64("value", value).Msg("unknown power unit")
 						} else {
 							if sensorEnvironmentMetricMap[iKey].powerSensor == nil {
@@ -216,9 +217,9 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 				var sumPower float64
 				if len(v.powerSensor) > 0 {
 					for _, v1 := range v.powerSensor {
-						if v1.unit == "mW" {
+						if v1.unit == "mW" || v1.unit == "mW*hr" {
 							sumPower += v1.value / 1000
-						} else if v1.unit == "W" {
+						} else if v1.unit == "W" || v1.unit == "W*hr" {
 							sumPower += v1.value
 						} else {
 							my.Logger.Warn().Str("node", key).Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
