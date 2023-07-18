@@ -13,18 +13,13 @@ Instructions on how to install Harvest via [NAbox](https://nabox.org/documentati
 
 ## Source
 
-To build Harvest from source code, first make sure you have a working Go environment 
-with [version 1.19 or greater installed](https://golang.org/doc/install).
+To build Harvest from source code follow these steps.
 
-Clone the repo and build everything.
-
-```
-git clone https://github.com/NetApp/harvest.git
-cd harvest
-make build
-bin/harvest version
-```
-
-If you're building on a Mac use `GOOS=darwin make build`
+1. `git clone https://github.com/NetApp/harvest.git`
+2. cd `harvest`
+3. check the version of go required in the `go.mod` file
+4. ensure you have a working Go environment at that version or newer. Go installs found [here](https://golang.org/doc/install). 
+5. `make build` (if you want to run Harvest from a Mac use `GOOS=darwin make build`) 
+6. `bin/harvest version`
 
 Checkout the `Makefile` for other targets of interest.
