@@ -294,7 +294,7 @@ func (c *ChangeLog) updateChangeLogLabels(object string, instance *matrix.Instan
 			if labelValue == "" {
 				c.Logger.Warn().Str("object", object).Str("label", l).Msg("Missing label")
 			} else {
-				change.labels[l] = instance.GetLabel(l)
+				change.labels[l] = labelValue
 			}
 		}
 	} else if cl.includeAll {
