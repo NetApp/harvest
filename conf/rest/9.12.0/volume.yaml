@@ -43,12 +43,12 @@ counters:
   - space.snapshot.used                           => snapshots_size_used
   - space.used                                    => size_used
   - hidden_fields:
-    - anti_ransomware.state
-    - autosize
-    - encryption.enabled
-    - is_svm_root
-    - snaplock.type
-    - space
+      - anti_ransomware.state
+      - autosize
+      - encryption.enabled
+      - is_svm_root
+      - snaplock.type
+      - space
 
 endpoints:
   - query: api/private/cli/volume
@@ -73,13 +73,11 @@ endpoints:
       - ^clone.parent_snapshot.name               => clone_parent_snapshot
       - ^clone.parent_svm.name                    => clone_parent_svm
       - ^clone.parent_volume.name                 => clone_parent_volume
-      - ^clone.split_initiated                    => clone_split_initiated
-      - clone.split_complete_percent              => clone_split_complete_percent
       - clone.split_estimate                      => clone_split_estimate
       - hidden_fields:
-        - clone
+          - clone
       - filter:
-         - clone.is_flexclone=true
+          - clone.is_flexclone=true
 
   - query: api/private/cli/volume/efficiency/stat
     counters:
@@ -105,7 +103,6 @@ plugins:
       value_to_num:
         - new_status state online online `0`
       replace:
-        - style style `flexgroup_constituent` `flexgroup`
         - svm_root root_volume `false` `No`
         - svm_root root_volume `true` `Yes`
       # To prevent visibility of transient volumes, uncomment the following lines
@@ -122,8 +119,6 @@ plugins:
 #        - volume `MDV_CRS_.+`
 #        # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
 #        - volume `MDV_aud_.+`
-  - Aggregator:
-      - volume<style=flexgroup>volume node,svm,aggr,style
 
 export_options:
   instance_keys:
@@ -137,7 +132,6 @@ export_options:
     - clone_parent_snapshot
     - clone_parent_svm
     - clone_parent_volume
-    - clone_split_initiated
     - isEncrypted
     - isHardwareEncrypted
     - is_sis_volume
@@ -147,4 +141,3 @@ export_options:
     - state
     - svm_root
     - type
-

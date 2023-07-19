@@ -17,6 +17,9 @@ import (
 // Bookend EMS testing: Simulated bookend issuing ems "wafl.vvol.offline" and ems "hm.alert.raised" with alert_id value as "RaidLeftBehindAggrAlert"
 var issuingEmsNames = []string{"wafl.vvol.offline", "hm.alert.raised"}
 
+// Default labels per ems is 5, "hm.alert.raised" ems has 10 labels and "wafl.vvol.offline" has 4 labels, total instance labels would be 24
+const expectedInstanceLabelCount = 24
+
 // Auto resolve EMS testing: Simulated bookend issuing ems "LUN.offline" and ems "monitor.fan.critical"
 var autoresolveEmsNames = []string{"LUN.offline", "monitor.fan.critical"}
 
@@ -76,12 +79,12 @@ func emsParams(emsConfigPath string) *node.Node {
 }
 
 func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
-	if _, emsCount, _ := e.HandleResults(results, e.emsProp); emsCount == 0 {
-		t.Fatal("Failed to fetch data")
+	if _, emsCount, _ := e.HandleResults(results, e.emsProp); emsCount != expectedInstanceLabelCount {
+		t.Fatalf("Instance labels count mismatch detected. Expected labels: %d actual labels: %d", expectedInstanceLabelCount, emsCount)
 	}
 
 	// Check and evaluate ems events
@@ -114,7 +117,7 @@ func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
 }
 
 func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	// Simulated bookend resolving ems "wafl.vvol.online" and ems "hm.alert.cleared" with alert_id value as "RaidLeftBehindAggrAlert"
 	results := collectors.JSONToGson(path, true)
@@ -156,7 +159,7 @@ func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
 
 func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 	var notGeneratedEmsNames, notAutoResolvedEmsNames []string
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	results := collectors.JSONToGson(path, true)
 	// Polling ems collector to handle results
@@ -184,9 +187,8 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 	}
 
 	// Evaluate the cache for existence of these auto resolve ems.
-	// Sleep for 1 second and check LUN.offline ems got auto resolved
-	time.Sleep(1 * time.Second)
-	e.updateMatrix()
+	// Simulate one second in the future and check that the LUN.offline ems event is auto resolved
+	e.updateMatrix(time.Now().Add(1 * time.Second))
 	// Check and evaluate bookend ems events got auto resolved successfully.
 	for generatedEmsName, mx := range e.Matrix {
 		if util.Contains(autoresolveEmsNames, generatedEmsName) {
@@ -206,9 +208,9 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 		t.Fatalf("These Bookend Ems haven't been auto resolved: %s", notAutoResolvedEmsNames)
 	}
 
-	// Sleep for another 1 second and check "LUN.offline" ems got removed from cache and "monitor.fan.critical" got auto resolved
-	time.Sleep(1 * time.Second)
-	e.updateMatrix()
+	// Simulate two seconds in future and check that the "LUN.offline" ems event was removed from the cache and
+	// "monitor.fan.critical" is auto resolved
+	e.updateMatrix(time.Now().Add(2 * time.Second))
 	notAutoResolvedEmsNames = make([]string, 0)
 	// Check bookend ems event got removed from cache successfully.
 	if e.Matrix["LUN.offline"] != nil {

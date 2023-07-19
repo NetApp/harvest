@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -146,13 +147,13 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		}
 	} else {
 		password := pollerAuth.Password
-		if poller.Username == "" {
+		if pollerAuth.Username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {
 			return nil, errs.New(errs.ErrMissingParam, "password")
 		}
 
-		request.SetBasicAuth(poller.Username, password)
+		request.SetBasicAuth(pollerAuth.Username, password)
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
@@ -304,9 +305,9 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 	return nil
 }
 
-// InvokeZapi will issue API requests with batching
+// invokeZapi will issue API requests with batching
 // The method bails on the first error
-func (c *Client) InvokeZapi(request *node.Node, handle func([]*node.Node) error) error {
+func (c *Client) invokeZapi(request *node.Node, handle func([]*node.Node) error) error {
 	var output []*node.Node
 	tag := "initial"
 
@@ -317,7 +318,7 @@ func (c *Client) InvokeZapi(request *node.Node, handle func([]*node.Node) error)
 			err      error
 		)
 
-		if result, tag, err = c.InvokeBatchRequest(request, tag); err != nil {
+		if result, tag, err = c.InvokeBatchRequest(request, tag, ""); err != nil {
 			return err
 		}
 
@@ -354,7 +355,7 @@ func (c *Client) InvokeZapi(request *node.Node, handle func([]*node.Node) error)
 // InvokeZapiCall will issue API requests with batching
 func (c *Client) InvokeZapiCall(request *node.Node) ([]*node.Node, error) {
 	var output []*node.Node
-	err := c.InvokeZapi(request, func(response []*node.Node) error {
+	err := c.invokeZapi(request, func(response []*node.Node) error {
 		output = append(output, response...)
 		return nil
 	})
@@ -364,17 +365,35 @@ func (c *Client) InvokeZapiCall(request *node.Node) ([]*node.Node, error) {
 	return output, nil
 }
 
-// Invoke will issue the API request and return server response
+// Invoke is used for two purposes
+// If testFilePath is non-empty -> Used only from unit test
+// Else -> will issue the API request and return server response
 // this method should only be called after building the request
-func (c *Client) Invoke() (*node.Node, error) {
-	result, _, _, err := c.invoke(false)
+func (c *Client) Invoke(testFilePath string) (*node.Node, error) {
+	if testFilePath != "" {
+		if testData, err := tree.ImportXML(testFilePath); err == nil {
+			return testData, nil
+		} else {
+			return nil, err
+		}
+	}
+	result, _, _, err := c.invokeWithAuthRetry(false)
 	return result, err
 }
 
-// InvokeBatchRequest will issue API requests in series, once there
+// InvokeBatchRequest is used for two purposes
+// If testFilePath is non-empty -> Used only from unit test
+// Else -> will issue API requests in series, once there
 // are no more instances returned by the server, returned results will be nil
 // Use the returned tag for subsequent calls to this method
-func (c *Client) InvokeBatchRequest(request *node.Node, tag string) (*node.Node, string, error) {
+func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string) (*node.Node, string, error) {
+	if testFilePath != "" && tag != "" {
+		if testData, err := tree.ImportXML(testFilePath); err == nil {
+			return testData, "", nil
+		} else {
+			return nil, "", err
+		}
+	}
 	// wasteful of course, need to rewrite later @TODO
 	results, tag, _, _, err := c.InvokeBatchWithTimers(request, tag)
 	return results, tag, err
@@ -403,7 +422,7 @@ func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string) (*node.No
 		return nil, "", rd, pd, err
 	}
 
-	if results, rd, pd, err = c.invoke(true); err != nil {
+	if results, rd, pd, err = c.invokeWithAuthRetry(true); err != nil {
 		return nil, "", rd, pd, err
 	}
 
@@ -421,7 +440,7 @@ func (c *Client) InvokeRequestString(request string) (*node.Node, error) {
 	if err := c.BuildRequestString(request); err != nil {
 		return nil, err
 	}
-	return c.Invoke()
+	return c.Invoke("")
 }
 
 // InvokeRequest builds a request from request and invokes it
@@ -430,37 +449,64 @@ func (c *Client) InvokeRequest(request *node.Node) (*node.Node, error) {
 	var err error
 
 	if err = c.BuildRequest(request); err == nil {
-		return c.Invoke()
+		return c.Invoke("")
 	}
 	return nil, err
 }
 
-// InvokeWithTimers invokes the request and returns parsed XML response and timers:
+// InvokeWithTimers is used for two purposes
+// If testFilePath is non-empty -> Used only from unit test
+// Else -> invokes the request and returns parsed XML response and timers:
 // API wait time and XML parse time.
 // This method should only be called after building the request
-func (c *Client) InvokeWithTimers() (*node.Node, time.Duration, time.Duration, error) {
-	return c.invoke(true)
+func (c *Client) InvokeWithTimers(testFilePath string) (*node.Node, time.Duration, time.Duration, error) {
+	if testFilePath != "" {
+		if testData, err := tree.ImportXML(testFilePath); err == nil {
+			return testData, 0, 0, nil
+		} else {
+			return nil, 0, 0, err
+		}
+	}
+	return c.invokeWithAuthRetry(true)
 }
 
-// InvokeRaw invokes the request and returns the raw server response
-// This method should only be called after building the request
-func (c *Client) InvokeRaw() ([]byte, error) {
-	var (
-		response *http.Response
-		body     []byte
-		err      error
-	)
-
-	if response, err = c.client.Do(c.request); err != nil {
-		return body, errs.New(errs.ErrConnection, err.Error())
+func (c *Client) invokeWithAuthRetry(withTimers bool) (*node.Node, time.Duration, time.Duration, error) {
+	var buffer bytes.Buffer
+	pollerAuth, err := c.auth.GetPollerAuth()
+	if err != nil {
+		return nil, 0, 0, err
 	}
-	//goland:noinspection GoUnhandledErrorResult
-	defer response.Body.Close()
-	if response.StatusCode != 200 {
-		return body, errs.New(errs.ErrAPIResponse, response.Status)
+	if pollerAuth.HasCredentialScript {
+		// Save the buffer in case it needs to be replayed after an auth failure
+		// This is required because Go clears the buffer when making a POST request
+		buffer = *c.buffer
 	}
 
-	return io.ReadAll(response.Body)
+	resp, t1, t2, err := c.invoke(withTimers)
+
+	if err != nil {
+		var he errs.HarvestError
+		if errors.As(err, &he) {
+			// If this is an auth failure and the client is using a credential script,
+			// expire the current credentials, call the script again, update the client's password,
+			// and try again
+			if errors.Is(he, errs.ErrAuthFailed) && pollerAuth.HasCredentialScript {
+				c.auth.Expire()
+				password, err := c.auth.Password()
+				if err != nil {
+					return nil, 0, 0, err
+				}
+				c.request.SetBasicAuth(pollerAuth.Username, password)
+				c.request.Body = io.NopCloser(&buffer)
+				c.request.ContentLength = int64(buffer.Len())
+				result2, s1, s2, err3 := c.invoke(withTimers)
+				u1 := t1.Nanoseconds() + s1.Nanoseconds()
+				u2 := t2.Nanoseconds() + s2.Nanoseconds()
+				return result2, time.Duration(u1) * time.Nanosecond, time.Duration(u2) * time.Nanosecond, err3
+			}
+		}
+	}
+	return resp, t1, t2, err
 }
 
 // invokes the request that has been built with one of the BuildRequest* methods
@@ -472,12 +518,15 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		start             time.Time
 		responseT, parseT time.Duration
 		body              []byte
-		status, reason    string
+		status            string
+		reason            string
+		errNum            string
 		found             bool
 		err               error
 	)
 
-	defer func(Body io.ReadCloser) { _ = Body.Close() }(c.request.Body)
+	//goland:noinspection GoUnhandledErrorResult
+	defer c.request.Body.Close()
 	defer c.buffer.Reset()
 
 	// issue request to server
@@ -501,7 +550,10 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	if response.StatusCode != 200 {
-		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status)
+		if response.StatusCode == 401 {
+			return result, responseT, parseT, errs.New(errs.ErrAuthFailed, response.Status, errs.WithStatus(response.StatusCode))
+		}
+		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status, errs.WithStatus(response.StatusCode))
 	}
 
 	// read response body
@@ -521,7 +573,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		parseT = time.Since(start)
 	}
 
-	// check if request was successful
+	// check if the request was successful
 	if result = root.GetChildS("results"); result == nil {
 		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, "missing \"results\"")
 	}
@@ -535,7 +587,8 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		if reason == "" {
 			reason = "no reason"
 		}
-		err = errs.New(errs.ErrAPIRequestRejected, reason)
+		errNum, _ = result.GetAttrValueS("errno")
+		err = errs.New(errs.ErrAPIRequestRejected, reason, errs.WithErrorNum(errNum))
 		return result, responseT, parseT, err
 	}
 
@@ -594,4 +647,9 @@ func (c *Client) tlsVersion(version string) uint16 {
 		c.Logger.Warn().Str("version", version).Msg("Unknown TLS version, using default")
 	}
 	return 0
+}
+
+// NewTestClient It's used for unit test only
+func NewTestClient() *Client {
+	return &Client{system: &system{name: "testCluster", clustered: true}, request: &http.Request{}}
 }

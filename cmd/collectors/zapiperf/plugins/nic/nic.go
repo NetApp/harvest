@@ -71,6 +71,9 @@ func (me *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	}
 
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 
 		var speed, base int
 		var s string

@@ -1,49 +1,49 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
       "description": "",
-      "type": "datasource",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
-      "pluginName": "Prometheus"
+      "pluginName": "Prometheus",
+      "type": "datasource"
     }
   ],
   "__requires": [
     {
-      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
+      "type": "grafana",
       "version": "8.1.8"
     },
     {
-      "type": "panel",
       "id": "heatmap",
       "name": "Heatmap",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
+      "type": "datasource",
       "version": "1.0.0"
     },
     {
-      "type": "panel",
       "id": "stat",
       "name": "Stat",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "table",
       "name": "Table",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
+      "type": "panel",
       "version": ""
     }
   ],
@@ -121,12 +121,12 @@
                 "value": null
               },
               {
-                "color": "#EAB839",
-                "value": 15000
+                "color": "orange",
+                "value": 20000
               },
               {
                 "color": "red",
-                "value": 20000
+                "value": 30000
               }
             ]
           },
@@ -142,7 +142,7 @@
       },
       "id": 64,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
@@ -303,12 +303,12 @@
                 "value": null
               },
               {
-                "color": "#EAB839",
-                "value": 15000
+                "color": "orange",
+                "value": 20000
               },
               {
                 "color": "red",
-                "value": 20000
+                "value": 30000
               }
             ]
           },
@@ -324,7 +324,7 @@
       },
       "id": 69,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
@@ -369,12 +369,12 @@
                 "value": null
               },
               {
-                "color": "#EAB839",
-                "value": 15000
+                "color": "orange",
+                "value": 20000
               },
               {
                 "color": "red",
-                "value": 20000
+                "value": 30000
               }
             ]
           },
@@ -390,7 +390,7 @@
       },
       "id": 72,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
@@ -2235,12 +2235,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -2256,7 +2256,7 @@
           },
           "id": 99,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -2459,12 +2459,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -2480,7 +2480,7 @@
           },
           "id": 100,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -2525,12 +2525,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -2546,7 +2546,7 @@
           },
           "id": 101,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -3297,12 +3297,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -3318,7 +3318,7 @@
           },
           "id": 111,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -3479,12 +3479,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -3500,7 +3500,7 @@
           },
           "id": 112,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -3545,12 +3545,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -3566,7 +3566,7 @@
           },
           "id": 113,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -4358,12 +4358,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -4379,7 +4379,7 @@
           },
           "id": 191,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -4540,12 +4540,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -4561,7 +4561,7 @@
           },
           "id": 192,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -4606,12 +4606,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20
+                    "value": 30000
                   }
                 ]
               },
@@ -4627,7 +4627,7 @@
           },
           "id": 202,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -5304,12 +5304,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 2000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "dark-red",
-                    "value": 10000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -5567,11 +5567,11 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
+                    "color": "orange",
                     "value": 20000
                   },
                   {
-                    "color": "dark-red",
+                    "color": "red",
                     "value": 30000
                   }
                 ]
@@ -5632,12 +5632,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 2000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "dark-red",
-                    "value": 10000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -6794,12 +6794,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 2000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "dark-red",
-                    "value": 10000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -7057,12 +7057,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 2000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "dark-red",
-                    "value": 10000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -7122,12 +7122,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 2000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "dark-red",
-                    "value": 10000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -8094,12 +8094,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 2000.0001
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "dark-red",
-                    "value": 10000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -8357,11 +8357,11 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
+                    "color": "orange",
                     "value": 20000
                   },
                   {
-                    "color": "dark-red",
+                    "color": "red",
                     "value": 30000
                   }
                 ]
@@ -8422,11 +8422,11 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
+                    "color": "orange",
                     "value": 20000
                   },
                   {
-                    "color": "dark-red",
+                    "color": "red",
                     "value": 30000
                   }
                 ]
@@ -9403,12 +9403,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -9424,7 +9424,7 @@
           },
           "id": 177,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -9585,12 +9585,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20000
+                    "value": 30000
                   }
                 ]
               },
@@ -9606,7 +9606,7 @@
           },
           "id": 180,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -9651,12 +9651,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 15
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
                     "color": "red",
-                    "value": 20
+                    "value": 30000
                   }
                 ]
               },
@@ -9672,7 +9672,7 @@
           },
           "id": 181,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -10717,12 +10717,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 10000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "semi-dark-red",
-                    "value": 20000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -10738,7 +10738,7 @@
           },
           "id": 209,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -10894,12 +10894,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 10000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "semi-dark-red",
-                    "value": 20000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -10915,7 +10915,7 @@
           },
           "id": 211,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -10958,12 +10958,12 @@
                     "value": null
                   },
                   {
-                    "color": "#EAB839",
-                    "value": 10000
+                    "color": "orange",
+                    "value": 20000
                   },
                   {
-                    "color": "semi-dark-red",
-                    "value": 20000
+                    "color": "red",
+                    "value": 30000
                   }
                 ]
               },
@@ -10979,7 +10979,7 @@
           },
           "id": 213,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -11560,6 +11560,8 @@
                 }
               },
               "mappings": [],
+              "max": 1,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -11573,9 +11575,7 @@
                   }
                 ]
               },
-              "unit": "percentunit",
-              "min": 0,
-              "max": 1
+              "unit": "percentunit"
             },
             "overrides": []
           },
@@ -12499,6 +12499,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -12512,9 +12514,8 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100            },
+              "unit": "percent"
+            },
             "overrides": []
           },
           "gridPos": {
@@ -12588,6 +12589,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -12601,9 +12604,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -12678,6 +12679,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -12691,9 +12694,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -12767,6 +12768,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -12781,8 +12783,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -12857,6 +12858,8 @@
                 }
               },
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -12870,9 +12873,7 @@
                   }
                 ]
               },
-              "unit": "percent",
-              "min": 0,
-              "max": 100
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -12946,6 +12947,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -12961,8 +12963,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -13036,6 +13037,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -13051,8 +13053,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
-              "decimals": 2
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -13209,8 +13210,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "3",
-          "value": "3"
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
@@ -13231,7 +13232,7 @@
             "value": "2"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "3",
             "value": "3"
           },
@@ -13241,7 +13242,7 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },

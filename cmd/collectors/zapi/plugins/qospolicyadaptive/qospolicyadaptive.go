@@ -32,6 +32,9 @@ func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 	}
 
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		p.setIOPs(data, instance, "absolute_min_iops")
 		p.setIOPs(data, instance, "expected_iops")
 		p.setIOPs(data, instance, "peak_iops")

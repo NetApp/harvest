@@ -351,7 +351,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	e.Logger.Debug().Msg("starting data poll")
 
 	// Update cache for bookend ems
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	startTime = time.Now()
 
@@ -465,7 +465,6 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			instanceKey string
 		)
 
-		var instanceLabelCount uint64
 		if !instanceData.IsObject() {
 			e.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
 			continue
@@ -537,10 +536,20 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 				mx = m[msgName]
 			}
 
-			//parse ems properties for the instance
+			// Check matches at all same name ems
 			isMatch := false
+			// Check matches at each ems
+			isMatchPs := false
+			// Check instance count at all same name ems
+			instanceLabelCount := uint64(0)
+			// Check instance count at each ems
+			instanceLabelCountPs := uint64(0)
+
+			// parse ems properties for the instance
 			if ps, ok := prop[msgName]; ok {
 				for _, p := range ps {
+					isMatchPs = false
+					instanceLabelCountPs = 0
 					instanceKey = e.getInstanceKeys(p, instanceData)
 					instance := mx.GetInstance(instanceKey)
 
@@ -571,7 +580,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							} else {
 								instance.SetLabel(display, value.String())
 							}
-							instanceLabelCount++
+							instanceLabelCountPs++
 						} else {
 							e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
 						}
@@ -584,12 +593,12 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 
 					//matches filtering
 					if len(p.Matches) == 0 {
-						isMatch = true
+						isMatchPs = true
 					} else {
 						for _, match := range p.Matches {
 							if value := instance.GetLabel(match.Name); value != "" {
 								if value == match.value {
-									isMatch = true
+									isMatchPs = true
 									break
 								}
 							} else {
@@ -602,8 +611,8 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 						}
 					}
-					if !isMatch {
-						instanceLabelCount = 0
+					if !isMatchPs {
+						instanceLabelCountPs = 0
 						continue
 					}
 
@@ -634,6 +643,8 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 								Msg("Unable to find metric")
 						}
 					}
+					instanceLabelCount += instanceLabelCountPs
+					isMatch = isMatch || isMatchPs
 				}
 			}
 			if !isMatch {
@@ -670,7 +681,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 	return instanceKey
 }
 
-func (e *Ems) updateMatrix() {
+func (e *Ems) updateMatrix(begin time.Time) {
 	tempMap := make(map[string]*matrix.Matrix)
 	// store the bookend ems metric in tempMap
 	for _, issuingEmsList := range e.bookendEmsMap {
@@ -715,7 +726,7 @@ func (e *Ems) updateMatrix() {
 
 			// check instance timestamp and remove it after given resolve_after duration
 			if metricTimestamp, ok := timestampMetric.GetValueFloat64(instance); ok {
-				if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter[issuingEms]) {
+				if collectors.IsTimestampOlderThanDuration(begin, metricTimestamp, e.resolveAfter[issuingEms]) {
 					// Set events metric value as 0 and export instance to true with label autoresolved as true.
 					if err := eventMetric.SetValueFloat64(instance, 0); err != nil {
 						e.Logger.Error().Err(err).Str("key", "events").

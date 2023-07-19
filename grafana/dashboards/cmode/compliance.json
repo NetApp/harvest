@@ -1,43 +1,43 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
       "description": "",
-      "type": "datasource",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
-      "pluginName": "Prometheus"
+      "pluginName": "Prometheus",
+      "type": "datasource"
     }
   ],
   "__requires": [
     {
-      "type": "panel",
       "id": "bargauge",
       "name": "Bar gauge",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
+      "type": "grafana",
       "version": "7.5.4"
     },
     {
-      "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
+      "type": "datasource",
       "version": "1.0.0"
     },
     {
-      "type": "panel",
       "id": "stat",
       "name": "Stat",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "table",
       "name": "Table",
+      "type": "panel",
       "version": ""
     }
   ],
@@ -84,13 +84,31 @@
   ],
   "panels": [
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 174,
+      "options": {
+        "content": "View ONTAP Security Hardening Guide https://www.netapp.com/media/10674-tr4569.pdf for more details.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Important Information about Compliance dashboard",
+      "type": "text"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 152,
       "panels": [
@@ -177,7 +195,7 @@
             "h": 3,
             "w": 16,
             "x": 0,
-            "y": 1
+            "y": 3
           },
           "id": 161,
           "options": {
@@ -350,7 +368,7 @@
             "h": 3,
             "w": 4,
             "x": 16,
-            "y": 1
+            "y": 3
           },
           "id": 166,
           "links": [],
@@ -458,7 +476,7 @@
             "h": 3,
             "w": 4,
             "x": 20,
-            "y": 1
+            "y": 3
           },
           "id": 167,
           "links": [],
@@ -802,19 +820,19 @@
                     "value": [
                       {
                         "options": {
-                          " ": {
+                          "true": {
                             "index": 0,
-                            "text": "No"
+                            "text": "❌   Yes"
                           }
                         },
                         "type": "value"
                       },
                       {
                         "options": {
-                          "match": "nan",
+                          "match": "null",
                           "result": {
                             "index": 1,
-                            "text": "❌   Yes"
+                            "text": "No"
                           }
                         },
                         "type": "special"
@@ -1343,7 +1361,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 6
           },
           "id": 170,
           "options": {
@@ -1400,7 +1418,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster, secured)(label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc.*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\"))",
+              "expr": "count by (datacenter, cluster, insecured)(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", insecured=\"true\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1440,7 +1458,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1450,7 +1468,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1460,7 +1478,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1470,7 +1488,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1480,7 +1498,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1523,7 +1541,7 @@
                     "telnet_enabled",
                     "locked",
                     "Value #D",
-                    "secured",
+                    "insecured",
                     "banner",
                     "Value #G",
                     "Value #K",
@@ -1587,17 +1605,15 @@
                   "certificateIssuerType": 18,
                   "cluster": 1,
                   "fips_enabled": 3,
+                  "insecured": 5,
                   "locked": 9,
                   "rsh_enabled": 10,
-                  "secured": 5,
                   "telnet_enabled": 4
                 },
                 "renameByName": {
                   "Value #A": "Autosupport Https Transport",
                   "Value #C": "Default Admin User",
                   "Value #D": "MD5 in use",
-                  "Value #E": "Insecure SSH Settings",
-                  "Value #F": "Login Banner",
                   "Value #G": "Network Time Protocol",
                   "Value #I": "Saml Users",
                   "Value #J": "Cluster Peering",
@@ -1614,18 +1630,16 @@
                   "certificateExpiryStatus": "Cluster Certificate Validity",
                   "certificateIssuerType": "Certificate Issuer Type",
                   "certificateuser": "Certificate Users",
-                  "ciphers": "Insecure SSH Settings1",
                   "cluster": "Cluster",
                   "encryption_state": "Cluster Peering",
                   "fips_enabled": "Global FIPS",
-                  "insecure": "Insecure SSH Settings",
+                  "insecured": "Insecure SSH Settings",
                   "ldapuser": "Ldap Users",
                   "localuser": "Local Users",
                   "locked": "Default Admin User",
                   "ntp": "Network Time Protocol",
                   "rsh_enabled": "Remote Shell",
                   "samluser": "Saml Users",
-                  "secured": "Insecure SSH Settings",
                   "telnet_enabled": "Telnet"
                 }
               }
@@ -1644,7 +1658,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 3
       },
       "id": 15,
       "panels": [
@@ -1702,7 +1716,7 @@
             "h": 3,
             "w": 16,
             "x": 0,
-            "y": 2
+            "y": 4
           },
           "id": 165,
           "options": {
@@ -1850,7 +1864,7 @@
             "h": 3,
             "w": 4,
             "x": 16,
-            "y": 2
+            "y": 4
           },
           "id": 168,
           "links": [],
@@ -1954,7 +1968,7 @@
             "h": 3,
             "w": 4,
             "x": 20,
-            "y": 2
+            "y": 4
           },
           "id": 164,
           "links": [],
@@ -2164,19 +2178,19 @@
                     "value": [
                       {
                         "options": {
-                          " ": {
-                            "index": 1,
-                            "text": "No"
+                          "true": {
+                            "index": 0,
+                            "text": "❌   Yes"
                           }
                         },
                         "type": "value"
                       },
                       {
                         "options": {
-                          "match": "nan",
+                          "match": "null",
                           "result": {
-                            "index": 0,
-                            "text": "❌   Yes"
+                            "index": 1,
+                            "text": "No"
                           }
                         },
                         "type": "special"
@@ -2407,14 +2421,14 @@
                     "id": "mappings",
                     "value": [
                       {
-                        "type": "regex",
                         "options": {
                           "pattern": ".*chap.*",
                           "result": {
-                            "text": "Enabled",
-                            "index": 0
+                            "index": 0,
+                            "text": "Enabled"
                           }
-                        }
+                        },
+                        "type": "regex"
                       },
                       {
                         "options": {
@@ -2568,7 +2582,7 @@
             "h": 13,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 7
           },
           "id": 172,
           "options": {
@@ -2610,7 +2624,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(label_replace(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}, \"nonsecure\", \"$1\", \"ciphers\", \"(.*)_cbc.*\"), \"secured\", \" \", \"nonsecure\", \"NonSupportedField\")",
+              "expr": "count by (datacenter, cluster, insecured)(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", insecured=\"true\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2666,7 +2680,7 @@
                     "smb_signing_required",
                     "svm",
                     "banner",
-                    "secured",
+                    "insecured",
                     "Value #G",
                     "Value #I",
                     "Value #B"
@@ -2722,10 +2736,10 @@
                   "banner": 3,
                   "cifs_ntlm_enabled": 7,
                   "cluster": 1,
+                  "insecured": 5,
                   "iscsi_authentication_type": 10,
                   "nfs_kerberos_protocol_enabled": 11,
                   "nis_authentication_enabled": 6,
-                  "secured": 5,
                   "smb_encryption_required": 12,
                   "smb_signing_required": 13,
                   "svm": 2
@@ -2733,10 +2747,8 @@
                 "renameByName": {
                   "Value #A": "Autosupport Https Transport",
                   "Value #B": "Compliant",
-                  "Value #C": "Login Banner",
                   "Value #D": "MD5 in use",
                   "Value #E": "",
-                  "Value #F": "Login Banner",
                   "Value #G": "LDAP Payload Signing",
                   "Value #I": "LDAP Encryption",
                   "activediruser": "Active Directory Users",
@@ -2746,11 +2758,10 @@
                   "banner": "Login Banner",
                   "certificateuser": "Certificate Users",
                   "cifs_ntlm_enabled": "NTML Authentication",
-                  "ciphers": "Insecure SSH Settings",
                   "cluster": "",
                   "fips_enabled": "Global FIPS",
                   "fpolicy_enabled": "Fpolicy Status Active",
-                  "insecure": "Insecure SSH Settings",
+                  "insecured": "Insecure SSH Settings",
                   "iscsi_authentication_type": "CHAP Settings",
                   "ldapuser": "Ldap Users",
                   "localuser": "Local Users",
@@ -2760,7 +2771,6 @@
                   "ntp": "Network Time Protocol",
                   "rsh_enabled": "Remote Shell",
                   "samluser": "Saml Users",
-                  "secured": "Insecure SSH Settings",
                   "smb_encryption_required": "SMB Encryption Enabled",
                   "smb_signing_required": "SMB Signing Enabled",
                   "svm": "SVM",

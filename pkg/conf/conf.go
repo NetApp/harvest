@@ -5,8 +5,8 @@
 package conf
 
 import (
+	"dario.cat/mergo"
 	"fmt"
-	"github.com/imdario/mergo"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -136,19 +136,25 @@ func ReadCredentialFile(credPath string, p *Poller) error {
 			return errs.New(errs.ErrInvalidParam, "poller not found in credentials file")
 		}
 	}
-	if credPoller.SslKey != "" {
+
+	// Merge the poller and defaults from the credential file
+	if credConfig.Defaults != nil {
+		_ = mergo.Merge(credPoller, credConfig.Defaults)
+	}
+
+	if p.SslKey == "" {
 		p.SslKey = credPoller.SslKey
 	}
-	if credPoller.SslCert != "" {
+	if p.SslCert == "" {
 		p.SslCert = credPoller.SslCert
 	}
-	if credPoller.CaCertPath != "" {
+	if p.CaCertPath == "" {
 		p.CaCertPath = credPoller.CaCertPath
 	}
-	if credPoller.Username != "" {
+	if p.Username == "" {
 		p.Username = credPoller.Username
 	}
-	if credPoller.Password != "" {
+	if p.Password == "" {
 		p.Password = credPoller.Password
 	}
 	return nil
@@ -504,6 +510,7 @@ type Exporter struct {
 	// Prometheus specific
 	HeartBeatURL string `yaml:"heart_beat_url,omitempty"`
 	SortLabels   bool   `yaml:"sort_labels,omitempty"`
+	TLS          TLS    `yaml:"tls,omitempty"`
 
 	// InfluxDB specific
 	Bucket        *string `yaml:"bucket,omitempty"`

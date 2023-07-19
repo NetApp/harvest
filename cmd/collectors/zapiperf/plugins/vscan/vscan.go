@@ -39,6 +39,9 @@ func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 
 func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		ontapName := instance.GetLabel("instance_uuid")
 		// colon separated list of fields
 		// vs_test4   :    2.2.2.2   :    umeng-aff300-05
@@ -65,10 +68,13 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 	// 		scan_request_dispatched_rate
 
 	// create per scanner instance cache
-	cache := data.Clone(false, true, false)
+	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".Vscan"
 
 	for _, i := range data.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		scanner := i.GetLabel("scanner")
 		if cache.GetInstance(scanner) == nil {
 			s, _ := cache.NewInstance(scanner)
@@ -135,6 +141,9 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 
 	// cook averaged values
 	for scanner, i := range cache.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		for mKey, m := range cache.GetMetrics() {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_used") {
 				count := counts[scanner][mKey]

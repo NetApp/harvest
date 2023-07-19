@@ -226,7 +226,7 @@ func (my *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		Msg("Collected")
 
 	// metrics with qtree prefix and quota prefix are available to support backward compatibility
-	qtreePluginData := my.data.Clone(true, true, true)
+	qtreePluginData := my.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
 	qtreePluginData.UUID = my.Parent + ".Qtree"
 	qtreePluginData.Object = "qtree"
 	qtreePluginData.Identifier = "qtree"
@@ -257,7 +257,7 @@ func (my Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 				if my.client.IsClustered() {
 					qtreeInstance = data.GetInstance(tree + "." + volume + "." + vserver)
 				} else {
-					qtreeInstance = data.GetInstance(tree + "." + volume)
+					qtreeInstance = data.GetInstance(volume + "." + tree)
 				}
 				if qtreeInstance == nil {
 					my.Logger.Warn().

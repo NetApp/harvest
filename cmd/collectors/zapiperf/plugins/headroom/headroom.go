@@ -21,6 +21,9 @@ func (me *Headroom) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	data := dataMap[me.Object]
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 
 		// no need to continue if labels are already parsed
 		if instance.GetLabel("aggr") != "" {

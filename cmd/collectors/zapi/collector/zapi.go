@@ -85,13 +85,26 @@ func (z *Zapi) Init(a *collector.AbstractCollector) error {
 }
 
 func (z *Zapi) InitVars() error {
-
 	var err error
+
+	// It's used for unit tests only
+	if z.Options.IsTest {
+		z.Client = client.NewTestClient()
+		templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
+		template, templatePath, err := z.ImportSubTemplate("cdot", templateName, [3]int{9, 8, 0})
+		if err != nil {
+			return fmt.Errorf("unable to import template=[%s] %w", templatePath, err)
+		}
+		z.TemplatePath = templatePath
+		z.Params.Union(template)
+		return nil
+	}
 
 	if z.Client, err = client.New(conf.ZapiPoller(z.Params), z.Auth); err != nil { // convert to connection error, so poller aborts
 		return errs.New(errs.ErrConnection, err.Error())
 	}
 	z.Client.TraceLogSet(z.Name, z.Params)
+
 	if err = z.Client.Init(5); err != nil { // 5 retries before giving up to connect
 		return errs.New(errs.ErrConnection, err.Error())
 	}

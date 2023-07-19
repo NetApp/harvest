@@ -22,6 +22,9 @@ func (e *ExternalServiceOperation) Run(dataMap map[string]*matrix.Matrix) ([]*ma
 	data := dataMap[e.Object]
 	datacenterClusterKey := data.GetGlobalLabels().Get("datacenter") + Hyphen + data.GetGlobalLabels().Get("cluster") + Hyphen
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		// generate unique key by appending datacenter, cluster, svm, service_name and operation to support topk in grafana dashboard
 		key := datacenterClusterKey + instance.GetLabel("svm") + Hyphen + instance.GetLabel("service_name") + Hyphen + instance.GetLabel("operation")
 		instance.SetLabel("key", key)

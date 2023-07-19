@@ -238,7 +238,7 @@ func testWithNoPolicyTypeNoRelationshipType(t *testing.T, instance *matrix.Insta
 func testOlderTimestampThanDuration(t *testing.T) {
 	timestamp := float64(time.Now().Add(-20 * time.Minute).UnixMicro())
 	duration := 5 * time.Minute
-	isOlder := IsTimestampOlderThanDuration(timestamp, duration)
+	isOlder := IsTimestampOlderThanDuration(time.Now(), timestamp, duration)
 
 	if isOlder {
 		// OK
@@ -250,7 +250,7 @@ func testOlderTimestampThanDuration(t *testing.T) {
 func testNewerTimestampThanDuration(t *testing.T) {
 	timestamp := float64(time.Now().Add(-1 * time.Hour).UnixMicro())
 	duration := 2 * time.Hour
-	isOlder := IsTimestampOlderThanDuration(timestamp, duration)
+	isOlder := IsTimestampOlderThanDuration(time.Now(), timestamp, duration)
 
 	if !isOlder {
 		// OK

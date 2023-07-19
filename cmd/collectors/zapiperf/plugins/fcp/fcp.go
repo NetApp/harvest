@@ -66,6 +66,9 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 
 		instance.SetLabel("port", strings.TrimPrefix(instance.GetLabel("port"), "port."))
 

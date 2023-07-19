@@ -1,37 +1,37 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
       "description": "",
-      "type": "datasource",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
-      "pluginName": "Prometheus"
+      "pluginName": "Prometheus",
+      "type": "datasource"
     }
   ],
   "__requires": [
     {
-      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
+      "type": "grafana",
       "version": "8.1.8"
     },
     {
-      "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
+      "type": "datasource",
       "version": "1.0.0"
     },
     {
-      "type": "panel",
       "id": "text",
       "name": "Text",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
+      "type": "panel",
       "version": ""
     }
   ],
@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1685426331905,
+  "iteration": 1689785874213,
   "links": [
     {
       "asDropdown": true,
@@ -214,6 +214,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents the delays in the network layer of ONTAP.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -281,7 +282,7 @@
         "x": 0,
         "y": 17
       },
-      "id": 131,
+      "id": 133,
       "options": {
         "legend": {
           "calcs": [
@@ -300,20 +301,21 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",resource=\"backend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"}))",
+          "expr": "100 * topk($TopResources, (qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",resource=\"frontend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads by Latency from backend",
+      "title": "Top $TopResources Workloads by Latency from frontend",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents the delays in the data/WAFL layer of ONTAP.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -381,7 +383,7 @@
         "x": 12,
         "y": 17
       },
-      "id": 133,
+      "id": 131,
       "options": {
         "legend": {
           "calcs": [
@@ -400,21 +402,21 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100 * topk($TopResources, (qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",resource=\"frontend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})))",
+          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",resource=\"backend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads by Latency from frontend",
+      "title": "Top $TopResources Workloads by Latency from backend",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Represents the cables and adapters with which clustered nodes are physically connected. If the cluster interconnect component is in contention, it means high wait time for I/O requests at the cluster interconnect is impacting the latency of one or more workloads.",
+      "description": "Represents delays caused by the cluster switches, cables, and adapters which physically connect clustered nodes. \n\nIf the cluster interconnect component is in contention, it means high wait time for I/O requests at the cluster interconnect is impacting the latency of one or more workloads.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -508,7 +510,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCluster\",resource=\"cluster\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -519,6 +521,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents delays due to buffered write flushes, called consistency points (cp).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -612,7 +615,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCP\",resource=\"cp\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -623,6 +626,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents slowness due to attached hard drives or solid state drives.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -716,7 +720,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSDisk\",resource=\"disk\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -727,7 +731,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Represents the wait time of I/O requests by the external networking protocols on the cluster. The wait time is time spent waiting for transfer ready transactions to finish before the cluster can respond to an I/O request. If the network component is in contention, it means high wait time at the protocol layer is impacting the latency of one or more workloads.",
+      "description": "`Note:` Typically these latencies only apply to SAN not NAS.\n\nRepresents the wait time of I/O requests by the external networking protocols on the cluster. The wait time is time spent waiting for transfer ready transactions to finish before the cluster can respond to an I/O request. If the network component is in contention, it means high wait time at the protocol layer is impacting the latency of one or more workloads.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -821,7 +825,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNetwork\",resource=\"network\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -832,6 +836,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents delays due to mirroring writes to the NVRAM/NVLOG memory and to the HA partner NVRAM/NVLOG memory.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -925,7 +930,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNVLog\",resource=\"nvlog\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -936,6 +941,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Represents delays due to operations suspending on a delay mechanism. Typically this is diagnosed by NetApp Support.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1029,7 +1035,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSuspend\",resource=\"suspend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -1040,7 +1046,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Represents the throughput maximum (peak) setting of the storage Quality of Service (QoS) policy group assigned to the workload. If the policy group component is in contention, it means all workloads in the policy group are being throttled by the set throughput limit, which is impacting the latency of one or more of those workloads.",
+      "description": "Represents the throughput maximum (ceiling) setting of the storage Quality of Service (QoS) policy group assigned to the workload. If the policy group component is in contention, it means all workloads in the policy group are being throttled by the set throughput limit, which is impacting the latency of one or more of those workloads.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1134,7 +1140,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSThrottle\",resource=\"throttle\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -1145,7 +1151,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Represents the latency to a workload that is being caused by QoS throughput minimum (expected) setting assigned to other workloads. If the QoS minimum set on certain workloads use the majority of the bandwidth to guarantee the promised throughput, other workloads will be throttled and see more latency.",
+      "description": "Represents the latency to a workload that is being caused by QoS throughput floor (expected) setting assigned to other workloads. If the QoS floor set on certain workloads use the majority of the bandwidth to guarantee the promised throughput, other workloads will be throttled and see more latency.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1239,117 +1245,13 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSQosMin\",resource=\"qos_min\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
       "title": "Top $TopResources Workloads by Latency from qos_min",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 67
-      },
-      "id": 151,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"}))",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads by Latency from flexcache_spinhi",
       "type": "timeseries"
     },
     {
@@ -1423,7 +1325,7 @@
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 67
       },
       "id": 153,
@@ -1448,7 +1350,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCloud\",resource=\"cloud\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -1527,216 +1429,8 @@
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 0,
-        "y": 77
-      },
-      "id": 155,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCOP\",resource=\"cop\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cop\"}))",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads by Latency from cop",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
         "x": 12,
-        "y": 77
-      },
-      "id": 157,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRal\",resource=\"flexcache_ral\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"}))",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Workloads by Latency from flexcache_ral",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 0,
-                  "text": "0%"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 87
+        "y": 67
       },
       "id": 159,
       "options": {
@@ -1760,7 +1454,7 @@
           "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSyncRepl\",resource=\"sync_repl\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
@@ -1839,10 +1533,10 @@
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 12,
-        "y": 87
+        "x": 0,
+        "y": 77
       },
-      "id": 161,
+      "id": 157,
       "options": {
         "legend": {
           "calcs": [
@@ -1861,16 +1555,120 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWaflAdmission\",resource=\"admission\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"admission\"}))",
+          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRal\",resource=\"flexcache_ral\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"}))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{workload}} / {{wid}}",
+          "legendFormat": "{{workload}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Workloads by Latency from admission",
+      "title": "Top $TopResources Workloads by Latency from flexcache_ral",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 77
+      },
+      "id": 151,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"}))",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Latency from flexcache_spinhi",
       "type": "timeseries"
     }
   ],
@@ -2439,52 +2237,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cop\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSCOP",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cop\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"admission\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSWaflAdmission",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"admission\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -2508,5 +2260,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "",
-  "version": 2
+  "version": 1
 }

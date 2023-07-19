@@ -1,0 +1,25 @@
+<results status="passed">
+    <attributes-list>
+        <instance-info>
+            <name>vol_nfs_clone_845</name>
+            <uuid>a2970d0e-1da1-11ed-b4ec-d039ea4d0ade</uuid>
+        </instance-info>
+        <instance-info>
+            <name>vol_cache</name>
+            <uuid>dff44854-1836-11ed-bda8-d039ea4d0a5a</uuid>
+        </instance-info>
+        <instance-info>
+            <name>vol_data</name>
+            <uuid>bc14a7f5-1836-11ed-bda8-d039ea4d0a5a</uuid>
+        </instance-info>
+        <instance-info>
+            <name>volume1</name>
+            <uuid>bc14a7f5-1836-11ed-bda8-d039ea4d0a5a</uuid>
+        </instance-info>
+        <instance-info>
+            <name>volume2</name>
+            <uuid>a2970d0e-1da1-11ed-b4ec-d039ea4d0ade</uuid>
+        </instance-info>
+    </attributes-list>
+    <num-records>5</num-records>
+</results>

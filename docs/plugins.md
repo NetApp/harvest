@@ -4,17 +4,17 @@ The `plugin` feature allows users to manipulate and customize data collected by 
 collectors. Plugins have the same capabilities as collectors and therefore can collect data on their own as well.
 Furthermore, multiple plugins can be put in a pipeline to perform more complex operations.
 
-Harvest architecture defines three types of plugins:
+Harvest architecture defines two types of plugins:
 
-**built-in generic** - Statically compiled, generic plugins. "Generic" means the plugin is collector-agnostic. These
-plugins are provided in this package.
+**Built-in generic** - Statically compiled, generic plugins.
+"Generic" means the plugin is collector-agnostic.
+These plugins are provided in this package and listed in the right sidebar.
 
-**dynamic-generic** - These are generic plugins as well, but they are compiled as shared objects and dynamically loaded.
-These plugins are living in the directory src/plugins.
-
-**dynamic-custom** - These plugins are collector-specific. Their source code should reside inside the plugins/
-subdirectory of the collector package. Custom plugins have access to all the parameters of their parent collector and
-should be therefore treated with great care.
+**Built-in custom** - These plugins are statically compiled, collector-specific plugins.
+Their source code should reside inside the `plugins/`  subdirectory of the collector package
+(e.g. (`cmd/collectors/rest/plugins/svm/svm.go`)[https://github.com/NetApp/harvest/blob/main/cmd/collectors/rest/plugins/svm/svm.go]).
+Custom plugins have access to all the parameters of their parent collector and
+should therefore be treated with great care.
 
 This documentation gives an overview of builtin plugins. For other plugins, see their respective documentation. For
 writing your own plugin, see Developer's documentation.

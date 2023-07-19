@@ -65,11 +65,14 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	}
 	v.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
 
-	cache := data.Clone(false, true, false)
+	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".Volume"
 
 	// create flexgroup instance cache
 	for _, i := range data.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			// instance key is svm.flexgroup-volume
 			key := i.GetLabel("svm") + "." + match[1]
@@ -224,6 +227,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	// normalize latency values
 	for _, i := range cache.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		for mkey, m := range cache.GetMetrics() {
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_latency") {
 

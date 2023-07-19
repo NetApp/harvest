@@ -61,7 +61,6 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	)
 
 	data := dataMap[s.Object]
-
 	href := rest.BuildHref("", "applications", nil, "", "", "", "", s.query)
 
 	if result, err = collectors.InvokeRestCall(s.client, href, s.Logger); err != nil {
@@ -91,7 +90,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 			}
 		}
 
-		securityAccountKey := username + svm
+		securityAccountKey := svm + username
 		if securityAccountInstance := data.GetInstance(securityAccountKey); securityAccountInstance != nil {
 			securityAccountInstance.SetExportable(false)
 

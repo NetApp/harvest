@@ -10,7 +10,11 @@ nav:
   - Installation:
       - 'Overview': 'install/overview.md'
       - 'Package Managers': 'install/package-managers.md'
-      - 'Containers': 'install/containers.md'
+      - 'Containers':
+          - 'Docker': 'install/containers.md'
+          - 'K8': 'install/k8.md'
+          - 'Podman': 'install/podman.md'
+          - 'Containerd': 'install/containerd.md'
       - 'Native': 'install/native.md'
   - System Requirements: 'system-requirements.md'
   - Upgrade: 'upgrade.md'
