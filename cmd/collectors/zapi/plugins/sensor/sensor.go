@@ -202,6 +202,8 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 			Msg("sensor excluded")
 	}
 
+	whrSensors := make(map[string]*sensorValue)
+
 	for key, v := range sensorEnvironmentMetricMap {
 		instance, err := my.data.NewInstance(key)
 		if err != nil {
@@ -222,7 +224,10 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						} else if v1.unit == "W" || v1.unit == "W*hr" {
 							sumPower += v1.value
 						} else {
-							my.Logger.Warn().Str("node", key).Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
+							my.Logger.Warn().Str("node", key).Str("name", v1.name).Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
+						}
+						if v1.unit == "mW*hr" || v1.unit == "W*hr" {
+							whrSensors[v1.name] = v1
 						}
 					}
 				} else if len(v.voltageSensor) > 0 && len(v.voltageSensor) == len(v.currentSensor) {
@@ -339,5 +344,17 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 			}
 		}
 	}
+
+	if len(whrSensors) > 0 {
+		var whrSensorsStr string
+		for _, v := range whrSensors {
+			if v != nil {
+				whrSensorsStr += " sensor:" + fmt.Sprintf("%v", *v)
+			}
+		}
+		my.Logger.Info().Str("sensor", whrSensorsStr).
+			Msg("sensor with *hr units")
+	}
+
 	return []*matrix.Matrix{my.data}, nil
 }
