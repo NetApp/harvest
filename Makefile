@@ -124,7 +124,7 @@ all: package ## Build, Test, Package
 harvest: deps
 	@mkdir -p bin
 	@# Build the harvest and poller cli
-	@echo "Building harvest and poller"
+	@echo "Building harvest"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
 
 	@# Build the daemonize for the pollers
