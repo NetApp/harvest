@@ -122,13 +122,9 @@ package: clean deps build test dist-tar ## Package Harvest binary
 all: package ## Build, Test, Package
 
 harvest: deps
-	@# Build the harvest cli
-	@echo "Building harvest"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin/harvest -ldflags=$(LD_FLAGS) cmd/harvest/harvest.go
-
-	@# Build the harvest poller
-	@echo "Building poller"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin/poller -ldflags=$(LD_FLAGS) cmd/poller/poller.go
+	@# Build the harvest and poller cli
+	@echo "Building harvest and poller"
+	GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
 
 	@# Build the daemonize for the pollers
 	@echo "Building daemonize"
