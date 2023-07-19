@@ -3,6 +3,7 @@ package auth
 import (
 	"bytes"
 	"context"
+	"dario.cat/mergo"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"os/exec"
@@ -162,7 +163,7 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 	if auth.IsCert {
 		return auth, nil
 	}
-	if auth.Password != "" {
+	if auth.Username != "" && auth.Password != "" {
 		return auth, nil
 	}
 
@@ -186,7 +187,8 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 	if auth.Username != "" {
 		defaultAuth.Username = auth.Username
 	}
-	return defaultAuth, nil
+	_ = mergo.Merge(&auth, defaultAuth)
+	return auth, nil
 }
 
 func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
