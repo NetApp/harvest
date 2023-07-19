@@ -2241,9 +2241,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "3",
-          "value": "3"
+          "selected": true,
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
@@ -2264,7 +2264,7 @@
             "value": "2"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "3",
             "value": "3"
           },
@@ -2274,7 +2274,7 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
