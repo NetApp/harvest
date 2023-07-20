@@ -13,6 +13,7 @@ import (
 	goversion "github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/harvest/version"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -958,9 +959,9 @@ func doRequest(opts *options, method, url string, query map[string]interface{}) 
 			return nil, status, code, err
 		}
 		buf = bytes.NewBuffer(data)
-		request, err = http.NewRequest(method, opts.addr+url, buf)
+		request, err = requests.New(method, opts.addr+url, buf)
 	} else {
-		request, err = http.NewRequest(method, opts.addr+url, nil)
+		request, err = requests.New(method, opts.addr+url, nil)
 	}
 
 	if err != nil {
