@@ -135,7 +135,7 @@ func (d *Disk) Init() error {
 
 	objects := d.Params.GetChildS("objects")
 	if objects == nil {
-		return errs.New(errs.ErrMissingParams, "objects")
+		return errs.New(errs.ErrMissingParam, "objects")
 	}
 
 	for _, obj := range objects.GetChildren() {
