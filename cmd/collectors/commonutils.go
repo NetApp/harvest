@@ -16,6 +16,13 @@ const (
 	MaxAllowedTimeDrift = 10 * time.Second
 )
 
+var validUnits = map[string]bool{
+	"mW":    true,
+	"W":     true,
+	"mW*hr": true,
+	"W*hr":  true,
+}
+
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
 	result, err := rest.Fetch(client, href)
 	if err != nil {
@@ -191,4 +198,8 @@ func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, l
 			logger.Debug().Msgf("lagTime value set from %f to 0 for %s. Healthy: %s, Schedule: %s, LastBytes: %f, LastError:%s", lag, relationshipID, healthy, schedule, lastBytes, lastError)
 		}
 	}
+}
+
+func IsValidUnit(unit string) bool {
+	return validUnits[unit]
 }
