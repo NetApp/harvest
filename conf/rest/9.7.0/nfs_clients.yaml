@@ -1,3 +1,5 @@
+# This template is disabled by default because it may slow down data collection
+
 name:             NFSClients
 query:            api/protocols/nfs/connected-clients
 object:           nfs_clients

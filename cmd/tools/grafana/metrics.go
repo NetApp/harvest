@@ -101,6 +101,7 @@ type variable struct {
 	query   string
 	refresh string
 	path    string
+	options []gjson.Result
 }
 
 func allVariables(data []byte) []variable {
@@ -116,6 +117,7 @@ func allVariables(data []byte) []variable {
 			kind:    value.Get("type").String(),
 			query:   value.Get("query.query").String(),
 			refresh: value.Get("refresh").String(),
+			options: value.Get("options").Array(),
 			path:    key.String(),
 		})
 		return true

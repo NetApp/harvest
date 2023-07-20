@@ -52,6 +52,50 @@ Pollers:
 		},
 
 		{
+			name:           "poller username from credentials_file defaults",
+			pollerName:     "test",
+			want:           PollerAuth{Username: "default-user", Password: "from-secrets-file"},
+			defaultDefined: true,
+			yaml: `
+Defaults:
+	auth_style: certificate_auth
+	credentials_file: secrets/openlab
+Pollers:
+	test:
+		addr: a.b.c
+		credentials_file: testdata/secrets.yaml`,
+		},
+
+		{
+			name:           "poller username from credentials_file, password from poller",
+			pollerName:     "test",
+			want:           PollerAuth{Username: "default-user", Password: "moon"},
+			defaultDefined: true,
+			yaml: `
+Defaults:
+	credentials_file: testdata/secrets.yaml
+Pollers:
+	test:
+		addr: a.b.c
+		password: moon`,
+		},
+
+		{
+			name:           "poller username from credentials_file",
+			pollerName:     "test2",
+			want:           PollerAuth{Username: "test2-user", Password: "from-secrets-file"},
+			defaultDefined: true,
+			yaml: `
+Defaults:
+	auth_style: certificate_auth
+	credentials_file: secrets/openlab
+Pollers:
+	test2:
+		addr: a.b.c
+		credentials_file: testdata/secrets.yaml`,
+		},
+
+		{
 			name:           "default cert_auth",
 			pollerName:     "test",
 			want:           PollerAuth{Username: "username", Password: "", IsCert: true},
@@ -254,6 +298,20 @@ Pollers:
 			path: testdata/get_pass
 `,
 		},
+
+		{
+			name:         "password with space",
+			pollerName:   "test",
+			want:         PollerAuth{Username: "flo", Password: "abc def"},
+			wantSchedule: "42m",
+			yaml: `
+Pollers:
+	test:
+		addr: a.b.c
+		username: flo
+		password: abc def
+`,
+		},
 	}
 
 	for _, tt := range tests {
@@ -283,9 +341,6 @@ Pollers:
 			}
 			if tt.want.Password != got.Password {
 				t.Errorf("got password=[%s], want password=[%s]", got.Password, tt.want.Password)
-			}
-			if tt.want.Username != poller.Username {
-				t.Errorf("poller got username=[%s], want username=[%s]", poller.Username, tt.want.Username)
 			}
 			if tt.want.IsCert != got.IsCert {
 				t.Errorf("got IsCert=[%t], want IsCert=[%t]", got.IsCert, tt.want.IsCert)

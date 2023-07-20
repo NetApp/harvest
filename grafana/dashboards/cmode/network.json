@@ -3317,8 +3317,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "20",
-          "value": "20"
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
@@ -3349,7 +3349,7 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
@@ -3374,7 +3374,7 @@
             "value": "15"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "20",
             "value": "20"
           },
