@@ -351,7 +351,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	e.Logger.Debug().Msg("starting data poll")
 
 	// Update cache for bookend ems
-	e.updateMatrix()
+	e.updateMatrix(time.Now())
 
 	startTime = time.Now()
 
@@ -681,7 +681,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 	return instanceKey
 }
 
-func (e *Ems) updateMatrix() {
+func (e *Ems) updateMatrix(begin time.Time) {
 	tempMap := make(map[string]*matrix.Matrix)
 	// store the bookend ems metric in tempMap
 	for _, issuingEmsList := range e.bookendEmsMap {
@@ -726,7 +726,7 @@ func (e *Ems) updateMatrix() {
 
 			// check instance timestamp and remove it after given resolve_after duration
 			if metricTimestamp, ok := timestampMetric.GetValueFloat64(instance); ok {
-				if collectors.IsTimestampOlderThanDuration(metricTimestamp, e.resolveAfter[issuingEms]) {
+				if collectors.IsTimestampOlderThanDuration(begin, metricTimestamp, e.resolveAfter[issuingEms]) {
 					// Set events metric value as 0 and export instance to true with label autoresolved as true.
 					if err := eventMetric.SetValueFloat64(instance, 0); err != nil {
 						e.Logger.Error().Err(err).Str("key", "events").

@@ -6,7 +6,7 @@
     ":semanticCommitScopeDisabled"
   ],
   "ignorePaths": ["**/integration/**"],
-  "schedule": ["after 10pm and before 5am every weekday", "every weekend"],
+  "schedule": ["before 4am on monday"],
   "groupName": "all dependencies",
   "groupSlug": "all",
   "lockFileMaintenance": {

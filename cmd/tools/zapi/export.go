@@ -104,7 +104,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	fp = append(fp, "9.8.0")
 	fp = append(fp, strings.ReplaceAll(args.Object, ":", "_")+".yaml")
 
-	if err = os.MkdirAll(path.Join(fp[:5]...), 0755); err != nil {
+	if err = os.MkdirAll(path.Join(fp[:5]...), 0750); err != nil {
 		fmt.Println("mkdirall")
 		return err
 	}

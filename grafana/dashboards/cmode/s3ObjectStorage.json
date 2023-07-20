@@ -486,19 +486,16 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "EO6UabnVz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "topk($TopResources, ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$TopS3LogicalUsedSize\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} - {{bucket}}",
           "refId": "A"
         }
       ],
-      "title": "Bucket Used Size",
+      "title": "Top $TopResources Buckets by Used Size",
       "transformations": [],
       "type": "timeseries"
     },
@@ -607,19 +604,16 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "EO6UabnVz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "topk($TopResources, ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$TopS3UsedPercent\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} - {{bucket}}",
           "refId": "A"
         }
       ],
-      "title": "Bucket Used Size Percent",
+      "title": "Top $TopResources Buckets by Used Size Percent",
       "transformations": [],
       "type": "timeseries"
     },
@@ -848,16 +842,8 @@
         "type": "query"
       },
       {
-        "allValue": "(.*)",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
+        "allValue": null,
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, bucket)",
         "hide": 0,
@@ -875,6 +861,143 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": null,
+        "definition": "query_result(topk($TopResources, avg_over_time(ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopS3LogicalUsedSize",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*bucket=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": null,
+        "definition": "query_result(topk($TopResources, avg_over_time(ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopS3UsedPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*bucket=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
         "type": "query"
       }
     ]

@@ -3,6 +3,7 @@ package auth
 import (
 	"bytes"
 	"context"
+	"dario.cat/mergo"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"os/exec"
@@ -26,14 +27,35 @@ func NewCredentials(p *conf.Poller, logger *logging.Logger) *Credentials {
 }
 
 type Credentials struct {
-	poller     *conf.Poller
-	nextUpdate time.Time
-	logger     *logging.Logger
-	authMu     *sync.Mutex
+	poller         *conf.Poller
+	nextUpdate     time.Time
+	logger         *logging.Logger
+	authMu         *sync.Mutex
+	cachedPassword string
 }
 
-func (c *Credentials) Password() string {
-	return c.password(c.poller)
+func (c *Credentials) Password() (string, error) {
+	auth, err := c.GetPollerAuth()
+	if err != nil {
+		return "", err
+	}
+	return auth.Password, nil
+}
+
+// Expire will reset the credential schedule if the receiver has a CredentialsScript
+// Otherwise it will do nothing.
+// Resetting the schedule will cause the next call to Password to fetch the credentials
+func (c *Credentials) Expire() {
+	auth, err := c.GetPollerAuth()
+	if err != nil {
+		return
+	}
+	if !auth.HasCredentialScript {
+		return
+	}
+	c.authMu.Lock()
+	defer c.authMu.Unlock()
+	c.nextUpdate = time.Time{}
 }
 
 func (c *Credentials) password(poller *conf.Poller) string {
@@ -43,10 +65,10 @@ func (c *Credentials) password(poller *conf.Poller) string {
 	c.authMu.Lock()
 	defer c.authMu.Unlock()
 	if time.Now().After(c.nextUpdate) {
-		poller.Password = c.fetchPassword(poller)
+		c.cachedPassword = c.fetchPassword(poller)
 		c.setNextUpdate()
 	}
-	return poller.Password
+	return c.cachedPassword
 }
 
 func (c *Credentials) fetchPassword(p *conf.Poller) string {
@@ -126,9 +148,11 @@ func (c *Credentials) setNextUpdate() {
 }
 
 type PollerAuth struct {
-	Username string
-	Password string
-	IsCert   bool
+	Username            string
+	Password            string
+	IsCert              bool
+	HasCredentialScript bool
+	Schedule            string
 }
 
 func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
@@ -139,9 +163,7 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 	if auth.IsCert {
 		return auth, nil
 	}
-	if auth.Password != "" {
-		c.poller.Username = auth.Username
-		c.poller.Password = auth.Password
+	if auth.Username != "" && auth.Password != "" {
 		return auth, nil
 	}
 
@@ -165,9 +187,8 @@ func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
 	if auth.Username != "" {
 		defaultAuth.Username = auth.Username
 	}
-	c.poller.Username = defaultAuth.Username
-	c.poller.Password = defaultAuth.Password
-	return defaultAuth, nil
+	_ = mergo.Merge(&auth, defaultAuth)
+	return auth, nil
 }
 
 func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
@@ -178,7 +199,12 @@ func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
 		return PollerAuth{Username: poller.Username, Password: poller.Password}, nil
 	}
 	if poller.CredentialsScript.Path != "" {
-		return PollerAuth{Username: poller.Username, Password: c.password(poller)}, nil
+		return PollerAuth{
+			Username:            poller.Username,
+			Password:            c.password(poller),
+			HasCredentialScript: true,
+			Schedule:            poller.CredentialsScript.Schedule,
+		}, nil
 	}
 	if poller.CredentialsFile != "" {
 		err := conf.ReadCredentialFile(poller.CredentialsFile, poller)
