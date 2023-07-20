@@ -51,6 +51,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog/log"
@@ -1029,7 +1030,7 @@ func (p *Poller) publishDetails() {
 	if heartBeatURL == "" {
 		heartBeatURL = defaultURL
 	}
-	req, err := http.NewRequest("PUT", heartBeatURL, bytes.NewBuffer(payload))
+	req, err := requests.New("PUT", heartBeatURL, bytes.NewBuffer(payload))
 	if err != nil {
 		logger.Err(err).Msg("failed to connect to admin")
 		return

@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"io"
 	"net/http"
 	url2 "net/url"
@@ -204,7 +205,7 @@ func (e *InfluxDB) Emit(data [][]byte) error {
 
 	buffer = bytes.NewBuffer(bytes.Join(data, []byte("\n")))
 
-	if request, err = http.NewRequest("POST", e.url, buffer); err != nil {
+	if request, err = requests.New("POST", e.url, buffer); err != nil {
 		return err
 	}
 

@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -185,7 +186,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 		return nil, err
 	}
 	u := c.baseURL + request
-	c.request, err = http.NewRequest("GET", u, nil)
+	c.request, err = requests.New("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +309,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 		return 0, fmt.Errorf("unable to create %s to save swagger.yaml", path)
 	}
 	defer func(out *os.File) { _ = out.Close() }(out)
-	request, err := http.NewRequest("GET", url, nil)
+	request, err := requests.New("GET", url, nil)
 	if err != nil {
 		return 0, err
 	}
