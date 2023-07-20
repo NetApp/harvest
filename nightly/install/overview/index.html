@@ -1135,15 +1135,15 @@ and stable <a href="https://github.com/NetApp/harvest/releases">releases</a>.</p
 <h2 id="nabox">Nabox<a class="headerlink" href="#nabox" title="Permanent link">&para;</a></h2>
 <p>Instructions on how to install Harvest via <a href="https://nabox.org/documentation/installation/">NAbox</a>.</p>
 <h2 id="source">Source<a class="headerlink" href="#source" title="Permanent link">&para;</a></h2>
-<p>To build Harvest from source code, first make sure you have a working Go environment 
-with <a href="https://golang.org/doc/install">version 1.19 or greater installed</a>.</p>
-<p>Clone the repo and build everything.</p>
-<div class="highlight"><pre><span></span><code>git clone https://github.com/NetApp/harvest.git
-cd harvest
-make build
-bin/harvest version
-</code></pre></div>
-<p>If you're building on a Mac use <code>GOOS=darwin make build</code></p>
+<p>To build Harvest from source code follow these steps.</p>
+<ol>
+<li><code>git clone https://github.com/NetApp/harvest.git</code></li>
+<li>cd <code>harvest</code></li>
+<li>check the version of go required in the <code>go.mod</code> file</li>
+<li>ensure you have a working Go environment at that version or newer. Go installs found <a href="https://golang.org/doc/install">here</a>. </li>
+<li><code>make build</code> (if you want to run Harvest from a Mac use <code>GOOS=darwin make build</code>) </li>
+<li><code>bin/harvest version</code></li>
+</ol>
 <p>Checkout the <code>Makefile</code> for other targets of interest.</p>
 
 
