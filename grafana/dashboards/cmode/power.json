@@ -35,6 +35,12 @@
       "version": ""
     },
     {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -65,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1675871743493,
+  "iteration": 1689849302689,
   "links": [
     {
       "asDropdown": true,
@@ -91,6 +97,36 @@
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 99,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 101,
+      "options": {
+        "content": "If an ONTAP system has embedded shelves, it may not have power and temperature information for shelf panels. This is because these details are calculated at the cluster level. Therefore, it is expected that you may not see power and temperature information for shelf panels in such systems.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
       },
       "id": 15,
       "panels": [],
@@ -124,7 +160,7 @@
         "h": 10,
         "w": 9,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 21,
       "links": [],
@@ -190,7 +226,7 @@
         "h": 5,
         "w": 7,
         "x": 9,
-        "y": 1
+        "y": 4
       },
       "id": 71,
       "options": {
@@ -265,7 +301,7 @@
         "h": 5,
         "w": 4,
         "x": 16,
-        "y": 1
+        "y": 4
       },
       "id": 68,
       "options": {
@@ -324,7 +360,7 @@
         "h": 5,
         "w": 4,
         "x": 20,
-        "y": 1
+        "y": 4
       },
       "id": 70,
       "options": {
@@ -383,7 +419,7 @@
         "h": 5,
         "w": 7,
         "x": 9,
-        "y": 6
+        "y": 9
       },
       "id": 96,
       "options": {
@@ -458,7 +494,7 @@
         "h": 5,
         "w": 4,
         "x": 16,
-        "y": 6
+        "y": 9
       },
       "id": 64,
       "options": {
@@ -518,7 +554,7 @@
         "h": 5,
         "w": 4,
         "x": 20,
-        "y": 6
+        "y": 9
       },
       "id": 97,
       "options": {
@@ -644,7 +680,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 14
       },
       "id": 82,
       "options": {
@@ -751,7 +787,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 19
+        "y": 22
       },
       "id": 73,
       "options": {
@@ -842,7 +878,7 @@
         "h": 8,
         "w": 11,
         "x": 13,
-        "y": 19
+        "y": 22
       },
       "id": 74,
       "options": {
@@ -932,7 +968,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 27
+        "y": 30
       },
       "id": 79,
       "options": {
@@ -1023,7 +1059,7 @@
         "h": 8,
         "w": 11,
         "x": 13,
-        "y": 27
+        "y": 30
       },
       "id": 88,
       "options": {
@@ -1114,7 +1150,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 35
+        "y": 38
       },
       "id": 87,
       "options": {
@@ -1205,7 +1241,7 @@
         "h": 8,
         "w": 11,
         "x": 13,
-        "y": 35
+        "y": 38
       },
       "id": 89,
       "options": {
@@ -1296,7 +1332,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 43
+        "y": 46
       },
       "id": 94,
       "options": {
@@ -1344,7 +1380,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 54
       },
       "id": 93,
       "panels": [
@@ -1732,7 +1768,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 55
       },
       "id": 84,
       "panels": [
@@ -1857,7 +1893,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 53
+        "y": 56
       },
       "id": 76,
       "panels": [
@@ -2394,7 +2430,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 57
       },
       "id": 78,
       "panels": [
@@ -3285,7 +3321,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -3295,7 +3331,7 @@
         "name": "TopShelfAvgTemp",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -3360,5 +3396,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 8
+  "version": 9
 }
