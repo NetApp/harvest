@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1689751504619,
+  "iteration": 1689847178728,
   "links": [
     {
       "asDropdown": true,
@@ -268,7 +268,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Poller Time: The timestamp when Harvest Poller captured the change <br>\nObject: The name of the ONTAP object that was changed (e.g., volume, svm, node) <br>\nOP: The type of change that was made (e.g., create, update, delete) <br>\nTrack: Property of the object which was modified <br>\nNew Value: The new value of the object after the change was made <br>\nOld Value: The previous value of the object before the change was made <br>",
+          "description": "`Poller Time:` The timestamp when Harvest Poller captured the change \n\n`Object:` The name of the ONTAP object that was changed (e.g., volume, svm, node)  \n\n`OP:` The type of change that was made (e.g., create, update, delete)  \n\n`Track:` Property of the object which was modified  \n\n`New Value:` The new value of the object after the change was made  \n\n`Old Value:` The previous value of the object before the change was made",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -301,6 +301,18 @@
                   {
                     "id": "unit",
                     "value": "dateTimeAsIso"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Poller Time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.align",
+                    "value": "left"
                   }
                 ]
               }
@@ -607,7 +619,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Poller Time: The timestamp when Harvest Poller captured the change <br>\nObject: The name of the ONTAP object that was changed (e.g., volume, svm, node) <br>\nOP: The type of change that was made (e.g., create, update, delete) <br>\nTrack: Property of the object which was modified <br>\nNew Value: The new value of the object after the change was made <br>\nOld Value: The previous value of the object before the change was made <br>",
+          "description": "`Poller Time:` The timestamp when Harvest Poller captured the change \n\n`Object:` The name of the ONTAP object that was changed (e.g., volume, svm, node)  \n\n`OP:` The type of change that was made (e.g., create, update, delete)  \n\n`Track:` Property of the object which was modified  \n\n`New Value:` The new value of the object after the change was made  \n\n`Old Value:` The previous value of the object before the change was made",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -646,24 +658,12 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Datacenter"
+                  "options": "Poller Time"
                 },
                 "properties": [
                   {
-                    "id": "custom.width",
-                    "value": null
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Cluster"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": null
+                    "id": "custom.align",
+                    "value": "left"
                   }
                 ]
               }
@@ -975,7 +975,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Poller Time: The timestamp when Harvest Poller captured the change <br>\nObject: The name of the ONTAP object that was changed (e.g., volume, svm, node) <br>\nOP: The type of change that was made (e.g., create, update, delete) <br>\nTrack: Property of the object which was modified <br>\nNew Value: The new value of the object after the change was made <br>\nOld Value: The previous value of the object before the change was made <br>",
+          "description": "`Poller Time:` The timestamp when Harvest Poller captured the change \n\n`Object:` The name of the ONTAP object that was changed (e.g., volume, svm, node)  \n\n`OP:` The type of change that was made (e.g., create, update, delete)  \n\n`Track:` Property of the object which was modified  \n\n`New Value:` The new value of the object after the change was made  \n\n`Old Value:` The previous value of the object before the change was made",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1014,24 +1014,12 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Datacenter"
+                  "options": "Poller Time"
                 },
                 "properties": [
                   {
-                    "id": "custom.width",
-                    "value": null
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Cluster"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": null
+                    "id": "custom.align",
+                    "value": "left"
                   }
                 ]
               }
@@ -1243,7 +1231,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
