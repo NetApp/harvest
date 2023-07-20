@@ -147,6 +147,8 @@ of the following parameters.
 | `credentials_file`   | Relative or absolute path to a yaml file that contains cluster credentials                               |              | [link](#credentials-file)   |
 | `credentials_script` | External script Harvest executes to retrieve credentials                                                 |              | [link](#credentials-script) |
 
+## Precedence
+
 When multiple authentication parameters are defined at the same time,
 Harvest tries each method listed below, in the following order, to resolve authentication requests. 
 The first method that returns a non-empty password stops the search. 
