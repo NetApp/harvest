@@ -66,9 +66,9 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 	for _, adapterData := range result {
 		adapter := adapterData.GetChildContentS("adapter-name")
-		node := adapterData.GetChildContentS("node-name")
+		nodeName := adapterData.GetChildContentS("node-name")
 		port := adapterData.GetChildContentS("port-name")
-		adapterPortMap[node+adapter] = port
+		adapterPortMap[nodeName+adapter] = port
 	}
 
 	// we would not use getInstance() as key would be `sti8300mcc-215:kernel:fcvi_device_1`

@@ -194,7 +194,7 @@ func (my *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	return []*matrix.Matrix{qtreePluginData, my.data}, nil
 }
 
-func (my Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
+func (my *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
 	for _, quota := range result {
 		var tree string
 		var quotaInstance *matrix.Instance
@@ -289,7 +289,7 @@ func (my Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 	return nil
 }
 
-func (my Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quotaCount *int, numMetrics *int) error {
+func (my *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quotaCount *int, numMetrics *int) error {
 	for quotaIndex, quota := range result {
 		var tree string
 

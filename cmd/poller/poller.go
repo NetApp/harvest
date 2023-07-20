@@ -1244,8 +1244,7 @@ func main() {
 	// log as much as possible
 	defer func() {
 		if r := recover(); r != nil {
-			e := r.(error)
-			logger.Error().Stack().Err(e).Msg("Poller panicked")
+			logger.Error().Stack().Any("err", r).Msg("Poller panicked")
 			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 		}
 	}()
