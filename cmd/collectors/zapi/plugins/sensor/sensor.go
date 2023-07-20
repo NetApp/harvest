@@ -348,9 +348,7 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 	if len(whrSensors) > 0 {
 		var whrSensorsStr string
 		for _, v := range whrSensors {
-			if v != nil {
-				whrSensorsStr += " sensor:" + fmt.Sprintf("%v", *v)
-			}
+			whrSensorsStr += " sensor:" + fmt.Sprintf("%v", *v)
 		}
 		my.Logger.Info().Str("sensor", whrSensorsStr).
 			Msg("sensor with *hr units")
