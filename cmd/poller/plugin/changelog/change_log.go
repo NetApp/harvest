@@ -41,6 +41,7 @@ type ChangeLog struct {
 	changeLogMap    map[string]*matrix.Matrix
 	changeLogConfig Entry
 	index           int
+	metricsCount    int
 }
 
 // Change represents a single change entry in the ChangeLog
@@ -246,7 +247,13 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		// The `index` variable is used to differentiate between changes to the same label in a Grafana dashboard.
 		// It has a value between 0 and 100 and is used in the `change_log` query as `last_over_time`.
 		c.index = (c.index + 1) % 100
+		c.Logger.Info().Int("instances", len(changeMat.GetInstances())).
+			Int("metrics", c.metricsCount).
+			Msg("Collected")
 	}
+
+	// reset metric count
+	c.metricsCount = 0
 
 	return matricesArray, nil
 }
@@ -272,6 +279,7 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 	for k, v := range change.labels {
 		cInstance.SetLabel(k, v)
 	}
+	c.metricsCount += cInstance.GetLabels().Size()
 	m := mat.GetMetric("log")
 	if m == nil {
 		if m, err = mat.NewMetricFloat64("log"); err != nil {
