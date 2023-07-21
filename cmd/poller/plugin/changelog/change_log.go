@@ -254,7 +254,6 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	// reset metric count
 	c.metricsCount = 0
-	c.metricsCount = 0
 
 	return matricesArray, nil
 }
