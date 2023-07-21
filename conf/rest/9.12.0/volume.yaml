@@ -9,6 +9,7 @@ counters:
   - ^^svm.name                                    => svm
   - ^aggregates.#.name                            => aggr
   - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
+  - ^anti_ransomware.dry_run_start_time           => anti_ransomware_start_time
   - ^anti_ransomware.state                        => antiRansomwareState
   - ^encryption.enabled                           => isEncrypted
   - ^is_svm_root                                  => svm_root
@@ -18,7 +19,6 @@ counters:
   - ^state                                        => state
   - ^style                                        => style
   - ^type                                         => type
-  - anti_ransomware.dry_run_start_time(timestamp) => anti_ransomware_start_time
   - autosize.grow_threshold                       => autosize_grow_threshold_percent
   - autosize.maximum                              => autosize_maximum_size
   - snapshot_count

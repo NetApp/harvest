@@ -13,6 +13,7 @@ objects:
   CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
+  EmsDestination:              ems_destination.yaml
 #  ExportRule:                  exports.yaml
   LIF:                         lif.yaml
   Health:                      health.yaml
@@ -42,6 +43,7 @@ objects:
   Status:                      status.yaml
   Subsystem:                   subsystem.yaml
   Support:                     support.yaml
+  SupportAutoUpdate:           support_auto_update.yaml
   SVM:                         svm.yaml
   Volume:                      volume.yaml
   VolumeAnalytics:             volume_analytics.yaml

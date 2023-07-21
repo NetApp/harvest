@@ -1,0 +1,24 @@
+
+name:             EmsDestination
+query:            api/support/ems/destinations
+object:           ems_destination
+
+counters:
+  - ^^destination   => destination
+  - ^^name          => name
+  - ^^type          => type
+  - ^certificate    => certificate
+  - ^filter         => filter
+  - ^syslog         => syslog
+  - ^system_defined => system_defined
+  - filter:
+    - system_defined=false
+
+export_options:
+  instance_keys:
+    - destination
+    - name
+    - type
+  instance_labels:
+    - filter
+    - syslog

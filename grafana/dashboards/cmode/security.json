@@ -2508,6 +2508,16 @@
                           }
                         },
                         "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 2,
+                            "text": "❌   Disabled"
+                          }
+                        },
+                        "type": "special"
                       }
                     ]
                   },
@@ -3301,6 +3311,10 @@
                         "type": "special"
                       }
                     ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 115
                   }
                 ]
               },
@@ -3334,6 +3348,10 @@
                         "type": "range"
                       }
                     ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 135
                   }
                 ]
               },
@@ -3367,13 +3385,17 @@
                         "type": "range"
                       }
                     ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 170
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "SVMs configured for ARW"
+                  "options": "ARW Protection for SVMs"
                 },
                 "properties": [
                   {
@@ -3383,7 +3405,7 @@
                         "options": {
                           "0": {
                             "index": 0,
-                            "text": "Yes"
+                            "text": "Configured"
                           }
                         },
                         "type": "value"
@@ -3393,7 +3415,7 @@
                           "from": 1,
                           "result": {
                             "index": 1,
-                            "text": "❌   No"
+                            "text": "❌   Not Configured"
                           },
                           "to": 9999
                         },
@@ -3404,7 +3426,98 @@
                           "match": "null",
                           "result": {
                             "index": 2,
-                            "text": "❌   No"
+                            "text": "❌   Not Configured"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 195
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ARW Protection for Volumes"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "Learning Mode": {
+                            "index": 3,
+                            "text": "❌   Learning Mode"
+                          },
+                          "Not Monitoring": {
+                            "index": 1,
+                            "text": "❌   Not Monitoring"
+                          },
+                          "Switch to Active Mode": {
+                            "index": 2,
+                            "text": "❌   Switch to Active Mode"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 0,
+                            "text": "❌   Not Applicable"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 218
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Notifications Configured"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "index": 0,
+                            "text": "❌   Not Configured"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "from": 1,
+                          "result": {
+                            "index": 1,
+                            "text": "Configured"
+                          },
+                          "to": 9999
+                        },
+                        "type": "range"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 2,
+                            "text": "Not Applicable"
                           }
                         },
                         "type": "special"
@@ -3416,7 +3529,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Volumes Monitored for ARW"
+                  "options": "Automatic Updates Configured"
                 },
                 "properties": [
                   {
@@ -3424,30 +3537,23 @@
                     "value": [
                       {
                         "options": {
-                          "0": {
+                          "false": {
                             "index": 0,
-                            "text": "Yes"
+                            "text": "❌   Not Configured"
+                          },
+                          "true": {
+                            "index": 1,
+                            "text": "Configured"
                           }
                         },
                         "type": "value"
                       },
                       {
                         "options": {
-                          "from": 1,
-                          "result": {
-                            "index": 1,
-                            "text": "❌   No"
-                          },
-                          "to": 9999
-                        },
-                        "type": "range"
-                      },
-                      {
-                        "options": {
                           "match": "null",
                           "result": {
                             "index": 2,
-                            "text": "❌   No"
+                            "text": "Not Applicable"
                           }
                         },
                         "type": "special"
@@ -3474,12 +3580,7 @@
               "show": false
             },
             "showHeader": true,
-            "sortBy": [
-              {
-                "desc": false,
-                "displayName": "SVMs configured for ARW"
-              }
-            ]
+            "sortBy": []
           },
           "pluginVersion": "8.1.8",
           "targets": [
@@ -3624,7 +3725,7 @@
             },
             {
               "exemplar": false,
-              "expr": "group by (datacenter, cluster)(support_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} or sum by (datacenter, cluster)(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy=\"none\"}) > 0 or sum by (datacenter, cluster)(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_autodelete=\"true\"}) > 0 or sum by (datacenter, cluster)(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",anti_ransomware_state=~\"|.*disabled\",type=\"data\"}) > 0 or sum by(datacenter, cluster)(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",antiRansomwareState=~\"|.*disabled\"}) > 0))",
+              "expr": "group by (datacenter, cluster)(support_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} or sum by (datacenter, cluster)(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy=\"none\"}) > 0 or sum by (datacenter, cluster)(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_autodelete=\"true\"}) > 0 or sum by (datacenter, cluster)(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",anti_ransomware_state=~\"|.*disabled\",type=\"data\"}) > 0 or volume_arw_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",ArwStatus!=\"Active Mode\"} * on (instance) group_left() metadata_collector_instances{datacenter=~\"$Datacenter\",collector=\"Rest\", object=\"Volume\"} or count by (datacenter, cluster)(ems_destination_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) > 0 or support_auto_update_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",auto_update_enabled=\"false\"}))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3664,7 +3765,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by(datacenter, cluster)(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",antiRansomwareState=~\"|.*disabled\"})",
+              "expr": "volume_arw_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (instance) group_left() metadata_collector_instances{datacenter=~\"$Datacenter\",collector=\"Rest\", object=\"Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3674,13 +3775,23 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster)((time() - (volume_labels{antiRansomwareState=~\"dry_run|enable_paused\"} * on(datacenter, cluster, svm, volume) group_right () volume_anti_ransomware_start_time{}))> 2629743)",
+              "expr": "count by (datacenter, cluster)(ems_destination_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
               "refId": "T"
+            },
+            {
+              "exemplar": false,
+              "expr": "support_auto_update_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "U"
             }
           ],
           "title": "Cluster Compliance",
@@ -3707,8 +3818,9 @@
                     "Value #H",
                     "Value #Q",
                     "Value #R",
-                    "Value #S",
-                    "Value #T"
+                    "Value #T",
+                    "auto_update_enabled",
+                    "ArwStatus"
                   ]
                 }
               }
@@ -3728,11 +3840,12 @@
                   "Value #D": false,
                   "Value #E": false,
                   "Value #G": false,
-                  "Value #T": true,
+                  "Value #S": true,
+                  "Value #T": false,
                   "__name__": true,
                   "__name__ 1": true,
                   "__name__ 2": true,
-                  "datacenter": true,
+                  "datacenter": false,
                   "datacenter 1": true,
                   "datacenter 2": true,
                   "fips_enabled": false,
@@ -3747,26 +3860,29 @@
                   "methods": true
                 },
                 "indexByName": {
+                  "ArwStatus": 6,
                   "Value #H": 2,
-                  "Value #I": 12,
-                  "Value #K": 16,
-                  "Value #L": 13,
-                  "Value #M": 14,
-                  "Value #N": 15,
+                  "Value #I": 13,
+                  "Value #K": 17,
+                  "Value #L": 14,
+                  "Value #M": 15,
+                  "Value #N": 16,
                   "Value #P": 0,
                   "Value #Q": 3,
                   "Value #R": 4,
                   "Value #S": 5,
-                  "asup_enabled": 9,
-                  "certificateExpiryStatus": 6,
-                  "certificateIssuerType": 17,
+                  "asup_enabled": 10,
+                  "certificateExpiryStatus": 7,
+                  "certificateIssuerType": 18,
                   "cluster": 1,
-                  "fips_enabled": 7,
-                  "locked": 10,
-                  "rsh_enabled": 11,
-                  "telnet_enabled": 8
+                  "datacenter": 19,
+                  "fips_enabled": 8,
+                  "locked": 11,
+                  "rsh_enabled": 12,
+                  "telnet_enabled": 9
                 },
                 "renameByName": {
+                  "ArwStatus": "ARW Protection for Volumes",
                   "Value #A": "Autosupport Https Transport",
                   "Value #C": "Default Admin User",
                   "Value #D": "MD5 in use",
@@ -3780,12 +3896,14 @@
                   "Value #N": "Certificate Users",
                   "Value #P": "Compliant",
                   "Value #Q": "Snapshot Autodelete",
-                  "Value #R": "SVMs configured for ARW",
-                  "Value #S": "Volumes Monitored for ARW",
+                  "Value #R": "ARW Protection for SVMs",
+                  "Value #S": "Volumes Monitored for ARW Protection",
+                  "Value #T": "Notifications Configured",
                   "activediruser": "Active Directory Users",
                   "asupEnabled": "",
                   "asupHttpsConfigured": "",
                   "asup_enabled": "Autosupport Https Transport",
+                  "auto_update_enabled": "Automatic Updates Configured",
                   "banner": "Login Banner",
                   "certificateExpiryStatus": "Cluster Certificate Validity",
                   "certificateIssuerType": "Certificate Issuer Type",
