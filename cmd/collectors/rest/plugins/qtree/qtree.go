@@ -35,7 +35,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Qtree{AbstractPlugin: p}
 }
 
-func (my *Qtree) Init() error {
+func (q *Qtree) Init() error {
 
 	var err error
 	quotaMetric := []string{
@@ -53,40 +53,40 @@ func (my *Qtree) Init() error {
 		//"threshold",   # deprecated
 	}
 
-	if err = my.InitAbc(); err != nil {
+	if err = q.InitAbc(); err != nil {
 		return err
 	}
 
-	clientTimeout := my.ParentParams.GetChildContentS("client_timeout")
+	clientTimeout := q.ParentParams.GetChildContentS("client_timeout")
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
 		timeout = duration
 	} else {
-		my.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
+		q.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
-	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout, my.Auth); err != nil {
-		my.Logger.Error().Stack().Err(err).Msg("connecting")
+	if q.client, err = rest.New(conf.ZapiPoller(q.ParentParams), timeout, q.Auth); err != nil {
+		q.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err = q.client.Init(5); err != nil {
 		return err
 	}
 
-	my.query = "api/storage/quota/reports"
+	q.query = "api/storage/quota/reports"
 
-	my.data = matrix.New(my.Parent+".Qtree", "quota", "quota")
-	my.instanceKeys = make(map[string]string)
-	my.instanceLabels = make(map[string]*dict.Dict)
-	my.historicalLabels = false
+	q.data = matrix.New(q.Parent+".Qtree", "quota", "quota")
+	q.instanceKeys = make(map[string]string)
+	q.instanceLabels = make(map[string]*dict.Dict)
+	q.historicalLabels = false
 
-	if my.Params.HasChildS("historicalLabels") {
+	if q.Params.HasChildS("historicalLabels") {
 		exportOptions := node.NewS("export_options")
 		instanceKeys := exportOptions.NewChildS("instance_keys", "")
 
 		// apply all instance keys, instance labels from parent (qtree.yaml) to all quota metrics
-		if exportOption := my.ParentParams.GetChildS("export_options"); exportOption != nil {
+		if exportOption := q.ParentParams.GetChildS("export_options"); exportOption != nil {
 			//parent instancekeys would be added in plugin metrics
 			if parentKeys := exportOption.GetChildS("instance_keys"); parentKeys != nil {
 				for _, parentKey := range parentKeys.GetAllChildContentS() {
@@ -105,103 +105,103 @@ func (my *Qtree) Init() error {
 		instanceKeys.NewChildS("", "index")
 		instanceKeys.NewChildS("", "unit")
 
-		my.data.SetExportOptions(exportOptions)
-		my.historicalLabels = true
+		q.data.SetExportOptions(exportOptions)
+		q.historicalLabels = true
 	}
 
-	quotaType := my.Params.GetChildS("quotaType")
+	quotaType := q.Params.GetChildS("quotaType")
 	if quotaType != nil {
-		my.quotaType = []string{}
-		my.quotaType = append(my.quotaType, quotaType.GetAllChildContentS()...)
+		q.quotaType = []string{}
+		q.quotaType = append(q.quotaType, quotaType.GetAllChildContentS()...)
 
 	} else {
-		my.quotaType = []string{"user", "group", "tree"}
+		q.quotaType = []string{"user", "group", "tree"}
 	}
 
 	for _, obj := range quotaMetric {
 		metricName, display, _, _ := util.ParseMetric(obj)
 
-		metric, err := my.data.NewMetricFloat64(metricName, display)
+		metric, err := q.data.NewMetricFloat64(metricName, display)
 		if err != nil {
-			my.Logger.Error().Stack().Err(err).Msg("add metric")
+			q.Logger.Error().Stack().Err(err).Msg("add metric")
 			return err
 		}
 
-		my.Logger.Trace().Msgf("added metric: (%s) [%s] %v", metricName, display, metric)
+		q.Logger.Trace().Msgf("added metric: (%s) [%s] %v", metricName, display, metric)
 	}
 
-	my.Logger.Debug().Msgf("added data with %d metrics", len(my.data.GetMetrics()))
+	q.Logger.Debug().Msgf("added data with %d metrics", len(q.data.GetMetrics()))
 
 	return nil
 }
 
-func (my *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		result     []gjson.Result
 		err        error
 		numMetrics int
 	)
-	data := dataMap[my.Object]
+	data := dataMap[q.Object]
 	// Purge and reset data
-	my.data.PurgeInstances()
-	my.data.Reset()
+	q.data.PurgeInstances()
+	q.data.Reset()
 
 	// Set all global labels from Rest.go if already not exist
-	my.data.SetGlobalLabels(data.GetGlobalLabels())
+	q.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	filter := []string{"return_unmatched_nested_array_objects=true", "show_default_records=false", "type=" + strings.Join(my.quotaType[:], "|")}
+	filter := []string{"return_unmatched_nested_array_objects=true", "show_default_records=false", "type=" + strings.Join(q.quotaType[:], "|")}
 
 	// In 22.05, all qtrees were exported
-	if my.historicalLabels {
+	if q.historicalLabels {
 		for _, qtreeInstance := range data.GetInstances() {
 			qtreeInstance.SetExportable(true)
 		}
 		// In 22.05, we would need default records as well.
-		filter = []string{"return_unmatched_nested_array_objects=true", "show_default_records=true", "type=" + strings.Join(my.quotaType[:], "|")}
+		filter = []string{"return_unmatched_nested_array_objects=true", "show_default_records=true", "type=" + strings.Join(q.quotaType[:], "|")}
 	}
 
-	href := rest.BuildHref("", "*", filter, "", "", "", "", my.query)
+	href := rest.BuildHref("", "*", filter, "", "", "", "", q.query)
 
-	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(q.client, href, q.Logger); err != nil {
 		return nil, err
 	}
 
 	quotaCount := 0
 	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
 
-	if my.historicalLabels {
+	if q.historicalLabels {
 		// In 22.05, populate metrics with qtree prefix and old labels
-		err = my.handlingHistoricalMetrics(result, data, cluster, &quotaCount, &numMetrics)
+		err = q.handlingHistoricalMetrics(result, data, cluster, &quotaCount, &numMetrics)
 	} else {
 		// Populate metrics with quota prefix and current labels
-		err = my.handlingQuotaMetrics(result, cluster, &quotaCount, &numMetrics)
+		err = q.handlingQuotaMetrics(result, cluster, &quotaCount, &numMetrics)
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	my.Logger.Info().
+	q.Logger.Info().
 		Int("numQuotas", quotaCount).
 		Int("metrics", numMetrics).
 		Msg("Collected")
 
 	// metrics with qtree prefix and quota prefix are available to support backward compatibility
-	qtreePluginData := my.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	qtreePluginData.UUID = my.Parent + ".Qtree"
+	qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	qtreePluginData.UUID = q.Parent + ".Qtree"
 	qtreePluginData.Object = "qtree"
 	qtreePluginData.Identifier = "qtree"
-	return []*matrix.Matrix{qtreePluginData, my.data}, nil
+	return []*matrix.Matrix{qtreePluginData, q.data}, nil
 }
 
-func (my *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
+func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
 	for _, quota := range result {
 		var tree string
 		var quotaInstance *matrix.Instance
 		var err error
 
 		if !quota.IsObject() {
-			my.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
+			q.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
 			return errs.New(errs.ErrNoInstance, "quota is not an object")
 		}
 
@@ -215,25 +215,25 @@ func (my *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.M
 
 		// If quota-type is not a tree, then skip
 		if quotaType != "tree" {
-			my.Logger.Trace().Str("quotaType", quotaType).Msg("Quota is not tree type, skipping")
+			q.Logger.Trace().Str("quotaType", quotaType).Msg("Quota is not tree type, skipping")
 			continue
 		}
 
 		// Ex. InstanceKey: vserver1vol1qtree15989279
 		quotaInstanceKey := vserver + volume + tree + qIndex
 
-		if quotaInstance = my.data.GetInstance(quotaInstanceKey); quotaInstance == nil {
-			if quotaInstance, err = my.data.NewInstance(quotaInstanceKey); err != nil {
-				my.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
+		if quotaInstance = q.data.GetInstance(quotaInstanceKey); quotaInstance == nil {
+			if quotaInstance, err = q.data.NewInstance(quotaInstanceKey); err != nil {
+				q.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
 				return err
 			}
-			my.Logger.Debug().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, qIndex)
+			q.Logger.Debug().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, qIndex)
 		}
 
 		// qtree instancekey would be qtree, svm and volume(sorted keys)
 		qtreeInstance := data.GetInstance(tree + vserver + volume)
 		if qtreeInstance == nil {
-			my.Logger.Warn().
+			q.Logger.Warn().
 				Str("tree", tree).
 				Str("volume", volume).
 				Str("vserver", vserver).
@@ -245,7 +245,7 @@ func (my *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.M
 			continue
 		}
 
-		for _, label := range my.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
+		for _, label := range q.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
 			if value := qtreeInstance.GetLabel(label); value != "" {
 				quotaInstance.SetLabel(label, value)
 			}
@@ -264,7 +264,7 @@ func (my *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.M
 		}
 
 		*quotaIndex++
-		for attribute, m := range my.data.GetMetrics() {
+		for attribute, m := range q.data.GetMetrics() {
 			value := 0.0
 
 			if attrValue := quota.Get(attribute); attrValue.Exists() {
@@ -279,22 +279,22 @@ func (my *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.M
 
 			// populate numeric data
 			if err = m.SetValueFloat64(quotaInstance, value); err != nil {
-				my.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
+				q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
 				*numMetrics++
-				my.Logger.Debug().Str("attribute", attribute).Float64("value", value).Msg("added value")
+				q.Logger.Debug().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 		}
 	}
 	return nil
 }
 
-func (my *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quotaCount *int, numMetrics *int) error {
+func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quotaCount *int, numMetrics *int) error {
 	for quotaIndex, quota := range result {
 		var tree string
 
 		if !quota.IsObject() {
-			my.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
+			q.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
 			return errs.New(errs.ErrNoInstance, "quota is not an object")
 		}
 
@@ -309,15 +309,15 @@ func (my *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quo
 		group := quota.Get("group.name").String()
 		*quotaCount++
 
-		for attribute, m := range my.data.GetMetrics() {
+		for attribute, m := range q.data.GetMetrics() {
 			// set -1 for unlimited
 			value := -1.0
 
 			quotaInstanceKey := strconv.Itoa(quotaIndex) + "." + attribute
 
-			quotaInstance, err := my.data.NewInstance(quotaInstanceKey)
+			quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 			if err != nil {
-				my.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
+				q.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
 				return err
 			}
 			//set labels
@@ -352,10 +352,10 @@ func (my *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quo
 
 			// populate numeric data
 			if err = m.SetValueFloat64(quotaInstance, value); err != nil {
-				my.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
+				q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
 				*numMetrics++
-				my.Logger.Trace().Str("attribute", attribute).Float64("value", value).Msg("added value")
+				q.Logger.Trace().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 		}
 	}
