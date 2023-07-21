@@ -17,9 +17,9 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Headroom{AbstractPlugin: p}
 }
 
-func (me *Headroom) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (h *Headroom) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	data := dataMap[me.Object]
+	data := dataMap[h.Object]
 	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
 			continue

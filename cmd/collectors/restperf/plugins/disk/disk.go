@@ -331,7 +331,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 								shelfChildInstance.SetLabel("shelf", shelfName)
 
-								// Each child would have different possible values which is ugly way to write all of them,
+								// Each child would have different possible values which is an ugly way to write all of them,
 								// so normal value would be mapped to 1 and rest all are mapped to 0.
 								if shelfChildInstance.GetLabel("status") == "normal" {
 									_ = statusMetric.SetValueInt64(shelfChildInstance, 1)
@@ -744,7 +744,7 @@ func (d *Disk) initMaps() {
 
 func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 	var err error
-	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
+	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric)
 	for _, o := range d.shelfData {
 		for k, instance := range o.GetInstances() {
 			firstInd := strings.Index(k, "#")
@@ -779,7 +779,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if mkey == "voltage" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
-								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64, 0)
+								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64)
 							}
 							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
 						}
@@ -788,7 +788,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if mkey == "current" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {
-								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64, 0)
+								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64)
 							}
 							shelfEnvironmentMetricMap[iKey].currentSensor[iKey2] = value
 						}

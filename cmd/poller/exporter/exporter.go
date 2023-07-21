@@ -77,77 +77,77 @@ func New(c, n string, o *options.Options, p conf.Exporter, params *conf.Poller) 
 }
 
 // InitAbc initializes AbstractExporter
-func (me *AbstractExporter) InitAbc() error {
-	me.Metadata.SetGlobalLabel("hostname", me.Options.Hostname)
-	me.Metadata.SetGlobalLabel("version", me.Options.Version)
-	me.Metadata.SetGlobalLabel("poller", me.Options.Poller)
-	me.Metadata.SetGlobalLabel("exporter", me.Class)
-	me.Metadata.SetGlobalLabel("target", me.Name)
+func (e *AbstractExporter) InitAbc() error {
+	e.Metadata.SetGlobalLabel("hostname", e.Options.Hostname)
+	e.Metadata.SetGlobalLabel("version", e.Options.Version)
+	e.Metadata.SetGlobalLabel("poller", e.Options.Poller)
+	e.Metadata.SetGlobalLabel("exporter", e.Class)
+	e.Metadata.SetGlobalLabel("target", e.Name)
 
-	if _, err := me.Metadata.NewMetricInt64("time"); err != nil {
+	if _, err := e.Metadata.NewMetricInt64("time"); err != nil {
 		return err
 	}
-	if _, err := me.Metadata.NewMetricUint64("count"); err != nil {
+	if _, err := e.Metadata.NewMetricUint64("count"); err != nil {
 		return err
 	}
 
 	//e.Metadata.AddLabel("task", "")
-	if instance, err := me.Metadata.NewInstance("export"); err == nil {
+	if instance, err := e.Metadata.NewInstance("export"); err == nil {
 		instance.SetLabel("task", "export")
 	} else {
 		return err
 	}
 
-	if instance, err := me.Metadata.NewInstance("render"); err == nil {
+	if instance, err := e.Metadata.NewInstance("render"); err == nil {
 		instance.SetLabel("task", "render")
 	} else {
 		return err
 	}
 
-	me.SetStatus(0, "initialized")
+	e.SetStatus(0, "initialized")
 	return nil
 }
 
 // GetClass returns the class of the AbstractExporter
-func (me *AbstractExporter) GetClass() string {
-	return me.Class
+func (e *AbstractExporter) GetClass() string {
+	return e.Class
 }
 
 // GetName returns the name of the AbstractExporter
-func (me *AbstractExporter) GetName() string {
-	return me.Name
+func (e *AbstractExporter) GetName() string {
+	return e.Name
 }
 
 // GetExportCount reports and resets count of exported data points "atomically"
 // this and next methods are only to report the poller
 // how much data we have exported (independent of poll/export interval)
-func (me *AbstractExporter) GetExportCount() uint64 {
-	me.countMux.Lock()
-	count := me.exportCount
-	me.exportCount = 0
-	me.countMux.Unlock()
+func (e *AbstractExporter) GetExportCount() uint64 {
+	e.countMux.Lock()
+	count := e.exportCount
+	e.exportCount = 0
+	e.countMux.Unlock()
 	return count
 }
 
 // AddExportCount adds count n to the export counter
-func (me *AbstractExporter) AddExportCount(n uint64) {
-	me.countMux.Lock()
-	me.exportCount += n
-	me.countMux.Unlock()
+func (e *AbstractExporter) AddExportCount(n uint64) {
+	e.countMux.Lock()
+	e.exportCount += n
+	e.countMux.Unlock()
 }
 
 // GetStatus returns current state of exporter
-func (me *AbstractExporter) GetStatus() (uint8, string, string) {
-	return me.Status, ExporterStatus[me.Status], me.Message
+func (e *AbstractExporter) GetStatus() (uint8, string, string) {
+	return e.Status, ExporterStatus[e.Status], e.Message
 }
 
 // SetStatus sets the current state of exporter
-func (me *AbstractExporter) SetStatus(code uint8, msg string) {
+func (e *AbstractExporter) SetStatus(code uint8, msg string) {
 	if code >= uint8(len(ExporterStatus)) {
 		panic("invalid status code " + strconv.Itoa(int(code)))
 	}
-	me.Status = code
-	me.Message = msg
+	e.Status = code
+	e.Message = msg
 }
 
 // @TODO: implement!
