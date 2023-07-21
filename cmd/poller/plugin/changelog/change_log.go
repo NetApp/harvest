@@ -70,7 +70,7 @@ func (c *ChangeLog) Init() error {
 	}
 
 	// Initialize the changeLogMap
-	c.changeLogMap = make(map[string]*matrix.Matrix)
+	c.changeLogMap = make(map[string]*matrix.Matrix, 0)
 
 	object := c.ParentParams.GetChildS("object")
 	c.matrixName = object.GetContentS() + "_" + changeLog
@@ -148,7 +148,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	prevMat := c.previousData
 	oldInstances := set.New()
-	prevInstancesUUIDKey := make(map[string]string)
+	prevInstancesUUIDKey := make(map[string]string, 0)
 	for key, prevInstance := range prevMat.GetInstances() {
 		uuid := prevInstance.GetLabel("uuid")
 		if uuid == "" {
@@ -185,7 +185,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 					key:    uuid + "_" + object,
 					object: object,
 					op:     create,
-					labels: make(map[string]string),
+					labels: make(map[string]string, 0),
 					time:   currentTime,
 				}
 				c.updateChangeLogLabels(object, instance, change)
@@ -199,7 +199,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 							key:      uuid + "_" + object + "_" + currentLabel,
 							object:   object,
 							op:       update,
-							labels:   make(map[string]string),
+							labels:   make(map[string]string, 0),
 							track:    currentLabel,
 							oldValue: old.Get(currentLabel),
 							newValue: newLabel,
@@ -228,7 +228,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 					key:    uuid + "_" + object,
 					object: object,
 					op:     del,
-					labels: make(map[string]string),
+					labels: make(map[string]string, 0),
 					time:   currentTime,
 				}
 				c.updateChangeLogLabels(object, prevInstance, change)
@@ -253,6 +253,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	}
 
 	// reset metric count
+	c.metricsCount = 0
 	c.metricsCount = 0
 
 	return matricesArray, nil
