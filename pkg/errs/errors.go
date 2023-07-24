@@ -23,7 +23,6 @@ const (
 	ErrInvalidItem        = harvestError("invalid item")
 	ErrInvalidParam       = harvestError("invalid parameter")
 	ErrMissingParam       = harvestError("missing parameter")
-	ErrMissingParams      = harvestError("missing parameter")
 	ErrNoCollector        = harvestError("no collectors")
 	ErrNoInstance         = harvestError("no instances")
 	ErrNoMetric           = harvestError("no metrics")

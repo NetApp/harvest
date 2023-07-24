@@ -760,6 +760,25 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	}
 
 	for _, v := range variables {
+		if v.name == "TopResources" {
+			for _, optionVal := range v.options {
+				selected := optionVal.Get("selected").Bool()
+				text := optionVal.Get("text").String()
+				value := optionVal.Get("value").String()
+
+				// Test if text and value match, except for the special case with "All" and "$__all"
+				if text != value && !(text == "All" && value == "$__all") {
+					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' does not match value '%s'",
+						shortPath(path), v.name, text, value)
+				}
+
+				// Test if the selected value matches the expected text "5"
+				if (text == "5") != selected {
+					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
+						shortPath(path), v.name, text, selected)
+				}
+			}
+		}
 		if !strings.Contains(v.query, "topk") || !strings.Contains(v.query, "__range") {
 			continue
 		}
@@ -779,6 +798,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/workload.json":         2,
 		"cmode/smb.json":              2,
 		"cmode/health.json":           2,
+		"cmode/power.json":            2,
 		"storagegrid/fabricpool.json": 2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1

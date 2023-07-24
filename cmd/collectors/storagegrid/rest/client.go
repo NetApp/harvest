@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"io"
@@ -128,7 +129,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
 		}
 	} else {
-		username := poller.Username
+		username := pollerAuth.Username
 		password := pollerAuth.Password
 		client.username = username
 		if username == "" {
@@ -230,7 +231,7 @@ func (c *Client) getRest(request string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to unescape %s err: %w", request, err)
 	}
 
-	c.request, err = http.NewRequest("GET", u, nil)
+	c.request, err = requests.New("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -392,7 +393,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 			return err
 		}
 
-		req, err = http.NewRequest("POST", u, bytes.NewBuffer(postBody))
+		req, err = requests.New("POST", u, bytes.NewBuffer(postBody))
 		if err != nil {
 			return err
 		}

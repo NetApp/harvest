@@ -135,7 +135,7 @@ func (d *Disk) Init() error {
 
 	objects := d.Params.GetChildS("objects")
 	if objects == nil {
-		return errs.New(errs.ErrMissingParams, "objects")
+		return errs.New(errs.ErrMissingParam, "objects")
 	}
 
 	for _, obj := range objects.GetChildren() {
@@ -665,7 +665,7 @@ func (d *Disk) handleShelfPower(shelves []*node.Node, output []*matrix.Matrix) (
 
 func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 	var err error
-	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric, 0)
+	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric)
 	for _, o := range d.shelfData {
 		for k, instance := range o.GetInstances() {
 			if !instance.IsExportable() {
@@ -702,7 +702,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if mkey == "voltage-sensor-reading" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
-								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64, 0)
+								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64)
 							}
 							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
 						}
@@ -711,7 +711,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if mkey == "current-sensor-reading" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {
-								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64, 0)
+								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64)
 							}
 							shelfEnvironmentMetricMap[iKey].currentSensor[iKey2] = value
 						}

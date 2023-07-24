@@ -14,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"io"
@@ -90,7 +91,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	}
 
 	// create a request object that will be used for later requests
-	if request, err = http.NewRequest("POST", url, nil); err != nil {
+	if request, err = requests.New("POST", url, nil); err != nil {
 		return nil, err
 	}
 
@@ -147,13 +148,13 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		}
 	} else {
 		password := pollerAuth.Password
-		if poller.Username == "" {
+		if pollerAuth.Username == "" {
 			return nil, errs.New(errs.ErrMissingParam, "username")
 		} else if password == "" {
 			return nil, errs.New(errs.ErrMissingParam, "password")
 		}
 
-		request.SetBasicAuth(poller.Username, password)
+		request.SetBasicAuth(pollerAuth.Username, password)
 		transport = &http.Transport{
 			Proxy:           http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec

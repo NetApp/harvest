@@ -4,7 +4,7 @@ object:                   flashpool
 
 counters:
   - ^^id
-  - ^hya_aggr_name                                 => aggr
+  - ^hya_aggregate_name                            => aggr
   - ^node.name                                     => node
   - evict_destage_rate
   - evict_remove_rate

@@ -22,7 +22,7 @@ objects:
   NetConnections:              netconnections.yaml
 #  NetPort:                     netport.yaml
   NetRoute:                    netroute.yaml
-  NFSClients:                  nfs_clients.yaml
+#  NFSClients:                  nfs_clients.yaml
   Node:                        node.yaml
   NtpServer:                   ntpserver.yaml
   OntapS3:                     ontap_s3.yaml
