@@ -50,7 +50,7 @@ objects:
   Vscan:             vscan.yaml
   VscanSVM:          vscan_svm.yaml
 
-#  Uncomment to collect workload/QOS counters
+#  Uncomment to collect workload/QOS counters. They are disabled by default because they typically slow down data collection due to a high number of metrics.
 #  Workload:             workload.yaml
 #  WorkloadDetail:       workload_detail.yaml
 #  WorkloadVolume:       workload_volume.yaml
