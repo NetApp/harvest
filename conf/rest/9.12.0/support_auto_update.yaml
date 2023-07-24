@@ -6,8 +6,6 @@ object:           support_auto_update
 counters:
   - ^enabled          => auto_update_enabled
 
-#export_options:
-#  include_all_labels: true
 export_options:
   instance_keys:
     - auto_update_enabled
