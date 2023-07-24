@@ -29,7 +29,7 @@ func assertRedacted(t *testing.T, input, redacted string) {
 }
 
 func TestConfigToStruct(t *testing.T) {
-	loadTestConfig()
+	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	if conf.Config.Defaults.Password != "123#abc" {
 		t.Fatalf(`expected harvestConfig.Defaults.Password to be 123#abc, actual=[%+v]`,
 			conf.Config.Defaults.Addr)
@@ -74,7 +74,7 @@ func TestConfigToStruct(t *testing.T) {
 }
 
 func TestUniquePromPorts(t *testing.T) {
-	loadTestConfig()
+	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	valid := checkUniquePromPorts(conf.Config)
 	if valid.isValid {
 		t.Fatal(`expected isValid to be false since there are duplicate prom ports, actual was isValid=true`)
@@ -85,21 +85,13 @@ func TestUniquePromPorts(t *testing.T) {
 }
 
 func TestExporterTypesAreValid(t *testing.T) {
-	loadTestConfig()
+	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	valid := checkExporterTypes(conf.Config)
 	if valid.isValid {
 		t.Fatalf(`expected isValid to be false since there are invalid exporter types, actual was %+v`, valid)
 	}
 	if len(valid.invalid) != 3 {
 		t.Fatalf(`expected three invalid exporters, got %d`, len(valid.invalid))
-	}
-}
-
-func loadTestConfig() {
-	path := "testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
 	}
 }
 
