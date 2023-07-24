@@ -167,7 +167,6 @@ func TestCheckCollectorName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {
-			conf.Config = conf.HarvestConfig{}
 			conf.TestLoadHarvestConfig(tt.path)
 			valid := checkCollectorName(conf.Config)
 			if valid.isValid != tt.want {
