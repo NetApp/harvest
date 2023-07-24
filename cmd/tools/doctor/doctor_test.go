@@ -144,3 +144,43 @@ func TestCustomYamlIsValid(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckCollectorName(t *testing.T) {
+	type test struct {
+		path string
+		want bool
+	}
+
+	tests := []test{
+		{
+			path: "testdata/collector/conf1.yml",
+			want: false,
+		},
+		{
+			path: "testdata/collector/conf2.yml",
+			want: false,
+		},
+		{
+			path: "testdata/collector/conf3.yml",
+			want: false,
+		},
+		{
+			path: "testdata/collector/conf4.yml",
+			want: true,
+		},
+		{
+			path: "testdata/collector/conf5.yml",
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			conf.Config = conf.HarvestConfig{}
+			conf.TestLoadHarvestConfig(tt.path)
+			valid := checkCollectorName(conf.Config)
+			if valid.isValid != tt.want {
+				t.Errorf("want isValid=%t, got %t", tt.want, valid.isValid)
+			}
+		})
+	}
+}

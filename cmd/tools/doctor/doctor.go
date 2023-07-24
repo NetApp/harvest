@@ -15,7 +15,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"reflect"
 	"strings"
 )
 
@@ -139,21 +138,26 @@ func checkAll(path string, contents []byte) {
 func checkCollectorName(config conf.HarvestConfig) validation {
 	valid := validation{isValid: true}
 
+	var isDefaultCollectorExist bool
 	// Verify default collectors
-	defaultCollectors := config.Defaults.Collectors
-	for _, c := range defaultCollectors {
-		// Check if the collector name is valid
-		_, ok := util.IsCollector[c.Name]
-		if !ok {
-			fmt.Printf("Default Section uses an invalid collector %s \n", color.Colorize(c.Name, color.Red))
-			valid.isValid = false
+	if config.Defaults != nil {
+		defaultCollectors := config.Defaults.Collectors
+		for _, c := range defaultCollectors {
+			isDefaultCollectorExist = true
+			// Check if the collector name is valid
+			_, ok := util.IsCollector[c.Name]
+			if !ok {
+				fmt.Printf("Default Section uses an invalid collector %s \n", color.Colorize(c.Name, color.Red))
+				valid.isValid = false
+			}
 		}
 	}
 
+	var isPollerCollectorExist bool
 	// Verify poller collectors
 	for k, v := range config.Pollers {
-		pCollectors := v.Collectors
-		for _, c := range pCollectors {
+		for _, c := range v.Collectors {
+			isPollerCollectorExist = true
 			// Check if the collector name is valid
 			_, ok := util.IsCollector[c.Name]
 			if !ok {
@@ -163,10 +167,14 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 		}
 	}
 
+	// if no collector is configured in default and poller
+	if !isDefaultCollectorExist && !isPollerCollectorExist {
+		valid.isValid = false
+	}
+
 	// Print the valid collector names if there are invalid collector names
 	if !valid.isValid {
-		keys := reflect.ValueOf(util.IsCollector).MapKeys()
-		fmt.Printf("Valid collector names %v \n", color.Colorize(keys, color.Green))
+		fmt.Printf("Valid collector names %v \n", color.Colorize(util.GetCollectorSlice(), color.Green))
 	}
 
 	return valid

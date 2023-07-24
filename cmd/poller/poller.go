@@ -65,7 +65,6 @@ import (
 	"os/exec"
 	"os/signal"
 	"path"
-	"reflect"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -297,7 +296,8 @@ func (p *Poller) Init() error {
 	for _, c := range filteredCollectors {
 		_, ok := util.IsCollector[c.Name]
 		if !ok {
-			logger.Warn().Str("Detected invalid collector", c.Name).Msgf("Valid collectors are: %v", reflect.ValueOf(util.IsCollector).MapKeys())
+			logger.Error().Str("Detected invalid collector", c.Name).Msgf("Valid collectors are: %v", util.GetCollectorSlice())
+			continue
 		}
 		objects, err := p.readObjects(c)
 		if err != nil {
