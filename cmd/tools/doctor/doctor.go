@@ -8,12 +8,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"strings"
 )
 
@@ -124,12 +126,50 @@ func checkAll(path string, contents []byte) {
 	anyFailed = !checkPollersExportToUniquePromPorts(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkExporterTypes(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkCustomYaml("").isValid || anyFailed
+	anyFailed = !checkCollectorName(*harvestConfig).isValid || anyFailed
 
 	if anyFailed {
 		os.Exit(1)
 	} else {
 		os.Exit(0)
 	}
+}
+
+// checkCollectorName checks if the collector names in the config struct are valid
+func checkCollectorName(config conf.HarvestConfig) validation {
+	valid := validation{isValid: true}
+
+	// Verify default collectors
+	defaultCollectors := config.Defaults.Collectors
+	for _, c := range defaultCollectors {
+		// Check if the collector name is valid
+		_, ok := util.IsCollector[c.Name]
+		if !ok {
+			fmt.Printf("Default Section uses an invalid collector %s \n", color.Colorize(c.Name, color.Red))
+			valid.isValid = false
+		}
+	}
+
+	// Verify poller collectors
+	for k, v := range config.Pollers {
+		pCollectors := v.Collectors
+		for _, c := range pCollectors {
+			// Check if the collector name is valid
+			_, ok := util.IsCollector[c.Name]
+			if !ok {
+				fmt.Printf("Poller [%s] uses an invalid collector [%s] \n", color.Colorize(k, color.Yellow), color.Colorize(c.Name, color.Red))
+				valid.isValid = false
+			}
+		}
+	}
+
+	// Print the valid collector names if there are invalid collector names
+	if !valid.isValid {
+		keys := reflect.ValueOf(util.IsCollector).MapKeys()
+		fmt.Printf("Valid collector names %v \n", color.Colorize(keys, color.Green))
+	}
+
+	return valid
 }
 
 func checkCustomYaml(confParent string) validation {

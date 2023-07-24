@@ -20,6 +20,15 @@ import (
 	"strings"
 )
 
+var IsCollector = map[string]struct{}{
+	"ZapiPerf":    {},
+	"Zapi":        {},
+	"Rest":        {},
+	"RestPerf":    {},
+	"Ems":         {},
+	"StorageGrid": {},
+}
+
 func MinLen(elements [][]string) int {
 	var min, i int
 	min = len(elements[0])

@@ -65,6 +65,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path"
+	"reflect"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -76,21 +77,13 @@ import (
 
 // default params
 var (
-	pollerSchedule   = "60s"
-	logFileName      = ""
-	logMaxMegaBytes  = logging.DefaultLogMaxMegaBytes
-	logMaxBackups    = logging.DefaultLogMaxBackups
-	logMaxAge        = logging.DefaultLogMaxAge
-	asupSchedule     = "24h" // send every 24 hours
-	asupFirstWrite   = "4m"  // after this time, write 1st autosupport payload (for testing)
-	isOntapCollector = map[string]struct{}{
-		"ZapiPerf":    {},
-		"Zapi":        {},
-		"Rest":        {},
-		"RestPerf":    {},
-		"Ems":         {},
-		"StorageGrid": {},
-	}
+	pollerSchedule  = "60s"
+	logFileName     = ""
+	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes
+	logMaxBackups   = logging.DefaultLogMaxBackups
+	logMaxAge       = logging.DefaultLogMaxAge
+	asupSchedule    = "24h" // send every 24 hours
+	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
 )
 
 const (
@@ -302,6 +295,10 @@ func (p *Poller) Init() error {
 
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
+		_, ok := util.IsCollector[c.Name]
+		if !ok {
+			logger.Warn().Str("Detected invalid collector", c.Name).Msgf("Valid collectors are: %v", reflect.ValueOf(util.IsCollector).MapKeys())
+		}
 		objects, err := p.readObjects(c)
 		if err != nil {
 			logger.Error().Err(err).
@@ -966,7 +963,7 @@ var pollerCmd = &cobra.Command{
 
 func (p *Poller) targetIsOntap() bool {
 	for _, c := range p.collectors {
-		_, ok := isOntapCollector[c.GetName()]
+		_, ok := util.IsCollector[c.GetName()]
 		if ok {
 			return true
 		}
