@@ -278,13 +278,1636 @@
       "type": "stat"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Compliant"
+            },
+            "properties": [
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "-Infinity": {
+                        "index": 1,
+                        "text": "0"
+                      },
+                      "Infinity": {
+                        "index": 0,
+                        "text": "0"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": -9999,
+                      "result": {
+                        "index": 2,
+                        "text": "0"
+                      },
+                      "to": -1
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 5,
+        "y": 3
+      },
+      "id": 216,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"} or (svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} unless on (svm) security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm!=\"$Cluster\", svm=~\"$SVM\"}))) or vector(0)",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "NonCompliantSvm",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"}) or vector (1) ",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "TotalSvm",
+          "refId": "B"
+        }
+      ],
+      "title": "SVM Compliant %",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "CompliantSvm",
+            "binary": {
+              "left": "TotalSvm",
+              "operator": "-",
+              "reducer": "sum",
+              "right": "NonCompliantSvm"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "CompliantSvm",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "TotalSvm"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Compliant",
+            "binary": {
+              "left": "CompliantSvm / TotalSvm",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 10,
+        "y": 3
+      },
+      "id": 207,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0))\n+\n(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0) )",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "encrypted",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}) or vector (1) )",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "total",
+          "refId": "B"
+        }
+      ],
+      "title": "Volume Encryption %",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "total"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted / total",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4.5,
+        "x": 15,
+        "y": 3
+      },
+      "id": 208,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "((count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"enabled|dry_run\"}) or vector (0)) / (count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\"}) or vector (1))) * 100",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Volume Anti-ransomware Status %",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "total"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted / total",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4.5,
+        "x": 19.5,
+        "y": 3
+      },
+      "id": 210,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "((count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0))\n/\n(count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\"}) or vector (1))) * 100",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "SVM Anti-ransomware Status %",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "total"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "encrypted / total",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Compliant"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "-Infinity": {
+                        "color": "semi-dark-green",
+                        "index": 1,
+                        "text": "0"
+                      },
+                      "Infinity": {
+                        "color": "semi-dark-green",
+                        "index": 0,
+                        "text": "0"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": -9999,
+                      "result": {
+                        "color": "semi-dark-green",
+                        "index": 2,
+                        "text": "0"
+                      },
+                      "to": -1
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "semi-dark-green",
+                        "index": 3
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Non Compliant"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "semi-dark-yellow",
+                        "index": 0
+                      },
+                      "to": 99999
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 5,
+        "x": 0,
+        "y": 6
+      },
+      "id": 215,
+      "options": {
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count (security_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Total",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(group by (datacenter, cluster)(support_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", asup_enabled=\"true\", asup_https_configured!=\"https\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", telnet_enabled=\"true\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", rsh_enabled=\"true\"} or group by (datacenter, cluster)(security_account_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", hash_algorithm=\"md5\"}) > 0 or cluster_peer_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"\"} or cluster_peer_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", encryption_state=\"none\"} or group by (datacenter, cluster) (security_account_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", locked=\"false\"}) > 0 or security_login_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", scope=\"cluster\", banner=\"\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$Cluster\"} or count by (datacenter, cluster) (ntpserver_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) < 1 or security_audit_destination_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", protocol!=\"tcp_encrypted\"} or security_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", fips_enabled=\"false\"} or svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", type=\"admin\", ciphers=~\".*_cbc.*\"} or group by (datacenter, cluster) ((svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", audit_protocol_enabled=\"false\"}) or security_ssh_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", scope=\"svm\", banner=\"\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}))) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Non Compliant",
+          "refId": "B"
+        }
+      ],
+      "title": "Cluster Compliant",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Compliant",
+            "binary": {
+              "left": "Total",
+              "operator": "-",
+              "reducer": "sum",
+              "right": "Non Compliant"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Total": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Compliant"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "semi-dark-green",
+                        "index": 0
+                      },
+                      "to": 9999
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": -9999,
+                      "result": {
+                        "color": "semi-dark-green",
+                        "index": 1,
+                        "text": "0"
+                      },
+                      "to": -1
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Not Compliant"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "semi-dark-yellow",
+                        "index": 0
+                      },
+                      "to": 99999
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 5,
+        "x": 5,
+        "y": 6
+      },
+      "id": 217,
+      "options": {
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"}) or vector(1)",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Total",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(group by (datacenter, cluster, svm) ((svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", cifs_protocol_enabled=\"true\"} or svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", nfs_protocol_enabled=\"true\"} and svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", audit_protocol_enabled=\"false\"}) or svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", ciphers=~\".*_cbc.*\"} or security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scope=\"svm\", banner=\"\"} or (svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} unless on (svm) security_login_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm!=\"$Cluster\", svm=~\"$SVM\"})))",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Not Compliant",
+          "refId": "B"
+        }
+      ],
+      "title": "SVM Compliant",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Compliant",
+            "binary": {
+              "left": "Total",
+              "operator": "-",
+              "reducer": "sum",
+              "right": "Not Compliant"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Total": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 5,
+        "x": 10,
+        "y": 6
+      },
+      "id": 204,
+      "options": {
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\"}) or vector (0)",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Software",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isHardwareEncrypted=\"true\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Hardware",
+          "refId": "B"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"true\", isHardwareEncrypted=\"true\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Hardware and Software",
+          "refId": "D"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", isEncrypted=\"false\", isHardwareEncrypted=\"false\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Not Encrypted",
+          "refId": "E"
+        }
+      ],
+      "title": "Volume Encryption",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 4.5,
+        "x": 15,
+        "y": 6
+      },
+      "id": 205,
+      "options": {
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"enabled\"}) or vector (0)",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Enabled in active mode",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=\"dry_run\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Enabled in learning mode",
+          "refId": "B"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\".*paused.*\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Paused",
+          "refId": "D"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", antiRansomwareState !=\"\" , antiRansomwareState=~\"disabled\"}) or vector (0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Disabled",
+          "refId": "E"
+        }
+      ],
+      "title": "Volume Anti-ransomware Status",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 4.5,
+        "x": 19.5,
+        "y": 6
+      },
+      "id": 209,
+      "options": {
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"enabled|dry_run\"}) or vector (0)",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Enabled",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", anti_ransomware_state!=\"\", anti_ransomware_state=~\"disabled\"}) or vector (0)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Disabled",
+          "refId": "B"
+        }
+      ],
+      "title": "SVM Anti-ransomware Status",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 201,
+      "options": {
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Cluster Authentication Methods",
+      "type": "text"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 16,
+        "x": 0,
+        "y": 20
+      },
+      "id": 211,
+      "options": {
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Authentication Methods",
+      "type": "text"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 16,
+        "y": 20
+      },
+      "id": 202,
+      "options": {
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Certificates",
+      "type": "text"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 21
+      },
+      "id": 158,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(count by (datacenter, cluster)(security_account_samluser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "SAML",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 21
+      },
+      "id": 192,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "(count(count by (datacenter, cluster) (security_account_activediruser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) + count(count by (datacenter, cluster) (security_account_ldapuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0))) or vector (0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "AD/LDAP",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 8,
+        "y": 21
+      },
+      "id": 190,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(count by (datacenter, cluster) (security_account_certificateuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Certificate",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 12,
+        "y": 21
+      },
+      "id": 194,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(count by (datacenter, cluster) (security_account_localuser{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0)) or vector (0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Local",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 21
+      },
+      "id": 193,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "count(security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expiring\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "title": "Expiring in < 60 days",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 21
+      },
+      "id": 191,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", certificateExpiryStatus=\"expired\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Expired",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "cluster": "Cluster",
+              "security_certificate_labels{certificateExpiryStatus=\"expiring\", certificateIssuerType=\"self_signed\", cluster=\"F8080-32-25\", datacenter=\"DC-02\", instance=\"localhost:12984\", job=\"prometheus14\", name=\"F8080-32-25_1673D3449EB39B95\", scope=\"cluster\", serial_number=\"1673D3449EB39B95\", type=\"server\", uuid=\"d7bb8e95-9840-11eb-814a-00a0986abd71\"}": ""
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 26
       },
       "id": 12,
       "panels": [
@@ -468,7 +2091,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 27
       },
       "id": 16,
       "panels": [
@@ -663,7 +2286,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 28
       },
       "id": 196,
       "panels": [
@@ -833,7 +2456,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 29
       },
       "id": 223,
       "panels": [
@@ -2312,7 +3935,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 30
       },
       "id": 227,
       "panels": [

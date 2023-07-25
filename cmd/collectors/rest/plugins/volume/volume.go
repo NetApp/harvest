@@ -5,7 +5,6 @@
 package volume
 
 import (
-	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -127,28 +126,31 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 
 	// Set all global labels
 	my.arw.SetGlobalLabels(data.GetGlobalLabels())
+	ArwStatusValue := "Active Mode"
 
-	learningMode := false
-	learningCompleted := false
-	disabled := false
-
+	// This is how cluster level arwStatusValue has been calculated based on each volume
+	// If any one volume arwStatus is disabled --> "Not Monitoring"
+	// If any one volume has been completed learning mode --> "Switch to Active Mode"
+	// If all volumes are in learning mode --> "Learning Mode"
+	// Else indicates arwStatus for all volumes are enabled --> "Active Mode"
 	for _, volume := range data.GetInstances() {
 		if arwState := volume.GetLabel("antiRansomwareState"); arwState != "" {
-			if arwState == "dry_run" || arwState == "enable_paused" {
-				if arwStartTime := volume.GetLabel("anti_ransomware_start_time"); arwStartTime != "" {
+			if arwState == "disabled" {
+				ArwStatusValue = "Not Monitoring"
+				break
+			} else if arwState == "dry_run" || arwState == "enable_paused" {
+				if arwStartTime := volume.GetLabel("anti_ransomware_start_time"); arwStartTime != "" && ArwStatusValue != "Switch to Active Mode" {
 					// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
 					if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
-						fmt.Printf("%v", err)
+						my.Logger.Error().Err(err).Msg("Failed to parse arw start time")
 						arwStartTimeValue = time.Now()
 					}
-
 					if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
-						learningCompleted = true
+						ArwStatusValue = "Switch to Active Mode"
+						continue
 					}
+					ArwStatusValue = "Learning Mode"
 				}
-				learningMode = true
-			} else if arwState == "disabled" {
-				disabled = true
 			}
 		}
 	}
@@ -159,18 +161,7 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 		return
 	}
 
-	if disabled {
-		arwInstance.SetLabel("ArwStatus", "Not Monitoring")
-	} else if learningMode {
-		if learningCompleted {
-			arwInstance.SetLabel("ArwStatus", "Switch to Active Mode")
-		} else {
-			arwInstance.SetLabel("ArwStatus", "Learning Mode")
-		}
-	} else {
-		arwInstance.SetLabel("ArwStatus", "Active Mode")
-	}
-
+	arwInstance.SetLabel("ArwStatus", ArwStatusValue)
 	m := my.arw.GetMetric("status")
 	// populate numeric data
 	value := 1.0
