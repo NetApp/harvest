@@ -29,7 +29,7 @@ func assertRedacted(t *testing.T, input, redacted string) {
 }
 
 func TestConfigToStruct(t *testing.T) {
-	loadTestConfig()
+	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	if conf.Config.Defaults.Password != "123#abc" {
 		t.Fatalf(`expected harvestConfig.Defaults.Password to be 123#abc, actual=[%+v]`,
 			conf.Config.Defaults.Addr)
@@ -74,7 +74,7 @@ func TestConfigToStruct(t *testing.T) {
 }
 
 func TestUniquePromPorts(t *testing.T) {
-	loadTestConfig()
+	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	valid := checkUniquePromPorts(conf.Config)
 	if valid.isValid {
 		t.Fatal(`expected isValid to be false since there are duplicate prom ports, actual was isValid=true`)
@@ -85,21 +85,13 @@ func TestUniquePromPorts(t *testing.T) {
 }
 
 func TestExporterTypesAreValid(t *testing.T) {
-	loadTestConfig()
+	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	valid := checkExporterTypes(conf.Config)
 	if valid.isValid {
 		t.Fatalf(`expected isValid to be false since there are invalid exporter types, actual was %+v`, valid)
 	}
 	if len(valid.invalid) != 3 {
 		t.Fatalf(`expected three invalid exporters, got %d`, len(valid.invalid))
-	}
-}
-
-func loadTestConfig() {
-	path := "testdata/testConfig.yml"
-	err := conf.LoadHarvestConfig(path)
-	if err != nil {
-		panic(err)
 	}
 }
 
@@ -140,6 +132,45 @@ func TestCustomYamlIsValid(t *testing.T) {
 				if !strings.Contains(invalid, tt.msgContains) {
 					t.Errorf("want invalid to contain %s, got %s", tt.msgContains, invalid)
 				}
+			}
+		})
+	}
+}
+
+func TestCheckCollectorName(t *testing.T) {
+	type test struct {
+		path string
+		want bool
+	}
+
+	tests := []test{
+		{
+			path: "testdata/collector/conf1.yml",
+			want: false,
+		},
+		{
+			path: "testdata/collector/conf2.yml",
+			want: false,
+		},
+		{
+			path: "testdata/collector/conf3.yml",
+			want: false,
+		},
+		{
+			path: "testdata/collector/conf4.yml",
+			want: true,
+		},
+		{
+			path: "testdata/collector/conf5.yml",
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			conf.TestLoadHarvestConfig(tt.path)
+			valid := checkCollectorName(conf.Config)
+			if valid.isValid != tt.want {
+				t.Errorf("want isValid=%t, got %t", tt.want, valid.isValid)
 			}
 		})
 	}
