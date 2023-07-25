@@ -94,7 +94,7 @@
       },
       "id": 176,
       "options": {
-        "content": "We have moved the `Compliance panels` from this dashboard to `ONTAP: Security` dashboard.",
+        "content": "These panels were moved to the `ONTAP: Security` dashboard.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",

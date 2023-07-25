@@ -14,11 +14,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
+
+const HoursInMonth = 24 * 30
 
 type Volume struct {
 	*plugin.AbstractPlugin
@@ -115,8 +116,9 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 
 func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 	var (
-		arwInstance *matrix.Instance
-		err         error
+		arwInstance       *matrix.Instance
+		arwStartTimeValue time.Time
+		err               error
 	)
 
 	// Purge and reset data
@@ -126,36 +128,41 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 	// Set all global labels
 	my.arw.SetGlobalLabels(data.GetGlobalLabels())
 
-	learningModeCount := 0
-	learningCompleted := 0
-	disabledCount := 0
+	learningMode := false
+	learningCompleted := false
+	disabled := false
 
 	for _, volume := range data.GetInstances() {
 		if arwState := volume.GetLabel("antiRansomwareState"); arwState != "" {
 			if arwState == "dry_run" || arwState == "enable_paused" {
 				if arwStartTime := volume.GetLabel("anti_ransomware_start_time"); arwStartTime != "" {
 					// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
-					if (float64(time.Now().Unix()) - HandleTimestamp(arwStartTime)) > 2629743 {
-						learningCompleted++
+					if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
+						fmt.Printf("%v", err)
+						arwStartTimeValue = time.Now()
+					}
+
+					if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
+						learningCompleted = true
 					}
 				}
-				learningModeCount++
+				learningMode = true
 			} else if arwState == "disabled" {
-				disabledCount++
+				disabled = true
 			}
 		}
 	}
 
 	arwInstanceKey := data.GetGlobalLabels().Get("cluster") + data.GetGlobalLabels().Get("datacenter")
 	if arwInstance, err = my.arw.NewInstance(arwInstanceKey); err != nil {
-		my.Logger.Error().Stack().Err(err).Str("arwInstanceKey", arwInstanceKey).Msg("Failed to create arw instance")
+		my.Logger.Error().Err(err).Str("arwInstanceKey", arwInstanceKey).Msg("Failed to create arw instance")
 		return
 	}
 
-	if disabledCount > 0 {
+	if disabled {
 		arwInstance.SetLabel("ArwStatus", "Not Monitoring")
-	} else if learningModeCount > 0 {
-		if learningCompleted > 0 {
+	} else if learningMode {
+		if learningCompleted {
 			arwInstance.SetLabel("ArwStatus", "Switch to Active Mode")
 		} else {
 			arwInstance.SetLabel("ArwStatus", "Learning Mode")
@@ -203,23 +210,4 @@ func (my *Volume) updateAggrMap(disks []gjson.Result) {
 			}
 		}
 	}
-}
-
-// Example: timestamp: 2020-12-02T18:36:19-08:00
-var regexTimeStamp = regexp.MustCompile(
-	`[+-]?\d{4}(-[01]\d(-[0-3]\d(T[0-2]\d:[0-5]\d:?([0-5]\d(\.\d+)?)?[+-][0-2]\d:[0-5]\d?)?)?)?`)
-
-func HandleTimestamp(value string) float64 {
-	var timestamp time.Time
-	var err error
-
-	if match := regexTimeStamp.MatchString(value); match {
-		// example: 2020-12-02T18:36:19-08:00   ==>  1606962979
-		if timestamp, err = time.Parse(time.RFC3339, value); err != nil {
-			fmt.Printf("%v", err)
-			return 0
-		}
-		return float64(timestamp.Unix())
-	}
-	return 0
 }
