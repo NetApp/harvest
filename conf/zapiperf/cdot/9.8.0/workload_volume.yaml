@@ -18,6 +18,7 @@ workload_class:
   - autovolume
 
 counters:
+  - concurrency
   - instance_name
   - instance_uuid
   - latency

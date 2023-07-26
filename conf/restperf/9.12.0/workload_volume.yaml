@@ -18,6 +18,7 @@ schedule:
 
 counters:
   - ^^uuid
+  - concurrency
   - latency
   - ops
   - read_data
