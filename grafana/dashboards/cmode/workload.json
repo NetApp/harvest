@@ -2641,7 +2641,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Workload Latency Breakup",
+      "title": "Workload Latency Breakdown",
       "type": "row"
     }
   ],
