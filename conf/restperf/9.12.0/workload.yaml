@@ -21,6 +21,7 @@ counters:
   - concurrency
   - latency
   - ops
+  - other_ops
   - read_data
   - read_io_type_percent      => read_io_type
   - read_latency
