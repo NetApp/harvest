@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1690369549912,
+  "iteration": 1690369549926,
   "links": [
     {
       "asDropdown": true,
@@ -905,13 +905,188 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This is the percentage of read requests served from various components (such as buffer cache, ext_cache, disk, etc.).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 47
+      },
+      "id": 172,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOType\"})",
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Read IO Type",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This is the average number of concurrent requests for the workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 57
+      },
+      "id": 173,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSConcurrency\"})",
+          "interval": "",
+          "legendFormat": "{{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Concurrency",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 67
       },
       "id": 127,
       "panels": [
@@ -974,7 +1149,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 68
           },
           "id": 129,
           "options": {
@@ -1074,7 +1249,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 68
+            "y": 78
           },
           "id": 133,
           "options": {
@@ -1175,7 +1350,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 68
+            "y": 78
           },
           "id": 131,
           "options": {
@@ -1280,7 +1455,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 78
+            "y": 88
           },
           "id": 135,
           "options": {
@@ -1385,7 +1560,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 78
+            "y": 88
           },
           "id": 137,
           "options": {
@@ -1490,7 +1665,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 88
+            "y": 98
           },
           "id": 139,
           "options": {
@@ -1595,7 +1770,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 88
+            "y": 98
           },
           "id": 141,
           "options": {
@@ -1700,7 +1875,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 98
+            "y": 108
           },
           "id": 143,
           "options": {
@@ -1805,7 +1980,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 98
+            "y": 108
           },
           "id": 145,
           "options": {
@@ -1910,7 +2085,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 108
+            "y": 118
           },
           "id": 147,
           "options": {
@@ -2015,7 +2190,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 108
+            "y": 118
           },
           "id": 149,
           "options": {
@@ -2120,7 +2295,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 118
+            "y": 128
           },
           "id": 153,
           "options": {
@@ -2224,7 +2399,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 118
+            "y": 128
           },
           "id": 159,
           "options": {
@@ -2328,7 +2503,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 128
+            "y": 138
           },
           "id": 157,
           "options": {
@@ -2432,7 +2607,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 128
+            "y": 138
           },
           "id": 151,
           "options": {
@@ -3242,6 +3417,52 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopQOSReadIOType",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*workload=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopQOSConcurrency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*workload=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -3265,5 +3486,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "",
-  "version": 1
+  "version": 2
 }
