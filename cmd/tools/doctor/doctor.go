@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io/fs"
@@ -124,12 +125,59 @@ func checkAll(path string, contents []byte) {
 	anyFailed = !checkPollersExportToUniquePromPorts(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkExporterTypes(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkCustomYaml("").isValid || anyFailed
+	anyFailed = !checkCollectorName(*harvestConfig).isValid || anyFailed
 
 	if anyFailed {
 		os.Exit(1)
 	} else {
 		os.Exit(0)
 	}
+}
+
+// checkCollectorName checks if the collector names in the config struct are valid
+func checkCollectorName(config conf.HarvestConfig) validation {
+	valid := validation{isValid: true}
+
+	var isDefaultCollectorExist bool
+	// Verify default collectors
+	if config.Defaults != nil {
+		defaultCollectors := config.Defaults.Collectors
+		for _, c := range defaultCollectors {
+			isDefaultCollectorExist = true
+			// Check if the collector name is valid
+			_, ok := util.IsCollector[c.Name]
+			if !ok {
+				fmt.Printf("Default Section uses an invalid collector %s \n", color.Colorize(c.Name, color.Red))
+				valid.isValid = false
+			}
+		}
+	}
+
+	var isPollerCollectorExist bool
+	// Verify poller collectors
+	for k, v := range config.Pollers {
+		for _, c := range v.Collectors {
+			isPollerCollectorExist = true
+			// Check if the collector name is valid
+			_, ok := util.IsCollector[c.Name]
+			if !ok {
+				fmt.Printf("Poller [%s] uses an invalid collector [%s] \n", color.Colorize(k, color.Yellow), color.Colorize(c.Name, color.Red))
+				valid.isValid = false
+			}
+		}
+	}
+
+	// if no collector is configured in default and poller
+	if !isDefaultCollectorExist && !isPollerCollectorExist {
+		valid.isValid = false
+	}
+
+	// Print the valid collector names if there are invalid collector names
+	if !valid.isValid {
+		fmt.Printf("Valid collector names %v \n", color.Colorize(util.GetCollectorSlice(), color.Green))
+	}
+
+	return valid
 }
 
 func checkCustomYaml(confParent string) validation {

@@ -34,6 +34,7 @@ const (
 // TestLoadHarvestConfig is used by testing code to reload a new config
 func TestLoadHarvestConfig(configPath string) {
 	configRead = false
+	Config = HarvestConfig{}
 	promPortRangeMapping = make(map[string]PortMap)
 	err := LoadHarvestConfig(configPath)
 	if err != nil {

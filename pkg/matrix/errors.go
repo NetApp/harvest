@@ -14,6 +14,5 @@ const (
 	ErrInvalidInstanceKey   = matrixError("invalid instance key")
 	ErrDuplicateMetricKey   = matrixError("duplicate metric key")
 	ErrDuplicateInstanceKey = matrixError("duplicate instance key")
-	ErrOverflow             = matrixError("overflow error")
 	ErrUnequalVectors       = matrixError("unequal vectors")
 )

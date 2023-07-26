@@ -51,6 +51,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog/log"
@@ -75,21 +76,13 @@ import (
 
 // default params
 var (
-	pollerSchedule   = "60s"
-	logFileName      = ""
-	logMaxMegaBytes  = logging.DefaultLogMaxMegaBytes
-	logMaxBackups    = logging.DefaultLogMaxBackups
-	logMaxAge        = logging.DefaultLogMaxAge
-	asupSchedule     = "24h" // send every 24 hours
-	asupFirstWrite   = "4m"  // after this time, write 1st autosupport payload (for testing)
-	isOntapCollector = map[string]struct{}{
-		"ZapiPerf":    {},
-		"Zapi":        {},
-		"Rest":        {},
-		"RestPerf":    {},
-		"Ems":         {},
-		"StorageGrid": {},
-	}
+	pollerSchedule  = "60s"
+	logFileName     = ""
+	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes
+	logMaxBackups   = logging.DefaultLogMaxBackups
+	logMaxAge       = logging.DefaultLogMaxAge
+	asupSchedule    = "24h" // send every 24 hours
+	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
 )
 
 const (
@@ -301,6 +294,11 @@ func (p *Poller) Init() error {
 
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
+		_, ok := util.IsCollector[c.Name]
+		if !ok {
+			logger.Error().Str("Detected invalid collector", c.Name).Msgf("Valid collectors are: %v", util.GetCollectorSlice())
+			continue
+		}
 		objects, err := p.readObjects(c)
 		if err != nil {
 			logger.Error().Err(err).
@@ -965,7 +963,7 @@ var pollerCmd = &cobra.Command{
 
 func (p *Poller) targetIsOntap() bool {
 	for _, c := range p.collectors {
-		_, ok := isOntapCollector[c.GetName()]
+		_, ok := util.IsCollector[c.GetName()]
 		if ok {
 			return true
 		}
@@ -1029,7 +1027,7 @@ func (p *Poller) publishDetails() {
 	if heartBeatURL == "" {
 		heartBeatURL = defaultURL
 	}
-	req, err := http.NewRequest("PUT", heartBeatURL, bytes.NewBuffer(payload))
+	req, err := requests.New("PUT", heartBeatURL, bytes.NewBuffer(payload))
 	if err != nil {
 		logger.Err(err).Msg("failed to connect to admin")
 		return
@@ -1244,8 +1242,7 @@ func main() {
 	// log as much as possible
 	defer func() {
 		if r := recover(); r != nil {
-			e := r.(error)
-			logger.Error().Stack().Err(e).Msg("Poller panicked")
+			logger.Error().Stack().Any("err", r).Msg("Poller panicked")
 			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
 		}
 	}()

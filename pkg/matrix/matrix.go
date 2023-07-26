@@ -41,9 +41,9 @@ type With struct {
 func New(uuid, object string, identifier string) *Matrix {
 	me := Matrix{UUID: uuid, Object: object, Identifier: identifier}
 	me.globalLabels = dict.New()
-	me.instances = make(map[string]*Instance, 0)
-	me.metrics = make(map[string]*Metric, 0)
-	me.displayMetrics = make(map[string]string, 0)
+	me.instances = make(map[string]*Instance)
+	me.metrics = make(map[string]*Metric)
+	me.displayMetrics = make(map[string]string)
 	me.exportable = true
 	return &me
 }
@@ -78,7 +78,7 @@ func (m *Matrix) Clone(with With) *Matrix {
 	clone.globalLabels = m.globalLabels
 	clone.exportOptions = m.exportOptions
 	clone.exportable = m.exportable
-	clone.displayMetrics = make(map[string]string, 0)
+	clone.displayMetrics = make(map[string]string)
 
 	if with.Instances {
 		clone.instances = make(map[string]*Instance, len(m.GetInstances()))
@@ -90,7 +90,7 @@ func (m *Matrix) Clone(with With) *Matrix {
 			}
 		}
 	} else {
-		clone.instances = make(map[string]*Instance, 0)
+		clone.instances = make(map[string]*Instance)
 	}
 
 	if with.Metrics {
@@ -101,7 +101,7 @@ func (m *Matrix) Clone(with With) *Matrix {
 			clone.displayMetrics[c.GetName()] = key
 		}
 	} else {
-		clone.metrics = make(map[string]*Metric, 0)
+		clone.metrics = make(map[string]*Metric)
 	}
 
 	return clone
@@ -193,7 +193,7 @@ func (m *Matrix) RemoveMetric(key string) {
 }
 
 func (m *Matrix) PurgeMetrics() {
-	m.metrics = make(map[string]*Metric, 0)
+	m.metrics = make(map[string]*Metric)
 }
 
 func (m *Matrix) RemoveExceptMetric(key string) {

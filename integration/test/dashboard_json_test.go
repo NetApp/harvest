@@ -87,6 +87,7 @@ var excludeCounters = []string{
 	"svm_read_total",
 	"svm_vscan",
 	"svm_write_total",
+	"nfs_clients_",
 }
 
 var flakyCounters = []string{
