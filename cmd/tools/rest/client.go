@@ -81,7 +81,13 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 	if err != nil {
 		return nil, err
 	}
-
+	pollerAuth, err := auth.GetPollerAuth()
+	if err != nil {
+		return nil, err
+	}
+	if !pollerAuth.IsCert {
+		client.username = pollerAuth.Username
+	}
 	transport.DialContext = (&net.Dialer{Timeout: DefaultDialerTimeout}).DialContext
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient
