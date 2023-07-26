@@ -4,8 +4,6 @@ package rest
 
 import (
 	"bytes"
-	"crypto/tls"
-	"crypto/x509"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -54,14 +52,12 @@ type Cluster struct {
 
 func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*Client, error) {
 	var (
-		client         Client
-		httpclient     *http.Client
-		transport      *http.Transport
-		cert           tls.Certificate
-		addr           string
-		url            string
-		useInsecureTLS bool
-		err            error
+		client     Client
+		httpclient *http.Client
+		transport  *http.Transport
+		addr       string
+		url        string
+		err        error
 	)
 
 	client = Client{
@@ -81,67 +77,9 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 	client.baseURL = url
 	client.Timeout = timeout
 
-	// by default, enforce secure TLS, if not requested otherwise by user
-	if x := poller.UseInsecureTLS; x != nil {
-		useInsecureTLS = *poller.UseInsecureTLS
-	} else {
-		useInsecureTLS = false
-	}
-
-	pollerAuth, err := auth.GetPollerAuth()
+	transport, err = auth.Transport(nil)
 	if err != nil {
 		return nil, err
-	}
-
-	if pollerAuth.IsCert {
-		sslCertPath := poller.SslCert
-		keyPath := poller.SslKey
-		caCertPath := poller.CaCertPath
-
-		if sslCertPath == "" {
-			return nil, errs.New(errs.ErrMissingParam, "ssl_cert")
-		} else if keyPath == "" {
-			return nil, errs.New(errs.ErrMissingParam, "ssl_key")
-		} else if cert, err = tls.LoadX509KeyPair(sslCertPath, keyPath); err != nil {
-			return nil, err
-		}
-
-		// Create a CA certificate pool and add certificate if specified
-		caCertPool := x509.NewCertPool()
-		if caCertPath != "" {
-			caCert, err := os.ReadFile(caCertPath)
-			if err != nil {
-				client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to read ca cert")
-				// continue
-			}
-			if caCert != nil {
-				pem := caCertPool.AppendCertsFromPEM(caCert)
-				if !pem {
-					client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to append ca cert")
-					// continue
-				}
-			}
-		}
-
-		transport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				RootCAs:            caCertPool,
-				Certificates:       []tls.Certificate{cert},
-				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
-		}
-	} else {
-		if pollerAuth.Username == "" {
-			return nil, errs.New(errs.ErrMissingParam, "username")
-		} else if pollerAuth.Password == "" {
-			return nil, errs.New(errs.ErrMissingParam, "password")
-		}
-		client.username = pollerAuth.Username
-
-		transport = &http.Transport{
-			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
-		}
 	}
 
 	transport.DialContext = (&net.Dialer{Timeout: DefaultDialerTimeout}).DialContext

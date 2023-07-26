@@ -7,7 +7,6 @@ package zapi
 import (
 	"bytes"
 	"crypto/tls"
-	"crypto/x509"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -19,7 +18,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"io"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -45,15 +43,13 @@ type Client struct {
 
 func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	var (
-		client         Client
-		httpclient     *http.Client
-		request        *http.Request
-		transport      *http.Transport
-		cert           tls.Certificate
-		timeout        time.Duration
-		url, addr      string
-		useInsecureTLS bool
-		err            error
+		client     Client
+		httpclient *http.Client
+		request    *http.Request
+		transport  *http.Transport
+		timeout    time.Duration
+		url, addr  string
+		err        error
 	)
 
 	client = Client{
@@ -98,68 +94,11 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	request.Header.Set("Content-type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
-	// by default, enforce secure TLS, if not requested otherwise by user
-	useInsecureTLS = false
-	if poller.UseInsecureTLS != nil {
-		useInsecureTLS = *poller.UseInsecureTLS
-	}
-
-	pollerAuth, err := c.GetPollerAuth()
+	transport, err = c.Transport(request)
 	if err != nil {
 		return nil, err
 	}
-	if pollerAuth.IsCert {
-		sslCertPath := poller.SslCert
-		keyPath := poller.SslKey
-		caCertPath := poller.CaCertPath
 
-		if sslCertPath == "" {
-			return nil, errs.New(errs.ErrMissingParam, "ssl_cert")
-		} else if keyPath == "" {
-			return nil, errs.New(errs.ErrMissingParam, "ssl_key")
-		} else if cert, err = tls.LoadX509KeyPair(sslCertPath, keyPath); err != nil {
-			return nil, err
-		}
-
-		// Create a CA certificate pool and add certificate if specified
-		caCertPool := x509.NewCertPool()
-		if caCertPath != "" {
-			caCert, err := os.ReadFile(caCertPath)
-			if err != nil {
-				client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to read ca cert")
-				// continue
-			}
-			if caCert != nil {
-				pem := caCertPool.AppendCertsFromPEM(caCert)
-				if !pem {
-					client.Logger.Error().Err(err).Str("cacert", caCertPath).Msg("Failed to append ca cert")
-					// continue
-				}
-			}
-		}
-
-		transport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				RootCAs:            caCertPool,
-				Certificates:       []tls.Certificate{cert},
-				InsecureSkipVerify: useInsecureTLS, //nolint:gosec
-			},
-		}
-	} else {
-		password := pollerAuth.Password
-		if pollerAuth.Username == "" {
-			return nil, errs.New(errs.ErrMissingParam, "username")
-		} else if password == "" {
-			return nil, errs.New(errs.ErrMissingParam, "password")
-		}
-
-		request.SetBasicAuth(pollerAuth.Username, password)
-		transport = &http.Transport{
-			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
-		}
-	}
 	if poller.TLSMinVersion != "" {
 		tlsVersion := client.tlsVersion(poller.TLSMinVersion)
 		if tlsVersion != 0 {
