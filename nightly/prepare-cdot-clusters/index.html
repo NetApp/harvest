@@ -546,26 +546,12 @@
     Prepare ONTAP cDOT cluster
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#creating-ontap-user" class="md-nav__link">
-    Creating ONTAP user
-  </a>
-  
-    <nav class="md-nav" aria-label="Creating ONTAP user">
+    <nav class="md-nav" aria-label="Prepare ONTAP cDOT cluster">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#system-manager-new-interface" class="md-nav__link">
-    System Manager: New interface
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#system-manager-classic-interface" class="md-nav__link">
-    System Manager: Classic interface
+  <a href="#system-manager" class="md-nav__link">
+    System Manager
   </a>
   
 </li>
@@ -586,15 +572,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#all-apis-read-only-approach" class="md-nav__link">
-    All APIs read-only approach
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-harvest-user-and-associate-to-role" class="md-nav__link">
-    Create harvest user and associate to role
+  <a href="#create-harvest-user-and-associate-with-the-harvest-role" class="md-nav__link">
+    Create harvest user and associate with the harvest role
   </a>
   
 </li>
@@ -1280,26 +1259,12 @@
     Prepare ONTAP cDOT cluster
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#creating-ontap-user" class="md-nav__link">
-    Creating ONTAP user
-  </a>
-  
-    <nav class="md-nav" aria-label="Creating ONTAP user">
+    <nav class="md-nav" aria-label="Prepare ONTAP cDOT cluster">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#system-manager-new-interface" class="md-nav__link">
-    System Manager: New interface
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#system-manager-classic-interface" class="md-nav__link">
-    System Manager: Classic interface
+  <a href="#system-manager" class="md-nav__link">
+    System Manager
   </a>
   
 </li>
@@ -1320,15 +1285,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#all-apis-read-only-approach" class="md-nav__link">
-    All APIs read-only approach
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-harvest-user-and-associate-to-role" class="md-nav__link">
-    Create harvest user and associate to role
+  <a href="#create-harvest-user-and-associate-with-the-harvest-role" class="md-nav__link">
+    Create harvest user and associate with the harvest role
   </a>
   
 </li>
@@ -1488,32 +1446,29 @@
 
 
 <h2 id="prepare-ontap-cdot-cluster">Prepare ONTAP cDOT cluster<a class="headerlink" href="#prepare-ontap-cdot-cluster" title="Permanent link">&para;</a></h2>
-<p>NetApp Harvest requires login credentials to access monitored hosts. Although, a generic admin account can be used, it
-is best practice to create a dedicated monitoring account with the least privilege access.</p>
-<p>In the examples below, the user, group, roles, etc., use a naming convention of ‘netapp-harvest’. These can be
-modified as needed to match your environment standards.</p>
-<p>There are few steps required to prepare each monitored system for collection.
-Harvest supports two authentication styles (<code>auth_style</code>) to connect to ONTAP clusters.<br />
-They are <code>basic_auth</code> or <code>certificate_auth</code>. Both work well, but if you're starting fresh, the recommendation is to
-create a read-only harvest user on your ONTAP server and use certificate-based TLS authentication.</p>
+<p>NetApp Harvest requires login credentials to access monitored hosts.
+Although a generic admin account can be used, it is better to create a dedicated read-only monitoring account.</p>
+<p>In the examples below, the user, group, roles, etc., use a naming convention of <code>netapp-harvest</code>.
+These can be modified as needed to match your organizational needs.</p>
+<p>There are few steps required to prepare each system for monitoring.
+Harvest supports
+two <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#authentication">authentication styles</a>
+(<code>auth_style</code>) to connect to ONTAP clusters.
+These are <code>basic_auth</code> or <code>certificate_auth</code>.
+Both work well, but if you're starting fresh, the recommendation is to create a read-only harvest user on your ONTAP
+server and use <a href="#using-certificate-authentication">certificate-based</a> TLS authentication.</p>
 <p>Here's a summary of what we're going to do</p>
 <ol>
-<li>Create an ONTAP role with the necessary capabilities that Harvest will use to auth and collect data</li>
-<li>Create a user account using the role created in step #1.</li>
+<li>Create a read-only ONTAP <strong>role</strong> with the necessary capabilities that Harvest will use to auth and collect data</li>
+<li>Create a <strong>user account</strong> using the role created in step #1</li>
+<li>Update the <code>harvest.yml</code> file to use the user account and password created in step #2 and start Harvest.</li>
 </ol>
-<h2 id="creating-ontap-user">Creating ONTAP user<a class="headerlink" href="#creating-ontap-user" title="Permanent link">&para;</a></h2>
-<p>There are two ways to create a read-only user:</p>
-<ol>
-<li>Create a user with read-only access to <strong>all</strong> API objects</li>
-<li>Create a user with read-only access to only the APIs Harvest collects today</li>
-</ol>
-<p>The second option has a smaller attack surface, but each time you want to collect counters for a new object, you will
-need to update the user's privileges.</p>
-<p>Below we explain how to create an ONTAP user and role for Harvest using ONTAP System Manager (Classic interface &amp; New
-interface) and CLI.</p>
-<h3 id="system-manager-new-interface">System Manager: New interface<a class="headerlink" href="#system-manager-new-interface" title="Permanent link">&para;</a></h3>
-<p><em>Note: in this section we add a user with read-only access to all API objects. For limited access, use either the
-classic interface or the CLI</em></p>
+<p>There are two ways to create a read-only ONTAP role. Pick the one that best fits your needs.</p>
+<ul>
+<li>Create a role with read-only access to all API objects via <a href="#system-manager">System Manager</a>.</li>
+<li>Create a role with read-only access to the limited set of APIs Harvest collects via <a href="#ontap-cli">ONTAP's command line interface (CLI)</a>.</li>
+</ul>
+<h3 id="system-manager">System Manager<a class="headerlink" href="#system-manager" title="Permanent link">&para;</a></h3>
 <p>Open System Manager. Click on <em>CLUSTER</em> in the left menu bar, <em>Settings</em> and <em>Users and Roles</em>.</p>
 <p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_0.png" /></p>
 <p>In the right column, under <em>Roles</em>, click on <em>Add</em> to add a new role.</p>
@@ -1522,108 +1477,73 @@ classic interface or the CLI</em></p>
 <em>ACCESS</em>. Click on <em>Save</em>.</p>
 <p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_2.png" /></p>
 <p>In the left column, under <em>Users</em>, click on <em>Add</em> to create a new user. Choose a username. Under <em>Role</em>, select the role
-that we just created. Under <em>User Login Methods</em> select <em>ONTAPI</em>, and select one of the two authentication methods. Type
-in a password if you chose <em>Password</em>. Click on <em>Save</em></p>
+that we just created. Under <em>User Login Methods</em> select <em>ONTAPI</em>, and one of the two authentication methods.
+Press the <code>Add</code> button and select <em>HTTP</em> and one of the authentication methods.
+Type in a password if you chose <em>Password</em>. Click on <em>Save</em></p>
 <p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_3.png" /></p>
 <p>If you chose <em>Password</em>, you can add the username and password to the Harvest configuration file and start Harvest. If
 you chose <em>Certificate</em> jump to <a href="#using-certificate-authentication">Using Certificate Authentication</a> to generate
 certificates files.</p>
-<h3 id="system-manager-classic-interface">System Manager: Classic interface<a class="headerlink" href="#system-manager-classic-interface" title="Permanent link">&para;</a></h3>
+<details>
+<summary>System Manager Classic interface</summary>
 <p>Open System Manager. Click on the Settings icon in the top-right corner of the window.</p>
 <p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_0.png" /></p>
 <p>Click on <em>Roles</em> in the left menu bar and click <em>Add</em>. Choose a role name (e.g. <em>harvest2-role</em>).</p>
 <p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_1.png" /></p>
-<p>If you want to give Harvest read-only access to <strong>all</strong> API objects, then under <em>Role Attributes</em> click on <em>Add</em>, under
-<em>Command</em> type <em>DEFAULT</em>, leave <em>Query</em> empty, select <em>readonly</em> under <em>Access Level</em>, click on <em>OK</em> and <em>Add</em>.</p>
-<p>If you want to limit the API objects, then under <em>Role Attributes</em>, add each of the following lines as an entry. All of
-those should be entered under the <em>Command</em> column, <em>Query</em> should be left blank, and <em>Access Level</em> should be selected
-<em>readonly</em>.</p>
-<ul>
-<li>cluster</li>
-<li>qos</li>
-<li>lun</li>
-<li>snapmirror</li>
-<li>statistics</li>
-<li>storage aggregate</li>
-<li>storage disk</li>
-<li>storage shelf</li>
-<li>system node</li>
-<li>version</li>
-<li>volume</li>
-</ul>
+<p>Under <em>Role Attributes</em> click on <em>Add</em>, under <em>Command</em> type <em>DEFAULT</em>, leave <em>Query</em> empty, select <em>readonly</em> under <em>Access Level</em>, click on <em>OK</em> and <em>Add</em>.</p>
 <p>After you click on <em>Add</em>, this is what you should see:</p>
 <p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_2.png" /></p>
 <p>Now we need to create a user. Click on <em>Users</em> in the left menu bar and <em>Add</em>. Choose a username and password. Under
-<em>User Login Methods</em>, click on <em>Add</em>, select <em>ontapi</em> as <em>Application</em> and select the role that we just created as
-<em>Role</em>. Click on <em>Add</em> in the pop-up window to save.</p>
+<em>User Login Methods</em> click on <em>Add</em>, select <em>ontapi</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
+Repeat by clicking on <em>Add</em>, select <em>http</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
+Click on <em>Add</em> in the pop-up window to save.</p>
 <p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_3.png" /></p>
-<p>Now add the username and password to <code>harvest.yml</code> and start Harvest.</p>
+</details>
 <h3 id="ontap-cli">ONTAP CLI<a class="headerlink" href="#ontap-cli" title="Permanent link">&para;</a></h3>
 <p>We are going to:</p>
-<ul>
-<li>create a Harvest role with read-only access to the API objects</li>
-<li>create a Harvest user and assign it to that role</li>
-</ul>
-<p>You should decide if you want to limit the Harvest role to only the subset of API objects Harvest requires or
-give Harvest access to all API objects. In both cases, Harvest's access will be read-only.</p>
-<p>Either approach is fine, following the principle of least-privilege, we recommend the limited approach.</p>
-<p>Login to the CLI of your c-DOT ONTAP system using SSH.</p>
+<ol>
+<li>create a Harvest role with read-only access to a <a href="#least-privilege-approach">limited set of objects</a></li>
+<li><a href="#create-harvest-user-and-associate-with-the-harvest-role">create a Harvest user</a> and assign it to that role</li>
+</ol>
+<p>Login to the CLI of your cDOT ONTAP system using SSH.</p>
 <h4 id="least-privilege-approach">Least-privilege approach<a class="headerlink" href="#least-privilege-approach" title="Permanent link">&para;</a></h4>
-<p>Verify there are no errors when you copy/paste these. Warnings are fine.</p>
+<p>Verify there are no errors when you copy/paste these.
+Warnings are fine.</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;cluster&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;lun&quot;</span><span class="w">    </span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network interface&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos adaptive-policy-group&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos policy-group&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos workload show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;security&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;snapmirror&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;statistics&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage aggregate&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage disk&quot;</span><span class="w">     </span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage encryption disk&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage shelf&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health status show&quot;</span><span class="w"> </span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health subsystem show&quot;</span><span class="w">  </span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;version&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;volume&quot;</span>
-
-<span class="c1"># Permissions required for Harvest 22.05+ security dashboard</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network interface&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;security&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage encryption disk&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;vserver&quot;</span>
-
-<span class="c1"># Permissions required for Harvest 23.05+ QoS policies</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos adaptive-policy-group&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos policy-group&quot;</span>
 </code></pre></div>
-<h4 id="all-apis-read-only-approach">All APIs read-only approach<a class="headerlink" href="#all-apis-read-only-approach" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;DEFAULT&quot;</span>
-</code></pre></div>
-<h4 id="create-harvest-user-and-associate-to-role">Create harvest user and associate to role<a class="headerlink" href="#create-harvest-user-and-associate-to-role" title="Permanent link">&para;</a></h4>
+<h4 id="create-harvest-user-and-associate-with-the-harvest-role">Create harvest user and associate with the harvest role<a class="headerlink" href="#create-harvest-user-and-associate-with-the-harvest-role" title="Permanent link">&para;</a></h4>
 <p>Use this for password authentication</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
-
-<span class="c1"># REST based access</span>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w">   </span>
 </code></pre></div>
 <p>Or this for certificate authentication</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
-
-<span class="c1"># REST based access</span>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert<span class="w"> </span>
 </code></pre></div>
-<p>Verify that an entry is present by running the following commands
-<div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi
-
-<span class="c1"># REST based access</span>
+<p>Check that the harvest role has web access for ONTAPI and REST.
+<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi
 vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>rest
 </code></pre></div></p>
-<p>If the entry is missing, enable access by running the following
-<div class="highlight"><pre><span></span><code><span class="c1"># ZAPI based access</span>
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role
-
-<span class="c1"># REST based access</span>
+<p>If either entry is missing, enable access by running the following. Replace <code>$ADMIN_VSERVER</code> with your SVM admin name.
+<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>rest<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 </code></pre></div></p>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
@@ -1639,10 +1559,10 @@ api-storage-shelf-environment-list-info,api-qtree-list,api-quota-report
 <p>See <a href="https://github.com/NetApp/harvest/issues/314#issuecomment-882120238">comments here for troubleshooting</a> client
 certificate authentication.</p>
 <p>Client certificate authentication allows you to authenticate with your ONTAP cluster without including
-username/passwords in your <code>harvest.yml</code> file. The process to setup client certificates is straightforward, although
+username/passwords in your <code>harvest.yml</code> file. The process to set up client certificates is straightforward, although
 self-signed certificates introduce more work as does Go's strict treatment of common names.</p>
 <p>Unless you've installed production certificates on your ONTAP cluster, you'll need to replace your cluster's
-common-name-based self-signed certificates with a subject alternative name based certificate. After that step is
+common-name-based self-signed certificates with a subject alternative name-based certificate. After that step is
 completed, we'll create client certificates and add those for passwordless login.</p>
 <p>If you can't or don't want to replace your ONTAP cluster certificates, there are some workarounds. You can</p>
 <ul>
@@ -1661,7 +1581,7 @@ like this:
 <li>Create a SAN certificate for your ONTAP cluster, using #2 to create it</li>
 <li>Install root ca certificate created in step #2 on cluster</li>
 <li>Install SAN certificate created in step #3 on your cluster</li>
-<li>Modify you cluster/SVM to use the new certificate installed at step #5</li>
+<li>Modify your cluster/SVM to use the new certificate installed at step #5</li>
 </ol>
 <h4 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code># create a place to store the certificate authority files, adjust as needed
@@ -1713,7 +1633,7 @@ openssl req -text -noout -in umeng-aff300-05-06.csr
                 DNS:umeng-aff300-05-06-cm.rtp.openenglab.netapp.com, DNS:umeng-aff300-05-06, IP Address:10.193.48.11, IP Address:10.193.48.11
     Signature Algorithm: sha256WithRSAEncryption     &lt;======== Signature Algorithm can not be sha-1
 </code></pre></div>
-<p>We'll now use the certificate signing request and the recently create certificate authority to create a new SAN
+<p>We'll now use the certificate signing request and the recently created certificate authority to create a new SAN
 certificate for our cluster.</p>
 <div class="highlight"><pre><span></span><code>openssl x509 -req -sha256 -days 30 -in umeng-aff300-05-06.csr -CA certs/ca.cert.pem -CAkey private/ca.key.pem -CAcreateserial -out umeng-aff300-05-06.crt -extensions req_ext -extfile server_cert.cnf
 
@@ -1856,7 +1776,7 @@ The certificate&#39;s generated name for reference: cbg_B77B59444444CCCC
 <h3 id="macos">macOS<a class="headerlink" href="#macos" title="Permanent link">&para;</a></h3>
 <p>The version of <code>curl</code> installed on macOS up through Monterey is not recent enough to work with self-signed SAN certs.
 You will need to install a newer version of <code>curl</code> via Homebrew, MacPorts, source, etc.</p>
-<p>Example of failure when running with older version of <code>curl</code> - you will see this
+<p>Example of failure when running with an older version of <code>curl</code> - you will see this
 in <a href="#install-client-certificates-on-cluster">client auth</a> test step above.</p>
 <div class="highlight"><pre><span></span><code>curl --version
 curl 7.64.1 (x86_64-apple-darwin20.0) libcurl/7.64.1 (SecureTransport) LibreSSL/2.8.3 zlib/1.2.11 nghttp2/1.41.0
@@ -1869,7 +1789,7 @@ curl: (60) SSL certificate problem: unable to get local issuer certificate
 <div class="highlight"><pre><span></span><code>If you need to have curl first in your PATH, run:
   echo &#39;export PATH=&quot;/usr/local/opt/curl/bin:$PATH&quot;&#39; &gt;&gt; /Users/cgrindst/.bash_profile
 </code></pre></div>
-<p>Now when we make a client auth request with our self-signed certificate it works! <code>\o/</code></p>
+<p>Now when we make a client auth request with our self-signed certificate, it works! <code>\o/</code></p>
 <div class="highlight"><pre><span></span><code>brew install curl
 
 curl --version
