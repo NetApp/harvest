@@ -31,16 +31,15 @@ const (
 )
 
 type Client struct {
-	client   *http.Client
-	request  *http.Request
-	buffer   *bytes.Buffer
-	Logger   *logging.Logger
-	baseURL  string
-	cluster  Cluster
-	username string
-	Timeout  time.Duration
-	logRest  bool // used to log Rest request/response
-	auth     *auth.Credentials
+	client  *http.Client
+	request *http.Request
+	buffer  *bytes.Buffer
+	Logger  *logging.Logger
+	baseURL string
+	cluster Cluster
+	Timeout time.Duration
+	logRest bool // used to log Rest request/response
+	auth    *auth.Credentials
 }
 
 type Cluster struct {
@@ -80,13 +79,6 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 	transport, err = auth.Transport(nil)
 	if err != nil {
 		return nil, err
-	}
-	pollerAuth, err := auth.GetPollerAuth()
-	if err != nil {
-		return nil, err
-	}
-	if !pollerAuth.IsCert {
-		client.username = pollerAuth.Username
 	}
 	transport.DialContext = (&net.Dialer{Timeout: DefaultDialerTimeout}).DialContext
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
@@ -135,12 +127,12 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 		return nil, err
 	}
 	c.request.Header.Set("accept", "application/json")
-	if c.username != "" {
-		password, err2 := c.auth.Password()
-		if err2 != nil {
-			return nil, err2
-		}
-		c.request.SetBasicAuth(c.username, password)
+	pollerAuth, err := c.auth.GetPollerAuth()
+	if err != nil {
+		return nil, err
+	}
+	if pollerAuth.Username != "" {
+		c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 	}
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
@@ -232,11 +224,11 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 				}
 				if pollerAuth.HasCredentialScript {
 					c.auth.Expire()
-					password, err2 := c.auth.Password()
+					pollerAuth2, err2 := c.auth.GetPollerAuth()
 					if err2 != nil {
 						return nil, err2
 					}
-					c.request.SetBasicAuth(pollerAuth.Username, password)
+					c.request.SetBasicAuth(pollerAuth2.Username, pollerAuth2.Password)
 					return doInvoke()
 				}
 			}
@@ -246,8 +238,6 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 }
 
 func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool) (int64, error) {
-	var restClient *Client
-
 	out, err := os.Create(path)
 	if err != nil {
 		return 0, fmt.Errorf("unable to create %s to save swagger.yaml", path)
@@ -259,23 +249,18 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
-	if restClient, err = New(poller, timeout, auth.NewCredentials(poller, logging.Get())); err != nil {
-		return 0, fmt.Errorf("error creating new client %w", err)
+	credentials := auth.NewCredentials(poller, logging.Get())
+	transport, err := credentials.Transport(request)
+	if err != nil {
+		return 0, err
 	}
+	httpclient := &http.Client{Transport: transport, Timeout: timeout}
 
-	downClient := &http.Client{Transport: restClient.client.Transport, Timeout: restClient.client.Timeout}
-	if restClient.username != "" {
-		password, err2 := restClient.auth.Password()
-		if err2 != nil {
-			return 0, err2
-		}
-		request.SetBasicAuth(restClient.username, password)
-	}
 	if verbose {
 		requestOut, _ := httputil.DumpRequestOut(request, false)
-		fmt.Printf("REQUEST: %s BY: %s\n%s\n", url, restClient.username, requestOut)
+		fmt.Printf("REQUEST: %s\n%s\n", url, requestOut)
 	}
-	response, err := downClient.Do(request)
+	response, err := httpclient.Do(request)
 	if err != nil {
 		return 0, err
 	}

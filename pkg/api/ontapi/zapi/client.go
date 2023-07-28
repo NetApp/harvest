@@ -432,11 +432,11 @@ func (c *Client) invokeWithAuthRetry(withTimers bool) (*node.Node, time.Duration
 			// and try again
 			if errors.Is(he, errs.ErrAuthFailed) && pollerAuth.HasCredentialScript {
 				c.auth.Expire()
-				password, err := c.auth.Password()
-				if err != nil {
-					return nil, 0, 0, err
+				pollerAuth2, err2 := c.auth.GetPollerAuth()
+				if err2 != nil {
+					return nil, 0, 0, err2
 				}
-				c.request.SetBasicAuth(pollerAuth.Username, password)
+				c.request.SetBasicAuth(pollerAuth2.Username, pollerAuth2.Password)
 				c.request.Body = io.NopCloser(&buffer)
 				c.request.ContentLength = int64(buffer.Len())
 				result2, s1, s2, err3 := c.invoke(withTimers)

@@ -45,14 +45,6 @@ type Credentials struct {
 	cachedPassword string
 }
 
-func (c *Credentials) Password() (string, error) {
-	auth, err := c.GetPollerAuth()
-	if err != nil {
-		return "", err
-	}
-	return auth.Password, nil
-}
-
 // Expire will reset the credential schedule if the receiver has a CredentialsScript
 // Otherwise it will do nothing.
 // Resetting the schedule will cause the next call to Password to fetch the credentials
@@ -317,10 +309,13 @@ func handCertificateAuth(c *Credentials, poller *conf.Poller, insecureTLS bool) 
 	certPath := poller.SslCert
 	keyPath := poller.SslKey
 
-	if certPath == "" {
+	if certPath == "" || keyPath == "" {
 		o := &options.Options{}
 		options.SetPathsAndHostname(o)
 		pathPrefix = path.Join(o.HomePath, "cert/", o.Hostname)
+	}
+
+	if certPath == "" {
 		certPath = pathPrefix + ".pem"
 	}
 	if keyPath == "" {

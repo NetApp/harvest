@@ -26,18 +26,17 @@ const (
 )
 
 type Client struct {
-	client   *http.Client
-	request  *http.Request
-	buffer   *bytes.Buffer
-	Logger   *logging.Logger
-	baseURL  string
-	Cluster  Cluster
-	username string
-	token    string
-	Timeout  time.Duration
-	logRest  bool // used to log Rest request/response
-	APIPath  string
-	auth     *auth.Credentials
+	client  *http.Client
+	request *http.Request
+	buffer  *bytes.Buffer
+	Logger  *logging.Logger
+	baseURL string
+	Cluster Cluster
+	token   string
+	Timeout time.Duration
+	logRest bool // used to log Rest request/response
+	APIPath string
+	auth    *auth.Credentials
 }
 
 type Cluster struct {
@@ -338,13 +337,13 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 		if err != nil {
 			return fmt.Errorf("failed to create auth URL err: %w", err)
 		}
-		password, err := c.auth.Password()
+		pollerAuth, err := c.auth.GetPollerAuth()
 		if err != nil {
 			return err
 		}
 		authB := authBody{
-			Username: c.username,
-			Password: password,
+			Username: pollerAuth.Username,
+			Password: pollerAuth.Password,
 		}
 		postBody, err := json.Marshal(authB)
 		if err != nil {
