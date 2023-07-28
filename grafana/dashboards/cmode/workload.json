@@ -983,7 +983,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOType\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{workload}} -  {{metric}}",
           "refId": "A"
         }
       ],
