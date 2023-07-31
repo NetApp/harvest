@@ -17,12 +17,22 @@ const BatchSize = "500"
 
 type Shelf struct {
 	*plugin.AbstractPlugin
-	data           map[string]*matrix.Matrix
-	instanceKeys   map[string]string
-	instanceLabels map[string]*dict.Dict
-	batchSize      string
-	client         *zapi.Client
-	query          string
+	data                map[string]*matrix.Matrix
+	shelfData           *matrix.Matrix
+	instanceKeys        map[string]string
+	instanceLabels      map[string]*dict.Dict
+	shelfInstanceKeys   []string
+	shelfInstanceLabels []shelfInstanceLabel
+	batchSize           string
+	client              *zapi.Client
+	query               string
+}
+
+type shelfInstanceLabel struct {
+	label        string
+	labelDisplay string
+	isChild      bool
+	parent       string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -49,6 +59,27 @@ func (my *Shelf) Init() error {
 	my.query = "storage-shelf-environment-list-info"
 
 	my.Logger.Debug().Msg("plugin connected!")
+
+	my.shelfData = matrix.New(my.Parent+".Shelf", "shelf", "shelf")
+	my.shelfInstanceKeys = make([]string, 0)
+	my.shelfInstanceLabels = []shelfInstanceLabel{}
+	shelfExportOptions := node.NewS("export_options")
+	shelfInstanceKeys := shelfExportOptions.NewChildS("instance_keys", "")
+	shelfInstanceLabels := shelfExportOptions.NewChildS("instance_labels", "")
+
+	if counters := my.ParentParams.GetChildS("counters"); counters != nil {
+		if channelInfo := counters.GetChildS("shelf-environ-channel-info"); channelInfo != nil {
+			if shelfList := channelInfo.GetChildS("shelf-environ-shelf-list"); shelfList != nil {
+				if shelfInfo := shelfList.GetChildS("shelf-environ-shelf-info"); shelfInfo != nil {
+					my.parseShelfTemplate(shelfInfo, shelfInstanceKeys, shelfInstanceLabels, false, "")
+				}
+			}
+		}
+	}
+
+	shelfInstanceKeys.NewChildS("", "channel")
+	shelfInstanceKeys.NewChildS("", "shelf")
+	my.shelfData.SetExportOptions(shelfExportOptions)
 
 	my.data = make(map[string]*matrix.Matrix)
 	my.instanceKeys = make(map[string]string)
@@ -154,20 +185,23 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		return nil, err
 	}
 
-	output, err = my.handle7Mode(result)
+	output, err = my.handle7Mode(data, result)
 
 	if err != nil {
 		return output, err
 	}
 
+	my.Logger.Debug().Msgf("Shelves instance count: %d", len(my.shelfData.GetInstances()))
+	output = append(output, my.shelfData)
 	return output, nil
 }
 
-func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
+func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix.Matrix, error) {
 	var (
-		shelves  []*node.Node
-		channels []*node.Node
-		output   []*matrix.Matrix
+		shelves         []*node.Node
+		channels        []*node.Node
+		output          []*matrix.Matrix
+		channelInstance *matrix.Instance
 	)
 
 	// Result would be the zapi response itself with only one record.
@@ -189,9 +223,26 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		data1.Reset()
 	}
 
+	// Purge and reset data
+	my.shelfData.PurgeInstances()
+	my.shelfData.Reset()
+
+	my.shelfData.SetGlobalLabels(data.GetGlobalLabels())
+	for _, instance := range data.GetInstances() {
+		instance.SetExportable(false)
+	}
+
 	for _, channel := range channels {
 		channelName := channel.GetChildContentS("channel-name")
 		shelves = channel.SearchChildren([]string{"shelf-environ-shelf-list", "shelf-environ-shelf-info"})
+		channelInstances := data.GetInstancesByPrefix(channelName)
+
+		if len(channelInstances) >= 1 {
+			channelInstance = channelInstances[0]
+		} else {
+			my.Logger.Debug().Msg("no channel found")
+			continue
+		}
 
 		if len(shelves) == 0 {
 			my.Logger.Debug().Str("channel", channelName).Msg("no shelves found")
@@ -199,10 +250,42 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		}
 
 		for _, shelf := range shelves {
-
 			uid := shelf.GetChildContentS("shelf-id")
 			shelfName := uid // no shelf name in 7mode
 			shelfID := uid
+
+			shelfInstanceKey := shelfID + "." + channelName
+			newShelfInstance, err := my.shelfData.NewInstance(shelfInstanceKey)
+			if err != nil {
+				my.Logger.Error().Msgf("Error while creating shelf instance: %v", err)
+				return nil, err
+			}
+
+			for _, key := range my.shelfInstanceKeys {
+				newShelfInstance.SetLabel(key, shelf.GetChildContentS(key))
+			}
+			for _, shelfLabelData := range my.shelfInstanceLabels {
+				if !shelfLabelData.isChild {
+					newShelfInstance.SetLabel(shelfLabelData.labelDisplay, shelf.GetChildContentS(shelfLabelData.label))
+				} else {
+					child := shelf.GetChildS(shelfLabelData.parent)
+					newShelfInstance.SetLabel(shelfLabelData.labelDisplay, child.GetChildContentS(shelfLabelData.label))
+				}
+			}
+
+			newShelfInstance.SetLabel("channel", channelInstance.GetLabel("channel"))
+			newShelfInstance.SetLabel("shelf", newShelfInstance.GetLabel("shelf_id"))
+
+			// populate numeric data
+			for metricKey, m := range my.shelfData.GetMetrics() {
+				if value := strings.Split(shelf.GetChildContentS(metricKey), " ")[0]; value != "" {
+					if err := m.SetValueString(newShelfInstance, value); err != nil {
+						my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+					} else {
+						my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+					}
+				}
+			}
 
 			for attribute, data1 := range my.data {
 				if statusMetric := data1.GetMetric("status"); statusMetric != nil {
@@ -252,7 +335,6 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 
 							// populate numeric data
 							for metricKey, m := range data1.GetMetrics() {
-
 								if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
 									if err := m.SetValueString(instance, value); err != nil {
 										my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
@@ -261,7 +343,6 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 									}
 								}
 							}
-
 						} else {
 							my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
 						}
@@ -273,4 +354,31 @@ func (my *Shelf) handle7Mode(result []*node.Node) ([]*matrix.Matrix, error) {
 		}
 	}
 	return output, nil
+}
+
+func (my *Shelf) parseShelfTemplate(shelfInfo *node.Node, shelfInstanceKeys, shelfInstanceLabels *node.Node, isChild bool, parent string) {
+	for _, shelfProp := range shelfInfo.GetChildren() {
+		if len(shelfProp.GetChildren()) > 0 {
+			my.parseShelfTemplate(shelfInfo.GetChildS(shelfProp.GetNameS()), shelfInstanceKeys, shelfInstanceLabels, true, shelfProp.GetNameS())
+		} else {
+			metricName, display, kind, _ := util.ParseMetric(shelfProp.GetContentS())
+			switch kind {
+			case "key":
+				my.shelfInstanceKeys = append(my.shelfInstanceKeys, metricName)
+				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, isChild: isChild, parent: parent})
+				shelfInstanceKeys.NewChildS("", display)
+				my.Logger.Debug().Msgf("added instance key: [%s]", display)
+			case "label":
+				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, isChild: isChild, parent: parent})
+				shelfInstanceLabels.NewChildS("", display)
+				my.Logger.Debug().Msgf("added instance label: [%s]", display)
+			case "float":
+				_, err := my.shelfData.NewMetricFloat64(metricName, display)
+				if err != nil {
+					my.Logger.Error().Stack().Err(err).Msg("add metric")
+				}
+				my.Logger.Debug().Msgf("added metric: [%s]", display)
+			}
+		}
+	}
 }
