@@ -56,7 +56,7 @@ github.com/power-devops/perfstat
 # github.com/rivo/uniseg v0.4.4
 ## explicit; go 1.18
 github.com/rivo/uniseg
-# github.com/rs/zerolog v1.29.1
+# github.com/rs/zerolog v1.30.0
 ## explicit; go 1.15
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
@@ -80,7 +80,7 @@ github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/tidwall/gjson v1.14.4
+# github.com/tidwall/gjson v1.15.0
 ## explicit; go 1.12
 github.com/tidwall/gjson
 # github.com/tidwall/match v1.1.1
