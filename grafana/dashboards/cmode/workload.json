@@ -2187,7 +2187,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from backend",
+          "title": "Top $TopResources Workloads by Service Time from backend",
           "type": "timeseries"
         },
         {
