@@ -3,7 +3,8 @@ package auth
 import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
-	"strings"
+	"os"
+	"reflect"
 	"testing"
 )
 
@@ -25,10 +26,10 @@ func TestCredentials_GetPollerAuth(t *testing.T) {
 			defaultDefined: false,
 			yaml: `
 Pollers:
-	test:
-		addr: a.b.c
-		username: username
-		credentials_file: testdata/secrets.yaml`,
+  test:
+    addr: a.b.c
+    username: username
+    credentials_file: testdata/secrets.yaml`,
 		},
 
 		{
@@ -38,17 +39,17 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	auth_style: certificate_auth
-	credentials_file: secrets/openlab
-	username: me
-	password: pass
-	credentials_script:
-		path: ../get_pass
+  auth_style: certificate_auth
+  credentials_file: secrets/openlab
+  username: me
+  password: pass
+  credentials_script:
+    path: ../get_pass
 Pollers:
-	test:
-		addr: a.b.c
-		username: username
-		credentials_file: testdata/secrets.yaml`,
+  test:
+    addr: a.b.c
+    username: username
+    credentials_file: testdata/secrets.yaml`,
 		},
 
 		{
@@ -58,12 +59,12 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	auth_style: certificate_auth
-	credentials_file: secrets/openlab
+  auth_style: certificate_auth
+  credentials_file: secrets/openlab
 Pollers:
-	test:
-		addr: a.b.c
-		credentials_file: testdata/secrets.yaml`,
+  test:
+    addr: a.b.c
+    credentials_file: testdata/secrets.yaml`,
 		},
 
 		{
@@ -73,11 +74,11 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	credentials_file: testdata/secrets.yaml
+  credentials_file: testdata/secrets.yaml
 Pollers:
-	test:
-		addr: a.b.c
-		password: moon`,
+  test:
+    addr: a.b.c
+    password: moon`,
 		},
 
 		{
@@ -87,31 +88,33 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	auth_style: certificate_auth
-	credentials_file: secrets/openlab
+  auth_style: certificate_auth
+  credentials_file: secrets/openlab
 Pollers:
-	test2:
-		addr: a.b.c
-		credentials_file: testdata/secrets.yaml`,
+  test2:
+    addr: a.b.c
+    credentials_file: testdata/secrets.yaml`,
 		},
 
 		{
 			name:           "default cert_auth",
 			pollerName:     "test",
-			want:           PollerAuth{Username: "username", Password: "", IsCert: true},
+			want:           PollerAuth{Username: "username", IsCert: true, CertPath: "my_cert", KeyPath: "my_key"},
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	auth_style: certificate_auth
-	credentials_file: secrets/openlab
-	username: me
-	password: pass
-	credentials_script:
-		path: ../get_pass
+  auth_style: certificate_auth
+  ssl_cert: my_cert
+  ssl_key: my_key
+  credentials_file: secrets/openlab
+  username: me
+  password: pass
+  credentials_script:
+    path: ../get_pass
 Pollers:
-	test:
-		addr: a.b.c
-		username: username`,
+  test:
+    addr: a.b.c
+    username: username`,
 		},
 
 		{
@@ -121,17 +124,17 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	auth_style: certificate_auth
-	credentials_file: secrets/openlab
-	username: me
-	password: pass
-	credentials_script:
-		path: ../get_pass
+  auth_style: certificate_auth
+  credentials_file: secrets/openlab
+  username: me
+  password: pass
+  credentials_script:
+    path: ../get_pass
 Pollers:
-	test:
-		addr: a.b.c
-		username: username
-		password: pass`,
+  test:
+    addr: a.b.c
+    username: username
+    password: pass`,
 		},
 
 		{
@@ -141,16 +144,16 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	auth_style: certificate_auth
-	credentials_file: secrets/openlab
-	username: me
-	password: pass
-	credentials_script:
-		path: ../get_pass
+  auth_style: certificate_auth
+  credentials_file: secrets/openlab
+  username: me
+  password: pass
+  credentials_script:
+    path: ../get_pass
 Pollers:
-	test:
-		addr: a.b.c
-		password: pass2`,
+  test:
+    addr: a.b.c
+    password: pass2`,
 		},
 
 		{
@@ -165,13 +168,13 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	username: me
-	credentials_script:
-		path: testdata/get_pass
+  username: me
+  credentials_script:
+    path: testdata/get_pass
 Pollers:
-	test:
-		addr: a.b.c
-		username: username`,
+  test:
+    addr: a.b.c
+    username: username`,
 		},
 
 		{
@@ -181,12 +184,12 @@ Pollers:
 			defaultDefined: true,
 			yaml: `
 Defaults:
-	username: me
-	credentials_script:
-		path: testdata/get_pass
+  username: me
+  credentials_script:
+    path: testdata/get_pass
 Pollers:
-	test:
-		addr: a.b.c`,
+  test:
+    addr: a.b.c`,
 		},
 
 		{
@@ -195,11 +198,11 @@ Pollers:
 			want:       PollerAuth{Username: "username", Password: "addr=a.b.c user=username", HasCredentialScript: true},
 			yaml: `
 Pollers:
-	test:
-		addr: a.b.c
-		credentials_script:
-			path: testdata/get_pass
-		username: username`,
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_pass
+    username: username`,
 		},
 
 		{
@@ -208,8 +211,8 @@ Pollers:
 			want:       PollerAuth{Username: "", Password: "", IsCert: false},
 			yaml: `
 Pollers:
-	test:
-		addr: a.b.c`,
+  test:
+    addr: a.b.c`,
 		},
 
 		{
@@ -218,24 +221,25 @@ Pollers:
 			want:       PollerAuth{Username: "default-user", Password: "default-pass", IsCert: false},
 			yaml: `
 Pollers:
-	missing:
-		addr: a.b.c
-		credentials_file: testdata/secrets.yaml`,
+  missing:
+    addr: a.b.c
+    credentials_file: testdata/secrets.yaml`,
 		},
 
 		{
 			name:       "with cred",
 			pollerName: "test",
-			want:       PollerAuth{Username: "", Password: "", IsCert: true},
+			want:       PollerAuth{IsCert: true, CertPath: "my_cert", KeyPath: "my_key"},
 			yaml: `
 Defaults:
-	use_insecure_tls: true
-	prefer_zapi: true
+  use_insecure_tls: true
+  prefer_zapi: true
 Pollers:
-	test:
-		addr: a.b.c
-		auth_style: certificate_auth
-`,
+  test:
+    addr: a.b.c
+    auth_style: certificate_auth
+    ssl_cert: my_cert
+    ssl_key: my_key`,
 		},
 
 		{
@@ -244,16 +248,16 @@ Pollers:
 			want:       PollerAuth{Username: "bat", Password: "addr=a.b.c user=bat", HasCredentialScript: true},
 			yaml: `
 Defaults:
-	use_insecure_tls: true
-	prefer_zapi: true
-	credentials_script:
-		path: testdata/get_pass2
+  use_insecure_tls: true
+  prefer_zapi: true
+  credentials_script:
+    path: testdata/get_pass2
 Pollers:
-	test:
-		addr: a.b.c
-		username: bat
-		credentials_script:
-			path: testdata/get_pass
+  test:
+    addr: a.b.c
+    username: bat
+    credentials_script:
+      path: testdata/get_pass
 `,
 		},
 
@@ -264,18 +268,18 @@ Pollers:
 			wantSchedule: "15m",
 			yaml: `
 Defaults:
-	use_insecure_tls: true
-	prefer_zapi: true
-	credentials_script:
-		path: testdata/get_pass
-		schedule: 45m
+  use_insecure_tls: true
+  prefer_zapi: true
+  credentials_script:
+    path: testdata/get_pass
+    schedule: 45m
 Pollers:
-	test:
-		addr: a.b.c
-		username: flo
-		credentials_script:
-			path: testdata/get_pass
-			schedule: 15m
+  test:
+    addr: a.b.c
+    username: flo
+    credentials_script:
+      path: testdata/get_pass
+      schedule: 15m
 `,
 		},
 
@@ -286,16 +290,16 @@ Pollers:
 			wantSchedule: "42m",
 			yaml: `
 Defaults:
-	use_insecure_tls: true
-	prefer_zapi: true
-	credentials_script:
-		schedule: 42m
+  use_insecure_tls: true
+  prefer_zapi: true
+  credentials_script:
+    schedule: 42m
 Pollers:
-	test:
-		addr: a.b.c
-		username: flo
-		credentials_script:
-			path: testdata/get_pass
+  test:
+    addr: a.b.c
+    username: flo
+    credentials_script:
+      path: testdata/get_pass
 `,
 		},
 
@@ -306,13 +310,128 @@ Pollers:
 			wantSchedule: "42m",
 			yaml: `
 Pollers:
-	test:
-		addr: a.b.c
-		username: flo
-		password: abc def
+  test:
+    addr: a.b.c
+    username: flo
+    password: abc def
+`,
+		},
+
+		{
+			name:       "certificate_script in poller",
+			pollerName: "test",
+			want: PollerAuth{
+				IsCert: true, PemCert: []byte(`-----BEGIN CERTIFICATE-----
+SSA8MyBIYXJ2ZXN0
+-----END CERTIFICATE-----`), PemKey: []byte(`-----BEGIN PRIVATE KEY-----
+c3VwZXIgc2VjcmV0
+-----END PRIVATE KEY-----`),
+			},
+			yaml: `
+Pollers:
+  test:
+    auth_style: certificate_auth
+    addr: a.b.c
+    certificate_script:
+            path: testdata/get_cert
+`,
+		},
+
+		{
+			name:       "certificate_script in defaults",
+			pollerName: "test",
+			want: PollerAuth{
+				IsCert: true, PemCert: []byte(`-----BEGIN CERTIFICATE-----
+SSA8MyBIYXJ2ZXN0
+-----END CERTIFICATE-----`), PemKey: []byte(`-----BEGIN PRIVATE KEY-----
+c3VwZXIgc2VjcmV0
+-----END PRIVATE KEY-----`),
+			},
+			yaml: `
+Defaults:
+  certificate_script:
+    path: testdata/get_cert
+Pollers:
+  test:
+    auth_style: certificate_auth
+    addr: a.b.c
+`,
+		},
+
+		{
+			name:       "certificate_script in both",
+			pollerName: "test",
+			want: PollerAuth{
+				IsCert: true, PemCert: []byte(`-----BEGIN CERTIFICATE-----
+SSA8MyBIYXJ2ZXN0
+-----END CERTIFICATE-----`), PemKey: []byte(`-----BEGIN PRIVATE KEY-----
+c3VwZXIgc2VjcmV0
+-----END PRIVATE KEY-----`),
+			},
+			yaml: `
+Defaults:
+  certificate_script:
+    path: testdata/get_cert2
+Pollers:
+  test:
+    auth_style: certificate_auth
+    addr: a.b.c
+    certificate_script:
+      path: testdata/get_cert
+`,
+		},
+
+		{
+			name:       "ssl_cert and ssl_key defaults",
+			pollerName: "test",
+			want:       PollerAuth{IsCert: true, CertPath: "ssl_cert", KeyPath: "ssl_key"},
+			yaml: `
+Defaults:
+    ssl_cert: ssl_cert
+    ssl_key: ssl_key
+Pollers:
+    test:
+      auth_style: certificate_auth
+      addr: a.b.c
+`,
+		},
+
+		{
+			name:       "certificate_auth with ssl_cert in both",
+			pollerName: "test",
+			want:       PollerAuth{IsCert: true, CertPath: "ssl_cert", KeyPath: "ssl_key"},
+			yaml: `
+Defaults:
+    ssl_cert: default_ssl_cert
+    ssl_key: default_ssl_cert
+Pollers:
+    test:
+      auth_style: certificate_auth
+      addr: a.b.c
+      ssl_cert: ssl_cert
+      ssl_key: ssl_key
+`,
+		},
+
+		{
+			name:       "optional ssl_cert and ssl_key",
+			pollerName: "test",
+			want:       PollerAuth{IsCert: true, CertPath: "cert/cgrindst-mac-0.pem", KeyPath: "cert/cgrindst-mac-0.key"},
+			yaml: `
+Pollers:
+    test:
+      auth_style: certificate_auth
+      addr: a.b.c
 `,
 		},
 	}
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		t.Errorf("failed to get hostname err: %v", err)
+	}
+	hostCertPath := "cert/" + hostname + ".pem"
+	hostKeyPath := "cert/" + hostname + ".key"
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -320,7 +439,7 @@ Pollers:
 			if tt.defaultDefined {
 				conf.Config.Defaults = &conf.Poller{}
 			}
-			err := conf.DecodeConfig(toYaml(tt.yaml))
+			err := conf.DecodeConfig([]byte(tt.yaml))
 			if err != nil {
 				t.Errorf("expected no error got %+v", err)
 				return
@@ -352,11 +471,18 @@ Pollers:
 					tt.want.HasCredentialScript,
 				)
 			}
+			if !reflect.DeepEqual(tt.want.PemCert, got.PemCert) {
+				t.Errorf("got PemCert=[%s], want PemCert=[%s]", got.PemCert, tt.want.PemCert)
+			}
+			if !reflect.DeepEqual(tt.want.PemKey, got.PemKey) {
+				t.Errorf("got PemKey=[%s], want PemKey=[%s]", got.PemKey, tt.want.PemKey)
+			}
+			if tt.want.CertPath != got.CertPath && got.CertPath != hostCertPath {
+				t.Errorf("got CertPath=[%s], want CertPath=[%s]", got.CertPath, tt.want.CertPath)
+			}
+			if tt.want.KeyPath != got.KeyPath && got.KeyPath != hostKeyPath {
+				t.Errorf("got KeyPath=[%s], want KeyPath=[%s]", got.KeyPath, tt.want.KeyPath)
+			}
 		})
 	}
-}
-
-func toYaml(s string) []byte {
-	all := strings.ReplaceAll(s, "\t", " ")
-	return []byte(all)
 }
