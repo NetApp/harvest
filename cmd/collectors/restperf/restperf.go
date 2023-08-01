@@ -42,6 +42,11 @@ var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
 var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
 var qosWorkloadQuery = "api/storage/qos/workloads"
 
+var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
+
+// enable for wait_time_latency
+//var workloadDetailMetrics = []string{"resource_latency", "service_time_latency", "wait_time_latency"}
+
 var qosQueries = map[string]string{
 	qosQuery:       qosQuery,
 	qosVolumeQuery: qosVolumeQuery,
@@ -573,25 +578,27 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 			return nil, errs.New(errs.ErrMissingParam, "resource_map")
 		} else {
 			for _, x := range resourceMap.GetChildren() {
-				name := x.GetNameS()
-				resource := x.GetContentS()
+				for _, wm := range workloadDetailMetrics {
+					name := x.GetNameS() + wm
+					resource := x.GetContentS()
 
-				if m := mat.GetMetric(name); m != nil {
-					continue
-				}
-				if m, err := mat.NewMetricFloat64(name, "resource_latency"); err != nil {
-					return nil, err
-				} else {
-					r.perfProp.counterInfo[name] = &counter{
-						name:        "resource_latency",
-						description: "",
-						counterType: r.perfProp.counterInfo[service.GetName()].counterType,
-						unit:        r.perfProp.counterInfo[service.GetName()].unit,
-						denominator: "ops",
+					if m := mat.GetMetric(name); m != nil {
+						continue
 					}
-					m.SetLabel("resource", resource)
+					if m, err := mat.NewMetricFloat64(name, wm); err != nil {
+						return nil, err
+					} else {
+						r.perfProp.counterInfo[name] = &counter{
+							name:        wm,
+							description: "",
+							counterType: r.perfProp.counterInfo[service.GetName()].counterType,
+							unit:        r.perfProp.counterInfo[service.GetName()].unit,
+							denominator: "ops",
+						}
+						m.SetLabel("resource", resource)
 
-					r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
+						r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
+					}
 				}
 			}
 		}
@@ -635,16 +642,15 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) (map[string]*matrix.Matrix, error) {
 	var (
-		count, numRecords uint64
-		apiD, parseD      time.Duration
-		err               error
-		instanceKeys      []string
-		resourceLatency   *matrix.Metric // for workload* objects
-		skips             int
-		instIndex         int
-		ts                float64
-		prevMat           *matrix.Matrix
-		curMat            *matrix.Matrix
+		count        uint64
+		apiD, parseD time.Duration
+		err          error
+		instanceKeys []string
+		skips        int
+		instIndex    int
+		ts           float64
+		prevMat      *matrix.Matrix
+		curMat       *matrix.Matrix
 	)
 
 	prevMat = r.Matrix[r.Object]
@@ -707,11 +713,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				}
 			}
 
+			var layer = "" // latency layer (resource) for workloads
+
 			// special case for these two objects
 			// we need to process each latency layer for each instance/counter
 			if isWorkloadDetailObject(r.Prop.Query) {
-
-				layer := "" // latency layer (resource) for workloads
 
 				// example instanceKey : umeng-aff300-02:test-wid12022.CPU_dblade
 				i := strings.Index(instanceKey, ":")
@@ -727,11 +733,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					return true
 				}
 
-				if resourceLatency = curMat.GetMetric(layer); resourceLatency == nil {
-					r.Logger.Trace().
-						Str("layer", layer).
-						Msg("Resource-latency metric missing in cache")
-					return true
+				for _, wm := range workloadDetailMetrics {
+					mLayer := layer + wm
+					if l := curMat.GetMetric(mLayer); l == nil {
+						r.Logger.Trace().
+							Str("layer", layer).
+							Msg("Resource-latency metric missing in cache")
+						return true
+					}
 				}
 			}
 
@@ -794,27 +803,61 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				if ok {
 					// special case for workload_detail
 					if isWorkloadDetailObject(r.Prop.Query) {
-						if name == "wait_time" || name == "service_time" {
-							if err := resourceLatency.AddValueString(instance, f.value); err != nil {
-								r.Logger.Error().
-									Stack().
-									Err(err).
-									Str("name", name).
-									Str("value", f.value).
-									Msg("Add resource-latency failed")
-							} else {
-								r.Logger.Trace().
-									Str("name", name).
-									Str("value", f.value).
-									Msg("Add resource-latency")
-								count++
+						for _, wm := range workloadDetailMetrics {
+							wMetric := curMat.GetMetric(layer + wm)
+							if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
+								if err := wMetric.AddValueString(instance, f.value); err != nil {
+									r.Logger.Error().
+										Stack().
+										Err(err).
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add resource_latency failed")
+								} else {
+									r.Logger.Trace().
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add resource_latency")
+									count++
+								}
+								continue
+							} else if wm == "service_time_latency" && name == "service_time" {
+								if err = wMetric.SetValueString(instance, f.value); err != nil {
+									r.Logger.Error().
+										Stack().
+										Err(err).
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add service_time_latency failed")
+								} else {
+									r.Logger.Trace().
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add service_time_latency")
+									count++
+								}
+							} else if wm == "wait_time_latency" && name == "wait_time" {
+								if err = wMetric.SetValueString(instance, f.value); err != nil {
+									r.Logger.Error().
+										Stack().
+										Err(err).
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add wait_time_latency failed")
+								} else {
+									r.Logger.Trace().
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add wait_time_latency")
+									count++
+								}
 							}
-							continue
+							// "visits" are ignored. This counter is only used to set properties of ops counter
+							if name == "visits" {
+								continue
+							}
 						}
-						// "visits" are ignored. This counter is only used to set properties of ops counter
-						if name == "visits" {
-							continue
-						}
+						continue
 					} else {
 						if f.isArray {
 							labels := strings.Split(f.label, ",")
@@ -941,7 +984,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				r.Logger.Error().Err(err).Msg("Failed to set timestamp")
 			}
 
-			numRecords += 1
 			return true
 		})
 	}
@@ -957,7 +999,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", numRecords)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	r.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
