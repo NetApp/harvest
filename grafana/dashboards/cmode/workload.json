@@ -2086,7 +2086,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from frontend",
+          "title": "Top $TopResources Workloads by Service Time from frontend",
           "type": "timeseries"
         },
         {
@@ -2292,7 +2292,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from cluster",
+          "title": "Top $TopResources Workloads by Service Time from cluster",
           "type": "timeseries"
         },
         {
@@ -2397,7 +2397,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from cp",
+          "title": "Top $TopResources Workloads by Service Time from cp",
           "type": "timeseries"
         },
         {
@@ -2502,7 +2502,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from disk",
+          "title": "Top $TopResources Workloads by Service Time from disk",
           "type": "timeseries"
         },
         {
@@ -2607,7 +2607,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from network",
+          "title": "Top $TopResources Workloads by Service Time from network",
           "type": "timeseries"
         },
         {
@@ -2712,7 +2712,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from nvlog",
+          "title": "Top $TopResources Workloads by Service Time from nvlog",
           "type": "timeseries"
         },
         {
@@ -2817,7 +2817,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from WAFL suspend",
+          "title": "Top $TopResources Workloads by Service Time from WAFL suspend",
           "type": "timeseries"
         },
         {
@@ -2922,7 +2922,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from Qos throttle",
+          "title": "Top $TopResources Workloads by Service Time from Qos throttle",
           "type": "timeseries"
         },
         {
@@ -3027,7 +3027,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from qos_min",
+          "title": "Top $TopResources Workloads by Service Time from qos_min",
           "type": "timeseries"
         },
         {
@@ -3132,7 +3132,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from cloud",
+          "title": "Top $TopResources Workloads by Service Time from cloud",
           "type": "timeseries"
         },
         {
@@ -3236,7 +3236,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from sync_repl",
+          "title": "Top $TopResources Workloads by Service Time from sync_repl",
           "type": "timeseries"
         },
         {
@@ -3340,7 +3340,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from flexcache_ral",
+          "title": "Top $TopResources Workloads by Service Time from flexcache_ral",
           "type": "timeseries"
         },
         {
@@ -3444,7 +3444,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Workloads by Service Latency from flexcache_spinhi",
+          "title": "Top $TopResources Workloads by Service Time from flexcache_spinhi",
           "type": "timeseries"
         }
       ],
