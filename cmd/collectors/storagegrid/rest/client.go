@@ -2,7 +2,6 @@ package rest
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -27,18 +26,17 @@ const (
 )
 
 type Client struct {
-	client   *http.Client
-	request  *http.Request
-	buffer   *bytes.Buffer
-	Logger   *logging.Logger
-	baseURL  string
-	Cluster  Cluster
-	username string
-	token    string
-	Timeout  time.Duration
-	logRest  bool // used to log Rest request/response
-	APIPath  string
-	auth     *auth.Credentials
+	client  *http.Client
+	request *http.Request
+	buffer  *bytes.Buffer
+	Logger  *logging.Logger
+	baseURL string
+	Cluster Cluster
+	token   string
+	Timeout time.Duration
+	logRest bool // used to log Rest request/response
+	APIPath string
+	auth    *auth.Credentials
 }
 
 type Cluster struct {
@@ -76,14 +74,12 @@ func NewClient(pollerName string, clientTimeout string, c *auth.Credentials) (*C
 
 func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Client, error) {
 	var (
-		client         Client
-		httpclient     *http.Client
-		transport      *http.Transport
-		cert           tls.Certificate
-		addr           string
-		href           string
-		useInsecureTLS bool
-		err            error
+		client     Client
+		httpclient *http.Client
+		transport  *http.Transport
+		addr       string
+		href       string
+		err        error
 	)
 
 	client = Client{
@@ -100,48 +96,9 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 	client.baseURL = href
 	client.Timeout = timeout
 
-	// by default, enforce secure TLS, if not requested otherwise by user
-	if x := poller.UseInsecureTLS; x != nil {
-		useInsecureTLS = *poller.UseInsecureTLS
-	} else {
-		useInsecureTLS = false
-	}
-
-	pollerAuth, err := c.GetPollerAuth()
+	transport, err = c.Transport(nil)
 	if err != nil {
 		return nil, err
-	}
-	if pollerAuth.IsCert {
-		certPath := poller.SslCert
-		keyPath := poller.SslKey
-		if certPath == "" {
-			return nil, errs.New(errs.ErrMissingParam, "ssl_cert")
-		} else if keyPath == "" {
-			return nil, errs.New(errs.ErrMissingParam, "ssl_key")
-		} else if cert, err = tls.LoadX509KeyPair(certPath, keyPath); err != nil {
-			return nil, err
-		}
-
-		transport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				Certificates:       []tls.Certificate{cert},
-				InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
-		}
-	} else {
-		username := pollerAuth.Username
-		password := pollerAuth.Password
-		client.username = username
-		if username == "" {
-			return nil, errs.New(errs.ErrMissingParam, "username")
-		} else if password == "" {
-			return nil, errs.New(errs.ErrMissingParam, "password")
-		}
-
-		transport = &http.Transport{
-			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: useInsecureTLS}, //nolint:gosec
-		}
 	}
 
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
@@ -380,13 +337,13 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 		if err != nil {
 			return fmt.Errorf("failed to create auth URL err: %w", err)
 		}
-		password, err := c.auth.Password()
+		pollerAuth, err := c.auth.GetPollerAuth()
 		if err != nil {
 			return err
 		}
 		authB := authBody{
-			Username: c.username,
-			Password: password,
+			Username: pollerAuth.Username,
+			Password: pollerAuth.Password,
 		}
 		postBody, err := json.Marshal(authB)
 		if err != nil {

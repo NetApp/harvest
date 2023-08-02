@@ -20,6 +20,25 @@ import (
 	"strings"
 )
 
+var IsCollector = map[string]struct{}{
+	"ZapiPerf":    {},
+	"Zapi":        {},
+	"Rest":        {},
+	"RestPerf":    {},
+	"Ems":         {},
+	"StorageGrid": {},
+	"Unix":        {},
+	"Simple":      {},
+}
+
+func GetCollectorSlice() []string {
+	keys := make([]string, 0, len(IsCollector))
+	for k := range IsCollector {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 func MinLen(elements [][]string) int {
 	var min, i int
 	min = len(elements[0])

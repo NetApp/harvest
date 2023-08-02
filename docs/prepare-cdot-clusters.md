@@ -1,39 +1,32 @@
 
 ## Prepare ONTAP cDOT cluster
 
-NetApp Harvest requires login credentials to access monitored hosts. Although, a generic admin account can be used, it
-is best practice to create a dedicated monitoring account with the least privilege access.
+NetApp Harvest requires login credentials to access monitored hosts.
+Although a generic admin account can be used, it is better to create a dedicated read-only monitoring account.
 
-In the examples below, the user, group, roles, etc., use a naming convention of ‘netapp-harvest’. These can be
-modified as needed to match your environment standards.
+In the examples below, the user, group, roles, etc., use a naming convention of `netapp-harvest`.
+These can be modified as needed to match your organizational needs.
 
-There are few steps required to prepare each monitored system for collection.
-Harvest supports two authentication styles (`auth_style`) to connect to ONTAP clusters.  
-They are `basic_auth` or `certificate_auth`. Both work well, but if you're starting fresh, the recommendation is to
-create a read-only harvest user on your ONTAP server and use certificate-based TLS authentication.
+There are few steps required to prepare each system for monitoring.
+Harvest supports
+two [authentication styles](https://netapp.github.io/harvest/latest/configure-harvest-basic/#authentication)
+(`auth_style`) to connect to ONTAP clusters.
+These are `basic_auth` or `certificate_auth`.
+Both work well, but if you're starting fresh, the recommendation is to create a read-only harvest user on your ONTAP
+server and use [certificate-based](#using-certificate-authentication) TLS authentication.
 
 Here's a summary of what we're going to do
 
-1. Create an ONTAP role with the necessary capabilities that Harvest will use to auth and collect data
-2. Create a user account using the role created in step #1.
+1. Create a read-only ONTAP **role** with the necessary capabilities that Harvest will use to auth and collect data
+2. Create a **user account** using the role created in step #1
+3. Update the `harvest.yml` file to use the user account and password created in step #2 and start Harvest.
 
-## Creating ONTAP user
+There are two ways to create a read-only ONTAP role. Pick the one that best fits your needs.
 
-There are two ways to create a read-only user:
+- Create a role with read-only access to all API objects via [System Manager](#system-manager).
+- Create a role with read-only access to the limited set of APIs Harvest collects via [ONTAP's command line interface (CLI)](#ontap-cli).
 
-1. Create a user with read-only access to **all** API objects
-2. Create a user with read-only access to only the APIs Harvest collects today
-
-The second option has a smaller attack surface, but each time you want to collect counters for a new object, you will
-need to update the user's privileges.
-
-Below we explain how to create an ONTAP user and role for Harvest using ONTAP System Manager (Classic interface & New
-interface) and CLI.
-
-### System Manager: New interface
-
-*Note: in this section we add a user with read-only access to all API objects. For limited access, use either the
-classic interface or the CLI*
+### System Manager
 
 Open System Manager. Click on *CLUSTER* in the left menu bar, *Settings* and *Users and Roles*.
 
@@ -49,8 +42,9 @@ Choose a role name (e.g. *harvest2-role*). In the *REST API PATH* field, type */
 ![System Manager Settings](assets/prepare-ontap/ontap_user_sm_2.png)
 
 In the left column, under *Users*, click on *Add* to create a new user. Choose a username. Under *Role*, select the role
-that we just created. Under *User Login Methods* select *ONTAPI*, and select one of the two authentication methods. Type
-in a password if you chose *Password*. Click on *Save*
+that we just created. Under *User Login Methods* select *ONTAPI*, and one of the two authentication methods.
+Press the `Add` button and select *HTTP* and one of the authentication methods.
+Type in a password if you chose *Password*. Click on *Save*
 
 ![System Manager Settings](assets/prepare-ontap/ontap_user_sm_3.png)
 
@@ -58,135 +52,90 @@ If you chose *Password*, you can add the username and password to the Harvest co
 you chose *Certificate* jump to [Using Certificate Authentication](#using-certificate-authentication) to generate
 certificates files.
 
-### System Manager: Classic interface
+??? "System Manager Classic interface"
 
-Open System Manager. Click on the Settings icon in the top-right corner of the window.
-
-![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_0.png)
-
-Click on *Roles* in the left menu bar and click *Add*. Choose a role name (e.g. *harvest2-role*).
-
-![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_1.png)
-
-If you want to give Harvest read-only access to **all** API objects, then under *Role Attributes* click on *Add*, under
-*Command* type *DEFAULT*, leave *Query* empty, select *readonly* under *Access Level*, click on *OK* and *Add*.
-
-If you want to limit the API objects, then under *Role Attributes*, add each of the following lines as an entry. All of
-those should be entered under the *Command* column, *Query* should be left blank, and *Access Level* should be selected
-*readonly*.
-
-* cluster
-* qos
-* lun
-* snapmirror
-* statistics
-* storage aggregate
-* storage disk
-* storage shelf
-* system node
-* version
-* volume
-
-After you click on *Add*, this is what you should see:
-
-![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_2.png)
-
-Now we need to create a user. Click on *Users* in the left menu bar and *Add*. Choose a username and password. Under
-*User Login Methods*, click on *Add*, select *ontapi* as *Application* and select the role that we just created as
-*Role*. Click on *Add* in the pop-up window to save.
-
-![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_3.png)
-
-Now add the username and password to `harvest.yml` and start Harvest.
+    Open System Manager. Click on the Settings icon in the top-right corner of the window.
+    
+    ![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_0.png)
+    
+    Click on *Roles* in the left menu bar and click *Add*. Choose a role name (e.g. *harvest2-role*).
+    
+    ![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_1.png)
+    
+    Under *Role Attributes* click on *Add*, under *Command* type *DEFAULT*, leave *Query* empty, select *readonly* under *Access Level*, click on *OK* and *Add*.
+    
+    After you click on *Add*, this is what you should see:
+    
+    ![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_2.png)
+    
+    Now we need to create a user. Click on *Users* in the left menu bar and *Add*. Choose a username and password. Under
+    *User Login Methods* click on *Add*, select *ontapi* as *Application* and select the role that we just created as *Role*.
+    Repeat by clicking on *Add*, select *http* as *Application* and select the role that we just created as *Role*.
+    Click on *Add* in the pop-up window to save.
+    
+    ![System Manager Classic Settings](assets/prepare-ontap/ontap_user_smc_3.png)
 
 ### ONTAP CLI
 
 We are going to:
 
-- create a Harvest role with read-only access to the API objects
-- create a Harvest user and assign it to that role
+1. create a Harvest role with read-only access to a [limited set of objects](#least-privilege-approach)
+2. [create a Harvest user](#create-harvest-user-and-associate-with-the-harvest-role) and assign it to that role
 
-You should decide if you want to limit the Harvest role to only the subset of API objects Harvest requires or
-give Harvest access to all API objects. In both cases, Harvest's access will be read-only.
-
-Either approach is fine, following the principle of least-privilege, we recommend the limited approach.
-
-Login to the CLI of your c-DOT ONTAP system using SSH.
+Login to the CLI of your cDOT ONTAP system using SSH.
 
 #### Least-privilege approach
 
-Verify there are no errors when you copy/paste these. Warnings are fine.
+Verify there are no errors when you copy/paste these.
+Warnings are fine.
 
 ```bash
 security login role create -role harvest2-role -access readonly -cmddirname "cluster"
 security login role create -role harvest2-role -access readonly -cmddirname "lun"    
+security login role create -role harvest2-role -access readonly -cmddirname "network interface"
+security login role create -role harvest2-role -access readonly -cmddirname "qos adaptive-policy-group"
+security login role create -role harvest2-role -access readonly -cmddirname "qos policy-group"
 security login role create -role harvest2-role -access readonly -cmddirname "qos workload show"
+security login role create -role harvest2-role -access readonly -cmddirname "security"
 security login role create -role harvest2-role -access readonly -cmddirname "snapmirror"
 security login role create -role harvest2-role -access readonly -cmddirname "statistics"
 security login role create -role harvest2-role -access readonly -cmddirname "storage aggregate"
 security login role create -role harvest2-role -access readonly -cmddirname "storage disk"     
+security login role create -role harvest2-role -access readonly -cmddirname "storage encryption disk"
 security login role create -role harvest2-role -access readonly -cmddirname "storage shelf"
 security login role create -role harvest2-role -access readonly -cmddirname "system health status show" 
 security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"  
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
-
-# Permissions required for Harvest 22.05+ security dashboard
-security login role create -role harvest2-role -access readonly -cmddirname "network interface"
-security login role create -role harvest2-role -access readonly -cmddirname "security"
-security login role create -role harvest2-role -access readonly -cmddirname "storage encryption disk"
 security login role create -role harvest2-role -access readonly -cmddirname "vserver"
-
-# Permissions required for Harvest 23.05+ QoS policies
-security login role create -role harvest2-role -access readonly -cmddirname "qos adaptive-policy-group"
-security login role create -role harvest2-role -access readonly -cmddirname "qos policy-group"
-
 ```
 
-#### All APIs read-only approach
-
-```bash
-security login role create -role harvest2-role -access readonly -cmddirname "DEFAULT"
-```
-
-#### Create harvest user and associate to role
+#### Create harvest user and associate with the harvest role
 
 Use this for password authentication
 
 ```bash
-# ZAPI based access
 security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method password
-
-# REST based access
 security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method password   
 ```
 
 Or this for certificate authentication
 
 ```bash
-# ZAPI based access
 security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method cert
- 
-# REST based access
 security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method cert 
 ```
 
-Verify that an entry is present by running the following commands
+Check that the harvest role has web access for ONTAPI and REST.
 ```bash
-# ZAPI based access
 vserver services web access show -role harvest2-role -name ontapi
- 
-# REST based access
 vserver services web access show -role harvest2-role -name rest
 ```
 
-If the entry is missing, enable access by running the following
+If either entry is missing, enable access by running the following. Replace `$ADMIN_VSERVER` with your SVM admin name.
 ```bash
-# ZAPI based access
 vserver services web access create -vserver $ADMIN_VSERVER -name ontapi -role harvest2-role
-
-# REST based access
 vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-role
 ```
 
@@ -209,11 +158,11 @@ See [comments here for troubleshooting](https://github.com/NetApp/harvest/issues
 certificate authentication.
 
 Client certificate authentication allows you to authenticate with your ONTAP cluster without including
-username/passwords in your `harvest.yml` file. The process to setup client certificates is straightforward, although
+username/passwords in your `harvest.yml` file. The process to set up client certificates is straightforward, although
 self-signed certificates introduce more work as does Go's strict treatment of common names.
 
 Unless you've installed production certificates on your ONTAP cluster, you'll need to replace your cluster's
-common-name-based self-signed certificates with a subject alternative name based certificate. After that step is
+common-name-based self-signed certificates with a subject alternative name-based certificate. After that step is
 completed, we'll create client certificates and add those for passwordless login.
 
 If you can't or don't want to replace your ONTAP cluster certificates, there are some workarounds. You can
@@ -235,7 +184,7 @@ like this:
 3. Create a SAN certificate for your ONTAP cluster, using #2 to create it
 4. Install root ca certificate created in step #2 on cluster
 5. Install SAN certificate created in step #3 on your cluster
-6. Modify you cluster/SVM to use the new certificate installed at step #5
+6. Modify your cluster/SVM to use the new certificate installed at step #5
 
 #### Setup
 
@@ -302,7 +251,7 @@ openssl req -text -noout -in umeng-aff300-05-06.csr
     Signature Algorithm: sha256WithRSAEncryption     <======== Signature Algorithm can not be sha-1
 ```
 
-We'll now use the certificate signing request and the recently create certificate authority to create a new SAN
+We'll now use the certificate signing request and the recently created certificate authority to create a new SAN
 certificate for our cluster.
 
 ```
@@ -493,7 +442,7 @@ Restart your poller and enjoy your password-less life-style.
 The version of `curl` installed on macOS up through Monterey is not recent enough to work with self-signed SAN certs.
 You will need to install a newer version of `curl` via Homebrew, MacPorts, source, etc.
 
-Example of failure when running with older version of `curl` - you will see this
+Example of failure when running with an older version of `curl` - you will see this
 in [client auth](#install-client-certificates-on-cluster) test step above.
 
 ```
@@ -512,7 +461,7 @@ If you need to have curl first in your PATH, run:
   echo 'export PATH="/usr/local/opt/curl/bin:$PATH"' >> /Users/cgrindst/.bash_profile
 ```
 
-Now when we make a client auth request with our self-signed certificate it works! `\o/`
+Now when we make a client auth request with our self-signed certificate, it works! `\o/`
 
 ```
 brew install curl

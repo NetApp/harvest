@@ -159,9 +159,10 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 			svmInstance.SetLabel("iscsi_authentication_type", iscsiAuthenticationType)
 		}
 
-		ciphersVal := svmInstance.GetLabel("ciphers")
-		insecured := weakCiphers.MatchString(ciphersVal)
-		svmInstance.SetLabel("insecured", strconv.FormatBool(insecured))
+		if ciphersVal := svmInstance.GetLabel("ciphers"); ciphersVal != "" {
+			insecured := weakCiphers.MatchString(ciphersVal)
+			svmInstance.SetLabel("insecured", strconv.FormatBool(insecured))
+		}
 	}
 	return nil, nil
 }
