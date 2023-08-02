@@ -225,18 +225,6 @@ func (m *Matrix) GetInstancesBySuffix(subKey string) []*Instance {
 	return instances
 }
 
-func (m *Matrix) GetInstancesByPrefix(subKey string) []*Instance {
-	var instances []*Instance
-	if subKey != "" {
-		for key, instance := range m.instances {
-			if strings.HasPrefix(key, subKey) {
-				instances = append(instances, instance)
-			}
-		}
-	}
-	return instances
-}
-
 func (m *Matrix) GetInstances() map[string]*Instance {
 	return m.instances
 }

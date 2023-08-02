@@ -48,7 +48,7 @@ func (my *Shelf) Init() error {
 	}
 
 	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
-		my.Logger.Error().Stack().Err(err).Msg("connecting")
+		my.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -133,7 +133,7 @@ func (my *Shelf) Init() error {
 				case "float":
 					_, err := my.data[attribute].NewMetricFloat64(metricName, display)
 					if err != nil {
-						my.Logger.Error().Stack().Err(err).Msg("add metric")
+						my.Logger.Error().Err(err).Msg("add metric")
 						return err
 					}
 					my.Logger.Debug().Msgf("added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
@@ -141,12 +141,12 @@ func (my *Shelf) Init() error {
 			}
 		}
 
-		my.Logger.Debug().Msgf("added data for [%s] with %d metrics", attribute, len(my.data[attribute].GetMetrics()))
+		my.Logger.Debug().Str("attribute", attribute).Int("metrics count", len(my.data[attribute].GetMetrics())).Msg("added")
 
 		my.data[attribute].SetExportOptions(exportOptions)
 	}
 
-	my.Logger.Debug().Msgf("initialized with data [%d] objects", len(my.data))
+	my.Logger.Debug().Int("objects count", len(my.data)).Msg("initialized")
 
 	// setup batchSize for request
 	my.batchSize = BatchSize
@@ -191,17 +191,16 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		return output, err
 	}
 
-	my.Logger.Debug().Msgf("Shelves instance count: %d", len(my.shelfData.GetInstances()))
+	my.Logger.Debug().Int("Shelves instance count", len(my.shelfData.GetInstances())).Send()
 	output = append(output, my.shelfData)
 	return output, nil
 }
 
 func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix.Matrix, error) {
 	var (
-		shelves         []*node.Node
-		channels        []*node.Node
-		output          []*matrix.Matrix
-		channelInstance *matrix.Instance
+		shelves  []*node.Node
+		channels []*node.Node
+		output   []*matrix.Matrix
 	)
 
 	// Result would be the zapi response itself with only one record.
@@ -235,14 +234,6 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 	for _, channel := range channels {
 		channelName := channel.GetChildContentS("channel-name")
 		shelves = channel.SearchChildren([]string{"shelf-environ-shelf-list", "shelf-environ-shelf-info"})
-		channelInstances := data.GetInstancesByPrefix(channelName)
-
-		if len(channelInstances) >= 1 {
-			channelInstance = channelInstances[0]
-		} else {
-			my.Logger.Debug().Msg("no channel found")
-			continue
-		}
 
 		if len(shelves) == 0 {
 			my.Logger.Debug().Str("channel", channelName).Msg("no shelves found")
@@ -257,7 +248,7 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 			shelfInstanceKey := shelfID + "." + channelName
 			newShelfInstance, err := my.shelfData.NewInstance(shelfInstanceKey)
 			if err != nil {
-				my.Logger.Error().Msgf("Error while creating shelf instance: %v", err)
+				my.Logger.Error().Err(err).Msg("Error while creating shelf instance")
 				return nil, err
 			}
 
@@ -273,16 +264,16 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 				}
 			}
 
-			newShelfInstance.SetLabel("channel", channelInstance.GetLabel("channel"))
+			newShelfInstance.SetLabel("channel", channelName)
 			newShelfInstance.SetLabel("shelf", newShelfInstance.GetLabel("shelf_id"))
 
 			// populate numeric data
 			for metricKey, m := range my.shelfData.GetMetrics() {
 				if value := strings.Split(shelf.GetChildContentS(metricKey), " ")[0]; value != "" {
 					if err := m.SetValueString(newShelfInstance, value); err != nil {
-						my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+						my.Logger.Debug().Str("metricKey", metricKey).Str("value", value).Err(err).Msg("failed to parse")
 					} else {
-						my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+						my.Logger.Debug().Str("metricKey", metricKey).Str("value", value).Msg("added")
 					}
 				}
 			}
@@ -367,17 +358,17 @@ func (my *Shelf) parseShelfTemplate(shelfInfo *node.Node, shelfInstanceKeys, she
 				my.shelfInstanceKeys = append(my.shelfInstanceKeys, metricName)
 				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, isChild: isChild, parent: parent})
 				shelfInstanceKeys.NewChildS("", display)
-				my.Logger.Debug().Msgf("added instance key: [%s]", display)
+				my.Logger.Debug().Str("instance key", display).Msg("added")
 			case "label":
 				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, isChild: isChild, parent: parent})
 				shelfInstanceLabels.NewChildS("", display)
-				my.Logger.Debug().Msgf("added instance label: [%s]", display)
+				my.Logger.Debug().Str("instance label", display).Msg("added")
 			case "float":
 				_, err := my.shelfData.NewMetricFloat64(metricName, display)
 				if err != nil {
-					my.Logger.Error().Stack().Err(err).Msg("add metric")
+					my.Logger.Error().Err(err).Msg("add metric")
 				}
-				my.Logger.Debug().Msgf("added metric: [%s]", display)
+				my.Logger.Debug().Str("metric", display).Msg("added")
 			}
 		}
 	}
