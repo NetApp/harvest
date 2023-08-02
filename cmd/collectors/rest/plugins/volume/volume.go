@@ -126,7 +126,11 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 
 	// Set all global labels
 	my.arw.SetGlobalLabels(data.GetGlobalLabels())
-	ArwStatusValue := "Active Mode"
+	arwStatusValue := "Active Mode"
+	// Case where cluster don't have any volumes, arwStatus show as 'Not Monitoring'
+	if len(data.GetInstances()) == 0 {
+		arwStatusValue = "Not Monitoring"
+	}
 
 	// This is how cluster level arwStatusValue has been calculated based on each volume
 	// If any one volume arwStatus is disabled --> "Not Monitoring"
@@ -134,22 +138,28 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 	// If all volumes are in learning mode --> "Learning Mode"
 	// Else indicates arwStatus for all volumes are enabled --> "Active Mode"
 	for _, volume := range data.GetInstances() {
-		if arwState := volume.GetLabel("antiRansomwareState"); arwState != "" {
+		if arwState := volume.GetLabel("antiRansomwareState"); arwState == "" {
+			// Case where REST call don't return `antiRansomwareState` field, arwStatus show as 'Not Monitoring'
+			arwStatusValue = "Not Monitoring"
+			break
+		} else {
 			if arwState == "disabled" {
-				ArwStatusValue = "Not Monitoring"
+				arwStatusValue = "Not Monitoring"
 				break
 			} else if arwState == "dry_run" || arwState == "enable_paused" {
-				if arwStartTime := volume.GetLabel("anti_ransomware_start_time"); arwStartTime != "" && ArwStatusValue != "Switch to Active Mode" {
-					// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
-					if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
-						my.Logger.Error().Err(err).Msg("Failed to parse arw start time")
-						arwStartTimeValue = time.Now()
-					}
-					if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
-						ArwStatusValue = "Switch to Active Mode"
-						continue
-					}
-					ArwStatusValue = "Learning Mode"
+				arwStartTime := volume.GetLabel("anti_ransomware_start_time")
+				if arwStartTime == "" || arwStatusValue == "Switch to Active Mode" {
+					continue
+				}
+				// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
+				if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
+					my.Logger.Error().Err(err).Msg("Failed to parse arw start time")
+					arwStartTimeValue = time.Now()
+				}
+				if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
+					arwStatusValue = "Switch to Active Mode"
+				} else {
+					arwStatusValue = "Learning Mode"
 				}
 			}
 		}
@@ -161,7 +171,7 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 		return
 	}
 
-	arwInstance.SetLabel("ArwStatus", ArwStatusValue)
+	arwInstance.SetLabel("ArwStatus", arwStatusValue)
 	m := my.arw.GetMetric("status")
 	// populate numeric data
 	value := 1.0
