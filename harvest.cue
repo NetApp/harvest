@@ -49,6 +49,11 @@ label: [string]: string
 	url?:     string
 }
 
+#CertificateScript: {
+	path:      string
+	timeout?:  string
+}
+
 #CredentialsScript: {
 	path:      string
 	schedule?: string
@@ -68,6 +73,7 @@ Pollers: [Name=_]: #Poller
 	collectors?:         [...#CollectorDef] | [...string]
 	credentials_file?:   string
 	credentials_script?: #CredentialsScript
+	certificate_script?: #CertificateScript
 	datacenter?:         string
 	exporters: [...string]
 	is_kfs?: bool

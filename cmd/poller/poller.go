@@ -54,7 +54,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -64,7 +63,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"path"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -76,21 +74,13 @@ import (
 
 // default params
 var (
-	pollerSchedule   = "60s"
-	logFileName      = ""
-	logMaxMegaBytes  = logging.DefaultLogMaxMegaBytes
-	logMaxBackups    = logging.DefaultLogMaxBackups
-	logMaxAge        = logging.DefaultLogMaxAge
-	asupSchedule     = "24h" // send every 24 hours
-	asupFirstWrite   = "4m"  // after this time, write 1st autosupport payload (for testing)
-	isOntapCollector = map[string]struct{}{
-		"ZapiPerf":    {},
-		"Zapi":        {},
-		"Rest":        {},
-		"RestPerf":    {},
-		"Ems":         {},
-		"StorageGrid": {},
-	}
+	pollerSchedule  = "60s"
+	logFileName     = ""
+	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes
+	logMaxBackups   = logging.DefaultLogMaxBackups
+	logMaxAge       = logging.DefaultLogMaxAge
+	asupSchedule    = "24h" // send every 24 hours
+	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
 )
 
 const (
@@ -251,33 +241,6 @@ func (p *Poller) Init() error {
 
 	// create a shared auth service that all collectors will use
 	p.auth = auth.NewCredentials(p.params, logger)
-	pollerAuth, err := p.auth.GetPollerAuth()
-	if err != nil {
-		return err
-	}
-
-	// check optional parameter auth_style
-	// if certificates are missing use default paths
-	if pollerAuth.IsCert {
-		if p.params.SslCert == "" {
-			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".pem")
-			p.params.SslCert = fp
-			logger.Debug().Msgf("using default [ssl_cert] path: [%s]", fp)
-			if _, err = os.Stat(fp); err != nil {
-				logger.Error().Stack().Err(err).Msgf("ssl_cert")
-				return errs.New(errs.ErrMissingParam, "ssl_cert: "+err.Error())
-			}
-		}
-		if p.params.SslKey == "" {
-			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".key")
-			p.params.SslKey = fp
-			logger.Debug().Msgf("using default [ssl_key] path: [%s]", fp)
-			if _, err = os.Stat(fp); err != nil {
-				logger.Error().Stack().Err(err).Msgf("ssl_key")
-				return errs.New(errs.ErrMissingParam, "ssl_key: "+err.Error())
-			}
-		}
-	}
 
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
@@ -302,6 +265,11 @@ func (p *Poller) Init() error {
 
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
+		_, ok := util.IsCollector[c.Name]
+		if !ok {
+			logger.Error().Str("Detected invalid collector", c.Name).Msgf("Valid collectors are: %v", util.GetCollectorSlice())
+			continue
+		}
 		objects, err := p.readObjects(c)
 		if err != nil {
 			logger.Error().Err(err).
@@ -966,7 +934,7 @@ var pollerCmd = &cobra.Command{
 
 func (p *Poller) targetIsOntap() bool {
 	for _, c := range p.collectors {
-		_, ok := isOntapCollector[c.GetName()]
+		_, ok := util.IsCollector[c.GetName()]
 		if ok {
 			return true
 		}
@@ -1170,7 +1138,7 @@ func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Co
 				Templates: c.Templates,
 			}
 		}
-		log.Error().Err(err).Str("collector", c.Name).Msg("Failed to negotiateAPI")
+		logger.Error().Err(err).Str("collector", c.Name).Msg("Failed to negotiateAPI")
 	}
 
 	return c

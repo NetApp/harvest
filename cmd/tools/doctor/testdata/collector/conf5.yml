@@ -1,0 +1,20 @@
+Exporters:
+  prometheus:
+    exporter: Prometheus
+    port_range: 12990-14000
+    local_http_addr: localhost
+    add_meta_tags: false
+
+Defaults:
+  use_insecure_tls: true
+  prefer_zapi: true
+
+Pollers:
+
+  u2:
+    datacenter: u2
+    addr: 1.1.1.1
+    username: username
+    password: password
+    exporters:
+      - prometheus
