@@ -59,7 +59,7 @@ func (my *Shelf) Init() error {
 
 	my.Logger.Debug().Msg("plugin connected!")
 
-	my.createShelfMetrics()
+	my.create7ModeShelfMetrics()
 
 	my.data = make(map[string]*matrix.Matrix)
 	my.instanceKeys = make(map[string]string)
@@ -327,7 +327,7 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 	return output, nil
 }
 
-func (my *Shelf) createShelfMetrics() {
+func (my *Shelf) create7ModeShelfMetrics() {
 	my.shelfData = matrix.New(my.Parent+".Shelf", "shelf", "shelf")
 	my.shelfInstanceKeys = make([]string, 0)
 	my.shelfInstanceLabels = []shelfInstanceLabel{}
@@ -339,7 +339,7 @@ func (my *Shelf) createShelfMetrics() {
 		if channelInfo := counters.GetChildS("shelf-environ-channel-info"); channelInfo != nil {
 			if shelfList := channelInfo.GetChildS("shelf-environ-shelf-list"); shelfList != nil {
 				if shelfInfo := shelfList.GetChildS("shelf-environ-shelf-info"); shelfInfo != nil {
-					my.parseTemplate(shelfInfo, shelfInstanceKeys, shelfInstanceLabels, "")
+					my.parse7ModeTemplate(shelfInfo, shelfInstanceKeys, shelfInstanceLabels, "")
 				}
 			}
 		}
@@ -350,10 +350,10 @@ func (my *Shelf) createShelfMetrics() {
 	my.shelfData.SetExportOptions(shelfExportOptions)
 }
 
-func (my *Shelf) parseTemplate(shelfInfo *node.Node, shelfInstanceKeys, shelfInstanceLabels *node.Node, parent string) {
+func (my *Shelf) parse7ModeTemplate(shelfInfo *node.Node, shelfInstanceKeys, shelfInstanceLabels *node.Node, parent string) {
 	for _, shelfProp := range shelfInfo.GetChildren() {
 		if len(shelfProp.GetChildren()) > 0 {
-			my.parseTemplate(shelfInfo.GetChildS(shelfProp.GetNameS()), shelfInstanceKeys, shelfInstanceLabels, shelfProp.GetNameS())
+			my.parse7ModeTemplate(shelfInfo.GetChildS(shelfProp.GetNameS()), shelfInstanceKeys, shelfInstanceLabels, shelfProp.GetNameS())
 		} else {
 			metricName, display, kind, _ := util.ParseMetric(shelfProp.GetContentS())
 			switch kind {
