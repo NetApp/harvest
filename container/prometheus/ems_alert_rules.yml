@@ -25,6 +25,28 @@ groups:
         annotations:
           summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) destroyed (UUID: {{ $labels.object_uuid }})."
 
+      - alert: LUN Offline
+        expr: last_over_time(ems_events{message="LUN.offline"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought offline (UUID: {{ $labels.object_uuid }})."
+
       - alert: NVMe Namespace Destroyed
         expr: last_over_time(ems_events{message="NVMeNS.destroy"}[5m]) == 1
         labels:
