@@ -37,6 +37,8 @@ counters:
         - ^auto-snapshots-enabled               => auto_snapshots_enabled
         - ^snapshot-policy
         - snapshot-count
+    - volume-snapshot-autodelete-attributes:
+        - ^is-autodelete-enabled                => snapshot_autodelete
     - volume-space-attributes:
         - expected-available
         - filesystem-size                       => filesystem_size
@@ -117,6 +119,7 @@ export_options:
     - is_sis_volume
     - node_root
     - root_volume
+    - snapshot_autodelete
     - snapshot_policy
     - state
     - svm_root
