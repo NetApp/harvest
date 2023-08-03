@@ -31,7 +31,6 @@ type Shelf struct {
 type shelfInstanceLabel struct {
 	label        string
 	labelDisplay string
-	isChild      bool
 	parent       string
 }
 
@@ -60,26 +59,7 @@ func (my *Shelf) Init() error {
 
 	my.Logger.Debug().Msg("plugin connected!")
 
-	my.shelfData = matrix.New(my.Parent+".Shelf", "shelf", "shelf")
-	my.shelfInstanceKeys = make([]string, 0)
-	my.shelfInstanceLabels = []shelfInstanceLabel{}
-	shelfExportOptions := node.NewS("export_options")
-	shelfInstanceKeys := shelfExportOptions.NewChildS("instance_keys", "")
-	shelfInstanceLabels := shelfExportOptions.NewChildS("instance_labels", "")
-
-	if counters := my.ParentParams.GetChildS("counters"); counters != nil {
-		if channelInfo := counters.GetChildS("shelf-environ-channel-info"); channelInfo != nil {
-			if shelfList := channelInfo.GetChildS("shelf-environ-shelf-list"); shelfList != nil {
-				if shelfInfo := shelfList.GetChildS("shelf-environ-shelf-info"); shelfInfo != nil {
-					my.parseShelfTemplate(shelfInfo, shelfInstanceKeys, shelfInstanceLabels, false, "")
-				}
-			}
-		}
-	}
-
-	shelfInstanceKeys.NewChildS("", "channel")
-	shelfInstanceKeys.NewChildS("", "shelf")
-	my.shelfData.SetExportOptions(shelfExportOptions)
+	my.createShelfMetrics()
 
 	my.data = make(map[string]*matrix.Matrix)
 	my.instanceKeys = make(map[string]string)
@@ -256,7 +236,7 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 				newShelfInstance.SetLabel(key, shelf.GetChildContentS(key))
 			}
 			for _, shelfLabelData := range my.shelfInstanceLabels {
-				if !shelfLabelData.isChild {
+				if shelfLabelData.parent == "" {
 					newShelfInstance.SetLabel(shelfLabelData.labelDisplay, shelf.GetChildContentS(shelfLabelData.label))
 				} else {
 					child := shelf.GetChildS(shelfLabelData.parent)
@@ -347,20 +327,43 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 	return output, nil
 }
 
-func (my *Shelf) parseShelfTemplate(shelfInfo *node.Node, shelfInstanceKeys, shelfInstanceLabels *node.Node, isChild bool, parent string) {
+func (my *Shelf) createShelfMetrics() {
+	my.shelfData = matrix.New(my.Parent+".Shelf", "shelf", "shelf")
+	my.shelfInstanceKeys = make([]string, 0)
+	my.shelfInstanceLabels = []shelfInstanceLabel{}
+	shelfExportOptions := node.NewS("export_options")
+	shelfInstanceKeys := shelfExportOptions.NewChildS("instance_keys", "")
+	shelfInstanceLabels := shelfExportOptions.NewChildS("instance_labels", "")
+
+	if counters := my.ParentParams.GetChildS("counters"); counters != nil {
+		if channelInfo := counters.GetChildS("shelf-environ-channel-info"); channelInfo != nil {
+			if shelfList := channelInfo.GetChildS("shelf-environ-shelf-list"); shelfList != nil {
+				if shelfInfo := shelfList.GetChildS("shelf-environ-shelf-info"); shelfInfo != nil {
+					my.parseTemplate(shelfInfo, shelfInstanceKeys, shelfInstanceLabels, "")
+				}
+			}
+		}
+	}
+
+	shelfInstanceKeys.NewChildS("", "channel")
+	shelfInstanceKeys.NewChildS("", "shelf")
+	my.shelfData.SetExportOptions(shelfExportOptions)
+}
+
+func (my *Shelf) parseTemplate(shelfInfo *node.Node, shelfInstanceKeys, shelfInstanceLabels *node.Node, parent string) {
 	for _, shelfProp := range shelfInfo.GetChildren() {
 		if len(shelfProp.GetChildren()) > 0 {
-			my.parseShelfTemplate(shelfInfo.GetChildS(shelfProp.GetNameS()), shelfInstanceKeys, shelfInstanceLabels, true, shelfProp.GetNameS())
+			my.parseTemplate(shelfInfo.GetChildS(shelfProp.GetNameS()), shelfInstanceKeys, shelfInstanceLabels, shelfProp.GetNameS())
 		} else {
 			metricName, display, kind, _ := util.ParseMetric(shelfProp.GetContentS())
 			switch kind {
 			case "key":
 				my.shelfInstanceKeys = append(my.shelfInstanceKeys, metricName)
-				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, isChild: isChild, parent: parent})
+				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, parent: parent})
 				shelfInstanceKeys.NewChildS("", display)
 				my.Logger.Debug().Str("instance key", display).Msg("added")
 			case "label":
-				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, isChild: isChild, parent: parent})
+				my.shelfInstanceLabels = append(my.shelfInstanceLabels, shelfInstanceLabel{label: metricName, labelDisplay: display, parent: parent})
 				shelfInstanceLabels.NewChildS("", display)
 				my.Logger.Debug().Str("instance label", display).Msg("added")
 			case "float":
