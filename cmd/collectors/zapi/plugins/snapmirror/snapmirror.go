@@ -150,12 +150,12 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		}
 		// check if destination node limit is missing
 		if instance.GetLabel("destination_node_limit") == "" {
-			if limit, has := my.srcLimitCache.GetHas(instance.GetLabel("destination_node")); has {
+			if limit, has := my.destLimitCache.GetHas(instance.GetLabel("destination_node")); has {
 				instance.SetLabel("destination_node_limit", limit)
 				limitUpdCount++
 			}
 		}
-		// check if destination node limit is missing
+		// check if source node limit is missing
 		if instance.GetLabel("source_node_limit") == "" {
 			if limit, has := my.srcLimitCache.GetHas(instance.GetLabel("source_node")); has {
 				instance.SetLabel("source_node_limit", limit)
@@ -183,11 +183,24 @@ func (my *SnapMirror) updateLimitCache() error {
 		return err
 	}
 	count := 0
+	nodeName := ""
+	srcMtCount := ""
+	dstMtCount := ""
 	if instances := response.GetChildS("instances"); instances != nil {
 		for _, i := range instances.GetChildren() {
-			nodeName := i.GetChildContentS("node_name")
-			my.destLimitCache.Set(nodeName, i.GetChildContentS("dest_meter_count"))
-			my.srcLimitCache.Set(nodeName, i.GetChildContentS("src_meter_count"))
+			for _, c := range i.GetChildS("counters").GetChildren() {
+				if c.GetChildContentS("name") == "node_name" {
+					nodeName = c.GetChildContentS("value")
+				}
+				if c.GetChildContentS("name") == "src_meter_count" {
+					srcMtCount = c.GetChildContentS("value")
+				}
+				if c.GetChildContentS("name") == "dest_meter_count" {
+					dstMtCount = c.GetChildContentS("value")
+				}
+			}
+			my.destLimitCache.Set(nodeName, dstMtCount)
+			my.srcLimitCache.Set(nodeName, srcMtCount)
 			count++
 		}
 	}

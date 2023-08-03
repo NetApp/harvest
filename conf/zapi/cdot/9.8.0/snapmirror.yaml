@@ -16,7 +16,6 @@ counters:
     - ^relationship-status
     - ^relationship-type
     - ^schedule
-    - ^source-node
     - ^source-volume
     - ^source-vserver
     - ^unhealthy-reason
@@ -44,7 +43,6 @@ export_options:
     - destination_vserver
     - relationship_id
     - source_cluster
-    - source_node
     - source_volume
     - source_vserver
   instance_labels:
