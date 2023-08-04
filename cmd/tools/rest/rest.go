@@ -319,7 +319,11 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, 
 		return fmt.Errorf("error making request %w", err)
 	}
 
-	*curls = append(*curls, fmt.Sprintf("curl --user %s --insecure '%s%s'", client.username, client.baseURL, href))
+	pollerAuth, err := client.auth.GetPollerAuth()
+	if err != nil {
+		return err
+	}
+	*curls = append(*curls, fmt.Sprintf("curl --user %s --insecure '%s%s'", pollerAuth.Username, client.baseURL, href))
 
 	isNonIterRestCall := false
 	value := gjson.GetBytes(getRest, "records")

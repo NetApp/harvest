@@ -362,6 +362,11 @@ type CredentialsScript struct {
 	Timeout  string `yaml:"timeout,omitempty"`
 }
 
+type CertificateScript struct {
+	Path    string `yaml:"path,omitempty"`
+	Timeout string `yaml:"timeout,omitempty"`
+}
+
 type Poller struct {
 	Addr              string                `yaml:"addr,omitempty"`
 	APIVersion        string                `yaml:"api_version,omitempty"`
@@ -372,6 +377,7 @@ type Poller struct {
 	Collectors        []Collector           `yaml:"collectors,omitempty"`
 	CredentialsFile   string                `yaml:"credentials_file,omitempty"`
 	CredentialsScript CredentialsScript     `yaml:"credentials_script,omitempty"`
+	CertificateScript CertificateScript     `yaml:"certificate_script,omitempty"`
 	Datacenter        string                `yaml:"datacenter,omitempty"`
 	Exporters         []string              `yaml:"exporters,omitempty"`
 	IsKfs             bool                  `yaml:"is_kfs,omitempty"`
@@ -477,6 +483,10 @@ func ZapiPoller(n *node.Node) *Poller {
 		p.CredentialsScript.Path = credentialsScriptNode.GetChildContentS("path")
 		p.CredentialsScript.Schedule = credentialsScriptNode.GetChildContentS("schedule")
 		p.CredentialsScript.Timeout = credentialsScriptNode.GetChildContentS("timeout")
+	}
+	if certificateScriptNode := n.GetChildS("certificate_script"); certificateScriptNode != nil {
+		p.CertificateScript.Path = certificateScriptNode.GetChildContentS("path")
+		p.CertificateScript.Timeout = certificateScriptNode.GetChildContentS("timeout")
 	}
 	if clientTimeout := n.GetChildContentS("client_timeout"); clientTimeout != "" {
 		p.ClientTimeout = clientTimeout

@@ -767,7 +767,6 @@
               "cluster": false,
               "datacenter": true,
               "destination_node": true,
-              "destination_node_limit": true,
               "destination_volume": false,
               "destination_vserver": false,
               "instance": true,
@@ -775,7 +774,6 @@
               "relationship_type": true,
               "schedule": true,
               "source_node": true,
-              "source_node_limit": true,
               "source_volume": false,
               "source_vserver": false
             },

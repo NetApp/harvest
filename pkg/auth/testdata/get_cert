@@ -1,0 +1,12 @@
+#!/bin/bash
+# Used by pkg/auth/auth_test.go
+# echo -n 'I <3 Harvest' | base64
+# SSA8MyBIYXJ2ZXN0
+# echo -n 'super secret' | base64
+# c3VwZXIgc2VjcmV0
+echo "-----BEGIN CERTIFICATE-----
+SSA8MyBIYXJ2ZXN0
+-----END CERTIFICATE-----
+-----BEGIN PRIVATE KEY-----
+c3VwZXIgc2VjcmV0
+-----END PRIVATE KEY-----"

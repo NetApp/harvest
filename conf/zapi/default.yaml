@@ -11,6 +11,7 @@ objects:
   CIFSSession:                 cifs_session.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
+  EmsDestination:              ems_destination.yaml
   LIF:                         lif.yaml
   Lun:                         lun.yaml
 #  NetPort:                     netPort.yaml
