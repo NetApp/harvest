@@ -47,7 +47,6 @@ export_options:
     - source_vserver
   instance_labels:
     - derived_relationship_type
-    - destination_node_limit
     - group_type
     - healthy
     - last_transfer_error
@@ -59,6 +58,5 @@ export_options:
     - relationship_status
     - relationship_type
     - schedule
-    - source_node_limit
     - unhealthy_reason
     
