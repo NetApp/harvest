@@ -2,6 +2,7 @@ package aggregate
 
 import (
 	"errors"
+	goversion "github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
@@ -9,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"strconv"
 	"strings"
 )
 
@@ -72,6 +74,29 @@ func (a *Aggregate) getCloudStores() error {
 		result []*node.Node
 		err    error
 	)
+
+	// aggr-object-store-get-iter Zapi was introduced in 9.2.
+	version := a.client.Version()
+	clusterVersion := strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
+	ontapVersion, err := goversion.NewVersion(clusterVersion)
+	if err != nil {
+		a.Logger.Error().Err(err).
+			Str("version", clusterVersion).
+			Msg("Failed to parse version")
+		return err
+	}
+	version92 := "9.2"
+	version92After, err := goversion.NewVersion(version92)
+	if err != nil {
+		a.Logger.Error().Err(err).
+			Str("version", version92).
+			Msg("Failed to parse version")
+		return err
+	}
+
+	if ontapVersion.LessThan(version92After) {
+		return nil
+	}
 
 	a.aggrCloudStoresMap = make(map[string][]string)
 	request := node.NewXMLS("aggr-object-store-get-iter")
