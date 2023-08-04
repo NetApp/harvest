@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -19,12 +18,9 @@ import (
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
-	client          *zapi.Client
-	destLimitCache  *dict.Dict
-	srcLimitCache   *dict.Dict
-	nodeUpdCounter  int
-	limitUpdCounter int
-	svmPeerDataMap  map[string]Peer // [peer SVM alias name] -> [peer detail] map
+	client         *zapi.Client
+	nodeUpdCounter int
+	svmPeerDataMap map[string]Peer // [peer SVM alias name] -> [peer detail] map
 }
 
 type Peer struct {
@@ -50,9 +46,6 @@ func (my *SnapMirror) Init() error {
 		return err
 	}
 	my.nodeUpdCounter = 0
-	my.limitUpdCounter = 0
-	my.destLimitCache = dict.New()
-	my.srcLimitCache = dict.New()
 	my.svmPeerDataMap = make(map[string]Peer)
 
 	my.Logger.Debug().Msg("plugin initialized")
@@ -60,20 +53,8 @@ func (my *SnapMirror) Init() error {
 }
 func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[my.Object]
-	// update caches every so while
-	if my.limitUpdCounter == 0 {
-		if err := my.updateLimitCache(); err != nil {
-			return nil, err
-		}
-		my.Logger.Debug().Msg("updated limit cache")
-	} else if my.limitUpdCounter > 100 {
-		my.limitUpdCounter = 0
-	} else {
-		my.limitUpdCounter++
-	}
 	destUpdCount := 0
 	srcUpdCount := 0
-	limitUpdCount := 0
 
 	if cluster, ok := data.GetGlobalLabels().GetHas("cluster"); ok {
 		if err := my.getSVMPeerData(cluster); err != nil {
@@ -148,51 +129,9 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 				}
 			}
 		}
-		// check if destination node limit is missing
-		if instance.GetLabel("destination_node_limit") == "" {
-			if limit, has := my.srcLimitCache.GetHas(instance.GetLabel("destination_node")); has {
-				instance.SetLabel("destination_node_limit", limit)
-				limitUpdCount++
-			}
-		}
-		// check if destination node limit is missing
-		if instance.GetLabel("source_node_limit") == "" {
-			if limit, has := my.srcLimitCache.GetHas(instance.GetLabel("source_node")); has {
-				instance.SetLabel("source_node_limit", limit)
-			}
-		}
 	}
-	my.Logger.Debug().Msgf("updated %d destination and %d source nodes, %d node limits", destUpdCount, srcUpdCount, limitUpdCount)
+	my.Logger.Debug().Msgf("updated %d destination and %d source nodes", destUpdCount, srcUpdCount)
 	return nil, nil
-}
-
-func (my *SnapMirror) updateLimitCache() error {
-	var (
-		request, response *node.Node
-		err               error
-	)
-	request = node.NewXMLS("perf-object-get-instances")
-	request.NewChildS("objectname", "smc_em")
-	requestInstances := request.NewChildS("instances", "")
-	requestInstances.NewChildS("instance", "*")
-	requestCounters := request.NewChildS("counters", "")
-	requestCounters.NewChildS("counter", "node_name")
-	requestCounters.NewChildS("counter", "dest_meter_count")
-	requestCounters.NewChildS("counter", "src_meter_count")
-	if response, err = my.client.InvokeRequest(request); err != nil {
-		return err
-	}
-	count := 0
-	if instances := response.GetChildS("instances"); instances != nil {
-		for _, i := range instances.GetChildren() {
-			nodeName := i.GetChildContentS("node_name")
-			my.destLimitCache.Set(nodeName, i.GetChildContentS("dest_meter_count"))
-			my.srcLimitCache.Set(nodeName, i.GetChildContentS("src_meter_count"))
-			count++
-		}
-	}
-	my.Logger.Debug().Msgf("updated limit cache for %d nodes", count)
-	return nil
 }
 
 func (my *SnapMirror) getSVMPeerData(cluster string) error {
