@@ -3,7 +3,7 @@ collector:          Zapi
 
 # Order here matters!
 schedule:
-  - data: 180s
+  - data: 3m
 
 objects:
   Aggregate:                   aggr.yaml

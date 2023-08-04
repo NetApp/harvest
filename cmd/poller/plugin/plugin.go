@@ -155,11 +155,20 @@ func (p *AbstractPlugin) Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	panic(p.Name + " has not implemented Run()")
 }
 
-func (p *AbstractPlugin) SetPluginInterval() int {
+func (p *AbstractPlugin) SetPluginInterval(defaultPluginIntervals ...time.Duration) int {
+	var dpi time.Duration
+	if len(defaultPluginIntervals) == 0 {
+		dpi = DefaultPluginInterval
+	} else {
+		dpi = defaultPluginIntervals[0]
+	}
 	pollInterval := GetInterval(p.ParentParams, DefaultPollInterval)
-	pluginInterval := GetInterval(p.Params, DefaultPluginInterval)
+	pluginInterval := GetInterval(p.Params, dpi)
 	p.PluginInvocationRate = int(pluginInterval / pollInterval)
-	p.Logger.Debug().Float64("PollInterval", pollInterval).Float64("PluginInterval", pluginInterval).Int("PluginInvocationRate", p.PluginInvocationRate).Send()
+	p.Logger.Debug().
+		Float64("PollInterval", pollInterval).
+		Float64("PluginInterval", pluginInterval).
+		Int("PluginInvocationRate", p.PluginInvocationRate).Send()
 	return p.PluginInvocationRate
 }
 

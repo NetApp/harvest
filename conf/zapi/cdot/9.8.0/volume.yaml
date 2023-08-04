@@ -71,7 +71,12 @@ counters:
 plugins:
   - Volume:
       schedule:
-        - data: 900s  # should be multiple of data poll duration
+        - data: 15m  # should be multiple of data poll duration
+  - DaysTillFull:
+      counters:
+        - used: size_used
+          total: size_total
+          metric: days_till_full
   - MetricAgent:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total

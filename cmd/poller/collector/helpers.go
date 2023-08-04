@@ -17,6 +17,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/aiops/daystillfull"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
@@ -197,11 +198,6 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	if name == "Max" {
 		return max.New(abc)
 	}
-	/* this will be added in soon
-	if name == "Calculator" {--4
-		return calculator.New(abc)
-	}
-	*/
 
 	if name == "LabelAgent" {
 		return labelagent.New(abc)
@@ -211,5 +207,8 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 		return metricagent.New(abc)
 	}
 
+	if name == "DaysTillFull" {
+		return daystillfull.New(abc)
+	}
 	return nil
 }

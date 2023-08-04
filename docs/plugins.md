@@ -654,3 +654,32 @@ compute_metric:
 #  "inode_files_total" and multiplying the result by 100.
 # inode_used_percent = inode_files_used / inode_files_total * 100
 ```
+
+# DaysTillFull
+
+The `DaysTillFull` plugin uses the [recursive least squares algorithm](https://en.wikipedia.org/wiki/Recursive_least_squares_filter) to predict how many days are remaining until a resource is full. 
+
+!!! note
+
+    After restarting Harvest, the system will take 24 hours to collect enough data to accurately predict days till full.
+
+Here's an example of how to configure the `DaysTillFull` plugin.
+
+This example will publish a new metric named `volume_days_till_full` which predicts how many days until the volume's `size_used` metric equals the volume's `size_total` metric. In other words, when that volume is full.
+
+```yaml
+object:                   volume
+
+counters:
+  - space.used            => size_used
+  - space.afs_total       => size_total
+  
+plugins:
+  - DaysTillFull:
+      counters:
+        - used: size_used
+          total: size_total
+          metric: days_till_full
+```
+
+**Note:** When using the rename operator `=>`, use label names from the right side of `=>`.

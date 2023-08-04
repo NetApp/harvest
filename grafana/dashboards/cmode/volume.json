@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1691050019799,
+  "iteration": 1691004961482,
   "links": [
     {
       "asDropdown": true,
@@ -754,6 +754,18 @@
                     "value": "bytes"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Days Till Full"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
               }
             ]
           },
@@ -870,6 +882,17 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "I"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_days_till_full{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "J"
             }
           ],
           "timeFrom": null,
@@ -892,7 +915,8 @@
                     "Value #F",
                     "Value #G",
                     "Value #H",
-                    "Value #I"
+                    "Value #I",
+                    "Value #J"
                   ]
                 }
               }
@@ -918,25 +942,32 @@
                 "indexByName": {
                   "Value #A": 4,
                   "Value #C": 5,
-                  "Value #D": 6,
-                  "Value #E": 9,
-                  "Value #F": 10,
-                  "Value #G": 11,
-                  "Value #H": 7,
-                  "Value #I": 8,
+                  "Value #D": 7,
+                  "Value #E": 10,
+                  "Value #F": 11,
+                  "Value #G": 12,
+                  "Value #H": 8,
+                  "Value #I": 9,
+                  "Value #J": 6,
                   "aggr": 3,
                   "node": 2,
                   "svm": 0,
                   "volume": 1
                 },
                 "renameByName": {
+                  "Value #A": "Status",
                   "Value #C": "Size",
                   "Value #D": "",
                   "Value #E": "Dedupe Space Saved",
                   "Value #F": "Compression Space Saved",
                   "Value #G": "Total Space Saved",
                   "Value #H": "Logical Space Used",
-                  "Value #I": "Physical Space Used"
+                  "Value #I": "Physical Space Used",
+                  "Value #J": "Days Till Full",
+                  "aggr": "Aggr",
+                  "node": "Node",
+                  "svm": "SVM",
+                  "volume": "Volume"
                 }
               }
             }
@@ -5814,6 +5845,196 @@
       ],
       "title": "Volume Sis Stat",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 116,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Days",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 22
+          },
+          "id": 118,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "bottomk($TopResources, volume_days_till_full{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeDaysTillFull\"})",
+              "interval": "",
+              "legendFormat": "{{svm}} / {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Days Till Full",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "%",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 22
+          },
+          "id": 119,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeDaysTillFull\"}",
+              "interval": "",
+              "legendFormat": "{{svm}} / {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Size Used Percent",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Days Till Full",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -6961,6 +7182,29 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(bottomk($TopResources, avg_over_time(volume_days_till_full{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopVolumeDaysTillFull",
+        "options": [],
+        "query": {
+          "query": "query_result(bottomk($TopResources, avg_over_time(volume_days_till_full{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*volume=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -6984,5 +7228,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "",
-  "version": 14
+  "version": 15
 }

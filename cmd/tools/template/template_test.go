@@ -590,11 +590,12 @@ func findCustomPlugins(path string, template *node.Node, model *TemplateModel) e
 		return nil
 	}
 	builtIn := map[string]bool{
-		"LabelAgent":  true,
-		"MetricAgent": true,
-		"Aggregator":  true,
-		"Max":         true,
-		"Tenant":      true,
+		"LabelAgent":   true,
+		"MetricAgent":  true,
+		"Aggregator":   true,
+		"Max":          true,
+		"Tenant":       true,
+		"DaysTillFull": true,
 	}
 	for _, child := range plug[0].Children {
 		name := child.GetNameS()
