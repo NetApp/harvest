@@ -36,6 +36,7 @@ var zapiCounterMap = map[string]struct{}{
 	"ontaps3_used_percent":         {},
 	"ontaps3_services_labels":      {},
 	"ontaps3_policy_labels":        {},
+	"volume_arw_status":            {},
 	"volume_num_compress_fail":     {},
 	"volume_num_compress_attempts": {},
 }
@@ -51,6 +52,7 @@ var excludeCounters = []string{
 	"cifs_session",
 	"cluster_peer",
 	"efficiency_savings",
+	"ems_destination_labels",
 	"ems_events",
 	"external_service_op_num_",
 	"external_service_op_request_",
@@ -80,6 +82,7 @@ var excludeCounters = []string{
 	"security_login",
 	"smb2_",
 	"snapmirror_",
+	"support_auto_update_labels",
 	"svm_cifs_",
 	"svm_ldap",
 	"svm_nfs_latency_hist_bucket",

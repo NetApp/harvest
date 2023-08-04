@@ -54,7 +54,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -64,7 +63,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"path"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -243,33 +241,6 @@ func (p *Poller) Init() error {
 
 	// create a shared auth service that all collectors will use
 	p.auth = auth.NewCredentials(p.params, logger)
-	pollerAuth, err := p.auth.GetPollerAuth()
-	if err != nil {
-		return err
-	}
-
-	// check optional parameter auth_style
-	// if certificates are missing use default paths
-	if pollerAuth.IsCert {
-		if p.params.SslCert == "" {
-			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".pem")
-			p.params.SslCert = fp
-			logger.Debug().Msgf("using default [ssl_cert] path: [%s]", fp)
-			if _, err = os.Stat(fp); err != nil {
-				logger.Error().Stack().Err(err).Msgf("ssl_cert")
-				return errs.New(errs.ErrMissingParam, "ssl_cert: "+err.Error())
-			}
-		}
-		if p.params.SslKey == "" {
-			fp := path.Join(p.options.HomePath, "cert/", p.options.Hostname+".key")
-			p.params.SslKey = fp
-			logger.Debug().Msgf("using default [ssl_key] path: [%s]", fp)
-			if _, err = os.Stat(fp); err != nil {
-				logger.Error().Stack().Err(err).Msgf("ssl_key")
-				return errs.New(errs.ErrMissingParam, "ssl_key: "+err.Error())
-			}
-		}
-	}
 
 	// initialize our metadata, the metadata will host status of our
 	// collectors and exporters, as well as ping stats to target host
@@ -1167,7 +1138,7 @@ func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Co
 				Templates: c.Templates,
 			}
 		}
-		log.Error().Err(err).Str("collector", c.Name).Msg("Failed to negotiateAPI")
+		logger.Error().Err(err).Str("collector", c.Name).Msg("Failed to negotiateAPI")
 	}
 
 	return c
