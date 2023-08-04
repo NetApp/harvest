@@ -92,6 +92,7 @@ var excludeCounters = []string{
 	"svm_vscan",
 	"svm_write_total",
 	"nfs_clients_",
+	"volume_days_till_full",
 }
 
 var flakyCounters = []string{
@@ -255,20 +256,17 @@ func counterIsMissing(flavor string, counter string, waitFor time.Duration) bool
 }
 
 func shouldIgnoreCounter(counter string, flavor string) bool {
+	var ignore bool
 	if len(counter) == 0 {
 		return true
 	}
 	if flavor == zapi {
-		if _, ok := zapiCounterMap[counter]; ok {
-			return true
-		}
+		_, ignore = zapiCounterMap[counter]
 	} else if flavor == rest {
-		if _, ok := restCounterMap[counter]; ok {
-			return true
-		}
+		_, ignore = restCounterMap[counter]
 	}
 
-	return false
+	return ignore
 }
 
 func shouldSkipDashboard(path string) bool {
