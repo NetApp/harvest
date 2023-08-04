@@ -9,11 +9,13 @@ counters:
   - ^^svm.name                                    => svm
   - ^aggregates.#.name                            => aggr
   - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
+  - ^anti_ransomware.dry_run_start_time           => anti_ransomware_start_time
   - ^anti_ransomware.state                        => antiRansomwareState
   - ^encryption.enabled                           => isEncrypted
   - ^is_svm_root                                  => svm_root
   - ^snaplock.type                                => snaplock_type
   - ^snapshot_policy.name                         => snapshot_policy
+  - ^space.snapshot.autodelete.enabled            => snapshot_autodelete
   - ^state                                        => state
   - ^style                                        => style
   - ^type                                         => type
@@ -43,6 +45,7 @@ counters:
   - space.snapshot.used                           => snapshots_size_used
   - space.used                                    => size_used
   - hidden_fields:
+      - anti_ransomware.dry_run_start_time
       - anti_ransomware.state
       - autosize
       - encryption.enabled
@@ -137,6 +140,7 @@ export_options:
     - is_sis_volume
     - root_volume
     - snaplock_type
+    - snapshot_autodelete
     - snapshot_policy
     - state
     - svm_root

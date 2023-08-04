@@ -11,17 +11,21 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"strings"
 	"time"
 )
 
+const HoursInMonth = 24 * 30
+
 type Volume struct {
 	*plugin.AbstractPlugin
 	currentVal int
 	client     *rest.Client
 	aggrsMap   map[string]string // aggregate-uuid -> aggregate-name map
+	arw        *matrix.Matrix
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -55,6 +59,16 @@ func (my *Volume) Init() error {
 		return err
 	}
 
+	my.arw = matrix.New(my.Parent+".Volume", "volume_arw", "volume_arw")
+	exportOptions := node.NewS("export_options")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+	instanceKeys.NewChildS("", "ArwStatus")
+	my.arw.SetExportOptions(exportOptions)
+	_, err = my.arw.NewMetricFloat64("status", "status")
+	if err != nil {
+		my.Logger.Error().Stack().Err(err).Msg("add metric")
+		return err
+	}
 	return nil
 }
 
@@ -79,8 +93,11 @@ func (my *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 	// update volume instance labels
 	my.updateVolumeLabels(data)
 
+	// parse anti_ransomware_start_time, antiRansomwareState for all volumes and export at cluster level
+	my.handleARWProtection(data)
+
 	my.currentVal++
-	return nil, nil
+	return []*matrix.Matrix{my.arw}, nil
 }
 
 func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
@@ -93,6 +110,75 @@ func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
 
 		_, exist := my.aggrsMap[aggrUUID]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+	}
+}
+
+func (my *Volume) handleARWProtection(data *matrix.Matrix) {
+	var (
+		arwInstance       *matrix.Instance
+		arwStartTimeValue time.Time
+		err               error
+	)
+
+	// Purge and reset data
+	my.arw.PurgeInstances()
+	my.arw.Reset()
+
+	// Set all global labels
+	my.arw.SetGlobalLabels(data.GetGlobalLabels())
+	arwStatusValue := "Active Mode"
+	// Case where cluster don't have any volumes, arwStatus show as 'Not Monitoring'
+	if len(data.GetInstances()) == 0 {
+		arwStatusValue = "Not Monitoring"
+	}
+
+	// This is how cluster level arwStatusValue has been calculated based on each volume
+	// If any one volume arwStatus is disabled --> "Not Monitoring"
+	// If any one volume has been completed learning mode --> "Switch to Active Mode"
+	// If all volumes are in learning mode --> "Learning Mode"
+	// Else indicates arwStatus for all volumes are enabled --> "Active Mode"
+	for _, volume := range data.GetInstances() {
+		if arwState := volume.GetLabel("antiRansomwareState"); arwState == "" {
+			// Case where REST call don't return `antiRansomwareState` field, arwStatus show as 'Not Monitoring'
+			arwStatusValue = "Not Monitoring"
+			break
+		} else {
+			if arwState == "disabled" {
+				arwStatusValue = "Not Monitoring"
+				break
+			} else if arwState == "dry_run" || arwState == "enable_paused" {
+				arwStartTime := volume.GetLabel("anti_ransomware_start_time")
+				if arwStartTime == "" || arwStatusValue == "Switch to Active Mode" {
+					continue
+				}
+				// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
+				if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
+					my.Logger.Error().Err(err).Msg("Failed to parse arw start time")
+					arwStartTimeValue = time.Now()
+				}
+				if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
+					arwStatusValue = "Switch to Active Mode"
+				} else {
+					arwStatusValue = "Learning Mode"
+				}
+			}
+		}
+	}
+
+	arwInstanceKey := data.GetGlobalLabels().Get("cluster") + data.GetGlobalLabels().Get("datacenter")
+	if arwInstance, err = my.arw.NewInstance(arwInstanceKey); err != nil {
+		my.Logger.Error().Err(err).Str("arwInstanceKey", arwInstanceKey).Msg("Failed to create arw instance")
+		return
+	}
+
+	arwInstance.SetLabel("ArwStatus", arwStatusValue)
+	m := my.arw.GetMetric("status")
+	// populate numeric data
+	value := 1.0
+	if err = m.SetValueFloat64(arwInstance, value); err != nil {
+		my.Logger.Error().Stack().Err(err).Float64("value", value).Msg("Failed to parse value")
+	} else {
+		my.Logger.Debug().Float64("value", value).Msg("added value")
 	}
 }
 
