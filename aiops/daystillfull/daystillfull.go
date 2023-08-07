@@ -41,10 +41,9 @@ func (d *DaysTillFull) Init() error {
 
 	if len(d.dtfRules) == 0 {
 		return errs.New(errs.ErrMissingParam, "valid rules")
-	} else {
-		d.Logger.Debug().Int("count", len(d.dtfRules)).Msg("parsed rules")
 	}
 
+	d.Logger.Debug().Int("count", len(d.dtfRules)).Msg("parsed rules")
 	d.dtfByUUID = make(map[string]*dtf)
 	d.SetPluginInterval(defaultPluginInterval)
 
@@ -113,6 +112,7 @@ func (d *DaysTillFull) addAndExport(dataMap map[string]*matrix.Matrix, shouldAdd
 
 	data := dataMap[d.Object]
 	now := time.Now()
+	// After restarting Harvest, the system will take 24 hours to collect enough data before exporting the metric
 	shouldExport := d.calls > 0
 
 	d.Logger.Debug().Bool("shouldExport", shouldExport).Int("calls", d.calls).Send()

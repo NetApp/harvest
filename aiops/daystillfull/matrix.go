@@ -152,8 +152,8 @@ func NewMatrix(n, m int) *Mat {
 
 func Identity(n int) *Mat {
 	matrix := NewMatrix(n, n)
-	for i, r := range *matrix {
-		r[i] = 1.0
+	for i := 0; i < n; i++ {
+		matrix.Set(i, i, 1.0)
 	}
 	return matrix
 }
