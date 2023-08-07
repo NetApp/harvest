@@ -98,15 +98,14 @@ func (d *DaysTillFull) parseRules() {
 
 func (d *DaysTillFull) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var err error
-	// Using the plugin's schedule, calculate the PluginInvocationRate and add observations every PluginInvocationRate
-	if d.calls%d.PluginInvocationRate == 0 {
-		err = d.addObservations(dataMap)
-	}
+	// Add observations every PluginInvocationRate
+	shouldAdd := d.calls%d.PluginInvocationRate == 0
+	err = d.addAndExport(dataMap, shouldAdd)
 	d.calls++
 	return nil, err
 }
 
-func (d *DaysTillFull) addObservations(dataMap map[string]*matrix.Matrix) error {
+func (d *DaysTillFull) addAndExport(dataMap map[string]*matrix.Matrix, shouldAdd bool) error {
 	var (
 		metric *matrix.Metric
 		err    error
@@ -147,7 +146,10 @@ func (d *DaysTillFull) addObservations(dataMap map[string]*matrix.Matrix) error 
 				d.dtfByUUID[uuid] = ttf
 			}
 			currentDayIndex := getDayIndex(now, ttf)
-			ttf.addObs(currentDayIndex, float32(used))
+
+			if shouldAdd {
+				ttf.addObs(currentDayIndex, float32(used))
+			}
 
 			if !shouldExport {
 				continue
