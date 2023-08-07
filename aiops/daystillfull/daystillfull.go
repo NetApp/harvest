@@ -127,15 +127,15 @@ func (d *DaysTillFull) addAndExport(dataMap map[string]*matrix.Matrix, shouldAdd
 			continue
 		}
 
-		for uuid, volume := range data.GetInstances() {
-			if !volume.IsExportable() {
+		for uuid, obj := range data.GetInstances() {
+			if !obj.IsExportable() {
 				continue
 			}
-			used, ok := usedMetric.GetValueFloat64(volume)
+			used, ok := usedMetric.GetValueFloat64(obj)
 			if !ok {
 				continue
 			}
-			total, ok := totalMetric.GetValueFloat64(volume)
+			total, ok := totalMetric.GetValueFloat64(obj)
 			if !ok {
 				continue
 			}
@@ -167,7 +167,7 @@ func (d *DaysTillFull) addAndExport(dataMap map[string]*matrix.Matrix, shouldAdd
 				}
 			}
 
-			err = metric.AddValueFloat64(volume, float64(daysToFull))
+			err = metric.SetValueFloat64(obj, float64(daysToFull))
 			if err != nil {
 				d.Logger.Error().Err(err).Str("metric", dtfMetric).Msg("Unable to add dtf")
 			}
