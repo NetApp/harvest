@@ -89,28 +89,29 @@ func init() {
 // Verified temperature sensor values by parsing, pivoting, etc. externally via dasel, jq, miller
 
 // average_ambient_temperature is
-// cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|System Inlet|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
+// cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
 
-// +------------+-----------+--------------------+-----------+
-// | node       | value_min | value_mean         | value_max |
-// +------------+-----------+--------------------+-----------+
-// | cdot-k3-05 | 21        | 21.666666666666668 | 23        |
-// | cdot-k3-06 | 21        | 22                 | 24        |
-// | cdot-k3-07 | 21        | 21.666666666666668 | 23        |
-// | cdot-k3-08 | 21        | 22.333333333333332 | 24        |
-// +------------+-----------+--------------------+-----------+
+//+------------+-----------+------------+-----------+
+//| node       | value_min | value_mean | value_max |
+//+------------+-----------+------------+-----------+
+//| cdot-k3-05 | 21        | 22         | 23        |
+//| cdot-k3-06 | 21        | 22.5       | 24        |
+//| cdot-k3-07 | 21        | 22         | 23        |
+//| cdot-k3-08 | 21        | 22.5       | 24        |
+//+------------+-----------+------------+-----------+
+
 //
 // average_temperature [min, avg, max] is calculated like so
-// cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg -v "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|System Inlet|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
+// cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg -v "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
 
-// +------------+-----------+------------+-----------+
-// | node       | value_min | value_mean | value_max |
-// +------------+-----------+------------+-----------+
-// | cdot-k3-05 | 19        | 27.1875    | 36        |
-// | cdot-k3-06 | 19        | 26.6875    | 35        |
-// | cdot-k3-07 | 19        | 26.6875    | 35        |
-// | cdot-k3-08 | 20        | 27.5       | 36        |
-// +------------+-----------+------------+-----------+
+//+------------+-----------+--------------------+-----------+
+//| node       | value_min | value_mean         | value_max |
+//+------------+-----------+--------------------+-----------+
+//| cdot-k3-05 | 19        | 26.823529411764707 | 36        |
+//| cdot-k3-06 | 19        | 26.352941176470587 | 35        |
+//| cdot-k3-07 | 19        | 26.352941176470587 | 35        |
+//| cdot-k3-08 | 20        | 27.176470588235293 | 36        |
+//+------------+-----------+--------------------+-----------+
 
 func TestSensor_Run(t *testing.T) {
 
@@ -120,12 +121,12 @@ func TestSensor_Run(t *testing.T) {
 	omat, _ := sensor.Run(dataMap)
 
 	expected := map[string]map[string]float64{
-		"average_ambient_temperature": {"cdot-k3-05": 21.666666666666668, "cdot-k3-06": 22, "cdot-k3-07": 21.666666666666668, "cdot-k3-08": 22.333333333333332},
+		"average_ambient_temperature": {"cdot-k3-05": 22, "cdot-k3-06": 22.5, "cdot-k3-07": 22, "cdot-k3-08": 22.5},
 		"average_fan_speed":           {"cdot-k3-05": 7030, "cdot-k3-06": 7050, "cdot-k3-07": 7040, "cdot-k3-08": 7050},
 		"max_fan_speed":               {"cdot-k3-05": 7700, "cdot-k3-06": 7700, "cdot-k3-07": 7700, "cdot-k3-08": 7700},
 		"min_fan_speed":               {"cdot-k3-05": 4600, "cdot-k3-06": 4500, "cdot-k3-07": 4600, "cdot-k3-08": 4500},
 		"power":                       {"cdot-k3-05": 383.4, "cdot-k3-06": 347.9, "cdot-k3-07": 340.8, "cdot-k3-08": 362.1},
-		"average_temperature":         {"cdot-k3-05": 27.1875, "cdot-k3-06": 26.6875, "cdot-k3-07": 26.6875, "cdot-k3-08": 27.5},
+		"average_temperature":         {"cdot-k3-05": 26.823529411764707, "cdot-k3-06": 26.352941176470587, "cdot-k3-07": 26.352941176470587, "cdot-k3-08": 27.176470588235293},
 		"max_temperature":             {"cdot-k3-05": 36, "cdot-k3-06": 35, "cdot-k3-07": 35, "cdot-k3-08": 36},
 		"min_ambient_temperature":     {"cdot-k3-05": 21, "cdot-k3-06": 21, "cdot-k3-07": 21, "cdot-k3-08": 21},
 		"min_temperature":             {"cdot-k3-05": 19, "cdot-k3-06": 19, "cdot-k3-07": 19, "cdot-k3-08": 20},

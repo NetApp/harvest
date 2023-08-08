@@ -49,6 +49,8 @@ objects:
   NFSv41:                   nfsv4_1.yaml
   NFSv42:                   nfsv4_2.yaml
   NFSv4:                    nfsv4.yaml
+#  NvmfRdmaPort:             nvmf_rdma_port.yaml
+#  NvmfTcpPort:              nvmf_tcp_port.yaml
   OntapS3SVM:               ontap_s3_svm.yaml
   SMB2:                     smb2.yaml
   Volume:                   volume.yaml

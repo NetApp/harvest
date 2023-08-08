@@ -1,0 +1,27 @@
+name:       EmsDestination
+query:      ems-event-notification-destination-get-iter
+object:     ems_destination
+
+counters:
+  event-notification-destination-info:
+    - ^^certificate-authority   => certificate
+    - ^^name                    => name
+    - ^^type                    => type
+    - destination:
+        - ^^string              => destination
+
+collect_only_labels: true
+
+plugins:
+  - LabelAgent:
+      exclude_equals:
+        - destination ``
+
+export_options:
+  instance_keys:
+    - destination
+    - name
+    - type
+  instance_labels:
+    - certificate
+
