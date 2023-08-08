@@ -63,6 +63,7 @@ counters:
   - lookup_total
   - lookupp_avg_latency
   - lookupp_total
+  - nfs41_latency_hist       => latency_hist
   - nfs41_read_throughput    => read_throughput
   - nfs41_throughput         => throughput
   - nfs41_write_throughput   => write_throughput
@@ -83,6 +84,7 @@ counters:
   - putrootfh_avg_latency
   - putrootfh_total
   - read_avg_latency
+  - read_latency_hist
   - read_total
   - readdir_avg_latency
   - readdir_total
@@ -116,6 +118,7 @@ counters:
   - want_delegation_avg_latency
   - want_delegation_total
   - write_avg_latency
+  - write_latency_hist
   - write_total
 
 export_options:
