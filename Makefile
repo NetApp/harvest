@@ -180,9 +180,10 @@ ifeq ($(origin ci),undefined)
 	@echo make ci=/path/to/harvest.yml ci-local
 	@exit 1
 endif
-	-@docker stop $$(docker ps -aq) && docker rm $$(docker ps -aq)
-	-@docker volume rm harvest_grafana_data harvest_prometheus_data
-	@cp $(ci) harvest.yml
+	-@docker stop $$(docker ps -aq) 2>/dev/null || true
+	-@docker rm $$(docker ps -aq) 2>/dev/null || true
+	-@docker volume rm harvest_grafana_data harvest_prometheus_data 2>/dev/null || true
+	@if [ "$(ci)" != "harvest.yml" ]; then cp $(ci) harvest.yml; else echo "Source and destination files are the same, skipping copy"; fi
 	@./bin/harvest generate docker full --port --output harvest-compose.yml
 	@docker build -f container/onePollerPerContainer/Dockerfile -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg VERSION=${VERSION}
 	@docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
