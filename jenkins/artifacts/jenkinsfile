@@ -65,7 +65,6 @@ pipeline {
         stage('Download Prerequisites') {
             steps {
                 sh '''
-               apt-get update
                apt-get install -y rpm
                apt-get install -y net-tools
                apt install -y git-all
