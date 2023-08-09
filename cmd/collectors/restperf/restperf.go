@@ -813,6 +813,10 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					// special case for workload_detail
 					if isWorkloadDetailObject(r.Prop.Query) {
 						for _, wm := range workloadDetailMetrics {
+							// "visits" are ignored. This counter is only used to set properties of ops counter
+							if name == "visits" {
+								continue
+							}
 							wMetric := curMat.GetMetric(layer + wm)
 							if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
 								if err := wMetric.AddValueString(instance, f.value); err != nil {
@@ -860,10 +864,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 										Msg("Add wait_time_latency")
 									count++
 								}
-							}
-							// "visits" are ignored. This counter is only used to set properties of ops counter
-							if name == "visits" {
-								continue
 							}
 						}
 						continue
