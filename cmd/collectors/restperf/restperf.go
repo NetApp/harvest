@@ -44,9 +44,6 @@ var qosWorkloadQuery = "api/storage/qos/workloads"
 
 var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
 
-// enable for wait_time_latency
-//var workloadDetailMetrics = []string{"resource_latency", "service_time_latency", "wait_time_latency"}
-
 var qosQueries = map[string]string{
 	qosQuery:       qosQuery,
 	qosVolumeQuery: qosVolumeQuery,

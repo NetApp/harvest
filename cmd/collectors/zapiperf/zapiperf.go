@@ -67,9 +67,6 @@ const (
 
 var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
 
-// enable for wait_time_latency
-//var workloadDetailMetrics = []string{"resource_latency", "service_time_latency", "wait_time_latency"}
-
 type ZapiPerf struct {
 	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	object          string
