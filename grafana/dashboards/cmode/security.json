@@ -2462,7 +2462,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "❌  means this attribute is non-compliant",
+          "description": "❌  means this attribute is non-compliant. \n\nDetails of those columns which can affect compliance status\n\n`Compliant:` Compliance status of Cluster \n\n`Snapshot Policy:` Snapshot policy applied for all volumes\n\n`Snapshot Autodelete:` Snapshot autodelete enabled for all volumes \n\n`ARW Protection for SVMs:` ARW protection enabled for all SVMs \n\n`ARW Protection for Volumes:` ARW protection enabled for all volumes\n\n`Cluster Certificate Validity:` Status of cluster certificate \n\n`Global FIPS:` Status of global fips\n\n`Telnet:` Status of telnet\n\n`Autosupport Https Transport:` ASUP transported via Https \n\n`Default Admin User:` Status of default admin user \n\n`Remote Shell:` Status of remote shell \n\n`MD5 in use:` Usage of md5 algorithm\n\n`Insecure SSH Settings:` Secure ssh status\n\n`Login Banner:` Status of login banner \n\n`Network Time Protocol:` Status of network time protocol configured \n\n`Cluster Peering:` Status of cluster peer\n\n`Notification Configured:` Status of notification configured \n\n`Automatic Updates Configured:` Status of automatic updates configured ",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2884,6 +2884,16 @@
                           "to": 9999
                         },
                         "type": "range"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 4,
+                            "text": "Not Applicable"
+                          }
+                        },
+                        "type": "special"
                       }
                     ]
                   },
@@ -3819,7 +3829,12 @@
                     "Value #R",
                     "Value #T",
                     "auto_update_enabled",
-                    "ArwStatus"
+                    "ArwStatus",
+                    "Value #J",
+                    "Value #G",
+                    "banner",
+                    "insecured",
+                    "Value #D"
                   ]
                 }
               }
