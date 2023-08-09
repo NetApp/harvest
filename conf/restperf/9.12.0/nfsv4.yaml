@@ -58,6 +58,7 @@ counters:
   - putrootfh.total                       => putrootfh_total
   - read.average_latency                  => read_avg_latency
   - read.total                            => read_total
+  - read_latency_histogram                => read_latency_hist
   - readdir.average_latency               => readdir_avg_latency
   - readdir.total                         => readdir_total
   - readlink.average_latency              => readlink_avg_latency
@@ -82,6 +83,7 @@ counters:
   - setclientid.total                     => setclientid_total
   - setclientid_confirm.average_latency   => setclientid_confirm_avg_latency
   - setclientid_confirm.total             => setclientid_confirm_total
+  - total.latency_histogram               => latency_hist
   - total.read_throughput                 => read_throughput
   - total.throughput                      => throughput
   - total.write_throughput                => write_throughput
@@ -90,6 +92,7 @@ counters:
   - verify.total                          => verify_total
   - write.average_latency                 => write_avg_latency
   - write.total                           => write_total
+  - write_latency_histogram               => write_latency_hist
 
 override:
   - access.total: rate
