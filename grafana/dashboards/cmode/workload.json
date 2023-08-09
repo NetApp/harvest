@@ -1607,7 +1607,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeFxmiss\", metric=\"fc_miss\"})",
+              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeFcmiss\", metric=\"fc_miss\"})",
               "interval": "",
               "legendFormat": "{{workload}}",
               "refId": "A"
@@ -5962,7 +5962,7 @@
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "TopQOSReadIOTypeFxmiss",
+        "name": "TopQOSReadIOTypeFcmiss",
         "options": [],
         "query": {
           "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"fc_miss\"}[${__range}])))",
