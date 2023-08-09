@@ -6,7 +6,7 @@ object:                   fcvi
 instance_key:             uuid
 
 counters:
-  - fw_SyStatDiscardFrames  => firmwares_systat_discard_frames
+  - fw_SyStatDiscardFrames  => firmware_systat_discard_frames
   - fw_invalid_crc          => firmware_invalid_crc_count
   - fw_invalid_xmit_words   => firmware_invalid_transmit_word_count
   - fw_link_failure         => firmware_link_failure_count
