@@ -190,14 +190,23 @@ func (z *ZapiPerf) loadWorkloadClassQuery(defaultValue string) string {
 	if x = z.Params.GetChildS(name); x != nil {
 		v := x.GetAllChildContentS()
 		if len(v) == 0 {
-			z.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+			z.Logger.Debug().
+				Str("name", name).
+				Str("defaultValue", defaultValue).
+				Send()
 			return defaultValue
 		}
 		s := strings.Join(v, "|")
-		z.Logger.Debug().Msgf("using %s = [%s]", name, s)
+		z.Logger.Debug().
+			Str("name", name).
+			Str("value", s).
+			Send()
 		return s
 	}
-	z.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	z.Logger.Debug().
+		Str("name", name).
+		Str("defaultValue", defaultValue).
+		Send()
 	return defaultValue
 }
 
@@ -506,12 +515,16 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				// special case for workload_detail
 				if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 					for _, wm := range workloadDetailMetrics {
+						// "visits" are ignored
+						if name == "visits" {
+							continue
+						}
+
 						wMetric := curMat.GetMetric(layer + wm)
 
 						if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
 							if err := wMetric.AddValueString(instance, value); err != nil {
 								z.Logger.Error().
-									Stack().
 									Err(err).
 									Str("name", name).
 									Str("value", value).
@@ -560,10 +573,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 									Msg("Add wait_time_latency")
 								count++
 							}
-						}
-						// "visits" are ignored
-						if name == "visits" {
-							continue
 						}
 					}
 					continue

@@ -189,14 +189,23 @@ func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
 	if x = r.Params.GetChildS(name); x != nil {
 		v := x.GetAllChildContentS()
 		if len(v) == 0 {
-			r.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+			r.Logger.Debug().
+				Str("name", name).
+				Str("defaultValue", defaultValue).
+				Send()
 			return defaultValue
 		}
 		s := strings.Join(v, "|")
-		r.Logger.Debug().Msgf("using %s = [%s]", name, s)
+		r.Logger.Debug().
+			Str("name", name).
+			Str("value", s).
+			Send()
 		return s
 	}
-	r.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	r.Logger.Debug().
+		Str("name", name).
+		Str("defaultValue", defaultValue).
+		Send()
 	return defaultValue
 }
 
