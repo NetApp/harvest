@@ -19,7 +19,7 @@ const (
 	defaultLogLevel              = zerolog.InfoLevel
 	defaultConsoleLoggingEnabled = true
 	defaultFileLoggingEnabled    = false // false to avoid opening many file descriptors for same log file
-	DefaultLogMaxMegaBytes       = 5     // 5 MB
+	DefaultLogMaxMegaBytes       = 10    // 10 MB
 	DefaultLogMaxBackups         = 5
 	DefaultLogMaxAge             = 7
 )
