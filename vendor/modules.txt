@@ -56,6 +56,8 @@ github.com/power-devops/perfstat
 # github.com/rivo/uniseg v0.4.4
 ## explicit; go 1.18
 github.com/rivo/uniseg
+# github.com/rogpeppe/go-internal v1.11.0
+## explicit; go 1.19
 # github.com/rs/zerolog v1.30.0
 ## explicit; go 1.15
 github.com/rs/zerolog
