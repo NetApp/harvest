@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1691508761583,
+  "iteration": 1691652999729,
   "links": [
     {
       "asDropdown": true,
@@ -5321,7 +5321,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 7
+            "y": 21
           },
           "id": 39,
           "options": {
@@ -5395,7 +5395,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 7
+            "y": 21
           },
           "id": 50,
           "interval": null,
@@ -5494,7 +5494,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 7
+            "y": 21
           },
           "id": 46,
           "interval": null,
@@ -5584,7 +5584,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 12
+            "y": 26
           },
           "id": 48,
           "options": {
@@ -5649,7 +5649,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 12
+            "y": 26
           },
           "id": 47,
           "options": {
@@ -5723,7 +5723,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 12
+            "y": 26
           },
           "id": 150,
           "interval": null,
@@ -5822,7 +5822,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 12
+            "y": 26
           },
           "id": 151,
           "interval": null,
@@ -5921,7 +5921,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 12
+            "y": 26
           },
           "id": 152,
           "interval": null,
@@ -6020,7 +6020,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 12
+            "y": 26
           },
           "id": 153,
           "interval": null,
@@ -6077,213 +6077,6 @@
           "type": "stat"
         },
         {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 17
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 246,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3Latency\",nfsv=\"v3\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv3 Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 17
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 249,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_read_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadAvgLatency\",nfsv=\"v3\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv3 Read Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 16,
-            "y": 17
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 250,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_write_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteAvgLatency\",nfsv=\"v3\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv3 Write Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
           "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
@@ -6336,7 +6129,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 25
+            "y": 31
           },
           "id": 51,
           "options": {
@@ -6428,7 +6221,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 25
+            "y": 31
           },
           "id": 53,
           "options": {
@@ -6528,7 +6321,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 25
+            "y": 31
           },
           "id": 42,
           "options": {
@@ -6629,7 +6422,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 33
+            "y": 39
           },
           "id": 52,
           "options": {
@@ -6724,7 +6517,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 33
+            "y": 39
           },
           "id": 54,
           "options": {
@@ -6761,6 +6554,219 @@
             }
           ],
           "type": "timeseries"
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 47
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 246,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv3 Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 47
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 249,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_read_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3ReadAvgLatency\",nfsv=\"v3\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv3 Read Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 47
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 250,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_write_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv3WriteAvgLatency\",nfsv=\"v3\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv3 Write Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
         }
       ],
       "title": "NFSv3 Drilldown",
@@ -6811,7 +6817,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 8
+            "y": 22
           },
           "id": 154,
           "options": {
@@ -6885,7 +6891,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 8
+            "y": 22
           },
           "id": 155,
           "interval": null,
@@ -6984,7 +6990,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 8
+            "y": 22
           },
           "id": 166,
           "interval": null,
@@ -7074,7 +7080,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 13
+            "y": 27
           },
           "id": 158,
           "options": {
@@ -7139,7 +7145,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 13
+            "y": 27
           },
           "id": 159,
           "options": {
@@ -7213,7 +7219,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 13
+            "y": 27
           },
           "id": 160,
           "interval": null,
@@ -7312,7 +7318,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 13
+            "y": 27
           },
           "id": 161,
           "interval": null,
@@ -7411,7 +7417,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 13
+            "y": 27
           },
           "id": 162,
           "interval": null,
@@ -7510,7 +7516,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 13
+            "y": 27
           },
           "id": 163,
           "interval": null,
@@ -7565,213 +7571,6 @@
             }
           ],
           "type": "stat"
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 18
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 256,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4Latency\",nfsv=\"v4\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv4 Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 18
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 257,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_read_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4Latency\",nfsv=\"v4\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv4 Read Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 16,
-            "y": 18
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 258,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_write_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv4Latency\",nfsv=\"v4\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv4 Write Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
         },
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -7831,7 +7630,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 26
+            "y": 32
           },
           "id": 145,
           "options": {
@@ -7930,7 +7729,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 26
+            "y": 32
           },
           "id": 146,
           "options": {
@@ -8024,7 +7823,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 26
+            "y": 32
           },
           "id": 147,
           "options": {
@@ -8127,7 +7926,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 34
+            "y": 40
           },
           "id": 157,
           "options": {
@@ -8227,7 +8026,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 34
+            "y": 40
           },
           "id": 149,
           "options": {
@@ -8268,6 +8067,219 @@
             }
           ],
           "type": "timeseries"
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 48
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 256,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv4 Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 48
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 257,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_read_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv4 Read Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 48
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 258,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_write_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv4 Write Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
         }
       ],
       "title": "NFSv4 Drilldown",
@@ -8318,7 +8330,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 9
+            "y": 23
           },
           "id": 164,
           "options": {
@@ -8392,7 +8404,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 9
+            "y": 23
           },
           "id": 165,
           "interval": null,
@@ -8491,7 +8503,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 9
+            "y": 23
           },
           "id": 156,
           "interval": null,
@@ -8581,7 +8593,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 14
+            "y": 28
           },
           "id": 140,
           "options": {
@@ -8646,7 +8658,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 14
+            "y": 28
           },
           "id": 167,
           "options": {
@@ -8720,7 +8732,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 14
+            "y": 28
           },
           "id": 168,
           "interval": null,
@@ -8819,7 +8831,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 14
+            "y": 28
           },
           "id": 169,
           "interval": null,
@@ -8918,7 +8930,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 14
+            "y": 28
           },
           "id": 170,
           "interval": null,
@@ -9017,7 +9029,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 14
+            "y": 28
           },
           "id": 171,
           "interval": null,
@@ -9072,213 +9084,6 @@
             }
           ],
           "type": "stat"
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 19
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 253,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41Latency\",nfsv=\"v4.1\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv4.1 Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 19
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 254,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_read_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41Latency\",nfsv=\"v4.1\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv4.1 Read Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#b4ff00",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateRdYlGn",
-            "exponent": 0.5,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 16,
-            "y": 19
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 255,
-          "interval": "6m",
-          "legend": {
-            "show": false
-          },
-          "maxDataPoints": 25,
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(increase(svm_nfs_write_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$TopNfsv41Latency\",nfsv=\"v4.1\"}[$__interval])) by (le)",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ le }}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "NFSv4.1 Write Latency Heatmap",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "µs",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null,
-            "width": null
-          },
-          "yBucketBound": "auto",
-          "yBucketNumber": null,
-          "yBucketSize": null
         },
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -9338,7 +9143,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 27
+            "y": 33
           },
           "id": 172,
           "options": {
@@ -9437,7 +9242,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 27
+            "y": 33
           },
           "id": 173,
           "options": {
@@ -9536,7 +9341,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 27
+            "y": 33
           },
           "id": 174,
           "options": {
@@ -9642,7 +9447,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 41
           },
           "id": 175,
           "options": {
@@ -9742,7 +9547,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 41
           },
           "id": 176,
           "options": {
@@ -9783,6 +9588,219 @@
             }
           ],
           "type": "timeseries"
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 49
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 253,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv4.1 Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 49
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 254,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_read_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv4.1 Read Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 49
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 255,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "repeat": "Cluster",
+          "repeatDirection": "v",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(increase(svm_nfs_write_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[$__interval])) by (le)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "NFSv4.1 Write Latency Heatmap $Cluster",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
         }
       ],
       "title": "NFSv4.1 Drilldown",
@@ -14221,29 +14239,6 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(svm_nfs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNfsv3Latency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v3\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(svm_nfs_read_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
         "description": null,
         "error": null,
@@ -15067,52 +15062,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(svm_nfs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNfsv41Latency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(svm_nfs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNfsv4Latency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(svm_nfs_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -15136,5 +15085,5 @@
   "timezone": "",
   "title": "ONTAP: SVM",
   "uid": "",
-  "version": 23
+  "version": 24
 }
