@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1687422677620,
+  "iteration": 1691664436025,
   "links": [
     {
       "asDropdown": true,
@@ -1449,8 +1449,19 @@
                     "serial",
                     "version",
                     "model",
-                    "Value #B"
+                    "Value #B",
+                    "cpu_firmware_release"
                   ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "cpu_firmware_release": "CPU Firmware Release"
                 }
               }
             }
@@ -4315,5 +4326,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 19
+  "version": 20
 }
