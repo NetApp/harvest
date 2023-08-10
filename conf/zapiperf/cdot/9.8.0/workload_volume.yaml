@@ -14,8 +14,6 @@ schedule:
   - data: 180s
 
 instance_key:             name
-workload_class:
-  - autovolume
 
 counters:
   - concurrency

@@ -10,12 +10,6 @@ instance_key:             name
 # recommended to use a large interval, since workload objects are expensive
 client_timeout:           1m30s
 
-# Filter by workload class. Options: undefined, preset, user_defined, system_defined, autovolume, load_control
-# Note: autovolume is already gathered through workload_detail_volume.yaml
-workload_class:
-  - user_defined
-  - system_defined
-
 schedule:
   - counter: 1200s
   - instance: 600s
