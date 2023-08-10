@@ -2462,7 +2462,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "❌  means this attribute is non-compliant. \n\nDetails of those columns which can affect compliance status\n\n`Compliant:` Compliance status of Cluster \n\n`Snapshot Policy:` Snapshot policy applied for all volumes\n\n`Snapshot Autodelete:` Snapshot autodelete enabled for all volumes \n\n`ARW Protection for SVMs:` ARW protection enabled for all SVMs \n\n`ARW Protection for Volumes:` ARW protection enabled for all volumes\n\n`Cluster Certificate Validity:` Status of cluster certificate \n\n`Global FIPS:` Status of global fips\n\n`Telnet:` Status of telnet\n\n`Autosupport Https Transport:` ASUP transported via Https \n\n`Default Admin User:` Status of default admin user \n\n`Remote Shell:` Status of remote shell \n\n`MD5 in use:` Usage of md5 algorithm\n\n`Insecure SSH Settings:` Secure ssh status\n\n`Login Banner:` Status of login banner \n\n`Network Time Protocol:` Status of network time protocol configured \n\n`Cluster Peering:` Status of cluster peer\n\n`Notification Configured:` Status of notification configured \n\n`Automatic Updates Configured:` Status of automatic updates configured ",
+          "description": "❌  means this attribute is non-compliant. \n\n|  Column  | Compliant When  |  \n|---|---|\n| `Snapshot Policy` | All volumes have applied Snapshot policy |  \n| `Snapshot Autodelete` | All volumes have enabled Snapshot autodelete |\n| `ARW Protection for SVMs` | All SVMs have enabled ARW protection |\n|`ARW Protection for Volumes`| All volumes have enabled ARW protection|\n| `Cluster Certificate Validity` | Cluster has active certificate |\n| `Global FIPS`| Cluster has global fips enabled |\n| `Telnet` | Cluster has telnet disabled |\n| `Autosupport Https Transport` | Cluster uses https for ASUP |\n| `Default Admin User` | Cluster has default admin user in locked state |\n| `Remote Shell` | Cluster has Remote shell disabled |\n| `MD5 in use` | Cluster hasn't used md5 algorithm |\n| `Insecure SSH Settings` | Cluster has secure ssh |\n| `Login Banner` | Cluster has enabled login banner |\n| `Network Time Protocol` | Cluster has configured 3 NTP servers |\n| `Cluster Peering` | Cluster has cluster peer encrypted |\n| `Notification Configured` | Cluster has configured destinations for notifications |\n| `Automatic Updates Configured`| Cluster has configured for automatic updates |",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2543,11 +2543,11 @@
                         "options": {
                           "false": {
                             "index": 0,
-                            "text": "Disabled"
+                            "text": "❌   Enabled"
                           },
                           "true": {
                             "index": 1,
-                            "text": "❌   Enabled"
+                            "text": "Disabled"
                           }
                         },
                         "type": "value"
@@ -3614,7 +3614,7 @@
             },
             {
               "exemplar": false,
-              "expr": "security_account_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", methods=~\".*password.*\",role_name=\"admin\", user_name=\"admin\"}",
+              "expr": "group by (datacenter,cluster,locked) (security_account_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", methods=~\".*password.*\",role_name=\"admin\", user_name=\"admin\",locked!=\"\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3874,26 +3874,29 @@
                   "methods": true
                 },
                 "indexByName": {
-                  "ArwStatus": 6,
+                  "ArwStatus": 5,
+                  "Value #G": 13,
                   "Value #H": 2,
-                  "Value #I": 13,
-                  "Value #K": 17,
-                  "Value #L": 14,
-                  "Value #M": 15,
-                  "Value #N": 16,
+                  "Value #I": 17,
+                  "Value #J": 14,
+                  "Value #K": 21,
+                  "Value #L": 18,
+                  "Value #M": 19,
+                  "Value #N": 20,
                   "Value #P": 0,
                   "Value #Q": 3,
                   "Value #R": 4,
-                  "Value #S": 5,
-                  "asup_enabled": 10,
-                  "certificateExpiryStatus": 7,
-                  "certificateIssuerType": 18,
+                  "Value #T": 15,
+                  "asup_enabled": 9,
+                  "auto_update_enabled": 16,
+                  "banner": 12,
+                  "certificateExpiryStatus": 6,
+                  "certificateIssuerType": 22,
                   "cluster": 1,
-                  "datacenter": 19,
-                  "fips_enabled": 8,
-                  "locked": 11,
-                  "rsh_enabled": 12,
-                  "telnet_enabled": 9
+                  "fips_enabled": 7,
+                  "locked": 10,
+                  "rsh_enabled": 11,
+                  "telnet_enabled": 8
                 },
                 "renameByName": {
                   "ArwStatus": "ARW Protection for Volumes",
@@ -4871,7 +4874,7 @@
     ]
   },
   "time": {
-    "from": "now-1m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
