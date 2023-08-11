@@ -19,7 +19,7 @@ objects:
   Health:                      health.yaml
   Lun:                         lun.yaml
   Namespace:                   namespace.yaml
-  NetConnections:              netconnections.yaml
+#  NetConnections:              netconnections.yaml
 #  NetPort:                     netport.yaml
   NetRoute:                    netroute.yaml
 #  NFSClients:                  nfs_clients.yaml
