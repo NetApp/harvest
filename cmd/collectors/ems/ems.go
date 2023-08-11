@@ -138,10 +138,7 @@ func (e *Ems) InitMatrix() error {
 }
 
 func (e *Ems) LoadPlugin(kind string, _ *plugin.AbstractPlugin) plugin.Plugin {
-	switch kind {
-	default:
-		e.Logger.Warn().Str("kind", kind).Msg("no ems plugin found ")
-	}
+	e.Logger.Warn().Str("kind", kind).Msg("no ems plugin found")
 	return nil
 }
 
