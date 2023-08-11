@@ -1183,7 +1183,7 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 			if string(sorted) != string(data) {
 				sortedPath := writeSorted(t, path, sorted)
 				path = "grafana/dashboards/" + path
-				t.Errorf("dashboard=%s should have sorted keys but does not.Sorted version created at path=%s. Run \033[1mcp %s %s\033[0m",
+				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s. Run cp %s %s",
 					path, sortedPath, sortedPath, path)
 			}
 		})
