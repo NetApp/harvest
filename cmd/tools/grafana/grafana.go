@@ -90,7 +90,7 @@ func adjustOptions() {
 
 func askForToken() {
 	// ask for API token if not provided as arg and validate
-	if err := checkToken(opts, false); err != nil {
+	if err := checkToken(opts, false, 5); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -716,14 +716,16 @@ func addPrefixToMetricNames(expr, prefix string) string {
 	return expr
 }
 
-func checkToken(opts *options, ignoreConfig bool) error {
-
-	// @TODO check and handle expired API token
+func checkToken(opts *options, ignoreConfig bool, tries int) error {
 
 	var (
 		token, configPath, answer string
 		err                       error
 	)
+
+	if tries == 0 {
+		return fmt.Errorf("no more attempts")
+	}
 
 	configPath = opts.config
 
@@ -765,7 +767,7 @@ func checkToken(opts *options, ignoreConfig bool) error {
 		msg := result["message"].(string)
 		fmt.Printf("error connect: (%d - %s) %s\n", code, status, msg)
 		opts.token = ""
-		return checkToken(opts, true)
+		return checkToken(opts, true, tries-1)
 	}
 
 	// ask user to save API key
