@@ -946,7 +946,7 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 
 func TestPanelChildPanels(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkPanelChildPanels(t, shortPath(path), data)
 		})
@@ -1182,8 +1182,9 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 			})
 			if string(sorted) != string(data) {
 				sortedPath := writeSorted(t, path, sorted)
-				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s",
-					path, sortedPath)
+				path = "grafana/dashboards/" + path
+				t.Errorf("dashboard=%s should have sorted keys but does not.Sorted version created at path=%s. Run \033[1mcp %s %s\033[0m",
+					path, sortedPath, sortedPath, path)
 			}
 		})
 }
@@ -1209,6 +1210,10 @@ func writeSorted(t *testing.T, path string, sorted []byte) string {
 		t.Errorf("failed to write sorted json to file=%s err=%v", dest, err)
 		return ""
 	}
-	create.Close()
+	err = create.Close()
+	if err != nil {
+		t.Errorf("failed to close file=%s err=%v", dest, err)
+		return ""
+	}
 	return dest
 }
