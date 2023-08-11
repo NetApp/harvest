@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1691771661345,
+  "iteration": 1691772584861,
   "links": [
     {
       "asDropdown": true,
@@ -5321,7 +5321,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 31
+            "y": 22
           },
           "id": 39,
           "options": {
@@ -5395,7 +5395,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 31
+            "y": 22
           },
           "id": 50,
           "interval": null,
@@ -5494,7 +5494,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 31
+            "y": 22
           },
           "id": 46,
           "interval": null,
@@ -5584,7 +5584,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 36
+            "y": 27
           },
           "id": 48,
           "options": {
@@ -5649,7 +5649,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 36
+            "y": 27
           },
           "id": 47,
           "options": {
@@ -5723,7 +5723,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 36
+            "y": 27
           },
           "id": 150,
           "interval": null,
@@ -5822,7 +5822,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 36
+            "y": 27
           },
           "id": 151,
           "interval": null,
@@ -5921,7 +5921,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 36
+            "y": 27
           },
           "id": 152,
           "interval": null,
@@ -6020,7 +6020,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 36
+            "y": 27
           },
           "id": 153,
           "interval": null,
@@ -6129,7 +6129,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 41
+            "y": 32
           },
           "id": 51,
           "options": {
@@ -6221,7 +6221,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 41
+            "y": 32
           },
           "id": 53,
           "options": {
@@ -6321,7 +6321,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 41
+            "y": 32
           },
           "id": 42,
           "options": {
@@ -6422,7 +6422,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 49
+            "y": 40
           },
           "id": 52,
           "options": {
@@ -6517,7 +6517,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 49
+            "y": 40
           },
           "id": 54,
           "options": {
@@ -6604,7 +6604,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 40
+            "y": 23
           },
           "id": 154,
           "options": {
@@ -6678,7 +6678,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 40
+            "y": 23
           },
           "id": 155,
           "interval": null,
@@ -6777,7 +6777,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 40
+            "y": 23
           },
           "id": 166,
           "interval": null,
@@ -6867,7 +6867,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 45
+            "y": 28
           },
           "id": 158,
           "options": {
@@ -6932,7 +6932,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 45
+            "y": 28
           },
           "id": 159,
           "options": {
@@ -7006,7 +7006,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 45
+            "y": 28
           },
           "id": 160,
           "interval": null,
@@ -7105,7 +7105,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 45
+            "y": 28
           },
           "id": 161,
           "interval": null,
@@ -7204,7 +7204,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 45
+            "y": 28
           },
           "id": 162,
           "interval": null,
@@ -7303,7 +7303,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 45
+            "y": 28
           },
           "id": 163,
           "interval": null,
@@ -7417,7 +7417,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 50
+            "y": 33
           },
           "id": 145,
           "options": {
@@ -7516,7 +7516,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 50
+            "y": 33
           },
           "id": 146,
           "options": {
@@ -7610,7 +7610,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 50
+            "y": 33
           },
           "id": 147,
           "options": {
@@ -7713,7 +7713,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 58
+            "y": 41
           },
           "id": 157,
           "options": {
@@ -7734,7 +7734,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "{__name__=~\"svm_nfs_.+_avg_latency\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
+              "expr": "avg by(__name__) ({__name__=~\"svm_nfs_.+_avg_latency\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{__name__}}",
@@ -7743,7 +7743,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources NFSv4 SVMs by Latency by Op Type",
+          "title": "NFSv4 SVMs by Latency by Op Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -7813,7 +7813,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 58
+            "y": 41
           },
           "id": 149,
           "options": {
@@ -7834,7 +7834,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "{__name__=~\"svm_nfs_.+_total\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"}",
+              "expr": "sum by (__name__) ({__name__=~\"svm_nfs_.+_total\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{__name__}}",
@@ -7843,7 +7843,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources NFSv4 SVMs by IOPs per Type",
+          "title": "NFSv4 SVMs by IOPs per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -7904,7 +7904,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 25
+            "y": 24
           },
           "id": 164,
           "options": {
@@ -7978,7 +7978,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 25
+            "y": 24
           },
           "id": 165,
           "interval": null,
@@ -8077,7 +8077,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 25
+            "y": 24
           },
           "id": 156,
           "interval": null,
@@ -8167,7 +8167,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 30
+            "y": 29
           },
           "id": 140,
           "options": {
@@ -8232,7 +8232,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 30
+            "y": 29
           },
           "id": 167,
           "options": {
@@ -8306,7 +8306,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 30
+            "y": 29
           },
           "id": 168,
           "interval": null,
@@ -8405,7 +8405,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 30
+            "y": 29
           },
           "id": 169,
           "interval": null,
@@ -8504,7 +8504,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 30
+            "y": 29
           },
           "id": 170,
           "interval": null,
@@ -8603,7 +8603,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 30
+            "y": 29
           },
           "id": 171,
           "interval": null,
@@ -8717,7 +8717,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 35
+            "y": 34
           },
           "id": 172,
           "options": {
@@ -8816,7 +8816,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 35
+            "y": 34
           },
           "id": 173,
           "options": {
@@ -8915,7 +8915,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 35
+            "y": 34
           },
           "id": 174,
           "options": {
@@ -9021,7 +9021,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 42
           },
           "id": 175,
           "options": {
@@ -9042,7 +9042,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "{__name__=~\"svm_nfs_.+_avg_latency\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
+              "expr": "avg by(__name__) ({__name__=~\"svm_nfs_.+_avg_latency\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{__name__}}",
@@ -9051,7 +9051,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources NFSv4.1 SVMs by Latency by Op Type",
+          "title": "NFSv4.1 SVMs by Latency by Op Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -9121,7 +9121,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 43
+            "y": 42
           },
           "id": 176,
           "options": {
@@ -9142,7 +9142,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "{__name__=~\"svm_nfs_.+_total\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"}",
+              "expr": "sum by (__name__) ({__name__=~\"svm_nfs_.+_total\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",nfsv=\"v4.1\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{__name__}}",
@@ -9151,7 +9151,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources NFSv4.1 SVMs by IOPs per Type",
+          "title": "NFSv4.1 SVMs by IOPs per Type",
           "transformations": [
             {
               "id": "renameByRegex",
