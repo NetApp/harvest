@@ -501,7 +501,7 @@ func (p *Poller) Run() {
 				}
 			}
 
-			// only zeroLog when numbers have changes, since hopefully that happens rarely
+			// only log when there are changes, which we expect to be infrequent
 			if upc != upCollectors || upe != upExporters {
 				logger.Info().Msgf("updated status, up collectors: %d (of %d), up exporters: %d (of %d)", upc, len(p.collectors), upe, len(p.exporters))
 			}
