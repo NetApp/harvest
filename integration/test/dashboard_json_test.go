@@ -76,7 +76,6 @@ var excludeCounters = []string{
 	"path_",
 	"poller",
 	"qos_detail_resource_latency",
-	"qos_detail_volume_resource_latency",
 	"quota_disk_used_pct_disk_limit",
 	"quota_files_used_pct_file_limit",
 	"security_login",
@@ -130,7 +129,7 @@ func TestJsonExpression(t *testing.T) {
 
 	now := time.Now()
 	// QoS counters have the longest schedule so check for them before checking for any of the other counters
-	precheckCounters := []string{"qos_read_data", "qos_volume_read_data"}
+	precheckCounters := []string{"qos_read_data"}
 	for _, counter := range precheckCounters {
 		if counterIsMissing(rest, counter, 7*time.Minute) {
 			t.Fatalf("rest qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())

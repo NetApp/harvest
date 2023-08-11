@@ -4,10 +4,11 @@
 
 name:                     WorkloadVolume
 query:                    api/cluster/counter/tables/qos_volume
-object:                   qos_volume
+object:                   qos
 
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s
+
 schedule:
   - counter: 1200s
   - instance: 600s
@@ -15,6 +16,7 @@ schedule:
 
 counters:
   - ^^uuid
+  - concurrency
   - latency
   - ops
   - read_data
