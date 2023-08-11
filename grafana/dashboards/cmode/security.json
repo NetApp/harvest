@@ -2462,7 +2462,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "❌  means this attribute is non-compliant",
+          "description": "❌  means this attribute is non-compliant. \n\n|  Column  | Compliant When  |  \n|---|---|\n| `Snapshot Policy` | All volumes have applied Snapshot policy |  \n| `Snapshot Autodelete` | All volumes have enabled Snapshot autodelete |\n| `ARW Protection for SVMs` | All SVMs have enabled ARW protection |\n|`ARW Protection for Volumes`| All volumes have enabled ARW protection|\n| `Cluster Certificate Validity` | Cluster has active certificate(s) |\n| `Global FIPS`| Cluster has global FIPS enabled |\n| `Telnet` | Cluster has telnet disabled |\n| `Autosupport Https Transport` | Cluster uses HTTPS for autosupport |\n| `Default Admin User` | Default admin user is locked |\n| `Remote Shell` | Cluster's remote shell is disabled |\n| `MD5 in use` | Cluster does not use MD5 algorithm |\n| `Insecure SSH Settings` | Cluster has strong SSH server ciphers |\n| `Login Banner` | Cluster has enabled login banner |\n| `Network Time Protocol` | Cluster has configured three NTP servers |\n| `Cluster Peering` | Cluster peers use encryption |\n| `Notification Configured` | Cluster has configured destinations for notifications |\n| `Automatic Updates Configured`| Cluster has enabled automatic updates |",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2543,11 +2543,11 @@
                         "options": {
                           "false": {
                             "index": 0,
-                            "text": "Disabled"
+                            "text": "❌   Enabled"
                           },
                           "true": {
                             "index": 1,
-                            "text": "❌   Enabled"
+                            "text": "Disabled"
                           }
                         },
                         "type": "value"
@@ -2884,6 +2884,16 @@
                           "to": 9999
                         },
                         "type": "range"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 4,
+                            "text": "Not Applicable"
+                          }
+                        },
+                        "type": "special"
                       }
                     ]
                   },
@@ -3604,7 +3614,7 @@
             },
             {
               "exemplar": false,
-              "expr": "security_account_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", methods=~\".*password.*\",role_name=\"admin\", user_name=\"admin\"}",
+              "expr": "group by (datacenter,cluster,locked) (security_account_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", methods=~\".*password.*\",role_name=\"admin\", user_name=\"admin\",locked!=\"\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3819,7 +3829,12 @@
                     "Value #R",
                     "Value #T",
                     "auto_update_enabled",
-                    "ArwStatus"
+                    "ArwStatus",
+                    "Value #J",
+                    "Value #G",
+                    "banner",
+                    "insecured",
+                    "Value #D"
                   ]
                 }
               }
@@ -3859,26 +3874,29 @@
                   "methods": true
                 },
                 "indexByName": {
-                  "ArwStatus": 6,
+                  "ArwStatus": 5,
+                  "Value #G": 13,
                   "Value #H": 2,
-                  "Value #I": 13,
-                  "Value #K": 17,
-                  "Value #L": 14,
-                  "Value #M": 15,
-                  "Value #N": 16,
+                  "Value #I": 17,
+                  "Value #J": 14,
+                  "Value #K": 21,
+                  "Value #L": 18,
+                  "Value #M": 19,
+                  "Value #N": 20,
                   "Value #P": 0,
                   "Value #Q": 3,
                   "Value #R": 4,
-                  "Value #S": 5,
-                  "asup_enabled": 10,
-                  "certificateExpiryStatus": 7,
-                  "certificateIssuerType": 18,
+                  "Value #T": 15,
+                  "asup_enabled": 9,
+                  "auto_update_enabled": 16,
+                  "banner": 12,
+                  "certificateExpiryStatus": 6,
+                  "certificateIssuerType": 22,
                   "cluster": 1,
-                  "datacenter": 19,
-                  "fips_enabled": 8,
-                  "locked": 11,
-                  "rsh_enabled": 12,
-                  "telnet_enabled": 9
+                  "fips_enabled": 7,
+                  "locked": 10,
+                  "rsh_enabled": 11,
+                  "telnet_enabled": 8
                 },
                 "renameByName": {
                   "ArwStatus": "ARW Protection for Volumes",
