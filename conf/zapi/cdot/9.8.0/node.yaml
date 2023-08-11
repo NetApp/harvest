@@ -6,7 +6,7 @@ object:                     node
 counters:
   node-details-info:
     - ^^node                                => node
-#    - ^cpu-firmware-release
+    - ^cpu-firmware-release                 => cpu_firmware_release
     - ^env-failed-fan-message               => failed_fan_message
     - ^env-failed-power-supply-message      => failed_power_message
     - ^env-over-temperature                 => over_temperature
@@ -51,6 +51,7 @@ export_options:
   instance_keys:
     - node
   instance_labels:
+    - cpu_firmware_release
     - healthy
     - location
     - max_aggr_size

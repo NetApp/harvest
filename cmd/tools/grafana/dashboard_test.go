@@ -1212,3 +1212,24 @@ func writeSorted(t *testing.T, path string, sorted []byte) string {
 	create.Close()
 	return dest
 }
+
+func TestDashboardTime(t *testing.T) {
+	visitDashboards(dashboards, func(path string, data []byte) {
+		checkDashboardTime(t, path, data)
+	})
+}
+
+func checkDashboardTime(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+	from := gjson.GetBytes(data, "time.from")
+	to := gjson.GetBytes(data, "time.to")
+
+	fromWant := "now-3h"
+	toWant := "now"
+	if from.String() != fromWant {
+		t.Errorf("dashboard=%s time.from got=%s want=%s", dashPath, from.String(), fromWant)
+	}
+	if to.String() != toWant {
+		t.Errorf("dashboard=%s time.to got=%s want=%s", dashPath, to.String(), toWant)
+	}
+}

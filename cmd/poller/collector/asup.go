@@ -15,7 +15,6 @@ import (
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/process"
-	"golang.org/x/sys/unix"
 	"os"
 	"os/exec"
 	"path"
@@ -291,7 +290,6 @@ func attachMemory(msg *Payload) {
 	// This is similar to ps -ww -eo user,pid,ppid,stime,nlwp,rss,cmd
 	processes, err := process.Processes()
 	if err != nil {
-		logging.Get().Error().Err(err).Msg("Unable to get processes")
 		return
 	}
 
@@ -301,24 +299,13 @@ func attachMemory(msg *Payload) {
 	for _, p := range processes {
 		name, err := p.Name()
 		if err != nil {
-			if errors.Is(err, unix.EINVAL) || errors.Is(err, unix.ENOENT) {
-				// we do not have permissions. That's OK, skip this one
-			} else {
-				logging.Get().Error().Err(err).Msg("Unable to get name")
-			}
 			continue
 		}
 		pp := Process{
 			Pid: p.Pid,
 		}
 		memInfo, err := p.MemoryInfo()
-		if err != nil {
-			if errors.Is(err, unix.EPERM) {
-				// we do not have permissions. That's OK, skip this one
-			} else {
-				logging.Get().Error().Err(err).Msg("Unable to get memory")
-			}
-		} else {
+		if err == nil {
 			pp.RssBytes = memInfo.RSS
 		}
 
@@ -333,7 +320,7 @@ func attachMemory(msg *Payload) {
 
 		cmdline, err := p.Cmdline()
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get cmdline")
+			continue
 		} else {
 			pp.Cmdline = cmdline
 		}
@@ -342,27 +329,19 @@ func attachMemory(msg *Payload) {
 		}
 
 		username, err := p.Username()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get username")
-		} else {
+		if err == nil {
 			pp.User = username
 		}
 		ppid, err := p.Ppid()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get parent pid")
-		} else {
+		if err == nil {
 			pp.Ppid = ppid
 		}
 		ctime, err := p.CreateTime()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get createTime")
-		} else {
+		if err == nil {
 			pp.Ctime = ctime
 		}
 		threads, err := p.NumThreads()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get numThreads")
-		} else {
+		if err == nil {
 			pp.Threads = threads
 		}
 		msg.Platform.Processes = append(msg.Platform.Processes, pp)

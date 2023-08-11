@@ -5,6 +5,7 @@ object:                     node
 
 counters:
   - ^^name                                            => node
+  - ^controller.cpu.firmware_release                  => cpu_firmware_release
   - ^controller.failed_fan.message.message            => failed_fan_message
   - ^controller.failed_power_supply.message.message   => failed_power_message
   - ^controller.over_temperature                      => over_temperature
@@ -39,6 +40,7 @@ export_options:
   instance_keys:
     - node
   instance_labels:
+    - cpu_firmware_release
     - healthy
     - location
     - max_aggr_size
