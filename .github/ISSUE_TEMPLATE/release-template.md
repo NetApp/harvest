@@ -46,7 +46,7 @@ go run pkg/changelog/main.go --title $RELEASE --highlights releaseHighlights_$RE
 
 #### Update Metrics Documentation
 ```bash
-bin/harvest generate metrics
+bin/harvest generate metrics --poller POLLERNAME
 ```
 - [ ] Make sure docs look good and open a PR for review with `docs/ontap-metrics.md` changes
 
