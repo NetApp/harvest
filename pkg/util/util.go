@@ -15,6 +15,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -40,44 +41,31 @@ func GetCollectorSlice() []string {
 }
 
 func MinLen(elements [][]string) int {
-	var min, i int
-	min = len(elements[0])
+	var smallest, i int
+	smallest = len(elements[0])
 	for i = 1; i < len(elements); i++ {
-		if len(elements[i]) < min {
-			min = len(elements[i])
+		if len(elements[i]) < smallest {
+			smallest = len(elements[i])
 		}
 	}
-	return min
+	return smallest
 }
 
 func MaxLen(elements [][]string) int {
-	var max, i int
-	max = len(elements[0])
+	var largest, i int
+	largest = len(elements[0])
 	for i = 1; i < len(elements); i++ {
-		if len(elements[i]) > max {
-			max = len(elements[i])
+		if len(elements[i]) > largest {
+			largest = len(elements[i])
 		}
 	}
-	return max
+	return largest
 }
 
 func AllSame(elements [][]string, k int) bool {
 	var i int
 	for i = 1; i < len(elements); i++ {
 		if elements[i][k] != elements[0][k] {
-			return false
-		}
-	}
-	return true
-}
-
-func EqualStringSlice(a, b []string) bool {
-	var i int
-	if len(a) != len(b) {
-		return false
-	}
-	for i = 0; i < len(a); i++ {
-		if a[i] != b[i] {
 			return false
 		}
 	}
@@ -125,15 +113,6 @@ func GetPollerStatuses() ([]PollerStatus, error) {
 		result = append(result, s)
 	}
 	return result, nil
-}
-
-func Contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }
 
 func FindLocalIP() (string, error) {
@@ -310,28 +289,20 @@ func SumNumbers(s []float64) float64 {
 	return total
 }
 
+// Max returns 0 when passed an empty slice, slices.Max panics if input is empty
+// This function can be removed once all callers are checked for empty slices
 func Max(input []float64) float64 {
 	if len(input) > 0 {
-		max := input[0]
-		for _, v := range input {
-			if v > max {
-				max = v
-			}
-		}
-		return max
+		return slices.Max(input)
 	}
 	return 0
 }
 
+// Min returns 0 when passed an empty slice, slices.Min panics if input is empty
+// This function can be removed once all callers are checked for empty slices
 func Min(input []float64) float64 {
 	if len(input) > 0 {
-		min := input[0]
-		for _, v := range input {
-			if v < min {
-				min = v
-			}
-		}
-		return min
+		return slices.Min(input)
 	}
 	return 0
 }

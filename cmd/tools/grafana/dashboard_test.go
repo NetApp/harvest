@@ -2,12 +2,12 @@ package grafana
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/pretty"
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -83,7 +83,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 								isThresholdSet = color.String() == th[0] && v.String() == th[1]
 							} else if id == "custom.displayMode" && kind == "table" {
 								v := propertiesN.Get("value")
-								if !util.Contains(expectedColorBackground[kind], v.String()) {
+								if !slices.Contains(expectedColorBackground[kind], v.String()) {
 									t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct displaymode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], v.String())
 								} else {
 									isColorBackgroundSet = true
@@ -94,7 +94,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 
 					if kind == "stat" {
 						colorMode := value.Get("options.colorMode")
-						if !util.Contains(expectedColorBackground[kind], colorMode.String()) {
+						if !slices.Contains(expectedColorBackground[kind], colorMode.String()) {
 							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct colorMode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], colorMode.String())
 						} else {
 							isColorBackgroundSet = true
