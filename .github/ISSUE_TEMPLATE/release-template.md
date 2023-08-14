@@ -20,6 +20,7 @@ git push origin release/$RELEASE
 ```bash
 RELEASE=23.02.0
 git clone https://github.com/NetApp/harvest-metrics.git
+cd harvest-metrics
 git checkout origin/HEAD
 git switch --create release/$RELEASE
 git push origin release/$RELEASE
