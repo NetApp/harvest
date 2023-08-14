@@ -11,7 +11,7 @@ require (
 	github.com/rs/zerolog v1.30.0
 	github.com/shirou/gopsutil/v3 v3.23.7
 	github.com/spf13/cobra v1.7.0
-	github.com/tidwall/gjson v1.15.0
+	github.com/tidwall/gjson v1.16.0
 	github.com/tidwall/pretty v1.2.1
 	github.com/tidwall/sjson v1.2.5
 	github.com/zekroTJA/timedmap v1.5.1
