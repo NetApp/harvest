@@ -16,6 +16,18 @@ git checkout origin/HEAD
 git switch --create release/$RELEASE
 git push origin release/$RELEASE
 ```
+- [ ] If any changes are made to the Asup binary code for the release in the harvest-private repository, please update the harvest-metrics repository `main` branch with the latest `asup_linux_amd64` binary. This binary can be generated using Jenkins with the following parameters:
+
+| Field                       | Value           |
+|-----------------------------|-----------------|
+| VERSION                     | 23.02.0         |
+| RELEASE                     | 1               |
+| BRANCH                      | release/23.02.0 |
+| ASUP_MAKE_TARGET            | production      |
+| DOCKER_PUBLISH              | false           |
+| RUN_TEST                    | true            |
+| OVERWRITE_DOCKER_LATEST_TAG | false           |
+
 - [ ] Create a release branch for the harvest-metrics repo like so:
 ```bash
 RELEASE=23.02.0
@@ -43,7 +55,6 @@ go run pkg/changelog/main.go --title $RELEASE --highlights releaseHighlights_$RE
 ```
   - [ ] Open a PR against the release branch with the generated release notes for review
   - [ ] PR approval
-- [ ] Update metrics repo if needed
 
 #### Update Metrics Documentation
 ```bash
