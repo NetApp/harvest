@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -326,7 +327,7 @@ func (n *Node) Merge(subtemplate *Node, skipOverwrite []string) {
 		} else if mine == nil {
 			n.AddChild(child)
 		} else {
-			if mine.GetParent() != nil && util.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
+			if mine.GetParent() != nil && slices.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
 				mine.SetContentS(mine.GetContentS() + "," + child.GetContentS())
 			} else {
 				mine.SetContentS(child.GetContentS())
@@ -418,7 +419,7 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 		}
 		//fmt.Printf(" -> current_path=%v \t new_path=%v\n", currentPath, newPath)
 		for _, path := range paths {
-			if util.EqualStringSlice(newPath, path) {
+			if slices.Equal(newPath, path) {
 				matches = append(matches, node.GetContentS())
 				//fmt.Println("    MATCH!")
 				break
@@ -451,7 +452,7 @@ func (n *Node) SearchChildren(path []string) []*Node {
 			newPath = make([]string, len(currentPath))
 			copy(newPath, currentPath)
 		}
-		if util.EqualStringSlice(newPath, path) {
+		if slices.Equal(newPath, path) {
 			matches = append(matches, node)
 		} else if len(newPath) < len(path) {
 			for _, child := range node.GetChildren() {
