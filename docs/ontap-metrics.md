@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Aug-09
+Creation Date : 2023-Aug-14
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -7213,8 +7213,8 @@ This is the average number of concurrent requests for the workload.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload.yaml | 
+| REST | `api/cluster/counter/tables/qos_volume` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml | 
+| ZAPI | `perf-object-get-instances workload_volume` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
 ### qos_detail_resource_latency
@@ -7227,107 +7227,7 @@ average latency for workload on Data ONTAP subsystems
 | ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
 
 
-### qos_detail_volume_resource_latency
-
-average latency for volume on Data ONTAP subsystems
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos_detail_volume` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail_volume.yaml | 
-| ZAPI | `perf-object-get-instances workload_detail_volume` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail_volume.yaml | 
-
-
 ### qos_latency
-
-This is the average response time for requests that were initiated by the workload.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> ops | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_ops
-
-Workload operations executed per second.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_read_data
-
-This is the amount of data read per second from the filer by the workload.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_read_io_type
-
-This is the percentage of read requests served from various components (such as buffer cache, ext_cache, disk, etc.).
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `read_io_type_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `read_io_type`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_read_latency
-
-This is the average response time for read requests that were initiated by the workload.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_read_ops
-
-This is the rate of this workload's read operations that completed during the measurement interval.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_sequential_reads
-
-This is the percentage of reads, performed on behalf of the workload, that were sequential.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `sequential_reads_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> sequential_reads_base | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `sequential_reads`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_reads_base | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_sequential_writes
-
-This is the percentage of writes, performed on behalf of the workload, that were sequential. This counter is only available on platforms with more than 4GB of NVRAM.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `sequential_writes_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> sequential_writes_base | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `sequential_writes`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_writes_base | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_total_data
-
-This is the total amount of data read/written per second from/to the filer by the workload.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_volume_latency
 
 This is the average response time for requests that were initiated by the workload.
 
@@ -7337,7 +7237,7 @@ This is the average response time for requests that were initiated by the worklo
 | ZAPI | `perf-object-get-instances workload_volume` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_ops
+### qos_ops
 
 This field is the workload's rate of operations that completed during the measurement interval; measured per second.
 
@@ -7347,7 +7247,17 @@ This field is the workload's rate of operations that completed during the measur
 | ZAPI | `perf-object-get-instances workload_volume` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_read_data
+### qos_other_ops
+
+This is the rate of this workload's other operations that completed during the measurement interval.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/qos` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
+| ZAPI | `perf-object-get-instances workload_volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
+
+
+### qos_read_data
 
 This is the amount of data read per second from the filer by the workload.
 
@@ -7357,7 +7267,7 @@ This is the amount of data read per second from the filer by the workload.
 | ZAPI | `perf-object-get-instances workload_volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_read_io_type
+### qos_read_io_type
 
 This is the percentage of read requests served from various components (such as buffer cache, ext_cache, disk, etc.).
 
@@ -7367,7 +7277,7 @@ This is the percentage of read requests served from various components (such as 
 | ZAPI | `perf-object-get-instances workload_volume` | `read_io_type`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_read_latency
+### qos_read_latency
 
 This is the average response time for read requests that were initiated by the workload.
 
@@ -7377,7 +7287,7 @@ This is the average response time for read requests that were initiated by the w
 | ZAPI | `perf-object-get-instances workload_volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_read_ops
+### qos_read_ops
 
 This is the rate of this workload's read operations that completed during the measurement interval.
 
@@ -7387,7 +7297,7 @@ This is the rate of this workload's read operations that completed during the me
 | ZAPI | `perf-object-get-instances workload_volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_sequential_reads
+### qos_sequential_reads
 
 This is the percentage of reads, performed on behalf of the workload, that were sequential.
 
@@ -7397,7 +7307,7 @@ This is the percentage of reads, performed on behalf of the workload, that were 
 | ZAPI | `perf-object-get-instances workload_volume` | `sequential_reads`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_reads_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_sequential_writes
+### qos_sequential_writes
 
 This is the percentage of writes, performed on behalf of the workload, that were sequential. This counter is only available on platforms with more than 4GB of NVRAM.
 
@@ -7407,7 +7317,7 @@ This is the percentage of writes, performed on behalf of the workload, that were
 | ZAPI | `perf-object-get-instances workload_volume` | `sequential_writes`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_writes_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_total_data
+### qos_total_data
 
 This is the total amount of data read/written per second from/to the filer by the workload.
 
@@ -7417,7 +7327,7 @@ This is the total amount of data read/written per second from/to the filer by th
 | ZAPI | `perf-object-get-instances workload_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_write_data
+### qos_write_data
 
 This is the amount of data written per second to the filer by the workload.
 
@@ -7427,7 +7337,7 @@ This is the amount of data written per second to the filer by the workload.
 | ZAPI | `perf-object-get-instances workload_volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_write_latency
+### qos_write_latency
 
 This is the average response time for write requests that were initiated by the workload.
 
@@ -7437,7 +7347,7 @@ This is the average response time for write requests that were initiated by the 
 | ZAPI | `perf-object-get-instances workload_volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_volume_write_ops
+### qos_write_ops
 
 This is the workload's write operations that completed during the measurement interval; measured per second.
 
@@ -7445,36 +7355,6 @@ This is the workload's write operations that completed during the measurement in
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml | 
 | ZAPI | `perf-object-get-instances workload_volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
-
-
-### qos_write_data
-
-This is the amount of data written per second to the filer by the workload.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_write_latency
-
-This is the average response time for write requests that were initiated by the workload.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/workload.yaml | 
-
-
-### qos_write_ops
-
-This is the workload's write operations that completed during the measurement interval; measured per second.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml | 
-| ZAPI | `perf-object-get-instances workload` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload.yaml | 
 
 
 ### qtree_cifs_ops

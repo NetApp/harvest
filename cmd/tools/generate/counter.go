@@ -40,8 +40,11 @@ var (
 		"read_latency_histogram":  {},
 		"latency_histogram":       {},
 		"nfsv3_latency_hist":      {},
+		"nfs4_latency_hist":       {},
 		"read_latency_hist":       {},
 		"write_latency_hist":      {},
+		"total.latency_histogram": {},
+		"nfs41_latency_hist":      {},
 	}
 	// Excludes these Rest gaps from logs
 	excludeLogRestCounters = []string{
