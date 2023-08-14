@@ -15,7 +15,7 @@ counters:
   - ^is_svm_root                                  => svm_root
   - ^snaplock.type                                => snaplock_type
   - ^snapshot_policy.name                         => snapshot_policy
-  - ^space.snapshot.autodelete.enabled            => snapshot_autodelete
+  - ^space.snapshot.autodelete_enabled            => snapshot_autodelete
   - ^state                                        => state
   - ^style                                        => style
   - ^type                                         => type
