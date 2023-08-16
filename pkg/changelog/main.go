@@ -43,6 +43,59 @@ type cli struct {
 	openIssues        []string
 }
 
+func (c *cli) makeDraft() {
+	const envName = "RELEASE"
+	releaseName, ok := os.LookupEnv(envName)
+	if ok {
+		releaseName = fmt.Sprintf("releaseHighlights_%s.md", releaseName)
+	} else {
+		releaseName = "highlights.md"
+		log.Warn().
+			Str("environmentVariable", envName).
+			Str("highlightsName", releaseName).
+			Msg("environment variable does not exist. Using highlightsName")
+	}
+	_, err := os.Stat(releaseName)
+	if err == nil {
+		log.Error().Str("file", releaseName).Msg("Refuse to overwrite existing file")
+		return
+	}
+	out, err := os.Create(releaseName)
+	if err != nil {
+		log.Error().Err(err).Str("releaseName", releaseName).Msg("Failed to create releaseName file")
+		return
+	}
+	_, _ = out.WriteString(`
+- :gem: Seven new dashboards:
+    - StorageGRID and ONTAP fabric pool
+    - Health
+
+- :star: Several of the existing dashboards include new panels in this release:
+
+- :ear_of_rice: Harvest includes new templates to collect:
+
+- :closed_book: Documentation additions
+
+## Announcements
+
+:bangbang: **IMPORTANT** NetApp moved their communities from Slack to [Discord](https://discord.gg/ZmmWPHTBHw), please join us [there](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
+
+:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please
+read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox.
+
+## Known Issues
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
+this release:
+
+- @Falcon667
+`)
+}
+
 func (c *cli) makeChangelog() {
 	highlights, err := os.ReadFile(c.highlights)
 	if err != nil {
@@ -165,7 +218,7 @@ func newPr(matches []string) pr {
 }
 
 func (c *cli) printChangelog(highlightBytes []byte) {
-	fmt.Printf("## %s / %s\n", c.title, time.Now().Format("2006-01-02"))
+	fmt.Printf("## %s / %s Release\n", c.title, time.Now().Format("2006-01-02"))
 	fmt.Printf(":pushpin: Highlights of this major release include:\n")
 	highlights := string(highlightBytes)
 	highlights = strings.TrimSpace(highlights)
@@ -240,11 +293,12 @@ type prType struct {
 }
 
 func (c *cli) initPrTypes() {
-	c.prOrder = []string{"feat", "fix", "doc", "test", "style", "refactor", "chore", "ci"}
+	c.prOrder = []string{"feat", "fix", "doc", "perf", "test", "style", "refactor", "chore", "ci"}
 
 	c.addPrType(prType{id: "feat", summary: "features", header: ":rocket: Features"})
 	c.addPrType(prType{id: "fix", summary: "bug fixes", header: ":bug: Bug Fixes"})
 	c.addPrType(prType{id: "doc", summary: "documentation", header: ":closed_book: Documentation"})
+	c.addPrType(prType{id: "perf", summary: "performance", header: ":zap: Performance"})
 	c.addPrType(prType{id: "test", summary: "testing", header: ":wrench: Testing"})
 	c.addPrType(prType{id: "style", summary: "styling", header: "Styling"})
 	c.addPrType(prType{id: "refactor", summary: "refactoring", header: "Refactoring"})
@@ -275,6 +329,14 @@ func (c *cli) Root() *cobra.Command {
 	_ = r.MarkFlagRequired("title")
 	_ = r.MarkFlagRequired("highlights")
 	_ = r.MarkFlagRequired("releaseHighlights")
+
+	r.AddCommand(&cobra.Command{
+		Use:   "new",
+		Short: "create draft release highlights",
+		Run: func(cmd *cobra.Command, args []string) {
+			c.makeDraft()
+		},
+	})
 	return r
 }
 

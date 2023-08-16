@@ -1,7 +1,7 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
-## 23.08.0 / 2023-08-15 Release
+## 23.08.0 / 2023-08-21 Release
 :pushpin: Highlights of this major release include:
 - Harvest Security dashboard highlights compliance using [NetApp's Security hardening guide for ONTAP](https://www.netapp.com/media/10674-tr4569.pdf)
 
@@ -56,7 +56,7 @@
 
 ## Announcements
 
-:bangbang: **IMPORTANT** `23.08` fixes a REST collector bug that caused partial data collection when ONTAP paginated results. See #2109 for details. 
+:bangbang: **IMPORTANT** `23.08` fixes a REST collector bug that caused partial data collection when ONTAP paginated results. See #2109 for details.
 
 :bangbang: **IMPORTANT** Release `23.08` disables the `NetConnections` and `NFSClients` templates by default. You can enable them if needed. These templates were disabled because several customers reported that these templates created millions of metrics. None of these metrics are used in Harvest dashboards.
 
@@ -87,7 +87,7 @@ this release:
 
 @7840vz, @DAx-cGn, @Falcon667, @Hedius, @LukaszWasko, @MrObvious, @ReneMeier, @Sawall10, @T1r0l, @XDavidT, @amd-eulee, @aticatac, @chadpruden, @cwaltham, @cygio, @ddhti, @debert-ntap, @demalik, @electrocreative, @elsgaard, @ev1963, @faguayot, @iStep2Step, @jgasher, @jmg011, @lobster1860, @mamoep, @matejzero, @matthieu-sudo, @merdos, @pilot7777, @rbrownATnetapp, @rodenj1, @slater0013, @swordfish291, @tsohst, @wooyoungAhn, Alessandro.Nuzzo, Ed Wilts, GregS, Imthenightbird, KlausHub, MeghanaD, MikeK, Paul P2, Rusty Brown, Shubham Mer, Tudor Pascu, Watson9121, jf38800, jfong, lorenzoc, rcl23, roller, scrhobbs, troysmuller, twodot0h
 
-:seedling: This release includes 41 features, 39 bug fixes, 20 documentation, 4 testing, 1 styling, 9 refactoring, 20 miscellaneous, and 12 ci pull requests.
+:seedling: This release includes 40 features, 39 bug fixes, 20 documentation, 2 performance, 4 testing, 1 styling, 9 refactoring, 20 miscellaneous, and 12 ci pull requests.
 
 ### :rocket: Features
 - Harvest Should Collect Iwarp Counters ([#2071](https://github.com/NetApp/harvest/pull/2071))
@@ -104,7 +104,6 @@ this release:
 - Added Volume Panels In Aggr Dashboard ([#2104](https://github.com/NetApp/harvest/pull/2104))
 - Workload Policy Iops Metrics ([#2111](https://github.com/NetApp/harvest/pull/2111))
 - Autoresolve Ems Would Export Metric Value As 0 And Autoresolve=True Label ([#2120](https://github.com/NetApp/harvest/pull/2120))
-- Harvest Should Include A Rename Label_agent ([#2125](https://github.com/NetApp/harvest/pull/2125))
 - Support Type Label For Volume For Backward Compatibility ([#2132](https://github.com/NetApp/harvest/pull/2132))
 - Volume Clone Info For Zapi ([#2140](https://github.com/NetApp/harvest/pull/2140))
 - Harvest Should Include Numpollers And Rss In Autosupport ([#2143](https://github.com/NetApp/harvest/pull/2143))
@@ -194,6 +193,10 @@ this release:
 - Update Metric Generate Step Command ([#2279](https://github.com/NetApp/harvest/pull/2279))
 - Move Troubleshoot Docs To Doc Site ([#2287](https://github.com/NetApp/harvest/pull/2287))
 - Release 23.08 Metric Docs ([#2290](https://github.com/NetApp/harvest/pull/2290))
+
+### :zap: Performance
+- Improve Memory And Cpu Performance Of Restperf Collector ([#2053](https://github.com/NetApp/harvest/pull/2053))
+- Optimize Restperf Collector Pollinstance ([#2121](https://github.com/NetApp/harvest/pull/2121))
 
 ### :wrench: Testing
 - Add Unit Test For Restperf ([#2044](https://github.com/NetApp/harvest/pull/2044))
