@@ -11,6 +11,10 @@
 
 - :gem: Updated workload dashboard now includes Service Center, Latency Breakdown, and 50 panels
 
+- :mega: The Harvest team published a couple of screencasts about:
+  - [Why Harvest](https://youtu.be/04-66_9egJc)
+  - [Harvest Quick Start: Docker Compose](https://youtu.be/4cbDKzwjGHI)
+
 - :star: Several of the existing dashboards include new panels in this release:
   - Aggregate dashboard includes busy volume panels
   - SVM dashboard includes per NFS latency heatmaps. Thanks to @rbrownATnetapp for raising.
