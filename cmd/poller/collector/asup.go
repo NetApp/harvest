@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"cmp"
 	"context"
 	"crypto/sha1" //nolint:gosec // used for sha1sum not for security
 	"encoding/hex"
@@ -19,7 +20,7 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"sort"
+	"slices"
 	"time"
 )
 
@@ -347,11 +348,17 @@ func attachMemory(msg *Payload) {
 		msg.Platform.Processes = append(msg.Platform.Processes, pp)
 	}
 
+	// keep at most 100, ordered by size descending
+	if len(msg.Platform.Processes) > 100 {
+		slices.SortStableFunc(msg.Platform.Processes, func(a, b Process) int {
+			return cmp.Compare(b.RssBytes, a.RssBytes)
+		})
+		msg.Platform.Processes = msg.Platform.Processes[:100]
+	}
+
 	// sort processes by pid
-	sort.Slice(msg.Platform.Processes, func(i, j int) bool {
-		a := msg.Platform.Processes[i]
-		b := msg.Platform.Processes[j]
-		return a.Pid < b.Pid
+	slices.SortStableFunc(msg.Platform.Processes, func(a, b Process) int {
+		return cmp.Compare(a.Pid, b.Pid)
 	})
 }
 
