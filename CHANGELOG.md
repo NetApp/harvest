@@ -19,7 +19,6 @@
   - Aggregate dashboard includes busy volume panels
   - SVM dashboard includes per NFS latency heatmaps. Thanks to @rbrownATnetapp for raising.
   - Volume dashboard includes top resources by other IOPs panel
-  - Workload panels are included in Lun, Volume, and Workload dashboards
 
 - All Harvest dashboard tables include column filters
 - Harvest dashboards use color to highlight latency and busy threshold breaches
@@ -57,9 +56,13 @@
 
 ## Announcements
 
+:bangbang: **IMPORTANT** `23.08` fixes a REST collector bug that caused partial data collection when ONTAP paginated results. See #2109 for details. 
+
 :bangbang: **IMPORTANT** Release `23.08` disables the `NetConnections` and `NFSClients` templates by default. You can enable them if needed. These templates were disabled because several customers reported that these templates created millions of metrics. None of these metrics are used in Harvest dashboards.
 
 :bulb: The Compliance dashboard was removed after its panels were moved to the Security dashboard.
+
+:eyes: Ambient temperature metric may experience an increase due to issue #2259
 
 :bangbang: **IMPORTANT** NetApp moved their communities from Slack to [Discord](https://discord.gg/ZmmWPHTBHw), please join us [there](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
 
