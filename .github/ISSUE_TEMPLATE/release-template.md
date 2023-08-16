@@ -16,7 +16,7 @@ git checkout origin/HEAD
 git switch --create release/$RELEASE
 git push origin release/$RELEASE
 ```
-- [ ] If any changes are made to the Asup binary code for the release in the harvest-private repository, please update the harvest-metrics repository `main` branch with the latest `asup_linux_amd64` binary. This binary can be generated using Jenkins with the following parameters:
+- [ ] If any changes are made in the [harvest autosupport](https://github.com/NetApp/harvest-private/tree/main/harvest-asup) repository, please update the harvest-metrics repository `main` branch with the latest `asup_linux_amd64` binary. This binary can be generated using Jenkins with the following parameters:
 
 | Field                       | Value           |
 |-----------------------------|-----------------|
