@@ -67,6 +67,8 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 
 ## Known Issues
 
+- Some AFF A250 systems do not report power metrics. See ONTAP bug [1511476](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1511476) for more details.
+
 - ONTAP does not include REST metrics for `offbox_vscan_server` and `offbox_vscan` until ONTAP 9.13.1. See ONTAP bug
   [1473892](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1473892) for more details.
 
