@@ -20,7 +20,6 @@
 - All Harvest dashboard tables include column filters
 - Harvest dashboards use color to highlight latency and busy threshold breaches
 - Harvest's Prometheus exporter supports TLS
-- Harvest calculates power for AFF-250 clusters. Earlier versions of Harvest were unable to calculate power for that family of clusters
 
 - :ear_of_rice: Harvest includes new templates to collect:
   - Iwarp metrics
