@@ -1,7 +1,7 @@
 collector:          Zapi
 schedule:
-  - instance: 600s
-  - data: 180s
+  - instance: 10m
+  - data:      3m
 objects:
   Node:             node.yaml
   Aggregate:        aggr.yaml
