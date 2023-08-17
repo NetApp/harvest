@@ -11,6 +11,8 @@
 
 - :gem: Updated workload dashboard now includes Service Center, Latency Breakdown, and 50 panels
 
+- :gem: Cluster dashboard updated to work with FSx. Some panels are blank because FSx does not have that data.
+
 - :mega: The Harvest team published a couple of screencasts about:
   - [Why Harvest](https://youtu.be/04-66_9egJc)
   - [Harvest Quick Start: Docker Compose](https://youtu.be/4cbDKzwjGHI)
@@ -87,7 +89,7 @@ this release:
 
 @7840vz, @DAx-cGn, @Falcon667, @Hedius, @LukaszWasko, @MrObvious, @ReneMeier, @Sawall10, @T1r0l, @XDavidT, @amd-eulee, @aticatac, @chadpruden, @cwaltham, @cygio, @ddhti, @debert-ntap, @demalik, @electrocreative, @elsgaard, @ev1963, @faguayot, @iStep2Step, @jgasher, @jmg011, @lobster1860, @mamoep, @matejzero, @matthieu-sudo, @merdos, @pilot7777, @rbrownATnetapp, @rodenj1, @slater0013, @swordfish291, @tsohst, @wooyoungAhn, Alessandro.Nuzzo, Ed Wilts, GregS, Imthenightbird, KlausHub, MeghanaD, MikeK, Paul P2, Rusty Brown, Shubham Mer, Tudor Pascu, Watson9121, jf38800, jfong, lorenzoc, rcl23, roller, scrhobbs, troysmuller, twodot0h
 
-:seedling: This release includes 40 features, 39 bug fixes, 20 documentation, 2 performance, 4 testing, 1 styling, 9 refactoring, 20 miscellaneous, and 12 ci pull requests.
+:seedling: This release includes 41 features, 39 bug fixes, 20 documentation, 2 performance, 4 testing, 1 styling, 9 refactoring, 20 miscellaneous, and 12 ci pull requests.
 
 ### :rocket: Features
 - Harvest Should Collect Iwarp Counters ([#2071](https://github.com/NetApp/harvest/pull/2071))
@@ -130,6 +132,7 @@ this release:
 - Added Table Description For Cluster Compliance ([#2269](https://github.com/NetApp/harvest/pull/2269))
 - Update Ontap Metric Document ([#2270](https://github.com/NetApp/harvest/pull/2270))
 - Add Cpu_firmware_release To Cluster Dashboard ([#2274](https://github.com/NetApp/harvest/pull/2274))
+- Enable Cluster Dashboard For Fsx ([#2303](https://github.com/NetApp/harvest/pull/2303))
 
 ### :bug: Bug Fixes
 - Disk Dashboard Power On Time Should Use `Seconds` Unit ([#2039](https://github.com/NetApp/harvest/pull/2039))
