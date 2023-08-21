@@ -20,7 +20,7 @@
 - :star: Several of the existing dashboards include new panels in this release:
   - Aggregate dashboard includes busy volume panels
   - SVM dashboard includes per NFS latency heatmaps. Thanks to @rbrownATnetapp for raising.
-  - Volume dashboard includes top resources by other IOPs panel
+  - Volume dashboard includes top resources by other IOPs panel and junction paths. Thanks to @tsohst for raising.
 
 - All Harvest dashboard tables include column filters
 - Harvest dashboards use color to highlight latency and busy threshold breaches
@@ -89,7 +89,7 @@ this release:
 
 @7840vz, @DAx-cGn, @Falcon667, @Hedius, @LukaszWasko, @MrObvious, @ReneMeier, @Sawall10, @T1r0l, @XDavidT, @amd-eulee, @aticatac, @chadpruden, @cwaltham, @cygio, @ddhti, @debert-ntap, @demalik, @electrocreative, @elsgaard, @ev1963, @faguayot, @iStep2Step, @jgasher, @jmg011, @lobster1860, @mamoep, @matejzero, @matthieu-sudo, @merdos, @pilot7777, @rbrownATnetapp, @rodenj1, @slater0013, @swordfish291, @tsohst, @wooyoungAhn, Alessandro.Nuzzo, Ed Wilts, GregS, Imthenightbird, KlausHub, MeghanaD, MikeK, Paul P2, Rusty Brown, Shubham Mer, Tudor Pascu, Watson9121, jf38800, jfong, lorenzoc, rcl23, roller, scrhobbs, troysmuller, twodot0h
 
-:seedling: This release includes 41 features, 39 bug fixes, 20 documentation, 2 performance, 4 testing, 1 styling, 9 refactoring, 20 miscellaneous, and 12 ci pull requests.
+:seedling: This release includes 42 features, 40 bug fixes, 20 documentation, 2 performance, 4 testing, 1 styling, 9 refactoring, 20 miscellaneous, and 12 ci pull requests.
 
 ### :rocket: Features
 - Harvest Should Collect Iwarp Counters ([#2071](https://github.com/NetApp/harvest/pull/2071))
@@ -133,6 +133,7 @@ this release:
 - Update Ontap Metric Document ([#2270](https://github.com/NetApp/harvest/pull/2270))
 - Add Cpu_firmware_release To Cluster Dashboard ([#2274](https://github.com/NetApp/harvest/pull/2274))
 - Enable Cluster Dashboard For Fsx ([#2303](https://github.com/NetApp/harvest/pull/2303))
+- Add Junction Paths In Volumes Dashboard ([#2309](https://github.com/NetApp/harvest/pull/2309))
 
 ### :bug: Bug Fixes
 - Disk Dashboard Power On Time Should Use `Seconds` Unit ([#2039](https://github.com/NetApp/harvest/pull/2039))
@@ -174,6 +175,7 @@ this release:
 - Grafana Ask-For-Token Should Retry At Most 5 Times ([#2284](https://github.com/NetApp/harvest/pull/2284))
 - Match Object Name With Zapiperf For Cifs_vserver.yaml ([#2288](https://github.com/NetApp/harvest/pull/2288))
 - Add Bin Dir Check Before Removing Files ([#2289](https://github.com/NetApp/harvest/pull/2289))
+- Adding Log Forwarding Column In Compliance Table In Security Dashboard ([#2306](https://github.com/NetApp/harvest/pull/2306))
 
 ### :closed_book: Documentation
 - Explain Bin/Grafana Import --Labels ([#2032](https://github.com/NetApp/harvest/pull/2032))
