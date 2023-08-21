@@ -7743,7 +7743,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 SVMs by Latency by Op Type",
+          "title": "NFSv4 Latency by Op Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -7843,7 +7843,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 SVMs by IOPs per Type",
+          "title": "NFSv4 IOPs per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -9051,7 +9051,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 SVMs by Latency by Op Type",
+          "title": "NFSv4.1 Latency by Op Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -9151,7 +9151,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 SVMs by IOPs per Type",
+          "title": "NFSv4.1 IOPs per Type",
           "transformations": [
             {
               "id": "renameByRegex",
