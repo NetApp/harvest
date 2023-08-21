@@ -165,7 +165,11 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	// Check that the variable DS_PROMETHEUS exist
 	doesDsPromExist := false
 	// This is a list of names that are exempt from the check for a 'true' selected status.
-	excludedNames := []string{"TopResources", "Interval", "IncludeRoot"}
+	excludedNames := map[string]bool{
+		"TopResources": true,
+		"Interval":     true,
+		"IncludeRoot":  true,
+	}
 
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		name := value.Get("name").String()
@@ -181,7 +185,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 			}
 		}
 
-		if !slices.Contains(excludedNames, name) {
+		if !excludedNames[name] {
 			if value.Get("current.selected").String() == "true" {
 				t.Errorf(
 					"dashboard=%s var=current.selected query want=false got=%s text=%s value=%s name= %s",
