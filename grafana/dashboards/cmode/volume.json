@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1692165657901,
+  "iteration": 1692609731870,
   "links": [
     {
       "asDropdown": true,
@@ -892,7 +892,8 @@
                     "Value #F",
                     "Value #G",
                     "Value #H",
-                    "Value #I"
+                    "Value #I",
+                    "junction_path"
                   ]
                 }
               }
@@ -936,7 +937,8 @@
                   "Value #F": "Compression Space Saved",
                   "Value #G": "Total Space Saved",
                   "Value #H": "Logical Space Used",
-                  "Value #I": "Physical Space Used"
+                  "Value #I": "Physical Space Used",
+                  "junction_path": "Junction Path"
                 }
               }
             }
