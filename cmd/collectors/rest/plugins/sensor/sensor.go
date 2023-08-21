@@ -245,31 +245,27 @@ func (my *Sensor) calculateEnvironmentMetrics(data *matrix.Matrix) ([]*matrix.Ma
 						currentKey := currentKeys[i]
 						voltageKey := voltageKeys[i]
 
-						//get values
+						// get values
 						currentSensorValue := v.currentSensor[currentKey]
 						voltageSensorValue := v.voltageSensor[voltageKey]
 
 						// convert units
 						if currentSensorValue.unit == "mA" {
 							currentSensorValue.value = currentSensorValue.value / 1000
-						} else if currentSensorValue.unit == "A" {
-							// do nothing
-						} else {
+						} else if currentSensorValue.unit != "A" {
 							my.Logger.Warn().Str("unit", currentSensorValue.unit).Float64("value", currentSensorValue.value).Msg("unknown current unit")
 						}
 
 						if voltageSensorValue.unit == "mV" {
 							voltageSensorValue.value = voltageSensorValue.value / 1000
-						} else if voltageSensorValue.unit == "V" {
-							// do nothing
-						} else {
+						} else if voltageSensorValue.unit != "V" {
 							my.Logger.Warn().Str("unit", voltageSensorValue.unit).Float64("value", voltageSensorValue.value).Msg("unknown voltage unit")
 						}
 
 						p := currentSensorValue.value * voltageSensorValue.value
 
 						if !strings.EqualFold(voltageSensorValue.name, "in") && !strings.EqualFold(currentSensorValue.name, "in") {
-							p = p / 0.93 //If the sensor names to do NOT contain "IN" or "in", then we need to adjust the power to account for loss in the power supply. We will use 0.93 as the power supply efficiency factor for all systems.
+							p = p / 0.93 // If the sensor names to do NOT contain "IN" or "in", then we need to adjust the power to account for loss in the power supply. We will use 0.93 as the power supply efficiency factor for all systems.
 						}
 
 						sumPower += p

@@ -1,29 +1,44 @@
 linters:
   disable-all: true
   enable:
+    - asasalint
+    - bidichk
     - bodyclose
+    - contextcheck
+    - dogsled
     - dupword
+    - durationcheck
     - errcheck
+    - errchkjson
     - errname
     - errorlint
+    - exhaustive
     - exportloopref
+    - gocheckcompilerdirectives
     - gosec
     - gosimple
     - govet
     - ineffassign
     - makezero
+    - mirror
     - nilerr
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
+    - reassign
+    - revive
     - staticcheck
     - stylecheck
     - tenv
-    - thelper
+    - tenv
+    - testableexamples
     - typecheck
     - unconvert
     - unparam
     - unused
+    - usestdlibvars
+    - wastedassign
+    - zerologlint
 
 issues:
   max-issues-per-linter: 0
@@ -38,3 +53,6 @@ linters-settings:
   thelper:
     test:
       begin: false
+  gocritic:
+    disabled-tags:
+      - style

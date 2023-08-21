@@ -241,7 +241,7 @@ func (c *Client) fetch() ([]byte, error) {
 	//goland:noinspection GoUnhandledErrorResult
 	defer response.Body.Close()
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		if body, err = io.ReadAll(response.Body); err == nil {
 			return nil, errs.NewStorageGridErr(response.StatusCode, body)
 		}
@@ -373,7 +373,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 			return err
 		}
 
-		if response.StatusCode != 200 {
+		if response.StatusCode != http.StatusOK {
 			return errs.NewStorageGridErr(response.StatusCode, body)
 		}
 

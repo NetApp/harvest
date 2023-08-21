@@ -177,13 +177,13 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		//goland:noinspection GoUnhandledErrorResult
 		defer response.Body.Close()
 
-		if response.StatusCode != 200 {
+		if response.StatusCode != http.StatusOK {
 			body, err2 := io.ReadAll(response.Body)
 			if err2 != nil {
 				return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
 			}
 
-			if response.StatusCode == 401 {
+			if response.StatusCode == http.StatusUnauthorized {
 				return nil, errs.New(errs.ErrAuthFailed, response.Status)
 			}
 
@@ -271,7 +271,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 		debugResp, _ := httputil.DumpResponse(response, false)
 		fmt.Printf("RESPONSE: \n%s", debugResp)
 	}
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf("error making request. server response statusCode=[%d]", response.StatusCode)
 	}
 	n, err := io.Copy(out, response.Body)

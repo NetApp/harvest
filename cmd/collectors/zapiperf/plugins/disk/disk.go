@@ -235,13 +235,13 @@ func (d *Disk) initAggrPowerMatrix() {
 }
 
 func (d *Disk) initMaps() {
-	//reset shelf Power
+	// reset shelf Power
 	d.ShelfMap = make(map[string]*shelf)
 
-	//reset diskmap
+	// reset diskmap
 	d.diskMap = make(map[string]*disk)
 
-	//reset aggrmap
+	// reset aggrmap
 	d.aggrMap = make(map[string]*aggregate)
 }
 
@@ -356,7 +356,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 			for _, v1 := range v.disks {
 				c := len(v1.aggregates)
 				if c > 0 {
-					diskWithAggregateCount += 1
+					diskWithAggregateCount++
 				}
 			}
 			if diskWithAggregateCount != 0 {

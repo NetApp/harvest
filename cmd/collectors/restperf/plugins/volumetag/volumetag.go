@@ -29,10 +29,7 @@ func (v *VolumeTag) Init() error {
 		return err
 	}
 
-	if err = v.client.Init(5); err != nil {
-		return err
-	}
-	return nil
+	return v.client.Init(5)
 }
 
 func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {

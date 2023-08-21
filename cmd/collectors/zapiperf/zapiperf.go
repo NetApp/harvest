@@ -264,14 +264,14 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// list of instance keys (instance names or uuids) for which
 	// we will request counter data
 	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-		if resourceMap := z.Params.GetChildS("resource_map"); resourceMap == nil {
+		resourceMap := z.Params.GetChildS("resource_map")
+		if resourceMap == nil {
 			return nil, errs.New(errs.ErrMissingParam, "resource_map")
-		} else {
-			instanceKeys = make([]string, 0)
-			for _, layer := range resourceMap.GetAllChildNamesS() {
-				for key := range prevMat.GetInstances() {
-					instanceKeys = append(instanceKeys, key+"."+layer)
-				}
+		}
+		instanceKeys = make([]string, 0)
+		for _, layer := range resourceMap.GetAllChildNamesS() {
+			for key := range prevMat.GetInstances() {
+				instanceKeys = append(instanceKeys, key+"."+layer)
 			}
 		}
 	} else {
@@ -337,8 +337,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if err != nil {
 			// if ONTAP complains about batch size, use a smaller batch size
 			if strings.Contains(err.Error(), "resource limit exceeded") && z.batchSize > 100 {
-				z.Logger.Error().Err(err)
-				z.Logger.Info().
+				z.Logger.Error().Err(err).
 					Int("oldBatchSize", z.batchSize).
 					Int("newBatchSize", z.batchSize-100).
 					Msg("Changed batch_size")
@@ -1109,48 +1108,48 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			wait.SetExportable(false)
 			visits.SetExportable(false)
 
-			if resourceMap := z.Params.GetChildS("resource_map"); resourceMap == nil {
+			resourceMap := z.Params.GetChildS("resource_map")
+			if resourceMap == nil {
 				return nil, errs.New(errs.ErrMissingParam, "resource_map")
-			} else {
-				for _, x := range resourceMap.GetChildren() {
-					for _, wm := range workloadDetailMetrics {
+			}
+			for _, x := range resourceMap.GetChildren() {
+				for _, wm := range workloadDetailMetrics {
 
-						name := x.GetNameS() + wm
-						resource := x.GetContentS()
+					name := x.GetNameS() + wm
+					resource := x.GetContentS()
 
-						if m := mat.GetMetric(name); m != nil {
-							oldMetrics.Remove(name)
-							continue
-						}
-						if m, err := mat.NewMetricFloat64(name, wm); err != nil {
-							return nil, err
-						} else {
-							m.SetLabel("resource", resource)
-							m.SetProperty(service.GetProperty())
-							// base counter is the ops of the same resource
-							m.SetComment("ops")
-
-							oldMetrics.Remove(name)
-							z.Logger.Debug().Msgf("+ [%s] (=> %s) added workload latency metric", name, resource)
-						}
+					if m := mat.GetMetric(name); m != nil {
+						oldMetrics.Remove(name)
+						continue
 					}
+					m, err := mat.NewMetricFloat64(name, wm)
+					if err != nil {
+						return nil, err
+					}
+					m.SetLabel("resource", resource)
+					m.SetProperty(service.GetProperty())
+					// base counter is the ops of the same resource
+					m.SetComment("ops")
+
+					oldMetrics.Remove(name)
+					z.Logger.Debug().Msgf("+ [%s] (=> %s) added workload latency metric", name, resource)
 				}
 			}
 		}
 
-		if qosLabels := z.Params.GetChildS("qos_labels"); qosLabels == nil {
+		qosLabels := z.Params.GetChildS("qos_labels")
+		if qosLabels == nil {
 			return nil, errs.New(errs.ErrMissingParam, "qos_labels")
-		} else {
-			z.qosLabels = make(map[string]string)
-			for _, label := range qosLabels.GetAllChildContentS() {
+		}
+		z.qosLabels = make(map[string]string)
+		for _, label := range qosLabels.GetAllChildContentS() {
 
-				display := strings.ReplaceAll(label, "-", "_")
-				if x := strings.Split(label, "=>"); len(x) == 2 {
-					label = strings.TrimSpace(x[0])
-					display = strings.TrimSpace(x[1])
-				}
-				z.qosLabels[label] = display
+			display := strings.ReplaceAll(label, "-", "_")
+			if x := strings.Split(label, "=>"); len(x) == 2 {
+				label = strings.TrimSpace(x[0])
+				display = strings.TrimSpace(x[1])
 			}
+			z.qosLabels[label] = display
 		}
 	}
 

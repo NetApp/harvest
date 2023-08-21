@@ -229,8 +229,8 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 	}
 
 	name = strings.TrimSpace(strings.TrimLeft(name, "^"))
-
-	fullPath = append(path, name)
+	fullPath = path
+	fullPath = append(fullPath, name)
 	key = strings.Join(fullPath, ".")
 	if display == "" {
 		display = util.ParseZAPIDisplay(object, fullPath)

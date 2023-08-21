@@ -629,13 +629,16 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		}
 
 		if r.Object == "Node" || r.Name == "ems" {
-			nodeIds, err := r.getNodeUuids()
+			var (
+				nodeIds []collector.ID
+				err     error
+			)
+			nodeIds, err = r.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
 				r.Logger.Error().
 					Err(err).
 					Msg("Unable to get nodes.")
-				nodeIds = make([]collector.ID, 0)
 			}
 			info.Ids = nodeIds
 			p.Nodes = &info
