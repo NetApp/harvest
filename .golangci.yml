@@ -30,7 +30,7 @@ linters:
     - staticcheck
     - stylecheck
     - tenv
-    - tenv
+    - thelper
     - testableexamples
     - typecheck
     - unconvert
