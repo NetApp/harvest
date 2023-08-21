@@ -26,6 +26,11 @@ and GitHub [discussions](https://github.com/NetApp/harvest/discussions). Come jo
 
 :closed_book: https://netapp.github.io/harvest/
 
+# Videos
+
+- [Why Harvest](https://youtu.be/04-66_9egJc)
+- [Harvest Quick Start: Docker Compose](https://youtu.be/4cbDKzwjGHI)
+
 ---
 
 <p align="center">
