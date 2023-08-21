@@ -129,10 +129,6 @@ harvest: deps
 	@echo "Building harvest"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
 
-	@# Build the daemonize for the pollers
-	@echo "Building daemonize"
-	@cd cmd/tools/daemonize; gcc daemonize.c -o ../../../bin/daemonize
-
 	@cp service/contrib/grafana bin; chmod +x bin/grafana
 
 ###############################################################################
