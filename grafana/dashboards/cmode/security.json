@@ -2153,7 +2153,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "❌  means this attribute is non-compliant. \n\n|  Column  | Compliant When  |  \n|---|---|\n| `Snapshot Policy` | All volumes have applied Snapshot policy |  \n| `Snapshot Autodelete` | All volumes have enabled Snapshot autodelete |\n| `ARW Protection for SVMs` | All SVMs have enabled ARW protection |\n|`ARW Protection for Volumes`| All volumes have enabled ARW protection|\n| `Cluster Certificate Validity` | Cluster has active certificate(s) |\n| `Global FIPS`| Cluster has global FIPS enabled |\n| `Telnet` | Cluster has telnet disabled |\n| `Autosupport Https Transport` | Cluster uses HTTPS for autosupport |\n| `Default Admin User` | Default admin user is locked |\n| `Remote Shell` | Cluster's remote shell is disabled |\n| `MD5 in use` | Cluster does not use MD5 algorithm |\n| `Insecure SSH Settings` | Cluster has strong SSH server ciphers |\n| `Login Banner` | Cluster has enabled login banner |\n| `Network Time Protocol` | Cluster has configured three NTP servers |\n| `Cluster Peering` | Cluster peers use encryption |\n| `Notification Configured` | Cluster has configured destinations for notifications |\n| `Automatic Updates Configured`| Cluster has enabled automatic updates |",
+          "description": "❌  means this attribute is non-compliant. \n\n|  Column  | Compliant When  |  \n|---|---|\n| `Snapshot Policy` | All volumes have applied Snapshot policy |  \n| `Snapshot Autodelete` | All volumes have enabled Snapshot autodelete |\n| `ARW Protection for SVMs` | All SVMs have enabled ARW protection |\n|`ARW Protection for Volumes`| All volumes have enabled ARW protection|\n| `Cluster Certificate Validity` | Cluster has active certificate(s) |\n| `Global FIPS`| Cluster has global FIPS enabled |\n| `Telnet` | Cluster has telnet disabled |\n| `Autosupport Https Transport` | Cluster uses HTTPS for autosupport |\n| `Default Admin User` | Default admin user is locked |\n| `Remote Shell` | Cluster's remote shell is disabled |\n| `MD5 in use` | Cluster does not use MD5 algorithm |\n| `Insecure SSH Settings` | Cluster has strong SSH server ciphers |\n| `Login Banner` | Cluster has enabled login banner |\n| `Log Forwarding Encrypted` | Cluster has encrypted protocol for log forwarding |\n| `Network Time Protocol` | Cluster has configured three NTP servers |\n| `Cluster Peering` | Cluster peers use encryption |\n| `Notification Configured` | Cluster has configured destinations for notifications |\n| `Automatic Updates Configured`| Cluster has enabled automatic updates |",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3265,6 +3265,46 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Log Forwarding Encrypted"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "tcp_encrypted": {
+                            "index": 0,
+                            "text": "Yes"
+                          },
+                          "tcp_unencrypted": {
+                            "index": 2,
+                            "text": "❌   No"
+                          },
+                          "udp_unencrypted": {
+                            "index": 1,
+                            "text": "❌   No"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 3,
+                            "text": "Not Configured"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -3496,6 +3536,16 @@
               "interval": "",
               "legendFormat": "",
               "refId": "U"
+            },
+            {
+              "exemplar": false,
+              "expr": "security_audit_destination_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "V"
             }
           ],
           "title": "Cluster Compliance",
@@ -3529,7 +3579,8 @@
                     "Value #G",
                     "banner",
                     "insecured",
-                    "Value #D"
+                    "Value #D",
+                    "protocol"
                   ]
                 }
               }
@@ -3571,27 +3622,28 @@
                 "indexByName": {
                   "ArwStatus": 5,
                   "Value #D": 10,
-                  "Value #G": 15,
+                  "Value #G": 16,
                   "Value #H": 2,
-                  "Value #I": 19,
-                  "Value #J": 18,
-                  "Value #K": 23,
-                  "Value #L": 20,
-                  "Value #M": 21,
-                  "Value #N": 22,
+                  "Value #I": 20,
+                  "Value #J": 19,
+                  "Value #K": 24,
+                  "Value #L": 21,
+                  "Value #M": 22,
+                  "Value #N": 23,
                   "Value #P": 0,
                   "Value #Q": 3,
                   "Value #R": 4,
-                  "Value #T": 17,
+                  "Value #T": 18,
                   "asup_enabled": 11,
-                  "auto_update_enabled": 16,
+                  "auto_update_enabled": 17,
                   "banner": 14,
                   "certificateExpiryStatus": 6,
-                  "certificateIssuerType": 24,
+                  "certificateIssuerType": 25,
                   "cluster": 1,
                   "fips_enabled": 7,
                   "insecured": 9,
                   "locked": 12,
+                  "protocol": 15,
                   "rsh_enabled": 13,
                   "telnet_enabled": 8
                 },
@@ -3630,6 +3682,7 @@
                   "localuser": "Local Users",
                   "locked": "Default Admin User",
                   "ntp": "Network Time Protocol",
+                  "protocol": "Log Forwarding Encrypted",
                   "rsh_enabled": "Remote Shell",
                   "samluser": "Saml Users",
                   "telnet_enabled": "Telnet"
@@ -4519,17 +4572,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": [
-            "rest",
-            "zapi"
-          ],
-          "value": [
-            "rest",
-            "zapi"
-          ]
-        },
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\"},datacenter)",
         "description": null,
@@ -4555,15 +4598,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
         "description": null,
@@ -4589,15 +4624,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",root_svm=\"No\"},svm)",
         "description": "Displaying only the data SVMs and omitting root SVMs",
