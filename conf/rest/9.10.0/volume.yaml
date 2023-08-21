@@ -13,6 +13,7 @@ counters:
   - ^anti_ransomware.state                        => antiRansomwareState
   - ^encryption.enabled                           => isEncrypted
   - ^is_svm_root                                  => svm_root
+  - ^nas.path                                     => junction_path
   - ^snaplock.type                                => snaplock_type
   - ^snapshot_policy.name                         => snapshot_policy
   - ^space.snapshot.autodelete_enabled            => snapshot_autodelete
@@ -50,6 +51,7 @@ counters:
       - autosize
       - encryption.enabled
       - is_svm_root
+      - nas.path
       - snaplock.type
       - space
 
@@ -138,6 +140,7 @@ export_options:
     - isEncrypted
     - isHardwareEncrypted
     - is_sis_volume
+    - junction_path
     - root_volume
     - snaplock_type
     - snapshot_autodelete
