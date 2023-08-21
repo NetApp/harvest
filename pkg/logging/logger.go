@@ -107,7 +107,7 @@ func Configure(config LogConfig) *Logger {
 	multiWriters := zerolog.MultiLevelWriter(writers...)
 
 	zerolog.SetGlobalLevel(config.LogLevel)
-	zerolog.ErrorStackMarshaler = MarshalStack
+	zerolog.ErrorStackMarshaler = MarshalStack //nolint:reassign
 	zerolog.CallerMarshalFunc = ShortFile
 	zeroLogger := zerolog.New(multiWriters).With().Caller().Str(config.PrefixKey, config.PrefixValue).Timestamp().Logger()
 

@@ -57,7 +57,7 @@ func NewEms() *Ems {
 	ac := collector.New("Ems", "Ems", &opts, emsParams(emsConfgPath), nil)
 	e := &Ems{}
 	if err := e.Init(ac); err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Send()
 	}
 	// Changed the resolve_after for 2 issuing ems for auto resolve testing
 	e.resolveAfter["LUN.offline"] = 1 * time.Second
@@ -102,9 +102,7 @@ func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
 				}
 				// Test for matches - filter
 				if generatedEmsName == "hm.alert.raised" {
-					if instance.GetLabel("alert_id") == "RaidLeftBehindAggrAlert" {
-						// OK
-					} else {
+					if instance.GetLabel("alert_id") != "RaidLeftBehindAggrAlert" {
 						t.Errorf("Labels alert_id= %s, expected: RaidLeftBehindAggrAlert", instance.GetLabel("alert_id"))
 					}
 				}
@@ -142,9 +140,7 @@ func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
 				}
 				// Test for matches - filter
 				if generatedEmsName == "hm.alert.raised" {
-					if instance.GetLabel("alert_id") == "RaidLeftBehindAggrAlert" && ok && val == 0.0 {
-						// OK
-					} else {
+					if instance.GetLabel("alert_id") != "RaidLeftBehindAggrAlert" || !ok || val != 0.0 {
 						t.Errorf("Labels alert_id= %s, expected: RaidLeftBehindAggrAlert, metric value = %f, expected: 0.0", instance.GetLabel("alert_id"), val)
 					}
 				}

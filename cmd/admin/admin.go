@@ -98,19 +98,19 @@ func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	if r.Method == "PUT" {
+	if r.Method == http.MethodPut {
 		a.apiPublish(w, r)
-	} else if r.Method == "GET" {
-		w.WriteHeader(200)
+	} else if r.Method == http.MethodGet {
+		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write(a.makeTargets())
 	} else {
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 	}
 }
 
 func (a *Admin) setupLogger() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	zerolog.ErrorStackMarshaler = logging.MarshalStack
+	zerolog.ErrorStackMarshaler = logging.MarshalStack //nolint:reassign
 
 	a.logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).
 		With().Caller().Timestamp().Logger()
@@ -128,7 +128,7 @@ func (a *Admin) apiPublish(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&publish)
 	if err != nil {
 		a.logger.Err(err).Msg("Unable to parse publish json")
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	a.pollerToPromAddr.Set(publish.Name, publish, a.expireAfter)

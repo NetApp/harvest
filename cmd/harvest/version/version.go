@@ -90,9 +90,8 @@ func isNewerAvailable(current string, remote string) (bool, error) {
 	}
 	if currentVersion.GreaterThanOrEqual(remoteVersion) {
 		return false, nil
-	} else {
-		return true, nil
 	}
+	return true, nil
 }
 
 func latestRelease() (string, error) {

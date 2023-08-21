@@ -1,35 +1,34 @@
-/*
-		Copyright NetApp Inc, 2021 All rights reserved
+// Copyright NetApp Inc, 2021 All rights reserved
 
-		Package Schedule provides a mechanism to run tasks at fixed time interals.
-		It is intended to be used by collectors, but can be used by any other
-		package as well. Tasks can be dynamically pointed to the poll functions
-		of the collector. (This why poll functions of collectors are public and
-		have the same signature).
+// Package Schedule provides a mechanism to run tasks at fixed time internals.
+// It is intended to be used by collectors, but can be used by any other
+// package as well. Tasks can be dynamically pointed to the poll functions
+// of the collector. (This is why poll functions of collectors are public and
+// have the same signature).
+//
+// At least one task should be added to Schedule before it can be used.
+// Tasks are yielded in the same order as added (FIFO). The intervals of tasks
+// can be safely changed any time.
+//
+// Create Schedule:
+//  - Initialize empty Schedule with New(),
+//  - Add tasks with NewTask() or NewTaskString(),
+//    the task is marked as due immediately!
+//
+// Use Schedule (usually in a closed loop):
+//  - iterate over all tasks with GetTasks()
+//  - check if it's time to run the task with IsDue(task)
+//  - run the task with task.Run() or run "manually" with task.Start()
+//  - suspend the goroutine until another task is due Sleep()/Wait()
+//
+// The Schedule can enter standByMode when a critical task has failed. In this
+// scenario, all tasks are stalled until the critical task has succeeded. This is
+// sometimes useful when a target system is unreachable, and we have to wait
+// until it's up again.
+//
+// Schedule is meant to be used by at most one goroutine and is not
+// concurrent-safe.
 
-		At least one task should be added to Schedule before it can be used.
-		Tasks are yielded in the same order as added (FIFO). The intervals of tasks
-		can be safely changed any time.
-
-	   	Create Schedule:
-	    	- Initialize empty Schedule with New(),
-	    	- Add tasks with NewTask() or NewTaskString(),
-	        the task is marked as due immediately!
-
-		Use Schedule (usually in a closed loop):
-	    	- iterate over all tasks with GetTasks()
-	        	- check if it's time to run the task with IsDue(task)
-	        	- run the task with task.Run() or run "manually" with task.Start()
-		   - suspend the goroutine until another task is due Sleep()/Wait()
-
-		The Schedule can enter standByMode when a critical task has failed. In this
-		scenario all tasks are stalled until the critical task has succeeded. This is
-		sometimes useful when a target system is unreachable and we have to wait
-		until it's up again.
-
-		Schedule is meant to be used by at most one goroutine and is not
-		concurrent-safe.
-*/
 package schedule
 
 import (
@@ -39,7 +38,7 @@ import (
 )
 
 // Task represents a scheduled task
-type task struct {
+type Task struct {
 	Name       string                                    // name of the task
 	interval   time.Duration                             // the schedule interval
 	timer      time.Time                                 // last time task was executed
@@ -51,49 +50,49 @@ type task struct {
 // Use this method if you are executing the task yourself and you need to register
 // when task started. If the task has a pointer to the executing function, use
 // Run() instead.
-func (t *task) Start() {
+func (t *Task) Start() {
 	t.timer = time.Now()
 }
 
 // Run marks the task as started and executes it
-func (t *task) Run() (map[string]*matrix.Matrix, error) {
+func (t *Task) Run() (map[string]*matrix.Matrix, error) {
 	t.Start()
 	return t.foo()
 }
 
 // GetDuration tells duration of executing the task
 // it assumes that the task just completed
-func (t *task) GetDuration() time.Duration {
+func (t *Task) GetDuration() time.Duration {
 	return time.Since(t.timer)
 }
 
 // GetInterval tells the scheduled interval of the task
-func (t *task) GetInterval() time.Duration {
+func (t *Task) GetInterval() time.Duration {
 	return t.interval
 }
 
 // NextDue tells time until the task is due
-func (t *task) NextDue() time.Duration {
+func (t *Task) NextDue() time.Duration {
 	return t.interval - time.Since(t.timer)
 }
 
 // IsDue tells whether it's time to run the task
-func (t *task) IsDue() bool {
+func (t *Task) IsDue() bool {
 	return t.NextDue() <= 0
 }
 
 // Schedule contains a collection of tasks and the current state of the schedule
 type Schedule struct {
-	tasks          []*task                  // list of tasks that Schedule needs to run
+	tasks          []*Task                  // list of tasks that Schedule needs to run
 	standByMode    bool                     // if true, Schedule waitsfor a stalled task
-	standByTask    *task                    // stalled task in standByMode
+	standByTask    *Task                    // stalled task in standByMode
 	cachedInterval map[string]time.Duration // normal interval of the stalled tasks
 }
 
 // New creates and initializes an empty Schedule.
 func New() *Schedule {
 	s := Schedule{}
-	s.tasks = make([]*task, 0)
+	s.tasks = make([]*Task, 0)
 	s.standByMode = false
 	s.cachedInterval = make(map[string]time.Duration)
 	return &s
@@ -106,14 +105,14 @@ func (s *Schedule) IsStandBy() bool {
 }
 
 // IsTaskStandBy tells if a task in schedule is in IsStandBy.
-func (s *Schedule) IsTaskStandBy(t *task) bool {
+func (s *Schedule) IsTaskStandBy(t *Task) bool {
 	return t.Name == s.standByTask.Name
 }
 
 // SetStandByMode initializes StandbyMode: Schedule will suspend all tasks until
 // the critical task t has succeeded. The temporary interval i will be used for
 // the task until Schedule recovers to normal mode.
-func (s *Schedule) SetStandByMode(t *task, i time.Duration) {
+func (s *Schedule) SetStandByMode(t *Task, i time.Duration) {
 	for _, x := range s.tasks {
 		if x.Name == t.Name {
 			s.standByTask = t
@@ -142,7 +141,7 @@ func (s *Schedule) Recover() {
 				t.timer = time.Now().Add(-t.interval)
 			}
 		}
-		//s.cachedInterval = nil
+		// s.cachedInterval = nil
 		s.standByTask = nil
 		s.standByMode = false
 		return
@@ -158,7 +157,7 @@ func (s *Schedule) Recover() {
 func (s *Schedule) NewTask(n string, i time.Duration, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
 	if s.GetTask(n) == nil {
 		if i > 0 {
-			t := &task{Name: n, interval: i, foo: f, identifier: identifier}
+			t := &Task{Name: n, interval: i, foo: f, identifier: identifier}
 			s.cachedInterval[n] = t.interval // remember normal interval of task
 			if runNow {
 				t.timer = time.Now().Add(-i) // set to run immediately
@@ -183,15 +182,15 @@ func (s *Schedule) NewTaskString(n, i string, f func() (map[string]*matrix.Matri
 }
 
 // GetTasks returns scheduled tasks
-func (s *Schedule) GetTasks() []*task {
+func (s *Schedule) GetTasks() []*Task {
 	if !s.standByMode {
 		return s.tasks
 	}
-	return []*task{s.standByTask}
+	return []*Task{s.standByTask}
 }
 
 // GetTask returns the task named n or nil if it doesn't exist
-func (s *Schedule) GetTask(n string) *task {
+func (s *Schedule) GetTask(n string) *Task {
 	for _, t := range s.tasks {
 		if t.Name == n {
 			return t

@@ -217,7 +217,7 @@ func addLabel(content []byte, label string, labelMap map[string]string) []byte {
 
 	// create a new list of vars and copy the existing ones into it, duplicate the first var since we're going to
 	// overwrite it
-	newVars := make([]gjson.Result, 0)
+	var newVars []gjson.Result
 	newVars = append(newVars, vars[0])
 	newVars = append(newVars, vars...)
 
@@ -304,7 +304,7 @@ func toChainedVar(defStr string, label string) string {
 		if firstParen == -1 {
 			return ""
 		}
-		if lastComma == -1 {
+		if lastComma == -1 { //nolint:revive
 			// Case 1: There are not existing labels
 			// label_values(datacenter) becomes label_values({foo=~"$Foo"}, datacenter)
 		} else {

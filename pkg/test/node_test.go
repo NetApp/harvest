@@ -70,7 +70,7 @@ func TestNode_MergeCollector(t *testing.T) {
 
 	// object name overwrite
 	want := "customLun"
-	got := ""
+	var got string
 	if name := defaultTemplate.GetChildS("name"); name != nil {
 		got = name.GetContentS()
 		if got != want {
