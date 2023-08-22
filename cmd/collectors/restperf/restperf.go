@@ -137,20 +137,20 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 
 func (r *RestPerf) InitQOSLabels() error {
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-		if qosLabels := r.Params.GetChildS("qos_labels"); qosLabels == nil {
+		qosLabels := r.Params.GetChildS("qos_labels")
+		if qosLabels == nil {
 			return errs.New(errs.ErrMissingParam, "qos_labels")
-		} else {
-			r.perfProp.qosLabels = make(map[string]string)
-			for _, label := range qosLabels.GetAllChildContentS() {
+		}
+		r.perfProp.qosLabels = make(map[string]string)
+		for _, label := range qosLabels.GetAllChildContentS() {
 
-				display := strings.ReplaceAll(label, "-", "_")
-				before, after, found := strings.Cut(label, "=>")
-				if found {
-					label = strings.TrimSpace(before)
-					display = strings.TrimSpace(after)
-				}
-				r.perfProp.qosLabels[label] = display
+			display := strings.ReplaceAll(label, "-", "_")
+			before, after, found := strings.Cut(label, "=>")
+			if found {
+				label = strings.TrimSpace(before)
+				display = strings.TrimSpace(after)
 			}
+			r.perfProp.qosLabels[label] = display
 		}
 	}
 	return nil
@@ -158,7 +158,7 @@ func (r *RestPerf) InitQOSLabels() error {
 
 func (r *RestPerf) InitMatrix() error {
 	mat := r.Matrix[r.Object]
-	//init perf properties
+	// init perf properties
 	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
@@ -433,7 +433,7 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 					ms := strings.Split(m, ",")
 					for range ms {
 						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
-						vLen += 1
+						vLen++
 					}
 					if vLen > len(subLabelSlice) {
 						return false
@@ -502,7 +502,7 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 					ms := strings.Split(m, ",")
 					for range ms {
 						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
-						vLen += 1
+						vLen++
 					}
 					if vLen > len(subLabelSlice) {
 						break
@@ -580,32 +580,32 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 		wait.SetExportable(false)
 		visits.SetExportable(false)
 
-		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
+		resourceMap := r.Params.GetChildS("resource_map")
+		if resourceMap == nil {
 			return nil, errs.New(errs.ErrMissingParam, "resource_map")
-		} else {
-			for _, x := range resourceMap.GetChildren() {
-				for _, wm := range workloadDetailMetrics {
-					name := x.GetNameS() + wm
-					resource := x.GetContentS()
+		}
+		for _, x := range resourceMap.GetChildren() {
+			for _, wm := range workloadDetailMetrics {
+				name := x.GetNameS() + wm
+				resource := x.GetContentS()
 
-					if m := mat.GetMetric(name); m != nil {
-						continue
-					}
-					if m, err := mat.NewMetricFloat64(name, wm); err != nil {
-						return nil, err
-					} else {
-						r.perfProp.counterInfo[name] = &counter{
-							name:        wm,
-							description: "",
-							counterType: r.perfProp.counterInfo[service.GetName()].counterType,
-							unit:        r.perfProp.counterInfo[service.GetName()].unit,
-							denominator: "ops",
-						}
-						m.SetLabel("resource", resource)
-
-						r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
-					}
+				if m := mat.GetMetric(name); m != nil {
+					continue
 				}
+				m, err := mat.NewMetricFloat64(name, wm)
+				if err != nil {
+					return nil, err
+				}
+				r.perfProp.counterInfo[name] = &counter{
+					name:        wm,
+					description: "",
+					counterType: r.perfProp.counterInfo[service.GetName()].counterType,
+					unit:        r.perfProp.counterInfo[service.GetName()].unit,
+					denominator: "ops",
+				}
+				m.SetLabel("resource", resource)
+
+				r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
 			}
 		}
 	}
@@ -864,123 +864,121 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							}
 						}
 						continue
-					} else {
-						if f.isArray {
-							labels := strings.Split(f.label, ",")
-							values := strings.Split(f.value, ",")
+					}
+					if f.isArray {
+						labels := strings.Split(f.label, ",")
+						values := strings.Split(f.value, ",")
 
-							if len(labels) != len(values) {
-								// warn & skip
-								r.Logger.Warn().
-									Str("labels", f.label).
-									Str("value", f.value).
-									Msg("labels don't match parsed values")
+						if len(labels) != len(values) {
+							// warn & skip
+							r.Logger.Warn().
+								Str("labels", f.label).
+								Str("value", f.value).
+								Msg("labels don't match parsed values")
+							continue
+						}
+
+						// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
+						// if a counter is a histogram
+						isHistogram = false
+						description := strings.ToLower(r.perfProp.counterInfo[name].description)
+						if len(labels) > 0 && strings.Contains(description, "histogram") {
+							key := name + ".bucket"
+							histogramMetric = curMat.GetMetric(key)
+							if histogramMetric != nil {
+								r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
+							} else {
+								histogramMetric, err = curMat.NewMetricFloat64(key, metric.Label)
+								if err != nil {
+									r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
+									continue
+								}
+							}
+							histogramMetric.SetArray(true)
+							histogramMetric.SetExportable(metric.Exportable)
+							histogramMetric.SetBuckets(&labels)
+							isHistogram = true
+						}
+
+						for i, label := range labels {
+							k := name + arrayKeyToken + label
+							metr, ok := curMat.GetMetrics()[k]
+							if !ok {
+								if metr, err = curMat.NewMetricFloat64(k, metric.Label); err != nil {
+									r.Logger.Error().Err(err).
+										Str("name", k).
+										Msg("NewMetricFloat64")
+									continue
+								}
+								if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
+									metr.SetLabel("metric", x[0])
+									metr.SetLabel("submetric", x[1])
+								} else {
+									metr.SetLabel("metric", label)
+								}
+								// differentiate between array and normal counter
+								metr.SetArray(true)
+								metr.SetExportable(metric.Exportable)
+								if isHistogram {
+									// Save the index of this label so the labels can be exported in order
+									metr.SetLabel("comment", strconv.Itoa(i))
+									// Save the bucket name so the flattened metrics can find their bucket when exported
+									metr.SetLabel("bucket", name+".bucket")
+									metr.SetHistogram(true)
+								}
+							}
+							if err = metr.SetValueString(instance, values[i]); err != nil {
+								r.Logger.Error().
+									Err(err).
+									Str("name", name).
+									Str("label", label).
+									Str("value", values[i]).
+									Int("instIndex", instIndex).
+									Msg("Set value failed")
 								continue
 							}
-
-							// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
-							// if a counter is a histogram
-							isHistogram = false
-							description := strings.ToLower(r.perfProp.counterInfo[name].description)
-							if len(labels) > 0 && strings.Contains(description, "histogram") {
-								key := name + ".bucket"
-								histogramMetric = curMat.GetMetric(key)
-								if histogramMetric != nil {
-									r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
-								} else {
-									histogramMetric, err = curMat.NewMetricFloat64(key, metric.Label)
-									if err != nil {
-										r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
-										continue
-									}
-								}
-								histogramMetric.SetArray(true)
-								histogramMetric.SetExportable(metric.Exportable)
-								histogramMetric.SetBuckets(&labels)
-								isHistogram = true
+							r.Logger.Trace().
+								Str("name", name).
+								Str("label", label).
+								Str("value", values[i]).
+								Int("instIndex", instIndex).
+								Msg("Set name.label = value")
+							count++
+						}
+					} else {
+						metr, ok := curMat.GetMetrics()[name]
+						if !ok {
+							if metr, err = curMat.NewMetricFloat64(name, metric.Label); err != nil {
+								r.Logger.Error().Err(err).
+									Str("name", name).
+									Int("instIndex", instIndex).
+									Msg("NewMetricFloat64")
 							}
-
-							for i, label := range labels {
-								k := name + arrayKeyToken + label
-								metr, ok := curMat.GetMetrics()[k]
-								if !ok {
-									if metr, err = curMat.NewMetricFloat64(k, metric.Label); err != nil {
-										r.Logger.Error().Err(err).
-											Str("name", k).
-											Msg("NewMetricFloat64")
-										continue
-									}
-									if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
-										metr.SetLabel("metric", x[0])
-										metr.SetLabel("submetric", x[1])
-									} else {
-										metr.SetLabel("metric", label)
-									}
-									// differentiate between array and normal counter
-									metr.SetArray(true)
-									metr.SetExportable(metric.Exportable)
-									if isHistogram {
-										// Save the index of this label so the labels can be exported in order
-										metr.SetLabel("comment", strconv.Itoa(i))
-										// Save the bucket name so the flattened metrics can find their bucket when exported
-										metr.SetLabel("bucket", name+".bucket")
-										metr.SetHistogram(true)
-									}
-								}
-								if err = metr.SetValueString(instance, values[i]); err != nil {
-									r.Logger.Error().
-										Err(err).
-										Str("name", name).
-										Str("label", label).
-										Str("value", values[i]).
-										Int("instIndex", instIndex).
-										Msg("Set value failed")
-									continue
-								} else {
-									r.Logger.Trace().
-										Str("name", name).
-										Str("label", label).
-										Str("value", values[i]).
-										Int("instIndex", instIndex).
-										Msg("Set name.label = value")
-									count++
-								}
-							}
-						} else {
-							metr, ok := curMat.GetMetrics()[name]
-							if !ok {
-								if metr, err = curMat.NewMetricFloat64(name, metric.Label); err != nil {
-									r.Logger.Error().Err(err).
-										Str("name", name).
-										Int("instIndex", instIndex).
-										Msg("NewMetricFloat64")
-								}
-							}
-							metr.SetExportable(metric.Exportable)
-							if c, err := strconv.ParseFloat(f.value, 64); err == nil {
-								if err = metr.SetValueFloat64(instance, c); err != nil {
-									r.Logger.Error().Err(err).
-										Str("key", metric.Name).
-										Str("metric", metric.Label).
-										Int("instIndex", instIndex).
-										Msg("Unable to set float key on metric")
-								} else {
-									r.Logger.Trace().
-										Int("instIndex", instIndex).
-										Str("key", instanceKey).
-										Str("counter", name).
-										Str("value", f.value).
-										Msg("Set metric")
-								}
-							} else {
+						}
+						metr.SetExportable(metric.Exportable)
+						if c, err := strconv.ParseFloat(f.value, 64); err == nil {
+							if err = metr.SetValueFloat64(instance, c); err != nil {
 								r.Logger.Error().Err(err).
 									Str("key", metric.Name).
 									Str("metric", metric.Label).
 									Int("instIndex", instIndex).
-									Msg("Unable to parse float value")
+									Msg("Unable to set float key on metric")
+							} else {
+								r.Logger.Trace().
+									Int("instIndex", instIndex).
+									Str("key", instanceKey).
+									Str("counter", name).
+									Str("value", f.value).
+									Msg("Set metric")
 							}
-							count++
+						} else {
+							r.Logger.Error().Err(err).
+								Str("key", metric.Name).
+								Str("metric", metric.Label).
+								Int("instIndex", instIndex).
+								Msg("Unable to parse float value")
 						}
+						count++
 					}
 				} else {
 					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
@@ -1049,8 +1047,10 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	}
 
 	// order metrics, such that those requiring base counters are processed last
-	orderedMetrics := append(orderedNonDenominatorMetrics, orderedDenominatorMetrics...)
-	orderedKeys := append(orderedNonDenominatorKeys, orderedDenominatorKeys...)
+	orderedMetrics := orderedNonDenominatorMetrics
+	orderedMetrics = append(orderedMetrics, orderedDenominatorMetrics...)
+	orderedKeys := orderedNonDenominatorKeys
+	orderedKeys = append(orderedKeys, orderedDenominatorKeys...)
 
 	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically

@@ -388,11 +388,11 @@ func Fetch(client *Client, href string) ([]gjson.Result, error) {
 			return nil, err
 		}
 		if mr != "" {
-			if mri, err := strconv.Atoi(mr); err != nil {
+			mri, err := strconv.Atoi(mr)
+			if err != nil {
 				return nil, err
-			} else {
-				maxRecords = mri
 			}
+			maxRecords = mri
 			downloadAll = maxRecords == 0
 		}
 	}
@@ -421,11 +421,11 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 			return []gjson.Result{}, gjson.Result{}, err
 		}
 		if mr != "" {
-			if mri, err := strconv.Atoi(mr); err != nil {
+			mri, err := strconv.Atoi(mr)
+			if err != nil {
 				return []gjson.Result{}, gjson.Result{}, err
-			} else {
-				maxRecords = mri
 			}
+			maxRecords = mri
 		}
 		downloadAll = maxRecords == 0
 	}

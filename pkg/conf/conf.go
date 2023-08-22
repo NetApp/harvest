@@ -175,9 +175,8 @@ func GetDefaultHarvestConfigPath() string {
 	configPath := os.Getenv("HARVEST_CONF")
 	if configPath == "" {
 		return "./" + HarvestYML
-	} else {
-		return path.Join(configPath, HarvestYML)
 	}
+	return path.Join(configPath, HarvestYML)
 }
 
 // GetHarvestHomePath returns the value of the env var HARVEST_CONF or ./

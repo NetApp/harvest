@@ -136,9 +136,8 @@ func (s *StorageGrid) InitCache() error {
 func (s *StorageGrid) PollData() (map[string]*matrix.Matrix, error) {
 	if s.Props.Query == "prometheus" {
 		return s.pollPrometheusMetrics()
-	} else {
-		return s.pollRest()
 	}
+	return s.pollRest()
 }
 
 func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error) {

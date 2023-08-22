@@ -1,5 +1,5 @@
 /*
-  - Copyright NetApp Inc, 2021 All rights reserved
+Copyright NetApp Inc, 2021 All rights reserved
 
 NetApp Harvest : the swiss-army-knife for datacenter monitoring
 

@@ -402,20 +402,18 @@ func (n *Node) printN(depth int, b *strings.Builder) {
 }
 
 func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool) {
-
-	//fmt.Printf("SearchContent: prefix=%v \t paths=%v\n", prefix, paths)
-
-	var search func(*Node, []string)
-
-	matches := make([]string, 0)
+	var (
+		search  func(*Node, []string)
+		matches []string
+	)
 
 	search = func(node *Node, currentPath []string) {
 		var newPath []string
 		if len(currentPath) > 0 || prefix[0] == node.GetNameS() {
-			newPath = append(currentPath, node.GetNameS())
+			newPath = currentPath
+			newPath = append(newPath, node.GetNameS())
 		} else {
-			newPath = make([]string, len(currentPath))
-			copy(newPath, currentPath)
+			newPath = slices.Clone(currentPath)
 		}
 		//fmt.Printf(" -> current_path=%v \t new_path=%v\n", currentPath, newPath)
 		for _, path := range paths {
@@ -440,17 +438,18 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 
 func (n *Node) SearchChildren(path []string) []*Node {
 
-	var search func(*Node, []string)
-
-	matches := make([]*Node, 0)
+	var (
+		search  func(*Node, []string)
+		matches []*Node
+	)
 
 	search = func(node *Node, currentPath []string) {
 		var newPath []string
 		if len(currentPath) > 0 || path[0] == node.GetNameS() {
-			newPath = append(currentPath, node.GetNameS())
+			newPath = currentPath
+			newPath = append(newPath, node.GetNameS())
 		} else {
-			newPath = make([]string, len(currentPath))
-			copy(newPath, currentPath)
+			newPath = slices.Clone(currentPath)
 		}
 		if slices.Equal(newPath, path) {
 			matches = append(matches, node)

@@ -90,7 +90,7 @@ func TestMultipleRule(t *testing.T) {
 	instanceNo.SetLabel("B", "aaa bbb ccc")
 	instanceNo.SetLabel("node", "nodeB")
 
-	results := make([]*matrix.Matrix, 0)
+	var results []*matrix.Matrix
 	results = append(results, m)
 	dataMap := map[string]*matrix.Matrix{
 		m.Object: m,

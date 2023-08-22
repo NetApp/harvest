@@ -275,10 +275,10 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string, isAppend bool) {
-
-		newpath := append(path, node.GetNameS())
-		key := strings.Join(newpath, ".")
-		z.Logger.Trace().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newpath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
+		newPath := path
+		newPath = append(newPath, node.GetNameS())
+		key := strings.Join(newPath, ".")
+		z.Logger.Trace().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newPath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 
 		if value := node.GetContentS(); value != "" {
 			if label, has := z.instanceLabelPaths[key]; has {
@@ -312,9 +312,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		for _, child := range node.GetChildren() {
 			if util.HasDuplicates(child.GetAllChildNamesS()) {
 				z.Logger.Debug().Msgf("Array detected for %s", child.GetNameS())
-				fetch(instance, child, newpath, true)
+				fetch(instance, child, newPath, true)
 			} else {
-				fetch(instance, child, newpath, isAppend)
+				fetch(instance, child, newPath, isAppend)
 			}
 		}
 	}
@@ -483,13 +483,16 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		}
 
 		if z.Object == "Node" {
-			nodeIds, err := z.getNodeUuids()
+			var (
+				nodeIds []collector.ID
+				err     error
+			)
+			nodeIds, err = z.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
 				z.Logger.Error().
 					Err(err).
 					Msg("Unable to get nodes.")
-				nodeIds = make([]collector.ID, 0)
 			}
 			info.Ids = nodeIds
 			p.Nodes = &info

@@ -114,11 +114,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err = e.InitMatrix(); err != nil {
-		return err
-	}
-
-	return nil
+	return e.InitMatrix()
 }
 
 func (e *Ems) InitMatrix() error {
@@ -359,7 +355,8 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	}
 	toTime := clusterTime.Unix()
 	timeFilter := e.getTimeStampFilter(clusterTime)
-	filter := append(e.Filter, timeFilter)
+	filter := e.Filter
+	filter = append(filter, timeFilter)
 
 	// build hrefs up to maxURLSize
 	var hrefs []string
@@ -534,13 +531,13 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 
 			// Check matches at all same name ems
-			isMatch := false
+			var isMatch bool
 			// Check matches at each ems
-			isMatchPs := false
+			var isMatchPs bool
 			// Check instance count at all same name ems
 			instanceLabelCount := uint64(0)
 			// Check instance count at each ems
-			instanceLabelCountPs := uint64(0)
+			var instanceLabelCountPs uint64
 
 			// parse ems properties for the instance
 			if ps, ok := prop[msgName]; ok {
@@ -609,7 +606,6 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						}
 					}
 					if !isMatchPs {
-						instanceLabelCountPs = 0
 						continue
 					}
 

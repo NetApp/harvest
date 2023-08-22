@@ -311,9 +311,8 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
 				a.Logger.Error().Stack().Err(err).Msgf("valueToNumMapping: new metric [%s]:", r.metric)
 				return err
-			} else {
-				metric.SetProperty("value_to_num mapping")
 			}
+			metric.SetProperty("value_to_num mapping")
 		}
 
 		for key, instance := range m.GetInstances() {
@@ -342,9 +341,8 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
 				a.Logger.Error().Stack().Err(err).Msgf("valueToNumRegexMapping: new metric [%s]:", r.metric)
 				return err
-			} else {
-				metric.SetProperty("value_to_num_regex mapping")
 			}
+			metric.SetProperty("value_to_num_regex mapping")
 		}
 
 		for key, instance := range m.GetInstances() {

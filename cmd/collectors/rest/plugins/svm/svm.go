@@ -23,20 +23,20 @@ var weakCiphers = regexp.MustCompile("(.*)_cbc.*")
 
 type SVM struct {
 	*plugin.AbstractPlugin
-	nsswitchInfo        map[string]nsswitch
+	nsswitchInfo        map[string]Nsswitch
 	kerberosInfo        map[string]string
-	fpolicyInfo         map[string]fpolicy
+	fpolicyInfo         map[string]Fpolicy
 	iscsiServiceInfo    map[string]string
 	iscsiCredentialInfo map[string]string
 	client              *rest.Client
 }
 
-type nsswitch struct {
+type Nsswitch struct {
 	nsdb     []string
 	nssource []string
 }
 
-type fpolicy struct {
+type Fpolicy struct {
 	name   string
 	enable string
 }
@@ -62,9 +62,9 @@ func (my *SVM) Init() error {
 	if err = my.client.Init(5); err != nil {
 		return err
 	}
-	my.nsswitchInfo = make(map[string]nsswitch)
+	my.nsswitchInfo = make(map[string]Nsswitch)
 	my.kerberosInfo = make(map[string]string)
-	my.fpolicyInfo = make(map[string]fpolicy)
+	my.fpolicyInfo = make(map[string]Fpolicy)
 	my.iscsiServiceInfo = make(map[string]string)
 	my.iscsiCredentialInfo = make(map[string]string)
 
@@ -167,15 +167,15 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	return nil, nil
 }
 
-func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]nsswitch, error) {
+func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]Nsswitch, error) {
 
 	var (
-		vserverNsswitchMap map[string]nsswitch
-		ns                 nsswitch
+		vserverNsswitchMap map[string]Nsswitch
+		ns                 Nsswitch
 		ok                 bool
 	)
 
-	vserverNsswitchMap = make(map[string]nsswitch)
+	vserverNsswitchMap = make(map[string]Nsswitch)
 
 	for _, svmInstance := range data.GetInstances() {
 		svmName := svmInstance.GetLabel("svm")
@@ -191,7 +191,7 @@ func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]nsswitch, error)
 				ns.nsdb = append(ns.nsdb, nsdb)
 				ns.nssource = append(ns.nssource, nssourcelist...)
 			} else {
-				ns = nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
+				ns = Nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
 			}
 			vserverNsswitchMap[svmName] = ns
 		}
@@ -231,14 +231,14 @@ func (my *SVM) GetKerberosConfig() (map[string]string, error) {
 	return svmKerberosMap, nil
 }
 
-func (my *SVM) GetFpolicy() (map[string]fpolicy, error) {
+func (my *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	var (
 		result        []gjson.Result
-		svmFpolicyMap map[string]fpolicy
+		svmFpolicyMap map[string]Fpolicy
 		err           error
 	)
 
-	svmFpolicyMap = make(map[string]fpolicy)
+	svmFpolicyMap = make(map[string]Fpolicy)
 	query := "api/protocols/fpolicy"
 	fpolicyFields := []string{"svm.name", "policies.enabled", "policies.name"}
 	href := rest.BuildHref("", strings.Join(fpolicyFields, ","), nil, "", "", "", "", query)
@@ -252,11 +252,11 @@ func (my *SVM) GetFpolicy() (map[string]fpolicy, error) {
 		fpolicyName := fpolicyData.Get("policies.name").String()
 		svmName := fpolicyData.Get("svm.name").String()
 		if _, ok := svmFpolicyMap[svmName]; !ok {
-			svmFpolicyMap[svmName] = fpolicy{name: fpolicyName, enable: fpolicyEnable}
+			svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
 		} else {
 			// If svm is already present, update the status value only if it is false
 			if svmFpolicyMap[svmName].enable == "false" {
-				svmFpolicyMap[svmName] = fpolicy{name: fpolicyName, enable: fpolicyEnable}
+				svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
 			}
 		}
 	}

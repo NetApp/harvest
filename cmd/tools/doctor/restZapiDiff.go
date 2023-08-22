@@ -113,7 +113,7 @@ func metricPerfValueDiff(metricName string) {
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
-	results := make([]gjson.Result, 0)
+	var results []gjson.Result
 
 	keyIndexes := make([]int, 0)
 
@@ -355,11 +355,10 @@ func metricValueDiff(metricName string) {
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
-	results := make([]gjson.Result, 0)
+	var results []gjson.Result
+	var keyIndexes []int
 
-	keyIndexes := make([]int, 0)
-
-	// These plugin generated metrics are node scoped.
+	// These plugin-generated metrics are node scoped.
 	environmentSensorMetrics := strings.Join([]string{
 		"environment_sensor_average_ambient_temperature",
 		"environment_sensor_average_fan_speed",

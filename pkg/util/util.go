@@ -388,9 +388,8 @@ func HasDuplicates(slice []string) bool {
 	for _, v := range slice {
 		if encountered[v] {
 			return true
-		} else {
-			encountered[v] = true
 		}
+		encountered[v] = true
 	}
 
 	return false
