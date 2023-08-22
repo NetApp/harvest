@@ -1,6 +1,9 @@
 # Harvest Logs Collection Guide
 
-This guide will help you collect logs for Harvest on various platforms. Follow the instructions specific to your platform. If you would like to share the collected logs with the Harvest team, feel free to email them to `ng-harvest-files@netapp.com`.
+This guide will help you collect Harvest logs on various platforms.
+Follow the instructions specific to your platform.
+If you would like to share the collected logs with the Harvest team,
+please email them to [ng-harvest-files@netapp.com](mailto:ng-harvest-files@netapp.com).
 
 ## RPM, DEB, and Native Installations
 
@@ -24,6 +27,14 @@ This command will create a file named `harvest_logs.tar.gz` containing the logs 
 
 ## NABox
 
-For NABox installations, refer to the NABox documentation on collecting logs:
+For NABox installations, use the following command to create a compressed tar file containing the logs:
 
-[NABox Troubleshooting - Collecting Logs](https://nabox.org/documentation/troubleshooting/#collecting-logs)
+```bash
+dc logs nabox-api > nabox-api.log; dc logs nabox-harvest2 > nabox-harvest2.log;\
+  tar -czf nabox-logs-`date +%Y-%m-%d_%H:%M:%S`.tgz *
+```
+
+This command will create a file named `nabox-logs-$date.tgz` containing the nabox-api and Harvest poller logs.
+
+For more information,
+see the [NABox documentation on collecting logs](https://nabox.org/documentation/troubleshooting/#collecting-logs)
