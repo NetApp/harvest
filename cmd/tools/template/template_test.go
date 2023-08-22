@@ -279,7 +279,8 @@ func TestExportLabelsExist(t *testing.T) {
 				allLabelNames[m.right] = true
 			} else {
 				if isZapi {
-					zapiPaths := append(m.parents, m.left)
+					zapiPaths := m.parents
+					zapiPaths = append(zapiPaths, m.left)
 					display := util.ParseZAPIDisplay(model.Object, zapiPaths)
 					allLabelNames[display] = true
 				} else {

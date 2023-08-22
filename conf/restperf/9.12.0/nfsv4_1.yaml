@@ -82,6 +82,7 @@ counters:
   - putrootfh.total                               => putrootfh_total
   - read.average_latency                          => read_avg_latency
   - read.total                                    => read_total
+  - read_latency_histogram                        => read_latency_hist
   - readdir.average_latency                       => readdir_avg_latency
   - readdir.total                                 => readdir_total
   - readlink.average_latency                      => readlink_avg_latency
@@ -108,6 +109,7 @@ counters:
   - setattr.total                                 => setattr_total
   - test_stateid.average_latency                  => test_stateid_avg_latency
   - test_stateid.total                            => test_stateid_total
+  - total.latency_histogram                       => latency_hist
   - total.read_throughput                         => read_throughput
   - total.throughput                              => write_throughput
   - total.write_throughput                        => throughput
@@ -118,6 +120,7 @@ counters:
   - want_delegation.total                         => want_delegation_total
   - write.average_latency                         => write_avg_latency
   - write.total                                   => write_total
+  - write_latency_histogram                       => write_latency_hist
 
 export_options:
   instance_keys:

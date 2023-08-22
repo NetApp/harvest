@@ -59,6 +59,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 		metric                    *matrix.Metric
 		metricVal, firstMetricVal *matrix.Metric
 		err                       error
+		metricNotFound            []error
 	)
 
 	// map values for compute_metric mapping rules
@@ -67,9 +68,8 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
 				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("Failed to create metric")
 				return err
-			} else {
-				metric.SetProperty("compute_metric mapping")
 			}
+			metric.SetProperty("compute_metric mapping")
 		}
 
 		for _, instance := range m.GetInstances() {
@@ -96,8 +96,8 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					if metricVal != nil {
 						v, _ = metricVal.GetValueFloat64(instance)
 					} else {
-						a.Logger.Warn().Err(err).Str("metricName", r.metricNames[i]).Msg("computeMetrics: metric not found")
-						return nil
+						metricNotFound = append(metricNotFound, err)
+						break
 					}
 				}
 
@@ -130,6 +130,9 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 			_ = metric.SetValueFloat64(instance, result)
 			a.Logger.Trace().Str("metricName", r.metric).Float64("metricValue", result).Msg("computeMetrics: new metric created")
 		}
+	}
+	if len(metricNotFound) > 0 {
+		a.Logger.Warn().Errs("computeMetrics: errors for metric not found", metricNotFound).Send()
 	}
 	return nil
 }

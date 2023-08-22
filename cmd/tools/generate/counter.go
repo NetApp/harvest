@@ -40,8 +40,26 @@ var (
 		"read_latency_histogram":  {},
 		"latency_histogram":       {},
 		"nfsv3_latency_hist":      {},
+		"nfs4_latency_hist":       {},
 		"read_latency_hist":       {},
 		"write_latency_hist":      {},
+		"total.latency_histogram": {},
+		"nfs41_latency_hist":      {},
+	}
+	// Excludes these Rest gaps from logs
+	excludeLogRestCounters = []string{
+		"smb2_",
+		"ontaps3_svm_",
+		"nvmf_rdma_port_",
+		"nvmf_tcp_port_",
+		"netstat_",
+		"external_service_op_",
+		"fabricpool_average_latency",
+		"fabricpool_get_throughput_bytes",
+		"fabricpool_put_throughput_bytes",
+		"fabricpool_stats",
+		"fabricpool_throughput_ops",
+		"iw_",
 	}
 )
 
@@ -211,8 +229,8 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 	}
 
 	name = strings.TrimSpace(strings.TrimLeft(name, "^"))
-
-	fullPath = append(path, name)
+	fullPath = path
+	fullPath = append(fullPath, name)
 	key = strings.Join(fullPath, ".")
 	if display == "" {
 		display = util.ParseZAPIDisplay(object, fullPath)
@@ -509,8 +527,17 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 		// Print such counters which are missing Rest mapping
 		if len(counter.APIs) == 1 {
 			if counter.APIs[0].API == "ZAPI" {
+				isPrint := true
+				for _, substring := range excludeLogRestCounters {
+					if strings.HasPrefix(counter.Name, substring) {
+						isPrint = false
+						break
+					}
+				}
 				//missing Rest Mapping
-				fmt.Printf("Missing %s mapping for %v \n", "REST", counter)
+				if isPrint {
+					fmt.Printf("Missing %s mapping for %v \n", "REST", counter)
+				}
 			}
 		}
 

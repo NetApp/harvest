@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
-	//"github.com/netapp/harvest/v2/share/logger"
+	// "github.com/netapp/harvest/v2/share/logger"
 )
 
 func newLabelAgent() *LabelAgent {
@@ -54,7 +54,7 @@ func newLabelAgent() *LabelAgent {
 	// create metric "result", if label "state" matches regex then map to 1 else use default value "4"
 	params.NewChildS("value_to_num_regex", "").NewChildS("", "result value ^test\\d+ ^error `4`")
 
-	// These both are mutually exclusive, and should honor the above one's filtered result.
+	// These both are mutually exclusive, and should honour the above one's filtered result.
 	// exclude instance if label "volstate" has value "offline"
 	params.NewChildS("exclude_equals", "").NewChildS("", "volstate `offline`")
 	// include instance if label "voltype" has value "rw"
@@ -63,9 +63,6 @@ func newLabelAgent() *LabelAgent {
 	params.NewChildS("include_contains", "").NewChildS("", "volstyle `flexvol`")
 	// exclude instance if label "volstatus" has value which starts with "stopped_"
 	params.NewChildS("exclude_contains", "").NewChildS("", "volstatus `stop`")
-
-	// rename label named style to type
-	params.NewChildS("rename", "").NewChildS("", "style type")
 
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &LabelAgent{AbstractPlugin: abc}
@@ -86,9 +83,7 @@ func TestSplitSimpleRule(t *testing.T) {
 	_ = p.splitSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("C") == "c" && instance.GetLabel("D") == "d" {
-		// OK
-	} else {
+	if instance.GetLabel("C") != "c" || instance.GetLabel("D") != "d" {
 		t.Error("Labels C and D don't have expected values")
 	}
 }
@@ -104,9 +99,7 @@ func TestSplitRegexRule(t *testing.T) {
 	_ = p.splitRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("A") == "A22" && instance.GetLabel("B") == "B333" {
-		// OK
-	} else {
+	if instance.GetLabel("A") != "A22" || instance.GetLabel("B") != "B333" {
 		t.Error("Labels A and B don't have expected values")
 	}
 }
@@ -122,9 +115,7 @@ func TestSplitPairsRule(t *testing.T) {
 	_ = p.splitPairs(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("owner") == "jack" && instance.GetLabel("contact") == "some@email" {
-		// OK
-	} else {
+	if instance.GetLabel("owner") != "jack" || instance.GetLabel("contact") != "some@email" {
 		t.Error("Labels owner and contact don't have expected values")
 	}
 }
@@ -141,27 +132,8 @@ func TestJoinSimpleRule(t *testing.T) {
 	_ = p.joinSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("X") == "aaa_bbb" {
-		// OK
-	} else {
+	if instance.GetLabel("X") != "aaa_bbb" {
 		t.Error("Label A does have expected value")
-	}
-}
-
-func TestRenameRule(t *testing.T) {
-	m := matrix.New("TestLabelAgent", "test", "test")
-	p := newLabelAgent()
-
-	instance, _ := m.NewInstance("0")
-	instance.SetLabel("style", "aaa_X")
-
-	_ = p.rename(m)
-
-	if instance.GetLabel("type") != "aaa_X" {
-		t.Errorf("rename failed, label type got=[%s] want=[%s]", instance.GetLabel("type"), "aaa_X")
-	}
-	if instance.GetLabel("style") != "" {
-		t.Errorf("rename failed, style lable should not exist got=[%s] ", instance.GetLabel("style"))
 	}
 }
 
@@ -176,9 +148,7 @@ func TestReplaceSimpleRule(t *testing.T) {
 	_ = p.replaceSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("A") == "X" && instance.GetLabel("B") == "bbb_X" {
-		// OK
-	} else {
+	if instance.GetLabel("A") != "X" || instance.GetLabel("B") != "bbb_X" {
 		t.Error("Labels A and B don't have expected values")
 	}
 }
@@ -194,9 +164,7 @@ func TestReplaceRegexRule(t *testing.T) {
 	_ = p.replaceRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("B") == "abcDEF-12345-bbb" {
-		// OK
-	} else {
+	if instance.GetLabel("B") != "abcDEF-12345-bbb" {
 		t.Error("Label B does not have expected value")
 	}
 }

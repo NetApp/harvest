@@ -29,36 +29,36 @@ type SVM struct {
 	batchSize      string
 	client         *zapi.Client
 	auditProtocols map[string]string
-	cifsProtocols  map[string]cifsSecurity
-	nsswitchInfo   map[string]nsswitch
+	cifsProtocols  map[string]CifsSecurity
+	nsswitchInfo   map[string]Nsswitch
 	nisInfo        map[string]string
 	cifsEnabled    map[string]bool
 	nfsEnabled     map[string]string
-	sshData        map[string]sshInfo
+	sshData        map[string]SSHInfo
 	iscsiAuth      map[string]string
 	iscsiService   map[string]string
-	fpolicyData    map[string]fpolicy
+	fpolicyData    map[string]Fpolicy
 	ldapData       map[string]string
 	kerberosConfig map[string]string
 }
 
-type nsswitch struct {
+type Nsswitch struct {
 	nsdb     []string
 	nssource []string
 }
 
-type fpolicy struct {
+type Fpolicy struct {
 	name   string
 	enable string
 }
 
-type cifsSecurity struct {
+type CifsSecurity struct {
 	cifsNtlmEnabled string
 	smbEncryption   string
 	smbSigning      string
 }
 
-type sshInfo struct {
+type SSHInfo struct {
 	ciphers    string
 	isInsecure string
 }
@@ -85,15 +85,15 @@ func (my *SVM) Init() error {
 	}
 
 	my.auditProtocols = make(map[string]string)
-	my.cifsProtocols = make(map[string]cifsSecurity)
-	my.nsswitchInfo = make(map[string]nsswitch)
+	my.cifsProtocols = make(map[string]CifsSecurity)
+	my.nsswitchInfo = make(map[string]Nsswitch)
 	my.nisInfo = make(map[string]string)
 	my.cifsEnabled = make(map[string]bool)
 	my.nfsEnabled = make(map[string]string)
-	my.sshData = make(map[string]sshInfo)
+	my.sshData = make(map[string]SSHInfo)
 	my.iscsiAuth = make(map[string]string)
 	my.iscsiService = make(map[string]string)
-	my.fpolicyData = make(map[string]fpolicy)
+	my.fpolicyData = make(map[string]Fpolicy)
 	my.ldapData = make(map[string]string)
 	my.kerberosConfig = make(map[string]string)
 
@@ -339,15 +339,15 @@ func (my *SVM) GetAuditProtocols() (map[string]string, error) {
 	return vserverAuditEnableMap, nil
 }
 
-func (my *SVM) GetCifsProtocols() (map[string]cifsSecurity, error) {
+func (my *SVM) GetCifsProtocols() (map[string]CifsSecurity, error) {
 	var (
 		result             []*node.Node
 		request            *node.Node
-		vserverCifsDataMap map[string]cifsSecurity
+		vserverCifsDataMap map[string]CifsSecurity
 		err                error
 	)
 
-	vserverCifsDataMap = make(map[string]cifsSecurity)
+	vserverCifsDataMap = make(map[string]CifsSecurity)
 
 	request = node.NewXMLS("cifs-security-get-iter")
 	request.NewChildS("max-records", my.batchSize)
@@ -365,22 +365,22 @@ func (my *SVM) GetCifsProtocols() (map[string]cifsSecurity, error) {
 		smbSigning := cifsSecurityData.GetChildContentS("is-signing-required")
 		smbEncryption := cifsSecurityData.GetChildContentS("is-smb-encryption-required")
 		svmName := cifsSecurityData.GetChildContentS("vserver")
-		vserverCifsDataMap[svmName] = cifsSecurity{cifsNtlmEnabled: lmCompatibilityLevel, smbEncryption: smbEncryption, smbSigning: smbSigning}
+		vserverCifsDataMap[svmName] = CifsSecurity{cifsNtlmEnabled: lmCompatibilityLevel, smbEncryption: smbEncryption, smbSigning: smbSigning}
 	}
 	return vserverCifsDataMap, nil
 }
 
-func (my *SVM) GetNSSwitchInfo() (map[string]nsswitch, error) {
+func (my *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
 	var (
 		result             []*node.Node
 		request            *node.Node
-		vserverNsswitchMap map[string]nsswitch
-		ns                 nsswitch
+		vserverNsswitchMap map[string]Nsswitch
+		ns                 Nsswitch
 		ok                 bool
 		err                error
 	)
 
-	vserverNsswitchMap = make(map[string]nsswitch)
+	vserverNsswitchMap = make(map[string]Nsswitch)
 
 	request = node.NewXMLS("nameservice-nsswitch-get-iter")
 	request.NewChildS("max-records", my.batchSize)
@@ -403,7 +403,7 @@ func (my *SVM) GetNSSwitchInfo() (map[string]nsswitch, error) {
 			ns.nsdb = append(ns.nsdb, nsdb)
 			ns.nssource = append(ns.nssource, nssourcelist...)
 		} else {
-			ns = nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
+			ns = Nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
 		}
 		vserverNsswitchMap[svmName] = ns
 	}
@@ -496,15 +496,15 @@ func (my *SVM) GetNfsEnabled() (map[string]string, error) {
 	return vserverNfsMap, nil
 }
 
-func (my *SVM) GetSSHData() (map[string]sshInfo, error) {
+func (my *SVM) GetSSHData() (map[string]SSHInfo, error) {
 	var (
 		result  []*node.Node
 		request *node.Node
-		sshMap  map[string]sshInfo
+		sshMap  map[string]SSHInfo
 		err     error
 	)
 
-	sshMap = make(map[string]sshInfo)
+	sshMap = make(map[string]SSHInfo)
 
 	request = node.NewXMLS("security-ssh-get-iter")
 	request.NewChildS("max-records", my.batchSize)
@@ -523,7 +523,7 @@ func (my *SVM) GetSSHData() (map[string]sshInfo, error) {
 		sort.Strings(sshList)
 		ciphersVal := strings.Join(sshList, ",")
 		insecured := weakCiphers.MatchString(ciphersVal)
-		sshMap[svmName] = sshInfo{ciphers: ciphersVal, isInsecure: strconv.FormatBool(insecured)}
+		sshMap[svmName] = SSHInfo{ciphers: ciphersVal, isInsecure: strconv.FormatBool(insecured)}
 	}
 	return sshMap, nil
 }
@@ -598,15 +598,15 @@ func (my *SVM) GetIscsiService() (map[string]string, error) {
 	return vserverIscsiServiceMap, nil
 }
 
-func (my *SVM) GetFpolicy() (map[string]fpolicy, error) {
+func (my *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	var (
 		result            []*node.Node
 		request           *node.Node
-		vserverFpolicyMap map[string]fpolicy
+		vserverFpolicyMap map[string]Fpolicy
 		err               error
 	)
 
-	vserverFpolicyMap = make(map[string]fpolicy)
+	vserverFpolicyMap = make(map[string]Fpolicy)
 
 	request = node.NewXMLS("fpolicy-policy-status-get-iter")
 	request.NewChildS("max-records", my.batchSize)
@@ -624,11 +624,11 @@ func (my *SVM) GetFpolicy() (map[string]fpolicy, error) {
 		enable := fpolicyData.GetChildContentS("status")
 		svmName := fpolicyData.GetChildContentS("vserver")
 		if _, ok := vserverFpolicyMap[svmName]; !ok {
-			vserverFpolicyMap[svmName] = fpolicy{name: name, enable: enable}
+			vserverFpolicyMap[svmName] = Fpolicy{name: name, enable: enable}
 		} else {
 			// If svm is already present, update the status value only if it is false
 			if vserverFpolicyMap[svmName].enable == "false" {
-				vserverFpolicyMap[svmName] = fpolicy{name: name, enable: enable}
+				vserverFpolicyMap[svmName] = Fpolicy{name: name, enable: enable}
 			}
 		}
 	}

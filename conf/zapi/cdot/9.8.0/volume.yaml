@@ -14,6 +14,7 @@ counters:
     - volume-id-attributes:
         - ^^instance-uuid                       => uuid
         - ^containing-aggregate-uuid            => aggrUuid
+        - ^junction-path                        => junction_path
         - ^name                                 => volume
         - ^owning-vserver-name                  => svm
         - ^style-extended                       => style
@@ -118,6 +119,7 @@ export_options:
     - isEncrypted
     - isHardwareEncrypted
     - is_sis_volume
+    - junction_path
     - node_root
     - root_volume
     - snapshot_autodelete

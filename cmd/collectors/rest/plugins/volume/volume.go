@@ -138,29 +138,29 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 	// If all volumes are in learning mode --> "Learning Mode"
 	// Else indicates arwStatus for all volumes are enabled --> "Active Mode"
 	for _, volume := range data.GetInstances() {
-		if arwState := volume.GetLabel("antiRansomwareState"); arwState == "" {
-			// Case where REST call don't return `antiRansomwareState` field, arwStatus show as 'Not Monitoring'
+		arwState := volume.GetLabel("antiRansomwareState")
+		if arwState == "" {
+			// Case where REST calls don't return `antiRansomwareState` field, arwStatus show as 'Not Monitoring'
 			arwStatusValue = "Not Monitoring"
 			break
-		} else {
-			if arwState == "disabled" {
-				arwStatusValue = "Not Monitoring"
-				break
-			} else if arwState == "dry_run" || arwState == "enable_paused" {
-				arwStartTime := volume.GetLabel("anti_ransomware_start_time")
-				if arwStartTime == "" || arwStatusValue == "Switch to Active Mode" {
-					continue
-				}
-				// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
-				if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
-					my.Logger.Error().Err(err).Msg("Failed to parse arw start time")
-					arwStartTimeValue = time.Now()
-				}
-				if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
-					arwStatusValue = "Switch to Active Mode"
-				} else {
-					arwStatusValue = "Learning Mode"
-				}
+		}
+		if arwState == "disabled" {
+			arwStatusValue = "Not Monitoring"
+			break
+		} else if arwState == "dry_run" || arwState == "enable_paused" {
+			arwStartTime := volume.GetLabel("anti_ransomware_start_time")
+			if arwStartTime == "" || arwStatusValue == "Switch to Active Mode" {
+				continue
+			}
+			// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
+			if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
+				my.Logger.Error().Err(err).Msg("Failed to parse arw start time")
+				arwStartTimeValue = time.Now()
+			}
+			if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
+				arwStatusValue = "Switch to Active Mode"
+			} else {
+				arwStatusValue = "Learning Mode"
 			}
 		}
 	}

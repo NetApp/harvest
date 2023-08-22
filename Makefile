@@ -8,7 +8,7 @@
 ###############################################################################
 SHELL := /bin/bash
 GCC_EXISTS := $(shell which gcc)
-REQUIRED_GO_VERSION := 1.20
+REQUIRED_GO_VERSION := 1.21
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
@@ -73,7 +73,9 @@ endif
 
 clean: header ## Cleanup the project binary (bin) folders
 	@echo "Cleaning harvest files"
-	@if test -d bin; then ls -d ./bin/* | grep -v "asup" | xargs rm -f; fi
+	@if [ -d bin ]; then \
+		ls -d ./bin/* | grep -v "asup" | xargs rm -f; \
+	fi
 
 test: ## run tests
 	@echo "Running tests"
@@ -126,10 +128,6 @@ harvest: deps
 	@# Build the harvest and poller cli
 	@echo "Building harvest"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
-
-	@# Build the daemonize for the pollers
-	@echo "Building daemonize"
-	@cd cmd/tools/daemonize; gcc daemonize.c -o ../../../bin/daemonize
 
 	@cp service/contrib/grafana bin; chmod +x bin/grafana
 

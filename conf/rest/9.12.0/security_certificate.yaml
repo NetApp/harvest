@@ -19,7 +19,7 @@ counters:
 plugins:
   - Certificate:
       schedule:
-        - data: 180s  # should be multiple of data poll duration
+        - data: 3m  # should be multiple of data poll duration
 
 export_options:
   instance_keys:

@@ -34,7 +34,7 @@ objects:
 #  NFSv4Pool:         nfsv4_pool.yaml
 
   # SVM-level metrics
-  CIFSsvm:           cifs_svm.yaml
+  CIFSvserver:       cifs_vserver.yaml
   CopyManager:       copy_manager.yaml
   FcpLif:            fcp_lif.yaml
   ISCSI:             iscsi_lif.yaml
@@ -52,8 +52,10 @@ objects:
   Vscan:             vscan.yaml
   VscanSVM:          vscan_svm.yaml
 
-#  Uncomment to collect workload/QOS counters. They are disabled by default because they typically slow down data collection due to a high number of metrics.
+#  Uncomment to collect workload/QOS counters.
 #  Workload:             workload.yaml
-#  WorkloadDetail:       workload_detail.yaml
 #  WorkloadVolume:       workload_volume.yaml
+
+# The following workload templates may slow down data collection due to a high number of metrics.
+#  WorkloadDetail:       workload_detail.yaml
 #  WorkloadDetailVolume: workload_detail_volume.yaml

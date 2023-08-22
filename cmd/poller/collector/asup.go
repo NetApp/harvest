@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"cmp"
 	"context"
 	"crypto/sha1" //nolint:gosec // used for sha1sum not for security
 	"encoding/hex"
@@ -15,12 +16,11 @@ import (
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/process"
-	"golang.org/x/sys/unix"
 	"os"
 	"os/exec"
 	"path"
 	"regexp"
-	"sort"
+	"slices"
 	"time"
 )
 
@@ -291,7 +291,6 @@ func attachMemory(msg *Payload) {
 	// This is similar to ps -ww -eo user,pid,ppid,stime,nlwp,rss,cmd
 	processes, err := process.Processes()
 	if err != nil {
-		logging.Get().Error().Err(err).Msg("Unable to get processes")
 		return
 	}
 
@@ -301,24 +300,13 @@ func attachMemory(msg *Payload) {
 	for _, p := range processes {
 		name, err := p.Name()
 		if err != nil {
-			if errors.Is(err, unix.EINVAL) || errors.Is(err, unix.ENOENT) {
-				// we do not have permissions. That's OK, skip this one
-			} else {
-				logging.Get().Error().Err(err).Msg("Unable to get name")
-			}
 			continue
 		}
 		pp := Process{
 			Pid: p.Pid,
 		}
 		memInfo, err := p.MemoryInfo()
-		if err != nil {
-			if errors.Is(err, unix.EPERM) {
-				// we do not have permissions. That's OK, skip this one
-			} else {
-				logging.Get().Error().Err(err).Msg("Unable to get memory")
-			}
-		} else {
+		if err == nil {
 			pp.RssBytes = memInfo.RSS
 		}
 
@@ -333,46 +321,43 @@ func attachMemory(msg *Payload) {
 
 		cmdline, err := p.Cmdline()
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get cmdline")
-		} else {
-			pp.Cmdline = cmdline
+			continue
 		}
+		pp.Cmdline = cmdline
 		if len(cmdline) == 0 {
 			continue
 		}
 
 		username, err := p.Username()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get username")
-		} else {
+		if err == nil {
 			pp.User = username
 		}
 		ppid, err := p.Ppid()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get parent pid")
-		} else {
+		if err == nil {
 			pp.Ppid = ppid
 		}
 		ctime, err := p.CreateTime()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get createTime")
-		} else {
+		if err == nil {
 			pp.Ctime = ctime
 		}
 		threads, err := p.NumThreads()
-		if err != nil {
-			logging.Get().Error().Err(err).Msg("Unable to get numThreads")
-		} else {
+		if err == nil {
 			pp.Threads = threads
 		}
 		msg.Platform.Processes = append(msg.Platform.Processes, pp)
 	}
 
+	// keep at most 100, ordered by size descending
+	if len(msg.Platform.Processes) > 100 {
+		slices.SortStableFunc(msg.Platform.Processes, func(a, b Process) int {
+			return cmp.Compare(b.RssBytes, a.RssBytes)
+		})
+		msg.Platform.Processes = msg.Platform.Processes[:100]
+	}
+
 	// sort processes by pid
-	sort.Slice(msg.Platform.Processes, func(i, j int) bool {
-		a := msg.Platform.Processes[i]
-		b := msg.Platform.Processes[j]
-		return a.Pid < b.Pid
+	slices.SortStableFunc(msg.Platform.Processes, func(a, b Process) int {
+		return cmp.Compare(a.Pid, b.Pid)
 	})
 }
 

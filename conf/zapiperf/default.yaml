@@ -3,9 +3,9 @@ collector:          ZapiPerf
 
 # Order here matters!
 schedule:
-  - counter: 1200s
-  - instance: 600s
-  - data: 60s
+  - counter:  20m
+  - instance: 10m
+  - data:      1m
 
 objects:
   # Node-level metrics
@@ -59,8 +59,10 @@ objects:
   Vscan:                    vscan.yaml
   VscanSVM:                 vscan_svm.yaml
 
-#  Uncomment to collect workload/QOS counters. They are disabled by default because they typically slow down data collection due to a high number of metrics.
-#  Workload:                 workload.yaml
-#  WorkloadDetail:           workload_detail.yaml
-#  WorkloadVolume:           workload_volume.yaml
-#  WorkloadDetailVolume:     workload_detail_volume.yaml
+#  Uncomment to collect workload/QOS counters.
+#  Workload:             workload.yaml
+#  WorkloadVolume:       workload_volume.yaml
+
+# The following workload templates may slow down data collection due to a high number of metrics.
+#  WorkloadDetail:       workload_detail.yaml
+#  WorkloadDetailVolume: workload_detail_volume.yaml

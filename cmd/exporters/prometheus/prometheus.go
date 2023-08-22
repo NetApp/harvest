@@ -585,7 +585,7 @@ func (p *Prometheus) normalizeHistogram(metric *matrix.Metric, ontap string, obj
 		p.Logger.Trace().Str("num", num).Msg("Unable to convert to float64")
 		return ""
 	}
-	normal := 0.0
+	var normal float64
 	switch unit {
 	case "us":
 		return num

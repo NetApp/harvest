@@ -1,5 +1,5 @@
 
-name:                     CIFSsvm
+name:                     CIFSvserver
 query:                    api/cluster/counter/tables/svm_cifs
 object:                   svm_cifs
 

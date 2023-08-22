@@ -1,5 +1,5 @@
 /*
-  - Copyright NetApp Inc, 2021 All rights reserved
+Copyright NetApp Inc, 2021 All rights reserved
 
 NetApp Harvest : the swiss-army-knife for datacenter monitoring
 
@@ -439,7 +439,30 @@ func startPoller(pollerName string, promPort int, opts *options) {
 		os.Exit(0)
 	}
 
-	cmd := exec.Command(path.Join(HarvestHomePath, "bin", "daemonize"), argv...) //nolint:gosec
+	// Set the Setsid attribute to true, which creates a new session for the child process
+	// This effectively detaches the child process from the parent process
+	cmd := exec.Command(argv[0], argv[1:]...) //nolint:gosec
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setsid: true,
+	}
+
+	// Redirect standard file descriptors to /dev/null
+	devNull, err := os.OpenFile(os.DevNull, os.O_RDWR, 0)
+	if err != nil {
+		fmt.Println("Error opening /dev/null:", err)
+		os.Exit(1)
+	}
+	defer func() {
+		if err := devNull.Close(); err != nil {
+			fmt.Println("Error closing /dev/null:", err)
+		}
+	}()
+
+	cmd.Stdin = devNull
+	cmd.Stdout = devNull
+	cmd.Stderr = devNull
+
+	// Start the poller process in the background
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

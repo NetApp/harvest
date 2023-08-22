@@ -20,7 +20,6 @@ type LabelAgent struct {
 	splitRegexRules      []splitRegexRule
 	splitPairsRules      []splitPairsRule
 	joinSimpleRules      []joinSimpleRule
-	renameRules          []renameRule
 	replaceSimpleRules   []replaceSimpleRule
 	replaceRegexRules    []replaceRegexRule
 	excludeEqualsRules   []excludeEqualsRule
@@ -132,24 +131,6 @@ func (a *LabelAgent) joinSimple(matrix *matrix.Matrix) error {
 			if len(values) != 0 {
 				instance.SetLabel(r.target, strings.Join(values, r.sep))
 				a.Logger.Trace().Msgf("joinSimple: (%v) => (%s) [%s]", r.sources, r.target, instance.GetLabel(r.target))
-			}
-		}
-	}
-	return nil
-}
-
-// rename source label, if present, to target label
-// if target label already exists overwrite it
-func (a *LabelAgent) rename(matrix *matrix.Matrix) error {
-	for _, instance := range matrix.GetInstances() {
-		for _, r := range a.renameRules {
-			if old := instance.GetLabel(r.source); old != "" {
-				instance.SetLabel(r.target, old)
-				instance.DeleteLabel(r.source)
-				a.Logger.Trace().
-					Str("source", r.source).
-					Str("target", r.target).
-					Msg("rename")
 			}
 		}
 	}
@@ -330,9 +311,8 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
 				a.Logger.Error().Stack().Err(err).Msgf("valueToNumMapping: new metric [%s]:", r.metric)
 				return err
-			} else {
-				metric.SetProperty("value_to_num mapping")
 			}
+			metric.SetProperty("value_to_num mapping")
 		}
 
 		for key, instance := range m.GetInstances() {
@@ -361,9 +341,8 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
 				a.Logger.Error().Stack().Err(err).Msgf("valueToNumRegexMapping: new metric [%s]:", r.metric)
 				return err
-			} else {
-				metric.SetProperty("value_to_num_regex mapping")
 			}
+			metric.SetProperty("value_to_num_regex mapping")
 		}
 
 		for key, instance := range m.GetInstances() {

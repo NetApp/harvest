@@ -135,7 +135,7 @@ func (p *Poller) Init() error {
 	p.options = &args
 	p.name = args.Poller
 
-	fileLoggingEnabled := false
+	var fileLoggingEnabled bool
 	consoleLoggingEnabled := false
 	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
 	// if we are daemon, use file logging
@@ -501,7 +501,7 @@ func (p *Poller) Run() {
 				}
 			}
 
-			// only zeroLog when numbers have changes, since hopefully that happens rarely
+			// only log when there are changes, which we expect to be infrequent
 			if upc != upCollectors || upe != upExporters {
 				logger.Info().Msgf("updated status, up collectors: %d (of %d), up exporters: %d (of %d)", upc, len(p.collectors), upe, len(p.exporters))
 			}
@@ -695,13 +695,13 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 
 		// update metadata
 
-		if instance, err := p.metadata.NewInstance(name + "." + obj); err != nil {
+		instance, err := p.metadata.NewInstance(name + "." + obj)
+		if err != nil {
 			return err
-		} else {
-			instance.SetLabel("type", "collector")
-			instance.SetLabel("name", name)
-			instance.SetLabel("target", obj)
 		}
+		instance.SetLabel("type", "collector")
+		instance.SetLabel("name", name)
+		instance.SetLabel("target", obj)
 	}
 
 	return nil
@@ -1031,7 +1031,7 @@ func (p *Poller) publishDetails() {
 		return
 	}
 	p.client.CloseIdleConnections()
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		txt := string(body)
 		txt = txt[0:int(math.Min(float64(len(txt)), 48))]
 		logger.Error().
@@ -1126,7 +1126,7 @@ func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Co
 				switchToRest = true
 			}
 
-			if he.StatusCode == 400 {
+			if he.StatusCode == http.StatusBadRequest {
 				logger.Warn().Str("collector", c.Name).Msg("ZAPIs EOA. Use REST")
 				switchToRest = true
 			}
@@ -1159,10 +1159,7 @@ func (p *Poller) doZAPIsExist() error {
 		return err
 
 	}
-	if err = connection.Init(2); err != nil {
-		return err
-	}
-	return nil
+	return connection.Init(2)
 }
 
 func startPoller(_ *cobra.Command, _ []string) {

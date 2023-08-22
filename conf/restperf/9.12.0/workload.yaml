@@ -6,10 +6,11 @@ object:                   qos
 
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s
+
 schedule:
-  - counter:  1200s
-  - instance: 600s
-  - data:     180s
+  - counter:  20m
+  - instance: 10m
+  - data:      3m
 
 counters:
   - ^^uuid
@@ -17,6 +18,7 @@ counters:
   - concurrency
   - latency
   - ops
+  - other_ops
   - read_data
   - read_io_type_percent      => read_io_type
   - read_latency

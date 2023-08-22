@@ -2,16 +2,17 @@
 # object provides latency breakdown per service or delay center per volume
 name:                     WorkloadDetailVolume
 query:                    workload_detail_volume
-object:                   qos_detail_volume
+object:                   qos_detail
 
 instance_key:             name
 
 # recommended to use a large interval, since workload objects are expensive
 client_timeout:           1m30s
+
 schedule:
-  - counter: 1200s
-  - instance: 600s
-  - data: 180s
+  - counter:  20m
+  - instance: 10m
+  - data:      3m
 
 counters:
   - instance_name

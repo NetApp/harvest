@@ -2,12 +2,12 @@ package grafana
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/pretty"
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -83,7 +83,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 								isThresholdSet = color.String() == th[0] && v.String() == th[1]
 							} else if id == "custom.displayMode" && kind == "table" {
 								v := propertiesN.Get("value")
-								if !util.Contains(expectedColorBackground[kind], v.String()) {
+								if !slices.Contains(expectedColorBackground[kind], v.String()) {
 									t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct displaymode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], v.String())
 								} else {
 									isColorBackgroundSet = true
@@ -94,7 +94,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 
 					if kind == "stat" {
 						colorMode := value.Get("options.colorMode")
-						if !util.Contains(expectedColorBackground[kind], colorMode.String()) {
+						if !slices.Contains(expectedColorBackground[kind], colorMode.String()) {
 							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct colorMode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], colorMode.String())
 						} else {
 							isColorBackgroundSet = true
@@ -164,7 +164,15 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 
 	// Check that the variable DS_PROMETHEUS exist
 	doesDsPromExist := false
+	// This is a list of names that are exempt from the check for a 'true' selected status.
+	excludedNames := map[string]bool{
+		"TopResources": true,
+		"Interval":     true,
+		"IncludeRoot":  true,
+	}
+
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		name := value.Get("name").String()
 		if value.Get("name").String() == "DS_PROMETHEUS" {
 			doesDsPromExist = true
 			query := value.Get("query").String()
@@ -174,6 +182,19 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 			theType := value.Get("type").String()
 			if theType != "datasource" {
 				t.Errorf("dashboard=%s var=DS_PROMETHEUS type want=datasource got=%s", path, theType)
+			}
+		}
+
+		if !excludedNames[name] {
+			if value.Get("current.selected").String() == "true" {
+				t.Errorf(
+					"dashboard=%s var=current.selected query want=false got=%s text=%s value=%s name= %s",
+					path,
+					"true",
+					value.Get("current.text"),
+					value.Get("current.value"),
+					name,
+				)
 			}
 		}
 		return true
@@ -946,7 +967,7 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 
 func TestPanelChildPanels(t *testing.T) {
 	visitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		dashboards,
 		func(path string, data []byte) {
 			checkPanelChildPanels(t, shortPath(path), data)
 		})
@@ -1182,8 +1203,9 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 			})
 			if string(sorted) != string(data) {
 				sortedPath := writeSorted(t, path, sorted)
-				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s",
-					path, sortedPath)
+				path = "grafana/dashboards/" + path
+				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s. Run cp %s %s",
+					path, sortedPath, sortedPath, path)
 			}
 		})
 }
@@ -1209,6 +1231,31 @@ func writeSorted(t *testing.T, path string, sorted []byte) string {
 		t.Errorf("failed to write sorted json to file=%s err=%v", dest, err)
 		return ""
 	}
-	create.Close()
+	err = create.Close()
+	if err != nil {
+		t.Errorf("failed to close file=%s err=%v", dest, err)
+		return ""
+	}
 	return dest
+}
+
+func TestDashboardTime(t *testing.T) {
+	visitDashboards(dashboards, func(path string, data []byte) {
+		checkDashboardTime(t, path, data)
+	})
+}
+
+func checkDashboardTime(t *testing.T, path string, data []byte) {
+	dashPath := shortPath(path)
+	from := gjson.GetBytes(data, "time.from")
+	to := gjson.GetBytes(data, "time.to")
+
+	fromWant := "now-3h"
+	toWant := "now"
+	if from.String() != fromWant {
+		t.Errorf("dashboard=%s time.from got=%s want=%s", dashPath, from.String(), fromWant)
+	}
+	if to.String() != toWant {
+		t.Errorf("dashboard=%s time.to got=%s want=%s", dashPath, to.String(), toWant)
+	}
 }

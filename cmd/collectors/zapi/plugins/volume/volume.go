@@ -136,9 +136,8 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			if splitEstimateBytes, err = strconv.ParseFloat(vc.splitEstimate, 64); err != nil {
 				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("parse clone_split_estimate")
 				continue
-			} else {
-				splitEstimateBytes = splitEstimateBytes * 4 * 1024
 			}
+			splitEstimateBytes = splitEstimateBytes * 4 * 1024
 			if err = splitEstimate.SetValueFloat64(volume, splitEstimateBytes); err != nil {
 				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("set clone_split_estimate")
 				continue
@@ -196,7 +195,7 @@ func (v *Volume) getEncryptedDisks() ([]string, error) {
 
 	request := node.NewXMLS("disk-encrypt-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
-	//algorithm is -- Protection mode needs to be DATA or FULL
+	// algorithm is -- Protection mode needs to be DATA or FULL
 	// Fetching rest of them and add as
 	query := request.NewChildS("query", "")
 	encryptInfoQuery := query.NewChildS("disk-encrypt-info", "")

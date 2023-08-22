@@ -19,6 +19,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"path"
@@ -28,9 +29,11 @@ import (
 )
 
 const (
-	latencyIoReqd = 10
-	BILLION       = 1_000_000_000
-	arrayKeyToken = "#"
+	latencyIoReqd          = 10
+	BILLION                = 1_000_000_000
+	arrayKeyToken          = "#"
+	objWorkloadClass       = "user_defined|system_defined"
+	objWorkloadVolumeClass = "autovolume"
 )
 
 var qosQuery = "api/cluster/counter/tables/qos"
@@ -38,6 +41,8 @@ var qosVolumeQuery = "api/cluster/counter/tables/qos_volume"
 var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
 var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
 var qosWorkloadQuery = "api/storage/qos/workloads"
+
+var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
 
 var qosQueries = map[string]string{
 	qosQuery:       qosQuery,
@@ -132,20 +137,20 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 
 func (r *RestPerf) InitQOSLabels() error {
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-		if qosLabels := r.Params.GetChildS("qos_labels"); qosLabels == nil {
+		qosLabels := r.Params.GetChildS("qos_labels")
+		if qosLabels == nil {
 			return errs.New(errs.ErrMissingParam, "qos_labels")
-		} else {
-			r.perfProp.qosLabels = make(map[string]string)
-			for _, label := range qosLabels.GetAllChildContentS() {
+		}
+		r.perfProp.qosLabels = make(map[string]string)
+		for _, label := range qosLabels.GetAllChildContentS() {
 
-				display := strings.ReplaceAll(label, "-", "_")
-				before, after, found := strings.Cut(label, "=>")
-				if found {
-					label = strings.TrimSpace(before)
-					display = strings.TrimSpace(after)
-				}
-				r.perfProp.qosLabels[label] = display
+			display := strings.ReplaceAll(label, "-", "_")
+			before, after, found := strings.Cut(label, "=>")
+			if found {
+				label = strings.TrimSpace(before)
+				display = strings.TrimSpace(after)
 			}
+			r.perfProp.qosLabels[label] = display
 		}
 	}
 	return nil
@@ -153,7 +158,7 @@ func (r *RestPerf) InitQOSLabels() error {
 
 func (r *RestPerf) InitMatrix() error {
 	mat := r.Matrix[r.Object]
-	//init perf properties
+	// init perf properties
 	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
@@ -169,6 +174,36 @@ func (r *RestPerf) InitMatrix() error {
 	// Add metadata metric for skips
 	_, _ = r.Metadata.NewMetricUint64("skips")
 	return nil
+}
+
+// load workload_class or use defaultValue
+func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
+
+	var x *node.Node
+
+	name := "workload_class"
+
+	if x = r.Params.GetChildS(name); x != nil {
+		v := x.GetAllChildContentS()
+		if len(v) == 0 {
+			r.Logger.Debug().
+				Str("name", name).
+				Str("defaultValue", defaultValue).
+				Send()
+			return defaultValue
+		}
+		s := strings.Join(v, "|")
+		r.Logger.Debug().
+			Str("name", name).
+			Str("value", s).
+			Send()
+		return s
+	}
+	r.Logger.Debug().
+		Str("name", name).
+		Str("defaultValue", defaultValue).
+		Send()
+	return defaultValue
 }
 
 // load an int parameter or use defaultValue
@@ -398,7 +433,7 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 					ms := strings.Split(m, ",")
 					for range ms {
 						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
-						vLen += 1
+						vLen++
 					}
 					if vLen > len(subLabelSlice) {
 						return false
@@ -467,7 +502,7 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 					ms := strings.Split(m, ",")
 					for range ms {
 						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
-						vLen += 1
+						vLen++
 					}
 					if vLen > len(subLabelSlice) {
 						break
@@ -545,30 +580,32 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 		wait.SetExportable(false)
 		visits.SetExportable(false)
 
-		if resourceMap := r.Params.GetChildS("resource_map"); resourceMap == nil {
+		resourceMap := r.Params.GetChildS("resource_map")
+		if resourceMap == nil {
 			return nil, errs.New(errs.ErrMissingParam, "resource_map")
-		} else {
-			for _, x := range resourceMap.GetChildren() {
-				name := x.GetNameS()
+		}
+		for _, x := range resourceMap.GetChildren() {
+			for _, wm := range workloadDetailMetrics {
+				name := x.GetNameS() + wm
 				resource := x.GetContentS()
 
 				if m := mat.GetMetric(name); m != nil {
 					continue
 				}
-				if m, err := mat.NewMetricFloat64(name, "resource_latency"); err != nil {
+				m, err := mat.NewMetricFloat64(name, wm)
+				if err != nil {
 					return nil, err
-				} else {
-					r.perfProp.counterInfo[name] = &counter{
-						name:        "resource_latency",
-						description: "",
-						counterType: r.perfProp.counterInfo[service.GetName()].counterType,
-						unit:        r.perfProp.counterInfo[service.GetName()].unit,
-						denominator: "ops",
-					}
-					m.SetLabel("resource", resource)
-
-					r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
 				}
+				r.perfProp.counterInfo[name] = &counter{
+					name:        wm,
+					description: "",
+					counterType: r.perfProp.counterInfo[service.GetName()].counterType,
+					unit:        r.perfProp.counterInfo[service.GetName()].unit,
+					denominator: "ops",
+				}
+				m.SetLabel("resource", resource)
+
+				r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
 			}
 		}
 	}
@@ -611,16 +648,15 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) (map[string]*matrix.Matrix, error) {
 	var (
-		count, numRecords uint64
-		apiD, parseD      time.Duration
-		err               error
-		instanceKeys      []string
-		resourceLatency   *matrix.Metric // for workload* objects
-		skips             int
-		instIndex         int
-		ts                float64
-		prevMat           *matrix.Matrix
-		curMat            *matrix.Matrix
+		count        uint64
+		apiD, parseD time.Duration
+		err          error
+		instanceKeys []string
+		skips        int
+		instIndex    int
+		ts           float64
+		prevMat      *matrix.Matrix
+		curMat       *matrix.Matrix
 	)
 
 	prevMat = r.Matrix[r.Object]
@@ -683,11 +719,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				}
 			}
 
+			var layer = "" // latency layer (resource) for workloads
+
 			// special case for these two objects
 			// we need to process each latency layer for each instance/counter
 			if isWorkloadDetailObject(r.Prop.Query) {
-
-				layer := "" // latency layer (resource) for workloads
 
 				// example instanceKey : umeng-aff300-02:test-wid12022.CPU_dblade
 				i := strings.Index(instanceKey, ":")
@@ -703,11 +739,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					return true
 				}
 
-				if resourceLatency = curMat.GetMetric(layer); resourceLatency == nil {
-					r.Logger.Trace().
-						Str("layer", layer).
-						Msg("Resource-latency metric missing in cache")
-					return true
+				for _, wm := range workloadDetailMetrics {
+					mLayer := layer + wm
+					if l := curMat.GetMetric(mLayer); l == nil {
+						r.Logger.Trace().
+							Str("layer", layer).
+							Msg("Resource-latency metric missing in cache")
+						return true
+					}
 				}
 			}
 
@@ -770,144 +809,176 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				if ok {
 					// special case for workload_detail
 					if isWorkloadDetailObject(r.Prop.Query) {
-						if name == "wait_time" || name == "service_time" {
-							if err := resourceLatency.AddValueString(instance, f.value); err != nil {
-								r.Logger.Error().
-									Stack().
-									Err(err).
-									Str("name", name).
-									Str("value", f.value).
-									Msg("Add resource-latency failed")
-							} else {
-								r.Logger.Trace().
-									Str("name", name).
-									Str("value", f.value).
-									Msg("Add resource-latency")
-								count++
-							}
-							continue
-						}
-						// "visits" are ignored. This counter is only used to set properties of ops counter
-						if name == "visits" {
-							continue
-						}
-					} else {
-						if f.isArray {
-							labels := strings.Split(f.label, ",")
-							values := strings.Split(f.value, ",")
-
-							if len(labels) != len(values) {
-								// warn & skip
-								r.Logger.Warn().
-									Str("labels", f.label).
-									Str("value", f.value).
-									Msg("labels don't match parsed values")
+						for _, wm := range workloadDetailMetrics {
+							// "visits" are ignored. This counter is only used to set properties of ops counter
+							if name == "visits" {
 								continue
 							}
-
-							// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
-							// if a counter is a histogram
-							isHistogram = false
-							description := strings.ToLower(r.perfProp.counterInfo[name].description)
-							if len(labels) > 0 && strings.Contains(description, "histogram") {
-								key := name + ".bucket"
-								histogramMetric = curMat.GetMetric(key)
-								if histogramMetric != nil {
-									r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
-								} else {
-									histogramMetric, err = curMat.NewMetricFloat64(key, metric.Label)
-									if err != nil {
-										r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
-										continue
-									}
-								}
-								histogramMetric.SetArray(true)
-								histogramMetric.SetExportable(metric.Exportable)
-								histogramMetric.SetBuckets(&labels)
-								isHistogram = true
-							}
-
-							for i, label := range labels {
-								k := name + arrayKeyToken + label
-								metr, ok := curMat.GetMetrics()[k]
-								if !ok {
-									if metr, err = curMat.NewMetricFloat64(k, metric.Label); err != nil {
-										r.Logger.Error().Err(err).
-											Str("name", k).
-											Msg("NewMetricFloat64")
-										continue
-									}
-									if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
-										metr.SetLabel("metric", x[0])
-										metr.SetLabel("submetric", x[1])
-									} else {
-										metr.SetLabel("metric", label)
-									}
-									// differentiate between array and normal counter
-									metr.SetArray(true)
-									metr.SetExportable(metric.Exportable)
-									if isHistogram {
-										// Save the index of this label so the labels can be exported in order
-										metr.SetLabel("comment", strconv.Itoa(i))
-										// Save the bucket name so the flattened metrics can find their bucket when exported
-										metr.SetLabel("bucket", name+".bucket")
-										metr.SetHistogram(true)
-									}
-								}
-								if err = metr.SetValueString(instance, values[i]); err != nil {
+							wMetric := curMat.GetMetric(layer + wm)
+							if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
+								if err := wMetric.AddValueString(instance, f.value); err != nil {
 									r.Logger.Error().
+										Stack().
 										Err(err).
 										Str("name", name).
-										Str("label", label).
-										Str("value", values[i]).
-										Int("instIndex", instIndex).
-										Msg("Set value failed")
-									continue
+										Str("value", f.value).
+										Msg("Add resource_latency failed")
 								} else {
 									r.Logger.Trace().
 										Str("name", name).
-										Str("label", label).
-										Str("value", values[i]).
-										Int("instIndex", instIndex).
-										Msg("Set name.label = value")
+										Str("value", f.value).
+										Msg("Add resource_latency")
+									count++
+								}
+								continue
+							} else if wm == "service_time_latency" && name == "service_time" {
+								if err = wMetric.SetValueString(instance, f.value); err != nil {
+									r.Logger.Error().
+										Stack().
+										Err(err).
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add service_time_latency failed")
+								} else {
+									r.Logger.Trace().
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add service_time_latency")
+									count++
+								}
+							} else if wm == "wait_time_latency" && name == "wait_time" {
+								if err = wMetric.SetValueString(instance, f.value); err != nil {
+									r.Logger.Error().
+										Stack().
+										Err(err).
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add wait_time_latency failed")
+								} else {
+									r.Logger.Trace().
+										Str("name", name).
+										Str("value", f.value).
+										Msg("Add wait_time_latency")
 									count++
 								}
 							}
-						} else {
-							metr, ok := curMat.GetMetrics()[name]
-							if !ok {
-								if metr, err = curMat.NewMetricFloat64(name, metric.Label); err != nil {
-									r.Logger.Error().Err(err).
-										Str("name", name).
-										Int("instIndex", instIndex).
-										Msg("NewMetricFloat64")
+						}
+						continue
+					}
+					if f.isArray {
+						labels := strings.Split(f.label, ",")
+						values := strings.Split(f.value, ",")
+
+						if len(labels) != len(values) {
+							// warn & skip
+							r.Logger.Warn().
+								Str("labels", f.label).
+								Str("value", f.value).
+								Msg("labels don't match parsed values")
+							continue
+						}
+
+						// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
+						// if a counter is a histogram
+						isHistogram = false
+						description := strings.ToLower(r.perfProp.counterInfo[name].description)
+						if len(labels) > 0 && strings.Contains(description, "histogram") {
+							key := name + ".bucket"
+							histogramMetric = curMat.GetMetric(key)
+							if histogramMetric != nil {
+								r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
+							} else {
+								histogramMetric, err = curMat.NewMetricFloat64(key, metric.Label)
+								if err != nil {
+									r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
+									continue
 								}
 							}
-							metr.SetExportable(metric.Exportable)
-							if c, err := strconv.ParseFloat(f.value, 64); err == nil {
-								if err = metr.SetValueFloat64(instance, c); err != nil {
+							histogramMetric.SetArray(true)
+							histogramMetric.SetExportable(metric.Exportable)
+							histogramMetric.SetBuckets(&labels)
+							isHistogram = true
+						}
+
+						for i, label := range labels {
+							k := name + arrayKeyToken + label
+							metr, ok := curMat.GetMetrics()[k]
+							if !ok {
+								if metr, err = curMat.NewMetricFloat64(k, metric.Label); err != nil {
 									r.Logger.Error().Err(err).
-										Str("key", metric.Name).
-										Str("metric", metric.Label).
-										Int("instIndex", instIndex).
-										Msg("Unable to set float key on metric")
-								} else {
-									r.Logger.Trace().
-										Int("instIndex", instIndex).
-										Str("key", instanceKey).
-										Str("counter", name).
-										Str("value", f.value).
-										Msg("Set metric")
+										Str("name", k).
+										Msg("NewMetricFloat64")
+									continue
 								}
-							} else {
+								if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
+									metr.SetLabel("metric", x[0])
+									metr.SetLabel("submetric", x[1])
+								} else {
+									metr.SetLabel("metric", label)
+								}
+								// differentiate between array and normal counter
+								metr.SetArray(true)
+								metr.SetExportable(metric.Exportable)
+								if isHistogram {
+									// Save the index of this label so the labels can be exported in order
+									metr.SetLabel("comment", strconv.Itoa(i))
+									// Save the bucket name so the flattened metrics can find their bucket when exported
+									metr.SetLabel("bucket", name+".bucket")
+									metr.SetHistogram(true)
+								}
+							}
+							if err = metr.SetValueString(instance, values[i]); err != nil {
+								r.Logger.Error().
+									Err(err).
+									Str("name", name).
+									Str("label", label).
+									Str("value", values[i]).
+									Int("instIndex", instIndex).
+									Msg("Set value failed")
+								continue
+							}
+							r.Logger.Trace().
+								Str("name", name).
+								Str("label", label).
+								Str("value", values[i]).
+								Int("instIndex", instIndex).
+								Msg("Set name.label = value")
+							count++
+						}
+					} else {
+						metr, ok := curMat.GetMetrics()[name]
+						if !ok {
+							if metr, err = curMat.NewMetricFloat64(name, metric.Label); err != nil {
+								r.Logger.Error().Err(err).
+									Str("name", name).
+									Int("instIndex", instIndex).
+									Msg("NewMetricFloat64")
+							}
+						}
+						metr.SetExportable(metric.Exportable)
+						if c, err := strconv.ParseFloat(f.value, 64); err == nil {
+							if err = metr.SetValueFloat64(instance, c); err != nil {
 								r.Logger.Error().Err(err).
 									Str("key", metric.Name).
 									Str("metric", metric.Label).
 									Int("instIndex", instIndex).
-									Msg("Unable to parse float value")
+									Msg("Unable to set float key on metric")
+							} else {
+								r.Logger.Trace().
+									Int("instIndex", instIndex).
+									Str("key", instanceKey).
+									Str("counter", name).
+									Str("value", f.value).
+									Msg("Set metric")
 							}
-							count++
+						} else {
+							r.Logger.Error().Err(err).
+								Str("key", metric.Name).
+								Str("metric", metric.Label).
+								Int("instIndex", instIndex).
+								Msg("Unable to parse float value")
 						}
+						count++
 					}
 				} else {
 					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
@@ -917,7 +988,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				r.Logger.Error().Err(err).Msg("Failed to set timestamp")
 			}
 
-			numRecords += 1
 			return true
 		})
 	}
@@ -933,7 +1003,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", numRecords)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	r.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
@@ -977,8 +1047,10 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	}
 
 	// order metrics, such that those requiring base counters are processed last
-	orderedMetrics := append(orderedNonDenominatorMetrics, orderedDenominatorMetrics...)
-	orderedKeys := append(orderedNonDenominatorKeys, orderedDenominatorKeys...)
+	orderedMetrics := orderedNonDenominatorMetrics
+	orderedMetrics = append(orderedMetrics, orderedDenominatorMetrics...)
+	orderedKeys := orderedNonDenominatorKeys
+	orderedKeys = append(orderedKeys, orderedDenominatorKeys...)
 
 	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
@@ -1255,9 +1327,9 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		fields = "*"
 		dataQuery = qosWorkloadQuery
 		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
-			filter = append(filter, "workload-class=autovolume|user_defined|system_defined")
+			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
 		} else {
-			filter = append(filter, "workload-class=user_defined|system_defined")
+			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadClass))
 		}
 	}
 

@@ -2,7 +2,6 @@ package doctor
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"io"
 	"log"
@@ -11,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -113,7 +113,7 @@ func metricPerfValueDiff(metricName string) {
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
-	results := make([]gjson.Result, 0)
+	var results []gjson.Result
 
 	keyIndexes := make([]int, 0)
 
@@ -355,11 +355,10 @@ func metricValueDiff(metricName string) {
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
 	zapiMetric := make(map[string]float64)
 	restMetric := make(map[string]float64)
-	results := make([]gjson.Result, 0)
+	var results []gjson.Result
+	var keyIndexes []int
 
-	keyIndexes := make([]int, 0)
-
-	// These plugin generated metrics are node scoped.
+	// These plugin-generated metrics are node scoped.
 	environmentSensorMetrics := strings.Join([]string{
 		"environment_sensor_average_ambient_temperature",
 		"environment_sensor_average_fan_speed",
@@ -520,7 +519,7 @@ func labelValueDiff(label string, labelNames []string) {
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if util.Contains([]string{"shelf_voltage_labels", "shelf_temperature_labels", "shelf_sensor_labels"}, label) {
+	if slices.Contains([]string{"shelf_voltage_labels", "shelf_temperature_labels", "shelf_sensor_labels"}, label) {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "shelf"))
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "sensor_id"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
@@ -533,7 +532,7 @@ func labelValueDiff(label string, labelNames []string) {
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if util.Contains([]string{"svm_labels", "security_login_labels"}, label) {
+	if slices.Contains([]string{"svm_labels", "security_login_labels"}, label) {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)

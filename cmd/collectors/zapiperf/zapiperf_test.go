@@ -48,7 +48,7 @@ func NewZapiPerf(object, path string) *ZapiPerf {
 	ac := collector.New("Zapiperf", object, &opts, params(object, path), nil)
 	z := &ZapiPerf{}
 	if err := z.Init(ac); err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Send()
 	}
 
 	z.Object = object

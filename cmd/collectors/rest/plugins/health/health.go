@@ -66,11 +66,7 @@ func (h *Health) Init() error {
 		return err
 	}
 
-	if err = h.client.Init(5); err != nil {
-		return err
-	}
-
-	return nil
+	return h.client.Init(5)
 }
 
 func (h *Health) initAllMatrix() error {
@@ -457,8 +453,7 @@ func (h *Health) collectSupportAlerts() {
 	}
 	toTime := clusterTime.Unix()
 	timeFilter := h.getTimeStampFilter(clusterTime)
-	addFilter := []string{"suppress=false"}
-	filter := append(addFilter, timeFilter)
+	filter := append([]string{"suppress=false"}, timeFilter)
 
 	records, err := h.getSupportAlerts(filter)
 	if err != nil {

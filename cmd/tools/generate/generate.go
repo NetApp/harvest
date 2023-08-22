@@ -396,6 +396,8 @@ func init() {
 
 	flags := metricCmd.PersistentFlags()
 	flags.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
+	_ = metricCmd.MarkPersistentFlagRequired("poller")
+
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)

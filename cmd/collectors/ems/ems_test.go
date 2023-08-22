@@ -7,9 +7,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog/log"
 	"os"
+	"slices"
 	"testing"
 	"time"
 )
@@ -57,7 +57,7 @@ func NewEms() *Ems {
 	ac := collector.New("Ems", "Ems", &opts, emsParams(emsConfgPath), nil)
 	e := &Ems{}
 	if err := e.Init(ac); err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Send()
 	}
 	// Changed the resolve_after for 2 issuing ems for auto resolve testing
 	e.resolveAfter["LUN.offline"] = 1 * time.Second
@@ -90,7 +90,7 @@ func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
 	// Check and evaluate ems events
 	var notGeneratedEmsNames []string
 	for generatedEmsName, mx := range e.Matrix {
-		if util.Contains(issuingEmsNames, generatedEmsName) {
+		if slices.Contains(issuingEmsNames, generatedEmsName) {
 			metr, ok := mx.GetMetrics()["events"]
 			if !ok {
 				t.Fatalf("Failed to get netric for Ems %s", generatedEmsName)
@@ -102,9 +102,7 @@ func (e *Ems) testBookendIssuingEms(t *testing.T, path string) {
 				}
 				// Test for matches - filter
 				if generatedEmsName == "hm.alert.raised" {
-					if instance.GetLabel("alert_id") == "RaidLeftBehindAggrAlert" {
-						// OK
-					} else {
+					if instance.GetLabel("alert_id") != "RaidLeftBehindAggrAlert" {
 						t.Errorf("Labels alert_id= %s, expected: RaidLeftBehindAggrAlert", instance.GetLabel("alert_id"))
 					}
 				}
@@ -129,7 +127,7 @@ func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
 	// Check and evaluate ems events
 	var notResolvedEmsNames []string
 	for generatedEmsName, mx := range e.Matrix {
-		if util.Contains(issuingEmsNames, generatedEmsName) {
+		if slices.Contains(issuingEmsNames, generatedEmsName) {
 			metr, ok := mx.GetMetrics()["events"]
 			if !ok {
 				t.Fatalf("Failed to get netric for Ems %s", generatedEmsName)
@@ -142,9 +140,7 @@ func (e *Ems) testBookendResolvingEms(t *testing.T, path string) {
 				}
 				// Test for matches - filter
 				if generatedEmsName == "hm.alert.raised" {
-					if instance.GetLabel("alert_id") == "RaidLeftBehindAggrAlert" && ok && val == 0.0 {
-						// OK
-					} else {
+					if instance.GetLabel("alert_id") != "RaidLeftBehindAggrAlert" || !ok || val != 0.0 {
 						t.Errorf("Labels alert_id= %s, expected: RaidLeftBehindAggrAlert, metric value = %f, expected: 0.0", instance.GetLabel("alert_id"), val)
 					}
 				}
@@ -169,7 +165,7 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 
 	// Check and evaluate ems events
 	for generatedEmsName, mx := range e.Matrix {
-		if util.Contains(autoresolveEmsNames, generatedEmsName) {
+		if slices.Contains(autoresolveEmsNames, generatedEmsName) {
 			if metr, ok := mx.GetMetrics()["events"]; ok {
 				for _, instance := range mx.GetInstances() {
 					// If value not exist for that instance or metric value 0 indicate ems hasn't been raised.
@@ -191,7 +187,7 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 	e.updateMatrix(time.Now().Add(1 * time.Second))
 	// Check and evaluate bookend ems events got auto resolved successfully.
 	for generatedEmsName, mx := range e.Matrix {
-		if util.Contains(autoresolveEmsNames, generatedEmsName) {
+		if slices.Contains(autoresolveEmsNames, generatedEmsName) {
 			if metr, ok := mx.GetMetrics()["events"]; ok {
 				for _, instance := range mx.GetInstances() {
 					// If value not exist for that instance or metric value 0 indicate ems hasn't been raised.
@@ -204,7 +200,7 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 			}
 		}
 	}
-	if util.Contains(notAutoResolvedEmsNames, "LUN.offline") {
+	if slices.Contains(notAutoResolvedEmsNames, "LUN.offline") {
 		t.Fatalf("These Bookend Ems haven't been auto resolved: %s", notAutoResolvedEmsNames)
 	}
 
@@ -217,7 +213,7 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 		t.Fatalf("These Bookend Ems haven't been removed from cache: %s", "LUN.offline")
 	}
 	for generatedEmsName, mx := range e.Matrix {
-		if util.Contains(autoresolveEmsNames, generatedEmsName) {
+		if slices.Contains(autoresolveEmsNames, generatedEmsName) {
 			if metr, ok := mx.GetMetrics()["events"]; ok {
 				for _, instance := range mx.GetInstances() {
 					// If value not exist for that instance or metric value 0 indicate ems hasn't been raised.
@@ -230,7 +226,7 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 			}
 		}
 	}
-	if util.Contains(notAutoResolvedEmsNames, "monitor.fan.critical") {
+	if slices.Contains(notAutoResolvedEmsNames, "monitor.fan.critical") {
 		t.Fatalf("These Bookend Ems haven't been auto resolved: %s", notAutoResolvedEmsNames)
 	}
 }

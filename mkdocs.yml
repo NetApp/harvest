@@ -39,7 +39,10 @@ nav:
   - Manage Harvest Pollers: 'manage-harvest.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Monitor Harvest: 'monitor-harvest.md'
-  - Troubleshoot: 'troubleshooting.md'
+  - Help:
+      - 'Troubleshooting': 'help/troubleshooting.md'
+      - 'FAQ': 'help/faq.md'
+      - 'Log Collection': 'help/log-collection.md'
   - Reference:
       - 'Plugins': 'plugins.md'
       - 'Matrix': 'resources/matrix.md'

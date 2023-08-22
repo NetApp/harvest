@@ -1,6 +1,5 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
- */
+// Copyright NetApp Inc, 2021 All rights reserved
+
 package disk
 
 import (

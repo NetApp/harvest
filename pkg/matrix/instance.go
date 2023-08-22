@@ -35,10 +35,6 @@ func (i *Instance) ClearLabels() {
 	i.labels = dict.New()
 }
 
-func (i *Instance) DeleteLabel(key string) {
-	i.labels.Delete(key)
-}
-
 func (i *Instance) SetLabel(key, value string) {
 	i.labels.Set(key, value)
 }

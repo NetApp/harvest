@@ -19,7 +19,7 @@ const (
 	defaultLogLevel              = zerolog.InfoLevel
 	defaultConsoleLoggingEnabled = true
 	defaultFileLoggingEnabled    = false // false to avoid opening many file descriptors for same log file
-	DefaultLogMaxMegaBytes       = 5     // 5 MB
+	DefaultLogMaxMegaBytes       = 10    // 10 MB
 	DefaultLogMaxBackups         = 5
 	DefaultLogMaxAge             = 7
 )
@@ -107,7 +107,7 @@ func Configure(config LogConfig) *Logger {
 	multiWriters := zerolog.MultiLevelWriter(writers...)
 
 	zerolog.SetGlobalLevel(config.LogLevel)
-	zerolog.ErrorStackMarshaler = MarshalStack
+	zerolog.ErrorStackMarshaler = MarshalStack //nolint:reassign
 	zerolog.CallerMarshalFunc = ShortFile
 	zeroLogger := zerolog.New(multiWriters).With().Caller().Str(config.PrefixKey, config.PrefixValue).Timestamp().Logger()
 
