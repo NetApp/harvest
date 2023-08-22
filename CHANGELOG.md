@@ -62,6 +62,8 @@
 
 :bangbang: **IMPORTANT** Release `23.08` disables the `NetConnections` and `NFSClients` templates by default. You can enable them if needed. These templates were disabled because several customers reported that these templates created millions of metrics. None of these metrics are used in Harvest dashboards.
 
+:bangbang: **IMPORTANT** Release `23.08` changes how Harvest monitors workloads. For detailed information, please refer to the discussion #2265.
+
 :bulb: The Compliance dashboard was removed after its panels were moved to the Security dashboard.
 
 :eyes: Ambient temperature metric may experience an increase due to issue #2259
