@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
-	//"github.com/netapp/harvest/v2/share/logger"
+	// "github.com/netapp/harvest/v2/share/logger"
 )
 
 func newLabelAgent() *LabelAgent {
@@ -83,9 +83,7 @@ func TestSplitSimpleRule(t *testing.T) {
 	_ = p.splitSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("C") == "c" && instance.GetLabel("D") == "d" {
-		// OK
-	} else {
+	if instance.GetLabel("C") != "c" || instance.GetLabel("D") != "d" {
 		t.Error("Labels C and D don't have expected values")
 	}
 }
@@ -101,9 +99,7 @@ func TestSplitRegexRule(t *testing.T) {
 	_ = p.splitRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("A") == "A22" && instance.GetLabel("B") == "B333" {
-		// OK
-	} else {
+	if instance.GetLabel("A") != "A22" || instance.GetLabel("B") != "B333" {
 		t.Error("Labels A and B don't have expected values")
 	}
 }
@@ -119,9 +115,7 @@ func TestSplitPairsRule(t *testing.T) {
 	_ = p.splitPairs(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("owner") == "jack" && instance.GetLabel("contact") == "some@email" {
-		// OK
-	} else {
+	if instance.GetLabel("owner") != "jack" || instance.GetLabel("contact") != "some@email" {
 		t.Error("Labels owner and contact don't have expected values")
 	}
 }
@@ -138,9 +132,7 @@ func TestJoinSimpleRule(t *testing.T) {
 	_ = p.joinSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("X") == "aaa_bbb" {
-		// OK
-	} else {
+	if instance.GetLabel("X") != "aaa_bbb" {
 		t.Error("Label A does have expected value")
 	}
 }
@@ -156,9 +148,7 @@ func TestReplaceSimpleRule(t *testing.T) {
 	_ = p.replaceSimple(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("A") == "X" && instance.GetLabel("B") == "bbb_X" {
-		// OK
-	} else {
+	if instance.GetLabel("A") != "X" || instance.GetLabel("B") != "bbb_X" {
 		t.Error("Labels A and B don't have expected values")
 	}
 }
@@ -174,9 +164,7 @@ func TestReplaceRegexRule(t *testing.T) {
 	_ = p.replaceRegex(m)
 	t.Logf("after  = [%s]\n", instance.GetLabels().String())
 
-	if instance.GetLabel("B") == "abcDEF-12345-bbb" {
-		// OK
-	} else {
+	if instance.GetLabel("B") != "abcDEF-12345-bbb" {
 		t.Error("Label B does not have expected value")
 	}
 }

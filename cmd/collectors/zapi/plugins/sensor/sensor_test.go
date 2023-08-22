@@ -33,9 +33,9 @@ func init() {
 	}
 
 	fetch = func(instance *matrix.Instance, node *node.Node, path []string) {
-
-		newpath := append(path, node.GetNameS())
-		key := strings.Join(newpath, ".")
+		newPath := path
+		newPath = append(newPath, node.GetNameS())
+		key := strings.Join(newPath, ".")
 		if value := node.GetContentS(); value != "" {
 			if label, has := instanceLabelPaths[key]; has {
 				instance.SetLabel(label, value)
@@ -45,7 +45,7 @@ func init() {
 		}
 
 		for _, child := range node.GetChildren() {
-			fetch(instance, child, newpath)
+			fetch(instance, child, newPath)
 		}
 	}
 

@@ -68,9 +68,8 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
 				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("Failed to create metric")
 				return err
-			} else {
-				metric.SetProperty("compute_metric mapping")
 			}
+			metric.SetProperty("compute_metric mapping")
 		}
 
 		for _, instance := range m.GetInstances() {

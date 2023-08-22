@@ -87,7 +87,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	}
 	fmt.Println("\n===========================================================================\n")
 	*/
-	fp := make([]string, 0)
+	var fp []string
 
 	harvestHomePath = conf.GetHarvestHomePath()
 	fp = append(fp, harvestHomePath)

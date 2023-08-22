@@ -322,9 +322,8 @@ func attachMemory(msg *Payload) {
 		cmdline, err := p.Cmdline()
 		if err != nil {
 			continue
-		} else {
-			pp.Cmdline = cmdline
 		}
+		pp.Cmdline = cmdline
 		if len(cmdline) == 0 {
 			continue
 		}

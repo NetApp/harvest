@@ -96,7 +96,7 @@ func (p *Prometheus) checkAddr(addr string) bool {
 func (p *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 
 	p.Logger.Debug().Msgf("(httpd) denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
-	w.WriteHeader(403)
+	w.WriteHeader(http.StatusForbidden)
 	w.Header().Set("content-type", "text/plain")
 	_, err := w.Write([]byte("403 Forbidden"))
 	if err != nil {
@@ -145,7 +145,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		data = filterMetaTags(data)
 	}
 
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("content-type", "text/plain")
 	_, err := w.Write(bytes.Join(data, []byte("\n")))
 	if err != nil {
@@ -284,7 +284,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	poller := p.Options.Poller
 	bodyFlat := fmt.Sprintf(htmlTemplate, poller, poller, poller, numCollectors, numObjects, numMetrics, strings.Join(body, "\n\n"))
 
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("content-type", "text/html")
 	_, err := w.Write([]byte(bodyFlat))
 	if err != nil {

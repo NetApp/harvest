@@ -129,9 +129,8 @@ func checkAll(path string, contents []byte) {
 
 	if anyFailed {
 		os.Exit(1)
-	} else {
-		os.Exit(0)
 	}
+	os.Exit(0)
 }
 
 // checkCollectorName checks if the collector names in the config struct are valid

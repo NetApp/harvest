@@ -30,10 +30,7 @@ func (f *FCVI) Init() error {
 		f.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
-	if err = f.client.Init(5); err != nil {
-		return err
-	}
-	return nil
+	return f.client.Init(5)
 }
 
 func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {

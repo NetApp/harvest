@@ -176,7 +176,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						}
 					}
 				}
-				if len(mtBytesUsedValues) == len(mtBytesUsedPercentages) && len(mtBytesUsedValues) == len(mtBytesUsedLabels) {
+				if len(mtBytesUsedValues) == len(mtBytesUsedPercentages) && len(mtBytesUsedValues) == len(mtBytesUsedLabels) { //nolint:gocritic
 
 					for i, mv := range mtBytesUsedValues {
 						key := "modified_value_" + mtBytesUsedLabels[i]
@@ -212,7 +212,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 					}
 				}
 
-				if len(atBytesUsedValues) == len(atBytesUsedPercentages) && len(atBytesUsedValues) == len(atBytesUsedLabels) {
+				if len(atBytesUsedValues) == len(atBytesUsedPercentages) && len(atBytesUsedValues) == len(atBytesUsedLabels) { //nolint:gocritic
 
 					for i, av := range atBytesUsedValues {
 						key := "access_value_" + atBytesUsedLabels[i]

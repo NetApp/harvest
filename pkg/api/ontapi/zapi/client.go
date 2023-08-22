@@ -311,11 +311,11 @@ func (c *Client) InvokeZapiCall(request *node.Node) ([]*node.Node, error) {
 // this method should only be called after building the request
 func (c *Client) Invoke(testFilePath string) (*node.Node, error) {
 	if testFilePath != "" {
-		if testData, err := tree.ImportXML(testFilePath); err == nil {
-			return testData, nil
-		} else {
+		testData, err := tree.ImportXML(testFilePath)
+		if err != nil {
 			return nil, err
 		}
+		return testData, nil
 	}
 	result, _, _, err := c.invokeWithAuthRetry(false)
 	return result, err
@@ -328,11 +328,11 @@ func (c *Client) Invoke(testFilePath string) (*node.Node, error) {
 // Use the returned tag for subsequent calls to this method
 func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string) (*node.Node, string, error) {
 	if testFilePath != "" && tag != "" {
-		if testData, err := tree.ImportXML(testFilePath); err == nil {
-			return testData, "", nil
-		} else {
+		testData, err := tree.ImportXML(testFilePath)
+		if err != nil {
 			return nil, "", err
 		}
+		return testData, "", nil
 	}
 	// wasteful of course, need to rewrite later @TODO
 	results, tag, _, _, err := c.InvokeBatchWithTimers(request, tag)
@@ -401,11 +401,11 @@ func (c *Client) InvokeRequest(request *node.Node) (*node.Node, error) {
 // This method should only be called after building the request
 func (c *Client) InvokeWithTimers(testFilePath string) (*node.Node, time.Duration, time.Duration, error) {
 	if testFilePath != "" {
-		if testData, err := tree.ImportXML(testFilePath); err == nil {
-			return testData, 0, 0, nil
-		} else {
+		testData, err := tree.ImportXML(testFilePath)
+		if err != nil {
 			return nil, 0, 0, err
 		}
+		return testData, 0, 0, nil
 	}
 	return c.invokeWithAuthRetry(true)
 }
@@ -489,8 +489,8 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		responseT = time.Since(start)
 	}
 
-	if response.StatusCode != 200 {
-		if response.StatusCode == 401 {
+	if response.StatusCode != http.StatusOK {
+		if response.StatusCode == http.StatusUnauthorized {
 			return result, responseT, parseT, errs.New(errs.ErrAuthFailed, response.Status, errs.WithStatus(response.StatusCode))
 		}
 		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status, errs.WithStatus(response.StatusCode))

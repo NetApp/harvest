@@ -1,6 +1,5 @@
-/*
- * Copyright NetApp Inc, 2023 All rights reserved
- */
+// Copyright NetApp Inc, 2023 All rights reserved
+
 package externalserviceoperation
 
 import (

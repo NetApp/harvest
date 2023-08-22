@@ -315,7 +315,7 @@ type replaceRegexRule struct {
 
 // example rule:
 //nolint:dupword
-//node node `^(node)_(\d+)_.*$` `Node-$2`
+// node node `^(node)_(\d+)_.*$` `Node-$2`
 // if node="node_10_dc2"; then:
 // node="Node-10"
 
@@ -522,13 +522,13 @@ func (a *LabelAgent) parseValueToNumRule(rule string) {
 
 			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
 
-			if v, err := strconv.ParseUint(fields[4], 10, 8); err != nil {
+			v, err := strconv.ParseUint(fields[4], 10, 8)
+			if err != nil {
 				a.Logger.Error().Stack().Err(err).Msgf("(value_to_num) parse default value (%s): ", fields[4])
 				return
-			} else {
-				r.hasDefault = true
-				r.defaultValue = uint8(v)
 			}
+			r.hasDefault = true
+			r.defaultValue = uint8(v)
 		}
 
 		a.valueToNumRules = append(a.valueToNumRules, r)
@@ -568,13 +568,13 @@ func (a *LabelAgent) parseValueToNumRegexRule(rule string) {
 
 		if len(fields) == 5 {
 			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
-			if v, err := strconv.ParseUint(fields[4], 10, 8); err != nil {
+			v, err := strconv.ParseUint(fields[4], 10, 8)
+			if err != nil {
 				a.Logger.Error().Stack().Err(err).Msgf("(value_to_num_regex) parse default value (%s): ", fields[4])
 				return
-			} else {
-				r.hasDefault = true
-				r.defaultValue = uint8(v)
 			}
+			r.hasDefault = true
+			r.defaultValue = uint8(v)
 		}
 
 		a.valueToNumRegexRules = append(a.valueToNumRegexRules, r)

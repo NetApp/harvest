@@ -14,8 +14,8 @@ import (
 
 func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 
-	prefix := make([]string, 0)
-	keys := make([][]string, 0)
+	var prefix []string
+	var keys [][]string
 
 	for key := range m.GetMetrics() {
 		keys = append(keys, strings.Split(key, "."))
@@ -24,9 +24,9 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 		keys = append(keys, strings.Split(key, "."))
 	}
 
-	max := util.MinLen(keys)
+	minLen := util.MinLen(keys)
 
-	for i := 0; i < max; i++ {
+	for i := 0; i < minLen; i++ {
 		if util.AllSame(keys, i) {
 			prefix = append(prefix, keys[0][i])
 		} else {
@@ -93,7 +93,8 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 
 	name = strings.TrimSpace(strings.TrimLeft(name, "^"))
 
-	fullPath = append(path, name)
+	fullPath = path
+	fullPath = append(fullPath, name)
 	key = strings.Join(fullPath, ".")
 
 	if display == "" {
