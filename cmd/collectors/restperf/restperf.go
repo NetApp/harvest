@@ -1402,6 +1402,8 @@ func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matr
 		if oldInstances.Has(instanceKey) {
 			// instance already in cache
 			oldInstances.Remove(instanceKey)
+			instance := mat.GetInstance(instanceKey)
+			r.updateQosLabels(instanceData, instance, instanceKey)
 			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, instanceKey, color.End)
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("instanceKey", instanceKey).Msg("add instance")
@@ -1409,18 +1411,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matr
 			r.Logger.Trace().
 				Str("key", instanceKey).
 				Msg("Added new instance")
-			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-				for label, display := range r.perfProp.qosLabels {
-					if value := instanceData.Get(label); value.Exists() {
-						instance.SetLabel(display, strings.Clone(value.String()))
-					} else {
-						// lun,file,qtree may not always exist for workload
-						r.Logger.Trace().Str("label", label).Str("instanceKey", instanceKey).Msg("Missing label")
-
-					}
-				}
-				r.Logger.Debug().Str("query", r.Prop.Query).Str("key", instanceKey).Str("qos labels", instance.GetLabels().String()).Msg("")
-			}
+			r.updateQosLabels(instanceData, instance, instanceKey)
 		}
 	}
 
@@ -1440,6 +1431,20 @@ func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matr
 	}
 
 	return nil, err
+}
+
+func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, key string) {
+	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+		for label, display := range r.perfProp.qosLabels {
+			if value := qos.Get(label); value.Exists() {
+				instance.SetLabel(display, strings.Clone(value.String()))
+			} else {
+				// lun,file,qtree may not always exist for workload
+				r.Logger.Trace().Str("label", label).Str("key", key).Msg("Missing label")
+			}
+		}
+		r.Logger.Debug().Str("query", r.Prop.Query).Str("key", key).Str("qos labels", instance.GetLabels().String()).Send()
+	}
 }
 
 func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matrix, error) {

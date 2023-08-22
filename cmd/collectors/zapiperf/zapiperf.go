@@ -1467,6 +1467,8 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 			} else if oldInstances.Has(key) {
 				// instance already in cache
 				oldInstances.Remove(key)
+				instance := mat.GetInstance(key)
+				z.updateQosLabels(i, instance, key)
 				z.Logger.Trace().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
 				continue
 			} else if instance, err := mat.NewInstance(key); err != nil {
@@ -1475,14 +1477,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				z.Logger.Trace().
 					Str("key", key).
 					Msg("Added new instance")
-				if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
-					for label, display := range z.qosLabels {
-						if value := i.GetChildContentS(label); value != "" {
-							instance.SetLabel(display, value)
-						}
-					}
-					z.Logger.Debug().Msgf("(%s) [%s] added QOS labels: %s", z.Query, key, instance.GetLabels().String())
-				}
+				z.updateQosLabels(i, instance, key)
 			}
 		}
 	}
@@ -1503,6 +1498,17 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	return nil, err
+}
+
+func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, key string) {
+	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+		for label, display := range z.qosLabels {
+			if value := qos.GetChildContentS(label); value != "" {
+				instance.SetLabel(display, value)
+			}
+		}
+		z.Logger.Debug().Str("query", z.Query).Str("key", key).Str("qos labels", instance.GetLabels().String()).Send()
+	}
 }
 
 // Interface guards
