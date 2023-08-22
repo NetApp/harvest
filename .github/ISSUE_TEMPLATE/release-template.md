@@ -45,7 +45,7 @@ git push origin release/$RELEASE
 - [ ] Create changelog
   - [ ] [Draft a new release](https://github.com/NetApp/harvest/releases). Use `v$RELEASE` for the tag and pick the release/$RELEASE branch. Click the `Generate release notes` button and double check, at the bottom of the release notes, that the commits are across the correct range. For example: `https://github.com/NetApp/harvest/compare/v22.11.1...v23.02.0`
   - [ ] Copy/paste the generated release notes and save them in a file `pbpaste > ghrn_$RELEASE.md`
-  - [ ] Hand-write list of release highlights `vi highlights_$RELEASE.md` ([example content](https://github.com/NetApp/harvest/blob/main/CHANGELOG.md#23020--2023-02-21))
+  - [ ] Generate draft release highlights by executing `go run pkg/changelog/main.go new`. This will create a file named `releaseHighlights_$RELEASE.md`. Edit that file to add content ([example content](https://github.com/NetApp/harvest/blob/main/CHANGELOG.md#23020--2023-02-21))
     - [ ] Ensure all notable features are highlighted
     - [ ] Ensure any breaking changes are highlighted
     - [ ] Ensure any deprecations are highlighted
@@ -91,4 +91,4 @@ bin/harvest generate metrics --poller POLLERNAME
 ```bash
 mike deploy --push --update-aliases $SHORT latest
 ```
-- [ ] Merge Release Branch into Main
+- [ ] Merge release branch into main. The PR should use the `chore: ` prefix 
