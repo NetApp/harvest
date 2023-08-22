@@ -136,7 +136,7 @@ func (p *Poller) Init() error {
 	p.name = args.Poller
 
 	var fileLoggingEnabled bool
-	consoleLoggingEnabled := false
+	var consoleLoggingEnabled bool
 	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
 	// if we are daemon, use file logging
 	if p.options.Daemon {
