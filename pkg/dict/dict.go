@@ -5,8 +5,8 @@
 package dict
 
 import (
-	"github.com/netapp/harvest/v2/pkg/util"
 	"reflect"
+	"slices"
 	"strings"
 )
 
@@ -129,7 +129,7 @@ func (d *Dict) CompareLabels(prev *Dict, labels []string) (*Dict, *Dict) {
 	old := New()
 	for key, val1 := range d.dict {
 		val2, ok := prev.dict[key]
-		if util.Contains(labels, key) && (!ok || !reflect.DeepEqual(val1, val2)) {
+		if slices.Contains(labels, key) && (!ok || !reflect.DeepEqual(val1, val2)) {
 			cur.dict[key] = val1
 			old.dict[key] = val2
 		}

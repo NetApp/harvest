@@ -80,12 +80,7 @@ func (c *ChangeLog) Init() error {
 		return err
 	}
 
-	// Populate the ChangeLog configuration
-	if err := c.populateChangeLogConfig(); err != nil {
-		return err
-	}
-
-	return nil
+	return c.populateChangeLogConfig()
 }
 
 // populateChangeLogConfig populates the ChangeLog configuration from the plugin parameters
