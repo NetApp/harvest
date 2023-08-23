@@ -62,9 +62,7 @@ endif
 
 clean: header ## Cleanup the project binary (bin) folders
 	@echo "Cleaning harvest files"
-	@if [ -d bin ]; then \
-		ls -d ./bin/* | grep -v "asup" | xargs rm -f; \
-	fi
+	@find ./bin -type f ! -name "*asup*" -exec rm -f {} \;
 
 test: ## run tests
 	@echo "Running tests"
