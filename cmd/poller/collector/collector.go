@@ -359,7 +359,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					// API was rejected, this happens when a resource is not available or does not exist
 					if errors.Is(err, errs.ErrAPIRequestRejected) {
 						c.Schedule.SetStandByMode(task, 1*time.Hour)
-						c.Logger.Info().
+						c.Logger.Warn().
 							Err(err).
 							Str("task", task.Name).
 							Msg("API rejected, entering standby mode")
