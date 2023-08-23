@@ -1204,7 +1204,10 @@
 
 
 <h1 id="harvest-logs-collection-guide">Harvest Logs Collection Guide<a class="headerlink" href="#harvest-logs-collection-guide" title="Permanent link">&para;</a></h1>
-<p>This guide will help you collect logs for Harvest on various platforms. Follow the instructions specific to your platform. If you would like to share the collected logs with the Harvest team, feel free to email them to <code>ng-harvest-files@netapp.com</code>.</p>
+<p>This guide will help you collect Harvest logs on various platforms.
+Follow the instructions specific to your platform.
+If you would like to share the collected logs with the Harvest team,
+please email them to <a href="mailto:ng-harvest-files@netapp.com">ng-harvest-files@netapp.com</a>.</p>
 <h2 id="rpm-deb-and-native-installations">RPM, DEB, and Native Installations<a class="headerlink" href="#rpm-deb-and-native-installations" title="Permanent link">&para;</a></h2>
 <p>For RPM, DEB, and native installations, use the following command to create a compressed tar file containing the logs:</p>
 <div class="highlight"><pre><span></span><code>tar<span class="w"> </span>-czvf<span class="w"> </span>harvest_logs.tar.gz<span class="w"> </span>-C<span class="w"> </span>/var/log<span class="w"> </span>harvest
@@ -1216,8 +1219,13 @@
 </code></pre></div>
 <p>This command will create a file named <code>harvest_logs.tar.gz</code> containing the logs from the specified container.</p>
 <h2 id="nabox">NABox<a class="headerlink" href="#nabox" title="Permanent link">&para;</a></h2>
-<p>For NABox installations, refer to the NABox documentation on collecting logs:</p>
-<p><a href="https://nabox.org/documentation/troubleshooting/#collecting-logs">NABox Troubleshooting - Collecting Logs</a></p>
+<p>For NABox installations, use the following command to create a compressed tar file containing the logs:</p>
+<div class="highlight"><pre><span></span><code>dc<span class="w"> </span>logs<span class="w"> </span>nabox-api<span class="w"> </span>&gt;<span class="w"> </span>nabox-api.log<span class="p">;</span><span class="w"> </span>dc<span class="w"> </span>logs<span class="w"> </span>nabox-harvest2<span class="w"> </span>&gt;<span class="w"> </span>nabox-harvest2.log<span class="p">;</span><span class="se">\</span>
+<span class="w">  </span>tar<span class="w"> </span>-czf<span class="w"> </span>nabox-logs-<span class="sb">`</span>date<span class="w"> </span>+%Y-%m-%d_%H:%M:%S<span class="sb">`</span>.tgz<span class="w"> </span>*
+</code></pre></div>
+<p>This command will create a file named <code>nabox-logs-$date.tgz</code> containing the nabox-api and Harvest poller logs.</p>
+<p>For more information,
+see the <a href="https://nabox.org/documentation/troubleshooting/#collecting-logs">NABox documentation on collecting logs</a></p>
 
 
 
