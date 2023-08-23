@@ -68,7 +68,6 @@ func SetPathsAndHostname(args *Options) {
 		args.Hostname = hostname
 	}
 
-	args.HomePath = conf.GetHarvestHomePath()
-
+	args.HomePath = conf.Path()
 	args.LogPath = conf.GetHarvestLogPath()
 }

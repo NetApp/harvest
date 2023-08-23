@@ -181,7 +181,7 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 
 func checkCustomYaml(confParent string) validation {
 	valid := validation{isValid: true}
-	confDir := path.Join(conf.GetHarvestHomePath(), "conf")
+	confDir := conf.Path("conf")
 	if confParent != "" {
 		confDir = path.Join(confParent, "conf")
 	}

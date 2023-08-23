@@ -331,7 +331,7 @@ func getData(c *client.Client, args *Args) (*node.Node, error) {
 var args = &Args{}
 
 func init() {
-	configPath := conf.GetDefaultHarvestConfigPath()
+	configPath := conf.Path(conf.HarvestYML)
 	Cmd.AddCommand(showCmd, exportCmd)
 	flags := Cmd.PersistentFlags()
 	flags.StringVarP(&args.Poller, "poller", "p", "", "name of poller (cluster), as defined in your harvest config")
