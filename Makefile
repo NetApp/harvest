@@ -3,11 +3,7 @@
 
 .PHONY: help deps clean build test fmt vet package asup dev fetch-asup
 
-###############################################################################
-#  Check for GCC, GO version, etc and anything we are dependent on.
-###############################################################################
 SHELL := /bin/bash
-GCC_EXISTS := $(shell which gcc)
 REQUIRED_GO_VERSION := 1.21
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
@@ -49,13 +45,6 @@ header:
 	@echo
 
 deps: header ## Check dependencies
-	@echo "checking Harvest dependencies"
-ifeq (${GCC_EXISTS}, )
-	@echo
-	@echo "Harvest requires that you have gcc installed."
-	@echo
-	@exit 1
-endif
 	@# Make sure that go exists
 ifeq (${FOUND_GO_VERSION}, )
 	@echo
