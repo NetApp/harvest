@@ -528,7 +528,11 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 			reason = "no reason"
 		}
 		errNum, _ = result.GetAttrValueS("errno")
-		err = errs.New(errs.ErrAPIRequestRejected, reason, errs.WithErrorNum(errNum))
+		if errNum == errs.ZAPIPermissionDenied {
+			err = errs.New(errs.ErrPermissionDenied, reason, errs.WithErrorNum(errNum))
+		} else {
+			err = errs.New(errs.ErrAPIRequestRejected, reason, errs.WithErrorNum(errNum))
+		}
 		return result, responseT, parseT, err
 	}
 
