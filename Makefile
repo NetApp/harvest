@@ -60,9 +60,11 @@ ifeq ("${CORRECT_GO_VERSION}", "0")
 	@exit 1
 endif
 
-clean: header ## Cleanup the project binary (bin) folders
+clean: ## Cleanup the project binary (bin) folders
 	@echo "Cleaning harvest files"
-	@find ./bin -type f ! -name "*asup*" -exec rm -f {} \;
+	@if [ -d bin ]; then \
+		find ./bin -type f -not -name "*asup*" -exec rm -f {} +; \
+	fi
 
 test: ## run tests
 	@echo "Running tests"
