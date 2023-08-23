@@ -359,9 +359,7 @@ func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, 
 		records, err = endpointFunc(endpoint)
 
 		if err != nil {
-			r.Logger.Error().Err(err).
-				Str("api", endpoint.prop.Query).
-				Msg("")
+			r.Logger.Error().Err(err).Str("api", endpoint.prop.Query).Send()
 			continue
 		}
 
