@@ -13,11 +13,9 @@ import (
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 var Config = HarvestConfig{}
@@ -170,25 +168,13 @@ func PollerNamed(name string) (*Poller, error) {
 	return poller, nil
 }
 
-// GetDefaultHarvestConfigPath returns the absolute path of the default harvest config file.
-func GetDefaultHarvestConfigPath() string {
-	configPath := os.Getenv("HARVEST_CONF")
-	if configPath == "" {
-		return "./" + HarvestYML
-	}
-	return path.Join(configPath, HarvestYML)
-}
-
-// GetHarvestHomePath returns the value of the env var HARVEST_CONF or ./
-func GetHarvestHomePath() string {
-	harvestConf := os.Getenv("HARVEST_CONF")
-	if harvestConf == "" {
-		return "./"
-	}
-	if strings.HasSuffix(harvestConf, "/") {
-		return harvestConf
-	}
-	return harvestConf + "/"
+// Path joins a set of path elems into a single path.
+// The final path will be relative to the HARVEST_CONF environment variable
+// or ./ when the environment variable is not set
+func Path(elem ...string) string {
+	home := os.Getenv("HARVEST_CONF")
+	paths := append([]string{home}, elem...)
+	return filepath.Join(paths...)
 }
 
 func GetHarvestLogPath() string {

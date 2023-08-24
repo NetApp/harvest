@@ -89,7 +89,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	*/
 	var fp []string
 
-	harvestHomePath = conf.GetHarvestHomePath()
+	harvestHomePath = conf.Path()
 	fp = append(fp, harvestHomePath)
 	fp = append(fp, "conf/")
 	fp = append(fp, "zapiperf/")
@@ -100,7 +100,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		fp = append(fp, "7mode")
 	}
 
-	//fp = append(fp, fmt.Sprintf("%d.%d.%d", c.System.Version[0], c.System.Version[1], c.System.Version[2]))
+	// fp = append(fp, fmt.Sprintf("%d.%d.%d", c.System.Version[0], c.System.Version[1], c.System.Version[2]))
 	fp = append(fp, "9.8.0")
 	fp = append(fp, strings.ReplaceAll(args.Object, ":", "_")+".yaml")
 

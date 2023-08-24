@@ -88,8 +88,8 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		err                                              error
 	)
 	opts.command = cmd.Name()
-	HarvestHomePath = conf.GetHarvestHomePath()
-	HarvestConfigPath = conf.GetDefaultHarvestConfigPath()
+	HarvestHomePath = conf.Path()
+	HarvestConfigPath = conf.Path(conf.HarvestYML)
 
 	if opts.verbose {
 		_ = cmd.Flags().Set("loglevel", "1")

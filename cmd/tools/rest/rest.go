@@ -579,7 +579,7 @@ func stderr(format string, a ...any) {
 }
 
 func init() {
-	configPath := conf.GetDefaultHarvestConfigPath()
+	configPath := conf.Path(conf.HarvestYML)
 
 	Cmd.AddCommand(showCmd)
 	flags := Cmd.PersistentFlags()
