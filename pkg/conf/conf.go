@@ -16,7 +16,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 var Config = HarvestConfig{}
@@ -174,13 +173,8 @@ func PollerNamed(name string) (*Poller, error) {
 // or ./ when the environment variable is not set
 func Path(elem ...string) string {
 	home := os.Getenv("HARVEST_CONF")
-	if home == "" {
-		return filepath.Join(elem...)
-	}
-	if !strings.HasSuffix(home, "/") {
-		home = home + "/"
-	}
-	return home + filepath.Join(elem...)
+	paths := append([]string{home}, elem...)
+	return filepath.Join(paths...)
 }
 
 func GetHarvestLogPath() string {
