@@ -36,16 +36,13 @@ func Test_ZapiPerf(t *testing.T) {
 func NewZapiPerf(object, path string) *ZapiPerf {
 	// homepath is harvest directory level
 	homePath := "../../../"
-	zapiperfPoller := "testZapiperf"
-
 	conf.TestLoadHarvestConfig("testdata/config.yml")
-	opts := options.Options{
-		Poller:   zapiperfPoller,
-		HomePath: homePath,
-		IsTest:   true,
-	}
+	opts := options.New(options.WithConfPath(homePath + "/conf"))
+	opts.Poller = "testZapiperf"
+	opts.HomePath = homePath
+	opts.IsTest = true
 
-	ac := collector.New("Zapiperf", object, &opts, params(object, path), nil)
+	ac := collector.New("Zapiperf", object, opts, params(object, path), nil)
 	z := &ZapiPerf{}
 	if err := z.Init(ac); err != nil {
 		log.Fatal().Err(err).Send()

@@ -205,12 +205,12 @@ func TestRestPerf_pollData(t *testing.T) {
 
 func newRestPerf(object string, path string) *RestPerf {
 	var err error
-	opts := options.Options{
-		Poller:   pollerName,
-		HomePath: "testdata",
-		IsTest:   true,
-	}
-	ac := collector.New("RestPerf", object, &opts, params(object, path), nil)
+	opts := options.New(options.WithConfPath("testdata/conf"))
+	opts.Poller = pollerName
+	opts.HomePath = "testdata"
+	opts.IsTest = true
+
+	ac := collector.New("RestPerf", object, opts, params(object, path), nil)
 	r := RestPerf{}
 	err = r.Init(ac)
 	if err != nil {

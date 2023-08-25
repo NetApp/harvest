@@ -35,7 +35,7 @@ import (
 	_ "net/http/pprof" // #nosec since pprof is off by default
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -55,6 +55,7 @@ type options struct {
 	loglevel   int
 	logToFile  bool // only used when running in foreground
 	config     string
+	confPath   string
 	profiling  bool
 	longStatus bool
 	daemon     bool
@@ -358,7 +359,7 @@ func stopPoller(ps *util.PollerStatus) {
 func startPoller(pollerName string, promPort int, opts *options) {
 
 	argv := []string{
-		path.Join(HarvestHomePath, "bin", "poller"),
+		filepath.Join(HarvestHomePath, "bin", "poller"),
 		"--poller",
 		pollerName,
 		"--loglevel",
@@ -366,42 +367,40 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	}
 
 	if promPort != 0 {
-		argv = append(argv, "--promPort")
-		argv = append(argv, strconv.Itoa(promPort))
+		argv = append(argv, "--promPort", strconv.Itoa(promPort))
 	}
 	if opts.debug {
 		argv = append(argv, "--debug")
 	}
 
 	if opts.config != HarvestConfigPath {
-		argv = append(argv, "--config")
-		argv = append(argv, opts.config)
+		argv = append(argv, "--config", opts.config)
+	}
+
+	if opts.confPath != conf.DefaultConfPath {
+		argv = append(argv, "--confpath", opts.confPath)
 	}
 
 	if opts.profiling {
 		if opts.foreground {
 			// Always pick the same port when profiling in foreground
-			argv = append(argv, "--profiling")
-			argv = append(argv, "6060")
+			argv = append(argv, "--profiling", "6060")
 		} else {
 			if port, err := freePort(); err != nil {
 				// No free port, log it and move on
 				fmt.Println("profiling disabled due to no free ports")
 			} else {
-				argv = append(argv, "--profiling")
-				argv = append(argv, strconv.Itoa(port))
+				argv = append(argv, "--profiling", strconv.Itoa(port))
 			}
 		}
 	}
 
 	if len(opts.collectors) > 0 {
-		argv = append(argv, "--collectors")
-		argv = append(argv, strings.Join(opts.collectors, ","))
+		argv = append(argv, "--collectors", strings.Join(opts.collectors, ","))
 	}
 
 	if len(opts.objects) > 0 {
-		argv = append(argv, "--objects")
-		argv = append(argv, strings.Join(opts.objects, ","))
+		argv = append(argv, "--objects", strings.Join(opts.objects, ","))
 	}
 
 	if opts.foreground {
@@ -541,6 +540,8 @@ func init() {
 	rootCmd.AddCommand(admin.Cmd())
 
 	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "Harvest config file path")
+	rootCmd.PersistentFlags().StringVar(&opts.confPath, "confpath", "conf", "colon-seperated paths to search for Harvest templates")
+
 	rootCmd.Version = version.String()
 	rootCmd.SetVersionTemplate(version.String())
 	rootCmd.SetUsageTemplate(rootCmd.UsageTemplate() + `

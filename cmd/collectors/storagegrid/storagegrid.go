@@ -449,24 +449,18 @@ func (s *StorageGrid) InitProp() {
 
 func (s *StorageGrid) LoadTemplate() (string, error) {
 	var (
-		template     *node.Node
-		templatePath string
-		err          error
+		template *node.Node
+		path     string
+		err      error
 	)
 
-	// import template
-
-	template, templatePath, err = s.ImportSubTemplate(
-		"",
-		rest.TemplateFn(s.Params, s.Object),
-		s.client.Cluster.Version,
-	)
+	template, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), s.client.Cluster.Version)
 	if err != nil {
 		return "", err
 	}
 
 	s.Params.Union(template)
-	return templatePath, nil
+	return path, nil
 }
 
 func (s *StorageGrid) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {

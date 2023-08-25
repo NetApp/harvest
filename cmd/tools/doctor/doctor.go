@@ -90,10 +90,12 @@ func doMerge(path1 string, path2 string) {
 
 func doDoctorCmd(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
-	doDoctor(conf.ConfigPath(config.Value.String()))
+	var confPaths = cmd.Root().PersistentFlags().Lookup("confpath")
+
+	doDoctor(conf.ConfigPath(config.Value.String()), confPaths.Value.String())
 }
 
-func doDoctor(path string) {
+func doDoctor(path string, confPath string) {
 	contents, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Printf("error reading config file. err=%+v\n", err)
@@ -102,13 +104,13 @@ func doDoctor(path string) {
 	if opts.ShouldPrintConfig {
 		printRedactedConfig(path, contents)
 	}
-	checkAll(path, contents)
+	checkAll(path, contents, confPath)
 }
 
 // checkAll runs all doctor checks
 // If all checks succeed, print nothing and exit with a return code of 0
 // Otherwise, print what failed and exit with a return code of 1
-func checkAll(path string, contents []byte) {
+func checkAll(path string, contents []byte, confPath string) {
 	// See https://github.com/NetApp/harvest/issues/16 for more checks to add
 	color.DetectConsole(opts.Color)
 	// Validate that the config file can be parsed
@@ -120,11 +122,12 @@ func checkAll(path string, contents []byte) {
 		return
 	}
 
+	confPaths := filepath.SplitList(confPath)
 	anyFailed := false
 	anyFailed = !checkUniquePromPorts(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkPollersExportToUniquePromPorts(*harvestConfig).isValid || anyFailed
 	anyFailed = !checkExporterTypes(*harvestConfig).isValid || anyFailed
-	anyFailed = !checkCustomYaml("").isValid || anyFailed
+	anyFailed = !checkConfTemplates(confPaths).isValid || anyFailed
 	anyFailed = !checkCollectorName(*harvestConfig).isValid || anyFailed
 
 	if anyFailed {
@@ -179,62 +182,61 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 	return valid
 }
 
-func checkCustomYaml(confParent string) validation {
+func checkConfTemplates(confPaths []string) validation {
 	valid := validation{isValid: true}
-	confDir := conf.Path("conf")
-	if confParent != "" {
-		confDir = path.Join(confParent, "conf")
-	}
 
-	dir, err := os.ReadDir(confDir)
-	if err != nil {
-		fmt.Printf("unable to read directory=%s err=%s\n", confDir, err)
-	}
-	for _, f := range dir {
-		if !f.IsDir() {
-			continue
-		}
-		flavor := f.Name()
-		custom := path.Join(confDir, flavor, "custom.yaml")
-		if _, err := os.Stat(custom); errors.Is(err, os.ErrNotExist) {
-			continue
-		}
-		template, err := collector.ImportTemplate(confParent, "custom.yaml", flavor)
+	for _, confDir := range confPaths {
+		dir, err := os.ReadDir(confDir)
 		if err != nil {
-			valid.isValid = false
-			valid.invalid = append(valid.invalid, fmt.Sprintf(`%s is empty or invalid err=%+v`, custom, err))
-			continue
+			fmt.Printf("unable to read directory=%s err=%s\n", confDir, err)
 		}
-		s := template.GetChildS("objects")
-		if s == nil {
-			valid.isValid = false
-			msg := fmt.Sprintf(`%s should have a top-level "objects" key`, custom)
-			valid.invalid = append(valid.invalid, msg)
-			continue
-		}
-		if s.Children == nil {
-			valid.isValid = false
-			msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
-			valid.invalid = append(valid.invalid, msg)
-		} else {
-			for _, t := range s.Children {
-				if len(t.Content) == 0 {
-					valid.isValid = false
-					msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
-					valid.invalid = append(valid.invalid, msg)
-					continue
-				}
-				searchDir := path.Join(confDir, flavor)
-				if !templateExists(searchDir, t.GetContentS()) {
-					valid.isValid = false
-					msg := fmt.Sprintf(`%s references template file "%s" which does not exist in %s`,
-						custom, t.GetContentS(), path.Join(searchDir, "**"))
-					valid.invalid = append(valid.invalid, msg)
-					continue
+		for _, f := range dir {
+			if !f.IsDir() {
+				continue
+			}
+			flavor := f.Name()
+			custom := path.Join(confDir, flavor, "custom.yaml")
+			if _, err := os.Stat(custom); errors.Is(err, os.ErrNotExist) {
+				continue
+			}
+			template, err := collector.ImportTemplate(confPaths, "custom.yaml", flavor)
+			if err != nil {
+				valid.isValid = false
+				valid.invalid = append(valid.invalid, fmt.Sprintf(`%s is empty or invalid err=%+v`, custom, err))
+				continue
+			}
+			s := template.GetChildS("objects")
+			if s == nil {
+				valid.isValid = false
+				msg := fmt.Sprintf(`%s should have a top-level "objects" key`, custom)
+				valid.invalid = append(valid.invalid, msg)
+				continue
+			}
+			if s.Children == nil {
+				valid.isValid = false
+				msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
+				valid.invalid = append(valid.invalid, msg)
+			} else {
+				for _, t := range s.Children {
+					if len(t.Content) == 0 {
+						valid.isValid = false
+						msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
+						valid.invalid = append(valid.invalid, msg)
+						continue
+					}
+					searchDir := path.Join(confDir, flavor)
+					if !templateExists(searchDir, t.GetContentS()) {
+						valid.isValid = false
+						msg := fmt.Sprintf(`%s references template file "%s" which does not exist in %s`,
+							custom, t.GetContentS(), path.Join(searchDir, "**"))
+						valid.invalid = append(valid.invalid, msg)
+						continue
+					}
 				}
 			}
 		}
 	}
+
 	if len(valid.invalid) > 0 {
 		fmt.Printf("%s: Problems found in custom.yaml files\n", color.Colorize("Error", color.Red))
 		for _, s := range valid.invalid {

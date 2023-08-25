@@ -85,21 +85,20 @@ func (z *Zapi) Init(a *collector.AbstractCollector) error {
 }
 
 func (z *Zapi) InitVars() error {
-	var err error
-
 	// It's used for unit tests only
 	if z.Options.IsTest {
 		z.Client = client.NewTestClient()
 		templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
-		template, templatePath, err := z.ImportSubTemplate("cdot", templateName, [3]int{9, 8, 0})
+		template, path, err := z.ImportSubTemplate("cdot", templateName, [3]int{9, 8, 0})
 		if err != nil {
-			return fmt.Errorf("unable to import template=[%s] %w", templatePath, err)
+			return err
 		}
-		z.TemplatePath = templatePath
+		z.TemplatePath = path
 		z.Params.Union(template)
 		return nil
 	}
 
+	var err error
 	if z.Client, err = client.New(conf.ZapiPoller(z.Params), z.Auth); err != nil { // convert to connection error, so poller aborts
 		return errs.New(errs.ErrConnection, err.Error())
 	}
@@ -122,12 +121,12 @@ func (z *Zapi) InitVars() error {
 	z.HostModel = model
 	templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
 
-	template, templatePath, err := z.ImportSubTemplate(model, templateName, z.Client.Version())
+	template, path, err := z.ImportSubTemplate(model, templateName, z.Client.Version())
 	if err != nil {
-		return fmt.Errorf("unable to import template=[%s] %w", templatePath, err)
+		return err
 	}
 
-	z.TemplatePath = templatePath
+	z.TemplatePath = path
 
 	z.Params.Union(template)
 
@@ -375,12 +374,12 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, instanceElem := range instances {
-			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
+			// c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
 			keys, found := instanceElem.SearchContent(z.shortestPathPrefix, z.instanceKeyPaths)
-			//logger.Debug(z.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
+			// logger.Debug(z.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
 
 			if !found {
-				//logger.Debug(z.Prefix, "Skipping instance: no keys fetched")
+				// logger.Debug(z.Prefix, "Skipping instance: no keys fetched")
 				continue
 			}
 

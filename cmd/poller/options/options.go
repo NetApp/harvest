@@ -13,17 +13,16 @@
 package options
 
 import (
-	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/rs/zerolog"
 	"os"
-	"strings"
+	"path/filepath"
 )
 
 type Options struct {
-	Poller string // name of the Poller
-	Daemon bool   // if true, Poller is started as daemon
-	Debug  bool   // if true, Poller is started in debug mode
-	// this mostly means that no data will be exported
+	Poller     string   // name of the Poller
+	Daemon     bool     // if true, Poller is started as daemon
+	Debug      bool     // if true, Poller is started in debug mode, which means data will not be exported
 	PromPort   int      // HTTP port that is assigned to Poller and can be used by the Prometheus exporter
 	Config     string   // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
@@ -35,39 +34,62 @@ type Options struct {
 	Collectors []string // name of collectors to load (override poller config)
 	Objects    []string // objects to load (overrides collector config)
 	Profiling  int      // in case of profiling, the HTTP port used to display results
-	Asup       bool     // if true, invoke autosupport at start up
+	Asup       bool     // if true, invoke autosupport at start-up
 	IsTest     bool     // true when run from unit test
+	ConfPath   string   // colon-seperated paths to search for templates
+	ConfPaths  []string // sliced version of `ConfPath`, list of paths to search for templates
 }
 
-// String provides a string representation of Options
-func (o *Options) String() string {
-	x := []string{
-		fmt.Sprintf("%s= %s", "Poller", o.Poller),
-		fmt.Sprintf("%s = %v", "Daemon", o.Daemon),
-		fmt.Sprintf("%s = %v", "Debug", o.Debug),
-		fmt.Sprintf("%s = %d", "Profiling", o.Profiling),
-		fmt.Sprintf("%s = %d", "PromPort", o.PromPort),
-		fmt.Sprintf("%s = %d", "LogLevel", o.LogLevel),
-		fmt.Sprintf("%s = %s", "HomePath", o.HomePath),
-		fmt.Sprintf("%s = %s", "LogPath", o.LogPath),
-		fmt.Sprintf("%s = %s", "Config", o.Config),
-		fmt.Sprintf("%s = %s", "Hostname", o.Hostname),
-		fmt.Sprintf("%s = %s", "Version", o.Version),
-		fmt.Sprintf("%s = %v", "Asup", o.Asup),
+func New(opts ...Option) *Options {
+	o := &Options{}
+	for _, opt := range opts {
+		opt(o)
 	}
-	return strings.Join(x, ", ")
+	o.SetDefaults()
+	return o
 }
 
-// Print writes Options to STDOUT
-func (o *Options) Print() {
-	fmt.Println(o.String())
+type Option func(*Options)
+
+func WithConfPath(path string) Option {
+	return func(o *Options) {
+		o.ConfPath = path
+	}
 }
 
-func SetPathsAndHostname(args *Options) {
+func WithConfigPath(path string) Option {
+	return func(o *Options) {
+		o.Config = path
+	}
+}
+
+func (o *Options) MarshalZerologObject(e *zerolog.Event) {
+	e.Str("config", o.Config)
+	e.Str("confPath", o.ConfPath)
+	e.Bool("daemon", o.Daemon)
+	e.Bool("debug", o.Debug)
+	e.Int("profiling", o.Profiling)
+	e.Int("promPort", o.PromPort)
+	e.Str("homePath", o.HomePath)
+	e.Str("logPath", o.LogPath)
+	e.Str("logPath", o.LogPath)
+	e.Str("hostname", o.Hostname)
+	e.Bool("asup", o.Asup)
+}
+
+func (o *Options) SetDefaults() *Options {
 	if hostname, err := os.Hostname(); err == nil {
-		args.Hostname = hostname
+		o.Hostname = hostname
 	}
 
-	args.HomePath = conf.Path()
-	args.LogPath = conf.GetHarvestLogPath()
+	o.HomePath = conf.Path()
+	o.LogPath = conf.GetHarvestLogPath()
+	o.SetConfPath(o.ConfPath)
+
+	return o
+}
+
+func (o *Options) SetConfPath(path string) {
+	o.ConfPath = path
+	o.ConfPaths = filepath.SplitList(path)
 }
