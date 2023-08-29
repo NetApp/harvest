@@ -28,29 +28,25 @@ type embedShelf struct {
 }
 
 // Reference https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage
+// There are two ways to identify embedded disk shelves:
+// 1. The shelf's module type ends with E
+// 2. The shelf is listed in the link above
 var combinations = map[embedShelf]bool{
-	embedShelf{"FS4483PSM3E", "PSM3E"}: true,
-	embedShelf{"NS224NSM8E", "NSM8E"}:  true,
-	embedShelf{"FS424-12", "IOM12F"}:   true,
-	embedShelf{"DS224-12", "IOM12E"}:   true,
-	embedShelf{"DS212-12", "IOM12E"}:   true,
-	embedShelf{"DS2246", "IOM6E"}:      true,
-	embedShelf{"DS4246", "IOM6E"}:      true,
-	embedShelf{"DS2126", "IOM6E"}:      true,
+	embedShelf{"FS424-12", "IOM12F"}: true,
 }
 
 func IsEmbedShelf(model string, moduleType string) bool {
 	model = strings.ToUpper(model)
 	moduleType = strings.ToUpper(moduleType)
-	if _, exists := combinations[embedShelf{model, moduleType}]; exists {
-		return true
-	}
 
 	// if module type ends with E
 	if strings.HasSuffix(moduleType, "E") {
 		return true
 	}
 
+	if _, exists := combinations[embedShelf{model, moduleType}]; exists {
+		return true
+	}
 	return false
 }
 

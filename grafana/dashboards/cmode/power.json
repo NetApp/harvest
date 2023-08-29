@@ -113,7 +113,7 @@
       },
       "id": 101,
       "options": {
-        "content": "In an ONTAP system with **embedded** shelves, power and temperature data might not be visible for individual shelves. This is because these metrics are computed at the cluster level, not at the level of individual shelves. Furthermore, if power data is available for an embedded shelf, it is not included in the Total Power calculation. This is because the power consumption of the embedded shelf is already factored into the node-level calculations.",
+        "content": "In an ONTAP system with **embedded** disk shelves, power and temperature data might not be visible for individual shelves. This is because these metrics are computed at the cluster level, not at the level of individual shelves.\n\nEmbedded shelf power is shared among the common nodes.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -195,7 +195,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Cluster Power (Node + Shelf)",
+      "title": "Total Power",
       "type": "stat"
     },
     {

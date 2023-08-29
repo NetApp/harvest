@@ -56,84 +56,86 @@ func (my *Shelf) Init() error {
 		return err
 	}
 
-	if !my.client.IsClustered() {
+	if my.client.IsClustered() {
+		return nil
+	}
 
-		my.query = "storage-shelf-environment-list-info"
+	my.query = "storage-shelf-environment-list-info"
 
-		my.Logger.Debug().Msg("plugin connected!")
+	my.Logger.Debug().Msg("plugin connected!")
 
-		my.create7ModeShelfMetrics()
+	my.create7ModeShelfMetrics()
 
-		my.data = make(map[string]*matrix.Matrix)
-		my.instanceKeys = make(map[string]string)
-		my.instanceLabels = make(map[string]*dict.Dict)
+	my.data = make(map[string]*matrix.Matrix)
+	my.instanceKeys = make(map[string]string)
+	my.instanceLabels = make(map[string]*dict.Dict)
 
-		objects := my.Params.GetChildS("objects")
-		if objects == nil {
-			return errs.New(errs.ErrMissingParam, "objects")
+	objects := my.Params.GetChildS("objects")
+	if objects == nil {
+		return errs.New(errs.ErrMissingParam, "objects")
+	}
+
+	for _, obj := range objects.GetChildren() {
+
+		attribute := obj.GetNameS()
+		objectName := strings.ReplaceAll(attribute, "-", "_")
+
+		if x := strings.Split(attribute, "=>"); len(x) == 2 {
+			attribute = strings.TrimSpace(x[0])
+			objectName = strings.TrimSpace(x[1])
 		}
 
-		for _, obj := range objects.GetChildren() {
+		my.instanceLabels[attribute] = dict.New()
 
-			attribute := obj.GetNameS()
-			objectName := strings.ReplaceAll(attribute, "-", "_")
+		my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
+		my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
 
-			if x := strings.Split(attribute, "=>"); len(x) == 2 {
-				attribute = strings.TrimSpace(x[0])
-				objectName = strings.TrimSpace(x[1])
-			}
+		exportOptions := node.NewS("export_options")
+		instanceLabels := exportOptions.NewChildS("instance_labels", "")
+		instanceKeys := exportOptions.NewChildS("instance_keys", "")
+		instanceKeys.NewChildS("", "shelf")
+		instanceKeys.NewChildS("", "channel")
 
-			my.instanceLabels[attribute] = dict.New()
+		// artificial metric for status of child object of shelf
+		_, _ = my.data[attribute].NewMetricUint8("status")
 
-			my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
-			my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
+		for _, x := range obj.GetChildren() {
 
-			exportOptions := node.NewS("export_options")
-			instanceLabels := exportOptions.NewChildS("instance_labels", "")
-			instanceKeys := exportOptions.NewChildS("instance_keys", "")
-			instanceKeys.NewChildS("", "shelf")
-			instanceKeys.NewChildS("", "channel")
+			for _, c := range x.GetAllChildContentS() {
 
-			// artificial metric for status of child object of shelf
-			_, _ = my.data[attribute].NewMetricUint8("status")
+				metricName, display, kind, _ := util.ParseMetric(c)
 
-			for _, x := range obj.GetChildren() {
-
-				for _, c := range x.GetAllChildContentS() {
-
-					metricName, display, kind, _ := util.ParseMetric(c)
-
-					switch kind {
-					case "key":
-						my.instanceKeys[attribute] = metricName
-						my.instanceLabels[attribute].Set(metricName, display)
-						instanceKeys.NewChildS("", display)
-						my.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
-					case "label":
-						my.instanceLabels[attribute].Set(metricName, display)
-						instanceLabels.NewChildS("", display)
-						my.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
-					case "float":
-						_, err := my.data[attribute].NewMetricFloat64(metricName, display)
-						if err != nil {
-							my.Logger.Error().Err(err).Msg("add metric")
-							return err
-						}
-						my.Logger.Debug().Msgf("added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+				switch kind {
+				case "key":
+					my.instanceKeys[attribute] = metricName
+					my.instanceLabels[attribute].Set(metricName, display)
+					instanceKeys.NewChildS("", display)
+					my.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+				case "label":
+					my.instanceLabels[attribute].Set(metricName, display)
+					instanceLabels.NewChildS("", display)
+					my.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+				case "float":
+					_, err := my.data[attribute].NewMetricFloat64(metricName, display)
+					if err != nil {
+						my.Logger.Error().Err(err).Msg("add metric")
+						return err
 					}
+					my.Logger.Debug().Msgf("added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 				}
 			}
-
-			my.Logger.Debug().Str("attribute", attribute).Int("metrics count", len(my.data[attribute].GetMetrics())).Msg("added")
-
-			my.data[attribute].SetExportOptions(exportOptions)
 		}
 
-		my.Logger.Debug().Int("objects count", len(my.data)).Msg("initialized")
+		my.Logger.Debug().Str("attribute", attribute).Int("metrics count", len(my.data[attribute].GetMetrics())).Msg("added")
 
-		// setup batchSize for request
-		my.batchSize = BatchSize
+		my.data[attribute].SetExportOptions(exportOptions)
 	}
+
+	my.Logger.Debug().Int("objects count", len(my.data)).Msg("initialized")
+
+	// setup batchSize for request
+	my.batchSize = BatchSize
+
 	return nil
 }
 
