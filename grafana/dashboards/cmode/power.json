@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1689849302689,
+  "iteration": 1693298975439,
   "links": [
     {
       "asDropdown": true,
@@ -113,7 +113,7 @@
       },
       "id": 101,
       "options": {
-        "content": "If an ONTAP system has **embedded** shelves, you may not see power and temperature information for those shelves since power and temperature are calculated at the cluster level.",
+        "content": "In an ONTAP system with **embedded** shelves, power and temperature data might not be visible for individual shelves. This is because these metrics are computed at the cluster level, not at the level of individual shelves. Furthermore, if power data is available for an embedded shelf, it is not included in the Total Power calculation. This is because the power consumption of the embedded shelf is already factored into the node-level calculations.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -183,7 +183,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(datacenter,cluster,shelf) shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",isEmbedded=\"No\"}) or vector(0))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -2849,7 +2849,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 54
+            "y": 58
           },
           "id": 81,
           "interval": "1m",
@@ -2988,6 +2988,7 @@
               "options": {
                 "include": {
                   "names": [
+                    "cluster",
                     "datacenter",
                     "model",
                     "module_type",
@@ -3004,11 +3005,11 @@
                     "Value #K",
                     "Value #F",
                     "Value #G",
+                    "Value #L",
                     "Value #H",
                     "Value #I",
                     "Value #J",
-                    "Value #L",
-                    "cluster"
+                    "isEmbedded"
                   ]
                 }
               }
@@ -3026,27 +3027,28 @@
                   "state": true
                 },
                 "indexByName": {
-                  "Value #A": 19,
-                  "Value #B": 16,
-                  "Value #C": 20,
-                  "Value #D": 4,
-                  "Value #E": 5,
-                  "Value #F": 7,
-                  "Value #G": 8,
-                  "Value #H": 10,
-                  "Value #I": 11,
-                  "Value #J": 12,
-                  "Value #K": 6,
-                  "Value #L": 9,
+                  "Value #A": 20,
+                  "Value #B": 17,
+                  "Value #C": 21,
+                  "Value #D": 5,
+                  "Value #E": 6,
+                  "Value #F": 8,
+                  "Value #G": 9,
+                  "Value #H": 11,
+                  "Value #I": 12,
+                  "Value #J": 13,
+                  "Value #K": 7,
+                  "Value #L": 10,
                   "cluster": 1,
                   "datacenter": 0,
+                  "isEmbedded": 4,
                   "model": 3,
-                  "module_type": 15,
-                  "op_status": 17,
-                  "serial_number": 13,
+                  "module_type": 16,
+                  "op_status": 18,
+                  "serial_number": 14,
                   "shelf": 2,
-                  "state": 18,
-                  "vendor_name": 14
+                  "state": 19,
+                  "vendor_name": 15
                 },
                 "renameByName": {
                   "Value #A": "",
@@ -3061,6 +3063,7 @@
                   "Value #J": "Min Fan Speed (rpm)",
                   "Value #K": "Min Ambient Temp (C)",
                   "Value #L": "Min Temp (C)",
+                  "isEmbedded": "Is Embedded",
                   "module_type": "",
                   "op_status": "",
                   "shelf_id": ""
@@ -3396,5 +3399,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 9
+  "version": 10
 }

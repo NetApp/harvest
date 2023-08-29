@@ -2,6 +2,7 @@
 package shelf
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -55,81 +56,84 @@ func (my *Shelf) Init() error {
 		return err
 	}
 
-	my.query = "storage-shelf-environment-list-info"
+	if !my.client.IsClustered() {
 
-	my.Logger.Debug().Msg("plugin connected!")
+		my.query = "storage-shelf-environment-list-info"
 
-	my.create7ModeShelfMetrics()
+		my.Logger.Debug().Msg("plugin connected!")
 
-	my.data = make(map[string]*matrix.Matrix)
-	my.instanceKeys = make(map[string]string)
-	my.instanceLabels = make(map[string]*dict.Dict)
+		my.create7ModeShelfMetrics()
 
-	objects := my.Params.GetChildS("objects")
-	if objects == nil {
-		return errs.New(errs.ErrMissingParam, "objects")
-	}
+		my.data = make(map[string]*matrix.Matrix)
+		my.instanceKeys = make(map[string]string)
+		my.instanceLabels = make(map[string]*dict.Dict)
 
-	for _, obj := range objects.GetChildren() {
-
-		attribute := obj.GetNameS()
-		objectName := strings.ReplaceAll(attribute, "-", "_")
-
-		if x := strings.Split(attribute, "=>"); len(x) == 2 {
-			attribute = strings.TrimSpace(x[0])
-			objectName = strings.TrimSpace(x[1])
+		objects := my.Params.GetChildS("objects")
+		if objects == nil {
+			return errs.New(errs.ErrMissingParam, "objects")
 		}
 
-		my.instanceLabels[attribute] = dict.New()
+		for _, obj := range objects.GetChildren() {
 
-		my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
-		my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
+			attribute := obj.GetNameS()
+			objectName := strings.ReplaceAll(attribute, "-", "_")
 
-		exportOptions := node.NewS("export_options")
-		instanceLabels := exportOptions.NewChildS("instance_labels", "")
-		instanceKeys := exportOptions.NewChildS("instance_keys", "")
-		instanceKeys.NewChildS("", "shelf")
-		instanceKeys.NewChildS("", "channel")
+			if x := strings.Split(attribute, "=>"); len(x) == 2 {
+				attribute = strings.TrimSpace(x[0])
+				objectName = strings.TrimSpace(x[1])
+			}
 
-		// artificial metric for status of child object of shelf
-		_, _ = my.data[attribute].NewMetricUint8("status")
+			my.instanceLabels[attribute] = dict.New()
 
-		for _, x := range obj.GetChildren() {
+			my.data[attribute] = matrix.New(my.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
+			my.data[attribute].SetGlobalLabel("datacenter", my.ParentParams.GetChildContentS("datacenter"))
 
-			for _, c := range x.GetAllChildContentS() {
+			exportOptions := node.NewS("export_options")
+			instanceLabels := exportOptions.NewChildS("instance_labels", "")
+			instanceKeys := exportOptions.NewChildS("instance_keys", "")
+			instanceKeys.NewChildS("", "shelf")
+			instanceKeys.NewChildS("", "channel")
 
-				metricName, display, kind, _ := util.ParseMetric(c)
+			// artificial metric for status of child object of shelf
+			_, _ = my.data[attribute].NewMetricUint8("status")
 
-				switch kind {
-				case "key":
-					my.instanceKeys[attribute] = metricName
-					my.instanceLabels[attribute].Set(metricName, display)
-					instanceKeys.NewChildS("", display)
-					my.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
-				case "label":
-					my.instanceLabels[attribute].Set(metricName, display)
-					instanceLabels.NewChildS("", display)
-					my.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
-				case "float":
-					_, err := my.data[attribute].NewMetricFloat64(metricName, display)
-					if err != nil {
-						my.Logger.Error().Err(err).Msg("add metric")
-						return err
+			for _, x := range obj.GetChildren() {
+
+				for _, c := range x.GetAllChildContentS() {
+
+					metricName, display, kind, _ := util.ParseMetric(c)
+
+					switch kind {
+					case "key":
+						my.instanceKeys[attribute] = metricName
+						my.instanceLabels[attribute].Set(metricName, display)
+						instanceKeys.NewChildS("", display)
+						my.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+					case "label":
+						my.instanceLabels[attribute].Set(metricName, display)
+						instanceLabels.NewChildS("", display)
+						my.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+					case "float":
+						_, err := my.data[attribute].NewMetricFloat64(metricName, display)
+						if err != nil {
+							my.Logger.Error().Err(err).Msg("add metric")
+							return err
+						}
+						my.Logger.Debug().Msgf("added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 					}
-					my.Logger.Debug().Msgf("added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 				}
 			}
+
+			my.Logger.Debug().Str("attribute", attribute).Int("metrics count", len(my.data[attribute].GetMetrics())).Msg("added")
+
+			my.data[attribute].SetExportOptions(exportOptions)
 		}
 
-		my.Logger.Debug().Str("attribute", attribute).Int("metrics count", len(my.data[attribute].GetMetrics())).Msg("added")
+		my.Logger.Debug().Int("objects count", len(my.data)).Msg("initialized")
 
-		my.data[attribute].SetExportOptions(exportOptions)
+		// setup batchSize for request
+		my.batchSize = BatchSize
 	}
-
-	my.Logger.Debug().Int("objects count", len(my.data)).Msg("initialized")
-
-	// setup batchSize for request
-	my.batchSize = BatchSize
 	return nil
 }
 
@@ -141,11 +145,26 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	)
 
 	data := dataMap[my.Object]
-	// Only 7mode is supported through this plugin
 	if my.client.IsClustered() {
+		for _, instance := range data.GetInstances() {
+			if !instance.IsExportable() {
+				continue
+			}
+
+			model := instance.GetLabel("model")
+			moduleType := instance.GetLabel("module_type")
+
+			isEmbed := collectors.IsEmbedShelf(model, moduleType)
+			if isEmbed {
+				instance.SetLabel("isEmbedded", "Yes")
+			} else {
+				instance.SetLabel("isEmbedded", "No")
+			}
+		}
 		return nil, nil
 	}
 
+	// 7 mode handling
 	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
 			continue
