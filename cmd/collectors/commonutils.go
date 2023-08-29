@@ -44,10 +44,7 @@ func IsEmbedShelf(model string, moduleType string) bool {
 		return true
 	}
 
-	if _, exists := combinations[embedShelf{model, moduleType}]; exists {
-		return true
-	}
-	return false
+	return combinations[embedShelf{model, moduleType}]
 }
 
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
