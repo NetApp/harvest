@@ -20,6 +20,7 @@ endpoints:
 
 
 plugins:
+  - Shelf
   - LabelAgent:
       replace:
         - state state `ok` `online`
@@ -30,6 +31,7 @@ export_options:
   instance_keys:
     - shelf
   instance_labels:
+    - isEmbedded
     - model
     - module_type
     - op_status
