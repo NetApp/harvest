@@ -449,14 +449,11 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	// Redirect standard file descriptors to /dev/null
 	devNull, err := os.OpenFile(os.DevNull, os.O_RDWR, 0)
 	if err != nil {
-		fmt.Println("Error opening /dev/null:", err)
+		fmt.Println("Error opening /dev/null: ", err)
 		os.Exit(1)
 	}
-	defer func() {
-		if err := devNull.Close(); err != nil {
-			fmt.Println("Error closing /dev/null:", err)
-		}
-	}()
+
+	defer closeDevNull(devNull)
 
 	cmd.Stdin = devNull
 	cmd.Stdout = devNull
@@ -465,7 +462,14 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	// Start the poller process in the background
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		closeDevNull(devNull) // os.Exit means closeDevNull will not run so call directly
+		os.Exit(1)            //nolint:gocritic
+	}
+}
+
+func closeDevNull(devNull *os.File) {
+	if err := devNull.Close(); err != nil {
+		fmt.Println("Error closing /dev/null: ", err)
 	}
 }
 
