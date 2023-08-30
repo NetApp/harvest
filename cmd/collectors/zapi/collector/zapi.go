@@ -375,12 +375,12 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, instanceElem := range instances {
-			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
+			// c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
 			keys, found := instanceElem.SearchContent(z.shortestPathPrefix, z.instanceKeyPaths)
-			//logger.Debug(z.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
+			// logger.Debug(z.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
 
 			if !found {
-				//logger.Debug(z.Prefix, "Skipping instance: no keys fetched")
+				// logger.Debug(z.Prefix, "Skipping instance: no keys fetched")
 				continue
 			}
 
@@ -451,6 +451,16 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	// Add collector information
+	md := z.GetMetadata()
+	info := collector.InstanceInfo{
+		Count:      md.LazyValueInt64("instances", "data"),
+		DataPoints: md.LazyValueInt64("metrics", "data"),
+		PollTime:   md.LazyValueInt64("poll_time", "data"),
+		APITime:    md.LazyValueInt64("api_time", "data"),
+		ParseTime:  md.LazyValueInt64("parse_time", "data"),
+		PluginTime: md.LazyValueInt64("plugin_time", "data"),
+	}
+
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      z.Name,
 		Query:     z.Query,
@@ -462,6 +472,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		},
 		Schedules:     schedules,
 		ClientTimeout: clientTimeout,
+		InstanceInfo:  &info,
 	})
 
 	if z.Name == "Zapi" && (z.Object == "Volume" || z.Object == "Node") {
@@ -471,16 +482,6 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 			p.Target.Serial = z.GetHostUUID()
 		}
 		p.Target.ClusterUUID = z.Client.ClusterUUID()
-
-		md := z.GetMetadata()
-		info := collector.InstanceInfo{
-			Count:      md.LazyValueInt64("instances", "data"),
-			DataPoints: md.LazyValueInt64("metrics", "data"),
-			PollTime:   md.LazyValueInt64("poll_time", "data"),
-			APITime:    md.LazyValueInt64("api_time", "data"),
-			ParseTime:  md.LazyValueInt64("parse_time", "data"),
-			PluginTime: md.LazyValueInt64("plugin_time", "data"),
-		}
 
 		if z.Object == "Node" {
 			var (

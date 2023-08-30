@@ -112,6 +112,7 @@ type AsupCollector struct {
 	Schedules     []Schedule
 	Exporters     []string
 	Counters      Counters
+	InstanceInfo  *InstanceInfo `json:"InstanceInfo,omitempty"`
 }
 
 const (
