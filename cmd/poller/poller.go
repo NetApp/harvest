@@ -136,7 +136,7 @@ func (p *Poller) Init() error {
 	p.name = args.Poller
 
 	var fileLoggingEnabled bool
-	consoleLoggingEnabled := false
+	var consoleLoggingEnabled bool
 	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
 	// if we are daemon, use file logging
 	if p.options.Daemon {
@@ -778,7 +778,7 @@ func Union2(hNode *node.Node, poller *conf.Poller) {
 					newNode := node.NewS(yNode.Value)
 					// this is the value that goes along with the key from yNode
 					valNode := rootContent.Content[index+1]
-					//fmt.Printf("node type=%s val=%s %s\n", yNode.Value, valNode.Tag, valNode.Value)
+					// fmt.Printf("node type=%s val=%s %s\n", yNode.Value, valNode.Tag, valNode.Value)
 					switch valNode.Tag {
 					case "!!str", "!!bool":
 						newNode.Content = []byte(valNode.Value)
@@ -1163,7 +1163,7 @@ func (p *Poller) doZAPIsExist() error {
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
-	//cmd.DebugFlags()  // uncomment to print flags
+	// cmd.DebugFlags()  // uncomment to print flags
 	poller := &Poller{}
 	poller.options = &args
 	if poller.Init() != nil {
@@ -1180,7 +1180,7 @@ var args = options.Options{
 }
 
 func init() {
-	configPath := conf.GetDefaultHarvestConfigPath()
+	configPath := conf.Path(conf.HarvestYML)
 
 	var flags = pollerCmd.Flags()
 	flags.StringVarP(&args.Poller, "poller", "p", "", "Poller name as defined in config")

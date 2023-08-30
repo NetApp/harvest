@@ -28,6 +28,9 @@ const (
 	DefaultTimeout = "30s"
 	// DefaultDialerTimeout limits the time spent establishing a TCP connection
 	DefaultDialerTimeout = 10 * time.Second
+	Message              = "message"
+	Code                 = "code"
+	Target               = "target"
 )
 
 type Client struct {
@@ -178,7 +181,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		defer response.Body.Close()
 
 		if response.StatusCode != http.StatusOK {
-			body, err2 := io.ReadAll(response.Body)
+			body2, err2 := io.ReadAll(response.Body)
 			if err2 != nil {
 				return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
 			}
@@ -187,11 +190,17 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 				return nil, errs.New(errs.ErrAuthFailed, response.Status)
 			}
 
-			result := gjson.GetBytes(body, "error")
+			result := gjson.GetBytes(body2, "error")
+
+			if response.StatusCode == http.StatusForbidden {
+				message := result.Get(Message).String()
+				return nil, errs.New(errs.ErrPermissionDenied, message)
+			}
+
 			if result.Exists() {
-				message := result.Get("message").String()
-				code := result.Get("code").Int()
-				target := result.Get("target").String()
+				message := result.Get(Message).String()
+				code := result.Get(Code).Int()
+				target := result.Get(Target).String()
 				return nil, errs.Rest(response.StatusCode, message, code, target)
 			}
 			return nil, errs.Rest(response.StatusCode, "", 0, "")
@@ -291,7 +300,11 @@ func (c *Client) Init(retries int) error {
 
 	for i = 0; i < retries; i++ {
 
-		if content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "", "")); err != nil {
+		content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "", ""))
+		if err != nil {
+			if errors.Is(err, errs.ErrPermissionDenied) {
+				return err
+			}
 			continue
 		}
 

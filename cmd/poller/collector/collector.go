@@ -350,22 +350,24 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Msg("no metrics of object on system, entering standby mode")
 				// not an error we are expecting, so enter failed or standby state
 				default:
+					if errors.Is(err, errs.ErrPermissionDenied) {
+						c.Schedule.SetStandByMode(task, 1*time.Hour)
+						c.Logger.Error().Err(err).Str("task", task.Name).Msg("Entering standby mode")
+					} else if errors.Is(err, errs.ErrAPIRequestRejected) {
+						// API was rejected, this happens when a resource is not available or does not exist
+						c.Schedule.SetStandByMode(task, 1*time.Hour)
+						// Log as info since some of these aren't errors
+						c.Logger.Info().Err(err).Str("task", task.Name).Msg("Entering standby mode")
+					} else {
+						c.Logger.Error().Err(err).Str("task", task.Name).Send()
+					}
+
 					var herr errs.HarvestError
 					errMsg := err.Error()
-
 					if ok := errors.As(err, &herr); ok {
 						errMsg = herr.Inner.Error()
 					}
-					// API was rejected, this happens when a resource is not available or does not exist
-					if errors.Is(err, errs.ErrAPIRequestRejected) {
-						c.Schedule.SetStandByMode(task, 1*time.Hour)
-						c.Logger.Info().
-							Err(err).
-							Str("task", task.Name).
-							Msg("API rejected, entering standby mode")
-					} else {
-						c.Logger.Error().Err(err).Str("task", task.Name).Msg("")
-					}
+
 					c.SetStatus(2, errMsg)
 				}
 				// stop here if we had errors
@@ -446,7 +448,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 		}
 
 		if nd := c.Schedule.NextDue(); nd > 0 {
-			c.Logger.Debug().Msgf("sleeping %s until next poll", nd.String()) //DEBUG
+			c.Logger.Debug().Msgf("sleeping %s until next poll", nd.String()) // DEBUG
 			c.Schedule.Sleep()
 			// log if lagging by more than 500 ms
 			// < is used since larger durations are more negative

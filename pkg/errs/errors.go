@@ -27,11 +27,13 @@ const (
 	ErrNoInstance         = harvestError("no instances")
 	ErrNoMetric           = harvestError("no metrics")
 	ErrPanic              = harvestError("goroutine panic")
+	ErrPermissionDenied   = harvestError("Permission denied")
 	ErrWrongTemplate      = harvestError("wrong template")
 )
 
 const (
-	ErrNumZAPISuspended = "61253"
+	ErrNumZAPISuspended  = "61253"
+	ZAPIPermissionDenied = "13003"
 )
 
 type HarvestError struct {

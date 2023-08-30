@@ -70,7 +70,7 @@ type Folder struct {
 
 func adjustOptions() {
 	opts.config = conf.ConfigPath(opts.config)
-	homePath = conf.GetHarvestHomePath()
+	homePath = conf.Path()
 	opts.dirGrafanaFolderMap = make(map[string]*Folder)
 
 	// When opt.addr starts with https don't change it
@@ -171,7 +171,7 @@ func exportFiles(dir string, folder *Folder) error {
 				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
 				return err
 			}
-			//#nosec G306 -- creating dashboards with group and other permissions of read are OK
+			// #nosec G306 -- creating dashboards with group and other permissions of read are OK
 			if err = os.WriteFile(fp, data, 0644); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
 				return err
@@ -970,7 +970,7 @@ func doRequest(opts *options, method, url string, query map[string]interface{}) 
 		return nil, status, code, err
 	}
 
-	//fmt.Printf("(debug) send request [%s]\n", request.URL.String())
+	// fmt.Printf("(debug) send request [%s]\n", request.URL.String())
 
 	request.Header = opts.headers
 
