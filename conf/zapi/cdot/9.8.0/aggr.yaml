@@ -68,7 +68,6 @@ plugins:
       # metric label zapi_value rest_value `default_value`
       value_to_num:
         - new_status state online online `0`
-  - ChangeLog
 
 export_options:
   instance_keys:

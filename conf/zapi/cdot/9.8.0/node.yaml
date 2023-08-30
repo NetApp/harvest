@@ -47,7 +47,7 @@ plugins:
       - new_status healthy true up `0`
     join:
       - warnings `; ` failed_fan_message,failed_power_message,over_temperature
-  - ChangeLog
+#  - ChangeLog
 
 export_options:
   instance_keys:

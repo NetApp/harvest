@@ -70,7 +70,7 @@ func (c *ChangeLog) Init() error {
 	}
 
 	// Initialize the changeLogMap
-	c.changeLogMap = make(map[string]*matrix.Matrix, 0)
+	c.changeLogMap = make(map[string]*matrix.Matrix)
 
 	object := c.ParentParams.GetChildS("object")
 	c.matrixName = object.GetContentS() + "_" + changeLog
@@ -143,7 +143,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	prevMat := c.previousData
 	oldInstances := set.New()
-	prevInstancesUUIDKey := make(map[string]string, 0)
+	prevInstancesUUIDKey := make(map[string]string)
 	for key, prevInstance := range prevMat.GetInstances() {
 		uuid := prevInstance.GetLabel("uuid")
 		if uuid == "" {
@@ -180,7 +180,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 					key:    uuid + "_" + object,
 					object: object,
 					op:     create,
-					labels: make(map[string]string, 0),
+					labels: make(map[string]string),
 					time:   currentTime,
 				}
 				c.updateChangeLogLabels(object, instance, change)
@@ -194,7 +194,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 							key:      uuid + "_" + object + "_" + currentLabel,
 							object:   object,
 							op:       update,
-							labels:   make(map[string]string, 0),
+							labels:   make(map[string]string),
 							track:    currentLabel,
 							oldValue: old.Get(currentLabel),
 							newValue: newLabel,
@@ -223,7 +223,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 					key:    uuid + "_" + object,
 					object: object,
 					op:     del,
-					labels: make(map[string]string, 0),
+					labels: make(map[string]string),
 					time:   currentTime,
 				}
 				c.updateChangeLogLabels(object, prevInstance, change)
@@ -255,7 +255,8 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 // copyPreviousData creates a copy of the previous data for comparison
 func (c *ChangeLog) copyPreviousData(cur *matrix.Matrix) {
-	labels := append(c.changeLogConfig.PublishLabels, c.changeLogConfig.Track...)
+	labels := c.changeLogConfig.PublishLabels
+	labels = append(labels, c.changeLogConfig.Track...)
 	labels = append(labels, "uuid")
 	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: false, Instances: true, ExportInstances: false, Labels: labels})
 }

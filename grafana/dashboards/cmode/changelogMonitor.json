@@ -54,7 +54,7 @@
       }
     ]
   },
-  "description": "The ONTAP Changelog Monitor is a comprehensive dashboard that provides tracking of configuration changes for ONTAP objects such as volumes, SVMs, and nodes.",
+  "description": "The ONTAP Changelog Monitor, tracks configuration modifications in volumes, SVMs, and nodes, is deactivated by default. To leverage this feature, one must enable the ChangeLog plugin within the Volume, SVM, and Node Templates.",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,

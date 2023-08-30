@@ -103,7 +103,7 @@ plugins:
         - svm_root root_volume `false` `No`
         - node_root root_volume `true` `Yes`
         - svm_root root_volume `true` `Yes`
-  - ChangeLog
+#  - ChangeLog
 
 export_options:
   instance_keys:

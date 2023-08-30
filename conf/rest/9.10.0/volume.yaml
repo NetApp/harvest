@@ -124,6 +124,7 @@ plugins:
 #        - volume `MDV_CRS_.+`
 #        # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
 #        - volume `MDV_aud_.+`
+#  - ChangeLog
 
 export_options:
   instance_keys:
