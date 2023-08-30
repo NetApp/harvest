@@ -37,8 +37,8 @@ import (
 
 // Default parameters
 const (
-	// maximum amount of time we will keep metrics in cache
-	cacheMaxKeep = "300s"
+	// the maximum amount of time to keep metrics in the cache
+	cacheMaxKeep = "5m"
 	// apply a prefix to metrics globally (default none)
 	globalPrefix = ""
 )
@@ -172,8 +172,8 @@ func (p *Prometheus) Init() error {
 	}
 
 	// The optional parameter LocalHTTPAddr is the address of the HTTP service, valid values are:
-	//- "localhost" or "127.0.0.1", this limits access to local machine
-	//- "" (default) or "0.0.0.0", allows access from network
+	// - "localhost" or "127.0.0.1", this limits access to local machine
+	// - "" (default) or "0.0.0.0", allows access from network
 	addr := p.Params.LocalHTTPAddr
 	if addr != "" {
 		p.Logger.Debug().Str("addr", addr).Msg("Using custom local addr")

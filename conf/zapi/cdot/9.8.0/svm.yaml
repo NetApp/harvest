@@ -18,7 +18,7 @@ collect_only_labels: true
 plugins:
   - SVM:
       schedule:
-        - data: 900s  # should be multiple of data poll duration
+        - data: 15m  # should be multiple of data poll duration
   - LabelAgent:
       replace:
         - type root_svm `data` `No`
