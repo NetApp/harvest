@@ -15,6 +15,7 @@ linters:
     - exhaustive
     - exportloopref
     - gocheckcompilerdirectives
+    - gocritic
     - gosec
     - gosimple
     - govet

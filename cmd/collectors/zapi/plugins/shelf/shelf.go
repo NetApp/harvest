@@ -2,6 +2,7 @@
 package shelf
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -53,6 +54,10 @@ func (my *Shelf) Init() error {
 
 	if err = my.client.Init(5); err != nil {
 		return err
+	}
+
+	if my.client.IsClustered() {
+		return nil
 	}
 
 	my.query = "storage-shelf-environment-list-info"
@@ -130,6 +135,7 @@ func (my *Shelf) Init() error {
 
 	// setup batchSize for request
 	my.batchSize = BatchSize
+
 	return nil
 }
 
@@ -141,11 +147,26 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	)
 
 	data := dataMap[my.Object]
-	// Only 7mode is supported through this plugin
 	if my.client.IsClustered() {
+		for _, instance := range data.GetInstances() {
+			if !instance.IsExportable() {
+				continue
+			}
+
+			model := instance.GetLabel("model")
+			moduleType := instance.GetLabel("module_type")
+
+			isEmbed := collectors.IsEmbedShelf(model, moduleType)
+			if isEmbed {
+				instance.SetLabel("isEmbedded", "Yes")
+			} else {
+				instance.SetLabel("isEmbedded", "No")
+			}
+		}
 		return nil, nil
 	}
 
+	// 7 mode handling
 	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
 			continue
