@@ -189,6 +189,7 @@ func checkConfTemplates(confPaths []string) validation {
 		dir, err := os.ReadDir(confDir)
 		if err != nil {
 			fmt.Printf("unable to read directory=%s err=%s\n", confDir, err)
+			continue
 		}
 		for _, f := range dir {
 			if !f.IsDir() {

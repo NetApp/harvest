@@ -89,7 +89,7 @@ func (o *Options) SetDefaults() *Options {
 	return o
 }
 
-func (o *Options) SetConfPath(path string) {
-	o.ConfPath = path
-	o.ConfPaths = filepath.SplitList(path)
+func (o *Options) SetConfPath(colonSeperatedPath string) {
+	o.ConfPath = colonSeperatedPath
+	o.ConfPaths = filepath.SplitList(colonSeperatedPath)
 }
