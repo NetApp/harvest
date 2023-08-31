@@ -74,7 +74,7 @@ import (
 
 // default params
 var (
-	pollerSchedule  = "60s"
+	pollerSchedule  = "1m"
 	logFileName     = ""
 	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes
 	logMaxBackups   = logging.DefaultLogMaxBackups

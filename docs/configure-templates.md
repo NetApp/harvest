@@ -178,7 +178,7 @@ sensor_value{datacenter="WDRF",cluster="shopfloor",node="shopfloor-02",sensor="P
 
 ## Extend an existing object template
 
-### How to extend a Rest/RestPerf/Ems collector's existing object template
+### How to extend a Rest/RestPerf/StorageGRID/Ems collector's existing object template
 
 Instead of editing one of the existing templates, it's better to copy one and edit the copy. That way, your custom
 template will not be overwritten when upgrading Harvest. For example, if you want to

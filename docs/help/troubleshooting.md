@@ -105,8 +105,8 @@ There are a few parameters that you can change to avoid this from happening. You
 Increase the `client_timeout` value by adding a `client_timeout` line at the beginning of the template, like so:
 
 ```yaml
-# increase the timeout to 60 seconds
-client_timeout: 60s
+# increase the timeout to 1 minute
+client_timeout: 1m
 ```
 
 #### `batch_size`
@@ -120,24 +120,24 @@ batch_size: 200
 
 #### `schedule`
 
-If nothing else helps, you can increase the data poll interval of the collector (default is `60s` for ZapiPerf and `180s` for Zapi). You can do this either by adding a `schedule` attribute to the template or, if it already exists, by changing the `- data` line.
+If nothing else helps, you can increase the data poll interval of the collector (default is `1m` for ZapiPerf and `3m` for Zapi). You can do this either by adding a `schedule` attribute to the template or, if it already exists, by changing the `- data` line.
 
 Example for ZapiPerf:
 
 ```yaml
 # increase data poll frequency to 2 minutes
 schedule:
-  - counter: 1200s
-  - instance: 600s
-  - data: 120s
+  - counter: 20m
+  - instance: 10m
+  - data: 2m
 ```
 Example for Zapi:
 
 ```yaml
 # increase data poll frequency to 5 minutes
 schedule:
-  - instance: 600s
-  - data: 300s
+  - instance: 10m
+  - data: 5m
 ```
 
 ## Prometheus HTTP Service Discovery doesn't work
