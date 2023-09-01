@@ -1562,7 +1562,7 @@ of Prometheus. Both options are explained below.</p>
 <td><code>cache_max_keep</code></td>
 <td>string (Go duration format), optional</td>
 <td>maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)</td>
-<td><code>300s</code></td>
+<td><code>5m</code></td>
 </tr>
 <tr>
 <td><code>add_meta_tags</code></td>
@@ -1832,7 +1832,7 @@ your <code>prometheus.yml</code>.</p>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;localhost:14568&#39;</span>
 </code></pre></div>
 <p><strong>NOTE</strong> If Prometheus is not on the same machine as Harvest, then replace <code>localhost</code> with the IP address of your
-Harvest machine. Also note the scrape interval above is set to 60s. That matches the polling frequency of the default
+Harvest machine. Also note the scrape interval above is set to 1m. That matches the polling frequency of the default
 Harvest collectors. If you change the polling frequency of a Harvest collector to a lower value, you should also change
 the scrape interval.</p>
 <h2 id="prometheus-exporter-and-tls">Prometheus Exporter and TLS<a class="headerlink" href="#prometheus-exporter-and-tls" title="Permanent link">&para;</a></h2>

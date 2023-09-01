@@ -1504,8 +1504,8 @@ skipped instance [9c90facd-3730-48f1-b55c-afacc35c6dbe]: not found in cache
 <p>There are a few parameters that you can change to avoid this from happening. You can do this by editing the subtemplate of the resource affected. E.g. you can add the parameters in <code>conf/zapiperf/cdot/9.8.0/volume.yaml</code> or <code>conf/zapi/cdot/9.8.0/volume.yaml</code>. If the errors happen for most of the resources, you can add them in the main template of the collector (<code>conf/zapi/default.yaml</code> or <code>conf/zapiperf/default.yaml</code>) to apply them on all objects.</p>
 <h4 id="client_timeout"><code>client_timeout</code><a class="headerlink" href="#client_timeout" title="Permanent link">&para;</a></h4>
 <p>Increase the <code>client_timeout</code> value by adding a <code>client_timeout</code> line at the beginning of the template, like so:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># increase the timeout to 60 seconds</span>
-<span class="nt">client_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># increase the timeout to 1 minute</span>
+<span class="nt">client_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
 </code></pre></div>
 <h4 id="batch_size"><code>batch_size</code><a class="headerlink" href="#batch_size" title="Permanent link">&para;</a></h4>
 <p>Decrease the <code>batch_size</code> value by adding a <code>batch_size</code> line at the beginning of the template. The default value of this parameter is <code>500</code>. By decreasing it, the collector will fetch less instances during each API request. Example:</p>
@@ -1513,19 +1513,19 @@ skipped instance [9c90facd-3730-48f1-b55c-afacc35c6dbe]: not found in cache
 <span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
 </code></pre></div>
 <h4 id="schedule"><code>schedule</code><a class="headerlink" href="#schedule" title="Permanent link">&para;</a></h4>
-<p>If nothing else helps, you can increase the data poll interval of the collector (default is <code>60s</code> for ZapiPerf and <code>180s</code> for Zapi). You can do this either by adding a <code>schedule</code> attribute to the template or, if it already exists, by changing the <code>- data</code> line.</p>
+<p>If nothing else helps, you can increase the data poll interval of the collector (default is <code>1m</code> for ZapiPerf and <code>3m</code> for Zapi). You can do this either by adding a <code>schedule</code> attribute to the template or, if it already exists, by changing the <code>- data</code> line.</p>
 <p>Example for ZapiPerf:</p>
 <p><div class="highlight"><pre><span></span><code><span class="c1"># increase data poll frequency to 2 minutes</span>
 <span class="nt">schedule</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">counter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1200s</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600s</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120s</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">counter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20m</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10m</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2m</span>
 </code></pre></div>
 Example for Zapi:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># increase data poll frequency to 5 minutes</span>
 <span class="nt">schedule</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600s</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300s</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10m</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span>
 </code></pre></div>
 <h2 id="prometheus-http-service-discovery-doesnt-work">Prometheus HTTP Service Discovery doesn't work<a class="headerlink" href="#prometheus-http-service-discovery-doesnt-work" title="Permanent link">&para;</a></h2>
 <p>Some things to check:</p>
