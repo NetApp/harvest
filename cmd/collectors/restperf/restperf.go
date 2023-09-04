@@ -267,7 +267,20 @@ func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matri
 		}
 
 		name := strings.Clone(c.Get("name").String())
+		dataType := strings.Clone(c.Get("type").String())
+		if p := r.GetOverride(name); p != "" {
+			dataType = p
+		}
+
 		if _, has := r.Prop.Metrics[name]; has {
+			if strings.Contains(dataType, "string") {
+				if _, ok := r.Prop.InstanceLabels[name]; !ok {
+					r.Prop.InstanceLabels[name] = r.Prop.Counters[name]
+				}
+				// remove from metrics
+				delete(r.Prop.Metrics, name)
+				return true
+			}
 			d := strings.Clone(c.Get("denominator.name").String())
 			if d != "" {
 				if _, has := r.Prop.Metrics[d]; !has {
