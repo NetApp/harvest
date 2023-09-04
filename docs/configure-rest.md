@@ -1,22 +1,22 @@
-## Rest Collector
+# Rest Collector
 
 The Rest collectors uses the REST protocol to collect data from ONTAP systems.
 
 The [RestPerf collector](#restperf-collector) is an extension of this collector, therefore they share many parameters
 and configuration settings.
 
-### Target System
+## Target System
 
 Target system can be cDot ONTAP system. 9.12.1 and after are supported, however the default configuration files
 may not completely match with all versions.
 See [REST Strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for more details.
 
-### Requirements
+## Requirements
 
 No SDK or other requirements. It is recommended to create a read-only user for Harvest on the ONTAP system (see
 [prepare monitored clusters](prepare-cdot-clusters.md#all-apis-read-only-approach) for details)
 
-### Metrics
+## Metrics
 
 The collector collects a dynamic set of metrics. ONTAP returns JSON documents and
 Harvest allows you to define templates to extract values from the JSON document via a dot notation path. You can view
@@ -50,7 +50,7 @@ into: `name`, `space.block_storage.size`, `space.block_storage.available`, `stat
 be taken, as is, unless you specify a short display name. See [counters](configure-templates.md#counters) for more
 details.
 
-### Parameters
+## Parameters
 
 The parameters of the collector are distributed across three files:
 
@@ -65,7 +65,7 @@ objects.
 
 The full set of parameters are described [below](#collector-configuration-file).
 
-#### Collector configuration file
+### Collector configuration file
 
 This configuration file contains a list of objects that should be collected and the filenames of their templates (
 explained in the next section).
@@ -91,7 +91,7 @@ are located in subdirectories matching the ONTAP version that was used to create
 have multiple version-subdirectories for multiple ONTAP versions. At runtime, the collector will select the object
 configuration file that closest matches the version of the target ONTAP system.
 
-### Object configuration file
+## Object configuration file
 
 The Object configuration file ("subtemplate") should contain the following parameters:
 
@@ -104,7 +104,52 @@ The Object configuration file ("subtemplate") should contain the following param
 | `plugins`        | list                 | plugins and their parameters to run on the collected data   |         |
 | `export_options` | list                 | parameters to pass to exporters (see notes below)           |         |
 
-#### `counters`
+Example:
+
+```yaml
+name:                     Volume
+query:                    api/storage/volumes
+object:                   volume
+
+counters:
+  - ^^name                                        => volume
+  - ^^svm.name                                    => svm
+  - ^aggregates.#.name                            => aggr
+  - ^anti_ransomware.state                        => antiRansomwareState
+  - ^state                                        => state
+  - ^style                                        => style
+  - space.available                               => size_available
+  - space.overwrite_reserve                       => overwrite_reserve_total
+  - space.overwrite_reserve_used                  => overwrite_reserve_used
+  - space.percent_used                            => size_used_percent
+  - space.physical_used                           => space_physical_used
+  - space.physical_used_percent                   => space_physical_used_percent
+  - space.size                                    => size
+  - space.used                                    => size_used
+  - hidden_fields:
+      - anti_ransomware.state
+      - space
+  - filter:
+      - order_by=space.used desc
+      - max_records=20
+
+plugins:
+  - LabelAgent:
+      exclude_equals:
+        - style `flexgroup_constituent`
+
+export_options:
+  instance_keys:
+    - aggr
+    - style
+    - svm
+    - volume
+  instance_labels:
+    - antiRansomwareState
+    - state
+```
+
+### `counters`
 
 This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
 histograms. The exact property of each counter is fetched from ONTAP and updated periodically.
@@ -113,7 +158,25 @@ The display name of a counter can be changed with `=>` (e.g., `space.block_stora
 
 Counters that are stored as labels will only be exported if they are included in the `export_options` section.
 
-#### `export_options`
+The `counter`s section allows you to specify `hidden_fields` and `filter` parameters. Please find the detailed explanation below.
+
+#### `hidden_fields`
+
+This is exclusively supported by the Rest Collector. The `hidden_fields` are specific fields that are not included in the response by default. However, they can be included if explicitly requested. When used, these fields are appended to the URL fields parameter.
+
+#### `filter`
+
+This is also specific to the Rest Collector. The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval.
+
+In the provided example of the volume template, the constructed URL would be:
+
+```
+https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&order_by=space.used desc&max_records=20
+```
+
+This URL includes the fields and order_by parameters, and limits the response to a maximum of 20 records.
+
+### `export_options`
 
 Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
 exporter. For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md)
@@ -123,7 +186,7 @@ exporters, the following parameters can be defined:
 * `instance_labels` (list): display names of labels to export as a separate data-point
 * `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
 
-## RestPerf Collector
+# RestPerf Collector
 
 RestPerf collects performance metrics from ONTAP systems using the REST protocol. The collector is designed to be easily
 extendable to collect new objects or to collect additional counters from already configured objects.
@@ -132,12 +195,12 @@ This collector is an extension of the [Rest collector](#rest-collector). The maj
 RestPerf collects only the performance (`perf`) APIs. Additionally, RestPerf always calculates final values from the
 deltas of two subsequent polls.
 
-## Metrics
+# Metrics
 
 RestPerf metrics are calculated the same as ZapiPerf metrics. More details about how
 performance metrics are calculated can be found [here](configure-zapi.md#metrics_1).
 
-## Parameters
+# Parameters
 
 The parameters of the collector are distributed across three files:
 
@@ -152,7 +215,7 @@ objects.
 
 The full set of parameters are described [below](#restperf-configuration-file).
 
-### RestPerf configuration file
+## RestPerf configuration file
 
 This configuration file (the "template") contains a list of objects that should be collected and the filenames of their
 configuration (explained in the next section).
@@ -184,17 +247,17 @@ multiple version-subdirectories for multiple ONTAP versions. At runtime, the col
 configuration file that closest matches to the version of the target ONTAP system. (A mismatch is tolerated since
 RestPerf will fetch and validate counter metadata from the system.)
 
-### Object configuration file
+## Object configuration file
 
 Refer [Object configuration file](configure-rest.md#object-configuration-file)
 
-#### `counters`
+### `counters`
 
 Refer [Counters](configure-rest.md#counters)
 
 Some counters require a "base-counter" for post-processing. If the base-counter is missing, RestPerf will still run, but
 the missing data won't be exported.
 
-#### `export_options`
+### `export_options`
 
 Refer [Export Options](configure-rest.md#export_options)
