@@ -37,4 +37,5 @@ objects:
   Support:                     support.yaml
   SVM:                         svm.yaml
   Volume:                      volume.yaml
+  VolumeFootprint:             volume_footprint.yaml
 
