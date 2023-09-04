@@ -13,23 +13,13 @@ import (
 
 func (r *Rest) LoadTemplate() (string, error) {
 
-	var (
-		template     *node.Node
-		templatePath string
-		err          error
-	)
-
-	// import template
-	if template, templatePath, err = r.ImportSubTemplate(
-		"",
-		TemplateFn(r.Params, r.Object),
-		r.Client.Cluster().Version,
-	); err != nil {
+	template, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), r.Client.Cluster().Version)
+	if err != nil {
 		return "", err
 	}
 
 	r.Params.Union(template)
-	return templatePath, nil
+	return path, nil
 }
 
 func (r *Rest) InitCache() error {
@@ -94,10 +84,10 @@ func HandleDuration(value string) float64 {
 
 		seconds := 0.0
 
-		//years
-		//months
+		// years
+		// months
 
-		//days
+		// days
 		if matches[3] != "" {
 			f, err := strconv.ParseFloat(matches[3], 64)
 			if err != nil {
@@ -107,7 +97,7 @@ func HandleDuration(value string) float64 {
 			seconds += f * 24 * 60 * 60
 		}
 
-		//hours
+		// hours
 		if matches[4] != "" {
 			f, err := strconv.ParseFloat(matches[4], 64)
 			if err != nil {
@@ -117,7 +107,7 @@ func HandleDuration(value string) float64 {
 			seconds += f * 60 * 60
 		}
 
-		//minutes
+		// minutes
 		if matches[5] != "" {
 			f, err := strconv.ParseFloat(matches[5], 64)
 			if err != nil {
@@ -127,7 +117,7 @@ func HandleDuration(value string) float64 {
 			seconds += f * 60
 		}
 
-		//seconds & milliseconds
+		// seconds & milliseconds
 		if matches[6] != "" {
 			f, err := strconv.ParseFloat(matches[6], 64)
 			if err != nil {

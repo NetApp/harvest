@@ -81,6 +81,7 @@ var (
 	logMaxAge       = logging.DefaultLogMaxAge
 	asupSchedule    = "24h" // send every 24 hours
 	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
+	opts            *options.Options
 )
 
 const (
@@ -129,16 +130,13 @@ type Poller struct {
 func (p *Poller) Init() error {
 
 	var err error
-
-	// read options
-	options.SetPathsAndHostname(&args)
-	p.options = &args
-	p.name = args.Poller
+	p.options = opts.SetDefaults()
+	p.name = opts.Poller
 
 	var fileLoggingEnabled bool
 	var consoleLoggingEnabled bool
 	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
-	// if we are daemon, use file logging
+	// if we are a daemon, use file logging
 	if p.options.Daemon {
 		fileLoggingEnabled = true
 	} else {
@@ -164,6 +162,8 @@ func (p *Poller) Init() error {
 		return err
 	}
 
+	p.mergeConfPath()
+
 	// log handling parameters
 	// size of file before rotating
 	if p.params.LogMaxBytes != 0 {
@@ -187,11 +187,6 @@ func (p *Poller) Init() error {
 		MaxAge:             logMaxAge}
 
 	logger = logging.Configure(logConfig)
-	logger.Info().
-		Str("logLevel", zeroLogLevel.String()).
-		Str("configPath", p.options.Config).
-		Str("version", version.String()).
-		Msg("Init")
 
 	// if profiling port > 0 start profiling service
 	if p.options.Profiling > 0 {
@@ -202,9 +197,11 @@ func (p *Poller) Init() error {
 		}()
 	}
 
-	// useful info for debugging
-	logger.Debug().Msgf("* %s *s", version.String())
-	logger.Debug().Msgf("options= %s", p.options.String())
+	logger.Info().
+		Str("logLevel", zeroLogLevel.String()).
+		Str("version", strings.TrimSpace(version.String())).
+		EmbedObject(p.options).
+		Msg("Init")
 
 	// set signal handler for graceful termination
 	signalChannel := make(chan os.Signal, 1)
@@ -232,7 +229,7 @@ func (p *Poller) Init() error {
 	}
 
 	// each poller is associated with a remote host
-	// if no address is specified, assume that is local host
+	// if no address is specified, assume localhost
 	if p.params.Addr == "" {
 		p.target = "localhost"
 	} else {
@@ -242,7 +239,7 @@ func (p *Poller) Init() error {
 	// create a shared auth service that all collectors will use
 	p.auth = auth.NewCredentials(p.params, logger)
 
-	// initialize our metadata, the metadata will host status of our
+	// initialize our metadata, the metadata will host the status of our
 	// collectors and exporters, as well as ping stats to target host
 	p.loadMetadata()
 	p.exporterParams = conf.Config.Exporters
@@ -581,13 +578,18 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 	// object name or list of objects
 	if c.Templates != nil {
 		for _, t := range *c.Templates {
-			if subTemplate, err = collector.ImportTemplate(p.options.HomePath, t, class); err != nil {
+			if subTemplate, err = collector.ImportTemplate(p.options.ConfPaths, t, class); err != nil {
 				logEvent := logger.Warn()
 				if t == "custom.yaml" {
 					// make this less noisy since it won't exist for most people
 					logEvent = logger.Debug()
 				}
-				logEvent.Str("err", err.Error()).Msg("Unable to load template.")
+				logEvent.
+					Str("err", err.Error()).
+					Strs("confPaths", p.options.ConfPaths).
+					Str("template", t).
+					Str("collector", class).
+					Msg("Unable to load template.")
 				continue
 			}
 			if template == nil {
@@ -595,7 +597,7 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 			} else {
 				logger.Debug().Str("template", t).Msg("Merged template.")
 				if c.Name == "Zapi" || c.Name == "ZapiPerf" {
-					// do not overwrite child of objects. They will be concatenated
+					// Do not overwrite child of objects. They will be concatenated
 					template.Merge(subTemplate, []string{"objects"})
 				} else {
 					template.Merge(subTemplate, []string{""})
@@ -1152,7 +1154,7 @@ func (p *Poller) doZAPIsExist() error {
 	)
 
 	// connect to the cluster and retrieve the system version
-	if poller, err = conf.PollerNamed(args.Poller); err != nil {
+	if poller, err = conf.PollerNamed(opts.Poller); err != nil {
 		return err
 	}
 	if connection, err = zapi.New(poller, p.auth); err != nil {
@@ -1162,10 +1164,22 @@ func (p *Poller) doZAPIsExist() error {
 	return connection.Init(2)
 }
 
+// set the poller's confPath using the following precedence:
+// CLI, harvest.yml, default (conf)
+func (p *Poller) mergeConfPath() {
+	path := conf.DefaultConfPath
+	if p.params.ConfPath != "" {
+		path = p.params.ConfPath
+	}
+	if p.options.ConfPath != conf.DefaultConfPath {
+		path = p.options.ConfPath
+	}
+	p.options.SetConfPath(path)
+}
+
 func startPoller(_ *cobra.Command, _ []string) {
-	// cmd.DebugFlags()  // uncomment to print flags
 	poller := &Poller{}
-	poller.options = &args
+	poller.options = opts
 	if poller.Init() != nil {
 		// error already logger by poller
 		poller.Stop()
@@ -1175,29 +1189,27 @@ func startPoller(_ *cobra.Command, _ []string) {
 	os.Exit(0)
 }
 
-var args = options.Options{
-	Version: version.VERSION,
-}
-
 func init() {
-	configPath := conf.Path(conf.HarvestYML)
+	opts = options.New()
+	opts.Version = version.VERSION
 
 	var flags = pollerCmd.Flags()
-	flags.StringVarP(&args.Poller, "poller", "p", "", "Poller name as defined in config")
-	flags.BoolVarP(&args.Debug, "debug", "d", false, "Debug mode, no data will be exported")
-	flags.BoolVar(&args.Daemon, "daemon", false, "Start as daemon")
-	flags.IntVarP(&args.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
-	flags.BoolVar(&args.LogToFile, "logtofile", false, "When running in the foreground, log to file instead of stdout")
-	flags.IntVar(&args.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
-	flags.IntVar(&args.PromPort, "promPort", 0, "Prometheus Port")
-	flags.StringVar(&args.Config, "config", configPath, "Harvest config file path")
-	flags.StringSliceVarP(&args.Collectors, "collectors", "c", []string{}, "Only start these collectors (overrides harvest.yml)")
-	flags.StringSliceVarP(&args.Objects, "objects", "o", []string{}, "Only start these objects (overrides collector config)")
+	flags.StringVarP(&opts.Poller, "poller", "p", "", "Poller name as defined in config")
+	flags.BoolVarP(&opts.Debug, "debug", "d", false, "Debug mode, no data will be exported")
+	flags.BoolVar(&opts.Daemon, "daemon", false, "Start as daemon")
+	flags.IntVarP(&opts.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
+	flags.BoolVar(&opts.LogToFile, "logtofile", false, "When running in the foreground, log to file instead of stdout")
+	flags.IntVar(&opts.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
+	flags.IntVar(&opts.PromPort, "promPort", 0, "Prometheus Port")
+	flags.StringVar(&opts.Config, "config", conf.HarvestYML, "Harvest config file path")
+	flags.StringSliceVarP(&opts.Collectors, "collectors", "c", []string{}, "Only start these collectors (overrides harvest.yml)")
+	flags.StringSliceVarP(&opts.Objects, "objects", "o", []string{}, "Only start these objects (overrides collector config)")
+	flags.StringVar(&opts.ConfPath, "confpath", conf.DefaultConfPath, "colon-seperated paths to search for Harvest templates")
 
 	// Used to test autosupport at startup. An environment variable is used instead of a cmdline
 	// arg, so we don't have to also add this testing arg to harvest cli
 	if isAsup := os.Getenv("ASUP"); isAsup != "" {
-		args.Asup = true
+		opts.Asup = true
 	}
 
 	_ = pollerCmd.MarkFlagRequired("poller")

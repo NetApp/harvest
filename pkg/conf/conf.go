@@ -24,6 +24,7 @@ var configRead = false
 const (
 	DefaultAPIVersion = "1.3"
 	DefaultTimeout    = "30s"
+	DefaultConfPath   = "conf"
 	HarvestYML        = "harvest.yml"
 	BasicAuth         = "basic_auth"
 	CertificateAuth   = "certificate_auth"
@@ -64,8 +65,7 @@ func LoadHarvestConfig(configPath string) error {
 	contents, err := os.ReadFile(configPath)
 
 	if err != nil {
-		fmt.Printf("error reading config file=[%s] %+v\n", configPath, err)
-		return err
+		return fmt.Errorf("error reading %s err=%w", configPath, err)
 	}
 	err = DecodeConfig(contents)
 	if err != nil {
@@ -277,16 +277,16 @@ func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
 	if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
 		matches := rangeRegex.FindStringSubmatch(node.Value)
 		if len(matches) == 3 {
-			min, err1 := strconv.Atoi(matches[1])
-			max, err2 := strconv.Atoi(matches[2])
+			minVal, err1 := strconv.Atoi(matches[1])
+			maxVal, err2 := strconv.Atoi(matches[2])
 			if err1 != nil {
 				return err1
 			}
 			if err2 != nil {
 				return err2
 			}
-			i.Min = min
-			i.Max = max
+			i.Min = minVal
+			i.Max = maxVal
 		}
 	}
 	return nil
@@ -378,6 +378,7 @@ type Poller struct {
 	UseInsecureTLS    *bool                 `yaml:"use_insecure_tls,omitempty"`
 	Username          string                `yaml:"username,omitempty"`
 	PreferZAPI        bool                  `yaml:"prefer_zapi,omitempty"`
+	ConfPath          string                `yaml:"conf_path,omitempty"`
 	promIndex         int
 	Name              string
 }
@@ -486,6 +487,9 @@ func ZapiPoller(n *node.Node) *Poller {
 	if logSet := n.GetChildS("log"); logSet != nil {
 		names := logSet.GetAllChildNamesS()
 		p.LogSet = &names
+	}
+	if confPath := n.GetChildContentS("conf_path"); confPath != "" {
+		p.ConfPath = confPath
 	}
 	return &p
 }

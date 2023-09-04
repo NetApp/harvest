@@ -10,7 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -104,12 +104,12 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	fp = append(fp, "9.8.0")
 	fp = append(fp, strings.ReplaceAll(args.Object, ":", "_")+".yaml")
 
-	if err = os.MkdirAll(path.Join(fp[:5]...), 0750); err != nil {
+	if err = os.MkdirAll(filepath.Join(fp[:5]...), 0750); err != nil {
 		fmt.Println("mkdirall")
 		return err
 	}
 
-	templateFp := path.Join(fp...)
+	templateFp := filepath.Join(fp...)
 
 	if err = os.WriteFile(templateFp, dump, 0600); err != nil {
 		fmt.Println("writefile")
@@ -128,13 +128,13 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		return nil
 	}
 
-	if custom, err = collector.ImportTemplate(harvestHomePath, "custom.yaml", "zapiperf"); err != nil {
+	if custom, err = collector.ImportTemplate([]string{"conf"}, "custom.yaml", "zapiperf"); err != nil {
 		custom = node.NewS("")
 		custom.NewChildS("collector", "ZapiPerf")
 		custom.NewChildS("objects", "")
 	}
 
-	customFp := path.Join(harvestHomePath, "conf/", "zapiperf/", "custom.yaml")
+	customFp := filepath.Join(harvestHomePath, "conf/", "zapiperf/", "custom.yaml")
 
 	if objects := custom.GetChildS("objects"); objects != nil {
 

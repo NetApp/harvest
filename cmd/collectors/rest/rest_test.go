@@ -152,12 +152,11 @@ func volumeEndpoints(e *endPoint) ([]gjson.Result, error) {
 
 func newRest(object string, path string) *Rest {
 	var err error
-	opts := options.Options{
-		Poller:   pollerName,
-		HomePath: "testdata",
-		IsTest:   true,
-	}
-	ac := collector.New("Rest", object, &opts, params(object, path), nil)
+	opts := options.New(options.WithConfPath("testdata/conf"))
+	opts.Poller = pollerName
+	opts.HomePath = "testdata"
+	opts.IsTest = true
+	ac := collector.New("Rest", object, opts, params(object, path), nil)
 	r := Rest{}
 	err = r.Init(ac)
 	if err != nil {

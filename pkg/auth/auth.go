@@ -310,8 +310,7 @@ func handCertificateAuth(c *Credentials, poller *conf.Poller, insecureTLS bool) 
 	keyPath := poller.SslKey
 
 	if certPath == "" || keyPath == "" {
-		o := &options.Options{}
-		options.SetPathsAndHostname(o)
+		o := options.New()
 		pathPrefix = path.Join(o.HomePath, "cert/", o.Hostname)
 	}
 
