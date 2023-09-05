@@ -106,7 +106,7 @@ var metricCmd = &cobra.Command{
 
 func doDockerFull(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateFullCompose(conf.ConfigPath(config.Value.String()))
+	generateDocker(conf.ConfigPath(config.Value.String()), full)
 }
 func doSystemd(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
@@ -115,7 +115,7 @@ func doSystemd(cmd *cobra.Command, _ []string) {
 
 func doDockerCompose(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateDockerCompose(conf.ConfigPath(config.Value.String()))
+	generateDocker(conf.ConfigPath(config.Value.String()), harvest)
 }
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
@@ -129,21 +129,23 @@ const (
 	harvestAdminService = "harvest-admin.service"
 )
 
-func generateFullCompose(path string) {
-	generateDocker(path, full)
-}
-
-func generateDockerCompose(path string) {
-	generateDocker(path, harvest)
-}
-
 func normalizeContainerNames(name string) string {
 	re := regexp.MustCompile("[._]")
 	return strings.ToLower(re.ReplaceAllString(name, "-"))
 }
 
 func generateDocker(path string, kind int) {
-	pollerTemplate := PollerTemplate{}
+	var (
+		pollerTemplate  PollerTemplate
+		configFilePath  string
+		templateDirPath string
+		certDirPath     string
+		filesd          []string
+		extraMounts     []string
+		out             *os.File
+	)
+
+	pollerTemplate = PollerTemplate{}
 	promTemplate := PromTemplate{
 		opts.grafanaPort,
 		opts.promPort,
@@ -152,13 +154,15 @@ func generateDocker(path string, kind int) {
 	if err != nil {
 		return
 	}
-	configFilePath := path
+	configFilePath = asComposePath(path)
+	templateDirPath = asComposePath(opts.templateDir)
+	certDirPath = asComposePath(opts.certDir)
 
-	templateDirPath := opts.templateDir
+	extraMounts = make([]string, 0, len(opts.mounts))
+	for _, mount := range opts.mounts {
+		extraMounts = append(extraMounts, asComposePath(mount))
+	}
 
-	certDirPath := opts.certDir
-
-	var filesd []string
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v, true)
 		pollerInfo := PollerInfo{
@@ -173,7 +177,7 @@ func generateDocker(path string, kind int) {
 			IsFull:        kind == full,
 			TemplateDir:   templateDirPath,
 			CertDir:       certDirPath,
-			Mounts:        opts.mounts,
+			Mounts:        extraMounts,
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
@@ -184,7 +188,6 @@ func generateDocker(path string, kind int) {
 		logErrAndExit(err)
 	}
 
-	var out *os.File
 	color.DetectConsole("")
 	out, err = os.Create(opts.outputPath)
 	if err != nil {
@@ -257,6 +260,13 @@ func generateDocker(path string, kind int) {
 			"Start containers with:\n"+
 				color.Colorize("docker-compose -f prom-stack.yml -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	}
+}
+
+func asComposePath(path string) string {
+	if strings.HasPrefix(path, "/") || strings.HasPrefix(path, "./") {
+		return path
+	}
+	return "./" + path
 }
 
 func logErrAndExit(err error) {
