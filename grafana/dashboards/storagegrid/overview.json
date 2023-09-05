@@ -60,11 +60,12 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1678383760521,
+  "iteration": 1693920052430,
   "links": [],
   "panels": [
     {
@@ -1093,7 +1094,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 3
           },
           "id": 12,
           "options": {
@@ -1159,8 +1160,10 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
+              "decimals": 1,
               "mappings": [],
+              "max": 1,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1174,7 +1177,7 @@
                   }
                 ]
               },
-              "unit": "decbytes"
+              "unit": "percentunit"
             },
             "overrides": []
           },
@@ -1182,7 +1185,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 3
           },
           "id": 14,
           "options": {
@@ -2141,6 +2144,7 @@
       "type": "row"
     }
   ],
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
@@ -2523,5 +2527,5 @@
   "timezone": "",
   "title": "StorageGrid: Overview",
   "uid": "",
-  "version": 3
+  "version": 4
 }
