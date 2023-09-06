@@ -152,7 +152,7 @@ func generateDocker(path string, kind int) {
 	}
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
-		return
+		logErrAndExit(err)
 	}
 	configFilePath = asComposePath(path)
 	templateDirPath = asComposePath(opts.templateDir)
@@ -282,7 +282,7 @@ func generateSystemd(path string) {
 	var adminService string
 	err := conf.LoadHarvestConfig(path)
 	if err != nil {
-		return
+		logErrAndExit(err)
 	}
 	if conf.Config.Pollers == nil {
 		return
@@ -364,11 +364,11 @@ func generateMetrics(path string) {
 
 	err = conf.LoadHarvestConfig(path)
 	if err != nil {
-		return
+		logErrAndExit(err)
 	}
 
 	if poller, _, err = rest.GetPollerAndAddr(opts.Poller); err != nil {
-		return
+		logErrAndExit(err)
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
