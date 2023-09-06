@@ -1,0 +1,33 @@
+
+name:               CloudTarget
+query:              aggr-object-store-config-get-iter
+object:             cloud_target
+
+counters:
+  aggr-object-store-config-info:
+    - ^^object-store-uuid                => uuid
+    - ^access-key                        => access_key
+    - ^auth-type                         => authentication_type
+    - ^ipspace                           => ipspace
+    - ^is-certificate-validation-enabled => certificate_validation_enabled
+    - ^object-store-name                 => container
+    - ^port                              => port
+    - ^provider-type                     => provider_type
+    - ^s3-name                           => name
+    - ^server                            => server
+    - ^ssl-enabled                       => ssl_enabled
+    - used-space                         => used
+
+export_options:
+  instance_keys:
+    - container
+    - name
+    - server
+  instance_labels:
+    - access_key
+    - authentication_type
+    - certificate_validation_enabled
+    - ipspace
+    - port
+    - provider_type
+    - ssl_enabled
