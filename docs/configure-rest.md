@@ -167,7 +167,7 @@ This is exclusively supported by the Rest Collector. The `hidden_fields` are spe
 
 This is also specific to the Rest Collector. The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. Refer ONTAP API specification for detailed information on `query parameters` and `record filtering`. 
 
-In the provided [template example](#template-example) of the volume template, the constructed URL would be:
+In the provided [template example](#template-example), the constructed URL would be:
 
 ```
 https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&name=*harvest*
