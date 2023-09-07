@@ -136,10 +136,7 @@ func normalizeContainerNames(name string) string {
 
 func isRunningInContainer() bool {
 	_, runningInContainer := os.LookupEnv("RUNNING_IN_CONTAINER")
-	if runningInContainer {
-		return true
-	}
-	return false
+	return runningInContainer
 }
 
 func generateDocker(path string, kind int) {
