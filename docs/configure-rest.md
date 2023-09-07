@@ -104,7 +104,7 @@ The Object configuration file ("subtemplate") should contain the following param
 | `plugins`        | list                 | plugins and their parameters to run on the collected data   |         |
 | `export_options` | list                 | parameters to pass to exporters (see notes below)           |         |
 
-Example:
+#### Template Example:
 
 ```yaml
 name:                     Volume
@@ -130,8 +130,7 @@ counters:
       - anti_ransomware.state
       - space
   - filter:
-      - order_by=space.used desc
-      - max_records=20
+      - name=*harvest*
 
 plugins:
   - LabelAgent:
@@ -162,19 +161,17 @@ The `counters` section allows you to specify `hidden_fields` and `filter` parame
 
 ##### `hidden_fields`
 
-This is exclusively supported by the Rest Collector. The `hidden_fields` are specific fields that are not included in the response by default. However, they can be included if explicitly requested. When used, these fields are appended to the URL fields parameter.
+This is exclusively supported by the Rest Collector. The `hidden_fields` are specific fields that aren't inherently included in requests and must be explicitly requested by the user. When used, these fields are appended to the URL fields parameter.
 
 ##### `filter`
 
-This is also specific to the Rest Collector. The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval.
+This is also specific to the Rest Collector. The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. Refer ONTAP API specification for detailed information on `query parameters` and `record filtering`. 
 
-In the provided example of the volume template, the constructed URL would be:
+In the provided [template example](#template-example) of the volume template, the constructed URL would be:
 
 ```
-https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&order_by=space.used desc&max_records=20
+https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&name=*harvest*
 ```
-
-This URL includes the fields and order_by parameters, and limits the response to a maximum of 20 records.
 
 #### `export_options`
 
