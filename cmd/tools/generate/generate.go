@@ -134,6 +134,14 @@ func normalizeContainerNames(name string) string {
 	return strings.ToLower(re.ReplaceAllString(name, "-"))
 }
 
+func isRunningInContainer() bool {
+	_, runningInContainer := os.LookupEnv("RUNNING_IN_CONTAINER")
+	if runningInContainer {
+		return true
+	}
+	return false
+}
+
 func generateDocker(path string, kind int) {
 	var (
 		pollerTemplate  PollerTemplate
@@ -250,6 +258,18 @@ func generateDocker(path string, kind int) {
 	}
 	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
 
+	if isRunningInContainer() {
+		srcFolder := "/opt/harvest"
+		destFolder := "/opt/temp"
+		filesToExclude := []string{"harvest.yml", "harvest.yml.example", "prom-stack.tmpl"}
+		dirsToExclude := []string{"bin", "autosupport"}
+
+		err = copyFiles(srcFolder, destFolder, filesToExclude, dirsToExclude)
+		if err != nil {
+			logErrAndExit(err)
+		}
+	}
+
 	if kind == harvest {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
@@ -260,6 +280,59 @@ func generateDocker(path string, kind int) {
 			"Start containers with:\n"+
 				color.Colorize("docker-compose -f prom-stack.yml -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	}
+}
+
+func copyFiles(srcPath, destPath string, filesToExclude, dirsToExclude []string) error {
+	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Generate the destination path
+		relPath, err := filepath.Rel(srcPath, path)
+		if err != nil {
+			return err
+		}
+		dest := filepath.Join(destPath, relPath)
+
+		if info.IsDir() {
+			// Skip excluded directories
+			for _, dir := range dirsToExclude {
+				if info.Name() == dir {
+					return filepath.SkipDir
+				}
+			}
+			// Create the directory
+			return os.MkdirAll(dest, 0750)
+		}
+
+		// Skip excluded files
+		for _, file := range filesToExclude {
+			if info.Name() == file {
+				return nil
+			}
+		}
+
+		// Copy the file
+		return copyFile(path, dest)
+	})
+}
+
+func copyFile(srcPath, destPath string) error {
+	srcFile, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer silentClose(srcFile)
+
+	destFile, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer silentClose(destFile)
+
+	_, err = io.Copy(destFile, srcFile)
+	return err
 }
 
 func asComposePath(path string) string {
