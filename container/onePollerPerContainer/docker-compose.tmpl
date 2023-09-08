@@ -7,7 +7,7 @@ services:
     container_name: {{ .Admin.ContainerName }}
     restart: unless-stopped
     ports:
-      - {{ .Admin.Port }}:{{ .Admin.Port }}
+      - "{{ .Admin.Port }}:{{ .Admin.Port }}"
     entrypoint: ["bin/harvest", "admin", "start", "--config", "/opt/harvest.yml"]
     volumes:
       - {{ .Admin.ConfigFile }}:/opt/harvest.yml
@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
     {{- if .ShowPorts}}
     {{ if .Port }}ports:
-      - {{ .Port }}:{{ .Port }}
+      - "{{ .Port }}:{{ .Port }}"
     {{- end}}
     {{- end}}
     command: '--poller {{ .PollerName }} {{if .Port }}--promPort {{ .Port }} {{ end }}
