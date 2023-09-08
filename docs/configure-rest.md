@@ -104,6 +104,50 @@ The Object configuration file ("subtemplate") should contain the following param
 | `plugins`        | list                 | plugins and their parameters to run on the collected data   |         |
 | `export_options` | list                 | parameters to pass to exporters (see notes below)           |         |
 
+#### Template Example:
+
+```yaml
+name:                     Volume
+query:                    api/storage/volumes
+object:                   volume
+
+counters:
+  - ^^name                                        => volume
+  - ^^svm.name                                    => svm
+  - ^aggregates.#.name                            => aggr
+  - ^anti_ransomware.state                        => antiRansomwareState
+  - ^state                                        => state
+  - ^style                                        => style
+  - space.available                               => size_available
+  - space.overwrite_reserve                       => overwrite_reserve_total
+  - space.overwrite_reserve_used                  => overwrite_reserve_used
+  - space.percent_used                            => size_used_percent
+  - space.physical_used                           => space_physical_used
+  - space.physical_used_percent                   => space_physical_used_percent
+  - space.size                                    => size
+  - space.used                                    => size_used
+  - hidden_fields:
+      - anti_ransomware.state
+      - space
+  - filter:
+      - name=*harvest*
+
+plugins:
+  - LabelAgent:
+      exclude_equals:
+        - style `flexgroup_constituent`
+
+export_options:
+  instance_keys:
+    - aggr
+    - style
+    - svm
+    - volume
+  instance_labels:
+    - antiRansomwareState
+    - state
+```
+
 #### `counters`
 
 This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
@@ -112,6 +156,24 @@ histograms. The exact property of each counter is fetched from ONTAP and updated
 The display name of a counter can be changed with `=>` (e.g., `space.block_storage.size => space_total`).
 
 Counters that are stored as labels will only be exported if they are included in the `export_options` section.
+
+The `counters` section allows you to specify `hidden_fields` and `filter` parameters. Please find the detailed explanation below.
+
+##### `hidden_fields`
+
+There are some fields that ONTAP will not return unless you explicitly ask for them, even when using the URL parameter `fields=**`. `hidden_fields` is how you tell ONTAP which additional fields it should include in the REST response.
+
+##### `filter`
+
+The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. The filtering uses ONTAP's REST record filtering. The example above asks ONTAP to only return records where a volume's name matches `*harvest*`.
+
+If you're familiar with ONTAP's REST record filtering, the [example](#template-example) above would become `name=*harvest*` and appended to the final URL like so:
+
+```
+https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&name=*harvest*
+```
+
+Refer to the ONTAP API specification, sections: `query parameters` and `record filtering`, for more details.
 
 #### `export_options`
 
