@@ -161,17 +161,19 @@ The `counters` section allows you to specify `hidden_fields` and `filter` parame
 
 ##### `hidden_fields`
 
-This is exclusively supported by the Rest Collector. The `hidden_fields` are specific fields that aren't inherently included in requests and must be explicitly requested by the user. When used, these fields are appended to the URL fields parameter.
+There are some fields that ONTAP will not return unless you explicitly ask for them, even when using the URL parameter `fields=**`. `hidden_fields` is how you tell ONTAP which additional fields it should include in the REST response.
 
 ##### `filter`
 
-This is also specific to the Rest Collector. The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. Refer ONTAP API specification for detailed information on `query parameters` and `record filtering`. 
+The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. The filtering uses ONTAP's REST record filtering. The example above asks ONTAP to only return records where a volume's name matches `*harvest*`.
 
-In the provided [template example](#template-example), the constructed URL would be:
+If you're familiar with ONTAP's REST record filtering, the [example](#template-example) above would become `name=*harvest*` and appended to the final URL like so:
 
 ```
 https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&name=*harvest*
 ```
+
+Refer to the ONTAP API specification, sections: `query parameters` and `record filtering`, for more details.
 
 #### `export_options`
 
