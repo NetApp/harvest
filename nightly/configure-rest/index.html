@@ -797,9 +797,36 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    Template Example:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#counters" class="md-nav__link">
     counters
   </a>
+  
+    <nav class="md-nav" aria-label="counters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hidden_fields" class="md-nav__link">
+    hidden_fields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    filter
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1340,9 +1367,36 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    Template Example:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#counters" class="md-nav__link">
     counters
   </a>
+  
+    <nav class="md-nav" aria-label="counters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hidden_fields" class="md-nav__link">
+    hidden_fields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    filter
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1585,11 +1639,61 @@ configuration file that closest matches the version of the target ONTAP system.<
 </tr>
 </tbody>
 </table>
+<h4 id="template-example">Template Example:<a class="headerlink" href="#template-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">                     </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">                    </span><span class="l l-Scalar l-Scalar-Plain">api/storage/volumes</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">                   </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                        =&gt; volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^svm.name                                    =&gt; svm</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^aggregates.#.name                            =&gt; aggr</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^anti_ransomware.state                        =&gt; antiRansomwareState</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^state                                        =&gt; state</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^style                                        =&gt; style</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.available                               =&gt; size_available</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.overwrite_reserve                       =&gt; overwrite_reserve_total</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.overwrite_reserve_used                  =&gt; overwrite_reserve_used</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.percent_used                            =&gt; size_used_percent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.physical_used                           =&gt; space_physical_used</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.physical_used_percent                   =&gt; space_physical_used_percent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.size                                    =&gt; size</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.used                                    =&gt; size_used</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hidden_fields</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">anti_ransomware.state</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name=*harvest*</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">LabelAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">exclude_equals</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style `flexgroup_constituent`</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">antiRansomwareState</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span>
+</code></pre></div>
 <h4 id="counters"><code>counters</code><a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
 <p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
 histograms. The exact property of each counter is fetched from ONTAP and updated periodically.</p>
 <p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>space.block_storage.size =&gt; space_total</code>).</p>
 <p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
+<p>The <code>counters</code> section allows you to specify <code>hidden_fields</code> and <code>filter</code> parameters. Please find the detailed explanation below.</p>
+<h5 id="hidden_fields"><code>hidden_fields</code><a class="headerlink" href="#hidden_fields" title="Permanent link">&para;</a></h5>
+<p>There are some fields that ONTAP will not return unless you explicitly ask for them, even when using the URL parameter <code>fields=**</code>. <code>hidden_fields</code> is how you tell ONTAP which additional fields it should include in the REST response.</p>
+<h5 id="filter"><code>filter</code><a class="headerlink" href="#filter" title="Permanent link">&para;</a></h5>
+<p>The <code>filter</code> is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. The filtering uses ONTAP's REST record filtering. The example above asks ONTAP to only return records where a volume's name matches <code>*harvest*</code>.</p>
+<p>If you're familiar with ONTAP's REST record filtering, the <a href="#template-example">example</a> above would become <code>name=*harvest*</code> and appended to the final URL like so:</p>
+<div class="highlight"><pre><span></span><code>https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&amp;name=*harvest*
+</code></pre></div>
+<p>Refer to the ONTAP API specification, sections: <code>query parameters</code> and <code>record filtering</code>, for more details.</p>
 <h4 id="export_options"><code>export_options</code><a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
 <p>Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
 exporter. For <a href="../prometheus-exporter/">Prometheus</a> and <a href="../influxdb-exporter/">InfluxDB</a>
