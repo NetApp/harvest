@@ -250,9 +250,7 @@ func generateDocker(path string, kind int) {
 	}
 	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
 
-	fmt.Println(os.Getenv("HARVEST_DOCKER"))
-	if os.Getenv("HARVEST_DOCKER") == "yes" {
-		fmt.Println("ok")
+	if os.Getenv("HARVEST_DOCKER") != "" {
 		srcFolder := "/opt/harvest"
 		destFolder := "/opt/temp"
 
@@ -275,14 +273,14 @@ func generateDocker(path string, kind int) {
 }
 
 func copyFiles(srcPath, destPath string) error {
-	filesToExclude := map[string]interface{}{
-		"harvest.yml":         nil,
-		"harvest.yml.example": nil,
-		"prom-stack.tmpl":     nil,
+	filesToExclude := map[string]bool{
+		"harvest.yml":         true,
+		"harvest.yml.example": true,
+		"prom-stack.tmpl":     true,
 	}
-	dirsToExclude := map[string]interface{}{
-		"bin":         nil,
-		"autosupport": nil,
+	dirsToExclude := map[string]bool{
+		"bin":         true,
+		"autosupport": true,
 	}
 	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -298,7 +296,7 @@ func copyFiles(srcPath, destPath string) error {
 
 		if info.IsDir() {
 			// Skip excluded directories
-			if _, has := dirsToExclude[info.Name()]; has {
+			if dirsToExclude[info.Name()] {
 				return filepath.SkipDir
 			}
 			// Create the directory
@@ -306,7 +304,7 @@ func copyFiles(srcPath, destPath string) error {
 		}
 
 		// Skip excluded files
-		if _, has := filesToExclude[info.Name()]; has {
+		if filesToExclude[info.Name()] {
 			return nil
 		}
 
