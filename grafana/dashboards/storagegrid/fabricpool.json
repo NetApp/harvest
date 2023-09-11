@@ -14,7 +14,7 @@
       "id": "grafana",
       "name": "Grafana",
       "type": "grafana",
-      "version": "8.1.2"
+      "version": "8.1.8"
     },
     {
       "id": "prometheus",
@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1681738814239,
+  "iteration": 1694089643456,
   "links": [
     {
       "asDropdown": true,
@@ -155,7 +155,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -232,7 +232,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -309,7 +309,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -373,7 +373,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -431,7 +431,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -491,7 +491,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -850,7 +850,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -1552,11 +1552,11 @@
           }
         ]
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
-          "expr": "bucket_bytes{cluster=~\"$SGCluster\",bucket=~\"$Container\"}",
+          "expr": "bucket_bytes{cluster=~\"$SGCluster\",bucket=~\"$Bucket\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1565,7 +1565,7 @@
         },
         {
           "exemplar": false,
-          "expr": "bucket_objects{cluster=~\"$SGCluster\",bucket=~\"$Container\"}",
+          "expr": "bucket_objects{cluster=~\"$SGCluster\",bucket=~\"$Bucket\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1731,36 +1731,10 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cloud_target_labels{cluster=~\"$Cluster\"}, container)",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "Container",
-        "options": [],
-        "query": {
-          "query": "label_values(cloud_target_labels{cluster=~\"$Cluster\"}, container)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
         "current": {
-          "selected": false,
-          "text": "6",
-          "value": "6"
+          "selected": true,
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
@@ -1937,6 +1911,32 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cloud_target_labels{cluster=~\"$Cluster\"},name)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Bucket",
+        "multi": true,
+        "name": "Bucket",
+        "options": [],
+        "query": {
+          "query": "label_values(cloud_target_labels{cluster=~\"$Cluster\"},name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -1948,5 +1948,5 @@
   "timezone": "",
   "title": "ONTAP: StorageGrid FabricPool",
   "uid": "",
-  "version": 1
+  "version": 2
 }
