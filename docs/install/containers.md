@@ -5,9 +5,8 @@ Harvest is container-ready and supports several deployment options:
 - [Stand-up Prometheus, Grafana, and Harvest via Docker Compose](#docker-compose). Choose this if
   you want to hit the ground running. Install, volume and network mounts automatically handled.
 
-- [Poller-per-container model](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer) that offers
-  more flexibility in configuration. This deployment enables a broad range of orchestrators (Nomad, Mesosphere, Swarm,
-  K8, etc.) since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is
+- [Stand-up Harvest via Docker Compose](harvest-containers.md) that offers
+  more flexibility in configuration. Choose this if you only want to run Harvest containers. Since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is
   recommended.
 
 - If you prefer Ansible, David Blackwell created

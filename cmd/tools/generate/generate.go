@@ -134,11 +134,6 @@ func normalizeContainerNames(name string) string {
 	return strings.ToLower(re.ReplaceAllString(name, "-"))
 }
 
-func isRunningInContainer() bool {
-	_, runningInContainer := os.LookupEnv("RUNNING_IN_CONTAINER")
-	return runningInContainer
-}
-
 func generateDocker(path string, kind int) {
 	var (
 		pollerTemplate  PollerTemplate
@@ -255,13 +250,13 @@ func generateDocker(path string, kind int) {
 	}
 	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
 
-	if isRunningInContainer() {
+	fmt.Println(os.Getenv("HARVEST_DOCKER"))
+	if os.Getenv("HARVEST_DOCKER") == "yes" {
+		fmt.Println("ok")
 		srcFolder := "/opt/harvest"
 		destFolder := "/opt/temp"
-		filesToExclude := []string{"harvest.yml", "harvest.yml.example", "prom-stack.tmpl"}
-		dirsToExclude := []string{"bin", "autosupport"}
 
-		err = copyFiles(srcFolder, destFolder, filesToExclude, dirsToExclude)
+		err = copyFiles(srcFolder, destFolder)
 		if err != nil {
 			logErrAndExit(err)
 		}
@@ -279,7 +274,16 @@ func generateDocker(path string, kind int) {
 	}
 }
 
-func copyFiles(srcPath, destPath string, filesToExclude, dirsToExclude []string) error {
+func copyFiles(srcPath, destPath string) error {
+	filesToExclude := map[string]interface{}{
+		"harvest.yml":         nil,
+		"harvest.yml.example": nil,
+		"prom-stack.tmpl":     nil,
+	}
+	dirsToExclude := map[string]interface{}{
+		"bin":         nil,
+		"autosupport": nil,
+	}
 	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -294,20 +298,16 @@ func copyFiles(srcPath, destPath string, filesToExclude, dirsToExclude []string)
 
 		if info.IsDir() {
 			// Skip excluded directories
-			for _, dir := range dirsToExclude {
-				if info.Name() == dir {
-					return filepath.SkipDir
-				}
+			if _, has := dirsToExclude[info.Name()]; has {
+				return filepath.SkipDir
 			}
 			// Create the directory
 			return os.MkdirAll(dest, 0750)
 		}
 
 		// Skip excluded files
-		for _, file := range filesToExclude {
-			if info.Name() == file {
-				return nil
-			}
+		if _, has := filesToExclude[info.Name()]; has {
+			return nil
 		}
 
 		// Copy the file

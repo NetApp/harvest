@@ -33,7 +33,7 @@ RUN cp -aR $BUILD_DIR/container/prometheus $INSTALL_DIR/container/
 FROM gcr.io/distroless/static-debian11:debug
 
 ARG INSTALL_DIR=/opt/harvest
-ENV RUNNING_IN_CONTAINER=true
+ENV HARVEST_DOCKER=yes
 COPY --from=builder $INSTALL_DIR $INSTALL_DIR
 WORKDIR $INSTALL_DIR
 
