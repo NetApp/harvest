@@ -7,6 +7,7 @@ schedule:
 
 objects:
   Aggregate:                   aggr.yaml
+  AggregateSpace:              aggr_space.yaml
   AggregateEfficiency:         aggr_efficiency.yaml
   CIFSSession:                 cifs_session.yaml
   ClusterPeer:                 clusterpeer.yaml
