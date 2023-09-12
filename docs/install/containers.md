@@ -5,9 +5,8 @@ Harvest is container-ready and supports several deployment options:
 - [Stand-up Prometheus, Grafana, and Harvest via Docker Compose](#docker-compose). Choose this if
   you want to hit the ground running. Install, volume and network mounts automatically handled.
 
-- [Poller-per-container model](https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer) that offers
-  more flexibility in configuration. This deployment enables a broad range of orchestrators (Nomad, Mesosphere, Swarm,
-  K8, etc.) since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is
+- [Stand-up Harvest via Docker Compose](harvest-containers.md) that offers
+  more flexibility in configuration. Choose this if you only want to run Harvest containers. Since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is
   recommended.
 
 - If you prefer Ansible, David Blackwell created
@@ -15,10 +14,10 @@ Harvest is container-ready and supports several deployment options:
   stands up Harvest, Grafana, and Prometheus.
 
 - Want to run Harvest on a Mac
-  via [containerd and Racher Desktop](https://github.com/NetApp/harvest/tree/main/container/containerd)? We got you
+  via [containerd and Racher Desktop](containerd.md)? We got you
   covered.
 
-- [K8 Deployment](https://github.com/NetApp/harvest/blob/main/container/k8/README.md) via Kompose
+- [K8 Deployment](k8.md) via Kompose
 
 ## Docker Compose
 
@@ -28,11 +27,6 @@ This is a quick way to install and get started with Harvest. Follow the four ste
 - Harvest dashboards are automatically imported and setup in Grafana with a Prometheus data source
 - A separate poller container is created for each monitored cluster
 - All pollers are automatically added as Prometheus scrape targets
-
-### Download and untar
-
-- Download the latest version of [Harvest](https://netapp.github.io/harvest/latest/install/native/), untar, and
-   cd into the harvest directory.
 
 ### Setup harvest.yml
 
@@ -73,11 +67,13 @@ Pollers:
 
 - Generate a Docker compose file from your `harvest.yml`
 
-```
+```sh
 docker run --rm \
   --entrypoint "bin/harvest" \
-  --volume "$(pwd):/opt/harvest" \
-  ghcr.io/netapp/harvest generate docker full \
+  --volume "$(pwd):/opt/temp" \
+  --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
+  ghcr.io/netapp/harvest \
+  generate docker full \
   --output harvest-compose.yml
 ```
 
@@ -86,6 +82,7 @@ docker run --rm \
 1. Creates a Docker compose file with a container for each Harvest poller defined in your `harvest.yml`
 2. Creates a matching Prometheus service discovery file for each Harvest poller (located
    in `container/prometheus/harvest_targets.yml`). Prometheus uses this file to scrape the Harvest pollers.
+
 
 ### Start everything
 
@@ -162,15 +159,15 @@ Note: Deleting or stopping Docker containers does not remove the data stored in 
 
 To upgrade Harvest:
 
-1. Download the latest `tar.gz` or packaged version and install it.
-   This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
+1. Retrieve the most recent version of the Harvest Docker image by executing the following command.This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
    image.
+   ```
+   docker pull ghcr.io/netapp/harvest
+   ```
 
 2. [Stop all containers](#stop-all-containers)
 
-3. Copy your existing `harvest.yml` into the new Harvest directory created in step #1.
-
-4. Regenerate your `harvest-compose.yml` file by
+3. Regenerate your `harvest-compose.yml` file by
    running [harvest generate](#generate-a-docker-compose-for-your-pollers)
    By default, generate will use the `latest` tag. If you want to upgrade to a `nightly` build see the twisty.
 
@@ -178,11 +175,18 @@ To upgrade Harvest:
     
         Tell the `generate` cmd to use a different tag like so:
 
-        `docker run --rm --entrypoint "bin/harvest" --volume "$(pwd):/opt/harvest" ghcr.io/netapp/harvest:nightly generate docker full --output harvest-compose.yml`
+        ```sh
+        docker run --rm \
+          --entrypoint "bin/harvest" \
+          --volume "$(pwd):/opt/temp" \
+          --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
+          ghcr.io/netapp/harvest:nightly \
+          generate docker full \
+          --output harvest-compose.yml
+        ```
 
-5. Pull new images and restart your containers like so:
+4. Restart your containers using the following:
 
 ```
-docker pull ghcr.io/netapp/harvest   # or if using Docker Hub: docker pull rahulguptajss/harvest
 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```

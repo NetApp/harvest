@@ -250,6 +250,16 @@ func generateDocker(path string, kind int) {
 	}
 	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
 
+	if os.Getenv("HARVEST_DOCKER") != "" {
+		srcFolder := "/opt/harvest"
+		destFolder := "/opt/temp"
+
+		err = copyFiles(srcFolder, destFolder)
+		if err != nil {
+			logErrAndExit(err)
+		}
+	}
+
 	if kind == harvest {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
@@ -260,6 +270,64 @@ func generateDocker(path string, kind int) {
 			"Start containers with:\n"+
 				color.Colorize("docker-compose -f prom-stack.yml -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	}
+}
+
+func copyFiles(srcPath, destPath string) error {
+	filesToExclude := map[string]bool{
+		"harvest.yml":         true,
+		"harvest.yml.example": true,
+		"prom-stack.tmpl":     true,
+	}
+	dirsToExclude := map[string]bool{
+		"bin":         true,
+		"autosupport": true,
+	}
+	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Generate the destination path
+		relPath, err := filepath.Rel(srcPath, path)
+		if err != nil {
+			return err
+		}
+		dest := filepath.Join(destPath, relPath)
+
+		if info.IsDir() {
+			// Skip excluded directories
+			if dirsToExclude[info.Name()] {
+				return filepath.SkipDir
+			}
+			// Create the directory
+			return os.MkdirAll(dest, 0750)
+		}
+
+		// Skip excluded files
+		if filesToExclude[info.Name()] {
+			return nil
+		}
+
+		// Copy the file
+		return copyFile(path, dest)
+	})
+}
+
+func copyFile(srcPath, destPath string) error {
+	srcFile, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer silentClose(srcFile)
+
+	destFile, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer silentClose(destFile)
+
+	_, err = io.Copy(destFile, srcFile)
+	return err
 }
 
 func asComposePath(path string) string {
