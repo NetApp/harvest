@@ -517,7 +517,7 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model TemplateM
 			}
 			err = addPluginLabels(path, &model)
 			if err != nil {
-				//t.Errorf("failed to addPluginLabels template path=%s err=%v", shortPath(path), err)
+				// t.Errorf("failed to addPluginLabels template path=%s err=%v", shortPath(path), err)
 				return err
 			}
 			eachTemplate(path, model)
@@ -609,6 +609,11 @@ func findCustomPlugins(path string, template *node.Node, model *TemplateModel) e
 		goPluginName := strings.ToLower(name)
 		splits := strings.Split(path, "/")
 		pluginGo := fmt.Sprintf("../../../cmd/collectors/%s/plugins/%s/%s.go", splits[4], goPluginName, goPluginName)
+
+		// Both Zapi and REST sensor.yaml templates uses a single plugin defined in power.go
+		if strings.Contains(path, "sensor.yaml") {
+			pluginGo = "../../../cmd/collectors/power.go"
+		}
 
 		err2 := readPlugin(pluginGo, model)
 		if err2 != nil {
