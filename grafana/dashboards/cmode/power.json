@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1693298975439,
+  "iteration": 1694453038642,
   "links": [
     {
       "asDropdown": true,
@@ -106,14 +106,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 2,
+        "h": 4,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 101,
       "options": {
-        "content": "In an ONTAP system with **embedded** disk shelves, power and temperature data might not be visible for individual shelves. This is because these metrics are computed at the cluster level, not at the level of individual shelves.\n\nEmbedded shelf power is shared among the common nodes.",
+        "content": "This dashboard requires ONTAP 9.6+ and REST private CLI.\n\nSee <a target='blank' href='https://netapp.github.io/harvest/latest/power-algorithm'>power algorithm</a> for more details.\n\nPower and temperature metrics may not be visible for clusters with **embedded** disk shelves. Those metrics are computed at the cluster level, not at the level of individual shelves. Embedded shelf power is shared among the common nodes.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -126,7 +126,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 5
       },
       "id": 15,
       "panels": [],
@@ -160,7 +160,7 @@
         "h": 10,
         "w": 9,
         "x": 0,
-        "y": 4
+        "y": 6
       },
       "id": 21,
       "links": [],
@@ -226,7 +226,7 @@
         "h": 5,
         "w": 7,
         "x": 9,
-        "y": 4
+        "y": 6
       },
       "id": 71,
       "options": {
@@ -301,7 +301,7 @@
         "h": 5,
         "w": 4,
         "x": 16,
-        "y": 4
+        "y": 6
       },
       "id": 68,
       "options": {
@@ -360,7 +360,7 @@
         "h": 5,
         "w": 4,
         "x": 20,
-        "y": 4
+        "y": 6
       },
       "id": 70,
       "options": {
@@ -419,7 +419,7 @@
         "h": 5,
         "w": 7,
         "x": 9,
-        "y": 9
+        "y": 11
       },
       "id": 96,
       "options": {
@@ -494,7 +494,7 @@
         "h": 5,
         "w": 4,
         "x": 16,
-        "y": 9
+        "y": 11
       },
       "id": 64,
       "options": {
@@ -554,7 +554,7 @@
         "h": 5,
         "w": 4,
         "x": 20,
-        "y": 9
+        "y": 11
       },
       "id": 97,
       "options": {
@@ -680,7 +680,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 16
       },
       "id": 82,
       "options": {
@@ -787,7 +787,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 22
+        "y": 24
       },
       "id": 73,
       "options": {
@@ -878,7 +878,7 @@
         "h": 8,
         "w": 11,
         "x": 13,
-        "y": 22
+        "y": 24
       },
       "id": 74,
       "options": {
@@ -968,7 +968,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 30
+        "y": 32
       },
       "id": 79,
       "options": {
@@ -1059,7 +1059,7 @@
         "h": 8,
         "w": 11,
         "x": 13,
-        "y": 30
+        "y": 32
       },
       "id": 88,
       "options": {
@@ -1150,7 +1150,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 38
+        "y": 40
       },
       "id": 87,
       "options": {
@@ -1241,7 +1241,7 @@
         "h": 8,
         "w": 11,
         "x": 13,
-        "y": 38
+        "y": 40
       },
       "id": 89,
       "options": {
@@ -1332,7 +1332,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 46
+        "y": 48
       },
       "id": 94,
       "options": {
@@ -1380,7 +1380,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 56
       },
       "id": 93,
       "panels": [
@@ -1768,7 +1768,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 55
+        "y": 57
       },
       "id": 84,
       "panels": [
@@ -1893,7 +1893,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 56
+        "y": 58
       },
       "id": 76,
       "panels": [
@@ -2430,7 +2430,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 59
       },
       "id": 78,
       "panels": [
@@ -3399,5 +3399,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 10
+  "version": 11
 }

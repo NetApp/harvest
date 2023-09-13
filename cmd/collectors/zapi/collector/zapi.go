@@ -6,13 +6,13 @@ package zapi
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/security"
-	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/sensor"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/svm"
@@ -158,7 +158,7 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	case "Volume":
 		return volume.New(abc)
 	case "Sensor":
-		return sensor.New(abc)
+		return collectors.NewSensor(abc)
 	case "Certificate":
 		return certificate.New(abc)
 	case "SVM":
