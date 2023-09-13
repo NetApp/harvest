@@ -173,7 +173,7 @@ func generateDocker(path string, kind int) {
 			LogLevel:      opts.loglevel,
 			Image:         opts.image,
 			ContainerName: normalizeContainerNames("poller_" + v),
-			ShowPorts:     kind == harvest || opts.showPorts,
+			ShowPorts:     opts.showPorts,
 			IsFull:        kind == full,
 			TemplateDir:   templateDirPath,
 			CertDir:       certDirPath,
@@ -483,7 +483,7 @@ func init() {
 	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
-	dFlags.BoolVarP(&opts.showPorts, "port", "p", false, "Expose poller ports to host machine")
+	dFlags.BoolVarP(&opts.showPorts, "port", "p", true, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
 	dFlags.StringSliceVar(&opts.mounts, "volume", []string{}, "Additional volume mounts to include in compose file")
 
