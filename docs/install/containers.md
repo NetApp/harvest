@@ -97,7 +97,7 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 The `prom-stack.yml` compose file creates a `frontend` and `backend` network. Prometheus and Grafana publish their admin
 ports on the front-end network and are routable to the local machine. By default, the Harvest pollers are part of the
 backend network and also expose their Prometheus web end-points. 
-If you do not want their end-points exposed, remove the `--port` option from the `generate` sub-command in the [previous step](#generate-a-docker-compose-for-your-pollers).
+If you do not want their end-points exposed, add the `--port=false` option to the `generate` sub-command in the [previous step](#generate-a-docker-compose-for-your-pollers).
 
 ### Prometheus
 
