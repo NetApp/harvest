@@ -1336,8 +1336,10 @@
 </ol>
 <div class="highlight"><pre><span></span><code>docker run --rm \
   --entrypoint &quot;bin/harvest&quot; \
-  --volume &quot;$(pwd):/opt/harvest&quot; \
-  ghcr.io/netapp/harvest generate docker full \
+  --volume &quot;$(pwd):/opt/temp&quot; \
+  --volume &quot;$(pwd)/harvest.yml:/opt/harvest/harvest.yml&quot; \
+  ghcr.io/netapp/harvest \
+  generate docker full \
   --output harvest-compose.yml
 </code></pre></div>
 <details><summary>example harvest.yml</summary>
@@ -1710,8 +1712,10 @@ Please note the following assumptions for the steps below:</p>
 </ul>
 <div class="highlight"><pre><span></span><code>docker run --rm \
   --entrypoint &quot;bin/harvest&quot; \
-  --volume &quot;$(pwd):/opt/harvest&quot; \
-  ghcr.io/netapp/harvest generate docker full \
+  --volume &quot;$(pwd):/opt/temp&quot; \
+  --volume &quot;$(pwd)/harvest.yml:/opt/harvest/harvest.yml&quot; \
+  ghcr.io/netapp/harvest \
+  generate docker full \
   --output harvest-compose.yml
 
 sed -i &#39;/\/conf/s/^/#/g&#39; harvest-compose.yml

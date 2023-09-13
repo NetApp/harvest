@@ -9,17 +9,13 @@
       
       
       
-        <link rel="prev" href="../podman/">
-      
-      
-        <link rel="next" href="../native/">
       
       <link rel="icon" href="../../assets/harvest.svg">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
     
     
       
-        <title>Containerd - Harvest</title>
+        <title>Harvest containers - Harvest</title>
       
     
     
@@ -73,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#containerized-harvest-on-mac-using-containerd" class="md-skip">
+        <a href="#setup-harvestyml" class="md-skip">
           Skip to content
         </a>
       
@@ -111,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Containerd
+              Harvest containers
             
           </span>
         </div>
@@ -284,16 +280,14 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
       
       
       
@@ -302,7 +296,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Installation
@@ -341,16 +335,14 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
       
       
       
@@ -359,7 +351,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_3">
           <span class="md-nav__icon md-icon"></span>
           Containers
@@ -412,21 +404,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../containerd/" class="md-nav__link">
         Containerd
       </a>
-      
     </li>
   
 
@@ -1115,8 +1097,69 @@
   
   
   
-    
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup-harvestyml" class="md-nav__link">
+    Setup harvest.yml
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generate-a-docker-compose-for-your-pollers" class="md-nav__link">
+    Generate a Docker compose for your Pollers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-everything" class="md-nav__link">
+    Start everything
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manage-pollers" class="md-nav__link">
+    Manage pollers
+  </a>
+  
+    <nav class="md-nav" aria-label="Manage pollers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-add-a-new-poller" class="md-nav__link">
+    How do I add a new poller?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stop-all-containers" class="md-nav__link">
+    Stop all containers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-harvest" class="md-nav__link">
+    Upgrade Harvest
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1131,78 +1174,103 @@
                   
 
 
-<h1 id="containerized-harvest-on-mac-using-containerd">Containerized Harvest on Mac using containerd<a class="headerlink" href="#containerized-harvest-on-mac-using-containerd" title="Permanent link">&para;</a></h1>
-<p>Harvest runs natively on a Mac already. If you need that, git clone and use <code>GOOS=darwin make build</code>. </p>
-<p>This page describes how to run Harvest on your Mac in a containerized environment (Compose, K8, etc.)
-The documentation below uses Rancher Desktop, but lima works just as well. Keep in mind, both of them
-are considered alpha. They work, but are still undergoing a lot of change.</p>
-<h1 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h1>
-<p>We're going to:
-- Install and Start <a href="https://rancherdesktop.io/">Rancher Desktop</a>
-- (Optional) Create Harvest Docker image by following Harvest's existing documentation
-- Generate a Compose file following Harvest' existing documentation
-- Concatenate the Prometheus/Grafana compose file with the harvest compose file since Rancher doesn't support multiple compose files yet
-  - Fixup the concatenated file
-- Start containers</p>
-<p>Under the hood, Rancher is using <a href="https://github.com/lima-vm/lima">lima</a>. If you want to skip Rancher and use lima directly that works too.</p>
-<h2 id="install-and-start-rancher-desktop">Install and Start Rancher Desktop<a class="headerlink" href="#install-and-start-rancher-desktop" title="Permanent link">&para;</a></h2>
-<p>We'll use brew to install Rancher.</p>
-<div class="highlight"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>rancher
+  <h1>Harvest containers</h1>
+
+<p>Follow this method if your goal is to establish a separate harvest container for each poller defined in <code>harvest.yml</code> file. Please note that these containers must be incorporated into your current infrastructure, which might include systems like Prometheus or Grafana.</p>
+<h3 id="setup-harvestyml">Setup harvest.yml<a class="headerlink" href="#setup-harvestyml" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Create a <code>harvest.yml</code> file with your cluster details, below is an example with annotated comments. Modify as needed
+  for your scenario.</li>
+</ul>
+<p>This config is using the Prometheus
+exporter <a href="../../prometheus-exporter/#port_range">port_range</a>
+feature, so you don't have to manage the Prometheus exporter port mappings for each poller.</p>
+<div class="highlight"><pre><span></span><code>Exporters:
+  prometheus1:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port_range: 2000-2030  # &lt;====== adjust to be greater than equal to the number of monitored clusters
+
+Defaults:
+  collectors:
+    - Zapi
+    - ZapiPerf
+    - EMS
+  use_insecure_tls: true   # &lt;====== adjust as needed to enable/disable TLS checks 
+  exporters:
+    - prometheus1
+
+Pollers:
+  infinity:                # &lt;====== add your cluster(s) here, they use the exporter defined three lines above
+    datacenter: DC-01
+    addr: 10.0.1.2
+    auth_style: basic_auth
+    username: user
+    password: 123#abc
+  # next cluster ....  
 </code></pre></div>
-<p>After Rancher Desktop installs, start it <code>Cmd + Space</code> type: Rancher and wait for it to start a VM and download images. Once everything is started continue.</p>
-<h2 id="create-harvest-docker-image">Create Harvest Docker image<a class="headerlink" href="#create-harvest-docker-image" title="Permanent link">&para;</a></h2>
-<p>You only need to <a href="https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer#building-harvest-docker-image">create a new image</a> if you've made changes to Harvest. If you just want to use the latest version of Harvest, skip this step.</p>
-<p>These are the same steps outline on <a href="https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer#building-harvest-docker-image">Building Harvest Docker Image</a> except we replace <code>docker build</code> with <code>nerdctl</code> like so:</p>
-<div class="highlight"><pre><span></span><code>nerdctl<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache<span class="w"> </span>
-</code></pre></div>
-<h2 id="generate-a-harvest-compose-file">Generate a Harvest compose file<a class="headerlink" href="#generate-a-harvest-compose-file" title="Permanent link">&para;</a></h2>
-<p>Follow the existing documentation to setup your <code>harvest.yml</code> <a href="../containers/#setup-harvestyml">file</a></p>
-<p>Create your <code>harvest-compose.yml</code> file like this:</p>
+<h3 id="generate-a-docker-compose-for-your-pollers">Generate a Docker compose for your Pollers<a class="headerlink" href="#generate-a-docker-compose-for-your-pollers" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Generate a Docker compose file from your <code>harvest.yml</code></li>
+</ul>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/opt/temp&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/harvest.yml:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>ghcr.io/netapp/harvest<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output<span class="w"> </span>harvest-compose.yml<span class="w"> </span><span class="c1"># --image tag, if you built a new image above</span>
+<span class="w">  </span>generate<span class="w"> </span>docker<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>harvest-compose.yml
 </code></pre></div>
-<h2 id="combine-prometheusgrafana-and-harvest-compose-file">Combine Prometheus/Grafana and Harvest compose file<a class="headerlink" href="#combine-prometheusgrafana-and-harvest-compose-file" title="Permanent link">&para;</a></h2>
-<p>Currently <code>nerdctl compose</code> does not support running with multiple compose files, so we'll concat the <code>prom-stack.yml</code> and the <code>harvest-compose.yml</code> into one file and then fix it up.</p>
-<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>prom-stack.yml<span class="w"> </span>harvest-compose.yml<span class="w"> </span>&gt;<span class="w"> </span>both.yml
-
-<span class="c1"># jump to line 45 and remove redundant version and services lines (lines 45, 46, 47 should be removed)</span>
-<span class="c1"># fix indentation of remaining lines - in vim, starting at line 46</span>
-<span class="c1"># Shift V</span>
-<span class="c1"># Shift G</span>
-<span class="c1"># Shift .</span>
-<span class="c1"># Esc</span>
-<span class="c1"># Shift ZZ</span>
+<h3 id="start-everything">Start everything<a class="headerlink" href="#start-everything" title="Permanent link">&para;</a></h3>
+<p>Bring everything up <img alt="🚀" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f680.svg" title=":rocket:" /></p>
+<div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
-<h2 id="start-containers">Start containers<a class="headerlink" href="#start-containers" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>nerdctl<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>both.yml<span class="w"> </span>up<span class="w"> </span>-d
-
-nerdctl<span class="w"> </span>ps<span class="w"> </span>-a
-
-CONTAINER<span class="w"> </span>ID<span class="w">    </span>IMAGE<span class="w">                               </span>COMMAND<span class="w">                   </span>CREATED<span class="w">               </span>STATUS<span class="w">    </span>PORTS<span class="w">                       </span>NAMES
-bd7131291960<span class="w">    </span>docker.io/grafana/grafana:latest<span class="w">    </span><span class="s2">&quot;/run.sh&quot;</span><span class="w">                 </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:3000-&gt;3000/tcp<span class="w">      </span>grafana
-f911553a14e2<span class="w">    </span>docker.io/prom/prometheus:latest<span class="w">    </span><span class="s2">&quot;/bin/prometheus --c…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:9090-&gt;9090/tcp<span class="w">      </span>prometheus
-037a4785bfad<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:15007-&gt;15007/tcp<span class="w">    </span>poller_simple7_v21.11.0513
-03fb951cfe26<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span><span class="m">59</span><span class="w"> </span>seconds<span class="w"> </span>ago<span class="w">        </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:15025-&gt;15025/tcp<span class="w">    </span>poller_simple25_v21.11.0513
-049d0d65b434<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:16050-&gt;16050/tcp<span class="w">    </span>poller_simple49_v21.11.0513
-0b77dd1bc0ff<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:16067-&gt;16067/tcp<span class="w">    </span>poller_u2_v21.11.0513
-1cabd1633c6f<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:15015-&gt;15015/tcp<span class="w">    </span>poller_simple15_v21.11.0513
-1d78c1bf605f<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:15062-&gt;15062/tcp<span class="w">    </span>poller_sandhya_v21.11.0513
-286271eabc1d<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:15010-&gt;15010/tcp<span class="w">    </span>poller_simple10_v21.11.0513
-29710da013d4<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:12990-&gt;12990/tcp<span class="w">    </span>poller_simple1_v21.11.0513
-321ae28637b6<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:15020-&gt;15020/tcp<span class="w">    </span>poller_simple20_v21.11.0513
-39c91ae54d68<span class="w">    </span>docker.io/library/cbg:latest<span class="w">        </span><span class="s2">&quot;bin/poller --poller…&quot;</span><span class="w">    </span>About<span class="w"> </span>a<span class="w"> </span>minute<span class="w"> </span>ago<span class="w">    </span>Up<span class="w">        </span><span class="m">0</span>.0.0.0:15053-&gt;15053/tcp<span class="w">    </span>poller_simple-53_v21.11.0513
-
-nerdctl<span class="w"> </span>logs<span class="w"> </span>poller_simple1_v21.11.0513
-nerdctl<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>both.yml<span class="w"> </span>down
-
-<span class="c1"># http://localhost:9090/targets   Prometheus</span>
-<span class="c1"># http://localhost:3000           Grafana</span>
-<span class="c1"># http://localhost:15062/metrics  Poller metrics</span>
+<h2 id="manage-pollers">Manage pollers<a class="headerlink" href="#manage-pollers" title="Permanent link">&para;</a></h2>
+<h3 id="how-do-i-add-a-new-poller">How do I add a new poller?<a class="headerlink" href="#how-do-i-add-a-new-poller" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Add poller to <code>harvest.yml</code></li>
+<li>Regenerate compose file by running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a></li>
+<li>Run <a href="#start-everything">docker compose up</a>, for example,</li>
+</ol>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>-f<span class="w"> </span>harvest-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--remove-orphans
+</code></pre></div>
+<h3 id="stop-all-containers">Stop all containers<a class="headerlink" href="#stop-all-containers" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>docker-compose-f harvest-compose.yml down
+</code></pre></div>
+<h3 id="upgrade-harvest">Upgrade Harvest<a class="headerlink" href="#upgrade-harvest" title="Permanent link">&para;</a></h3>
+<p>To upgrade Harvest:</p>
+<ol>
+<li>
+<p>Retrieve the most recent version of the Harvest Docker image by executing the following command.This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
+   image.
+   <div class="highlight"><pre><span></span><code>docker pull ghcr.io/netapp/harvest
+</code></pre></div></p>
+</li>
+<li>
+<p><a href="#stop-all-containers">Stop all containers</a></p>
+</li>
+<li>
+<p>Regenerate your <code>harvest-compose.yml</code> file by
+   running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a>
+   By default, generate will use the <code>latest</code> tag. If you want to upgrade to a <code>nightly</code> build see the twisty.</p>
+<details class="question">
+<summary>I want to upgrade to a nightly build</summary>
+<p>Tell the <code>generate</code> cmd to use a different tag like so:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/opt/temp&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/harvest.yml:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ghcr.io/netapp/harvest:nightly<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>generate<span class="w"> </span>docker<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>harvest-compose.yml
+</code></pre></div>
+</details>
+</li>
+<li>
+<p>Restart your containers using the following:</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
 
 

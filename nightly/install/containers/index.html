@@ -417,13 +417,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#download-and-untar" class="md-nav__link">
-    Download and untar
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#setup-harvestyml" class="md-nav__link">
     Setup harvest.yml
   </a>
@@ -1267,13 +1260,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#download-and-untar" class="md-nav__link">
-    Download and untar
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#setup-harvestyml" class="md-nav__link">
     Setup harvest.yml
   </a>
@@ -1385,9 +1371,8 @@
   you want to hit the ground running. Install, volume and network mounts automatically handled.</p>
 </li>
 <li>
-<p><a href="https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer">Poller-per-container model</a> that offers
-  more flexibility in configuration. This deployment enables a broad range of orchestrators (Nomad, Mesosphere, Swarm,
-  K8, etc.) since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is
+<p><a href="../harvest-containers/">Stand-up Harvest via Docker Compose</a> that offers
+  more flexibility in configuration. Choose this if you only want to run Harvest containers. Since you pick-and-choose what gets built and how it's deployed, stronger familiarity with containers is
   recommended.</p>
 </li>
 <li>
@@ -1397,11 +1382,11 @@
 </li>
 <li>
 <p>Want to run Harvest on a Mac
-  via <a href="https://github.com/NetApp/harvest/tree/main/container/containerd">containerd and Racher Desktop</a>? We got you
+  via <a href="../containerd/">containerd and Racher Desktop</a>? We got you
   covered.</p>
 </li>
 <li>
-<p><a href="https://github.com/NetApp/harvest/blob/main/container/k8/README.md">K8 Deployment</a> via Kompose</p>
+<p><a href="../k8/">K8 Deployment</a> via Kompose</p>
 </li>
 </ul>
 <h2 id="docker-compose">Docker Compose<a class="headerlink" href="#docker-compose" title="Permanent link">&para;</a></h2>
@@ -1411,11 +1396,6 @@
 <li>Harvest dashboards are automatically imported and setup in Grafana with a Prometheus data source</li>
 <li>A separate poller container is created for each monitored cluster</li>
 <li>All pollers are automatically added as Prometheus scrape targets</li>
-</ul>
-<h3 id="download-and-untar">Download and untar<a class="headerlink" href="#download-and-untar" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Download the latest version of <a href="https://netapp.github.io/harvest/latest/install/native/">Harvest</a>, untar, and
-   cd into the harvest directory.</li>
 </ul>
 <h3 id="setup-harvestyml">Setup harvest.yml<a class="headerlink" href="#setup-harvestyml" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1453,11 +1433,13 @@ Pollers:
 <ul>
 <li>Generate a Docker compose file from your <code>harvest.yml</code></li>
 </ul>
-<div class="highlight"><pre><span></span><code>docker run --rm \
-  --entrypoint &quot;bin/harvest&quot; \
-  --volume &quot;$(pwd):/opt/harvest&quot; \
-  ghcr.io/netapp/harvest generate docker full \
-  --output harvest-compose.yml
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/opt/temp&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/harvest.yml:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ghcr.io/netapp/harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>harvest-compose.yml
 </code></pre></div>
 <p><code>generate docker full</code> does two things:</p>
 <ol>
@@ -1514,15 +1496,13 @@ before continuing with the upgrade steps below.</p>
 <p>To upgrade Harvest:</p>
 <ol>
 <li>
-<p>Download the latest <code>tar.gz</code> or packaged version and install it.
-   This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
-   image.</p>
+<p>Retrieve the most recent version of the Harvest Docker image by executing the following command.This is needed since the new version may contain new templates, dashboards, or other files not included in the Docker
+   image.
+   <div class="highlight"><pre><span></span><code>docker pull ghcr.io/netapp/harvest
+</code></pre></div></p>
 </li>
 <li>
 <p><a href="#stop-all-containers">Stop all containers</a></p>
-</li>
-<li>
-<p>Copy your existing <code>harvest.yml</code> into the new Harvest directory created in step #1.</p>
 </li>
 <li>
 <p>Regenerate your <code>harvest-compose.yml</code> file by
@@ -1531,15 +1511,21 @@ before continuing with the upgrade steps below.</p>
 <details class="question">
 <summary>I want to upgrade to a nightly build</summary>
 <p>Tell the <code>generate</code> cmd to use a different tag like so:</p>
-<p><code>docker run --rm --entrypoint "bin/harvest" --volume "$(pwd):/opt/harvest" ghcr.io/netapp/harvest:nightly generate docker full --output harvest-compose.yml</code></p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/opt/temp&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/harvest.yml:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ghcr.io/netapp/harvest:nightly<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>harvest-compose.yml
+</code></pre></div>
 </details>
 </li>
 <li>
-<p>Pull new images and restart your containers like so:</p>
+<p>Restart your containers using the following:</p>
 </li>
 </ol>
-<div class="highlight"><pre><span></span><code>docker pull ghcr.io/netapp/harvest   # or if using Docker Hub: docker pull rahulguptajss/harvest
-docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+<div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
 
 

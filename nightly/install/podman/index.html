@@ -1347,10 +1347,27 @@ sudo<span class="w"> </span>curl<span class="w"> </span>-H<span class="w"> </spa
 </code></pre></div>
 <h2 id="running-harvest">Running Harvest<a class="headerlink" href="#running-harvest" title="Permanent link">&para;</a></h2>
 <p>By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091 so we can run both Cockpit and Prometheus. Line <code>2</code> below does that.</p>
-<p>With these changes, the <a href="../containers/#docker-compose">standard Harvest compose instructions</a> can be followed as normal now. In summary,
-1. Add the clusters, exporters, etc. to your <code>harvest.yml</code> file
-2. Generate a compose file from your <code>harvest.yml</code> by running <code>docker run --rm --entrypoint "bin/harvest" --volume "$(pwd):/opt/harvest" ghcr.io/netapp/harvest generate docker full --output harvest-compose.yml --promPort 9091</code>
-3. Bring everything up with <code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans</code></p>
+<p>With these changes, the <a href="../containers/#docker-compose">standard Harvest compose instructions</a> can be followed as normal now. In summary,</p>
+<ol>
+<li>Add the clusters, exporters, etc. to your <code>harvest.yml</code> file</li>
+<li>
+<p>Generate a compose file from your <code>harvest.yml</code> by running </p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/opt/temp&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/harvest.yml:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ghcr.io/netapp/harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>harvest-compose.yml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--promPort<span class="w"> </span><span class="m">9091</span>
+</code></pre></div>
+</li>
+<li>
+<p>Bring everything up <img alt="🚀" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f680.svg" title=":rocket:" /></p>
+<div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+</code></pre></div>
+</li>
+</ol>
 <p>After starting the containers, you can view them with <code>podman ps -a</code> or using Cockpit <code>https://host-ip:9090/podman</code>.</p>
 <div class="highlight"><pre><span></span><code>podman<span class="w"> </span>ps<span class="w"> </span>-a
 CONTAINER<span class="w"> </span>ID<span class="w">  </span>IMAGE<span class="w">                                   </span>COMMAND<span class="w">               </span>CREATED<span class="w">        </span>STATUS<span class="w">            </span>PORTS<span class="w">                     </span>NAMES
