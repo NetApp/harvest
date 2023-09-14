@@ -2,7 +2,7 @@
 Gathering power metrics requires a cluster with:
 
 * ONTAP versions 9.6+
-* REST enabled, even when using the ZAPI collector
+* [REST enabled](../prepare-cdot-clusters.md), even when using the ZAPI collector
 
 REST is required because it is the only way to collect chassis field-replaceable-unit (FRU) information via the
 REST API `/api/private/cli/system/chassis/fru`.
@@ -18,8 +18,8 @@ With n PSUs, each PSU does roughly (1/n) the work
 
 ## Node power
 
-Node power is calculated by collecting power supply unit (PSU) power, as reported by ONTAP, via 
-`/api/private/cli/system/environment/sensors`.
+Node power is calculated by collecting power supply unit (PSU) power, as reported by REST 
+`/api/private/cli/system/environment/sensors` or by ZAPI `environment-sensors-get-iter`.
 
 When a power supply is shared between controllers,
 the PSU's power will be evenly divided across the controllers due to load-sharing.
