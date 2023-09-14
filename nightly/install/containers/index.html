@@ -1455,7 +1455,7 @@ Pollers:
 <p>The <code>prom-stack.yml</code> compose file creates a <code>frontend</code> and <code>backend</code> network. Prometheus and Grafana publish their admin
 ports on the front-end network and are routable to the local machine. By default, the Harvest pollers are part of the
 backend network and also expose their Prometheus web end-points. 
-If you do not want their end-points exposed, remove the <code>--port</code> option from the <code>generate</code> sub-command in the <a href="#generate-a-docker-compose-for-your-pollers">previous step</a>.</p>
+If you do not want their end-points exposed, add the <code>--port=false</code> option to the <code>generate</code> sub-command in the <a href="#generate-a-docker-compose-for-your-pollers">previous step</a>.</p>
 <h3 id="prometheus">Prometheus<a class="headerlink" href="#prometheus" title="Permanent link">&para;</a></h3>
 <p>After bringing up the <code>prom-stack.yml</code> compose file, you can check Prometheus's list of targets
 at <code>http://IP_OF_PROMETHEUS:9090/targets</code>.</p>
