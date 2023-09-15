@@ -9,13 +9,17 @@
       
       
       
+        <link rel="prev" href="../../ontap-metrics/">
+      
+      
+        <link rel="next" href="../../plugins/">
       
       <link rel="icon" href="../../assets/harvest.svg">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
     
     
       
-        <title>Power algorithm - Harvest</title>
+        <title>Power Algorithm - Harvest</title>
       
     
     
@@ -107,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Power algorithm
+              Power Algorithm
             
           </span>
         </div>
@@ -918,14 +922,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" checked>
       
       
       
@@ -934,26 +940,12 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_17">
           <span class="md-nav__icon md-icon"></span>
           Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../plugins/" class="md-nav__link">
-        Plugins
-      </a>
-    </li>
-  
-
-            
           
             
               
@@ -987,10 +979,102 @@
               
   
   
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Power Algorithm
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Power Algorithm
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-does-harvest-calculate-cluster-power" class="md-nav__link">
+    How does Harvest calculate cluster power?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#node-power" class="md-nav__link">
+    Node power
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-shelf-power" class="md-nav__link">
+    Disk shelf power
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fas2750" class="md-nav__link">
+    FAS2750
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aff-a800" class="md-nav__link">
+    AFF A800
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
   
     <li class="md-nav__item">
-      <a href="../templates-and-metrics/" class="md-nav__link">
-        Templates And Metrics
+      <a href="../../plugins/" class="md-nav__link">
+        Plugins
       </a>
     </li>
   
@@ -1005,6 +1089,20 @@
     <li class="md-nav__item">
       <a href="../rest-perf-metrics/" class="md-nav__link">
         REST Perf Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../templates-and-metrics/" class="md-nav__link">
+        Templates And Metrics
       </a>
     </li>
   
@@ -1111,6 +1209,47 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#node-power" class="md-nav__link">
+    Node power
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-shelf-power" class="md-nav__link">
+    Disk shelf power
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fas2750" class="md-nav__link">
+    FAS2750
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aff-a800" class="md-nav__link">
+    AFF A800
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1126,9 +1265,133 @@
                   
 
 
-  <h1>Power algorithm</h1>
+  <h1>Power Algorithm</h1>
 
+<p>Gathering power metrics requires a cluster with:</p>
+<ul>
+<li>ONTAP versions 9.6+</li>
+<li><a href="../../prepare-cdot-clusters/">REST enabled</a>, even when using the ZAPI collector</li>
+</ul>
+<p>REST is required because it is the only way to collect chassis field-replaceable-unit (FRU) information via the
+REST API <code>/api/private/cli/system/chassis/fru</code>.</p>
 <h2 id="how-does-harvest-calculate-cluster-power">How does Harvest calculate cluster power?<a class="headerlink" href="#how-does-harvest-calculate-cluster-power" title="Permanent link">&para;</a></h2>
+<p>Cluster power is the sum of a cluster's <a href="#node-power">node(s) power</a> + 
+the sum of attached <a href="#disk-shelf-power">disk shelve(s) power</a>.</p>
+<p>Redundant power supplies (PSU) load-share the total load.
+With n PSUs, each PSU does roughly (1/n) the work
+(the actual amount is slightly more than a single PSU due to additional fans.)</p>
+<h2 id="node-power">Node power<a class="headerlink" href="#node-power" title="Permanent link">&para;</a></h2>
+<p>Node power is calculated by collecting power supply unit (PSU) power, as reported by REST 
+<code>/api/private/cli/system/environment/sensors</code> or by ZAPI <code>environment-sensors-get-iter</code>.</p>
+<p>When a power supply is shared between controllers,
+the PSU's power will be evenly divided across the controllers due to load-sharing.</p>
+<p>For example:</p>
+<ul>
+<li>FAS2750 models have two power supplies that power both controllers. Each PSU is shared between the two controllers.</li>
+<li>A800 models have four power supplies. <code>PSU1</code> and <code>PSU2</code> power <code>Controller1</code> and <code>PSU3</code> and <code>PSU4</code> power <code>Controller2</code>. Each PSU provides power to a single controller.</li>
+</ul>
+<p>Harvest determines whether a PSU is shared between controllers by consulting the <code>connected_nodes</code> of each PSU,
+as reported by ONTAP via <code>/api/private/cli/system/chassis/fru</code></p>
+<h2 id="disk-shelf-power">Disk shelf power<a class="headerlink" href="#disk-shelf-power" title="Permanent link">&para;</a></h2>
+<p>Disk shelf power is calculated by collecting <code>psu.power_drawn</code>, as reported by REST, via
+<code>/api/storage/shelves</code> or <code>sensor-reading</code>, as reported by ZAPI <code>storage-shelf-info-get-iter</code>.</p>
+<p>The power for <a href="https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage">embedded shelves</a>
+is ignored, since that power is already accounted for in the controller's power draw.</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<h3 id="fas2750">FAS2750<a class="headerlink" href="#fas2750" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code># Power Metrics for 10.61.183.200
+
+## ONTAP version NetApp Release 9.8P16: Fri Dec 02 02:05:05 UTC 2022
+
+## Nodes
+system show
+       Node         |  Model  | SerialNumber  
+----------------------+---------+---------------
+cie-na2750-g1344-01 | FAS2750 | 621841000123  
+cie-na2750-g1344-02 | FAS2750 | 621841000124
+
+## Chassis
+system chassis fru show
+ ChassisId   |      Name       |         Fru         |    Type    | Status | NumNodes |              ConnectedNodes               
+---------------+-----------------+---------------------+------------+--------+----------+-------------------------------------------
+021827030435 | 621841000123    | cie-na2750-g1344-01 | controller | ok     |        1 | cie-na2750-g1344-01                       
+021827030435 | 621841000124    | cie-na2750-g1344-02 | controller | ok     |        1 | cie-na2750-g1344-02                       
+021827030435 | PSQ094182201794 | PSU2 FRU            | psu        | ok     |        2 | cie-na2750-g1344-02, cie-na2750-g1344-01  
+021827030435 | PSQ094182201797 | PSU1 FRU            | psu        | ok     |        2 | cie-na2750-g1344-02, cie-na2750-g1344-01
+
+## Sensors
+system environment sensors show
+(filtered by power, voltage, current)
+       Node         |     Name      |  Type   | State  | Value | Units  
+----------------------+---------------+---------+--------+-------+--------
+cie-na2750-g1344-01 | PSU1 12V Curr | current | normal |  9920 | mA     
+cie-na2750-g1344-01 | PSU1 12V      | voltage | normal | 12180 | mV     
+cie-na2750-g1344-01 | PSU1 5V Curr  | current | normal |  4490 | mA     
+cie-na2750-g1344-01 | PSU1 5V       | voltage | normal |  5110 | mV     
+cie-na2750-g1344-01 | PSU2 12V Curr | current | normal |  9140 | mA     
+cie-na2750-g1344-01 | PSU2 12V      | voltage | normal | 12100 | mV     
+cie-na2750-g1344-01 | PSU2 5V Curr  | current | normal |  4880 | mA     
+cie-na2750-g1344-01 | PSU2 5V       | voltage | normal |  5070 | mV     
+cie-na2750-g1344-02 | PSU1 12V Curr | current | normal |  9920 | mA     
+cie-na2750-g1344-02 | PSU1 12V      | voltage | normal | 12180 | mV     
+cie-na2750-g1344-02 | PSU1 5V Curr  | current | normal |  4330 | mA     
+cie-na2750-g1344-02 | PSU1 5V       | voltage | normal |  5110 | mV     
+cie-na2750-g1344-02 | PSU2 12V Curr | current | normal |  9170 | mA     
+cie-na2750-g1344-02 | PSU2 12V      | voltage | normal | 12100 | mV     
+cie-na2750-g1344-02 | PSU2 5V Curr  | current | normal |  4720 | mA     
+cie-na2750-g1344-02 | PSU2 5V       | voltage | normal |  5070 | mV
+
+## Shelf PSUs
+storage shelf show
+Shelf | ProductId | ModuleType | PSUId | PSUIsEnabled | PSUPowerDrawn | Embedded  
+------+-----------+------------+-------+--------------+---------------+---------
+  1.0 | DS224-12  | iom12e     | 1,2   | true,true    | 1397,1318     | true
+
+### Controller Power From Sum(InVoltage * InCurrent)/NumNodes
+Power: 256W
+</code></pre></div>
+<h3 id="aff-a800">AFF A800<a class="headerlink" href="#aff-a800" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code># Power Metrics for 10.61.124.110
+
+## ONTAP version NetApp Release 9.13.1P1: Tue Jul 25 10:19:28 UTC 2023
+
+## Nodes
+system show
+  Node    |  Model   | SerialNumber  
+----------+----------+-------------
+a800-1-01 | AFF-A800 | 941825000071  
+a800-1-02 | AFF-A800 | 941825000072
+
+## Chassis
+system chassis fru show
+   ChassisId    |      Name      |    Fru    |    Type    | Status | NumNodes | ConnectedNodes  
+----------------+----------------+-----------+------------+--------+----------+---------------
+SHFFG1826000154 | 941825000071   | a800-1-01 | controller | ok     |        1 | a800-1-01       
+SHFFG1826000154 | 941825000072   | a800-1-02 | controller | ok     |        1 | a800-1-02       
+SHFFG1826000154 | EEQT1822002800 | PSU1 FRU  | psu        | ok     |        1 | a800-1-02       
+SHFFG1826000154 | EEQT1822002804 | PSU2 FRU  | psu        | ok     |        1 | a800-1-02       
+SHFFG1826000154 | EEQT1822002805 | PSU2 FRU  | psu        | ok     |        1 | a800-1-01       
+SHFFG1826000154 | EEQT1822002806 | PSU1 FRU  | psu        | ok     |        1 | a800-1-01
+
+## Sensors
+system environment sensors show
+(filtered by power, voltage, current)
+  Node    |     Name      |  Type   | State  | Value | Units  
+----------+---------------+---------+--------+-------+------
+a800-1-01 | PSU1 Power In | unknown | normal |   376 | W      
+a800-1-01 | PSU2 Power In | unknown | normal |   411 | W      
+a800-1-02 | PSU1 Power In | unknown | normal |   383 | W      
+a800-1-02 | PSU2 Power In | unknown | normal |   433 | W
+
+## Shelf PSUs
+storage shelf show
+Shelf |  ProductId  | ModuleType | PSUId | PSUIsEnabled | PSUPowerDrawn | Embedded  
+------+-------------+------------+-------+--------------+---------------+---------
+  1.0 | FS4483PSM3E | psm3e      |       |              |               | true      
+
+### Controller Power From Sum(InPower sensors)
+Power: 1603W
+</code></pre></div>
 
 
 
