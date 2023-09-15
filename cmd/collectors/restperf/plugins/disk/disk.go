@@ -485,25 +485,24 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 
 	// fill aggr power matrix with power calculated above
 	for k, v := range d.aggrMap {
-		if v.export {
-			instanceKey := k
-			instance, err := aggrData.NewInstance(instanceKey)
-			if err != nil {
-				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
-				continue
-			}
-			instance.SetLabel("aggr", k)
-			instance.SetLabel("derivedType", string(v.derivedType))
-			instance.SetLabel("node", v.node)
+		instanceKey := k
+		instance, err := aggrData.NewInstance(instanceKey)
+		if err != nil {
+			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
+			continue
+		}
+		instance.SetLabel("aggr", k)
+		instance.SetLabel("derivedType", string(v.derivedType))
+		instance.SetLabel("node", v.node)
 
-			m := aggrData.GetMetric("power")
-			err = m.SetValueFloat64(instance, v.power)
-			if err != nil {
-				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
-				continue
-			}
+		m := aggrData.GetMetric("power")
+		err = m.SetValueFloat64(instance, v.power)
+		if err != nil {
+			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
+			continue
 		}
 	}
+
 	output = append(output, aggrData)
 	return output, nil
 
