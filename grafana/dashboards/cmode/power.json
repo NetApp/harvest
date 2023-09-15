@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1694453038642,
+  "iteration": 1694717870555,
   "links": [
     {
       "asDropdown": true,
@@ -1353,7 +1353,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_disk_user_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
+          "expr": "sum(aggr_disk_user_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
           "hide": false,
           "interval": "",
           "legendFormat": "Reads  - {{aggr}} ({{cluster}})",
@@ -1361,7 +1361,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(aggr_disk_user_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
+          "expr": "sum(aggr_disk_user_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
           "hide": false,
           "interval": "",
           "legendFormat": "Writes  - {{aggr}} ({{cluster}})",
@@ -1635,7 +1635,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 52
+            "y": 57
           },
           "id": 91,
           "interval": "1m",
@@ -1664,37 +1664,7 @@
             },
             {
               "exemplar": false,
-              "expr": "aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "D"
-            },
-            {
-              "exemplar": false,
-              "expr": "aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "E"
-            },
-            {
-              "exemplar": false,
-              "expr": "aggr_space_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "F"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(aggr_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
+              "expr": "sum(aggr_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1704,23 +1674,13 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(aggr_disk_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} and on(aggr,cluster,node) aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
+              "expr": "sum(aggr_disk_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
               "refId": "G"
-            },
-            {
-              "exemplar": false,
-              "expr": "aggr_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
             }
           ],
           "timeFrom": null,
@@ -2849,7 +2809,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 60
           },
           "id": 81,
           "interval": "1m",
@@ -2861,6 +2821,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "exemplar": false,
               "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
@@ -2890,7 +2851,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(datacenter,cluster,shelf) shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",isEmbedded=\"No\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3399,5 +3360,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 11
+  "version": 12
 }
