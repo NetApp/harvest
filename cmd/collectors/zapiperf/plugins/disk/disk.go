@@ -66,7 +66,6 @@ type aggregate struct {
 	isShared    bool
 	power       float64
 	derivedType RaidAggrDerivedType
-	export      bool
 }
 
 type disk struct {
@@ -313,7 +312,6 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	if totalTransfers == nil {
 		return output, errs.New(errs.ErrNoMetric, "total_transfers")
 	}
-	totaliops := make(map[string]float64)
 
 	// calculate power for returned disks in zapiperf response
 	for _, instance := range data.GetInstances() {
@@ -335,9 +333,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 				sh, ok := d.ShelfMap[shelfID]
 				if ok {
 					diskPower := v * sh.power / sh.iops
-					totaliops[shelfID] = totaliops[shelfID] + v
-					aggrPower := a.power + diskPower
-					a.power = aggrPower
+					a.power += diskPower
 				}
 			} else {
 				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
@@ -385,23 +381,21 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 
 	// fill aggr power matrix with power calculated above
 	for k, v := range d.aggrMap {
-		if v.export {
-			instanceKey := k
-			instance, err := aggrData.NewInstance(instanceKey)
-			if err != nil {
-				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
-				continue
-			}
-			instance.SetLabel("aggr", k)
-			instance.SetLabel("derivedType", string(v.derivedType))
-			instance.SetLabel("node", v.node)
+		instanceKey := k
+		instance, err := aggrData.NewInstance(instanceKey)
+		if err != nil {
+			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
+			continue
+		}
+		instance.SetLabel("aggr", k)
+		instance.SetLabel("derivedType", string(v.derivedType))
+		instance.SetLabel("node", v.node)
 
-			m := aggrData.GetMetric("power")
-			err = m.SetValueFloat64(instance, v.power)
-			if err != nil {
-				d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
-				continue
-			}
+		m := aggrData.GetMetric("power")
+		err = m.SetValueFloat64(instance, v.power)
+		if err != nil {
+			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
+			continue
 		}
 	}
 	output = append(output, aggrData)
@@ -553,7 +547,6 @@ func (d *Disk) getAggregates() error {
 	aggrRaidAttributes.NewChildS("uses-shared-disks", "")
 	aggrRaidAttributes.NewChildS("aggregate-type", "")
 	aggrRaidAttributes.NewChildS("is-composite", "")
-	aggrRaidAttributes.NewChildS("is-root-aggregate", "")
 	aggrAttributes.AddChild(aggrRaidAttributes)
 	aggrAttributes.AddChild(aggrOwnerAttributes)
 	desired.AddChild(aggrAttributes)
@@ -584,21 +577,17 @@ func (d *Disk) getAggregates() error {
 				nodeName = aggrOwnerAttr.GetChildContentS("home-name")
 			}
 			if aggrRaidAttr != nil {
-				isR := aggrRaidAttr.GetChildContentS("is-root-aggregate")
-
 				usesSharedDisks := aggrRaidAttr.GetChildContentS("uses-shared-disks")
 				aggregateType := aggrRaidAttr.GetChildContentS("aggregate-type")
 				isC := aggrRaidAttr.GetChildContentS("is-composite")
 				isComposite := isC == "true"
 				isShared := usesSharedDisks == "true"
-				isRootAggregate := isR == "true"
 				derivedType := getAggregateDerivedType(aggregateType, isComposite, isShared)
 				d.aggrMap[aggrName] = &aggregate{
 					name:        aggrName,
 					isShared:    isShared,
 					derivedType: derivedType,
 					node:        nodeName,
-					export:      !isRootAggregate,
 				}
 			}
 		}
