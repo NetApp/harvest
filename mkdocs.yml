@@ -44,11 +44,12 @@ nav:
       - 'FAQ': 'help/faq.md'
       - 'Log Collection': 'help/log-collection.md'
   - Reference:
-      - 'Plugins': 'plugins.md'
       - 'Matrix': 'resources/matrix.md'
       - 'ONTAP Metrics': 'ontap-metrics.md'
-      - 'Templates And Metrics': 'resources/templates-and-metrics.md'
+      - 'Power Algorithm': 'resources/power-algorithm.md'
+      - 'Plugins': 'plugins.md'
       - 'REST Perf Metrics': 'resources/rest-perf-metrics.md'
+      - 'Templates And Metrics': 'resources/templates-and-metrics.md'
   - About:
       - 'License': 'license.md'
       - 'Release Notes': 'release-notes.md'
