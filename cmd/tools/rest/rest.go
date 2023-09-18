@@ -112,7 +112,7 @@ func doShow(_ *cobra.Command, a []string) {
 	if !c.isValid {
 		return
 	}
-	err := conf.LoadHarvestConfig(args.Config)
+	_, err := conf.LoadHarvestConfig(args.Config)
 	if err != nil {
 		log.Fatal(err)
 	}

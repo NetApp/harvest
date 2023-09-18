@@ -1,0 +1,6 @@
+
+Pollers:
+  star:
+    addr: localhost
+    collectors:
+      - Simple

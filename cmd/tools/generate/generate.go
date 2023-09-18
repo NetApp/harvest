@@ -150,7 +150,7 @@ func generateDocker(path string, kind int) {
 		opts.grafanaPort,
 		opts.promPort,
 	}
-	err := conf.LoadHarvestConfig(path)
+	_, err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		logErrAndExit(err)
 	}
@@ -348,7 +348,7 @@ func silentClose(body io.ReadCloser) {
 
 func generateSystemd(path string) {
 	var adminService string
-	err := conf.LoadHarvestConfig(path)
+	_, err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		logErrAndExit(err)
 	}
@@ -430,7 +430,7 @@ func generateMetrics(path string) {
 		zapiClient *zapi.Client
 	)
 
-	err = conf.LoadHarvestConfig(path)
+	_, err = conf.LoadHarvestConfig(path)
 	if err != nil {
 		logErrAndExit(err)
 	}

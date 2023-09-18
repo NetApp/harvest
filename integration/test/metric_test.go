@@ -25,7 +25,7 @@ var skipDuplicates = map[string]bool{
 
 func TestPollerMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
+	_, err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Unable to load harvest config")
 	}

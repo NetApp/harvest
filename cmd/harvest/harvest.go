@@ -101,7 +101,8 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 
 	// cmd.DebugFlags()  // uncomment to print flags
 
-	if err = conf.LoadHarvestConfig(opts.config); err != nil {
+	_, err = conf.LoadHarvestConfig(opts.config)
+	if err != nil {
 		if os.IsNotExist(err) {
 			log.Fatalf("config [%s]: not found\n", opts.config)
 		}
