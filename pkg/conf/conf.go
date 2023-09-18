@@ -28,7 +28,6 @@ const (
 	HarvestYML        = "harvest.yml"
 	BasicAuth         = "basic_auth"
 	CertificateAuth   = "certificate_auth"
-	HomeEnvVar        = "HARVEST_CONF"
 )
 
 // TestLoadHarvestConfig is used by testing code to reload a new config
@@ -173,7 +172,7 @@ func PollerNamed(name string) (*Poller, error) {
 // The final path will be relative to the HARVEST_CONF environment variable
 // or ./ when the environment variable is not set
 func Path(elem ...string) string {
-	home := os.Getenv(HomeEnvVar)
+	home := os.Getenv("HARVEST_CONF")
 	paths := append([]string{home}, elem...)
 	return filepath.Join(paths...)
 }
