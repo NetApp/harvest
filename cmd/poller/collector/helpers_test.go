@@ -2,6 +2,7 @@ package collector
 
 import (
 	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"sort"
 	"testing"
 )
@@ -45,5 +46,18 @@ func Test_getClosestIndex(t *testing.T) {
 				t.Errorf("getClosestIndex() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func Test_HARVEST_CONF(t *testing.T) {
+	t.Setenv(conf.HomeEnvVar, "testdata")
+	template, err := ImportTemplate([]string{"conf"}, "test.yaml", "test")
+	if err != nil {
+		t.Errorf(`got err="%v", want no err`, err)
+		return
+	}
+	name := template.GetChildContentS("collector")
+	if name != "Test" {
+		t.Errorf("collectorName got=%s, want=Test", name)
 	}
 }

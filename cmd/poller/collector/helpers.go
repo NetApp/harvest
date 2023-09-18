@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/max"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -29,8 +30,9 @@ import (
 // ImportTemplate looks for a collector's template by searching confPaths for the first template that exists in
 // confPath/collectorName/templateName
 func ImportTemplate(confPaths []string, templateName, collectorName string) (*node.Node, error) {
+	homePath := conf.Path()
 	for _, confPath := range confPaths {
-		fp := filepath.Join(confPath, strings.ToLower(collectorName), templateName)
+		fp := filepath.Join(homePath, confPath, strings.ToLower(collectorName), templateName)
 		_, err := os.Stat(fp)
 		if errors.Is(err, os.ErrNotExist) {
 			continue
@@ -67,11 +69,12 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	if err != nil {
 		return nil, "", fmt.Errorf("no best-fit template found due to err=%w", err)
 	}
+	homePath := conf.Path()
 
 nextFile:
 	for _, f := range filenames {
 		for _, confPath := range c.Options.ConfPaths {
-			selectedVersion, err = c.findBestFit(confPath, f, model, ontapVersion)
+			selectedVersion, err = c.findBestFit(homePath, confPath, f, model, ontapVersion)
 			if err != nil || selectedVersion == "" {
 				continue
 			}
@@ -112,13 +115,13 @@ nextFile:
 	return finalTemplate, templatePath, err
 }
 
-func (c *AbstractCollector) findBestFit(confPath string, name string, model string, ontapVersion *version.Version) (string, error) {
+func (c *AbstractCollector) findBestFit(homePath string, confPath string, name string, model string, ontapVersion *version.Version) (string, error) {
 	var (
 		selectedVersion   string
 		availableVersions []string
 	)
 
-	pathPrefix := filepath.Join(confPath, strings.ToLower(c.Name), model)
+	pathPrefix := filepath.Join(homePath, confPath, strings.ToLower(c.Name), model)
 	c.Logger.Debug().Str("pathPrefix", pathPrefix).Msg("Looking for best-fitting template in pathPrefix")
 
 	// check for available versions, these are the subdirectories with matching filenames
