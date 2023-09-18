@@ -44,11 +44,10 @@ func TestLoadHarvestConfig(configPath string) {
 
 func ConfigPath(path string) string {
 	// Harvest uses the following precedence order. Each item takes precedence over the
-	// item below it. All paths are relative to the `HARVEST_CONF` environment variable
+	// item below it. All paths are relative to `HARVEST_CONF` environment variable
 	// 1. `--config` command line flag
 	// 2. `HARVEST_CONFIG` environment variable
 	// 3. no command line argument and no environment variable, use the default path (HarvestYML)
-	// If the environment variable, HARVEST_CONF is set, items three will be relative to it
 	if path != HarvestYML && path != "./"+HarvestYML {
 		return Path(path)
 	}
