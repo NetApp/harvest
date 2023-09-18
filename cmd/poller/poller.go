@@ -129,12 +129,16 @@ type Poller struct {
 // starts collectors and exporters
 func (p *Poller) Init() error {
 
-	var err error
+	var (
+		err                   error
+		fileLoggingEnabled    bool
+		consoleLoggingEnabled bool
+		configPath            string
+	)
+
 	p.options = opts.SetDefaults()
 	p.name = opts.Poller
 
-	var fileLoggingEnabled bool
-	var consoleLoggingEnabled bool
 	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
 	// if we are a daemon, use file logging
 	if p.options.Daemon {
@@ -147,18 +151,24 @@ func (p *Poller) Init() error {
 		logFileName = "poller_" + p.name + ".log"
 	}
 
-	err = conf.LoadHarvestConfig(p.options.Config)
+	configPath, err = conf.LoadHarvestConfig(p.options.Config)
 	if err != nil {
 		// separate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
 		// Using default instance of logger which logs below error to harvest.log
 		logging.Get().SubLogger("Poller", p.name).Error().
-			Str("config", p.options.Config).Err(err).Msg("Unable to read config")
+			Str("config", p.options.Config).
+			Str("configPath", configPath).
+			Err(err).
+			Msg("Unable to read config")
 		return err
 	}
 	p.params, err = conf.PollerNamed(p.name)
 	if err != nil {
 		logging.Get().SubLogger("Poller", p.name).Error().
-			Str("config", p.options.Config).Err(err).Msg("Failed to find poller")
+			Str("config", p.options.Config).
+			Str("configPath", configPath).
+			Err(err).
+			Msg("Failed to find poller")
 		return err
 	}
 
@@ -199,6 +209,7 @@ func (p *Poller) Init() error {
 
 	logger.Info().
 		Str("logLevel", zeroLogLevel.String()).
+		Str("configPath", configPath).
 		Str("version", strings.TrimSpace(version.String())).
 		EmbedObject(p.options).
 		Msg("Init")

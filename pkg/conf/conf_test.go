@@ -281,3 +281,23 @@ func TestNodeToPoller(t *testing.T) {
 	testArg(t, "30s", poller.ClientTimeout)
 	testArg(t, "true", strconv.FormatBool(*poller.UseInsecureTLS))
 }
+
+func TestReadHarvestConfigFromEnv(t *testing.T) {
+	t.Helper()
+	configRead = false
+	Config = HarvestConfig{}
+	t.Setenv(HomeEnvVar, "testdata")
+	cp, err := LoadHarvestConfig(HarvestYML)
+	if err != nil {
+		t.Errorf("Failed to load config at=[%s] err=%+v\n", HarvestYML, err)
+		return
+	}
+	wantCp := "testdata/harvest.yml"
+	if cp != wantCp {
+		t.Errorf("configPath got=%s want=%s", cp, wantCp)
+	}
+	poller := Config.Pollers["star"]
+	if poller == nil {
+		t.Errorf("check if star poller exists. got=nil want=poller")
+	}
+}

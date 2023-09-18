@@ -351,7 +351,7 @@ func newLabelVar(label string) []byte {
 
 func doImport(_ *cobra.Command, _ []string) {
 	opts.command = "import"
-	err := conf.LoadHarvestConfig(opts.config)
+	_, err := conf.LoadHarvestConfig(opts.config)
 	if err != nil {
 		return
 	}
@@ -731,7 +731,7 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 
 	configPath = opts.config
 
-	err = conf.LoadHarvestConfig(configPath)
+	_, err = conf.LoadHarvestConfig(configPath)
 	if err != nil {
 		return err
 	}

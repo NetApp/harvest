@@ -129,7 +129,7 @@ func doCmd(cmd string) {
 		connection *client.Client
 	)
 
-	err = conf.LoadHarvestConfig(args.Config)
+	_, err = conf.LoadHarvestConfig(args.Config)
 	if err != nil {
 		log.Fatal(err)
 	}
