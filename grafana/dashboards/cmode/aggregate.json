@@ -4057,8 +4057,9 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -4072,7 +4073,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -4104,14 +4105,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$TopAggregateCapacityTierFootprint\"})",
+              "expr": "topk($TopResources, (aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggregatePerformanceTierFootprintPerc\"}))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Aggregates by Capacity Tier Footprint",
+          "title": "Top $TopResources Aggregates by Performance Tier Footprint %",
           "transformations": [],
           "type": "timeseries"
         },
@@ -4151,9 +4152,8 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
-              "max": 100,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -4167,7 +4167,7 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -4199,14 +4199,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggregatePerformanceTierFootprintPerc\"}))",
+              "expr": "topk($TopResources, aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$TopAggregateCapacityTierFootprint\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Aggregates by Performance Tier Footprint %",
+          "title": "Top $TopResources Aggregates by Capacity Tier Footprint",
           "transformations": [],
           "type": "timeseries"
         }
@@ -4729,8 +4729,9 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
               "mappings": [],
+              "max": 100,
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -4744,7 +4745,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -4776,14 +4777,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_capacity_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeCapacityTierFootprint\"})",
+              "expr": "topk($TopResources, (volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumePerformanceTierFootprintPerc\"}))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{volume}} ",
+              "legendFormat": "{{volume}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Volumes by Capacity Tier Footprint",
+          "title": "Top $TopResources Volumes by Performance Tier Footprint %",
           "transformations": [],
           "type": "timeseries"
         },
@@ -4823,9 +4824,8 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
-              "max": 100,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -4839,7 +4839,7 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -4871,14 +4871,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumePerformanceTierFootprintPerc\"}))",
+              "expr": "topk($TopResources, volume_capacity_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeCapacityTierFootprint\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{volume}} ",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Volumes by Performance Tier Footprint %",
+          "title": "Top $TopResources Volumes by Capacity Tier Footprint",
           "transformations": [],
           "type": "timeseries"
         },
