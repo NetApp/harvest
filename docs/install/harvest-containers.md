@@ -103,6 +103,7 @@ To upgrade Harvest:
           --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
           ghcr.io/netapp/harvest:nightly \
           generate docker \
+          --image ghcr.io/netapp/harvest:nightly \
           --output harvest-compose.yml
         ```
 
