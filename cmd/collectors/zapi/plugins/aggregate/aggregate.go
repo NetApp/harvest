@@ -57,13 +57,42 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		return nil, err
 	}
 
+	aggrFootprintMap, err := a.getAggrFootprint()
+	if err != nil {
+		a.Logger.Error().Err(err).Msg("Failed to update footprint data")
+	}
+
 	// update aggregate instance label with cloud stores info
-	if len(a.aggrCloudStoresMap) > 0 {
-		for aggrUUID, aggr := range data.GetInstances() {
-			if !aggr.IsExportable() {
-				continue
+	for aggrUUID, aggr := range data.GetInstances() {
+		if !aggr.IsExportable() {
+			continue
+		}
+		aggr.SetLabel("cloud_stores", strings.Join(a.aggrCloudStoresMap[aggrUUID], ","))
+
+		// Handling aggr footprint metrics
+		aggrName := aggr.GetLabel("aggr")
+		if af, ok := aggrFootprintMap[aggrName]; ok {
+			for afKey, afVal := range af {
+				vfMetric := data.GetMetric(afKey)
+				if vfMetric == nil {
+					if vfMetric, err = data.NewMetricFloat64(afKey); err != nil {
+						a.Logger.Error().Err(err).Str("metric", afKey).Msg("add metric")
+						continue
+					}
+				}
+
+				if afVal != "" {
+					vfMetricVal, err := strconv.ParseFloat(afVal, 64)
+					if err != nil {
+						a.Logger.Error().Err(err).Str(afKey, afVal).Msg("parse")
+						continue
+					}
+					if err = vfMetric.SetValueFloat64(aggr, vfMetricVal); err != nil {
+						a.Logger.Error().Err(err).Str(afKey, afVal).Msg("set")
+						continue
+					}
+				}
 			}
-			aggr.SetLabel("cloud_stores", strings.Join(a.aggrCloudStoresMap[aggrUUID], ","))
 		}
 	}
 	return nil, nil
@@ -123,4 +152,38 @@ func (a *Aggregate) getCloudStores() error {
 		a.aggrCloudStoresMap[aggregateUUID] = append(a.aggrCloudStoresMap[aggregateUUID], objectStoreName)
 	}
 	return nil
+}
+
+func (a *Aggregate) getAggrFootprint() (map[string]map[string]string, error) {
+	var (
+		result           []*node.Node
+		aggrFootprintMap map[string]map[string]string
+		footprintMatrics map[string]string
+		err              error
+	)
+
+	aggrFootprintMap = make(map[string]map[string]string)
+	request := node.NewXMLS("aggr-space-get-iter")
+	request.NewChildS("max-records", collectors.DefaultBatchSize)
+	if result, err = a.client.InvokeZapiCall(request); err != nil {
+		return aggrFootprintMap, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return aggrFootprintMap, nil
+	}
+
+	for _, footprint := range result {
+		footprintMatrics = make(map[string]string)
+		aggr := footprint.GetChildContentS("aggregate")
+		performanceTierUsed := footprint.GetChildContentS("volume-footprints")
+		performanceTierUsedPerc := footprint.GetChildContentS("volume-footprints-percent")
+		if performanceTierUsed != "" || performanceTierUsedPerc != "" {
+			footprintMatrics["space_performance_tier_used"] = performanceTierUsed
+			footprintMatrics["space_performance_tier_used_percent"] = performanceTierUsedPerc
+			aggrFootprintMap[aggr] = footprintMatrics
+		}
+	}
+
+	return aggrFootprintMap, nil
 }

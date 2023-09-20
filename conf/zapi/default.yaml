@@ -7,7 +7,6 @@ schedule:
 
 objects:
   Aggregate:                   aggr.yaml
-  AggregateSpace:              aggr_space.yaml
   AggregateEfficiency:         aggr_efficiency.yaml
   CIFSSession:                 cifs_session.yaml
   ClusterPeer:                 clusterpeer.yaml
@@ -38,5 +37,3 @@ objects:
   Support:                     support.yaml
   SVM:                         svm.yaml
   Volume:                      volume.yaml
-  VolumeFootprint:             volume_footprint.yaml
-

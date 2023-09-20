@@ -92,19 +92,23 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	}
 
 	volumeCloneMap, err := v.getVolumeCloneInfo()
-
 	if err != nil {
 		v.Logger.Error().Err(err).Msg("Failed to update clone data")
 	}
 
+	volumeFootprintMap, err := v.getVolumeFootprint()
+	if err != nil {
+		v.Logger.Error().Err(err).Msg("Failed to update footprint data")
+	}
+
 	// update volume instance labels
-	v.updateVolumeLabels(data, volumeCloneMap)
+	v.updateVolumeLabels(data, volumeCloneMap, volumeFootprintMap)
 
 	v.currentVal++
 	return nil, nil
 }
 
-func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone) {
+func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone, volumeFootprintMap map[string]map[string]string) {
 	var err error
 	for _, volume := range data.GetInstances() {
 		if !volume.IsExportable() {
@@ -141,6 +145,31 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			if err = splitEstimate.SetValueFloat64(volume, splitEstimateBytes); err != nil {
 				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("set clone_split_estimate")
 				continue
+			}
+		}
+
+		// Handling volume footprint metrics
+		if vf, ok := volumeFootprintMap[key]; ok {
+			for vfKey, vfVal := range vf {
+				vfMetric := data.GetMetric(vfKey)
+				if vfMetric == nil {
+					if vfMetric, err = data.NewMetricFloat64(vfKey); err != nil {
+						v.Logger.Error().Err(err).Str("metric", vfKey).Msg("add metric")
+						continue
+					}
+				}
+
+				if vfVal != "" {
+					vfMetricVal, err := strconv.ParseFloat(vfVal, 64)
+					if err != nil {
+						v.Logger.Error().Err(err).Str(vfKey, vfVal).Msg("parse")
+						continue
+					}
+					if err = vfMetric.SetValueFloat64(volume, vfMetricVal); err != nil {
+						v.Logger.Error().Err(err).Str(vfKey, vfVal).Msg("set")
+						continue
+					}
+				}
 			}
 		}
 	}
@@ -184,6 +213,43 @@ func (v *Volume) getVolumeCloneInfo() (map[string]volumeClone, error) {
 	}
 
 	return volumeCloneMap, nil
+}
+
+func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
+	var (
+		result             []*node.Node
+		volumeFootprintMap map[string]map[string]string
+		footprintMatrics   map[string]string
+		err                error
+	)
+
+	volumeFootprintMap = make(map[string]map[string]string)
+	request := node.NewXMLS("volume-footprint-get-iter")
+	request.NewChildS("max-records", collectors.DefaultBatchSize)
+	if result, err = v.client.InvokeZapiCall(request); err != nil {
+		return volumeFootprintMap, err
+	}
+
+	if len(result) == 0 || result == nil {
+		return volumeFootprintMap, nil
+	}
+
+	for _, footprint := range result {
+		footprintMatrics = make(map[string]string)
+		volume := footprint.GetChildContentS("volume")
+		svm := footprint.GetChildContentS("vserver")
+		performanceTierFootprint := footprint.GetChildContentS("volume-blocks-footprint-bin0")
+		performanceTierFootprintPerc := footprint.GetChildContentS("volume-blocks-footprint-bin0-percent")
+		capacityTierFootprint := footprint.GetChildContentS("volume-blocks-footprint-bin1")
+		capacityTierFootprintPerc := footprint.GetChildContentS("volume-blocks-footprint-bin1-percent")
+		footprintMatrics["performance_tier_footprint"] = performanceTierFootprint
+		footprintMatrics["performance_tier_footprint_percent"] = performanceTierFootprintPerc
+		footprintMatrics["capacity_tier_footprint"] = capacityTierFootprint
+		footprintMatrics["capacity_tier_footprint_percent"] = capacityTierFootprintPerc
+		volumeFootprintMap[volume+svm] = footprintMatrics
+	}
+
+	return volumeFootprintMap, nil
 }
 
 func (v *Volume) getEncryptedDisks() ([]string, error) {
