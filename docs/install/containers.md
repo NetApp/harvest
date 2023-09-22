@@ -77,6 +77,22 @@ docker run --rm \
   --output harvest-compose.yml
 ```
 
+By default, the above command uses the harvest configuration file located in the current directory, denoted as `$(pwd)/harvest.yml`. However, you may want to use a harvest config from a different location.
+??? question "What if my harvest configuration file is in a different path"
+    Suppose the path to your harvest configuration file is stored in a variable named `HARVEST_CONFIG_PATH`
+
+    ```sh
+    export HARVEST_CONFIG_PATH="/opt/custom_harvest.yml"
+    docker run --rm \
+      --entrypoint "bin/harvest" \
+      --volume "$(pwd):/opt/temp" \
+      --volume "${HARVEST_CONFIG_PATH}:${HARVEST_CONFIG_PATH}" \
+      ghcr.io/netapp/harvest:latest \
+      generate docker full \
+      --output harvest-compose.yml \
+      --config ${HARVEST_CONFIG_PATH}
+    ```
+
 `generate docker full` does two things:
 
 1. Creates a Docker compose file with a container for each Harvest poller defined in your `harvest.yml`
