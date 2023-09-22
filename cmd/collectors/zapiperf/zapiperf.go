@@ -26,6 +26,7 @@ package zapiperf
 
 import (
 	"errors"
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/externalserviceoperation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
@@ -43,6 +44,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -56,29 +58,34 @@ const (
 	batchSize     = 500
 	latencyIoReqd = 10
 	// objects that need special handling
-	objWorkload             = "workload"
-	objWorkloadDetail       = "workload_detail"
-	objWorkloadVolume       = "workload_volume"
-	objWorkloadDetailVolume = "workload_detail_volume"
-	objWorkloadClass        = "user_defined|system_defined"
-	objWorkloadVolumeClass  = "autovolume"
-	BILLION                 = 1_000_000_000
+	objWorkload                  = "workload"
+	objWorkloadConstituent       = "workload:constituent"
+	objWorkloadVolumeConstituent = "workload_volume:constituent"
+	objWorkloadDetail            = "workload_detail"
+	objWorkloadVolume            = "workload_volume"
+	objWorkloadDetailVolume      = "workload_detail_volume"
+	objWorkloadClass             = "user_defined|system_defined"
+	objWorkloadVolumeClass       = "autovolume"
+	BILLION                      = 1_000_000_000
 )
 
 var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
 
 type ZapiPerf struct {
-	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	object          string
-	batchSize       int
-	latencyIoReqd   int
-	instanceKey     string
-	instanceLabels  map[string]string
-	histogramLabels map[string][]string
-	scalarCounters  []string
-	qosLabels       map[string]string
-	isCacheEmpty    bool
-	testFilePath    string // Used only from unit test
+	*zapi.Zapi         // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	object             string
+	batchSize          int
+	latencyIoReqd      int
+	instanceKey        string
+	instanceLabels     map[string]string
+	histogramLabels    map[string][]string
+	scalarCounters     []string
+	qosLabels          map[string]string
+	isCacheEmpty       bool
+	testFilePath       string // Used only from unit test
+	nodes              []string
+	enableNode         bool
+	InvokeZapiCallFunc func(request *node.Node) ([]*node.Node, error)
 }
 
 func init() {
@@ -110,6 +117,10 @@ func (z *ZapiPerf) Init(a *collector.AbstractCollector) error {
 
 	if err := z.InitCache(); err != nil {
 		return err
+	}
+
+	if enableNode := z.Params.GetChildContentS("enable_node"); enableNode == "true" {
+		z.enableNode = true
 	}
 
 	z.Logger.Debug().Msg("initialized")
@@ -228,6 +239,37 @@ func (z *ZapiPerf) loadParamInt(name string, defaultValue int) int {
 	return defaultValue
 }
 
+func (z *ZapiPerf) InvokeZapiCall(request *node.Node) ([]*node.Node, error) {
+	if z.InvokeZapiCallFunc != nil {
+		return z.InvokeZapiCallFunc(request)
+	}
+	return z.Client.InvokeZapiCall(request)
+}
+
+func (z *ZapiPerf) getNodes() ([]string, error) {
+	var (
+		result []*node.Node
+		err    error
+		names  []string
+	)
+	request := node.NewXMLS("system-node-get-iter")
+	desired := node.NewXMLS("desired-attributes")
+	nodeDetailsInfo := node.NewXMLS("node-details-info")
+	nodeDetailsInfo.NewChildS("node", "")
+	desired.AddChild(nodeDetailsInfo)
+	request.AddChild(desired)
+
+	if result, err = z.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	for _, n := range result {
+		name := n.GetChildContentS("node")
+		names = append(names, name)
+	}
+	return names, nil
+}
+
 // PollData updates the data cache of the collector. During first poll, no data will
 // be emitted. Afterwards, final metric values will be calculated from previous poll.
 func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
@@ -269,11 +311,16 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			return nil, errs.New(errs.ErrMissingParam, "resource_map")
 		}
 		instanceKeys = make([]string, 0)
+		instanceKeysSet := set.New()
 		for _, layer := range resourceMap.GetAllChildNamesS() {
 			for key := range prevMat.GetInstances() {
-				instanceKeys = append(instanceKeys, key+"."+layer)
+				if z.enableNode {
+					key = strings.Split(key, ":")[1]
+				}
+				instanceKeysSet.Add(key + "." + layer)
 			}
 		}
+		instanceKeys = instanceKeysSet.Values()
 	} else {
 		instanceKeys = curMat.GetInstanceKeys()
 	}
@@ -367,23 +414,35 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		ts := float64(time.Now().UnixNano()) / BILLION
 
 		for instIndex, i := range instances.GetChildren() {
-
-			key := i.GetChildContentS(z.instanceKey)
+			iKey := z.instanceKey
+			if z.enableNode {
+				iKey = "uuid"
+			}
+			key := i.GetChildContentS(iKey)
 
 			var layer = "" // latency layer (resource) for workloads
 
 			// special case for these two objects
 			// we need to process each latency layer for each instance/counter
 			if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-
-				if x := strings.Split(key, "."); len(x) == 2 {
-					key = x[0]
-					layer = x[1]
+				if z.enableNode {
+					key, layer, err = extractEnableNodeKey(key)
+					if err != nil {
+						z.Logger.Warn().
+							Str("key", key).
+							Msg("Instance key has unexpected format")
+						continue
+					}
 				} else {
-					z.Logger.Warn().
-						Str("key", key).
-						Msg("Instance key has unexpected format")
-					continue
+					if x := strings.Split(key, "."); len(x) == 2 {
+						key = x[0]
+						layer = x[1]
+					} else {
+						z.Logger.Warn().
+							Str("key", key).
+							Msg("Instance key has unexpected format")
+						continue
+					}
 				}
 
 				for _, wm := range workloadDetailMetrics {
@@ -515,7 +574,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 						if name == "visits" {
 							continue
 						}
-
 						wMetric := curMat.GetMetric(layer + wm)
 
 						if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
@@ -789,11 +847,18 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 		apiT, parseT time.Duration
 		err          error
 	)
-
 	if z.Query == objWorkloadDetail {
-		object = objWorkload
+		if z.enableNode {
+			object = objWorkloadConstituent
+		} else {
+			object = objWorkload
+		}
 	} else {
-		object = objWorkloadVolume
+		if z.enableNode {
+			object = objWorkloadVolumeConstituent
+		} else {
+			object = objWorkloadVolume
+		}
 	}
 
 	z.Logger.Debug().Msgf("(%s) starting redundancy poll for ops from parent object (%s)", z.Query, object)
@@ -833,8 +898,15 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 
 		request.PopChildS(KeyAttr + "s")
 		requestInstances := request.NewChildS(KeyAttr+"s", "")
+		instanceKeysSet := set.New()
 		for _, key := range instanceKeys[startIndex:endIndex] {
-			requestInstances.NewChildS(KeyAttr, key)
+			if z.enableNode {
+				key = strings.Split(key, ":")[1]
+			}
+			if !instanceKeysSet.Has(key) {
+				requestInstances.NewChildS(KeyAttr, key)
+			}
+			instanceKeysSet.Add(key)
 		}
 
 		startIndex = endIndex
@@ -859,41 +931,51 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 
 		for _, i := range instances.GetChildren() {
 
-			key := i.GetChildContentS(z.instanceKey)
+			k := i.GetChildContentS(z.instanceKey)
 
-			if key == "" {
+			if k == "" {
 				z.Logger.Debug().Msgf("skip instance, no key [%s] (name=%s, uuid=%s)", z.instanceKey, i.GetChildContentS("name"), i.GetChildContentS("uuid"))
 				continue
 			}
 
-			instance := data.GetInstance(key)
-			if instance == nil {
-				z.Logger.Warn().Msgf("skip instance [%s], not found in cache", key)
-				continue
+			keys := []string{k}
+			if z.enableNode {
+				keys = []string{}
+				for _, n := range z.nodes {
+					key := n + ":" + k
+					keys = append(keys, key)
+				}
 			}
 
-			counters := i.GetChildS("counters")
-			if counters == nil {
-				z.Logger.Debug().Msgf("skip instance [%s], no data counters", key)
-				continue
-			}
+			for _, key := range keys {
+				instance := data.GetInstance(key)
+				if instance == nil {
+					z.Logger.Warn().Msgf("skip instance [%s], not found in cache", key)
+					continue
+				}
 
-			for _, cnt := range counters.GetChildren() {
+				counters := i.GetChildS("counters")
+				if counters == nil {
+					z.Logger.Debug().Msgf("skip instance [%s], no data counters", key)
+					continue
+				}
 
-				name := cnt.GetChildContentS("name")
-				value := cnt.GetChildContentS("value")
+				for _, cnt := range counters.GetChildren() {
+					name := cnt.GetChildContentS("name")
+					value := cnt.GetChildContentS("value")
 
-				z.Logger.Trace().Msgf("(%s%s%s%s) parsing counter = %v", color.Grey, key, color.End, name, value)
+					z.Logger.Trace().Msgf("(%s%s%s%s) parsing counter = %v", color.Grey, key, color.End, name, value)
 
-				if name == "ops" {
-					if err = ops.SetValueString(instance, value); err != nil {
-						z.Logger.Error().Err(err).Msgf("set metric (%s) value [%s]", name, value)
+					if name == "ops" {
+						if err = ops.SetValueString(instance, value); err != nil {
+							z.Logger.Error().Err(err).Msgf("set metric (%s) value [%s]", name, value)
+						} else {
+							z.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", name, color.Cyan, value, color.End)
+							count++
+						}
 					} else {
-						z.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", name, color.Cyan, value, color.End)
-						count++
+						z.Logger.Error().Err(nil).Msgf("unrequested metric (%s)", name)
 					}
-				} else {
-					z.Logger.Error().Err(nil).Msgf("unrequested metric (%s)", name)
 				}
 			}
 		}
@@ -919,6 +1001,11 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	wanted = dict.New()    // counters listed in template, maps raw name to display name
 	missing = set.New()    // required base counters, missing in template
 	replaced = set.New()   // deprecated and replaced counters
+
+	z.nodes, err = z.getNodes()
+	if err != nil {
+		return nil, err
+	}
 
 	mat := z.Matrix[z.Object]
 	for key := range mat.GetMetrics() {
@@ -1068,7 +1155,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	}
 
 	// hack for workload objects, @TODO replace with a plugin
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+	if z.Query == objWorkload || z.Query == objWorkloadConstituent || z.Query == objWorkloadVolumeConstituent || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
 
 		// for these two objects, we need to create latency/ops counters for each of the workload layers
 		// there original counters will be discarded
@@ -1112,6 +1199,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			if resourceMap == nil {
 				return nil, errs.New(errs.ErrMissingParam, "resource_map")
 			}
+
 			for _, x := range resourceMap.GetChildren() {
 				for _, wm := range workloadDetailMetrics {
 
@@ -1395,15 +1483,16 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	keyAttr = z.instanceKey
 
 	// hack for workload objects: get instances from Zapi
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+	if z.Query == objWorkload || z.Query == objWorkloadConstituent || z.Query == objWorkloadVolumeConstituent || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
 		request = node.NewXMLS("qos-workload-get-iter")
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
-		if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+		if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume || z.Query == objWorkloadVolumeConstituent {
 			infoElem.NewChildS("workload-class", z.loadWorkloadClassQuery(objWorkloadVolumeClass))
 		} else {
 			infoElem.NewChildS("workload-class", z.loadWorkloadClassQuery(objWorkloadClass))
 		}
+		infoElem.NewChildS("workload-name", "osc_iscsi_vol01-wid46473")
 
 		instancesAttr = "attributes-list"
 		nameAttr = "workload-name"
@@ -1458,26 +1547,42 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, i := range instances.GetChildren() {
-
-			if key := i.GetChildContentS(keyAttr); key == "" {
-				// instance key missing
-				name := i.GetChildContentS(nameAttr)
-				uuid := i.GetChildContentS(uuidAttr)
-				z.Logger.Debug().Msgf("skip instance, missing key [%s] (name=%s, uuid=%s)", z.instanceKey, name, uuid)
-			} else if oldInstances.Has(key) {
-				// instance already in cache
-				oldInstances.Remove(key)
-				instance := mat.GetInstance(key)
-				z.updateQosLabels(i, instance, key)
-				z.Logger.Trace().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
-				continue
-			} else if instance, err := mat.NewInstance(key); err != nil {
-				z.Logger.Error().Err(err).Msg("add instance")
+			var keys []string
+			k := i.GetChildContentS(keyAttr)
+			if z.Query == objWorkloadConstituent || z.Query == objWorkloadVolumeConstituent {
+				for _, n := range z.nodes {
+					k1 := n + ";" + k
+					keys = append(keys, k1)
+				}
+			} else if z.enableNode {
+				for _, n := range z.nodes {
+					k1 := n + ":" + k
+					keys = append(keys, k1)
+				}
 			} else {
-				z.Logger.Trace().
-					Str("key", key).
-					Msg("Added new instance")
-				z.updateQosLabels(i, instance, key)
+				keys = append(keys, k)
+			}
+			for _, key := range keys {
+				if key == "" {
+					// instance key missing
+					name := i.GetChildContentS(nameAttr)
+					uuid := i.GetChildContentS(uuidAttr)
+					z.Logger.Debug().Msgf("skip instance, missing key [%s] (name=%s, uuid=%s)", z.instanceKey, name, uuid)
+				} else if oldInstances.Has(key) {
+					// instance already in cache
+					oldInstances.Remove(key)
+					instance := mat.GetInstance(key)
+					z.updateQosLabels(i, instance, key)
+					z.Logger.Trace().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, key, color.End)
+					continue
+				} else if instance, err := mat.NewInstance(key); err != nil {
+					z.Logger.Error().Err(err).Msg("add instance")
+				} else {
+					z.Logger.Trace().
+						Str("key", key).
+						Msg("Added new instance")
+					z.updateQosLabels(i, instance, key)
+				}
 			}
 		}
 	}
@@ -1501,13 +1606,27 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 }
 
 func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, key string) {
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+	if z.Query == objWorkload || z.Query == objWorkloadConstituent || z.Query == objWorkloadVolumeConstituent || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
 		for label, display := range z.qosLabels {
 			if value := qos.GetChildContentS(label); value != "" {
 				instance.SetLabel(display, value)
 			}
 		}
 		z.Logger.Debug().Str("query", z.Query).Str("key", key).Str("qos labels", instance.GetLabels().String()).Send()
+	}
+}
+
+// Function to extract the desired parts from the string
+func extractEnableNodeKey(str string) (string, string, error) {
+	pattern := `^(.*?):.*?:(.*?)\.(.*?)$`
+	re := regexp.MustCompile(pattern)
+
+	matches := re.FindStringSubmatch(str)
+
+	if len(matches) > 0 {
+		return matches[1] + ":" + matches[2], matches[3], nil
+	} else {
+		return "", "", fmt.Errorf("no matches found")
 	}
 }
 

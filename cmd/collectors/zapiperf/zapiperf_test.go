@@ -54,6 +54,9 @@ func NewZapiPerf(object, path string) *ZapiPerf {
 	mx := matrix.New(z.Object, z.Object, z.Object)
 	z.Matrix = make(map[string]*matrix.Matrix)
 	z.Matrix[z.Object] = mx
+	z.InvokeZapiCallFunc = func(request *node.Node) ([]*node.Node, error) {
+		return nil, nil
+	}
 	return z
 }
 

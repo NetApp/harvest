@@ -1,0 +1,57 @@
+
+# object Workload provides counters about workload usage 
+
+name:                     WorkloadVolumeConstituent
+query:                    workload_volume:constituent
+object:                   qos
+
+# recommended to use large interval, since workload objects are expensive
+client_timeout:           1m30s
+schedule:
+  - counter:  20m
+  - instance: 10m
+  - data:      3m
+
+counters:
+  - concurrency
+  - instance_name
+  - instance_uuid
+  - latency
+  - node_name            => node
+  - ops
+  - other_ops
+  - read_data
+  - read_io_type
+  - read_latency
+  - read_ops
+  - sequential_reads
+  - sequential_writes
+  - total_data
+  - write_data
+  - write_latency
+  - write_ops
+
+override:
+  - read_io_type_base: delta
+
+qos_labels:
+  - vserver       => svm
+  - volume
+  - qtree
+  - lun
+  - file
+  - policy-group
+  - wid
+  - workload-name => workload
+
+export_options:
+  instance_keys:
+    - file
+    - lun
+    - node
+    - policy_group
+    - qtree
+    - svm
+    - volume
+    - wid
+    - workload
