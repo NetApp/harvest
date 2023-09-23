@@ -1539,7 +1539,13 @@
 <tr>
 <td><code>ssl_cert</code>, <code>ssl_key</code></td>
 <td>optional if <code>auth_style</code> is <code>certificate_auth</code></td>
-<td>Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for <code>&lt;hostname&gt;.key</code> and <code>&lt;hostname&gt;.pem</code> in <code>$HARVEST_HOME/cert/</code>.<br/><br/>To create certificates for ONTAP systems, see <a href="../prepare-cdot-clusters/#using-certificate-authentication">using certificate authentication</a></td>
+<td>Paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for <code>&lt;hostname&gt;.key</code> and <code>&lt;hostname&gt;.pem</code> in <code>$HARVEST_HOME/cert/</code>.<br/><br/>To create certificates for ONTAP systems, see <a href="../prepare-cdot-clusters/#using-certificate-authentication">using certificate authentication</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ca_cert</code></td>
+<td>optional if <code>auth_style</code> is <code>certificate_auth</code></td>
+<td>Path to file that contains PEM encoded certificates. Harvest will append these certificates to the system-wide set of root certificate authorities (CA).<br /><br />If not provided, the OS's root CAs will be used.<br/><br/>To create certificates for ONTAP systems, see <a href="../prepare-cdot-clusters/#using-certificate-authentication">using certificate authentication</a></td>
 <td></td>
 </tr>
 <tr>
