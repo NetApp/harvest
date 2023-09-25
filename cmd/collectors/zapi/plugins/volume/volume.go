@@ -14,9 +14,10 @@ import (
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	currentVal int
-	client     *zapi.Client
-	aggrsMap   map[string]string // aggregate-uuid -> aggregate-name map
+	currentVal         int
+	client             *zapi.Client
+	aggrsMap           map[string]string            // aggregate-uuid -> aggregate-name map
+	volumeFootprintMap map[string]map[string]string // volume+svm -> map of footprint metric name and value
 }
 
 type aggrData struct {
@@ -55,6 +56,7 @@ func (v *Volume) Init() error {
 	}
 
 	v.aggrsMap = make(map[string]string)
+	v.volumeFootprintMap = make(map[string]map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -96,19 +98,18 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		v.Logger.Error().Err(err).Msg("Failed to update clone data")
 	}
 
-	volumeFootprintMap, err := v.getVolumeFootprint()
-	if err != nil {
+	if err := v.getVolumeFootprint(); err != nil {
 		v.Logger.Error().Err(err).Msg("Failed to update footprint data")
 	}
 
 	// update volume instance labels
-	v.updateVolumeLabels(data, volumeCloneMap, volumeFootprintMap)
+	v.updateVolumeLabels(data, volumeCloneMap)
 
 	v.currentVal++
 	return nil, nil
 }
 
-func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone, volumeFootprintMap map[string]map[string]string) {
+func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone) {
 	var err error
 	for _, volume := range data.GetInstances() {
 		if !volume.IsExportable() {
@@ -149,7 +150,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 		}
 
 		// Handling volume footprint metrics
-		if vf, ok := volumeFootprintMap[key]; ok {
+		if vf, ok := v.volumeFootprintMap[key]; ok {
 			for vfKey, vfVal := range vf {
 				vfMetric := data.GetMetric(vfKey)
 				if vfMetric == nil {
@@ -215,14 +216,13 @@ func (v *Volume) getVolumeCloneInfo() (map[string]volumeClone, error) {
 	return volumeCloneMap, nil
 }
 
-func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
+func (v *Volume) getVolumeFootprint() error {
 	var (
-		result             []*node.Node
-		volumeFootprintMap map[string]map[string]string
-		err                error
+		result []*node.Node
+		err    error
 	)
 
-	volumeFootprintMap = make(map[string]map[string]string)
+	v.volumeFootprintMap = make(map[string]map[string]string)
 	request := node.NewXMLS("volume-footprint-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
 	desired := node.NewXMLS("desired-attributes")
@@ -237,11 +237,11 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 	request.AddChild(desired)
 
 	if result, err = v.client.InvokeZapiCall(request); err != nil {
-		return volumeFootprintMap, err
+		return err
 	}
 
 	if len(result) == 0 {
-		return volumeFootprintMap, nil
+		return nil
 	}
 
 	for _, footprint := range result {
@@ -256,10 +256,10 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 		footprintMatrics["performance_tier_footprint_percent"] = performanceTierFootprintPerc
 		footprintMatrics["capacity_tier_footprint"] = capacityTierFootprint
 		footprintMatrics["capacity_tier_footprint_percent"] = capacityTierFootprintPerc
-		volumeFootprintMap[volume+svm] = footprintMatrics
+		v.volumeFootprintMap[volume+svm] = footprintMatrics
 	}
 
-	return volumeFootprintMap, nil
+	return nil
 }
 
 func (v *Volume) getEncryptedDisks() ([]string, error) {

@@ -17,7 +17,8 @@ import (
 type Aggregate struct {
 	*plugin.AbstractPlugin
 	client             *zapi.Client
-	aggrCloudStoresMap map[string][]string // aggregate-uuid -> slice of cloud stores map
+	aggrCloudStoresMap map[string][]string          // aggregate-uuid -> slice of cloud stores map
+	aggrFootprintMap   map[string]map[string]string // aggr -> map of footprint metric name and value
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -42,21 +43,22 @@ func (a *Aggregate) Init() error {
 	}
 
 	a.aggrCloudStoresMap = make(map[string][]string)
+	a.aggrFootprintMap = make(map[string]map[string]string)
 	return nil
 }
 
 func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[a.Object]
+	var err error
 
 	// invoke aggr-object-store-get-iter zapi and populate cloud stores info
-	if err := a.getCloudStores(); err != nil {
+	if err = a.getCloudStores(); err != nil {
 		if errors.Is(err, errs.ErrNoInstance) {
 			a.Logger.Debug().Err(err).Msg("Failed to collect cloud store data")
 		}
 	}
 
-	aggrFootprintMap, err := a.getAggrFootprint()
-	if err != nil {
+	if err = a.getAggrFootprint(); err != nil {
 		a.Logger.Error().Err(err).Msg("Failed to update footprint data")
 	}
 
@@ -69,7 +71,7 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 		// Handling aggr footprint metrics
 		aggrName := aggr.GetLabel("aggr")
-		if af, ok := aggrFootprintMap[aggrName]; ok {
+		if af, ok := a.aggrFootprintMap[aggrName]; ok {
 			for afKey, afVal := range af {
 				vfMetric := data.GetMetric(afKey)
 				if vfMetric == nil {
@@ -152,14 +154,13 @@ func (a *Aggregate) getCloudStores() error {
 	return nil
 }
 
-func (a *Aggregate) getAggrFootprint() (map[string]map[string]string, error) {
+func (a *Aggregate) getAggrFootprint() error {
 	var (
-		result           []*node.Node
-		aggrFootprintMap map[string]map[string]string
-		err              error
+		result []*node.Node
+		err    error
 	)
 
-	aggrFootprintMap = make(map[string]map[string]string)
+	a.aggrFootprintMap = make(map[string]map[string]string)
 	request := node.NewXMLS("aggr-space-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
 	desired := node.NewXMLS("desired-attributes")
@@ -171,11 +172,11 @@ func (a *Aggregate) getAggrFootprint() (map[string]map[string]string, error) {
 	request.AddChild(desired)
 
 	if result, err = a.client.InvokeZapiCall(request); err != nil {
-		return aggrFootprintMap, err
+		return err
 	}
 
 	if len(result) == 0 {
-		return aggrFootprintMap, nil
+		return nil
 	}
 
 	for _, footprint := range result {
@@ -186,9 +187,9 @@ func (a *Aggregate) getAggrFootprint() (map[string]map[string]string, error) {
 		if performanceTierUsed != "" || performanceTierUsedPerc != "" {
 			footprintMatrics["space_performance_tier_used"] = performanceTierUsed
 			footprintMatrics["space_performance_tier_used_percent"] = performanceTierUsedPerc
-			aggrFootprintMap[aggr] = footprintMatrics
+			a.aggrFootprintMap[aggr] = footprintMatrics
 		}
 	}
 
-	return aggrFootprintMap, nil
+	return nil
 }
