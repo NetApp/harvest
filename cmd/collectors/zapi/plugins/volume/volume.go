@@ -219,23 +219,33 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 	var (
 		result             []*node.Node
 		volumeFootprintMap map[string]map[string]string
-		footprintMatrics   map[string]string
 		err                error
 	)
 
 	volumeFootprintMap = make(map[string]map[string]string)
 	request := node.NewXMLS("volume-footprint-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
+	desired := node.NewXMLS("desired-attributes")
+	footprintInfo := node.NewXMLS("footprint-info")
+	footprintInfo.NewChildS("volume", "")
+	footprintInfo.NewChildS("vserver", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin0", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin0-percent", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin1", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin1-percent", "")
+	desired.AddChild(footprintInfo)
+	request.AddChild(desired)
+
 	if result, err = v.client.InvokeZapiCall(request); err != nil {
 		return volumeFootprintMap, err
 	}
 
-	if len(result) == 0 || result == nil {
+	if len(result) == 0 {
 		return volumeFootprintMap, nil
 	}
 
 	for _, footprint := range result {
-		footprintMatrics = make(map[string]string)
+		footprintMatrics := make(map[string]string)
 		volume := footprint.GetChildContentS("volume")
 		svm := footprint.GetChildContentS("vserver")
 		performanceTierFootprint := footprint.GetChildContentS("volume-blocks-footprint-bin0")

@@ -4013,7 +4013,7 @@
               "expr": "topk($TopResources, (aggr_space_performance_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggregatePerformanceTierFootprint\"}))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{aggr}}",
+              "legendFormat": "{{cluster}} - {{aggr}}",
               "refId": "A"
             }
           ],
@@ -4108,7 +4108,7 @@
               "expr": "topk($TopResources, (aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggregatePerformanceTierFootprintPerc\"}))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{aggr}}",
+              "legendFormat": "{{cluster}} - {{aggr}}",
               "refId": "A"
             }
           ],
@@ -4202,7 +4202,7 @@
               "expr": "topk($TopResources, aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$TopAggregateCapacityTierFootprint\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{aggr}}",
+              "legendFormat": "{{cluster}} - {{aggr}}",
               "refId": "A"
             }
           ],
@@ -4211,7 +4211,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Aggregate FabricPool Drilldown",
+      "title": "FabricPool Drilldown",
       "type": "row"
     },
     {
