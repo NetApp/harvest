@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/tree/xml"
 	"io"
 	"net/http"
 	"strconv"
@@ -497,8 +498,10 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 
 	// read response body
-	if body, err = io.ReadAll(response.Body); err != nil {
-		return result, responseT, parseT, err
+	if c.logZapi {
+		if body, err = io.ReadAll(response.Body); err != nil {
+			return result, responseT, parseT, err
+		}
 	}
 	defer c.printRequestAndResponse(zapiReq, body)
 
@@ -506,7 +509,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	if withTimers {
 		start = time.Now()
 	}
-	if root, err = tree.LoadXML(body); err != nil {
+	if root, err = xml.Load(response.Body); err != nil {
 		return result, responseT, parseT, err
 	}
 	if withTimers {
@@ -551,11 +554,11 @@ func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
 }
 
 func (c *Client) printRequestAndResponse(req string, response []byte) {
-	res := "<nil>"
-	if response != nil {
-		res = string(response)
-	}
 	if req != "" {
+		res := "<nil>"
+		if response != nil {
+			res = string(response)
+		}
 		c.Logger.Info().
 			Str("Request", req).
 			Str("Response", res).

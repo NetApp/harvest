@@ -5,15 +5,14 @@
 package xml
 
 import (
-	"bytes"
 	"encoding/xml"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"io"
 )
 
-func Load(data []byte) (*node.Node, error) {
+func Load(data io.Reader) (*node.Node, error) {
 	root := new(node.Node)
-	buf := bytes.NewBuffer(data)
-	dec := xml.NewDecoder(buf)
+	dec := xml.NewDecoder(data)
 	if err := dec.Decode(&root); err != nil {
 		return nil, err
 	}
