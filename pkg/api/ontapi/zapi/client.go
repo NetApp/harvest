@@ -497,23 +497,20 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status, errs.WithStatus(response.StatusCode))
 	}
 
-	// read response body
-	if c.logZapi {
-		if body, err = io.ReadAll(response.Body); err != nil {
-			return result, responseT, parseT, err
-		}
-	}
-	defer c.printRequestAndResponse(zapiReq, body)
-
 	// parse xml
 	if withTimers {
 		start = time.Now()
 	}
-	if root, err = xml.Load(response.Body); err != nil {
+	if root, body, err = xml.Load(response.Body, c.logZapi); err != nil {
 		return result, responseT, parseT, err
 	}
 	if withTimers {
 		parseT = time.Since(start)
+	}
+
+	// read response body
+	if c.logZapi {
+		defer c.printRequestAndResponse(zapiReq, body)
 	}
 
 	// check if the request was successful

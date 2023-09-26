@@ -69,7 +69,8 @@ func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
 }
 
 func LoadXML(r io.Reader) (*node.Node, error) {
-	return xml.Load(r)
+	root, _, err := xml.Load(r, false)
+	return root, err
 }
 
 func DumpXML(n *node.Node) ([]byte, error) {
