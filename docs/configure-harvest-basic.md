@@ -176,7 +176,7 @@ At runtime, the `credentials_file` will be read and the included credentials wil
 matching cluster(s).
 
 This is handy when integrating with 3rd party credential stores.
-See #884 for examples.
+See [#884](https://github.com/NetApp/harvest/discussions/884) for examples.
 
 The format of the `credentials_file` is similar to `harvest.yml` and can contain multiple cluster credentials.
 
