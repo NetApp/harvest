@@ -8,16 +8,24 @@ import (
 	"bytes"
 	"encoding/xml"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"io"
 )
 
-func Load(data []byte) (*node.Node, error) {
-	root := new(node.Node)
-	buf := bytes.NewBuffer(data)
-	dec := xml.NewDecoder(buf)
-	if err := dec.Decode(&root); err != nil {
-		return nil, err
+func Load(data io.Reader, log bool) (*node.Node, []byte, error) {
+	var buf bytes.Buffer
+	reader := data
+
+	if log {
+		reader = io.TeeReader(data, &buf)
 	}
-	return root, nil
+
+	root := new(node.Node)
+	dec := xml.NewDecoder(reader)
+	if err := dec.Decode(&root); err != nil {
+		return nil, nil, err
+	}
+
+	return root, buf.Bytes(), nil
 }
 
 func Dump(n *node.Node) ([]byte, error) {

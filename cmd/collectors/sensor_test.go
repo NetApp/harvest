@@ -27,7 +27,7 @@ func loadTestdata() {
 	// setup matrix data
 	var err error
 	var fetch func(*matrix.Instance, *node.Node, []string)
-	dat, err := os.ReadFile(testxml)
+	dat, err := os.Open(testxml)
 	if err != nil {
 		abs, _ := filepath.Abs(testxml)
 		fmt.Printf("failed to load %s\n", abs)
