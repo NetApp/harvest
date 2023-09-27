@@ -78,7 +78,6 @@ func (m *Matrix) Clone(with With) *Matrix {
 	clone.globalLabels = m.globalLabels
 	clone.exportOptions = m.exportOptions
 	clone.exportable = m.exportable
-	clone.displayMetrics = make(map[string]string)
 
 	if with.Instances {
 		clone.instances = make(map[string]*Instance, len(m.GetInstances()))
@@ -95,6 +94,7 @@ func (m *Matrix) Clone(with With) *Matrix {
 
 	if with.Metrics {
 		clone.metrics = make(map[string]*Metric, len(m.GetMetrics()))
+		clone.displayMetrics = make(map[string]string)
 		for key, metric := range m.GetMetrics() {
 			c := metric.Clone(with.Data)
 			clone.metrics[key] = c
