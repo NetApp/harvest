@@ -208,9 +208,6 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 
 		defer c.printRequestAndResponse(restReq, innerBody)
 
-		if innerErr != nil {
-			return nil, innerErr
-		}
 		return innerBody, nil
 	}
 
