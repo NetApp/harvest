@@ -79,7 +79,7 @@ docker run --rm \
 
 By default, the above command uses the harvest configuration file(`harvest.yml`) located in the current directory. If you want to use a harvest config from a different location.
 ??? question "What if my harvest configuration file is somewhere else or not named harvest.yml"
-    Use the following docker run command, updating the `HYML` variable with the absolute path to your  `harvest.yml`.
+    Use the following docker run command, updating the `HYML` variable with the absolute path to your `harvest.yml`.
 
     ```sh
     HYML="/opt/custom_harvest.yml" \
