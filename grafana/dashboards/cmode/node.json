@@ -1294,7 +1294,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "CPU Layer Drilldown",
+      "title": "CPU Layer",
       "type": "row"
     },
     {
@@ -1673,7 +1673,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Network Layer Drilldown",
+      "title": "Network Layer",
       "type": "row"
     },
     {
@@ -2366,7 +2366,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Backend Drilldown",
+      "title": "Backend",
       "type": "row"
     },
     {
@@ -3112,7 +3112,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NFSv3 Frontend Drilldown",
+      "title": "NFSv3 Frontend",
       "type": "row"
     },
     {
@@ -3456,7 +3456,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "CIFS Frontend Drilldown",
+      "title": "CIFS Frontend",
       "type": "row"
     },
     {
@@ -3870,7 +3870,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "FCP Frontend Drilldown",
+      "title": "FCP Frontend",
       "type": "row"
     },
     {
@@ -4286,7 +4286,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NVMe/FC Frontend Drilldown",
+      "title": "NVMe/FC Frontend",
       "type": "row"
     },
     {
@@ -4700,7 +4700,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "iSCSI Frontend Drilldown",
+      "title": "iSCSI Frontend",
       "type": "row"
     }
   ],

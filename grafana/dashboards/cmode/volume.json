@@ -1675,7 +1675,7 @@
           "type": "table"
         }
       ],
-      "title": "Volume Table Drilldown",
+      "title": "Volume Table",
       "type": "row"
     },
     {
@@ -2602,7 +2602,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume WAFL Layer Drilldown",
+      "title": "Volume WAFL Layer",
       "type": "row"
     },
     {
@@ -3356,7 +3356,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Volume End-to-End QoS Drilldown",
+      "title": "Top Volume End-to-End QoS",
       "type": "row"
     },
     {
@@ -4383,7 +4383,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Volume QoS Resource Latency Drilldown",
+      "title": "Top Volume QoS Resource Latency",
       "type": "row"
     },
     {
@@ -5320,7 +5320,7 @@
           "type": "table"
         }
       ],
-      "title": "Top Volume FabricPool Drilldown",
+      "title": "Top Volume FabricPool",
       "type": "row"
     },
     {
@@ -5596,7 +5596,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Inode Drilldown",
+      "title": "Top Inode",
       "type": "row"
     },
     {
