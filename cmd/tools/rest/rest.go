@@ -450,16 +450,12 @@ func fetch(client *Client, href string, records *[]gjson.Result, downloadAll boo
 		return fmt.Errorf("error making request %w", err)
 	}
 
-	isNonIterRestCall := false
-	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href")
-	data := output[0]
-	numRecords := output[1]
-	next := output[2]
-	if !data.Exists() {
-		isNonIterRestCall = true
-	}
+	output := gjson.ParseBytes(getRest)
+	data := output.Get("records")
+	numRecords := output.Get("num_records")
+	next := output.Get("_links.next.href")
 
-	if isNonIterRestCall {
+	if !data.Exists() {
 		contentJSON := `{"records":[]}`
 		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", getRest)
 		if err != nil {
@@ -503,11 +499,11 @@ func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analyt
 		return fmt.Errorf("error making request %w", err)
 	}
 
-	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href", "analytics")
-	data := output[0]
-	numRecords := output[1]
-	next := output[2]
-	*analytics = output[3]
+	output := gjson.ParseBytes(getRest)
+	data := output.Get("records")
+	numRecords := output.Get("num_records")
+	next := output.Get("_links.next.href")
+	*analytics = output.Get("analytics")
 
 	// extract returned records since paginated records need to be merged into a single lists
 	if numRecords.Exists() && numRecords.Int() > 0 {
@@ -546,11 +542,10 @@ func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) e
 	}
 
 	// extract returned records since paginated records need to be merged into a single list
-	output := gjson.GetManyBytes(getRest, "records", "num_records", "_links.next.href")
-
-	data := output[0]
-	numRecords := output[1]
-	next := output[2]
+	output := gjson.ParseBytes(getRest)
+	data := output.Get("records")
+	numRecords := output.Get("num_records")
+	next := output.Get("_links.next.href")
 
 	if numRecords.Exists() && numRecords.Int() > 0 {
 		p := PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}

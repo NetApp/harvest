@@ -301,13 +301,13 @@ func (c *Client) Init(retries int) error {
 			continue
 		}
 
-		results := gjson.GetManyBytes(content, "name", "uuid", "version.full", "version.generation", "version.major", "version.minor")
-		c.cluster.Name = results[0].String()
-		c.cluster.UUID = results[1].String()
-		c.cluster.Info = results[2].String()
-		c.cluster.Version[0] = int(results[3].Int())
-		c.cluster.Version[1] = int(results[4].Int())
-		c.cluster.Version[2] = int(results[5].Int())
+		results := gjson.ParseBytes(content)
+		c.cluster.Name = results.Get("name").String()
+		c.cluster.UUID = results.Get("uuid").String()
+		c.cluster.Info = results.Get("version.full").String()
+		c.cluster.Version[0] = int(results.Get("version.generation").Int())
+		c.cluster.Version[1] = int(results.Get("version.major").Int())
+		c.cluster.Version[2] = int(results.Get("version.minor").Int())
 		return nil
 	}
 	return err

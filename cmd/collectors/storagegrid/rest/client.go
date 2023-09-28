@@ -143,8 +143,8 @@ func (c *Client) Fetch(request string, result *[]gjson.Result) error {
 		return fmt.Errorf("error making request %w", err)
 	}
 
-	output := gjson.GetManyBytes(fetched, "data")
-	data = output[0]
+	output := gjson.ParseBytes(fetched)
+	data = output.Get("data")
 	for _, r := range data.Array() {
 		*result = append(*result, r.Array()...)
 	}
@@ -172,8 +172,8 @@ func (c *Client) GetMetricQuery(metric string, result *[]gjson.Result) error {
 	if err != nil {
 		return err
 	}
-	output := gjson.GetManyBytes(fetched, "data")
-	data := output[0]
+	output := gjson.ParseBytes(fetched)
+	data := output.Get("data")
 	for _, r := range data.Array() {
 		*result = append(*result, r.Array()...)
 	}
@@ -280,8 +280,8 @@ func (c *Client) Init(retries int) error {
 		if content, err = c.GetGridRest("grid/config/product-version"); err != nil {
 			continue
 		}
-		results := gjson.GetManyBytes(content, "data.productVersion")
-		err = c.SetVersion(results[0].String())
+		results := gjson.ParseBytes(content)
+		err = c.SetVersion(results.Get("data.productVersion").String())
 		if err != nil {
 			return err
 		}
@@ -289,14 +289,15 @@ func (c *Client) Init(retries int) error {
 		if content, err = c.GetGridRest("grid/health/topology?depth=grid"); err != nil {
 			continue
 		}
-		results = gjson.GetManyBytes(content, "data.name")
-		c.Cluster.Name = strings.ReplaceAll(results[0].String(), " ", "_")
+
+		results = gjson.ParseBytes(content)
+		c.Cluster.Name = strings.ReplaceAll(results.Get("data.name").String(), " ", "_")
 
 		if content, err = c.GetGridRest("grid/license"); err != nil {
 			continue
 		}
-		results = gjson.GetManyBytes(content, "data.systemId")
-		c.Cluster.UUID = results[0].String()
+		results = gjson.ParseBytes(content)
+		c.Cluster.UUID = results.Get("data.systemId").String()
 		return nil
 	}
 
@@ -377,9 +378,9 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 			return errs.NewStorageGridErr(response.StatusCode, body)
 		}
 
-		results := gjson.GetManyBytes(body, "data", "message.text")
-		token := results[0]
-		errorMsg := results[1]
+		results := gjson.ParseBytes(body)
+		token := results.Get("data")
+		errorMsg := results.Get("message.text")
 
 		if token.Exists() {
 			c.token = token.String()

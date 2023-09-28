@@ -476,18 +476,12 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 	for _, name := range t.Array() {
 		if name.String() == metric {
 			metricPath := "counters.#(name=" + metric + ")"
-			many := gjson.GetMany(instanceDataS,
-				metricPath+".value",
-				metricPath+".values",
-				metricPath+".labels",
-				metricPath+".counters.#.label",
-				metricPath+".counters.#.values",
-			)
-			value := many[0]
-			values := many[1]
-			labels := many[2]
-			subLabels := many[3]
-			subValues := many[4]
+			many := gjson.Parse(instanceDataS)
+			value := many.Get(metricPath + ".value")
+			values := many.Get(metricPath + ".values")
+			labels := many.Get(metricPath + ".labels")
+			subLabels := many.Get(metricPath + ".counters.#.label")
+			subValues := many.Get(metricPath + ".counters.#.values")
 			if value.String() != "" {
 				return &metricResponse{value: strings.Clone(value.String()), label: ""}
 			}
