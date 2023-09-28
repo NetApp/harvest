@@ -8,8 +8,7 @@ counters:
   - ^destination.family                      => family
   - ^destination.netmask                     => netmask_length
   - ^gateway                                 => gateway
-  - ^interfaces.#.ip.address                 => interface_address       # Added in Ontap 9.9
-  - ^interfaces.#.name                       => interface_name          # Added in Ontap 9.9
+  - ^interfaces                              => interfaces              # Added in Ontap 9.9
   - ^ipspace.name                            => ipspace
   - ^scope                                   => scope
   - ^svm.name                                => svm
@@ -17,7 +16,7 @@ counters:
       - interfaces
 
 plugins:
-  - NetRoute   #Creates net_route_interface_labels from interface_name and interface_address metrics collected above
+  - NetRoute   #Creates net_route_interface_labels from interfaces metrics collected above
 
 export_options:
   instance_keys:
