@@ -6,6 +6,7 @@ package conf
 
 import (
 	"dario.cat/mergo"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -15,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 )
 
@@ -31,7 +33,7 @@ const (
 	HomeEnvVar        = "HARVEST_CONF"
 )
 
-// TestLoadHarvestConfig is used by testing code to reload a new config
+// TestLoadHarvestConfig loads a new config - used by testing code
 func TestLoadHarvestConfig(configPath string) {
 	configRead = false
 	Config = HarvestConfig{}
@@ -59,11 +61,17 @@ func ConfigPath(path string) string {
 }
 
 func LoadHarvestConfig(configPath string) (string, error) {
+	var (
+		contents   []byte
+		duplicates []error
+		err        error
+	)
+
 	configPath = ConfigPath(configPath)
 	if configRead {
 		return configPath, nil
 	}
-	contents, err := os.ReadFile(configPath)
+	contents, err = os.ReadFile(configPath)
 
 	if err != nil {
 		return "", fmt.Errorf("error reading %s err=%w", configPath, err)
@@ -73,26 +81,85 @@ func LoadHarvestConfig(configPath string) (string, error) {
 		fmt.Printf("error unmarshalling config file=[%s] %+v\n", configPath, err)
 		return "", err
 	}
+
+	for _, pat := range Config.PollerFiles {
+		fs, err := filepath.Glob(pat)
+		if err != nil {
+			return "", fmt.Errorf("error retrieving poller_files path=%s err=%w", pat, err)
+		}
+
+		sort.Strings(fs)
+
+		if len(fs) == 0 {
+			fmt.Printf("add 0 poller(s) from poller_file=%s because no matching paths\n", pat)
+			continue
+		}
+
+		for _, filename := range fs {
+			fsContents, err := os.ReadFile(filename)
+			if err != nil {
+				return "", fmt.Errorf("error reading poller_file=%s err=%w", filename, err)
+			}
+			cfg, err := unmarshalConfig(fsContents)
+			if err != nil {
+				return "", fmt.Errorf("error unmarshalling poller_file=%s err=%w", filename, err)
+			}
+			for _, pName := range cfg.PollersOrdered {
+				_, ok := Config.Pollers[pName]
+				if ok {
+					duplicates = append(duplicates, fmt.Errorf("poller name=%s from poller_file=%s is not unique", pName, filename))
+					continue
+				}
+				Config.Pollers[pName] = cfg.Pollers[pName]
+				Config.PollersOrdered = append(Config.PollersOrdered, pName)
+			}
+			fmt.Printf("add %d poller(s) from poller_file=%s\n", len(cfg.PollersOrdered), filename)
+		}
+	}
+
+	if len(duplicates) > 0 {
+		return "", errors.Join(duplicates...)
+	}
+
+	// Fix promIndex for combined pollers
+	for i, name := range Config.PollersOrdered {
+		Config.Pollers[name].promIndex = i
+	}
 	return configPath, nil
 }
 
+func unmarshalConfig(contents []byte) (*HarvestConfig, error) {
+	var (
+		cfg           HarvestConfig
+		orderedConfig OrderedConfig
+		err           error
+	)
+
+	err = yaml.Unmarshal(contents, &cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling config: %w", err)
+	}
+
+	// Read the yaml again to determine poller order
+	err = yaml.Unmarshal(contents, &orderedConfig)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling ordered config: %w", err)
+	}
+	cfg.PollersOrdered = orderedConfig.Pollers.namesInOrder
+	for i, name := range Config.PollersOrdered {
+		Config.Pollers[name].promIndex = i
+	}
+
+	return &cfg, nil
+}
+
 func DecodeConfig(contents []byte) error {
-	err := yaml.Unmarshal(contents, &Config)
+	cfg, err := unmarshalConfig(contents)
 	configRead = true
 	if err != nil {
 		return fmt.Errorf("error unmarshalling config err: %w", err)
 	}
-	// Until https://github.com/go-yaml/yaml/issues/717 is fixed
-	// read the yaml again to determine poller order
-	orderedConfig := OrderedConfig{}
-	err = yaml.Unmarshal(contents, &orderedConfig)
-	if err != nil {
-		return err
-	}
-	Config.PollersOrdered = orderedConfig.Pollers.namesInOrder
-	for i, name := range Config.PollersOrdered {
-		Config.Pollers[name].promIndex = i
-	}
+	Config = *cfg
 
 	// Merge pollers and defaults
 	pollers := Config.Pollers
@@ -293,8 +360,8 @@ func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-// GetUniqueExporters returns the unique set of exporter types from the list of export names
-// For example: If 2 prometheus exporters are configured for a poller, the last one is returned
+// GetUniqueExporters returns the unique set of exporter types from the list of export names.
+// For example, if two prometheus exporters are configured for a poller, the last one is returned
 func GetUniqueExporters(exporterNames []string) []string {
 	var resultExporters []string
 	definedExporters := Config.Exporters
@@ -572,6 +639,7 @@ type HarvestConfig struct {
 	Tools          *Tools              `yaml:"Tools,omitempty"`
 	Exporters      map[string]Exporter `yaml:"Exporters,omitempty"`
 	Pollers        map[string]*Poller  `yaml:"Pollers,omitempty"`
+	PollerFiles    []string            `yaml:"Poller_files,omitempty"`
 	Defaults       *Poller             `yaml:"Defaults,omitempty"`
 	Admin          Admin               `yaml:"Admin,omitempty"`
 	PollersOrdered []string            // poller names in same order as yaml config

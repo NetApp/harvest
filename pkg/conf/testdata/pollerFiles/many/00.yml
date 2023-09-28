@@ -1,0 +1,16 @@
+Pollers:
+  netapp1:
+    datacenter: rtp
+    addr: 1.1.1.1
+  netapp2:
+    datacenter: rtp
+    addr: 1.1.1.2
+  netapp3:
+    datacenter: rtp
+    addr: 1.1.1.3
+  netapp4:
+    datacenter: rtp
+    addr: 1.1.1.4
+
+Tools:
+  grafana_api_token: ignore
