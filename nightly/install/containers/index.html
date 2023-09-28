@@ -1455,6 +1455,21 @@ Pollers:
 <span class="w">  </span>generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--output<span class="w"> </span>harvest-compose.yml
 </code></pre></div>
+<p>By default, the above command uses the harvest configuration file(<code>harvest.yml</code>) located in the current directory. If you want to use a harvest config from a different location.</p>
+<details class="question">
+<summary>What if my harvest configuration file is somewhere else or not named harvest.yml</summary>
+<p>Use the following docker run command, updating the <code>HYML</code> variable with the absolute path to your <code>harvest.yml</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">HYML</span><span class="o">=</span><span class="s2">&quot;/opt/custom_harvest.yml&quot;</span><span class="w"> </span><span class="se">\</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
+--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/opt/temp&quot;</span><span class="w"> </span><span class="se">\</span>
+--volume<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HYML</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">HYML</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+ghcr.io/netapp/harvest:latest<span class="w"> </span><span class="se">\</span>
+generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w"> </span><span class="se">\</span>
+--output<span class="w"> </span>harvest-compose.yml<span class="w"> </span><span class="se">\</span>
+--config<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HYML</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+</details>
 <p><code>generate docker full</code> does two things:</p>
 <ol>
 <li>Creates a Docker compose file with a container for each Harvest poller defined in your <code>harvest.yml</code></li>
