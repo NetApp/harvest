@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/tree/xml"
 	y3 "gopkg.in/yaml.v3"
-	"io"
 	"os"
 )
 
@@ -68,9 +67,8 @@ func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
 	}
 }
 
-func LoadXML(r io.Reader) (*node.Node, error) {
-	root, _, err := xml.Load(r, false)
-	return root, err
+func LoadXML(data []byte) (*node.Node, error) {
+	return xml.Load(data)
 }
 
 func DumpXML(n *node.Node) ([]byte, error) {
@@ -78,11 +76,9 @@ func DumpXML(n *node.Node) ([]byte, error) {
 }
 
 func ImportXML(filepath string) (*node.Node, error) {
-	file, err := os.Open(filepath)
+	data, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, err
 	}
-	//goland:noinspection GoUnhandledErrorResult
-	defer file.Close()
-	return LoadXML(file)
+	return LoadXML(data)
 }
