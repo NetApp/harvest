@@ -3,15 +3,15 @@ query:                    api/network/ip/routes
 object:                   net_route
 
 counters:
-  - ^^uuid                                   => uuid
-  - ^destination.address                     => destination
-  - ^destination.family                      => family
-  - ^destination.netmask                     => netmask_length
-  - ^gateway                                 => gateway
-  - ^interfaces                              => interfaces              # Added in Ontap 9.9
-  - ^ipspace.name                            => ipspace
-  - ^scope                                   => scope
-  - ^svm.name                                => svm
+  - ^^uuid                                          => uuid
+  - ^destination.address                            => destination
+  - ^destination.family                             => family
+  - ^destination.netmask                            => netmask_length
+  - ^gateway                                        => gateway
+  - ^ipspace.name                                   => ipspace
+  - ^scope                                          => scope
+  - ^svm.name                                       => svm
+  - ^{interfaces.#.name,interfaces.#.ip.address}    => interfaces              # Added in Ontap 9.9
   - hidden_fields:
       - interfaces
 

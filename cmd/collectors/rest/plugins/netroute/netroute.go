@@ -73,8 +73,8 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		interfaces := instance.GetLabel("interfaces")
 
 		interfacesList := gjson.Result{Type: gjson.JSON, Raw: interfaces}
-		names := interfacesList.Get("..#.name").Array()
-		address := interfacesList.Get("..#.ip.address").Array()
+		names := interfacesList.Get("name").Array()
+		address := interfacesList.Get("address").Array()
 
 		if names != nil && address != nil {
 			if len(names) == len(address) {
