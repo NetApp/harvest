@@ -59,7 +59,7 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("Failed to update footprint data")
 		// clean the map in case of the error
-		aggrFootprintMap = make(map[string]map[string]string)
+		clear(aggrFootprintMap)
 	}
 
 	// update aggregate instance label with cloud stores info

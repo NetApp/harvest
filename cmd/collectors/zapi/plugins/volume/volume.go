@@ -100,7 +100,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	if err != nil {
 		v.Logger.Error().Err(err).Msg("Failed to update footprint data")
 		// clean the map in case of the error
-		volumeFootprintMap = make(map[string]map[string]string)
+		clear(volumeFootprintMap)
 	}
 
 	// update volume instance labels
