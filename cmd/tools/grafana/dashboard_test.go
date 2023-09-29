@@ -27,7 +27,7 @@ var aggregationPattern = regexp.MustCompile(`\b(sum|count|min|max)\b`)
 func checkThreshold(t *testing.T, path string, data []byte) {
 	path = shortPath(path)
 	var thresholdMap = map[string][]string{
-		// _latency are in microseconds
+		// _latencies are in microseconds
 		"_latency": {
 			"[\"green\",\"orange\",\"red\"]",
 			"[null,20000,30000]",
@@ -37,7 +37,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 			"[null,60,80]",
 		},
 	}
-	// visit all panel for datasource test
+	// visit all panels for datasource test
 	visitAllPanels(data, func(p string, key, value gjson.Result) {
 		panelTitle := value.Get("title").String()
 		kind := value.Get("type").String()
@@ -62,7 +62,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 						"table": {"color-background", "lcd-gauge"},
 						"stat":  {"background"},
 					}
-					// check in default also for stat. For table we only want relevant column background and override settings
+					// check in default also for stat. For table, we only want the relevant column background and override settings
 					if kind == "stat" {
 						dS := value.Get("fieldConfig.defaults")
 						tSlice := dS.Get("thresholds")
@@ -1080,19 +1080,19 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 		if defaultUnit != "percent" && defaultUnit != "percentunit" {
 			return
 		}
-		min := value.Get("fieldConfig.defaults.min").String()
-		max := value.Get("fieldConfig.defaults.max").String()
-		if min != "0" {
+		theMin := value.Get("fieldConfig.defaults.min").String()
+		theMax := value.Get("fieldConfig.defaults.max").String()
+		if theMin != "0" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, min should be 0 got=%s`,
-				dashPath, path, value.Get("title").String(), defaultUnit, min)
+				dashPath, path, value.Get("title").String(), defaultUnit, theMin)
 		}
-		if defaultUnit == "percent" && max != "100" {
+		if defaultUnit == "percent" && theMax != "100" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 100 got=%s`,
-				dashPath, path, value.Get("title").String(), defaultUnit, max)
+				dashPath, path, value.Get("title").String(), defaultUnit, theMax)
 		}
-		if defaultUnit == "percentunit" && max != "1" {
+		if defaultUnit == "percentunit" && theMax != "1" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 1 got=%s`,
-				dashPath, path, value.Get("title").String(), defaultUnit, max)
+				dashPath, path, value.Get("title").String(), defaultUnit, theMax)
 		}
 	})
 }
@@ -1258,4 +1258,24 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 	if to.String() != toWant {
 		t.Errorf("dashboard=%s time.to got=%s want=%s", dashPath, to.String(), toWant)
 	}
+}
+
+func TestNoDrillDownRows(t *testing.T) {
+	visitDashboards(dashboards, func(path string, data []byte) {
+		checkRowNames(t, path, data)
+	})
+}
+
+func checkRowNames(t *testing.T, path string, data []byte) {
+	path = shortPath(path)
+	visitAllPanels(data, func(p string, key, value gjson.Result) {
+		kind := value.Get("type").String()
+		if kind == "row" {
+			title := value.Get("title").String()
+			if strings.Contains(title, "Drilldown") {
+				t.Errorf(`dashboard=%s path=panels[%d] title=[%s] got row with Drilldown in title. Remove drilldown`, path, key.Int(), title)
+			}
+		}
+	})
+
 }

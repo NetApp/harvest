@@ -79,7 +79,7 @@
       },
       "id": 105,
       "panels": [],
-      "title": "Ethernet Drilldown",
+      "title": "Ethernet",
       "type": "row"
     },
     {
@@ -3956,7 +3956,7 @@
           }
         }
       ],
-      "title": "FibreChannel Drilldown",
+      "title": "FibreChannel",
       "type": "row"
     }
   ],
