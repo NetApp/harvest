@@ -40,6 +40,8 @@ counters:
   - space.efficiency_without_snapshots.savings                     => efficiency_savings_wo_snapshots
   - space.efficiency_without_snapshots_flexclones.logical_used     => logical_used_wo_snapshots_flexclones
   - space.efficiency_without_snapshots_flexclones.savings          => efficiency_savings_wo_snapshots_flexclones
+  - space.footprint                                                => space_performance_tier_used
+  - space.footprint_percent                                        => space_performance_tier_used_percent
   - space.snapshot.available                                       => snapshot_size_available
   - space.snapshot.reserve_percent                                 => snapshot_reserve_percent
   - space.snapshot.total                                           => snapshot_size_total
