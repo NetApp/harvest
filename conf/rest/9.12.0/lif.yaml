@@ -3,23 +3,23 @@ query:      api/network/ip/interfaces
 object:     lif
 
 counters:
-  - ^^uuid
-  - ^ip.address                    => address
+  - ^^ip.address                   => address
+  - ^^name                         => lif
+  - ^^svm.name                     => svm
   - ^ipspace.name                  => ipspace
   - ^location.home_node.name       => home_node
   - ^location.home_port.name       => home_port
   - ^location.is_home              => is_home
   - ^location.node.name            => node
   - ^location.port.name            => port
-  - ^name                          => lif
   - ^services                      => services
   - ^state                         => status
   - ^subnet.name                   => subnet
-  - ^svm.name                      => svm
 
 endpoints:
   - query: api/private/cli/network/interface
     counters:
+      - ^^address                  => address
       - ^^lif
       - ^^vserver                  => svm
       - ^data_protocol             => protocols

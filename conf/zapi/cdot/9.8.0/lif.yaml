@@ -4,18 +4,17 @@ object:     lif
 
 counters:
   net-interface-info:
-    - ^^lif-uuid
-    - ^address                      => address
+    - ^^address                     => address
+    - ^^interface-name              => lif
+    - ^^vserver                     => svm
     - ^current-node                 => node
     - ^current-port                 => port
     - ^home-node                    => home_node
     - ^home-port                    => home_port
-    - ^interface-name               => lif
     - ^ipspace                      => ipspace
     - ^is-home                      => is_home
     - ^operational-status           => status
     - ^subnet-name                  => subnet
-    - ^vserver                      => svm
     - data-protocols:
         - ^data-protocol            => protocols
     - service-names:
