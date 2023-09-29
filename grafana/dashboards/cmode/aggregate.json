@@ -4211,7 +4211,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "FabricPool Drilldown",
+      "title": "FabricPool",
       "type": "row"
     },
     {
