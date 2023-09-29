@@ -41,6 +41,7 @@ plugins:
     - node
     - aggr ...
     - plex node,aggr,plex
+    - raid node,aggr,disk,plex,raid
 
   Max:
   # plugin will create max for each object

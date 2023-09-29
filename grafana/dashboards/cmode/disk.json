@@ -937,7 +937,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "topk($TopResources, aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskTotalTransfers\"})",
+          "expr": "topk($TopResources, aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopMaxDiskTotalTransfers\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -946,7 +946,7 @@
           "refId": "C"
         },
         {
-          "expr": "topk($TopResources, aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskBusy\"})",
+          "expr": "topk($TopResources, aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopMaxDiskBusy\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1059,7 +1059,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "topk($TopResources, max by (node, aggr) (aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskBusy\"}))",
+          "expr": "topk($TopResources, max by (node, aggr) (aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopMaxDiskBusy\"}))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1148,7 +1148,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "topk($TopResources, max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskTotalTransfers\"}))",
+          "expr": "topk($TopResources, max by (node, aggr) (aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopMaxDiskTotalTransfers\"}))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1348,13 +1348,383 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Average latency per block in microseconds for user read operations",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 29
+      },
+      "id": 58,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, (raid_disk_user_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\",disk=~\"$TopDiskUserReadLatency\"}))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{disk}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Disks by User Read Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Average latency per block in microseconds for user write operations",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 29
+      },
+      "id": 61,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, (raid_disk_user_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\",disk=~\"$TopDiskUserWriteLatency\"}))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{disk}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Disks by User Write Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Total number of disk operations involving data transfer initiated per second",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "id": 60,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, (raid_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\",disk=~\"$TopDiskTotalTransfers\"}))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{disk}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Disks by Total Transfers",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "The utilization percent of the disk in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "id": 59,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "topk($TopResources, (raid_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\",disk=~\"$TopDiskBusy\"}))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{disk}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Disks by Disk Busy",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 45
       },
       "id": 22,
       "panels": [
@@ -1608,7 +1978,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 46
           },
           "id": 18,
           "interval": "1m",
@@ -1834,7 +2204,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 56
       },
       "id": 28,
       "panels": [
@@ -2572,6 +2942,58 @@
       },
       {
         "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "definition": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}, plex)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Plex",
+        "options": [],
+        "query": {
+          "query": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}, plex)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "definition": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\"}, raid)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Raid",
+        "options": [],
+        "query": {
+          "query": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\"}, raid)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
         "current": {
           "selected": false,
           "text": "5",
@@ -2718,7 +3140,7 @@
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "TopDiskBusy",
+        "name": "TopMaxDiskBusy",
         "options": [],
         "query": {
           "query": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
@@ -2741,7 +3163,7 @@
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "TopDiskTotalTransfers",
+        "name": "TopMaxDiskTotalTransfers",
         "options": [],
         "query": {
           "query": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
@@ -2749,6 +3171,98 @@
         },
         "refresh": 2,
         "regex": ".*aggr=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "definition": "query_result(topk($TopResources, (avg_over_time(raid_disk_user_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopDiskUserReadLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, (avg_over_time(raid_disk_user_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*disk=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "definition": "query_result(topk($TopResources, (avg_over_time(raid_disk_user_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopDiskUserWriteLatency",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, (avg_over_time(raid_disk_user_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*disk=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "definition": "query_result(topk($TopResources, (avg_over_time(raid_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopDiskTotalTransfers",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, (avg_over_time(raid_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*disk=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "definition": "query_result(topk($TopResources, (avg_over_time(raid_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopDiskBusy",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, (avg_over_time(raid_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\",raid=~\"$Raid\"}[${__range}]))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*disk=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
