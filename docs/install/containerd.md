@@ -47,8 +47,10 @@ Create your `harvest-compose.yml` file like this:
 ```sh
 docker run --rm \
   --entrypoint "bin/harvest" \
-  --volume "$(pwd):/opt/harvest" \
-  ghcr.io/netapp/harvest generate docker full \
+  --volume "$(pwd):/opt/temp" \
+  --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
+  ghcr.io/netapp/harvest \
+  generate docker full \
   --output harvest-compose.yml # --image tag, if you built a new image above
 ```
 

@@ -1,7 +1,7 @@
 name: Build, Test, Lint License
 
 env:
-  GO_VERSION: "1.21.0"
+  GO_VERSION: "1.21.1"
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
   govulncheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -48,7 +48,7 @@ jobs:
       if: '!github.event.deleted'
       runs-on: ubuntu-latest
       steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Go
         uses: actions/setup-go@v4
         with:

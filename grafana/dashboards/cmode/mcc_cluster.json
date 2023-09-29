@@ -1609,7 +1609,7 @@
         }
       ],
       "repeat": null,
-      "title": "MetroCluster FCVI Drilldown",
+      "title": "MetroCluster FCVI",
       "type": "row"
     },
     {
@@ -1997,7 +1997,7 @@
         }
       ],
       "repeat": null,
-      "title": "MetroCluster Iwarp Drilldown",
+      "title": "MetroCluster Iwarp",
       "type": "row"
     },
     {
@@ -2622,7 +2622,7 @@
         }
       ],
       "repeat": null,
-      "title": "MetroCluster Disk Drilldown",
+      "title": "MetroCluster Disk",
       "type": "row"
     },
     {
@@ -2824,7 +2824,7 @@
         }
       ],
       "repeat": null,
-      "title": "Disk and Tape Adapter Drilldown",
+      "title": "Disk and Tape Adapter",
       "type": "row"
     },
     {
@@ -3392,7 +3392,7 @@
         }
       ],
       "repeat": null,
-      "title": "MetroCluster FibreBridge/Array Drilldown",
+      "title": "MetroCluster FibreBridge/Array",
       "type": "row"
     }
   ],

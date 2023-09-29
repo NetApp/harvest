@@ -9,6 +9,7 @@ objects:
   Aggregate:                   aggr.yaml
   AggregateEfficiency:         aggr_efficiency.yaml
   CIFSSession:                 cifs_session.yaml
+  CloudTarget:                 aggr_object_store_config.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
   EmsDestination:              ems_destination.yaml

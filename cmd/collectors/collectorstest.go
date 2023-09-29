@@ -50,13 +50,11 @@ func JSONToGson(path string, flatten bool) []gjson.Result {
 		return nil
 	}
 	bb := b.Bytes()
-	output := gjson.GetManyBytes(bb, "records", "num_records", "_links.next.href")
+	output := gjson.ParseBytes(bb)
+	data := output.Get("records")
+	numRecords := output.Get("num_records")
 
-	data := output[0]
-	numRecords := output[1]
-	isNonIterRestCall := !data.Exists()
-
-	if isNonIterRestCall {
+	if !data.Exists() {
 		contentJSON := `{"records":[]}`
 		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", bb)
 		if err != nil {

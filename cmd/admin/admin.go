@@ -223,7 +223,7 @@ func doTLS(_ *cobra.Command, _ []string) {
 
 func doAdmin(c *cobra.Command, _ []string) {
 	var configPath = c.Root().PersistentFlags().Lookup("config").Value.String()
-	err := conf.LoadHarvestConfig(configPath)
+	_, err := conf.LoadHarvestConfig(configPath)
 	if err != nil {
 		return
 	}

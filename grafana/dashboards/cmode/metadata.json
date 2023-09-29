@@ -3795,7 +3795,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Collectors Drilldown",
+      "title": "Collectors",
       "type": "row"
     },
     {
@@ -4030,7 +4030,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Prometheus Drilldown",
+      "title": "Prometheus",
       "type": "row"
     }
   ],

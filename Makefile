@@ -167,8 +167,8 @@ ifeq ($(origin ci),undefined)
 	@echo make ci=/path/to/harvest.yml ci-local
 	@exit 1
 endif
-	-@docker stop $$(docker ps -aq) 2>/dev/null || true
-	-@docker rm $$(docker ps -aq) 2>/dev/null || true
+	-@docker stop $$(docker ps -a --format '{{.ID}} {{.Names}}' | grep -E 'grafana|prometheus|poller') 2>/dev/null || true
+	-@docker rm $$(docker ps -a --format '{{.ID}} {{.Names}}' | grep -E 'grafana|prometheus|poller') 2>/dev/null || true
 	-@docker volume rm harvest_grafana_data harvest_prometheus_data 2>/dev/null || true
 	@if [ "$(ci)" != "harvest.yml" ]; then cp $(ci) harvest.yml; else echo "Source and destination files are the same, skipping copy"; fi
 	@./bin/harvest generate docker full --port --output harvest-compose.yml

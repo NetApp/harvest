@@ -28,6 +28,7 @@ const (
 	HarvestYML        = "harvest.yml"
 	BasicAuth         = "basic_auth"
 	CertificateAuth   = "certificate_auth"
+	HomeEnvVar        = "HARVEST_CONF"
 )
 
 // TestLoadHarvestConfig is used by testing code to reload a new config
@@ -35,7 +36,7 @@ func TestLoadHarvestConfig(configPath string) {
 	configRead = false
 	Config = HarvestConfig{}
 	promPortRangeMapping = make(map[string]PortMap)
-	err := LoadHarvestConfig(configPath)
+	_, err := LoadHarvestConfig(configPath)
 	if err != nil {
 		log.Fatalf("Failed to load config at=[%s] err=%+v\n", configPath, err)
 	}
@@ -43,36 +44,36 @@ func TestLoadHarvestConfig(configPath string) {
 
 func ConfigPath(path string) string {
 	// Harvest uses the following precedence order. Each item takes precedence over the
-	// item below it:
-	// 1. --config command line flag
-	// 2. HARVEST_CONFIG environment variable
+	// item below it. All paths are relative to `HARVEST_CONF` environment variable
+	// 1. `--config` command line flag
+	// 2. `HARVEST_CONFIG` environment variable
 	// 3. no command line argument and no environment variable, use the default path (HarvestYML)
 	if path != HarvestYML && path != "./"+HarvestYML {
-		return path
+		return Path(path)
 	}
 	fp := os.Getenv("HARVEST_CONFIG")
-	if fp == "" {
-		return path
+	if fp != "" {
+		path = fp
 	}
-	return fp
+	return Path(path)
 }
 
-func LoadHarvestConfig(configPath string) error {
-	if configRead {
-		return nil
-	}
+func LoadHarvestConfig(configPath string) (string, error) {
 	configPath = ConfigPath(configPath)
+	if configRead {
+		return configPath, nil
+	}
 	contents, err := os.ReadFile(configPath)
 
 	if err != nil {
-		return fmt.Errorf("error reading %s err=%w", configPath, err)
+		return "", fmt.Errorf("error reading %s err=%w", configPath, err)
 	}
 	err = DecodeConfig(contents)
 	if err != nil {
 		fmt.Printf("error unmarshalling config file=[%s] %+v\n", configPath, err)
-		return err
+		return "", err
 	}
-	return nil
+	return configPath, nil
 }
 
 func DecodeConfig(contents []byte) error {
@@ -172,7 +173,7 @@ func PollerNamed(name string) (*Poller, error) {
 // The final path will be relative to the HARVEST_CONF environment variable
 // or ./ when the environment variable is not set
 func Path(elem ...string) string {
-	home := os.Getenv("HARVEST_CONF")
+	home := os.Getenv(HomeEnvVar)
 	paths := append([]string{home}, elem...)
 	return filepath.Join(paths...)
 }

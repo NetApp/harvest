@@ -280,7 +280,7 @@ func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 	currInstances := set.NewFrom(mat.GetInstanceKeys())
 	currSize := currInstances.Size()
 
-	err := conf.LoadHarvestConfig(u.Options.Config)
+	_, err := conf.LoadHarvestConfig(u.Options.Config)
 	if err != nil {
 		return nil, err
 	}

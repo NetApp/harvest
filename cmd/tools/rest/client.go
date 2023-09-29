@@ -158,9 +158,9 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 
 	doInvoke := func() ([]byte, error) {
 		var (
-			response *http.Response
-			body     []byte
-			err      error
+			response  *http.Response
+			innerBody []byte
+			innerErr  error
 		)
 
 		if c.request.Body != nil {
@@ -174,23 +174,23 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		restReq := c.request.URL.String()
 
 		// send request to server
-		if response, err = c.client.Do(c.request); err != nil {
-			return nil, fmt.Errorf("connection error %w", err)
+		if response, innerErr = c.client.Do(c.request); innerErr != nil {
+			return nil, fmt.Errorf("connection error %w", innerErr)
 		}
 		//goland:noinspection GoUnhandledErrorResult
 		defer response.Body.Close()
+		innerBody, innerErr = io.ReadAll(response.Body)
+		if innerErr != nil {
+			return nil, errs.Rest(response.StatusCode, innerErr.Error(), 0, "")
+		}
 
 		if response.StatusCode != http.StatusOK {
-			body2, err2 := io.ReadAll(response.Body)
-			if err2 != nil {
-				return nil, errs.Rest(response.StatusCode, err2.Error(), 0, "")
-			}
 
 			if response.StatusCode == http.StatusUnauthorized {
 				return nil, errs.New(errs.ErrAuthFailed, response.Status)
 			}
 
-			result := gjson.GetBytes(body2, "error")
+			result := gjson.GetBytes(innerBody, "error")
 
 			if response.StatusCode == http.StatusForbidden {
 				message := result.Get(Message).String()
@@ -206,16 +206,9 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			return nil, errs.Rest(response.StatusCode, "", 0, "")
 		}
 
-		// read response body
-		if body, err = io.ReadAll(response.Body); err != nil {
-			return nil, err
-		}
-		defer c.printRequestAndResponse(restReq, body)
+		defer c.printRequestAndResponse(restReq, innerBody)
 
-		if err != nil {
-			return nil, err
-		}
-		return body, nil
+		return innerBody, nil
 	}
 
 	body, err = doInvoke()
@@ -308,13 +301,13 @@ func (c *Client) Init(retries int) error {
 			continue
 		}
 
-		results := gjson.GetManyBytes(content, "name", "uuid", "version.full", "version.generation", "version.major", "version.minor")
-		c.cluster.Name = results[0].String()
-		c.cluster.UUID = results[1].String()
-		c.cluster.Info = results[2].String()
-		c.cluster.Version[0] = int(results[3].Int())
-		c.cluster.Version[1] = int(results[4].Int())
-		c.cluster.Version[2] = int(results[5].Int())
+		results := gjson.ParseBytes(content)
+		c.cluster.Name = results.Get("name").String()
+		c.cluster.UUID = results.Get("uuid").String()
+		c.cluster.Info = results.Get("version.full").String()
+		c.cluster.Version[0] = int(results.Get("version.generation").Int())
+		c.cluster.Version[1] = int(results.Get("version.major").Int())
+		c.cluster.Version[2] = int(results.Get("version.minor").Int())
 		return nil
 	}
 	return err

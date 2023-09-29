@@ -2000,7 +2000,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Lock Drilldown",
+      "title": "Lock",
       "type": "row"
     }
   ],
