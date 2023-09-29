@@ -1,0 +1,17 @@
+
+name:                     Iwarp
+query:                    api/cluster/counter/tables/iwarp
+object:                   iw
+
+counters:
+  - ^^id
+  - ^node_name           => node
+  - average_latency      => avg_latency
+  - ops                  => ops
+  - read_ops             => read_ops
+  - write_ops            => write_ops
+
+
+export_options:
+  instance_keys:
+    - node
