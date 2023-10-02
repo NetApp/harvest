@@ -43,6 +43,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/rs/zerolog"
 	"strconv"
 	"strings"
 	"time"
@@ -907,18 +908,18 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		err                                      error
 		request, response, counterList           *node.Node
 		oldMetrics, oldLabels, replaced, missing *set.Set
-		wanted                                   *dict.Dict
+		wanted                                   map[string]string
 		oldMetricsSize, oldLabelsSize            int
 		counters                                 map[string]*node.Node
 	)
 
 	z.scalarCounters = make([]string, 0)
 	counters = make(map[string]*node.Node)
-	oldMetrics = set.New() // current set of metrics, so we can remove from matrix if not updated
-	oldLabels = set.New()  // current set of labels
-	wanted = dict.New()    // counters listed in template, maps raw name to display name
-	missing = set.New()    // required base counters, missing in template
-	replaced = set.New()   // deprecated and replaced counters
+	oldMetrics = set.New()           // current set of metrics, so we can remove from matrix if not updated
+	oldLabels = set.New()            // current set of labels
+	wanted = make(map[string]string) // counters listed in template, maps raw name to display name
+	missing = set.New()              // required base counters, missing in template
+	replaced = set.New()             // deprecated and replaced counters
 
 	mat := z.Matrix[z.Object]
 	for key := range mat.GetMetrics() {
@@ -935,16 +936,16 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	if counterList = z.Params.GetChildS("counters"); counterList != nil {
 		for _, cnt := range counterList.GetAllChildContentS() {
 			if renamed := strings.Split(cnt, "=>"); len(renamed) == 2 {
-				wanted.Set(strings.TrimSpace(renamed[0]), strings.TrimSpace(renamed[1]))
+				wanted[strings.TrimSpace(renamed[0])] = strings.TrimSpace(renamed[1])
 			} else if cnt == "instance_name" {
-				wanted.Set("instance_name", z.object)
+				wanted["instance_name"] = z.object
 			} else {
 				display := strings.ReplaceAll(cnt, "-", "_")
 				if strings.HasPrefix(display, z.object) {
 					display = strings.TrimPrefix(display, z.object)
 					display = strings.TrimPrefix(display, "_")
 				}
-				wanted.Set(cnt, display)
+				wanted[cnt] = display
 			}
 		}
 	} else {
@@ -987,7 +988,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			counter.SetChildContentS("properties", p)
 		}
 
-		display, ok := wanted.GetHas(key)
+		display, ok := wanted[key]
 		// counter not requested
 		if !ok {
 			z.Logger.Trace().
@@ -1004,7 +1005,8 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 					Str("key", key).
 					Str("replacement", r).
 					Msg("Replaced deprecated counter")
-				if !wanted.Has(r) {
+				_, ok = wanted[r]
+				if !ok {
 					replaced.Add(r)
 				}
 			}
@@ -1018,9 +1020,12 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		} else {
 			// add counter as numeric metric
 			oldMetrics.Remove(key)
-			if r := z.addCounter(counter, key, display, true, counters); r != "" && !wanted.Has(r) {
-				missing.Add(r) // required base counter, missing in template
-				z.Logger.Trace().Msgf("%smarking [%s] as required base counter for [%s]%s", color.Red, r, key, color.End)
+			if r := z.addCounter(counter, key, display, true, counters); r != "" {
+				_, ok = wanted[r]
+				if !ok {
+					missing.Add(r) // required base counter, missing in template
+					z.Logger.Trace().Msgf("%smarking [%s] as required base counter for [%s]%s", color.Red, r, key, color.End)
+				}
 			}
 		}
 	}
@@ -1032,9 +1037,12 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			if replaced.Has(name) {
 				oldMetrics.Remove(name)
 				z.Logger.Debug().Msgf("adding [%s] (replacement for deprecated counter)", name)
-				if r := z.addCounter(counter, name, name, true, counters); r != "" && !wanted.Has(r) {
-					missing.Add(r) // required base counter, missing in template
-					z.Logger.Debug().Msgf("%smarking [%s] as required base counter for [%s]%s", color.Red, r, name, color.End)
+				if r := z.addCounter(counter, name, name, true, counters); r != "" {
+					_, ok := wanted[r]
+					if !ok {
+						missing.Add(r) // required base counter, missing in template
+						z.Logger.Debug().Msgf("%smarking [%s] as required base counter for [%s]%s", color.Red, r, name, color.End)
+					}
 				}
 			}
 		}
@@ -1507,7 +1515,13 @@ func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, ke
 				instance.SetLabel(display, value)
 			}
 		}
-		z.Logger.Debug().Str("query", z.Query).Str("key", key).Str("qos labels", instance.GetLabels().String()).Send()
+		if z.Logger.GetLevel() == zerolog.DebugLevel {
+			z.Logger.Debug().
+				Str("query", z.Query).
+				Str("key", key).
+				Str("qos labels", dict.String(instance.GetLabels())).
+				Send()
+		}
 	}
 }
 

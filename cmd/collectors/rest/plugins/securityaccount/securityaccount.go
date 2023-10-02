@@ -103,7 +103,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						return nil, err
 					}
 
-					for k, v := range securityAccountInstance.GetLabels().Map() {
+					for k, v := range securityAccountInstance.GetLabels() {
 						securityAccountNewInstance.SetLabel(k, v)
 					}
 					securityAccountNewInstance.SetLabel("applications", application)

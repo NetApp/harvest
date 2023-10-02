@@ -6,8 +6,10 @@ package max
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/rs/zerolog"
 	"regexp"
 	"strconv"
 	"strings"
@@ -125,7 +127,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 			key := strconv.Itoa(i) + k
 
-			//Create matrix for each metric as each metric may have an instance with different label
+			// Create matrix for each metric as each metric may have an instance with different label
 			matrices[key] = data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 
 			matrices[key].RemoveExceptMetric(k)
@@ -134,7 +136,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 			} else {
 				matrices[key].Object = strings.ToLower(rule.label) + "_" + data.Object
 			}
-			//UUID needs to be unique
+			// UUID needs to be unique
 			matrices[key].UUID += key
 			matrices[key].SetExportOptions(matrix.DefaultExportOptions())
 			matrices[key].SetExportable(true)
@@ -159,7 +161,9 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 			continue
 		}
 
-		m.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
+		if m.Logger.GetLevel() == zerolog.TraceLevel {
+			m.Logger.Trace().Msgf("handling instance with labels [%s]", dict.String(instance.GetLabels()))
+		}
 
 		for i, rule := range m.rules {
 

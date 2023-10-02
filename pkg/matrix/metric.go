@@ -13,7 +13,7 @@ package matrix
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/dict"
+	"maps"
 	"strconv"
 )
 
@@ -25,7 +25,7 @@ type Metric struct {
 	array      bool
 	histogram  bool
 	exportable bool
-	labels     *dict.Dict
+	labels     map[string]string
 	buckets    *[]string
 	record     []bool
 	values     []float64
@@ -42,9 +42,7 @@ func (m *Metric) Clone(deep bool) *Metric {
 		histogram:  m.histogram,
 		buckets:    m.buckets,
 	}
-	if m.labels != nil {
-		clone.labels = m.labels.Copy()
-	}
+	clone.labels = maps.Clone(m.labels)
 	if deep {
 		if len(m.record) != 0 {
 			clone.record = make([]bool, len(m.record))
@@ -100,9 +98,9 @@ func (m *Metric) SetArray(c bool) {
 
 func (m *Metric) SetLabel(key, value string) {
 	if m.labels == nil {
-		m.labels = dict.New()
+		m.labels = make(map[string]string)
 	}
-	m.labels.Set(key, value)
+	m.labels[key] = value
 }
 
 func (m *Metric) SetHistogram(b bool) {
@@ -121,23 +119,23 @@ func (m *Metric) SetBuckets(buckets *[]string) {
 	m.buckets = buckets
 }
 
-func (m *Metric) SetLabels(labels *dict.Dict) {
+func (m *Metric) SetLabels(labels map[string]string) {
 	m.labels = labels
 }
 
 func (m *Metric) GetLabel(key string) string {
 	if m.labels != nil {
-		return m.labels.Get(key)
+		return m.labels[key]
 	}
 	return ""
 }
 
-func (m *Metric) GetLabels() *dict.Dict {
+func (m *Metric) GetLabels() map[string]string {
 	return m.labels
 
 }
 func (m *Metric) HasLabels() bool {
-	return m.labels != nil && m.labels.Size() != 0
+	return m.labels != nil && len(m.labels) > 0
 }
 
 func (m *Metric) GetRecords() []bool {

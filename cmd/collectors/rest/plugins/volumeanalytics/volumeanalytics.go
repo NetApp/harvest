@@ -88,7 +88,7 @@ func (v *VolumeAnalytics) initMatrix() error {
 
 func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[v.Object]
-	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
+	cluster := data.GetGlobalLabels()["cluster"]
 	clusterVersion := v.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
@@ -152,7 +152,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 				instance.SetLabel("dir_name", name)
 				instance.SetLabel("index", cluster+"_"+strconv.Itoa(index))
 				// copy all labels
-				for k1, v1 := range dataInstance.GetLabels().Map() {
+				for k1, v1 := range dataInstance.GetLabels() {
 					instance.SetLabel(k1, v1)
 				}
 				if bytesUsed != "" {

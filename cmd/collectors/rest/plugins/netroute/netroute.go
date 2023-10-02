@@ -67,7 +67,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 
 	count := 0
 	for key, instance := range data.GetInstances() {
-		cluster := data.GetGlobalLabels().Get("cluster")
+		cluster := data.GetGlobalLabels()["cluster"]
 		routeID := instance.GetLabel("uuid")
 		interfaceName := instance.GetLabel("interface_name")
 		interfaceAddress := instance.GetLabel("interface_address")
