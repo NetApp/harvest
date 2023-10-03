@@ -96,39 +96,39 @@ func doDoctorCmd(cmd *cobra.Command, _ []string) {
 }
 
 func doDoctor(path string, confPath string) {
-	contents, err := os.ReadFile(path)
-	if err != nil {
-		fmt.Printf("error reading config file. err=%+v\n", err)
-		return
-	}
 	if opts.ShouldPrintConfig {
+		contents, err := os.ReadFile(path)
+		if err != nil {
+			fmt.Printf("error reading config file. err=%+v\n", err)
+			return
+		}
 		printRedactedConfig(path, contents)
 	}
-	checkAll(path, contents, confPath)
+	checkAll(path, confPath)
 }
 
 // checkAll runs all doctor checks
 // If all checks succeed, print nothing and exit with a return code of 0
 // Otherwise, print what failed and exit with a return code of 1
-func checkAll(path string, contents []byte, confPath string) {
+func checkAll(path string, confPath string) {
 	// See https://github.com/NetApp/harvest/issues/16 for more checks to add
 	color.DetectConsole(opts.Color)
-	// Validate that the config file can be parsed
-	harvestConfig := &conf.HarvestConfig{}
-	err := yaml.Unmarshal(contents, harvestConfig)
+
+	_, err := conf.LoadHarvestConfig(path)
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", path, err)
 		os.Exit(1)
 		return
 	}
 
+	cfg := conf.Config
 	confPaths := filepath.SplitList(confPath)
 	anyFailed := false
-	anyFailed = !checkUniquePromPorts(*harvestConfig).isValid || anyFailed
-	anyFailed = !checkPollersExportToUniquePromPorts(*harvestConfig).isValid || anyFailed
-	anyFailed = !checkExporterTypes(*harvestConfig).isValid || anyFailed
+	anyFailed = !checkUniquePromPorts(cfg).isValid || anyFailed
+	anyFailed = !checkPollersExportToUniquePromPorts(cfg).isValid || anyFailed
+	anyFailed = !checkExporterTypes(cfg).isValid || anyFailed
 	anyFailed = !checkConfTemplates(confPaths).isValid || anyFailed
-	anyFailed = !checkCollectorName(*harvestConfig).isValid || anyFailed
+	anyFailed = !checkCollectorName(cfg).isValid || anyFailed
 
 	if anyFailed {
 		os.Exit(1)

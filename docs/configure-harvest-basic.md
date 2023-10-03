@@ -63,6 +63,66 @@ Tools:
   #grafana_api_token: 'aaa-bbb-ccc-ddd'
 ```
 
+## Poller_files
+
+Harvest supports loading pollers from multiple files specified in the `Poller_files` section of your `harvest.yml` file.
+For example, the following snippet tells harvest to load pollers from all the `*.yml` files under the `configs` directory, 
+and from the `path/to/single.yml` file.
+
+Paths may be relative or absolute.
+
+```yaml
+Poller_files:
+    - configs/*.yml
+    - path/to/single.yml
+
+Pollers:
+    u2:
+        datacenter: dc-1
+```
+
+Each referenced file can contain one or more unique pollers.
+Ensure that you include the top-level `Pollers` section in these files.
+All other top-level sections will be ignored.
+For example:
+
+```yaml
+# contents of configs/00-rtp.yml
+Pollers:
+  ntap3:
+    datacenter: rtp
+
+  ntap4:
+    datacenter: rtp
+---
+# contents of configs/01-rtp.yml
+Pollers:
+  ntap5:
+    datacenter: blr
+---
+# contents of path/to/single.yml
+Pollers:
+  ntap1:
+    datacenter: dc-1
+
+  ntap2:
+    datacenter: dc-1
+```
+
+At runtime, all files will be read and combined into a single configuration.
+The example above would result in the following set of pollers, in this order.
+```yaml
+- u2
+- ntap3
+- ntap4
+- ntap5
+- ntap1
+- ntap2
+```
+
+When using glob patterns, the list of matching paths will be sorted before they are read.
+Errors will be logged for all duplicate pollers and Harvest will refuse to start.
+
 ## Configuring collectors
 
 Collectors are configured by their own configuration files ([templates](configure-templates.md)), which are stored in subdirectories

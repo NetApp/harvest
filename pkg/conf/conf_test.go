@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"sort"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -284,8 +285,7 @@ func TestNodeToPoller(t *testing.T) {
 
 func TestReadHarvestConfigFromEnv(t *testing.T) {
 	t.Helper()
-	configRead = false
-	Config = HarvestConfig{}
+	resetConfig()
 	t.Setenv(HomeEnvVar, "testdata")
 	cp, err := LoadHarvestConfig(HarvestYML)
 	if err != nil {
@@ -299,5 +299,60 @@ func TestReadHarvestConfigFromEnv(t *testing.T) {
 	poller := Config.Pollers["star"]
 	if poller == nil {
 		t.Errorf("check if star poller exists. got=nil want=poller")
+	}
+}
+
+func resetConfig() {
+	configRead = false
+	Config = HarvestConfig{}
+}
+
+func TestMultiplePollerFiles(t *testing.T) {
+	t.Helper()
+	resetConfig()
+	_, err := LoadHarvestConfig("testdata/pollerFiles/harvest.yml")
+
+	wantNumErrs := 2
+	numErrs := strings.Count(err.Error(), "\n") + 1
+	if numErrs != wantNumErrs {
+		t.Errorf("got %d errors, want %d", numErrs, wantNumErrs)
+	}
+
+	wantNumPollers := 10
+	if len(Config.Pollers) != wantNumPollers {
+		t.Errorf("got %d pollers, want %d", len(Config.Pollers), wantNumPollers)
+	}
+
+	if len(Config.PollersOrdered) != wantNumPollers {
+		t.Errorf("got %d ordered pollers, want %d", len(Config.PollersOrdered), wantNumPollers)
+	}
+
+	wantToken := "token"
+	if Config.Tools.GrafanaAPIToken != wantToken {
+		t.Errorf("got token=%s, want token=%s", Config.Tools.GrafanaAPIToken, wantToken)
+	}
+
+	orderWanted := []string{
+		"star",
+		"netapp1",
+		"netapp2",
+		"netapp3",
+		"netapp4",
+		"netapp5",
+		"netapp6",
+		"netapp7",
+		"netapp8",
+		"moon",
+	}
+
+	for i, n := range orderWanted {
+		named, err := PollerNamed(n)
+		if err != nil {
+			t.Errorf("got no poller, want poller named=%s", n)
+			continue
+		}
+		if named.promIndex != i {
+			t.Errorf("got promIndex=%d, want promIndex=%d", named.promIndex, i)
+		}
 	}
 }

@@ -1,0 +1,13 @@
+Pollers:
+  netapp5:
+    datacenter: blr
+    addr: 1.1.1.5
+  netapp6:
+    datacenter: blr
+    addr: 1.1.1.6
+  netapp7:
+    datacenter: blr
+    addr: 1.1.1.7
+  netapp8:
+    datacenter: blr
+    addr: 1.1.1.8
