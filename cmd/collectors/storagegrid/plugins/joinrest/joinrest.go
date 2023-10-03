@@ -131,9 +131,9 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 }
 
 func (t *JoinRest) updateCache(model join, bytes *[]byte) {
-	results := gjson.GetManyBytes(*bytes, "data.#."+model.JoinRest, "data.#."+model.LabelRest)
-	keys := results[0].Array()
-	vals := results[1].Array()
+	results := gjson.ParseBytes(*bytes)
+	keys := results.Get("data.#." + model.JoinRest).Array()
+	vals := results.Get("data.#." + model.LabelRest).Array()
 	if len(keys) != len(vals) {
 		t.Logger.Error().
 			Str("restKey", model.JoinRest).

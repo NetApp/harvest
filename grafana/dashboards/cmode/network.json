@@ -1399,7 +1399,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Ethernet Drilldown",
+      "title": "Ethernet",
       "type": "row"
     },
     {
@@ -2457,7 +2457,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "FibreChannel Drilldown",
+      "title": "FibreChannel",
       "type": "row"
     },
     {
@@ -3018,7 +3018,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NVMe/FC Drilldown",
+      "title": "NVMe/FC",
       "type": "row"
     },
     {

@@ -8,10 +8,10 @@ require (
 	github.com/go-openapi/spec v0.20.9
 	github.com/hashicorp/go-version v1.6.0
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/rs/zerolog v1.30.0
-	github.com/shirou/gopsutil/v3 v3.23.8
+	github.com/rs/zerolog v1.31.0
+	github.com/shirou/gopsutil/v3 v3.23.9
 	github.com/spf13/cobra v1.7.0
-	github.com/tidwall/gjson v1.16.0
+	github.com/tidwall/gjson v1.17.0
 	github.com/tidwall/pretty v1.2.1
 	github.com/tidwall/sjson v1.2.5
 	github.com/zekroTJA/timedmap v1.5.1
