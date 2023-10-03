@@ -26,10 +26,10 @@ endpoints:
 
 export_options:
   instance_keys:
+    - address
     - lif
     - svm
   instance_labels:
-    - address
     - home_node
     - home_port
     - ipspace
