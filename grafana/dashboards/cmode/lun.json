@@ -1415,7 +1415,7 @@
           "type": "table"
         }
       ],
-      "title": "LUN Table Drilldown",
+      "title": "LUN Table",
       "type": "row"
     },
     {
@@ -1978,7 +1978,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top LUN Performance Drilldown",
+      "title": "Top LUN Performance",
       "type": "row"
     },
     {
@@ -2299,7 +2299,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top LUN Performance Efficiency Drilldown",
+      "title": "Top LUN Performance Efficiency",
       "type": "row"
     },
     {
@@ -3891,7 +3891,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Volume and LUN Capacity Drilldown",
+      "title": "Top Volume and LUN Capacity",
       "type": "row"
     },
     {
@@ -4526,7 +4526,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Per LUN Drilldown (Must Select Cluster/SVM/Volume/LUN)",
+      "title": "Per LUN (Must Select Cluster/SVM/Volume/LUN)",
       "type": "row"
     }
   ],

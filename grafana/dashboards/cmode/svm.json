@@ -1506,7 +1506,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volumes Performance Drilldown",
+      "title": "Volumes Performance",
       "type": "row"
     },
     {
@@ -2203,7 +2203,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "LIF Drilldown",
+      "title": "LIF",
       "type": "row"
     },
     {
@@ -3265,7 +3265,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "CIFS Drilldown",
+      "title": "CIFS",
       "type": "row"
     },
     {
@@ -4326,7 +4326,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "FCP Drilldown",
+      "title": "FCP",
       "type": "row"
     },
     {
@@ -5273,7 +5273,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "iSCSI Drilldown",
+      "title": "iSCSI",
       "type": "row"
     },
     {
@@ -6556,7 +6556,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NFSv3 Drilldown",
+      "title": "NFSv3",
       "type": "row"
     },
     {
@@ -7856,7 +7856,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NFSv4 Drilldown",
+      "title": "NFSv4",
       "type": "row"
     },
     {
@@ -9164,7 +9164,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NFSv4.1 Drilldown",
+      "title": "NFSv4.1",
       "type": "row"
     },
     {
@@ -10226,7 +10226,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "NVMe/FC Drilldown",
+      "title": "NVMe/FC",
       "type": "row"
     },
     {
@@ -10480,7 +10480,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Copy Offload Drilldown",
+      "title": "Copy Offload",
       "type": "row"
     },
     {
@@ -11417,7 +11417,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "QoS Policy Group Drilldown",
+      "title": "QoS Policy Group",
       "type": "row"
     },
     {
@@ -12242,7 +12242,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "QoS Policy Group Latency from Resource Drilldown",
+      "title": "QoS Policy Group Latency from Resource",
       "type": "row"
     },
     {
@@ -12886,7 +12886,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume Capacity Drilldown",
+      "title": "Volume Capacity",
       "type": "row"
     },
     {
