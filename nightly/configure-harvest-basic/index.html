@@ -652,6 +652,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#poller_files" class="md-nav__link">
+    Poller_files
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configuring-collectors" class="md-nav__link">
     Configuring collectors
   </a>
@@ -1358,6 +1365,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#poller_files" class="md-nav__link">
+    Poller_files
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configuring-collectors" class="md-nav__link">
     Configuring collectors
   </a>
@@ -1650,6 +1664,55 @@ not prompt you for the key when importing dashboards.</p>
 <div class="highlight"><pre><span></span><code>Tools:
   #grafana_api_token: &#39;aaa-bbb-ccc-ddd&#39;
 </code></pre></div>
+<h2 id="poller_files">Poller_files<a class="headerlink" href="#poller_files" title="Permanent link">&para;</a></h2>
+<p>Harvest supports loading pollers from multiple files specified in the <code>Poller_files</code> section of your <code>harvest.yml</code> file.
+For example, the following snippet tells harvest to load pollers from all the <code>*.yml</code> files under the <code>configs</code> directory, 
+and from the <code>path/to/single.yml</code> file.</p>
+<p>Paths may be relative or absolute.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Poller_files</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configs/*.yml</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path/to/single.yml</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">u2</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+</code></pre></div>
+<p>Each referenced file can contain one or more unique pollers.
+Ensure that you include the top-level <code>Pollers</code> section in these files.
+All other top-level sections will be ignored.
+For example:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># contents of configs/00-rtp.yml</span>
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ntap3</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rtp</span>
+
+<span class="w">  </span><span class="nt">ntap4</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rtp</span>
+<span class="nn">---</span>
+<span class="c1"># contents of configs/01-rtp.yml</span>
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ntap5</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blr</span>
+<span class="nn">---</span>
+<span class="c1"># contents of path/to/single.yml</span>
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ntap1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+
+<span class="w">  </span><span class="nt">ntap2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+</code></pre></div>
+<p>At runtime, all files will be read and combined into a single configuration.
+The example above would result in the following set of pollers, in this order.
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">u2</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap3</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap4</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap5</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap1</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap2</span>
+</code></pre></div></p>
+<p>When using glob patterns, the list of matching paths will be sorted before they are read.
+Errors will be logged for all duplicate pollers and Harvest will refuse to start.</p>
 <h2 id="configuring-collectors">Configuring collectors<a class="headerlink" href="#configuring-collectors" title="Permanent link">&para;</a></h2>
 <p>Collectors are configured by their own configuration files (<a href="../configure-templates/">templates</a>), which are stored in subdirectories
 in <a href="https://github.com/NetApp/harvest/tree/main/conf">conf/</a>.
