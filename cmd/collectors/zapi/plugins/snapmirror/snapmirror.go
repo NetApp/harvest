@@ -56,7 +56,7 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	destUpdCount := 0
 	srcUpdCount := 0
 
-	if cluster, ok := data.GetGlobalLabels().GetHas("cluster"); ok {
+	if cluster, ok := data.GetGlobalLabels()["cluster"]; ok {
 		if err := my.getSVMPeerData(cluster); err != nil {
 			return nil, err
 		}

@@ -16,11 +16,13 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 	"path"
 	"strconv"
@@ -1450,7 +1452,13 @@ func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, 
 				r.Logger.Trace().Str("label", label).Str("key", key).Msg("Missing label")
 			}
 		}
-		r.Logger.Debug().Str("query", r.Prop.Query).Str("key", key).Str("qos labels", instance.GetLabels().String()).Send()
+		if r.Logger.GetLevel() == zerolog.DebugLevel {
+			r.Logger.Debug().
+				Str("query", r.Prop.Query).
+				Str("key", key).
+				Str("qos labels", dict.String(instance.GetLabels())).
+				Send()
+		}
 	}
 }
 

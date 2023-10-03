@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"maps"
 	"regexp"
 	"sort"
 	"strings"
@@ -67,7 +68,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 			key := i.GetLabel("svm") + "." + match[1]
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
-				fg.SetLabels(i.GetLabels().Copy())
+				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
 				// Flexgroup don't show any aggregate, node
 				fg.SetLabel("aggr", "")
@@ -77,7 +78,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 			if volumeAggrmetric.GetInstance(key) == nil {
 				flexgroupInstance, _ := volumeAggrmetric.NewInstance(key)
-				flexgroupInstance.SetLabels(i.GetLabels().Copy())
+				flexgroupInstance.SetLabels(maps.Clone(i.GetLabels()))
 				flexgroupInstance.SetLabel("volume", match[1])
 				// Flexgroup don't show any node
 				flexgroupInstance.SetLabel("node", "")
@@ -98,7 +99,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				v.Logger.Error().Err(err).Str("key", key).Msg("Failed to create new instance")
 				continue
 			}
-			flexvolInstance.SetLabels(i.GetLabels().Copy())
+			flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
 			flexvolInstance.SetLabel(style, "flexvol")
 			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
 				v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
@@ -108,7 +109,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	v.Logger.Debug().Int("flexgroup volume count", len(cache.GetInstances())).Msg("")
 
-	//cache.Reset()
+	// cache.Reset()
 
 	// create summary
 	for _, i := range data.GetInstances() {
