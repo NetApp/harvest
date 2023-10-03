@@ -76,25 +76,23 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		names := interfacesList.Get("name").Array()
 		address := interfacesList.Get("address").Array()
 
-		if names != nil && address != nil {
-			if len(names) == len(address) {
-				for i, name := range names {
-					index := strings.Join([]string{cluster, strconv.Itoa(count)}, "_")
-					interfaceInstance, err := n.data.NewInstance(index)
-					if err != nil {
-						n.Logger.Error().Err(err).Str("add instance failed for instance key", key).Send()
-						return nil, err
-					}
-
-					for _, l := range instanceLabels {
-						interfaceInstance.SetLabel(l, instance.GetLabel(l))
-					}
-					interfaceInstance.SetLabel("index", index)
-					interfaceInstance.SetLabel("address", address[i].String())
-					interfaceInstance.SetLabel("name", name.String())
-					interfaceInstance.SetLabel("route_uuid", routeID)
-					count++
+		if len(names) == len(address) {
+			for i, name := range names {
+				index := strings.Join([]string{cluster, strconv.Itoa(count)}, "_")
+				interfaceInstance, err := n.data.NewInstance(index)
+				if err != nil {
+					n.Logger.Error().Err(err).Str("add instance failed for instance key", key).Send()
+					return nil, err
 				}
+
+				for _, l := range instanceLabels {
+					interfaceInstance.SetLabel(l, instance.GetLabel(l))
+				}
+				interfaceInstance.SetLabel("index", index)
+				interfaceInstance.SetLabel("address", address[i].String())
+				interfaceInstance.SetLabel("name", name.String())
+				interfaceInstance.SetLabel("route_uuid", routeID)
+				count++
 			}
 		}
 	}
