@@ -2817,7 +2817,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Disk Utilization: Node-level overview",
+      "title": "Disk Utilization: Node-level Overview",
       "type": "row"
     }
   ],
