@@ -53,6 +53,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	opsKeyPrefix := "temp_"
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
+	fgAggrMap := make(map[string]*set.Set)
 	flexgroupAggrsMap := make(map[string]*set.Set)
 	// volume_aggr_labels metric is deprecated now and will be removed later.
 	metricName := "labels"
@@ -81,10 +82,10 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
-				// Flexgroup don't show any aggregate, node
-				fg.SetLabel("aggr", "")
+				// Flexgroup don't show any node
 				fg.SetLabel("node", "")
 				fg.SetLabel(style, "flexgroup")
+				fgAggrMap[key] = set.New()
 			}
 
 			if volumeAggrmetric.GetInstance(key) == nil {
@@ -99,6 +100,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 					v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 				}
 			}
+			fgAggrMap[key].Add(i.GetLabel("aggr"))
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel(style, "flexgroup_constituent")
 			i.SetExportable(false)
@@ -143,6 +145,11 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				v.Logger.Error().Err(nil).Msgf("instance [%s] not in local cache", key)
 				continue
 			}
+
+			// set aggrs label for fg, make sure the order of aggregate is same for each poll
+			aggrs := fgAggrMap[key].Values()
+			sort.Strings(aggrs)
+			fg.SetLabel("aggr", strings.Join(aggrs, ","))
 
 			for mkey, m := range data.GetMetrics() {
 
