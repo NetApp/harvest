@@ -283,7 +283,11 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	query := "api/support/ems/messages"
 	fields := []string{"name"}
 
-	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "", e.ReturnTimeOut, query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(strings.Join(fields, ",")).
+		ReturnTimeout(e.ReturnTimeOut).
+		Build()
 
 	if records, err = e.GetRestData(href); err != nil {
 		return nil, err
@@ -415,7 +419,12 @@ func (e *Ems) getHref(names []string, filter []string) string {
 	orderByIndexFilter := "order_by=" + "index%20asc"
 	filter = append(filter, orderByIndexFilter)
 
-	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
+	href := rest.NewHrefBuilder().
+		APIPath(e.Query).
+		Fields(strings.Join(e.Fields, ",")).
+		Filter(filter).
+		ReturnTimeout(e.ReturnTimeOut).
+		Build()
 	return href
 }
 

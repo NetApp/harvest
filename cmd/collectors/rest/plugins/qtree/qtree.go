@@ -159,7 +159,11 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		filter = []string{"return_unmatched_nested_array_objects=true", "show_default_records=true", "type=" + strings.Join(q.quotaType[:], "|")}
 	}
 
-	href := rest.BuildHref("", "*", filter, "", "", "", "", q.query)
+	href := rest.NewHrefBuilder().
+		APIPath(q.query).
+		Fields("*").
+		Filter(filter).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(q.client, href, q.Logger); err != nil {
 		return nil, err

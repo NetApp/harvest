@@ -72,7 +72,12 @@ func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.L
 	query := "private/cli/cluster/date"
 	fields := []string{"date"}
 
-	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", returnTimeOut, "")
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(strings.Join(fields, ",")).
+		MaxRecords("1").
+		ReturnTimeout(returnTimeOut).
+		Build()
 
 	if records, err = rest.Fetch(client, href); err != nil {
 		return clusterTime, err

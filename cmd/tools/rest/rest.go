@@ -184,7 +184,16 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 	now := time.Now()
 	var records []any
 	var curls []string
-	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
+
+	href := NewHrefBuilder().
+		APIPath(args.API).
+		Fields(args.Fields).
+		Filter(args.Field).
+		QueryFields(args.QueryField).
+		QueryValue(args.QueryValue).
+		MaxRecords(args.MaxRecords).
+		Endpoint(args.Endpoint).
+		Build()
 
 	err = FetchForCli(client, href, &records, args.DownloadAll, &curls)
 	if err != nil {

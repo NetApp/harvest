@@ -209,7 +209,10 @@ func (my *SVM) GetKerberosConfig() (map[string]string, error) {
 	svmKerberosMap = make(map[string]string)
 	query := "api/protocols/nfs/kerberos/interfaces"
 	kerberosFields := []string{"svm.name", "enabled"}
-	href := rest.BuildHref("", strings.Join(kerberosFields, ","), nil, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(strings.Join(kerberosFields, ",")).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return nil, err
@@ -241,7 +244,10 @@ func (my *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	svmFpolicyMap = make(map[string]Fpolicy)
 	query := "api/protocols/fpolicy"
 	fpolicyFields := []string{"svm.name", "policies.enabled", "policies.name"}
-	href := rest.BuildHref("", strings.Join(fpolicyFields, ","), nil, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(strings.Join(fpolicyFields, ",")).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return nil, err
@@ -274,7 +280,10 @@ func (my *SVM) GetIscsiServices() (map[string]string, error) {
 	svmIscsiServiceMap = make(map[string]string)
 	query := "api/protocols/san/iscsi/services"
 	iscsiServiceFields := []string{"svm.name", "enabled"}
-	href := rest.BuildHref("", strings.Join(iscsiServiceFields, ","), nil, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(strings.Join(iscsiServiceFields, ",")).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return nil, err
@@ -306,7 +315,10 @@ func (my *SVM) GetIscsiCredentials() (map[string]string, error) {
 	svmIscsiCredentialMap = make(map[string]string)
 	query := "api/protocols/san/iscsi/credentials"
 	iscsiCredentialFields := []string{"svm.name", "authentication_type"}
-	href := rest.BuildHref("", strings.Join(iscsiCredentialFields, ","), nil, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(strings.Join(iscsiCredentialFields, ",")).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return nil, err

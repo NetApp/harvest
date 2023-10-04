@@ -26,7 +26,11 @@ func collectChassisFRU(client *rest.Client, logger *logging.Logger) (map[string]
 	fields := "fru-name,type,status,connected-nodes,num-nodes"
 	query := "api/private/cli/system/chassis/fru"
 	filter := []string{"type=psu"}
-	href := rest.BuildHref("", fields, filter, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter(filter).
+		Build()
 
 	result, err := rest.Fetch(client, href)
 	if err != nil {

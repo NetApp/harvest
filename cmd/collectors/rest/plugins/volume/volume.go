@@ -190,7 +190,11 @@ func (my *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 
 	diskFields := []string{"aggregates.name", "aggregates.uuid"}
 	query := "api/storage/disks"
-	href := rest.BuildHref("", strings.Join(diskFields, ","), []string{"protection_mode=!data|full"}, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(strings.Join(diskFields, ",")).
+		Filter([]string{"protection_mode=!data|full"}).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return nil, err

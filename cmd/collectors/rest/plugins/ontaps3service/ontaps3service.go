@@ -67,7 +67,10 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	data := dataMap[o.Object]
 
 	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port"}
-	href := rest.BuildHref("", strings.Join(fields, ","), nil, "", "", "", "", o.query)
+	href := rest.NewHrefBuilder().
+		APIPath(o.query).
+		Fields(strings.Join(fields, ",")).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(o.client, href, o.Logger); err != nil {
 		return nil, err
