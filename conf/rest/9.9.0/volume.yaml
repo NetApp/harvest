@@ -88,6 +88,16 @@ endpoints:
       - filter:
           - privilege_level=diagnostic
 
+  - query: api/private/cli/volume/footprint
+    counters:
+      - ^^volume
+      - ^^vserver                                 => svm
+      - volume_blocks_footprint_bin0              => performance_tier_footprint
+      - volume_blocks_footprint_bin0_percent      => performance_tier_footprint_percent
+      - volume_blocks_footprint_bin1              => capacity_tier_footprint
+      - volume_blocks_footprint_bin1_percent      => capacity_tier_footprint_percent
+
+
 plugins:
   - Volume:
       schedule:

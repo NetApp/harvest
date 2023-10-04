@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
@@ -11,7 +12,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/sensor"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
@@ -403,7 +403,7 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	case "SVM":
 		return svm.New(abc)
 	case "Sensor":
-		return sensor.New(abc)
+		return collectors.NewSensor(abc)
 	case "Shelf":
 		return shelf.New(abc)
 	case "SecurityAccount":
@@ -502,6 +502,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 						labelString := r.String()
 						labelArray = append(labelArray, labelString)
 					}
+					sort.Strings(labelArray)
 					instance.SetLabel(display, strings.Join(labelArray, ","))
 				} else {
 					instance.SetLabel(display, value.String())
@@ -581,7 +582,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		exporterTypes = append(exporterTypes, exporter.GetClass())
 	}
 
-	var counters = make([]string, 0)
+	var counters = make([]string, 0, len(r.Prop.Counters))
 	for k := range r.Prop.Counters {
 		counters = append(counters, k)
 	}
@@ -598,6 +599,16 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	// Add collector information
+	md := r.GetMetadata()
+	info := collector.InstanceInfo{
+		Count:      md.LazyValueInt64("instances", "data"),
+		DataPoints: md.LazyValueInt64("metrics", "data"),
+		PollTime:   md.LazyValueInt64("poll_time", "data"),
+		APITime:    md.LazyValueInt64("api_time", "data"),
+		ParseTime:  md.LazyValueInt64("parse_time", "data"),
+		PluginTime: md.LazyValueInt64("plugin_time", "data"),
+	}
+
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      r.Name,
 		Query:     r.Prop.Query,
@@ -608,6 +619,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		},
 		Schedules:     schedules,
 		ClientTimeout: r.Client.Timeout.String(),
+		InstanceInfo:  &info,
 	})
 
 	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node")) || r.Name == "Ems" {
@@ -618,16 +630,6 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			p.Target.Serial = r.Client.Cluster().UUID
 		}
 		p.Target.ClusterUUID = r.Client.Cluster().UUID
-
-		md := r.GetMetadata()
-		info := collector.InstanceInfo{
-			Count:      md.LazyValueInt64("instances", "data"),
-			DataPoints: md.LazyValueInt64("metrics", "data"),
-			PollTime:   md.LazyValueInt64("poll_time", "data"),
-			APITime:    md.LazyValueInt64("api_time", "data"),
-			ParseTime:  md.LazyValueInt64("parse_time", "data"),
-			PluginTime: md.LazyValueInt64("plugin_time", "data"),
-		}
 
 		if r.Object == "Node" || r.Name == "ems" {
 			var (

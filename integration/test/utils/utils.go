@@ -248,7 +248,7 @@ func WriteToken(token string) {
 	var err error
 	filename := "harvest.yml"
 	abs, _ := filepath.Abs(filename)
-	err = conf.LoadHarvestConfig(filename)
+	_, err = conf.LoadHarvestConfig(filename)
 	PanicIfNotNil(err)
 	tools := conf.Config.Tools
 	if tools != nil {

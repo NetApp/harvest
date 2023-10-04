@@ -253,7 +253,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 	// only to store global labels that we'll
 	// add to all instances
 	global := NewMeasurement("", 0)
-	for key, value := range data.GetGlobalLabels().Map() {
+	for key, value := range data.GetGlobalLabels() {
 		global.AddTag(key, value)
 	}
 
@@ -271,14 +271,14 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 
 		// tag set
 		if includeAll {
-			for label, value := range instance.GetLabels().Map() {
+			for label, value := range instance.GetLabels() {
 				if value != "" {
 					m.AddTag(label, value)
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
-				if value, has := instance.GetLabels().GetHas(key); has && value != "" {
+				if value, has := instance.GetLabels()[key]; has && value != "" {
 					m.AddTag(key, value)
 				}
 			}
@@ -286,14 +286,14 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 
 		// skip instance without key tags
 		if len(m.tagSet) == 0 {
-			e.Logger.Debug().Msgf("skip instance (%s), no tag set parsed from labels (%v)", key, instance.GetLabels().Map())
+			e.Logger.Debug().Msgf("skip instance (%s), no tag set parsed from labels (%v)", key, instance.GetLabels())
 		}
 
 		// field set
 
 		// strings
 		for _, label := range labelsToInclude {
-			if value, has := instance.GetLabels().GetHas(label); has && value != "" {
+			if value, has := instance.GetLabels()[label]; has && value != "" {
 				if value == "true" || value == "false" {
 					m.AddField(label, value)
 				} else {
@@ -320,7 +320,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, error) {
 			fieldName := metric.GetName()
 
 			if metric.HasLabels() {
-				for _, label := range metric.GetLabels().Map() {
+				for _, label := range metric.GetLabels() {
 					fieldName += "_" + label
 				}
 			}

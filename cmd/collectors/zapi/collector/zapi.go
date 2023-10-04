@@ -6,13 +6,13 @@ package zapi
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/security"
-	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/sensor"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/svm"
@@ -85,21 +85,20 @@ func (z *Zapi) Init(a *collector.AbstractCollector) error {
 }
 
 func (z *Zapi) InitVars() error {
-	var err error
-
 	// It's used for unit tests only
 	if z.Options.IsTest {
 		z.Client = client.NewTestClient()
 		templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
-		template, templatePath, err := z.ImportSubTemplate("cdot", templateName, [3]int{9, 8, 0})
+		template, path, err := z.ImportSubTemplate("cdot", templateName, [3]int{9, 8, 0})
 		if err != nil {
-			return fmt.Errorf("unable to import template=[%s] %w", templatePath, err)
+			return err
 		}
-		z.TemplatePath = templatePath
+		z.TemplatePath = path
 		z.Params.Union(template)
 		return nil
 	}
 
+	var err error
 	if z.Client, err = client.New(conf.ZapiPoller(z.Params), z.Auth); err != nil { // convert to connection error, so poller aborts
 		return errs.New(errs.ErrConnection, err.Error())
 	}
@@ -122,12 +121,12 @@ func (z *Zapi) InitVars() error {
 	z.HostModel = model
 	templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
 
-	template, templatePath, err := z.ImportSubTemplate(model, templateName, z.Client.Version())
+	template, path, err := z.ImportSubTemplate(model, templateName, z.Client.Version())
 	if err != nil {
-		return fmt.Errorf("unable to import template=[%s] %w", templatePath, err)
+		return err
 	}
 
-	z.TemplatePath = templatePath
+	z.TemplatePath = path
 
 	z.Params.Union(template)
 
@@ -159,7 +158,7 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	case "Volume":
 		return volume.New(abc)
 	case "Sensor":
-		return sensor.New(abc)
+		return collectors.NewSensor(abc)
 	case "Certificate":
 		return certificate.New(abc)
 	case "SVM":
@@ -285,7 +284,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				// Handling array with comma separated values
 				previousValue := instance.GetLabel(label)
 				if isAppend && previousValue != "" {
-					instance.SetLabel(label, previousValue+","+value)
+					currentVal := strings.Split(previousValue+","+value, ",")
+					sort.Strings(currentVal)
+					instance.SetLabel(label, strings.Join(currentVal, ","))
 					z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, instance.GetLabel(label)+","+value, color.End)
 				} else {
 					instance.SetLabel(label, value)
@@ -375,12 +376,12 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, instanceElem := range instances {
-			//c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
+			// c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
 			keys, found := instanceElem.SearchContent(z.shortestPathPrefix, z.instanceKeyPaths)
-			//logger.Debug(z.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
+			// logger.Debug(z.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
 
 			if !found {
-				//logger.Debug(z.Prefix, "Skipping instance: no keys fetched")
+				// logger.Debug(z.Prefix, "Skipping instance: no keys fetched")
 				continue
 			}
 
@@ -451,6 +452,16 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	// Add collector information
+	md := z.GetMetadata()
+	info := collector.InstanceInfo{
+		Count:      md.LazyValueInt64("instances", "data"),
+		DataPoints: md.LazyValueInt64("metrics", "data"),
+		PollTime:   md.LazyValueInt64("poll_time", "data"),
+		APITime:    md.LazyValueInt64("api_time", "data"),
+		ParseTime:  md.LazyValueInt64("parse_time", "data"),
+		PluginTime: md.LazyValueInt64("plugin_time", "data"),
+	}
+
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      z.Name,
 		Query:     z.Query,
@@ -462,6 +473,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		},
 		Schedules:     schedules,
 		ClientTimeout: clientTimeout,
+		InstanceInfo:  &info,
 	})
 
 	if z.Name == "Zapi" && (z.Object == "Volume" || z.Object == "Node") {
@@ -471,16 +483,6 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 			p.Target.Serial = z.GetHostUUID()
 		}
 		p.Target.ClusterUUID = z.Client.ClusterUUID()
-
-		md := z.GetMetadata()
-		info := collector.InstanceInfo{
-			Count:      md.LazyValueInt64("instances", "data"),
-			DataPoints: md.LazyValueInt64("metrics", "data"),
-			PollTime:   md.LazyValueInt64("poll_time", "data"),
-			APITime:    md.LazyValueInt64("api_time", "data"),
-			ParseTime:  md.LazyValueInt64("parse_time", "data"),
-			PluginTime: md.LazyValueInt64("plugin_time", "data"),
-		}
 
 		if z.Object == "Node" {
 			var (

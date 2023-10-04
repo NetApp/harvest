@@ -88,7 +88,7 @@
       },
       "id": 28,
       "panels": [],
-      "title": "Top NVMe Namespaces Performance Drilldown",
+      "title": "Top NVMe Namespaces Performance",
       "type": "row"
     },
     {
@@ -899,7 +899,7 @@
           "type": "table"
         }
       ],
-      "title": "NVMe Namespaces Table Drilldown",
+      "title": "NVMe Namespaces Table",
       "type": "row"
     }
   ],

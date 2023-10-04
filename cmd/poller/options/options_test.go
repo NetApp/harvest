@@ -6,8 +6,7 @@ import "testing"
 // See https://github.com/NetApp/harvest/issues/28
 func TestConfigPath(t *testing.T) {
 	want := "foo"
-	options := Options{Config: want}
-	SetPathsAndHostname(&options)
+	options := New(WithConfigPath(want))
 
 	if options.Config != want {
 		t.Fatalf(`options.Config expected=[%q], actual was=[%q]`, want, options.Config)

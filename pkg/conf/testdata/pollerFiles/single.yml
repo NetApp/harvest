@@ -1,0 +1,14 @@
+
+Poller_files: # these will be ignored since they are in single.yml
+  - testdata/pollerFiles/many/*.yml
+  - testdata/pollerFiles/single.yml
+  - testdata/pollerFiles/missing1.yml
+  - testdata/pollerFiles/missing2.yml
+  - testdata/pollerFiles/missing3.yml
+  - testdata/pollerFiles/single.yml
+
+Pollers:
+  moon:
+    addr: localhost
+    collectors:
+      - Simple

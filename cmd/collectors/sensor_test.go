@@ -1,27 +1,39 @@
-package sensor
+package collectors
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
-var testxml = "../../../../../cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml"
+var testxml = "testdata/sensor.xml"
 var mat *matrix.Matrix
 var sensor = &Sensor{AbstractPlugin: plugin.New("sensor", nil, nil, nil, "sensor", nil)}
 
-func init() {
-	//setup matrix data
+func TestMain(m *testing.M) {
+	loadTestdata()
+	os.Exit(m.Run())
+}
+
+func loadTestdata() {
+	// setup matrix data
 	var err error
 	var fetch func(*matrix.Instance, *node.Node, []string)
-	dat, _ := os.ReadFile(testxml)
-	instanceLabelPaths := map[string]string{"environment-sensors-info.discrete-sensor-state": "discrete_state",
+	dat, err := os.ReadFile(testxml)
+	if err != nil {
+		abs, _ := filepath.Abs(testxml)
+		fmt.Printf("failed to load %s\n", abs)
+		panic(err)
+	}
+	instanceLabelPaths := map[string]string{
+		"environment-sensors-info.discrete-sensor-state":  "discrete_state",
 		"environment-sensors-info.sensor-type":            "type",
 		"environment-sensors-info.threshold-sensor-state": "threshold_state",
 		"environment-sensors-info.warning-high-threshold": "warning_high",
@@ -55,7 +67,10 @@ func init() {
 	_, _ = mat.NewMetricInt64("environment-sensors-info.critical-high-threshold")
 	_, _ = mat.NewMetricInt64("environment-sensors-info.critical-low-threshold")
 	_, _ = mat.NewMetricInt64("environment-sensors-info.threshold-sensor-value")
-	response, _ := tree.LoadXML(dat)
+	response, err := tree.LoadXML(dat)
+	if err != nil {
+		panic(err)
+	}
 	instances := response.SearchChildren(shortestPathPrefix)
 	for _, instanceElem := range instances {
 		keys, found := instanceElem.SearchContent(shortestPathPrefix, instanceKeyPath)
@@ -78,7 +93,7 @@ func init() {
 
 	sensor.data = matrix.New("Sensor", "environment_sensor", "environment_sensor")
 	sensor.instanceKeys = make(map[string]string)
-	sensor.instanceLabels = make(map[string]*dict.Dict)
+	sensor.instanceLabels = make(map[string]map[string]string)
 	sensor.AbstractPlugin.Logger = logging.Get()
 
 	for _, k := range eMetrics {
@@ -91,34 +106,39 @@ func init() {
 // average_ambient_temperature is
 // cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
 
-//+------------+-----------+------------+-----------+
-//| node       | value_min | value_mean | value_max |
-//+------------+-----------+------------+-----------+
-//| cdot-k3-05 | 21        | 22         | 23        |
-//| cdot-k3-06 | 21        | 22.5       | 24        |
-//| cdot-k3-07 | 21        | 22         | 23        |
-//| cdot-k3-08 | 21        | 22.5       | 24        |
-//+------------+-----------+------------+-----------+
+// +------------+-----------+------------+-----------+
+// | node       | value_min | value_mean | value_max |
+// +------------+-----------+------------+-----------+
+// | cdot-k3-05 | 21        | 22         | 23        |
+// | cdot-k3-06 | 21        | 22.5       | 24        |
+// | cdot-k3-07 | 21        | 22         | 23        |
+// | cdot-k3-08 | 21        | 22.5       | 24        |
+// +------------+-----------+------------+-----------+
 
 //
 // average_temperature [min, avg, max] is calculated like so
 // cat cmd/collectors/zapi/plugins/sensor/testdata/sensor.xml | dasel -r xml -w json | jq -r '.root."attributes-list"."environment-sensors-info"[] | select(."sensor-type" | test("thermal")) | {node: (."node-name"), name: (."sensor-name"), value: (."threshold-sensor-value")} | [.node, .name, .value] | @csv' | rg -v "Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|Bat Ambient \d|Riser Inlet Temp" | rg -v "Fake" | mlr --csv --implicit-csv-header label node,name,value then stats1 -a min,mean,max -f value -g node | mlr --csv --opprint --barred cat
 
-//+------------+-----------+--------------------+-----------+
-//| node       | value_min | value_mean         | value_max |
-//+------------+-----------+--------------------+-----------+
-//| cdot-k3-05 | 19        | 26.823529411764707 | 36        |
-//| cdot-k3-06 | 19        | 26.352941176470587 | 35        |
-//| cdot-k3-07 | 19        | 26.352941176470587 | 35        |
-//| cdot-k3-08 | 20        | 27.176470588235293 | 36        |
-//+------------+-----------+--------------------+-----------+
+// +------------+-----------+--------------------+-----------+
+// | node       | value_min | value_mean         | value_max |
+// +------------+-----------+--------------------+-----------+
+// | cdot-k3-05 | 19        | 26.823529411764707 | 36        |
+// | cdot-k3-06 | 19        | 26.352941176470587 | 35        |
+// | cdot-k3-07 | 19        | 26.352941176470587 | 35        |
+// | cdot-k3-08 | 20        | 27.176470588235293 | 36        |
+// +------------+-----------+--------------------+-----------+
 
 func TestSensor_Run(t *testing.T) {
-
-	dataMap := map[string]*matrix.Matrix{
-		mat.Object: mat,
+	nodeToNumNode := map[string]int{
+		"cdot-k3-05": 1,
+		"cdot-k3-06": 1,
+		"cdot-k3-07": 1,
+		"cdot-k3-08": 1,
 	}
-	omat, _ := sensor.Run(dataMap)
+	omat, err := calculateEnvironmentMetrics(mat, logging.Get(), zapiValueKey, sensor.data, nodeToNumNode)
+	if err != nil {
+		t.Errorf("got err %v", err)
+	}
 
 	expected := map[string]map[string]float64{
 		"average_ambient_temperature": {"cdot-k3-05": 22, "cdot-k3-06": 22.5, "cdot-k3-07": 22, "cdot-k3-08": 22.5},
@@ -134,6 +154,9 @@ func TestSensor_Run(t *testing.T) {
 
 	for _, k := range eMetrics {
 		metrics := omat[0].GetMetrics()
+		if len(omat[0].GetInstances()) == 0 {
+			t.Errorf("got no instances")
+		}
 		for iKey, v := range omat[0].GetInstances() {
 			got, _ := metrics[k].GetValueFloat64(v)
 			exp := expected[k][iKey]

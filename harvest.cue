@@ -50,8 +50,8 @@ label: [string]: string
 }
 
 #CertificateScript: {
-	path:      string
-	timeout?:  string
+	path:     string
+	timeout?: string
 }
 
 #CredentialsScript: {
@@ -69,11 +69,13 @@ Pollers: [Name=_]: #Poller
 #Poller: {
 	addr?:               string
 	auth_style?:         "basic_auth" | "certificate_auth"
+	ca_cert?:            string
+	certificate_script?: #CertificateScript
 	client_timeout?:     string
 	collectors?:         [...#CollectorDef] | [...string]
+	conf_path?:          string
 	credentials_file?:   string
 	credentials_script?: #CredentialsScript
-	certificate_script?: #CertificateScript
 	datacenter?:         string
 	exporters: [...string]
 	is_kfs?: bool

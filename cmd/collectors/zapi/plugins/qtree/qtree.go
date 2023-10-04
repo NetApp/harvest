@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -23,7 +22,7 @@ type Qtree struct {
 	*plugin.AbstractPlugin
 	data             *matrix.Matrix
 	instanceKeys     map[string]string
-	instanceLabels   map[string]*dict.Dict
+	instanceLabels   map[string]map[string]string
 	batchSize        string
 	client           *zapi.Client
 	query            string
@@ -61,7 +60,7 @@ func (q *Qtree) Init() error {
 
 	q.data = matrix.New(q.Parent+".Qtree", "quota", "quota")
 	q.instanceKeys = make(map[string]string)
-	q.instanceLabels = make(map[string]*dict.Dict)
+	q.instanceLabels = make(map[string]map[string]string)
 	q.historicalLabels = false
 
 	if q.Params.HasChildS("historicalLabels") {
@@ -70,7 +69,7 @@ func (q *Qtree) Init() error {
 
 		// apply all instance keys, instance labels from parent (qtree.yaml) to all quota metrics
 		if exportOption := q.ParentParams.GetChildS("export_options"); exportOption != nil {
-			//parent instancekeys would be added in plugin metrics
+			// parent instancekeys would be added in plugin metrics
 			if parentKeys := exportOption.GetChildS("instance_keys"); parentKeys != nil {
 				for _, parentKey := range parentKeys.GetAllChildContentS() {
 					instanceKeys.NewChildS("", parentKey)
@@ -173,7 +172,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		}
 	}
 
-	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
+	cluster := data.GetGlobalLabels()["cluster"]
 
 	for {
 		response, tag, ad, pd, err = q.client.InvokeBatchWithTimers(request, tag)
@@ -291,7 +290,7 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 					}
 				}
 
-				//set labels
+				// set labels
 				quotaInstance.SetLabel("type", quotaType)
 				quotaInstance.SetLabel("qtree", tree)
 				quotaInstance.SetLabel("volume", volume)
@@ -385,7 +384,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 					q.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
 					return err
 				}
-				//set labels
+				// set labels
 				quotaInstance.SetLabel("type", quotaType)
 				quotaInstance.SetLabel("qtree", tree)
 				quotaInstance.SetLabel("volume", volume)

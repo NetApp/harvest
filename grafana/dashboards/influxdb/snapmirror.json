@@ -1940,7 +1940,7 @@
           }
         }
       ],
-      "title": "Destination Node DrillDown",
+      "title": "Destination Node",
       "type": "row"
     },
     {
@@ -3190,7 +3190,7 @@
           }
         }
       ],
-      "title": "Destination SVM Drilldown",
+      "title": "Destination SVM",
       "type": "row"
     }
   ],

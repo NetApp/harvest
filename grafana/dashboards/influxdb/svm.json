@@ -73,7 +73,7 @@
       },
       "id": 37,
       "panels": [],
-      "title": "NFS${NFSv} Frontend Drilldown",
+      "title": "NFS${NFSv} Frontend",
       "type": "row"
     },
     {

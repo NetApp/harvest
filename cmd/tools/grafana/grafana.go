@@ -185,25 +185,27 @@ func exportFiles(dir string, folder *Folder) error {
 }
 
 func addSvmRegex(content []byte, fileName string, val string) []byte {
-	var err error
-	newContent := content
-	var svmExpression []string
+	svmExpression := []string{"templating.list.#(name=\"SVM\")"}
 	if fileName == "snapmirror.json" {
 		svmExpression = []string{"templating.list.#(name=\"DestinationSVM\")", "templating.list.#(name=\"SourceSVM\")"}
-	} else {
-		svmExpression = []string{"templating.list.#(name=\"SVM\")"}
 	}
 	for _, s := range svmExpression {
+		var err error
 		svm := gjson.GetBytes(content, s)
 		if svm.Exists() {
-			newContent, err = sjson.SetBytes(newContent, s+".regex", []byte(val))
+			content, err = sjson.SetBytes(content, s+".regex", []byte(val))
 			if err != nil {
-				fmt.Printf("error while setting svm regex")
+				fmt.Printf("Error while setting svm regex: %v\n", err)
+				continue
+			}
+			content, err = sjson.SetBytes(content, s+".allValue", json.RawMessage("null"))
+			if err != nil {
+				fmt.Printf("Error while setting svm allValue: %v\n", err)
 				continue
 			}
 		}
 	}
-	return newContent
+	return content
 }
 
 func addLabel(content []byte, label string, labelMap map[string]string) []byte {
@@ -349,7 +351,7 @@ func newLabelVar(label string) []byte {
 
 func doImport(_ *cobra.Command, _ []string) {
 	opts.command = "import"
-	err := conf.LoadHarvestConfig(opts.config)
+	_, err := conf.LoadHarvestConfig(opts.config)
 	if err != nil {
 		return
 	}
@@ -729,7 +731,7 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 
 	configPath = opts.config
 
-	err = conf.LoadHarvestConfig(configPath)
+	_, err = conf.LoadHarvestConfig(configPath)
 	if err != nil {
 		return err
 	}

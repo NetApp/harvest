@@ -16,11 +16,13 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 	"path"
 	"strconv"
@@ -267,7 +269,20 @@ func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matri
 		}
 
 		name := strings.Clone(c.Get("name").String())
+		dataType := strings.Clone(c.Get("type").String())
+		if p := r.GetOverride(name); p != "" {
+			dataType = p
+		}
+
 		if _, has := r.Prop.Metrics[name]; has {
+			if strings.Contains(dataType, "string") {
+				if _, ok := r.Prop.InstanceLabels[name]; !ok {
+					r.Prop.InstanceLabels[name] = r.Prop.Counters[name]
+				}
+				// remove from metrics
+				delete(r.Prop.Metrics, name)
+				return true
+			}
 			d := strings.Clone(c.Get("denominator.name").String())
 			if d != "" {
 				if _, has := r.Prop.Metrics[d]; !has {
@@ -463,18 +478,12 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 	for _, name := range t.Array() {
 		if name.String() == metric {
 			metricPath := "counters.#(name=" + metric + ")"
-			many := gjson.GetMany(instanceDataS,
-				metricPath+".value",
-				metricPath+".values",
-				metricPath+".labels",
-				metricPath+".counters.#.label",
-				metricPath+".counters.#.values",
-			)
-			value := many[0]
-			values := many[1]
-			labels := many[2]
-			subLabels := many[3]
-			subValues := many[4]
+			many := gjson.Parse(instanceDataS)
+			value := many.Get(metricPath + ".value")
+			values := many.Get(metricPath + ".values")
+			labels := many.Get(metricPath + ".labels")
+			subLabels := many.Get(metricPath + ".counters.#.label")
+			subValues := many.Get(metricPath + ".counters.#.values")
 			if value.String() != "" {
 				return &metricResponse{value: strings.Clone(value.String()), label: ""}
 			}
@@ -1443,7 +1452,13 @@ func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, 
 				r.Logger.Trace().Str("label", label).Str("key", key).Msg("Missing label")
 			}
 		}
-		r.Logger.Debug().Str("query", r.Prop.Query).Str("key", key).Str("qos labels", instance.GetLabels().String()).Send()
+		if r.Logger.GetLevel() == zerolog.DebugLevel {
+			r.Logger.Debug().
+				Str("query", r.Prop.Query).
+				Str("key", key).
+				Str("qos labels", dict.String(instance.GetLabels())).
+				Send()
+		}
 	}
 }
 

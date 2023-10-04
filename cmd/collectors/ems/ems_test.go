@@ -43,18 +43,17 @@ func BookendEmsTest(t *testing.T, e *Ems) {
 }
 
 func NewEms() *Ems {
-	// homepath is harvest directory level
+	// homePath is harvest directory level
 	homePath := "../../../"
-	emsConfgPath := homePath + "conf/ems/default.yaml"
-	emsPoller := "testEms"
+	emsConfigPath := homePath + "conf/ems/default.yaml"
 
 	conf.TestLoadHarvestConfig("testdata/config.yml")
-	opts := options.Options{
-		Poller:   emsPoller,
-		HomePath: homePath,
-		IsTest:   true,
-	}
-	ac := collector.New("Ems", "Ems", &opts, emsParams(emsConfgPath), nil)
+	opts := options.New(options.WithConfPath(homePath + "conf"))
+	opts.Poller = "testEms"
+	opts.HomePath = homePath
+	opts.IsTest = true
+
+	ac := collector.New("Ems", "Ems", opts, emsParams(emsConfigPath), nil)
 	e := &Ems{}
 	if err := e.Init(ac); err != nil {
 		log.Fatal().Err(err).Send()

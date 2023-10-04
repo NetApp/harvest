@@ -449,24 +449,18 @@ func (s *StorageGrid) InitProp() {
 
 func (s *StorageGrid) LoadTemplate() (string, error) {
 	var (
-		template     *node.Node
-		templatePath string
-		err          error
+		template *node.Node
+		path     string
+		err      error
 	)
 
-	// import template
-
-	template, templatePath, err = s.ImportSubTemplate(
-		"",
-		rest.TemplateFn(s.Params, s.Object),
-		s.client.Cluster.Version,
-	)
+	template, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), s.client.Cluster.Version)
 	if err != nil {
 		return "", err
 	}
 
 	s.Params.Union(template)
-	return templatePath, nil
+	return path, nil
 }
 
 func (s *StorageGrid) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
@@ -503,7 +497,7 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 		exporterTypes = append(exporterTypes, exporter.GetClass())
 	}
 
-	var counters = make([]string, 0)
+	var counters = make([]string, 0, len(s.Props.Counters))
 	for k := range s.Props.Counters {
 		counters = append(counters, k)
 	}
@@ -520,6 +514,16 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	// Add collector information
+	md := s.GetMetadata()
+	info := collector.InstanceInfo{
+		Count:      md.LazyValueInt64("instances", "data"),
+		DataPoints: md.LazyValueInt64("metrics", "data"),
+		PollTime:   md.LazyValueInt64("poll_time", "data"),
+		APITime:    md.LazyValueInt64("api_time", "data"),
+		ParseTime:  md.LazyValueInt64("parse_time", "data"),
+		PluginTime: md.LazyValueInt64("plugin_time", "data"),
+	}
+
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      s.Name,
 		Query:     s.Props.Query,
@@ -530,6 +534,7 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 		},
 		Schedules:     schedules,
 		ClientTimeout: s.client.Timeout.String(),
+		InstanceInfo:  &info,
 	})
 
 	version := s.client.Cluster.Version
@@ -551,15 +556,6 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 	}
 
 	if s.Object == "Tenant" {
-		md := s.GetMetadata()
-		info := collector.InstanceInfo{
-			Count:      md.LazyValueInt64("instances", "data"),
-			DataPoints: md.LazyValueInt64("metrics", "data"),
-			PollTime:   md.LazyValueInt64("poll_time", "data"),
-			APITime:    md.LazyValueInt64("api_time", "data"),
-			ParseTime:  md.LazyValueInt64("parse_time", "data"),
-			PluginTime: md.LazyValueInt64("plugin_time", "data"),
-		}
 		p.Tenants = &info
 	}
 }

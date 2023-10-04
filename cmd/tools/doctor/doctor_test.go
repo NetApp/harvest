@@ -104,24 +104,24 @@ func TestCustomYamlIsValid(t *testing.T) {
 
 	tests := []test{
 		{
-			path:        "testdata/conf1",
+			path:        "testdata/conf1/conf",
 			numInvalid:  1,
 			msgContains: "top-level",
 		},
 		{
-			path:        "testdata/conf2",
+			path:        "testdata/conf2/conf",
 			numInvalid:  1,
 			msgContains: "should be a map",
 		},
 		{
-			path:        "testdata/conf3",
+			path:        "testdata/conf3/conf",
 			numInvalid:  1,
 			msgContains: "does not exist",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {
-			valid := checkCustomYaml(tt.path)
+			valid := checkConfTemplates([]string{tt.path})
 			if valid.isValid {
 				t.Errorf("want isValid=%t, got %t", false, valid.isValid)
 			}

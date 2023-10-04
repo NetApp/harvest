@@ -7,6 +7,7 @@ package labelagent
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"strings"
@@ -189,7 +190,7 @@ func (a *LabelAgent) excludeEquals(matrix *matrix.Matrix) error {
 				instance.SetExportable(false)
 				a.Logger.Trace().Str("label", r.label).
 					Str("value", r.value).
-					Str("instance labels", instance.GetLabels().String()).
+					Str("instance labels", dict.String(instance.GetLabels())).
 					Msg("excludeEquals: excluded")
 				break
 			}
@@ -206,7 +207,7 @@ func (a *LabelAgent) excludeContains(matrix *matrix.Matrix) error {
 				instance.SetExportable(false)
 				a.Logger.Trace().Str("label", r.label).
 					Str("value", r.value).
-					Str("instance labels", instance.GetLabels().String()).
+					Str("instance labels", dict.String(instance.GetLabels())).
 					Msg("excludeContains: excluded")
 				break
 			}
@@ -223,7 +224,7 @@ func (a *LabelAgent) excludeRegex(matrix *matrix.Matrix) error {
 				instance.SetExportable(false)
 				a.Logger.Trace().Str("label", r.label).
 					Str("regex", r.reg.String()).
-					Str("instance labels", instance.GetLabels().String()).
+					Str("instance labels", dict.String(instance.GetLabels())).
 					Msg("excludeRegex: excluded")
 				break
 			}
@@ -242,7 +243,7 @@ func (a *LabelAgent) includeEquals(matrix *matrix.Matrix) error {
 					isExport = true
 					a.Logger.Trace().Str("label", r.label).
 						Str("value", r.value).
-						Str("instance labels", instance.GetLabels().String()).
+						Str("instance labels", dict.String(instance.GetLabels())).
 						Msg("includeEquals: included")
 					break
 				}
@@ -263,7 +264,7 @@ func (a *LabelAgent) includeContains(matrix *matrix.Matrix) error {
 					isExport = true
 					a.Logger.Trace().Str("label", r.label).
 						Str("value", r.value).
-						Str("instance labels", instance.GetLabels().String()).
+						Str("instance labels", dict.String(instance.GetLabels())).
 						Msg("includeContains: included")
 					break
 				}
@@ -286,7 +287,7 @@ func (a *LabelAgent) includeRegex(matrix *matrix.Matrix) error {
 					isExport = true
 					a.Logger.Trace().Str("label", r.label).
 						Str("regex", r.reg.String()).
-						Str("instance labels", instance.GetLabels().String()).
+						Str("instance labels", dict.String(instance.GetLabels())).
 						Msg("includeRegex: included")
 					break
 				}
