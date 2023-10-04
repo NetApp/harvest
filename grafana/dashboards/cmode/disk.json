@@ -1443,7 +1443,7 @@
               "format": "time_series",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{disk}}",
+              "legendFormat": "{{cluster}} - {{disk}} - {{plex}} - {{raid}}",
               "refId": "A"
             }
           ],
@@ -1535,7 +1535,7 @@
               "format": "time_series",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{disk}}",
+              "legendFormat": "{{cluster}} - {{disk}} - {{plex}} - {{raid}}",
               "refId": "A"
             }
           ],
@@ -1627,7 +1627,7 @@
               "format": "time_series",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{disk}}",
+              "legendFormat": "{{cluster}} - {{disk}} - {{plex}} - {{raid}}",
               "refId": "A"
             }
           ],
@@ -1721,7 +1721,7 @@
               "format": "time_series",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{disk}}",
+              "legendFormat": "{{cluster}} - {{disk}} - {{plex}} - {{raid}}",
               "refId": "A"
             }
           ],
