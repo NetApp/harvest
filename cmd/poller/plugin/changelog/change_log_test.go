@@ -57,8 +57,8 @@ func checkChangeLogInstances(t *testing.T, o []*matrix.Matrix, expectedInstances
 				if i.GetLabel(opLabel) != expectedOpLabel {
 					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, expectedOpLabel, i.GetLabel(opLabel))
 				}
-				if i.GetLabels().Size() != expectedLabels {
-					t.Errorf("ChangeLog number of labels expected %d, actual %d", expectedLabels, i.GetLabels().Size())
+				if len(i.GetLabels()) != expectedLabels {
+					t.Errorf("ChangeLog number of labels expected %d, actual %d", expectedLabels, len(i.GetLabels()))
 				}
 			}
 		}

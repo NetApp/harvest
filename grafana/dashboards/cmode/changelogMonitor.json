@@ -33,6 +33,12 @@
       "name": "Table",
       "type": "panel",
       "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
     }
   ],
   "annotations": {
@@ -59,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1690282136692,
+  "iteration": 1696405583422,
   "links": [
     {
       "asDropdown": true,
@@ -78,13 +84,43 @@
   ],
   "panels": [
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 303,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 305,
+      "options": {
+        "content": "To use this dashboard, enable the ChangeLog plugin for node, svm, and volume templates. For more details, visit the [ChangeLog documentation](https://netapp.github.io/harvest/latest/plugins/#changelog).",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
       },
       "id": 282,
       "panels": [
@@ -435,7 +471,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 297,
       "panels": [
@@ -466,7 +502,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 15
+            "y": 2
           },
           "id": 298,
           "options": {
@@ -525,7 +561,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 15
+            "y": 2
           },
           "id": 292,
           "options": {
@@ -585,7 +621,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 15
+            "y": 2
           },
           "id": 300,
           "options": {
@@ -673,7 +709,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 7
           },
           "id": 301,
           "options": {
@@ -791,7 +827,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 5
       },
       "id": 290,
       "panels": [
@@ -822,7 +858,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 29
+            "y": 3
           },
           "id": 284,
           "options": {
@@ -881,7 +917,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 29
+            "y": 3
           },
           "id": 299,
           "options": {
@@ -941,7 +977,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 29
+            "y": 3
           },
           "id": 293,
           "options": {
@@ -1029,7 +1065,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 8
           },
           "id": 295,
           "options": {

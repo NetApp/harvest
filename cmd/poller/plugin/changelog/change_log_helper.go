@@ -4,8 +4,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"gopkg.in/yaml.v3"
+	"slices"
 	"strconv"
-	"strings"
 )
 
 // Entry represents a single ChangeLog entry
@@ -48,69 +48,65 @@ ChangeLog:
 `
 
 // getChangeLogConfig returns a map of ChangeLog entries for the given object
-func getChangeLogConfig(parentParams *node.Node, s string, logger *logging.Logger) (Entry, error) {
-	var config Config
+func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger *logging.Logger) (Entry, error) {
+	var (
+		config Config
+		entry  Entry
+		err    error
+	)
 	object := parentParams.GetChildS("object").GetContentS()
 
-	temp := defaultChangeLogTemplate
-	if s != "" {
-		temp = preprocessOverwrite(object, s)
-		err := yaml.Unmarshal([]byte(temp), &config)
+	if len(overwriteConfig) > 0 {
+		entry, err = preprocessOverwrite(object, overwriteConfig)
 		if err != nil {
-			logger.Warn().Err(err).Str("template", s).Msg("failed to parse changelog dsl. Trying default")
-			temp = defaultChangeLogTemplate
+			logger.Warn().Err(err).Str("template", string(overwriteConfig)).Msg("failed to parse changelog dsl. Trying default")
+		} else {
+			return entry, nil
 		}
 	}
-	err := yaml.Unmarshal([]byte(temp), &config)
+
+	err = yaml.Unmarshal([]byte(defaultChangeLogTemplate), &config)
 	if err != nil {
 		return Entry{}, err
 	}
 
-	for _, obj := range config.ChangeLogs {
-		if obj.Object == object {
-			// populate publish_labels if they are empty
-			if obj.PublishLabels == nil {
-				if exportOption := parentParams.GetChildS("export_options"); exportOption != nil {
-					if exportedKeys := exportOption.GetChildS("instance_keys"); exportedKeys != nil {
-						obj.PublishLabels = append(obj.PublishLabels, exportedKeys.GetAllChildContentS()...)
-					} else if x := exportOption.GetChildContentS("include_all_labels"); x != "" {
-						if includeAllLabels, err := strconv.ParseBool(x); err != nil {
-							logger.Logger.Error().Err(err).Msg("parameter: include_all_labels")
-						} else {
-							if includeAllLabels {
-								obj.includeAll = true
-							}
-						}
+	i := slices.IndexFunc(config.ChangeLogs, func(entry Entry) bool {
+		return entry.Object == object
+	})
+	if i == -1 {
+		return Entry{}, nil
+	}
+	entry = config.ChangeLogs[i]
+	// populate publish_labels if they are empty
+	if entry.PublishLabels == nil {
+		if exportOption := parentParams.GetChildS("export_options"); exportOption != nil {
+			if exportedKeys := exportOption.GetChildS("instance_keys"); exportedKeys != nil {
+				entry.PublishLabels = append(entry.PublishLabels, exportedKeys.GetAllChildContentS()...)
+			} else if x := exportOption.GetChildContentS("include_all_labels"); x != "" {
+				if includeAllLabels, err := strconv.ParseBool(x); err != nil {
+					logger.Logger.Error().Err(err).Msg("parameter: include_all_labels")
+				} else {
+					if includeAllLabels {
+						entry.includeAll = true
 					}
 				}
 			}
-			return obj, nil
 		}
 	}
 
-	return Entry{}, nil
+	return entry, nil
 }
 
 // preprocessOverwrite updates the ChangeLog configuration by adding the given object and its properties
-func preprocessOverwrite(object string, configStr string) string {
-	// Split the YAML content into lines
-	lines := strings.Split(configStr, "\n")
+func preprocessOverwrite(object string, configStr []byte) (Entry, error) {
+	var entry Entry
 
-	// Add four spaces to indent each line, making them at the same level as object
-	indentedLines := make([]string, len(lines))
-	for i, line := range lines {
-		indentedLines[i] = "    " + line
+	err := yaml.Unmarshal(configStr, &entry)
+	if err != nil {
+		return entry, err
 	}
 
-	// Join the indented lines back into a single string
-	indentedYaml := strings.Join(indentedLines, "\n")
-
-	// Add the ChangeLog prefix
-	prefix := `
-ChangeLog:
-  - object: ` + object
-
-	newYaml := strings.Join([]string{prefix, indentedYaml}, "\n")
-	return newYaml
+	entry.Object = object
+	return entry, nil
 
 }

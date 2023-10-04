@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
+	"maps"
 	"strconv"
 	"time"
 )
@@ -16,16 +17,16 @@ The shape of the change_log is specific to each label change and is only applica
 
 // Constants for ChangeLog metrics and labels
 const (
-	changeLog     = "change"
-	objectLabel   = "object"
-	opLabel       = "op"
-	create        = "create"
-	update        = "update"
-	del           = "delete"
-	track         = "track"
-	oldLabelValue = "old_value"
-	newLabelValue = "new_value"
-	indexLabel    = "index"
+	changeLog   = "change"
+	objectLabel = "object"
+	opLabel     = "op"
+	create      = "create"
+	update      = "update"
+	del         = "delete"
+	track       = "track"
+	oldValue    = "old_value"
+	newValue    = "new_value"
+	indexLabel  = "index"
 )
 
 // Metrics to be used in ChangeLog
@@ -91,7 +92,7 @@ func (c *ChangeLog) populateChangeLogConfig() error {
 		return err
 	}
 
-	c.changeLogConfig, err = getChangeLogConfig(c.ParentParams, string(changeLogYaml), c.Logger)
+	c.changeLogConfig, err = getChangeLogConfig(c.ParentParams, changeLogYaml, c.Logger)
 	if err != nil {
 		return err
 	}
@@ -119,14 +120,17 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	data := dataMap[c.Object]
 	// Purge and reset data
-	// remove all metrics as analytics label may change over time
+	// remove all metrics
 	err := c.initMatrix()
 	if err != nil {
 		c.Logger.Warn().Err(err).Msg("error while init matrix")
 		return nil, err
 	}
 
-	// if this is first poll
+	// reset metric count
+	c.metricsCount = 0
+
+	// if this is the first poll
 	if c.previousData == nil {
 		c.copyPreviousData(data)
 		return nil, nil
@@ -156,81 +160,78 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	currentTime := time.Now().Unix()
 
-	// check if prev exists
-	if c.previousData != nil {
-		// loop over current instances
-		for key, instance := range data.GetInstances() {
-			uuid := instance.GetLabel("uuid")
-			if uuid == "" {
-				c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing uuid. ChangeLog is not supported")
-				continue
+	// loop over current instances
+	for key, instance := range data.GetInstances() {
+		uuid := instance.GetLabel("uuid")
+		if uuid == "" {
+			c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing uuid. ChangeLog is not supported")
+			continue
+		}
+
+		prevKey := prevInstancesUUIDKey[uuid]
+		if prevKey != "" {
+			// instance already in cache
+			oldInstances.Remove(prevKey)
+		}
+
+		prevInstance := c.previousData.GetInstance(prevKey)
+
+		if prevInstance == nil {
+			//instance created
+			change := &Change{
+				key:    uuid + "_" + object,
+				object: object,
+				op:     create,
+				labels: make(map[string]string),
+				time:   currentTime,
 			}
-
-			prevKey := prevInstancesUUIDKey[uuid]
-			if prevKey != "" {
-				// instance already in cache
-				oldInstances.Remove(prevKey)
-			}
-
-			prevInstance := c.previousData.GetInstance(prevKey)
-
-			if prevInstance == nil {
-				//instance created
-				change := &Change{
-					key:    uuid + "_" + object,
-					object: object,
-					op:     create,
-					labels: make(map[string]string),
-					time:   currentTime,
-				}
-				c.updateChangeLogLabels(object, instance, change)
-				c.createChangeLogInstance(changeMat, change)
-			} else {
-				// check for any modification
-				cur, old := instance.GetLabels().CompareLabels(prevInstance.GetLabels(), c.changeLogConfig.Track)
-				if !cur.IsEmpty() {
-					for currentLabel, newLabel := range cur.Iter() {
-						change := &Change{
-							key:      uuid + "_" + object + "_" + currentLabel,
-							object:   object,
-							op:       update,
-							labels:   make(map[string]string),
-							track:    currentLabel,
-							oldValue: old.Get(currentLabel),
-							newValue: newLabel,
-							time:     currentTime,
-						}
-						c.updateChangeLogLabels(object, instance, change)
-						// add changed track and its old, new value
-						change.labels[track] = currentLabel
-						change.labels[oldLabelValue] = old.Get(currentLabel)
-						change.labels[newLabelValue] = newLabel
-						c.createChangeLogInstance(changeMat, change)
+			c.updateChangeLogLabels(object, instance, change)
+			c.createChangeLogInstance(changeMat, change)
+		} else {
+			// check for any modification
+			cur, old := instance.CompareDiffs(prevInstance, c.changeLogConfig.Track)
+			if len(cur) > 0 {
+				for currentLabel, nVal := range cur {
+					change := &Change{
+						key:      uuid + "_" + object + "_" + currentLabel,
+						object:   object,
+						op:       update,
+						labels:   make(map[string]string),
+						track:    currentLabel,
+						oldValue: old[currentLabel],
+						newValue: nVal,
+						time:     currentTime,
 					}
+					c.updateChangeLogLabels(object, instance, change)
+					// add changed track and its old, new value
+					change.labels[track] = currentLabel
+					change.labels[oldValue] = change.oldValue
+					change.labels[newValue] = nVal
+					c.createChangeLogInstance(changeMat, change)
 				}
 			}
 		}
-		// create deleted instances change_log
-		for key := range oldInstances.Iter() {
-			prevInstance := prevMat.GetInstance(key)
-			uuid := prevInstance.GetLabel("uuid")
-			if uuid == "" {
-				c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing uuid. ChangeLog is not supported")
-				continue
+	}
+	// create deleted instances change_log
+	for key := range oldInstances.Iter() {
+		prevInstance := prevMat.GetInstance(key)
+		uuid := prevInstance.GetLabel("uuid")
+		if uuid == "" {
+			c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing uuid. ChangeLog is not supported")
+			continue
+		}
+		if prevInstance != nil {
+			change := &Change{
+				key:    uuid + "_" + object,
+				object: object,
+				op:     del,
+				labels: make(map[string]string),
+				time:   currentTime,
 			}
-			if prevInstance != nil {
-				change := &Change{
-					key:    uuid + "_" + object,
-					object: object,
-					op:     del,
-					labels: make(map[string]string),
-					time:   currentTime,
-				}
-				c.updateChangeLogLabels(object, prevInstance, change)
-				c.createChangeLogInstance(changeMat, change)
-			} else {
-				c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing instance")
-			}
+			c.updateChangeLogLabels(object, prevInstance, change)
+			c.createChangeLogInstance(changeMat, change)
+		} else {
+			c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing instance")
 		}
 	}
 
@@ -244,11 +245,9 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		c.index = (c.index + 1) % 100
 		c.Logger.Info().Int("instances", len(changeMat.GetInstances())).
 			Int("metrics", c.metricsCount).
+			Int("index", c.index).
 			Msg("Collected")
 	}
-
-	// reset metric count
-	c.metricsCount = 0
 
 	return matricesArray, nil
 }
@@ -275,16 +274,16 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 	for k, v := range change.labels {
 		cInstance.SetLabel(k, v)
 	}
-	c.metricsCount += cInstance.GetLabels().Size()
+	c.metricsCount += len(cInstance.GetLabels())
 	m := mat.GetMetric("log")
 	if m == nil {
 		if m, err = mat.NewMetricFloat64("log"); err != nil {
-			c.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+			c.Logger.Warn().Err(err).Str("key", "log").Msg("error while creating metric")
 			return
 		}
 	}
 	if err = m.SetValueInt64(cInstance, change.time); err != nil {
-		c.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		c.Logger.Error().Err(err).Int64("val", change.time).Msg("Unable to set value on metric")
 		return
 	}
 }
@@ -302,9 +301,7 @@ func (c *ChangeLog) updateChangeLogLabels(object string, instance *matrix.Instan
 			}
 		}
 	} else if cl.includeAll {
-		for k := range instance.GetLabels().Iter() {
-			change.labels[k] = instance.GetLabel(k)
-		}
+		maps.Copy(change.labels, instance.GetLabels())
 	} else {
 		c.Logger.Warn().Str("object", object).Msg("missing publish labels")
 	}
