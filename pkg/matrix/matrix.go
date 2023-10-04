@@ -12,7 +12,6 @@ package matrix
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -23,7 +22,7 @@ type Matrix struct {
 	UUID           string
 	Object         string
 	Identifier     string
-	globalLabels   *dict.Dict
+	globalLabels   map[string]string
 	instances      map[string]*Instance
 	metrics        map[string]*Metric // ONTAP metric name => metric (in templates, this is left side)
 	displayMetrics map[string]string  // display name of metric to => metric name (in templates, this is right side)
@@ -40,7 +39,7 @@ type With struct {
 
 func New(uuid, object string, identifier string) *Matrix {
 	me := Matrix{UUID: uuid, Object: object, Identifier: identifier}
-	me.globalLabels = dict.New()
+	me.globalLabels = make(map[string]string)
 	me.instances = make(map[string]*Instance)
 	me.metrics = make(map[string]*Metric)
 	me.displayMetrics = make(map[string]string)
@@ -287,15 +286,22 @@ func (m *Matrix) RemoveInstance(key string) {
 }
 
 func (m *Matrix) SetGlobalLabel(label, value string) {
-	m.globalLabels.Set(label, value)
+	m.globalLabels[label] = value
 }
 
-// SetGlobalLabels sets all global labels that do not already exist
-func (m *Matrix) SetGlobalLabels(allLabels *dict.Dict) {
-	m.globalLabels.SetAll(allLabels)
+// SetGlobalLabels copies allLabels to globalLabels when the label does not exist in globalLabels
+func (m *Matrix) SetGlobalLabels(allLabels map[string]string) {
+	if allLabels == nil {
+		return
+	}
+	for key, val := range allLabels {
+		if _, has := m.globalLabels[key]; !has {
+			m.globalLabels[key] = val
+		}
+	}
 }
 
-func (m *Matrix) GetGlobalLabels() *dict.Dict {
+func (m *Matrix) GetGlobalLabels() map[string]string {
 	return m.globalLabels
 }
 

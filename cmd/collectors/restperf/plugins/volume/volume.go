@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"maps"
 	"regexp"
 	"sort"
 	"strings"
@@ -44,6 +45,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
+	fgAggrMap := make(map[string]*set.Set)
 	flexgroupAggrsMap := make(map[string]*set.Set)
 	// volume_aggr_labels metric is deprecated now and will be removed later.
 	metricName := "labels"
@@ -67,17 +69,17 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 			key := i.GetLabel("svm") + "." + match[1]
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
-				fg.SetLabels(i.GetLabels().Copy())
+				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
-				// Flexgroup don't show any aggregate, node
-				fg.SetLabel("aggr", "")
+				// Flexgroup don't show any node
 				fg.SetLabel("node", "")
 				fg.SetLabel(style, "flexgroup")
+				fgAggrMap[key] = set.New()
 			}
 
 			if volumeAggrmetric.GetInstance(key) == nil {
 				flexgroupInstance, _ := volumeAggrmetric.NewInstance(key)
-				flexgroupInstance.SetLabels(i.GetLabels().Copy())
+				flexgroupInstance.SetLabels(maps.Clone(i.GetLabels()))
 				flexgroupInstance.SetLabel("volume", match[1])
 				// Flexgroup don't show any node
 				flexgroupInstance.SetLabel("node", "")
@@ -87,6 +89,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 					v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
 				}
 			}
+			fgAggrMap[key].Add(i.GetLabel("aggr"))
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel(style, "flexgroup_constituent")
 			i.SetExportable(false)
@@ -98,7 +101,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				v.Logger.Error().Err(err).Str("key", key).Msg("Failed to create new instance")
 				continue
 			}
-			flexvolInstance.SetLabels(i.GetLabels().Copy())
+			flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
 			flexvolInstance.SetLabel(style, "flexvol")
 			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
 				v.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
@@ -108,7 +111,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	v.Logger.Debug().Int("flexgroup volume count", len(cache.GetInstances())).Msg("")
 
-	//cache.Reset()
+	// cache.Reset()
 
 	// create summary
 	for _, i := range data.GetInstances() {
@@ -130,6 +133,11 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				v.Logger.Error().Msgf("instance [%s] not in local cache", key)
 				continue
 			}
+
+			// set aggrs label for fg, make sure the order of aggregate is same for each poll
+			aggrs := fgAggrMap[key].Values()
+			sort.Strings(aggrs)
+			fg.SetLabel("aggr", strings.Join(aggrs, ","))
 
 			for mkey, m := range data.GetMetrics() {
 

@@ -5,7 +5,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -45,7 +44,7 @@ type Disk struct {
 	shelfData      map[string]*matrix.Matrix
 	powerData      map[string]*matrix.Matrix
 	instanceKeys   map[string]string
-	instanceLabels map[string]*dict.Dict
+	instanceLabels map[string]map[string]string
 	batchSize      string
 	client         *zapi.Client
 	query          string
@@ -130,7 +129,7 @@ func (d *Disk) Init() error {
 	d.powerData = make(map[string]*matrix.Matrix)
 
 	d.instanceKeys = make(map[string]string)
-	d.instanceLabels = make(map[string]*dict.Dict)
+	d.instanceLabels = make(map[string]map[string]string)
 
 	objects := d.Params.GetChildS("objects")
 	if objects == nil {
@@ -147,7 +146,7 @@ func (d *Disk) Init() error {
 			objectName = strings.TrimSpace(x[1])
 		}
 
-		d.instanceLabels[attribute] = dict.New()
+		d.instanceLabels[attribute] = make(map[string]string)
 
 		d.shelfData[attribute] = matrix.New(d.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
 		d.shelfData[attribute].SetGlobalLabel("datacenter", d.ParentParams.GetChildContentS("datacenter"))
@@ -170,11 +169,11 @@ func (d *Disk) Init() error {
 				switch kind {
 				case "key":
 					d.instanceKeys[attribute] = metricName
-					d.instanceLabels[attribute].Set(metricName, display)
+					d.instanceLabels[attribute][metricName] = display
 					instanceKeys.NewChildS("", display)
 					d.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 				case "label":
-					d.instanceLabels[attribute].Set(metricName, display)
+					d.instanceLabels[attribute][metricName] = display
 					instanceLabels.NewChildS("", display)
 					d.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
 				case "float":
@@ -843,7 +842,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 						}
 						d.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
 
-						for label, labelDisplay := range d.instanceLabels[attribute].Map() {
+						for label, labelDisplay := range d.instanceLabels[attribute] {
 							if value := obj.GetChildContentS(label); value != "" {
 								instance.SetLabel(labelDisplay, value)
 							}

@@ -3,9 +3,9 @@ query:      api/network/ip/interfaces
 object:     lif
 
 counters:
+  - ^^ip.address                   => address
   - ^^name                         => lif
   - ^^svm.name                     => svm
-  - ^ip.address                    => address
   - ^ipspace.name                  => ipspace
   - ^location.home_node.name       => home_node
   - ^location.home_port.name       => home_port
@@ -19,16 +19,17 @@ counters:
 endpoints:
   - query: api/private/cli/network/interface
     counters:
+      - ^^address                  => address
       - ^^lif
       - ^^vserver                  => svm
       - ^data_protocol             => protocols
 
 export_options:
   instance_keys:
+    - address
     - lif
     - svm
   instance_labels:
-    - address
     - home_node
     - home_port
     - ipspace

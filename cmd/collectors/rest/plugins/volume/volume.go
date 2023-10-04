@@ -165,7 +165,7 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 		}
 	}
 
-	arwInstanceKey := data.GetGlobalLabels().Get("cluster") + data.GetGlobalLabels().Get("datacenter")
+	arwInstanceKey := data.GetGlobalLabels()["cluster"] + data.GetGlobalLabels()["datacenter"]
 	if arwInstance, err = my.arw.NewInstance(arwInstanceKey); err != nil {
 		my.Logger.Error().Err(err).Str("arwInstanceKey", arwInstanceKey).Msg("Failed to create arw instance")
 		return
