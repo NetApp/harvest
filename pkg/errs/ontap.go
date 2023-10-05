@@ -10,18 +10,20 @@ type RestError struct {
 	Target     string
 	Code       int64
 	StatusCode int
+	API        string
 }
 
 func (r *RestError) Error() string {
-	return fmt.Sprintf("%d: %s", r.Code, r.Message)
+	return fmt.Sprintf("%d: %s: %s", r.Code, r.Message, r.API)
 }
 
-func Rest(statusCode int, message string, code int64, target string) error {
+func Rest(statusCode int, message string, code int64, target string, api string) error {
 	return &RestError{
 		StatusCode: statusCode,
 		Message:    message,
 		Code:       code,
 		Target:     target,
+		API:        api,
 	}
 }
 

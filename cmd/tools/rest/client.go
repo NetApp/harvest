@@ -172,6 +172,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		}
 
 		restReq := c.request.URL.String()
+		api := util.GetURLWithoutHost(c.request)
 
 		// send request to server
 		if response, innerErr = c.client.Do(c.request); innerErr != nil {
@@ -181,29 +182,28 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		defer response.Body.Close()
 		innerBody, innerErr = io.ReadAll(response.Body)
 		if innerErr != nil {
-			return nil, errs.Rest(response.StatusCode, innerErr.Error(), 0, "")
+			return nil, errs.Rest(response.StatusCode, innerErr.Error(), 0, "", api)
 		}
 
 		if response.StatusCode != http.StatusOK {
 
 			if response.StatusCode == http.StatusUnauthorized {
-				return nil, errs.New(errs.ErrAuthFailed, response.Status)
+				return nil, errs.Rest(response.StatusCode, string(errs.ErrAuthFailed), 0, "", api)
 			}
 
 			result := gjson.GetBytes(innerBody, "error")
 
 			if response.StatusCode == http.StatusForbidden {
-				message := result.Get(Message).String()
-				return nil, errs.New(errs.ErrPermissionDenied, message)
+				return nil, errs.Rest(response.StatusCode, string(errs.ErrPermissionDenied), 0, "", api)
 			}
 
 			if result.Exists() {
 				message := result.Get(Message).String()
 				code := result.Get(Code).Int()
 				target := result.Get(Target).String()
-				return nil, errs.Rest(response.StatusCode, message, code, target)
+				return nil, errs.Rest(response.StatusCode, message, code, target, api)
 			}
-			return nil, errs.Rest(response.StatusCode, "", 0, "")
+			return nil, errs.Rest(response.StatusCode, "", 0, "", api)
 		}
 
 		defer c.printRequestAndResponse(restReq, innerBody)
