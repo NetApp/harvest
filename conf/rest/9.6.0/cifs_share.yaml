@@ -1,0 +1,21 @@
+name:               CIFSShare
+query:              api/private/cli/vserver/cifs/share
+object:             cifs_share
+
+counters:
+  - ^^share_name                        => name
+  - ^^vserver                           => svm
+  - ^path
+  - ^share_properties                   => properties
+  - ^symlink_properties
+  - ^volume
+
+export_options:
+  instance_keys:
+    - name
+    - svm
+  instance_labels:
+    - path
+    - properties
+    - symlink_properties
+    - volume
