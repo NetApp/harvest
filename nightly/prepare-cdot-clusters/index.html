@@ -1617,10 +1617,12 @@ security<span class="w"> </span>login<span class="w"> </span>create<span class="
 <p>Check that the harvest role has web access for ONTAPI and REST.
 <div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi
 vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>rest
+vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>docs-api
 </code></pre></div></p>
 <p>If either entry is missing, enable access by running the following. Replace <code>$ADMIN_VSERVER</code> with your SVM admin name.
 <div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>rest<span class="w"> </span>-role<span class="w"> </span>harvest2-role
+vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>docs-api<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 </code></pre></div></p>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
 <p>Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
