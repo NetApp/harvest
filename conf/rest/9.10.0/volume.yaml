@@ -20,6 +20,7 @@ counters:
   - ^state                                        => state
   - ^style                                        => style
   - ^type                                         => type
+  - ^uuid
   - autosize.grow_threshold                       => autosize_grow_threshold_percent
   - autosize.maximum                              => autosize_maximum_size
   - snapshot_count

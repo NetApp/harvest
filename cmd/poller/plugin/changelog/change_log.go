@@ -39,7 +39,6 @@ type ChangeLog struct {
 	*plugin.AbstractPlugin
 	matrixName      string
 	previousData    *matrix.Matrix
-	changeLogMap    map[string]*matrix.Matrix
 	changeLogConfig Entry
 	index           int
 	metricsCount    int
@@ -70,16 +69,8 @@ func (c *ChangeLog) Init() error {
 		return err
 	}
 
-	// Initialize the changeLogMap
-	c.changeLogMap = make(map[string]*matrix.Matrix)
-
 	object := c.ParentParams.GetChildS("object")
 	c.matrixName = object.GetContentS() + "_" + changeLog
-
-	// Initialize the changeLogMatrix
-	if err := c.initMatrix(); err != nil {
-		return err
-	}
 
 	return c.populateChangeLogConfig()
 }
@@ -100,28 +91,27 @@ func (c *ChangeLog) populateChangeLogConfig() error {
 }
 
 // initMatrix initializes a new matrix with the given name
-func (c *ChangeLog) initMatrix() error {
-	c.changeLogMap[c.matrixName] = matrix.New(c.Parent+c.matrixName, changeLog, c.matrixName)
-	for _, changeLogMatrix := range c.changeLogMap {
+func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
+	changeLogMap := make(map[string]*matrix.Matrix)
+	changeLogMap[c.matrixName] = matrix.New(c.Parent+c.matrixName, changeLog, c.matrixName)
+	for _, changeLogMatrix := range changeLogMap {
 		changeLogMatrix.SetExportOptions(matrix.DefaultExportOptions())
 	}
 	for _, k := range metrics {
-		err := matrix.CreateMetric(k, c.changeLogMap[c.matrixName])
+		err := matrix.CreateMetric(k, changeLogMap[c.matrixName])
 		if err != nil {
 			c.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
-			return err
+			return nil, err
 		}
 	}
-	return nil
+	return changeLogMap, nil
 }
 
 // Run processes the data and generates ChangeLog instances
 func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	data := dataMap[c.Object]
-	// Purge and reset data
-	// remove all metrics
-	err := c.initMatrix()
+	changeLogMap, err := c.initMatrix()
 	if err != nil {
 		c.Logger.Warn().Err(err).Msg("error while init matrix")
 		return nil, err
@@ -136,7 +126,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		return nil, nil
 	}
 
-	changeMat := c.changeLogMap[c.matrixName]
+	changeMat := changeLogMap[c.matrixName]
 
 	changeMat.SetGlobalLabels(data.GetGlobalLabels())
 	object := data.Object
