@@ -192,7 +192,6 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 		QueryFields(args.QueryField).
 		QueryValue(args.QueryValue).
 		MaxRecords(args.MaxRecords).
-		Endpoint(args.Endpoint).
 		Build()
 
 	err = FetchForCli(client, href, &records, args.DownloadAll, &curls)
@@ -594,7 +593,6 @@ func init() {
 
 	showFlags := showCmd.Flags()
 	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
-	showFlags.StringVar(&args.Endpoint, "endpoint", "", "By default, /api is appended to passed argument in --api. Use --endpoint instead to pass absolute path of url")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.BoolVarP(&args.Verbose, "verbose", "v", false, "Be verbose")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")

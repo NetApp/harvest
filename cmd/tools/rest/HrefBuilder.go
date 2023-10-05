@@ -10,7 +10,6 @@ type HrefBuilder struct {
 	queryValue    string
 	maxRecords    string
 	returnTimeout string
-	endpoint      string
 }
 
 func NewHrefBuilder() *HrefBuilder {
@@ -52,21 +51,13 @@ func (b *HrefBuilder) ReturnTimeout(returnTimeout string) *HrefBuilder {
 	return b
 }
 
-func (b *HrefBuilder) Endpoint(endpoint string) *HrefBuilder {
-	b.endpoint = endpoint
-	return b
-}
-
 func (b *HrefBuilder) Build() string {
 	href := strings.Builder{}
-	if b.endpoint == "" {
-		if !strings.HasPrefix(b.apiPath, "api/") {
-			href.WriteString("api/")
-		}
-		href.WriteString(b.apiPath)
-	} else {
-		href.WriteString(b.endpoint)
+	if !strings.HasPrefix(b.apiPath, "api/") {
+		href.WriteString("api/")
 	}
+	href.WriteString(b.apiPath)
+
 	href.WriteString("?return_records=true")
 	addArg(&href, "&fields=", b.fields)
 	for _, f := range b.filter {
