@@ -20,7 +20,6 @@ cp -r "$SRC/.git" "$BUILD/harvest"
 cp -r "$SRC/cmd/" "$BUILD/harvest/"
 cp -r "$SRC/conf/" "$BUILD/harvest/"
 cp -r "$SRC/container/" "$BUILD/harvest/"
-cp -r "$SRC/docs/" "$BUILD/harvest/"
 cp -r "$SRC/grafana/" "$BUILD/harvest/"
 cp -r "$SRC/pkg/" "$BUILD/harvest/"
 cp -r "$SRC/rpm/" "$BUILD/harvest/"
@@ -52,12 +51,22 @@ else
       make build VERSION=$HARVEST_VERSION RELEASE=$HARVEST_RELEASE
 fi
 
-rm -rf $BUILD/harvest/asup/*
-
 if [ ! $? -eq 0 ]; then
     echo "build failed, aborting"
     exit 1
 fi
+
+rm -rf $BUILD/harvest/asup/*
+rm -rf $BUILD/harvest/.git
+rm -rf $BUILD/harvest/vendor
+rm -rf $BUILD/harvest/cmd
+rm -rf $BUILD/harvest/package
+rm -rf $BUILD/harvest/go.mod
+rm -rf $BUILD/harvest/go.sum
+rm -rf $BUILD/harvest/harvest.cue
+rm -rf $BUILD/harvest/makefile
+rm -rf $BUILD/harvest/prom-stack.tmpl
+rm -rf $BUILD/harvest/.github
 
 # create rpm build package
 cd "$BUILD"

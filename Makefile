@@ -129,7 +129,7 @@ dist-tar:
 	@rm -rf ${DIST}
 	@mkdir ${TMP}
 	@mkdir ${DIST}
-	@cp -r .git cmd bin conf container docs grafana pkg service cert autosupport go.mod go.sum Makefile README.md LICENSE prom-stack.tmpl harvest.cue ${TMP}
+	@cp -r bin conf container grafana service cert autosupport README.md LICENSE prom-stack.tmpl ${TMP}
 	@cp harvest.yml ${TMP}/harvest.yml
 	@tar --directory /tmp --create --gzip --file ${DIST}/${HARVEST_PACKAGE}.tar.gz ${HARVEST_PACKAGE}
 	@rm -rf ${TMP}
