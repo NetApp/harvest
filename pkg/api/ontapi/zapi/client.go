@@ -552,14 +552,10 @@ func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
 
 func (c *Client) printRequestAndResponse(req string, response []byte) {
 	if req != "" {
-		res := "<nil>"
-		if response != nil {
-			res = string(response)
-		}
 		c.Logger.Info().
 			Str("Request", req).
-			Str("Response", res).
-			Msg("")
+			Bytes("Response", response).
+			Send()
 	}
 }
 
