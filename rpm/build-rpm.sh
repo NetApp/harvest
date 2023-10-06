@@ -56,7 +56,7 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-rm -rf $BUILD/harvest/asup/*
+rm -rf $BUILD/harvest/asup
 rm -rf $BUILD/harvest/.git
 rm -rf $BUILD/harvest/vendor
 rm -rf $BUILD/harvest/cmd
@@ -64,7 +64,7 @@ rm -rf $BUILD/harvest/package
 rm -rf $BUILD/harvest/go.mod
 rm -rf $BUILD/harvest/go.sum
 rm -rf $BUILD/harvest/harvest.cue
-rm -rf $BUILD/harvest/makefile
+rm -rf $BUILD/harvest/Makefile
 rm -rf $BUILD/harvest/.github
 
 # create rpm build package

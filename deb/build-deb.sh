@@ -65,7 +65,7 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-rm -rf $BUILD/opt/harvest/asup/*
+rm -rf $BUILD/opt/harvest/asup
 rm -rf $BUILD/opt/harvest/.git
 rm -rf $BUILD/opt/harvest/vendor
 rm -rf $BUILD/opt/harvest/cmd
@@ -73,7 +73,7 @@ rm -rf $BUILD/opt/harvest/package
 rm -rf $BUILD/opt/harvest/go.mod
 rm -rf $BUILD/opt/harvest/go.sum
 rm -rf $BUILD/opt/harvest/harvest.cue
-rm -rf $BUILD/opt/harvest/makefile
+rm -rf $BUILD/opt/harvest/Makefile
 rm -rf $BUILD/opt/harvest/.github
 
 # build deb package
