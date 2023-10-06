@@ -182,28 +182,52 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		defer response.Body.Close()
 		innerBody, innerErr = io.ReadAll(response.Body)
 		if innerErr != nil {
-			return nil, errs.Rest(response.StatusCode, innerErr.Error(), 0, "", api)
+			return nil, errs.NewRestError().
+				StatusCode(response.StatusCode).
+				InnerError(innerErr.Error()).
+				API(api).
+				Build()
 		}
 
 		if response.StatusCode != http.StatusOK {
 
 			if response.StatusCode == http.StatusUnauthorized {
-				return nil, errs.Rest(response.StatusCode, string(errs.ErrAuthFailed), 0, "", api)
+				return nil, errs.NewRestError().
+					StatusCode(response.StatusCode).
+					InnerError(string(errs.ErrAuthFailed)).
+					Message(response.Status).
+					API(api).
+					Build()
 			}
 
 			result := gjson.GetBytes(innerBody, "error")
 
 			if response.StatusCode == http.StatusForbidden {
-				return nil, errs.Rest(response.StatusCode, string(errs.ErrPermissionDenied), 0, "", api)
+				message := result.Get(Message).String()
+				return nil, errs.NewRestError().
+					StatusCode(response.StatusCode).
+					InnerError(string(errs.ErrPermissionDenied)).
+					Message(message).
+					API(api).
+					Build()
 			}
 
 			if result.Exists() {
 				message := result.Get(Message).String()
 				code := result.Get(Code).Int()
 				target := result.Get(Target).String()
-				return nil, errs.Rest(response.StatusCode, message, code, target, api)
+				return nil, errs.NewRestError().
+					StatusCode(response.StatusCode).
+					Message(message).
+					Code(code).
+					Target(target).
+					API(api).
+					Build()
 			}
-			return nil, errs.Rest(response.StatusCode, "", 0, "", api)
+			return nil, errs.NewRestError().
+				StatusCode(response.StatusCode).
+				API(api).
+				Build()
 		}
 
 		defer c.printRequestAndResponse(restReq, innerBody)
