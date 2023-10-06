@@ -22,98 +22,110 @@ const HoursInMonth = 24 * 30
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	currentVal int
-	client     *rest.Client
-	aggrsMap   map[string]string // aggregate-uuid -> aggregate-name map
-	arw        *matrix.Matrix
+	currentVal          int
+	client              *rest.Client
+	aggrsMap            map[string]string // aggregate-uuid -> aggregate-name map
+	arw                 *matrix.Matrix
+	includeConstituents bool
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
 
-func (my *Volume) Init() error {
+func (v *Volume) Init() error {
 
 	var err error
 
-	if err = my.InitAbc(); err != nil {
+	if err = v.InitAbc(); err != nil {
 		return err
 	}
 
-	my.aggrsMap = make(map[string]string)
+	v.aggrsMap = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	my.currentVal = my.SetPluginInterval()
+	v.currentVal = v.SetPluginInterval()
 
-	if my.Options.IsTest {
+	if v.Options.IsTest {
 		return nil
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout, my.Auth); err != nil {
-		my.Logger.Error().Stack().Err(err).Msg("connecting")
+	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
+		v.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err = v.client.Init(5); err != nil {
 		return err
 	}
 
-	my.arw = matrix.New(my.Parent+".Volume", "volume_arw", "volume_arw")
+	v.arw = matrix.New(v.Parent+".Volume", "volume_arw", "volume_arw")
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	instanceKeys.NewChildS("", "ArwStatus")
-	my.arw.SetExportOptions(exportOptions)
-	_, err = my.arw.NewMetricFloat64("status", "status")
+	v.arw.SetExportOptions(exportOptions)
+	_, err = v.arw.NewMetricFloat64("status", "status")
 	if err != nil {
-		my.Logger.Error().Stack().Err(err).Msg("add metric")
+		v.Logger.Error().Stack().Err(err).Msg("add metric")
 		return err
 	}
+
+	// Read template to decide inclusion of flexgroup constituents
+	v.includeConstituents = collectors.ReadPluginKey(v.Params, "includeConstituents")
 	return nil
 }
 
-func (my *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
-	data := dataMap[my.Object]
-	if my.currentVal >= my.PluginInvocationRate {
-		my.currentVal = 0
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+	data := dataMap[v.Object]
+	if v.currentVal >= v.PluginInvocationRate {
+		v.currentVal = 0
 
 		// invoke disk rest and populate info in aggrsMap
-		if disks, err := my.getEncryptedDisks(); err != nil {
+		if disks, err := v.getEncryptedDisks(); err != nil {
 			if errs.IsRestErr(err, errs.APINotFound) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect disk data")
+				v.Logger.Debug().Err(err).Msg("Failed to collect disk data")
 			} else {
-				my.Logger.Error().Err(err).Msg("Failed to collect disk data")
+				v.Logger.Error().Err(err).Msg("Failed to collect disk data")
 			}
 		} else {
 			// update aggrsMap based on disk data
-			my.updateAggrMap(disks)
+			v.updateAggrMap(disks)
 		}
 	}
 
 	// update volume instance labels
-	my.updateVolumeLabels(data)
+	v.updateVolumeLabels(data)
 
 	// parse anti_ransomware_start_time, antiRansomwareState for all volumes and export at cluster level
-	my.handleARWProtection(data)
+	v.handleARWProtection(data)
 
-	my.currentVal++
-	return []*matrix.Matrix{my.arw}, nil
+	v.currentVal++
+	return []*matrix.Matrix{v.arw}, nil
 }
 
-func (my *Volume) updateVolumeLabels(data *matrix.Matrix) {
+func (v *Volume) updateVolumeLabels(data *matrix.Matrix) {
 	for _, volume := range data.GetInstances() {
+		if !volume.IsExportable() {
+			continue
+		}
+
+		if volume.GetLabel("style") == "flexgroup_constituent" {
+			volume.SetExportable(v.includeConstituents)
+			continue
+		}
 		// For flexgroup, aggrUuid in Rest should be empty for parity with Zapi response
 		if volumeStyle := volume.GetLabel("style"); volumeStyle == "flexgroup" {
 			volume.SetLabel("aggrUuid", "")
 		}
 		aggrUUID := volume.GetLabel("aggrUuid")
 
-		_, exist := my.aggrsMap[aggrUUID]
+		_, exist := v.aggrsMap[aggrUUID]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
 	}
 }
 
-func (my *Volume) handleARWProtection(data *matrix.Matrix) {
+func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	var (
 		arwInstance       *matrix.Instance
 		arwStartTimeValue time.Time
@@ -121,11 +133,11 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 	)
 
 	// Purge and reset data
-	my.arw.PurgeInstances()
-	my.arw.Reset()
+	v.arw.PurgeInstances()
+	v.arw.Reset()
 
 	// Set all global labels
-	my.arw.SetGlobalLabels(data.GetGlobalLabels())
+	v.arw.SetGlobalLabels(data.GetGlobalLabels())
 	arwStatusValue := "Active Mode"
 	// Case where cluster don't have any volumes, arwStatus show as 'Not Monitoring'
 	if len(data.GetInstances()) == 0 {
@@ -154,7 +166,7 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 			}
 			// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
 			if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
-				my.Logger.Error().Err(err).Msg("Failed to parse arw start time")
+				v.Logger.Error().Err(err).Msg("Failed to parse arw start time")
 				arwStartTimeValue = time.Now()
 			}
 			if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
@@ -166,23 +178,23 @@ func (my *Volume) handleARWProtection(data *matrix.Matrix) {
 	}
 
 	arwInstanceKey := data.GetGlobalLabels()["cluster"] + data.GetGlobalLabels()["datacenter"]
-	if arwInstance, err = my.arw.NewInstance(arwInstanceKey); err != nil {
-		my.Logger.Error().Err(err).Str("arwInstanceKey", arwInstanceKey).Msg("Failed to create arw instance")
+	if arwInstance, err = v.arw.NewInstance(arwInstanceKey); err != nil {
+		v.Logger.Error().Err(err).Str("arwInstanceKey", arwInstanceKey).Msg("Failed to create arw instance")
 		return
 	}
 
 	arwInstance.SetLabel("ArwStatus", arwStatusValue)
-	m := my.arw.GetMetric("status")
+	m := v.arw.GetMetric("status")
 	// populate numeric data
 	value := 1.0
 	if err = m.SetValueFloat64(arwInstance, value); err != nil {
-		my.Logger.Error().Stack().Err(err).Float64("value", value).Msg("Failed to parse value")
+		v.Logger.Error().Stack().Err(err).Float64("value", value).Msg("Failed to parse value")
 	} else {
-		my.Logger.Debug().Float64("value", value).Msg("added value")
+		v.Logger.Debug().Float64("value", value).Msg("added value")
 	}
 }
 
-func (my *Volume) getEncryptedDisks() ([]gjson.Result, error) {
+func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -192,22 +204,22 @@ func (my *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 	query := "api/storage/disks"
 	href := rest.BuildHref("", strings.Join(diskFields, ","), []string{"protection_mode=!data|full"}, "", "", "", "", query)
 
-	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (my *Volume) updateAggrMap(disks []gjson.Result) {
+func (v *Volume) updateAggrMap(disks []gjson.Result) {
 	if disks != nil {
 		// Clean aggrsMap map
-		my.aggrsMap = make(map[string]string)
+		v.aggrsMap = make(map[string]string)
 
 		for _, disk := range disks {
 			aggrName := disk.Get("aggregates.name").String()
 			aggrUUID := disk.Get("aggregates.uuid").String()
 			if aggrUUID != "" {
-				my.aggrsMap[aggrUUID] = aggrName
+				v.aggrsMap[aggrUUID] = aggrName
 			}
 		}
 	}

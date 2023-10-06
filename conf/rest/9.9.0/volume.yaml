@@ -1,69 +1,119 @@
-# This api would provide all volumes(but node).
-
 name:                     Volume
-query:                    api/storage/volumes
+query:                    api/private/cli/volume
 object:                   volume
 
 counters:
-  - ^^name                                        => volume
-  - ^^svm.name                                    => svm
-  - ^aggregates.#.name                            => aggr
-  - ^aggregates.#.uuid                            => aggrUuid        # handled in plugin for flexgroup
-  - ^encryption.enabled                           => isEncrypted
-  - ^is_svm_root                                  => svm_root
-  - ^snaplock.type                                => snaplock_type
-  - ^snapshot_policy.name                         => snapshot_policy
-  - ^space.snapshot.autodelete_enabled            => snapshot_autodelete
-  - ^state                                        => state
-  - ^style                                        => style
-  - ^type                                         => type
-  - autosize.grow_threshold                       => autosize_grow_threshold_percent
-  - autosize.maximum                              => autosize_maximum_size
-  - snapshot_count
-  - space.afs_total                               => size_total
-  - space.available                               => size_available
-  - space.expected_available                      => space_expected_available
-  - space.filesystem_size                         => filesystem_size
-  - space.logical_space.available                 => space_logical_available
-  - space.logical_space.used                      => space_logical_used
-  - space.logical_space.used_by_afs               => space_logical_used_by_afs
-  - space.logical_space.used_by_snapshots         => space_logical_used_by_snapshots
-  - space.logical_space.used_percent              => space_logical_used_percent
-  - space.overwrite_reserve                       => overwrite_reserve_total
-  - space.overwrite_reserve_used                  => overwrite_reserve_used
-  - space.percent_used                            => size_used_percent
-  - space.physical_used                           => space_physical_used
-  - space.physical_used_percent                   => space_physical_used_percent
-  - space.size                                    => size
-  - space.size_available_for_snapshots            => snapshots_size_available
-  - space.snapshot.reserve_available              => snapshot_reserve_available
-  - space.snapshot.reserve_percent                => snapshot_reserve_percent
-  - space.snapshot.reserve_size                   => snapshot_reserve_size
-  - space.snapshot.space_used_percent             => snapshot_reserve_used_percent
-  - space.snapshot.used                           => snapshots_size_used
-  - space.used                                    => size_used
-  - hidden_fields:
-      - autosize
-      - encryption.enabled
-      - is_svm_root
-      - snaplock.type
-      - space
+  - ^^volume
+  - ^^vserver                                     => svm
+  - ^is_sis_volume                                => is_sis_volume
+  - ^nodes                                        => node
+  - ^volume_style_extended                        => style
+  - compression_space_saved                       => sis_compress_saved
+  - compression_space_saved_percent               => sis_compress_saved_percent
+  - dedupe_space_saved                            => sis_dedup_saved
+  - dedupe_space_saved_percent                    => sis_dedup_saved_percent
+  - files                                         => inode_files_total
+  - files_used                                    => inode_files_used
+  - sis_space_saved                               => sis_total_saved
+  - sis_space_saved_percent                       => sis_total_saved_percent
+  - filter:
+      - is_constituent=*
 
 endpoints:
-  - query: api/private/cli/volume
+  - query: api/storage/volumes
     counters:
-      - ^^volume
-      - ^^vserver                                 => svm
-      - ^is_sis_volume                            => is_sis_volume
-      - ^nodes                                    => node
-      - compression_space_saved                   => sis_compress_saved
-      - compression_space_saved_percent           => sis_compress_saved_percent
-      - dedupe_space_saved                        => sis_dedup_saved
-      - dedupe_space_saved_percent                => sis_dedup_saved_percent
-      - files                                     => inode_files_total
-      - files_used                                => inode_files_used
-      - sis_space_saved                           => sis_total_saved
-      - sis_space_saved_percent                   => sis_total_saved_percent
+      - ^^name                                    => volume
+      - ^^svm.name                                => svm
+      - ^aggregates.#.name                        => aggr
+      - ^aggregates.#.uuid                        => aggrUuid        # handled in plugin for flexgroup
+      - ^encryption.enabled                       => isEncrypted
+      - ^is_svm_root                              => svm_root
+      - ^snaplock.type                            => snaplock_type
+      - ^snapshot_policy.name                     => snapshot_policy
+      - ^space.snapshot.autodelete_enabled        => snapshot_autodelete
+      - ^state                                    => state
+      - ^type                                     => type
+      - autosize.grow_threshold                   => autosize_grow_threshold_percent
+      - autosize.maximum                          => autosize_maximum_size
+      - snapshot_count
+      - space.afs_total                           => size_total
+      - space.available                           => size_available
+      - space.expected_available                  => space_expected_available
+      - space.filesystem_size                     => filesystem_size
+      - space.logical_space.available             => space_logical_available
+      - space.logical_space.used                  => space_logical_used
+      - space.logical_space.used_by_afs           => space_logical_used_by_afs
+      - space.logical_space.used_by_snapshots     => space_logical_used_by_snapshots
+      - space.logical_space.used_percent          => space_logical_used_percent
+      - space.overwrite_reserve                   => overwrite_reserve_total
+      - space.overwrite_reserve_used              => overwrite_reserve_used
+      - space.percent_used                        => size_used_percent
+      - space.physical_used                       => space_physical_used
+      - space.physical_used_percent               => space_physical_used_percent
+      - space.size                                => size
+      - space.size_available_for_snapshots        => snapshots_size_available
+      - space.snapshot.reserve_available          => snapshot_reserve_available
+      - space.snapshot.reserve_percent            => snapshot_reserve_percent
+      - space.snapshot.reserve_size               => snapshot_reserve_size
+      - space.snapshot.space_used_percent         => snapshot_reserve_used_percent
+      - space.snapshot.used                       => snapshots_size_used
+      - space.used                                => size_used
+      - hidden_fields:
+          - autosize
+          - encryption.enabled
+          - is_svm_root
+          - snaplock.type
+          - space
+      - filter:
+          - is_constituent=false
+
+  # This call gives all metrics/labels for only Flexgroup Constituents
+  - query: api/storage/volumes
+    counters:
+      - ^^name                                    => volume
+      - ^^svm.name                                => svm
+      - ^aggregates.#.name                        => aggr
+      - ^aggregates.#.uuid                        => aggrUuid        # handled in plugin for flexgroup
+      - ^encryption.enabled                       => isEncrypted
+      - ^is_svm_root                              => svm_root
+      - ^snaplock.type                            => snaplock_type
+      - ^snapshot_policy.name                     => snapshot_policy
+      - ^space.snapshot.autodelete_enabled        => snapshot_autodelete
+      - ^state                                    => state
+      - ^type                                     => type
+      - autosize.grow_threshold                   => autosize_grow_threshold_percent
+      - autosize.maximum                          => autosize_maximum_size
+      - snapshot_count
+      - space.afs_total                           => size_total
+      - space.available                           => size_available
+      - space.expected_available                  => space_expected_available
+      - space.filesystem_size                     => filesystem_size
+      - space.logical_space.available             => space_logical_available
+      - space.logical_space.used                  => space_logical_used
+      - space.logical_space.used_by_afs           => space_logical_used_by_afs
+      - space.logical_space.used_by_snapshots     => space_logical_used_by_snapshots
+      - space.logical_space.used_percent          => space_logical_used_percent
+      - space.overwrite_reserve                   => overwrite_reserve_total
+      - space.overwrite_reserve_used              => overwrite_reserve_used
+      - space.percent_used                        => size_used_percent
+      - space.physical_used                       => space_physical_used
+      - space.physical_used_percent               => space_physical_used_percent
+      - space.size                                => size
+      - space.size_available_for_snapshots        => snapshots_size_available
+      - space.snapshot.reserve_available          => snapshot_reserve_available
+      - space.snapshot.reserve_percent            => snapshot_reserve_percent
+      - space.snapshot.reserve_size               => snapshot_reserve_size
+      - space.snapshot.space_used_percent         => snapshot_reserve_used_percent
+      - space.snapshot.used                       => snapshots_size_used
+      - space.used                                => size_used
+      - hidden_fields:
+          - autosize
+          - encryption.enabled
+          - is_svm_root
+          - snaplock.type
+          - space
+      - filter:
+          - is_constituent=true
 
   - query: api/storage/volumes
     counters:
@@ -101,14 +151,13 @@ plugins:
   - Volume:
       schedule:
         - data: 15m  # should be multiple of poll duration
+      includeConstituents: true
   - MetricAgent:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
         - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
         - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
   - LabelAgent:
-      exclude_equals:
-        - style `flexgroup_constituent`
       value_to_num:
         - new_status state online online `0`
       replace:

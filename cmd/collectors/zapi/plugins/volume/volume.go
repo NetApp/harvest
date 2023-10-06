@@ -14,9 +14,10 @@ import (
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	currentVal int
-	client     *zapi.Client
-	aggrsMap   map[string]string // aggregate-uuid -> aggregate-name map
+	currentVal          int
+	client              *zapi.Client
+	aggrsMap            map[string]string // aggregate-uuid -> aggregate-name map
+	includeConstituents bool
 }
 
 type aggrData struct {
@@ -59,6 +60,8 @@ func (v *Volume) Init() error {
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
 
+	// Read template to decide inclusion of flexgroup constituents
+	v.includeConstituents = collectors.ReadPluginKey(v.Params, "includeConstituents")
 	return nil
 }
 
@@ -114,6 +117,11 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 	var err error
 	for _, volume := range data.GetInstances() {
 		if !volume.IsExportable() {
+			continue
+		}
+
+		if volume.GetLabel("style") == "flexgroup_constituent" {
+			volume.SetExportable(v.includeConstituents)
 			continue
 		}
 		aggrUUID := volume.GetLabel("aggrUuid")
