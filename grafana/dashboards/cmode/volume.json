@@ -2603,7 +2603,9 @@
           "options": {
             "legend": {
               "calcs": [
-                "sum"
+                "mean",
+                "lastNotNull",
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom"
