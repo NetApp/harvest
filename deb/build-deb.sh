@@ -74,7 +74,6 @@ rm -rf $BUILD/opt/harvest/go.mod
 rm -rf $BUILD/opt/harvest/go.sum
 rm -rf $BUILD/opt/harvest/harvest.cue
 rm -rf $BUILD/opt/harvest/makefile
-rm -rf $BUILD/opt/harvest/prom-stack.tmpl
 rm -rf $BUILD/opt/harvest/.github
 
 # build deb package

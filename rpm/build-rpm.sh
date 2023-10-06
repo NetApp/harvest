@@ -65,7 +65,6 @@ rm -rf $BUILD/harvest/go.mod
 rm -rf $BUILD/harvest/go.sum
 rm -rf $BUILD/harvest/harvest.cue
 rm -rf $BUILD/harvest/makefile
-rm -rf $BUILD/harvest/prom-stack.tmpl
 rm -rf $BUILD/harvest/.github
 
 # create rpm build package
