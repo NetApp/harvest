@@ -1197,9 +1197,10 @@ bin/harvest start
 </code></pre></div></p>
 <details class="info">
 <summary>With curl</summary>
+<p>If you don't have <code>wget</code> installed, you can use <code>curl</code> like so:</p>
+<div class="highlight"><pre><span></span><code>curl -L -O https://github.com/NetApp/harvest/releases/download/v22.08.0/harvest-22.08.0-1_linux_amd64.tar.gz
+</code></pre></div>
 </details>
-<p>If you don't have <code>wget</code> installed, you can use <code>curl</code> like so:
-<code>curl -L -O https://github.com/NetApp/harvest/releases/download/v22.08.0/harvest-22.08.0-1_linux_amd64.tar.gz</code></p>
 <p>It's best to run Harvest as a non-root user. Make sure the user running Harvest can write to <code>/var/log/harvest/</code> or tell Harvest to write the logs somewhere else with the <code>HARVEST_LOGS</code> environment variable.</p>
 <p>If something goes wrong, examine the logs files in <code>/var/log/harvest</code>, check out
 the <a href="https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest">troubleshooting</a> section on the wiki and jump
