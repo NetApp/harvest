@@ -99,6 +99,10 @@ func ReadOrDownloadSwagger(pName string) (string, error) {
 		bytesDownloaded, err := downloadSwagger(poller, swaggerPath, swaggerURL, args.Verbose)
 		if err != nil {
 			fmt.Printf("error downloading swagger %s\n", err)
+			if bytesDownloaded == 0 {
+				// if the tmp file exists, remove it since it is empty
+				_ = os.Remove(swaggerPath)
+			}
 			return "", err
 		}
 		fmt.Printf("downloaded %d bytes from %s\n", bytesDownloaded, swaggerURL)

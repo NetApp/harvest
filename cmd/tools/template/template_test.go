@@ -1,15 +1,8 @@
 package template
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
-	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/tree"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	y3 "gopkg.in/yaml.v3"
 	"io/fs"
@@ -73,7 +66,7 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 
 	}
 
-	visitTemplates(t, func(path string, model TemplateModel) {
+	visitTemplates(t, func(path string, model Model) {
 		sp := collectorPath(path)
 		o := modelsByTemplate[sp]
 		if o == nil {
@@ -140,12 +133,12 @@ func TestTotals(t *testing.T) {
 	totalObject := make(objectMap)
 	var totalCounters int
 
-	visitTemplates(t, func(path string, model TemplateModel) {
+	visitTemplates(t, func(path string, model Model) {
 		totalObject[model.Name] = path
 		totalCounters += len(model.metrics)
 
 		for _, ep := range model.Endpoints {
-			totalCounters += len(ep.metrics)
+			totalCounters += len(ep.Metrics)
 		}
 	}, allTemplatesButEms...)
 
@@ -194,7 +187,7 @@ func newObjectMap(n *y3.Node) objectMap {
 }
 
 func TestMetricColumnAlignmentAndCase(t *testing.T) {
-	visitTemplates(t, func(path string, model TemplateModel) {
+	visitTemplates(t, func(path string, model Model) {
 		columnSet := make(map[int]int)
 		for _, m := range model.metrics {
 			if m.renameColumn > 0 {
@@ -213,7 +206,7 @@ func TestMetricColumnAlignmentAndCase(t *testing.T) {
 		}
 
 		for _, ep := range model.Endpoints {
-			for _, m := range ep.metrics {
+			for _, m := range ep.Metrics {
 				if m.renameColumn > 0 {
 					columnSet[m.renameColumn]++
 				}
@@ -230,7 +223,7 @@ func TestMetricColumnAlignmentAndCase(t *testing.T) {
 }
 
 func TestNoTabs(t *testing.T) {
-	visitTemplates(t, func(path string, model TemplateModel) {
+	visitTemplates(t, func(path string, model Model) {
 		data, err := os.ReadFile(path)
 		if err != nil {
 			t.Errorf("failed to read path=%s err=%v", shortPath(path), err)
@@ -257,7 +250,7 @@ func TestExportLabelsExist(t *testing.T) {
 		"zapi/cdot/9.8.0/qos_policy_fixed.yaml",
 	}
 
-	visitTemplates(t, func(path string, model TemplateModel) {
+	visitTemplates(t, func(path string, model Model) {
 		shortenedPath := shortPath(path)
 		isZapi := strings.Contains(path, "zapi")
 		isZapiPerf := strings.Contains(path, "zapiperf")
@@ -289,7 +282,7 @@ func TestExportLabelsExist(t *testing.T) {
 			}
 		}
 		for _, ep := range model.Endpoints {
-			for _, m := range ep.metrics {
+			for _, m := range ep.Metrics {
 				if m.right != "" {
 					allLabelNames[m.right] = true
 				} else {
@@ -318,17 +311,7 @@ type sorted struct {
 	want string
 }
 
-type metric struct {
-	left         string
-	right        string
-	line         string
-	renameColumn int
-	hasSigil     bool
-	column       int
-	parents      []string
-}
-
-func (m metric) pathString() string {
+func (m Metric) pathString() string {
 	return strings.Join(m.parents, "/") + "/" + m.left
 }
 
@@ -339,7 +322,7 @@ func (m metric) pathString() string {
 // ZAPI parent attributes are sorted alphabetically
 // Tests that exported keys and labels are in sorted order
 func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
-	visitTemplates(t, func(path string, model TemplateModel) {
+	visitTemplates(t, func(path string, model Model) {
 		sortedCounters := checkSortedCounters(model.metrics)
 		if sortedCounters.got != sortedCounters.want {
 			t.Errorf("counters should be sorted path=[%s]", shortPath(path))
@@ -348,7 +331,7 @@ func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 		}
 
 		for _, endpoint := range model.Endpoints {
-			sortedCounters := checkSortedCounters(endpoint.metrics)
+			sortedCounters := checkSortedCounters(endpoint.Metrics)
 			if sortedCounters.got != sortedCounters.want {
 				t.Errorf("endpoint=%s counters should be sorted path=[%s]", endpoint.Query, shortPath(path))
 				t.Errorf("use this instead\n")
@@ -377,7 +360,7 @@ func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 	}, allTemplatesButEms...)
 }
 
-func checkForDuplicateMetrics(t *testing.T, model TemplateModel, path string) {
+func checkForDuplicateMetrics(t *testing.T, model Model, path string) {
 	dupSet := make(map[string]bool)
 	for _, m := range model.metrics {
 		p := m.pathString()
@@ -391,7 +374,7 @@ func checkForDuplicateMetrics(t *testing.T, model TemplateModel, path string) {
 	for _, endpoint := range model.Endpoints {
 		// endpoints are independent metrics
 		dupSet = make(map[string]bool)
-		for _, m := range endpoint.metrics {
+		for _, m := range endpoint.Metrics {
 			p := m.pathString()
 			_, ok := dupSet[p]
 			if ok {
@@ -402,14 +385,14 @@ func checkForDuplicateMetrics(t *testing.T, model TemplateModel, path string) {
 	}
 }
 
-func checkSortedCounters(counters []metric) sorted {
+func checkSortedCounters(counters []Metric) sorted {
 	got := countersStr(counters)
 	sortZapiCounters(counters)
 	want := countersStr(counters)
 	return sorted{got: got, want: want}
 }
 
-func countersStr(counters []metric) string {
+func countersStr(counters []Metric) string {
 	builder := strings.Builder{}
 	parentSeen := make(map[string]bool)
 	for _, counter := range counters {
@@ -437,7 +420,7 @@ func countersStr(counters []metric) string {
 	return builder.String()
 }
 
-func sortZapiCounters(counters []metric) {
+func sortZapiCounters(counters []Metric) {
 	sort.SliceStable(counters, func(i, j int) bool {
 		a := counters[i]
 		b := counters[j]
@@ -487,9 +470,7 @@ func labelsToString(labels []string) string {
 	return b.String()
 }
 
-var sigilReplacer = strings.NewReplacer("^", "", "- ", "")
-
-func visitTemplates(t *testing.T, eachTemplate func(path string, model TemplateModel), dirs ...string) {
+func visitTemplates(t *testing.T, eachTemplate func(path string, model Model), dirs ...string) {
 	if len(dirs) == 0 {
 		t.Fatalf("must pass list of directories")
 	}
@@ -499,7 +480,6 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model TemplateM
 			if err != nil {
 				return err
 			}
-			var model TemplateModel
 			ext := filepath.Ext(path)
 			if ext != ".yaml" {
 				return nil
@@ -507,18 +487,9 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model TemplateM
 			if strings.HasSuffix(path, "custom.yaml") || strings.HasSuffix(path, "default.yaml") {
 				return nil
 			}
-			data, err := os.ReadFile(path)
+			model, err := ReadTemplate(path)
 			if err != nil {
 				return fmt.Errorf("failed to read template path=%s err=%w", shortPath(path), err)
-			}
-			model, err = unmarshalModel(data)
-			if err != nil {
-				return fmt.Errorf("failed to unmarshalModel template path=%s err=%w", shortPath(path), err)
-			}
-			err = addPluginLabels(path, &model)
-			if err != nil {
-				// t.Errorf("failed to addPluginLabels template path=%s err=%v", shortPath(path), err)
-				return err
 			}
 			eachTemplate(path, model)
 			return nil
@@ -527,277 +498,6 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model TemplateM
 			t.Errorf("failed to visitTemplate dir=%s err=%v", dir, err)
 		}
 	}
-}
-
-func addPluginLabels(path string, model *TemplateModel) error {
-	template, err := tree.ImportYaml(path)
-	if err != nil {
-		return fmt.Errorf("failed to ImportYaml err: %w", err)
-	}
-	err = findBuiltInPlugins(template, model)
-	if err != nil {
-		return fmt.Errorf("failed to find findBuiltInPlugins err: %w", err)
-	}
-	err = findCustomPlugins(path, template, model)
-	if err != nil {
-		return fmt.Errorf("failed to findCustomPlugins err: %w", err)
-	}
-	return nil
-}
-
-func flattenCounters(n *y3.Node, metrics *[]metric, parents []string) {
-	switch n.Tag {
-	case "!!map":
-		key := n.Content[0].Value
-		if key == "hidden_fields" || key == "filter" {
-			return
-		}
-		parents = append(parents, key)
-		flattenCounters(n.Content[1], metrics, parents)
-	case "!!seq":
-		for _, c := range n.Content {
-			flattenCounters(c, metrics, parents)
-		}
-	case "!!str":
-		*metrics = append(*metrics, newZapiMetric(n, parents))
-	}
-}
-
-func newZapiMetric(n *y3.Node, parents []string) metric {
-	// separate left and right and remove all sigils
-	text := n.Value
-	noSigils := sigilReplacer.Replace(text)
-	before, after, found := strings.Cut(noSigils, "=>")
-	m := metric{
-		line:     text,
-		left:     strings.TrimSpace(noSigils),
-		hasSigil: strings.Contains(text, "^"),
-		column:   n.Column,
-		parents:  parents,
-	}
-	if found {
-		m.left = strings.TrimSpace(before)
-		m.right = trimComment(after)
-		m.renameColumn = strings.Index(text, "=>") + n.Column
-	}
-	return m
-}
-
-var setRe = regexp.MustCompile(`[sS]etLabel\("?(\w+)"?,`)
-
-func findCustomPlugins(path string, template *node.Node, model *TemplateModel) error {
-	plug := template.SearchChildren([]string{"plugins"})
-	if len(plug) == 0 {
-		return nil
-	}
-	builtIn := map[string]bool{
-		"LabelAgent":  true,
-		"MetricAgent": true,
-		"Aggregator":  true,
-		"Max":         true,
-		"Tenant":      true,
-	}
-	for _, child := range plug[0].Children {
-		name := child.GetNameS()
-		if name == "" {
-			name = child.GetContentS()
-		}
-		if builtIn[name] {
-			continue
-		}
-
-		goPluginName := strings.ToLower(name)
-		splits := strings.Split(path, "/")
-		pluginGo := fmt.Sprintf("../../../cmd/collectors/%s/plugins/%s/%s.go", splits[4], goPluginName, goPluginName)
-
-		// Both Zapi and REST sensor.yaml templates uses a single plugin defined in power.go
-		if strings.Contains(path, "sensor.yaml") {
-			pluginGo = "../../../cmd/collectors/power.go"
-		}
-
-		err2 := readPlugin(pluginGo, model)
-		if err2 != nil {
-			return err2
-		}
-		// special case for labels added outside normal per-object plugin
-		if strings.Contains(path, "snapmirror.yaml") || strings.Contains(path, "svm.yaml") {
-			err2 = readPlugin("../../../cmd/collectors/commonutils.go", model)
-			if err2 != nil {
-				return err2
-			}
-		}
-	}
-	return nil
-}
-
-func readPlugin(fileName string, model *TemplateModel) error {
-	file, err := os.Open(fileName)
-	if err != nil {
-		return err
-	}
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		text := scanner.Text()
-		trimmed := strings.TrimSpace(text)
-		matches := setRe.FindStringSubmatch(trimmed)
-		if len(matches) == 2 {
-			model.pluginLabels = append(model.pluginLabels, matches[1])
-		}
-	}
-	_ = file.Close()
-	return nil
-}
-
-func findBuiltInPlugins(template *node.Node, model *TemplateModel) error {
-	template.PreprocessTemplate()
-	children := template.SearchChildren([]string{"plugins", "LabelAgent"})
-	if len(children) == 0 {
-		return nil
-	}
-	abc := plugin.AbstractPlugin{Params: children[0]}
-	la := labelagent.New(&abc)
-	err := la.Init()
-	if err != nil {
-		return err
-	}
-	model.pluginLabels = la.NewLabels()
-
-	children = template.SearchChildren([]string{"plugins", "Aggregator"})
-	if len(children) == 0 {
-		return nil
-	}
-	abc = plugin.AbstractPlugin{Params: children[0]}
-	agg := aggregator.New(&abc)
-	err = agg.Init()
-	if err != nil {
-		return err
-	}
-	model.pluginLabels = append(model.pluginLabels, agg.NewLabels()...)
-
-	return nil
-}
-
-func unmarshalModel(data []byte) (TemplateModel, error) {
-	tm := TemplateModel{}
-	root := &y3.Node{}
-	err := y3.Unmarshal(data, root)
-	if err != nil {
-		return tm, fmt.Errorf("failed to unmarshal err: %w", err)
-	}
-	if len(root.Content) == 0 {
-		return tm, errs.New(errs.ErrConfig, "template file is empty or does not exist")
-	}
-	contentNode := root.Content[0]
-	err = readNameQueryObject(&tm, contentNode)
-	if err != nil {
-		return tm, err
-	}
-	countersNode := searchNode(contentNode, "counters")
-	if countersNode == nil {
-		return tm, fmt.Errorf("template has no counters")
-	}
-	metrics := make([]metric, 0)
-	flattenCounters(countersNode, &metrics, make([]string, 0))
-	addEndpoints(&tm, searchNode(contentNode, "endpoints"), make([]string, 0))
-	addExportOptions(&tm, searchNode(contentNode, "export_options"))
-
-	tm.metrics = metrics
-	return tm, nil
-}
-
-func addExportOptions(tm *TemplateModel, n *y3.Node) {
-	if n == nil {
-		return
-	}
-	instanceKeys := searchNode(n, "instance_keys")
-	if instanceKeys != nil {
-		for _, ikn := range instanceKeys.Content {
-			tm.ExportOptions.InstanceKeys = append(tm.ExportOptions.InstanceKeys, ikn.Value)
-		}
-	}
-	instanceLabels := searchNode(n, "instance_labels")
-	if instanceLabels != nil {
-		for _, il := range instanceLabels.Content {
-			tm.ExportOptions.InstanceLabels = append(tm.ExportOptions.InstanceLabels, il.Value)
-		}
-	}
-}
-
-func readNameQueryObject(tm *TemplateModel, root *y3.Node) error {
-	nameNode := searchNode(root, "name")
-	if nameNode != nil {
-		tm.Name = nameNode.Value
-	}
-	queryNode := searchNode(root, "query")
-	if queryNode != nil {
-		tm.Query = queryNode.Value
-	}
-	objectNode := searchNode(root, "object")
-	if objectNode != nil {
-		tm.Object = objectNode.Value
-	}
-	if tm.Name == "" {
-		return fmt.Errorf("template has no name")
-	}
-	if tm.Query == "" {
-		return fmt.Errorf("template has no query")
-	}
-	if tm.Object == "" {
-		return fmt.Errorf("template has no object")
-	}
-	return nil
-}
-
-func addEndpoints(tm *TemplateModel, n *y3.Node, parents []string) {
-	if n == nil {
-		return
-	}
-	for _, m := range n.Content {
-		query := m.Content[1].Value
-		metrics := make([]metric, 0)
-		countersNode := m.Content[3]
-		flattenCounters(countersNode, &metrics, parents)
-		ep := &Endpoint{Query: query, metrics: metrics}
-		tm.Endpoints = append(tm.Endpoints, ep)
-	}
-}
-
-func searchNode(r *y3.Node, key string) *y3.Node {
-	for i, n := range r.Content {
-		if n.Tag == "!!str" && n.Value == key {
-			return r.Content[i+1]
-		}
-	}
-	return nil
-}
-
-func trimComment(text string) string {
-	lastSink := strings.Index(text, "#")
-	if lastSink > -1 {
-		return strings.TrimSpace(text[:lastSink])
-	}
-	return strings.TrimSpace(text)
-}
-
-type Endpoint struct {
-	Query    string   `yaml:"query"`
-	Counters []string `yaml:"counters"`
-	metrics  []metric
-}
-
-type TemplateModel struct {
-	Name          string      `yaml:"name"`
-	Query         string      `yaml:"query"`
-	Object        string      `yaml:"object"`
-	Endpoints     []*Endpoint `yaml:"endpoints"`
-	ExportOptions struct {
-		InstanceKeys     []string `yaml:"instance_keys"`
-		InstanceLabels   []string `yaml:"instance_labels"`
-		IncludeAllLabels bool     `yaml:"include_all_labels"`
-	} `yaml:"export_options"`
-	metrics      []metric
-	pluginLabels []string
 }
 
 func collectorPath(path string) string {

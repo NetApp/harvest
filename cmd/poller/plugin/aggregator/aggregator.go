@@ -306,3 +306,13 @@ func (a *Aggregator) NewLabels() []string {
 
 	return newLabelNames
 }
+
+// NewMetrics returns the new metrics the receiver creates
+func (a *Aggregator) NewMetrics() []plugin.DerivedMetric {
+	var derivedMetrics []plugin.DerivedMetric
+	for _, r := range a.rules {
+		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{Name: r.label, Source: r.object})
+	}
+
+	return derivedMetrics
+}
