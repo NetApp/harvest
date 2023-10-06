@@ -7,7 +7,7 @@ import (
 )
 
 type RestError struct {
-	InnerError string
+	Err        error
 	Message    string
 	Target     string
 	Code       int64
@@ -15,13 +15,17 @@ type RestError struct {
 	API        string
 }
 
+func (r *RestError) Unwrap() error {
+	return r.Err
+}
+
 func (r *RestError) Error() string {
 	var parts []string
 	if r.StatusCode != 0 {
 		parts = append(parts, fmt.Sprintf("StatusCode: %d", r.StatusCode))
 	}
-	if r.InnerError != "" {
-		parts = append(parts, fmt.Sprintf("InnerError: %s", r.InnerError))
+	if r.Err != nil {
+		parts = append(parts, fmt.Sprintf("Error: %s", r.Err))
 	}
 	if r.Message != "" {
 		parts = append(parts, fmt.Sprintf("Message: %s", r.Message))
@@ -42,7 +46,7 @@ type RestErrorBuilder struct {
 	restError RestError
 }
 
-func NewRestError() *RestErrorBuilder {
+func NewRest() *RestErrorBuilder {
 	return &RestErrorBuilder{}
 }
 
@@ -51,8 +55,8 @@ func (b *RestErrorBuilder) StatusCode(statusCode int) *RestErrorBuilder {
 	return b
 }
 
-func (b *RestErrorBuilder) InnerError(innerError string) *RestErrorBuilder {
-	b.restError.InnerError = innerError
+func (b *RestErrorBuilder) Error(err error) *RestErrorBuilder {
+	b.restError.Err = err
 	return b
 }
 
