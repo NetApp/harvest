@@ -49,7 +49,12 @@ func (r *Rest) InitCache() error {
 
 	// default value for ONTAP is 15 sec
 	if returnTimeout := r.Params.GetChildContentS("return_timeout"); returnTimeout != "" {
-		r.Prop.ReturnTimeOut = returnTimeout
+		iReturnTimeout, err := strconv.Atoi(returnTimeout)
+		if err != nil {
+			r.Logger.Warn().Str("returnTimeout", returnTimeout).Msg("Invalid value of returnTimeout")
+		} else {
+			r.Prop.ReturnTimeOut = &iReturnTimeout
+		}
 	}
 
 	// private end point do not support * as fields. We need to pass fields in endpoint

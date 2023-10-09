@@ -17,7 +17,7 @@ import (
 
 const explorer = "volume_analytics"
 
-var MaxDirCollectCount = "100"
+var MaxDirCollectCount = 100
 
 type VolumeAnalytics struct {
 	*plugin.AbstractPlugin
@@ -50,7 +50,13 @@ func (v *VolumeAnalytics) Init() error {
 
 	m := v.Params.GetChildS("MaxDirectoryCount")
 	if m != nil {
-		MaxDirCollectCount = m.GetContentS()
+		count := m.GetContentS()
+		i, err := strconv.Atoi(count)
+		if err != nil {
+			v.Logger.Warn().Str("MaxDirectoryCount", count).Msg("using default")
+		} else {
+			MaxDirCollectCount = i
+		}
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
@@ -282,8 +288,13 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, g
 
 	fields := []string{"analytics.file_count", "analytics.bytes_used", "analytics.subdir_count", "analytics.by_modified_time.bytes_used", "analytics.by_accessed_time.bytes_used"}
 	query := path.Join("api/storage/volumes", instanceID, "files/")
-	href := rest.BuildHref(query, strings.Join(fields, ","), []string{"order_by=analytics.bytes_used+desc", "type=directory"}, "", "", MaxDirCollectCount, "", query)
 
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter([]string{"order_by=analytics.bytes_used+desc", "type=directory"}).
+		MaxRecords(&MaxDirCollectCount).
+		Build()
 	if result, analytics, err = rest.FetchAnalytics(v.client, href); err != nil {
 		return nil, gjson.Result{}, err
 	}

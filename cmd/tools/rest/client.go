@@ -312,8 +312,11 @@ func (c *Client) Init(retries int) error {
 	)
 
 	for i = 0; i < retries; i++ {
-
-		content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "", ""))
+		href := NewHrefBuilder().
+			APIPath("api/cluster").
+			Fields([]string{"*"}).
+			Build()
+		content, err = c.GetRest(href)
 		if err != nil {
 			if errors.Is(err, errs.ErrPermissionDenied) {
 				return err
@@ -331,34 +334,6 @@ func (c *Client) Init(retries int) error {
 		return nil
 	}
 	return err
-}
-
-func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string, endpoint string) string {
-	href := strings.Builder{}
-	if endpoint == "" {
-		href.WriteString("api/")
-		href.WriteString(apiPath)
-	} else {
-		href.WriteString(endpoint)
-	}
-	href.WriteString("?return_records=true")
-	addArg(&href, "&fields=", fields)
-	for _, f := range field {
-		addArg(&href, "&", f)
-	}
-	addArg(&href, "&query_fields=", queryFields)
-	addArg(&href, "&query=", queryValue)
-	addArg(&href, "&max_records=", maxRecords)
-	addArg(&href, "&return_timeout=", returnTimeout)
-	return href.String()
-}
-
-func addArg(href *strings.Builder, field string, value string) {
-	if value == "" {
-		return
-	}
-	href.WriteString(field)
-	href.WriteString(value)
 }
 
 func (c *Client) Cluster() Cluster {

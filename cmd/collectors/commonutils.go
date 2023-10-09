@@ -61,7 +61,7 @@ func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([
 	return result, nil
 }
 
-func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.Logger) (time.Time, error) {
+func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *logging.Logger) (time.Time, error) {
 	var (
 		err         error
 		records     []gjson.Result
@@ -72,7 +72,14 @@ func GetClusterTime(client *rest.Client, returnTimeOut string, logger *logging.L
 	query := "private/cli/cluster/date"
 	fields := []string{"date"}
 
-	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "1", returnTimeOut, "")
+	maxRecords := 1
+
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		MaxRecords(&maxRecords).
+		ReturnTimeout(returnTimeOut).
+		Build()
 
 	if records, err = rest.Fetch(client, href); err != nil {
 		return clusterTime, err

@@ -14,7 +14,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -188,9 +187,13 @@ func (my *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 		err    error
 	)
 
-	diskFields := []string{"aggregates.name", "aggregates.uuid"}
+	fields := []string{"aggregates.name", "aggregates.uuid"}
 	query := "api/storage/disks"
-	href := rest.BuildHref("", strings.Join(diskFields, ","), []string{"protection_mode=!data|full"}, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter([]string{"protection_mode=!data|full"}).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return nil, err
