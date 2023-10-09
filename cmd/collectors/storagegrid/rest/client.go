@@ -247,9 +247,9 @@ func (c *Client) fetch() ([]byte, error) {
 			return nil, errs.NewStorageGridErr(response.StatusCode, body)
 		}
 		api := util.GetURLWithoutHost(c.request)
-		return nil, errs.NewRestError().
+		return nil, errs.NewRest().
 			StatusCode(response.StatusCode).
-			Message(err.Error()).
+			Error(err).
 			API(api).
 			Build()
 	}

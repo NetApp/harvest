@@ -182,9 +182,9 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		defer response.Body.Close()
 		innerBody, innerErr = io.ReadAll(response.Body)
 		if innerErr != nil {
-			return nil, errs.NewRestError().
+			return nil, errs.NewRest().
 				StatusCode(response.StatusCode).
-				InnerError(innerErr.Error()).
+				Error(innerErr).
 				API(api).
 				Build()
 		}
@@ -192,9 +192,9 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		if response.StatusCode != http.StatusOK {
 
 			if response.StatusCode == http.StatusUnauthorized {
-				return nil, errs.NewRestError().
+				return nil, errs.NewRest().
 					StatusCode(response.StatusCode).
-					InnerError(string(errs.ErrAuthFailed)).
+					Error(errs.ErrAuthFailed).
 					Message(response.Status).
 					API(api).
 					Build()
@@ -204,9 +204,9 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 
 			if response.StatusCode == http.StatusForbidden {
 				message := result.Get(Message).String()
-				return nil, errs.NewRestError().
+				return nil, errs.NewRest().
 					StatusCode(response.StatusCode).
-					InnerError(string(errs.ErrPermissionDenied)).
+					Error(errs.ErrPermissionDenied).
 					Message(message).
 					API(api).
 					Build()
@@ -216,7 +216,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 				message := result.Get(Message).String()
 				code := result.Get(Code).Int()
 				target := result.Get(Target).String()
-				return nil, errs.NewRestError().
+				return nil, errs.NewRest().
 					StatusCode(response.StatusCode).
 					Message(message).
 					Code(code).
@@ -224,7 +224,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 					API(api).
 					Build()
 			}
-			return nil, errs.NewRestError().
+			return nil, errs.NewRest().
 				StatusCode(response.StatusCode).
 				API(api).
 				Build()
