@@ -54,7 +54,7 @@ type prop struct {
 	InstanceLabels map[string]string
 	Metrics        map[string]*Metric
 	Counters       map[string]string
-	ReturnTimeOut  *int
+	ReturnTimeOut  int
 	Fields         []string
 	APIType        string // public, private
 	Filter         []string
