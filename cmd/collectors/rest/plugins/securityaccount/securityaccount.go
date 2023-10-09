@@ -63,7 +63,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	data := dataMap[s.Object]
 	href := rest.NewHrefBuilder().
 		APIPath(s.query).
-		Fields("applications").
+		Fields([]string{"applications"}).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(s.client, href, s.Logger); err != nil {

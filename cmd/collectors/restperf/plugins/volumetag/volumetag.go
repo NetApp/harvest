@@ -43,7 +43,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields("comment").
+		Fields([]string{"comment"}).
 		Build()
 
 	records, err := rest.Fetch(v.client, href)

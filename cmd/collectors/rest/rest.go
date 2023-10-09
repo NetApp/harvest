@@ -54,7 +54,7 @@ type prop struct {
 	InstanceLabels map[string]string
 	Metrics        map[string]*Metric
 	Counters       map[string]string
-	ReturnTimeOut  string
+	ReturnTimeOut  *int
 	Fields         []string
 	APIType        string // public, private
 	Filter         []string
@@ -299,7 +299,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	href := rest.NewHrefBuilder().
 		APIPath(r.Prop.Query).
-		Fields(strings.Join(r.Prop.Fields, ",")).
+		Fields(r.Prop.Fields).
 		Filter(r.Prop.Filter).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
@@ -348,7 +348,7 @@ func (r *Rest) pollData(startTime time.Time, records []gjson.Result, endpointFun
 func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(r.query(e)).
-		Fields(strings.Join(r.fields(e), ",")).
+		Fields(r.fields(e)).
 		Filter(r.filter(e)).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
@@ -678,7 +678,7 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields("serial_number,system_id").
+		Fields([]string{"serial_number", "system_id"}).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 

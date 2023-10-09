@@ -294,7 +294,7 @@ func (c *Client) Init(retries int) error {
 	for i = 0; i < retries; i++ {
 		href := NewHrefBuilder().
 			APIPath("api/cluster").
-			Fields("*").
+			Fields([]string{"*"}).
 			Build()
 		content, err = c.GetRest(href)
 		if err != nil {

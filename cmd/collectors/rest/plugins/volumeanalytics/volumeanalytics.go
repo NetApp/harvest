@@ -17,7 +17,7 @@ import (
 
 const explorer = "volume_analytics"
 
-var MaxDirCollectCount = "100"
+var MaxDirCollectCount = 100
 
 type VolumeAnalytics struct {
 	*plugin.AbstractPlugin
@@ -50,7 +50,13 @@ func (v *VolumeAnalytics) Init() error {
 
 	m := v.Params.GetChildS("MaxDirectoryCount")
 	if m != nil {
-		MaxDirCollectCount = m.GetContentS()
+		count := m.GetContentS()
+		i, err := strconv.Atoi(count)
+		if err != nil {
+			v.Logger.Warn().Str("MaxDirectoryCount", count).Msg("using default")
+		} else {
+			MaxDirCollectCount = i
+		}
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
@@ -285,7 +291,7 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, g
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"order_by=analytics.bytes_used+desc", "type=directory"}).
 		MaxRecords(MaxDirCollectCount).
 		Build()

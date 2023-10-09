@@ -161,7 +161,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 
 	href := rest.NewHrefBuilder().
 		APIPath(q.query).
-		Fields("*").
+		Fields([]string{"*"}).
 		Filter(filter).
 		Build()
 

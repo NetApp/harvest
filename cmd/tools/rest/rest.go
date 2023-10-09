@@ -46,7 +46,7 @@ type Args struct {
 	QueryField    string
 	QueryValue    string
 	DownloadAll   bool
-	MaxRecords    string
+	MaxRecords    int
 	ForceDownload bool
 	Verbose       bool
 	Timeout       string
@@ -187,7 +187,7 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 
 	href := NewHrefBuilder().
 		APIPath(args.API).
-		Fields(args.Fields).
+		Fields(strings.Split(args.Fields, ",")).
 		Filter(args.Field).
 		QueryFields(args.QueryField).
 		QueryValue(args.QueryValue).
@@ -595,7 +595,7 @@ func init() {
 	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.BoolVarP(&args.Verbose, "verbose", "v", false, "Be verbose")
-	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")
+	showFlags.IntVarP(&args.MaxRecords, "max-records", "m", -1, "Limit the number of records returned before providing pagination link")
 	showFlags.BoolVar(&args.ForceDownload, "download", false, "Force download Swagger file instead of using local copy")
 	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "Fields to return in the response <field>[,...].")
 	showFlags.StringArrayVar(&args.Field, "field", []string{}, "Query a field by value (can be specified multiple times.)\n"+

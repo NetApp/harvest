@@ -5,7 +5,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"strings"
 	"time"
 )
 
@@ -39,7 +38,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	fields := []string{"node", "adapter", "port_name"}
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Build()
 	records, err := rest.Fetch(f.client, href)
 	if err != nil {

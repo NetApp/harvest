@@ -188,7 +188,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	query := "api/private/cli/vserver"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields("type").
+		Fields([]string{"type"}).
 		Filter([]string{"type=admin"}).
 		Build()
 
@@ -214,7 +214,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	query := "api/private/cli/security/ssl"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields("serial").
+		Fields([]string{"serial"}).
 		Filter([]string{"vserver=" + adminSvm}).
 		Build()
 

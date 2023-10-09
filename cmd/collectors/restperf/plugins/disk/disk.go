@@ -246,7 +246,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 	href := rest.NewHrefBuilder().
 		APIPath(d.query).
-		Fields("*").
+		Fields([]string{"*"}).
 		Build()
 
 	records, err := rest.Fetch(d.client, href)
@@ -549,7 +549,7 @@ func (d *Disk) getDisks() error {
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields("name,uid,shelf.uid,type,aggregates").
+		Fields([]string{"name", "uid", "shelf.uid", "type", "aggregates"}).
 		Build()
 
 	records, err := rest.Fetch(d.client, href)
@@ -607,7 +607,7 @@ func (d *Disk) getAggregates() error {
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields("aggregate,composite,node,uses_shared_disks,storage_type").
+		Fields([]string{"aggregate", "composite", "node", "uses_shared_disks", "storage_type"}).
 		Build()
 
 	records, err := rest.Fetch(d.client, href)

@@ -1,6 +1,9 @@
 package rest
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 type HrefBuilder struct {
 	apiPath       string
@@ -8,8 +11,8 @@ type HrefBuilder struct {
 	filter        []string
 	queryFields   string
 	queryValue    string
-	maxRecords    string
-	returnTimeout string
+	maxRecords    int
+	returnTimeout *int
 }
 
 func NewHrefBuilder() *HrefBuilder {
@@ -21,8 +24,8 @@ func (b *HrefBuilder) APIPath(apiPath string) *HrefBuilder {
 	return b
 }
 
-func (b *HrefBuilder) Fields(fields string) *HrefBuilder {
-	b.fields = fields
+func (b *HrefBuilder) Fields(fields []string) *HrefBuilder {
+	b.fields = strings.Join(fields, ",")
 	return b
 }
 
@@ -41,12 +44,12 @@ func (b *HrefBuilder) QueryValue(queryValue string) *HrefBuilder {
 	return b
 }
 
-func (b *HrefBuilder) MaxRecords(maxRecords string) *HrefBuilder {
+func (b *HrefBuilder) MaxRecords(maxRecords int) *HrefBuilder {
 	b.maxRecords = maxRecords
 	return b
 }
 
-func (b *HrefBuilder) ReturnTimeout(returnTimeout string) *HrefBuilder {
+func (b *HrefBuilder) ReturnTimeout(returnTimeout *int) *HrefBuilder {
 	b.returnTimeout = returnTimeout
 	return b
 }
@@ -65,8 +68,12 @@ func (b *HrefBuilder) Build() string {
 	}
 	addArg(&href, "&query_fields=", b.queryFields)
 	addArg(&href, "&query=", b.queryValue)
-	addArg(&href, "&max_records=", b.maxRecords)
-	addArg(&href, "&return_timeout=", b.returnTimeout)
+	if b.maxRecords > 0 {
+		addArg(&href, "&max_records=", strconv.Itoa(b.maxRecords))
+	}
+	if b.returnTimeout != nil {
+		addArg(&href, "&return_timeout=", strconv.Itoa(*b.returnTimeout))
+	}
 	return href.String()
 }
 

@@ -113,7 +113,7 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	query := "api/svm/peers"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"peer.cluster.name=!" + cluster}).
 		Build()
 

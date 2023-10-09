@@ -11,7 +11,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -446,7 +445,7 @@ func (h *Health) collectSupportAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	clusterTime, err := collectors.GetClusterTime(h.client, "", h.Logger)
+	clusterTime, err := collectors.GetClusterTime(h.client, nil, h.Logger)
 	if err != nil {
 		h.Logger.Error().Err(err).Msg("Failed to collect cluster time")
 		return
@@ -535,7 +534,7 @@ func (h *Health) getDisks() ([]gjson.Result, error) {
 	query := "api/storage/disks"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"container_type=broken|unassigned"}).
 		Build()
 
@@ -555,7 +554,7 @@ func (h *Health) getShelves() ([]gjson.Result, error) {
 	query := "api/private/cli/storage/shelf"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
@@ -574,7 +573,7 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 	query := "api/private/cli/node"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"health=false"}).
 		Build()
 
@@ -612,7 +611,7 @@ func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
 	fields := []string{"name,scope,state"}
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"state=noncompliant"}).
 		Build()
 
@@ -632,7 +631,7 @@ func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 	fields := []string{"uuid,name,movement.state,svm"}
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"movement.state=cutover_wait|failed|cutover_pending"}).
 		Build()
 
@@ -651,7 +650,7 @@ func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
 	query := "api/network/ip/interfaces"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields("svm,location").
+		Fields([]string{"svm", "location"}).
 		Filter([]string{"location.is_home=false"}).
 		Build()
 
@@ -671,7 +670,7 @@ func (h *Health) getFCPorts() ([]gjson.Result, error) {
 	query := "api/network/fc/ports"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"enabled=true", "state=offlined_by_system"}).
 		Build()
 
@@ -691,7 +690,7 @@ func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
 	query := "api/network/ethernet/ports"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields(strings.Join(fields, ",")).
+		Fields(fields).
 		Filter([]string{"enabled=true", "state=down"}).
 		Build()
 

@@ -644,7 +644,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
-		Fields(strings.Join(r.Prop.Fields, ",")).
+		Fields(r.Prop.Fields).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
@@ -1237,7 +1237,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 	filter = append(filter, "counters.name=ops")
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
-		Fields("*").
+		Fields([]string{"*"}).
 		Filter(filter).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
@@ -1356,7 +1356,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
-		Fields(fields).
+		Fields([]string{fields}).
 		Filter(filter).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
