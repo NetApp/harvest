@@ -445,7 +445,7 @@ func (h *Health) collectSupportAlerts() {
 	var (
 		instance *matrix.Instance
 	)
-	clusterTime, err := collectors.GetClusterTime(h.client, -1, h.Logger)
+	clusterTime, err := collectors.GetClusterTime(h.client, nil, h.Logger)
 	if err != nil {
 		h.Logger.Error().Err(err).Msg("Failed to collect cluster time")
 		return

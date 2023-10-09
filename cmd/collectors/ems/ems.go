@@ -34,7 +34,7 @@ type Ems struct {
 	emsProp        map[string][]*emsProp // array is used here to handle same ems written with different ops, matches or exports. Example: arw.volume.state ems with op as disabled or dry-run
 	Filter         []string
 	Fields         []string
-	ReturnTimeOut  int
+	ReturnTimeOut  *int
 	lastFilterTime int64
 	maxURLSize     int
 	DefaultLabels  []string
@@ -191,7 +191,7 @@ func (e *Ems) InitCache() error {
 		if err != nil {
 			e.Logger.Warn().Str("returnTimeout", returnTimeout).Msg("Invalid value of returnTimeout")
 		} else {
-			e.ReturnTimeOut = iReturnTimeout
+			e.ReturnTimeOut = &iReturnTimeout
 		}
 	}
 

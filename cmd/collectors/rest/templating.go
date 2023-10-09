@@ -53,7 +53,7 @@ func (r *Rest) InitCache() error {
 		if err != nil {
 			r.Logger.Warn().Str("returnTimeout", returnTimeout).Msg("Invalid value of returnTimeout")
 		} else {
-			r.Prop.ReturnTimeOut = iReturnTimeout
+			r.Prop.ReturnTimeOut = &iReturnTimeout
 		}
 	}
 
