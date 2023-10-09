@@ -10,6 +10,7 @@ schedule:
 objects:
   Aggregate:                   aggr.yaml
   CIFSSession:                 cifs_session.yaml
+#  CIFSShare:                    cifs_share.yaml
   CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml

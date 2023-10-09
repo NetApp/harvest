@@ -512,6 +512,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 						labelString := r.String()
 						labelArray = append(labelArray, labelString)
 					}
+					sort.Strings(labelArray)
 					instance.SetLabel(display, strings.Join(labelArray, ","))
 				} else {
 					instance.SetLabel(display, value.String())

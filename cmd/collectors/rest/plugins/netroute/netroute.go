@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/tidwall/gjson"
 	"strconv"
 	"strings"
 )
@@ -69,29 +70,29 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 	for key, instance := range data.GetInstances() {
 		cluster := data.GetGlobalLabels()["cluster"]
 		routeID := instance.GetLabel("uuid")
-		interfaceName := instance.GetLabel("interface_name")
-		interfaceAddress := instance.GetLabel("interface_address")
-		if interfaceName != "" && interfaceAddress != "" {
-			names := strings.Split(interfaceName, ",")
-			address := strings.Split(interfaceAddress, ",")
-			if len(names) == len(address) {
-				for i, name := range names {
-					index := strings.Join([]string{cluster, strconv.Itoa(count)}, "_")
-					interfaceInstance, err := n.data.NewInstance(index)
-					if err != nil {
-						n.Logger.Error().Err(err).Str("add instance failed for instance key", key).Send()
-						return nil, err
-					}
+		interfaces := instance.GetLabel("interfaces")
 
-					for _, l := range instanceLabels {
-						interfaceInstance.SetLabel(l, instance.GetLabel(l))
-					}
-					interfaceInstance.SetLabel("index", index)
-					interfaceInstance.SetLabel("address", address[i])
-					interfaceInstance.SetLabel("name", name)
-					interfaceInstance.SetLabel("route_uuid", routeID)
-					count++
+		interfacesList := gjson.Result{Type: gjson.JSON, Raw: interfaces}
+		names := interfacesList.Get("name").Array()
+		address := interfacesList.Get("address").Array()
+
+		if len(names) == len(address) {
+			for i, name := range names {
+				index := strings.Join([]string{cluster, strconv.Itoa(count)}, "_")
+				interfaceInstance, err := n.data.NewInstance(index)
+				if err != nil {
+					n.Logger.Error().Err(err).Str("add instance failed for instance key", key).Send()
+					return nil, err
 				}
+
+				for _, l := range instanceLabels {
+					interfaceInstance.SetLabel(l, instance.GetLabel(l))
+				}
+				interfaceInstance.SetLabel("index", index)
+				interfaceInstance.SetLabel("address", address[i].String())
+				interfaceInstance.SetLabel("name", name.String())
+				interfaceInstance.SetLabel("route_uuid", routeID)
+				count++
 			}
 		}
 	}

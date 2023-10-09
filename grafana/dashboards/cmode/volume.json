@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1692609731870,
+  "iteration": 1696487584834,
   "links": [
     {
       "asDropdown": true,
@@ -754,6 +754,18 @@
                     "value": "bytes"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Clone Split Estimate"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
               }
             ]
           },
@@ -870,6 +882,16 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "I"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_clone_split_estimate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "J"
             }
           ],
           "timeFrom": null,
@@ -882,6 +904,10 @@
                 "include": {
                   "names": [
                     "aggr",
+                    "clone_parent_snapshot",
+                    "clone_parent_svm",
+                    "clone_parent_volume",
+                    "junction_path",
                     "node",
                     "svm",
                     "volume",
@@ -893,7 +919,7 @@
                     "Value #G",
                     "Value #H",
                     "Value #I",
-                    "junction_path"
+                    "Value #J"
                   ]
                 }
               }
@@ -926,6 +952,10 @@
                   "Value #H": 7,
                   "Value #I": 8,
                   "aggr": 3,
+                  "clone_parent_snapshot": 15,
+                  "clone_parent_svm": 13,
+                  "clone_parent_volume": 14,
+                  "junction_path": 12,
                   "node": 2,
                   "svm": 0,
                   "volume": 1
@@ -938,6 +968,10 @@
                   "Value #G": "Total Space Saved",
                   "Value #H": "Logical Space Used",
                   "Value #I": "Physical Space Used",
+                  "Value #J": "Clone Split Estimate",
+                  "clone_parent_snapshot": "Clone Parent Snapshot",
+                  "clone_parent_svm": "Clone Parent SVM",
+                  "clone_parent_volume": "Clone Parent Volume",
                   "junction_path": "Junction Path"
                 }
               }
@@ -7585,5 +7619,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "",
-  "version": 15
+  "version": 16
 }

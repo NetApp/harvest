@@ -13,8 +13,9 @@ bin/harvest start
 
 ??? info "With curl"
 
-If you don't have `wget` installed, you can use `curl` like so:
-```
+    If you don't have `wget` installed, you can use `curl` like so:
+
+    ```
     curl -L -O https://github.com/NetApp/harvest/releases/download/v22.08.0/harvest-22.08.0-1_linux_amd64.tar.gz
     ```
 

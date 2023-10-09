@@ -284,7 +284,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				// Handling array with comma separated values
 				previousValue := instance.GetLabel(label)
 				if isAppend && previousValue != "" {
-					instance.SetLabel(label, previousValue+","+value)
+					currentVal := strings.Split(previousValue+","+value, ",")
+					sort.Strings(currentVal)
+					instance.SetLabel(label, strings.Join(currentVal, ","))
 					z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, instance.GetLabel(label)+","+value, color.End)
 				} else {
 					instance.SetLabel(label, value)
