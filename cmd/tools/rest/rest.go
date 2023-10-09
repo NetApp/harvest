@@ -46,7 +46,7 @@ type Args struct {
 	QueryField    string
 	QueryValue    string
 	DownloadAll   bool
-	MaxRecords    int
+	MaxRecords    *int
 	ForceDownload bool
 	Verbose       bool
 	Timeout       string
@@ -107,7 +107,7 @@ func ReadOrDownloadSwagger(pName string) (string, error) {
 	return swaggerPath, nil
 }
 
-func doShow(_ *cobra.Command, a []string) {
+func doShow(cmd *cobra.Command, a []string) {
 	c := validateArgs(a)
 	if !c.isValid {
 		return
@@ -119,6 +119,9 @@ func doShow(_ *cobra.Command, a []string) {
 	if args.SwaggerPath != "" {
 		doSwagger(*args)
 	} else {
+		if !cmd.Flags().Changed("max-records") {
+			args.MaxRecords = nil
+		}
 		doCmd()
 	}
 }
@@ -595,7 +598,9 @@ func init() {
 	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.BoolVarP(&args.Verbose, "verbose", "v", false, "Be verbose")
-	showFlags.IntVarP(&args.MaxRecords, "max-records", "m", -1, "Limit the number of records returned before providing pagination link")
+	var maxRecords int
+	args.MaxRecords = &maxRecords
+	showFlags.IntVarP(args.MaxRecords, "max-records", "m", 0, "Limit the number of records returned before providing pagination link")
 	showFlags.BoolVar(&args.ForceDownload, "download", false, "Force download Swagger file instead of using local copy")
 	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "Fields to return in the response <field>[,...].")
 	showFlags.StringArrayVar(&args.Field, "field", []string{}, "Query a field by value (can be specified multiple times.)\n"+

@@ -11,7 +11,7 @@ type HrefBuilder struct {
 	filter        []string
 	queryFields   string
 	queryValue    string
-	maxRecords    int
+	maxRecords    *int
 	returnTimeout *int
 }
 
@@ -44,7 +44,7 @@ func (b *HrefBuilder) QueryValue(queryValue string) *HrefBuilder {
 	return b
 }
 
-func (b *HrefBuilder) MaxRecords(maxRecords int) *HrefBuilder {
+func (b *HrefBuilder) MaxRecords(maxRecords *int) *HrefBuilder {
 	b.maxRecords = maxRecords
 	return b
 }
@@ -68,8 +68,8 @@ func (b *HrefBuilder) Build() string {
 	}
 	addArg(&href, "&query_fields=", b.queryFields)
 	addArg(&href, "&query=", b.queryValue)
-	if b.maxRecords > 0 {
-		addArg(&href, "&max_records=", strconv.Itoa(b.maxRecords))
+	if b.maxRecords != nil {
+		addArg(&href, "&max_records=", strconv.Itoa(*b.maxRecords))
 	}
 	if b.returnTimeout != nil {
 		addArg(&href, "&return_timeout=", strconv.Itoa(*b.returnTimeout))

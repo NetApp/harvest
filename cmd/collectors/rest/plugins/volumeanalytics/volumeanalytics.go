@@ -293,7 +293,7 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, g
 		APIPath(query).
 		Fields(fields).
 		Filter([]string{"order_by=analytics.bytes_used+desc", "type=directory"}).
-		MaxRecords(MaxDirCollectCount).
+		MaxRecords(&MaxDirCollectCount).
 		Build()
 	if result, analytics, err = rest.FetchAnalytics(v.client, href); err != nil {
 		return nil, gjson.Result{}, err
