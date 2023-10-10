@@ -15,6 +15,7 @@ counters:
   - ^services                      => services
   - ^state                         => status
   - ^subnet.name                   => subnet
+  - ^uuid                          => uuid
 
 endpoints:
   - query: api/private/cli/network/interface

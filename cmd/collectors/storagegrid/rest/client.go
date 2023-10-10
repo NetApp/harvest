@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"io"
 	"net/http"
@@ -245,7 +246,12 @@ func (c *Client) fetch() ([]byte, error) {
 		if body, err = io.ReadAll(response.Body); err == nil {
 			return nil, errs.NewStorageGridErr(response.StatusCode, body)
 		}
-		return nil, errs.Rest(response.StatusCode, err.Error(), 0, "")
+		api := util.GetURLWithoutHost(c.request)
+		return nil, errs.NewRest().
+			StatusCode(response.StatusCode).
+			Error(err).
+			API(api).
+			Build()
 	}
 
 	// read response body

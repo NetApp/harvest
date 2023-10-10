@@ -235,7 +235,10 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		records []gjson.Result
 	)
 
-	href := rest.BuildHref(r.Prop.Query, "", nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
+	href := rest.NewHrefBuilder().
+		APIPath(r.Prop.Query).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
@@ -639,7 +642,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
-	href := rest.BuildHref(dataQuery, strings.Join(r.Prop.Fields, ","), nil, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+	href := rest.NewHrefBuilder().
+		APIPath(dataQuery).
+		Fields(r.Prop.Fields).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -1228,7 +1235,12 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	var filter []string
 	filter = append(filter, "counters.name=ops")
-	href := rest.BuildHref(dataQuery, "*", filter, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+	href := rest.NewHrefBuilder().
+		APIPath(dataQuery).
+		Fields([]string{"*"}).
+		Filter(filter).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -1342,7 +1354,12 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	href := rest.BuildHref(dataQuery, fields, filter, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+	href := rest.NewHrefBuilder().
+		APIPath(dataQuery).
+		Fields([]string{fields}).
+		Filter(filter).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {

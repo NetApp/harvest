@@ -12,6 +12,7 @@ import (
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"regexp"
@@ -402,4 +403,12 @@ func GetSortedKeys(m map[string]string) []string {
 	}
 	sort.Strings(sortedKeys)
 	return sortedKeys
+}
+
+func GetURLWithoutHost(r *http.Request) string {
+	urlWithoutHost := r.URL.Path
+	if r.URL.RawQuery != "" {
+		urlWithoutHost += "?" + r.URL.RawQuery
+	}
+	return urlWithoutHost
 }

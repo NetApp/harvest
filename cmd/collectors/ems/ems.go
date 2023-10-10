@@ -34,7 +34,7 @@ type Ems struct {
 	emsProp        map[string][]*emsProp // array is used here to handle same ems written with different ops, matches or exports. Example: arw.volume.state ems with op as disabled or dry-run
 	Filter         []string
 	Fields         []string
-	ReturnTimeOut  string
+	ReturnTimeOut  *int
 	lastFilterTime int64
 	maxURLSize     int
 	DefaultLabels  []string
@@ -187,7 +187,12 @@ func (e *Ems) InitCache() error {
 
 	// default value for ONTAP is 15 sec
 	if returnTimeout := e.Params.GetChildContentS("return_timeout"); returnTimeout != "" {
-		e.ReturnTimeOut = returnTimeout
+		iReturnTimeout, err := strconv.Atoi(returnTimeout)
+		if err != nil {
+			e.Logger.Warn().Str("returnTimeout", returnTimeout).Msg("Invalid value of returnTimeout")
+		} else {
+			e.ReturnTimeOut = &iReturnTimeout
+		}
 	}
 
 	// init plugins
@@ -283,7 +288,11 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	query := "api/support/ems/messages"
 	fields := []string{"name"}
 
-	href := rest.BuildHref(query, strings.Join(fields, ","), nil, "", "", "", e.ReturnTimeOut, query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		ReturnTimeout(e.ReturnTimeOut).
+		Build()
 
 	if records, err = e.GetRestData(href); err != nil {
 		return nil, err
@@ -415,7 +424,12 @@ func (e *Ems) getHref(names []string, filter []string) string {
 	orderByIndexFilter := "order_by=" + "index%20asc"
 	filter = append(filter, orderByIndexFilter)
 
-	href := rest.BuildHref(e.Query, strings.Join(e.Fields, ","), filter, "", "", "", e.ReturnTimeOut, e.Query)
+	href := rest.NewHrefBuilder().
+		APIPath(e.Query).
+		Fields(e.Fields).
+		Filter(filter).
+		ReturnTimeout(e.ReturnTimeOut).
+		Build()
 	return href
 }
 

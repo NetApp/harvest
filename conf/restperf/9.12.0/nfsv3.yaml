@@ -77,7 +77,7 @@ override:
   - mknod.total: rate
   - null.total: rate
   - pathconf.total: rate
-  - read.symlink_total: rate
+  - read_symlink.total: rate
   - read.total: rate
   - readdir.total: rate
   - readdirplus.total: rate

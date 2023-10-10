@@ -168,6 +168,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		}
 
 		restReq := c.request.URL.String()
+		api := util.GetURLWithoutHost(c.request)
 
 		// send request to server
 		if response, innerErr = c.client.Do(c.request); innerErr != nil {
@@ -177,29 +178,52 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		defer response.Body.Close()
 		innerBody, innerErr = io.ReadAll(response.Body)
 		if innerErr != nil {
-			return nil, errs.Rest(response.StatusCode, innerErr.Error(), 0, "")
+			return nil, errs.NewRest().
+				StatusCode(response.StatusCode).
+				Error(innerErr).
+				API(api).
+				Build()
 		}
 
 		if response.StatusCode != http.StatusOK {
 
 			if response.StatusCode == http.StatusUnauthorized {
-				return nil, errs.New(errs.ErrAuthFailed, response.Status)
+				return nil, errs.NewRest().
+					StatusCode(response.StatusCode).
+					Error(errs.ErrAuthFailed).
+					Message(response.Status).
+					API(api).
+					Build()
 			}
 
 			result := gjson.GetBytes(innerBody, "error")
 
 			if response.StatusCode == http.StatusForbidden {
 				message := result.Get(Message).String()
-				return nil, errs.New(errs.ErrPermissionDenied, message)
+				return nil, errs.NewRest().
+					StatusCode(response.StatusCode).
+					Error(errs.ErrPermissionDenied).
+					Message(message).
+					API(api).
+					Build()
 			}
 
 			if result.Exists() {
 				message := result.Get(Message).String()
 				code := result.Get(Code).Int()
 				target := result.Get(Target).String()
-				return nil, errs.Rest(response.StatusCode, message, code, target)
+				return nil, errs.NewRest().
+					StatusCode(response.StatusCode).
+					Message(message).
+					Code(code).
+					Target(target).
+					API(api).
+					Build()
 			}
-			return nil, errs.Rest(response.StatusCode, "", 0, "")
+			return nil, errs.NewRest().
+				StatusCode(response.StatusCode).
+				API(api).
+				Build()
 		}
 
 		defer c.printRequestAndResponse(restReq, innerBody)
@@ -288,8 +312,11 @@ func (c *Client) Init(retries int) error {
 	)
 
 	for i = 0; i < retries; i++ {
-
-		content, err = c.GetRest(BuildHref("cluster", "*", nil, "", "", "", "", ""))
+		href := NewHrefBuilder().
+			APIPath("api/cluster").
+			Fields([]string{"*"}).
+			Build()
+		content, err = c.GetRest(href)
 		if err != nil {
 			if errors.Is(err, errs.ErrPermissionDenied) {
 				return err
@@ -307,34 +334,6 @@ func (c *Client) Init(retries int) error {
 		return nil
 	}
 	return err
-}
-
-func BuildHref(apiPath string, fields string, field []string, queryFields string, queryValue string, maxRecords string, returnTimeout string, endpoint string) string {
-	href := strings.Builder{}
-	if endpoint == "" {
-		href.WriteString("api/")
-		href.WriteString(apiPath)
-	} else {
-		href.WriteString(endpoint)
-	}
-	href.WriteString("?return_records=true")
-	addArg(&href, "&fields=", fields)
-	for _, f := range field {
-		addArg(&href, "&", f)
-	}
-	addArg(&href, "&query_fields=", queryFields)
-	addArg(&href, "&query=", queryValue)
-	addArg(&href, "&max_records=", maxRecords)
-	addArg(&href, "&return_timeout=", returnTimeout)
-	return href.String()
-}
-
-func addArg(href *strings.Builder, field string, value string) {
-	if value == "" {
-		return
-	}
-	href.WriteString(field)
-	href.WriteString(value)
 }
 
 func (c *Client) Cluster() Cluster {

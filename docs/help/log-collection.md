@@ -27,7 +27,9 @@ This command will create a file named `harvest_logs.tar.gz` containing the logs 
 
 ## NABox
 
-For NABox installations, use the following command to create a compressed tar file containing the logs:
+For NABox installations,
+[ssh](https://nabox.org/documentation/configuration/) into your nabox instance,
+and use the following command to create a compressed tar file containing the logs:
 
 ```bash
 dc logs nabox-api > nabox-api.log; dc logs nabox-harvest2 > nabox-harvest2.log;\

@@ -188,7 +188,23 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 	now := time.Now()
 	var records []any
 	var curls []string
-	href := BuildHref(args.API, args.Fields, args.Field, args.QueryField, args.QueryValue, args.MaxRecords, "", args.Endpoint)
+
+	hrefBuilder := NewHrefBuilder().
+		APIPath(args.API).
+		Fields(strings.Split(args.Fields, ",")).
+		Filter(args.Field).
+		QueryFields(args.QueryField).
+		QueryValue(args.QueryValue)
+
+	if args.MaxRecords != "" {
+		maxRecords, err := strconv.Atoi(args.MaxRecords)
+		if err != nil {
+			return nil, fmt.Errorf("--max-records should be numeric %s", args.MaxRecords)
+		}
+		hrefBuilder.MaxRecords(&maxRecords)
+	}
+
+	href := hrefBuilder.Build()
 
 	err = FetchForCli(client, href, &records, args.DownloadAll, &curls)
 	if err != nil {
@@ -589,7 +605,6 @@ func init() {
 
 	showFlags := showCmd.Flags()
 	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
-	showFlags.StringVar(&args.Endpoint, "endpoint", "", "By default, /api is appended to passed argument in --api. Use --endpoint instead to pass absolute path of url")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
 	showFlags.BoolVarP(&args.Verbose, "verbose", "v", false, "Be verbose")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")

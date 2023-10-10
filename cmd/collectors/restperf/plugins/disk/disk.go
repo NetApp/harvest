@@ -244,7 +244,10 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		d.powerData[a].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
-	href := rest.BuildHref("", "*", nil, "", "", "", "", d.query)
+	href := rest.NewHrefBuilder().
+		APIPath(d.query).
+		Fields([]string{"*"}).
+		Build()
 
 	records, err := rest.Fetch(d.client, href)
 	if err != nil {
@@ -544,7 +547,10 @@ func (d *Disk) getDisks() error {
 
 	query := "api/storage/disks"
 
-	href := rest.BuildHref("", "name,uid,shelf.uid,type,aggregates", nil, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"name", "uid", "shelf.uid", "type", "aggregates"}).
+		Build()
 
 	records, err := rest.Fetch(d.client, href)
 	if err != nil {
@@ -599,7 +605,10 @@ func (d *Disk) getAggregates() error {
 
 	query := "api/private/cli/aggr"
 
-	href := rest.BuildHref("", "aggregate,composite,node,uses_shared_disks,storage_type", nil, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"aggregate", "composite", "node", "uses_shared_disks", "storage_type"}).
+		Build()
 
 	records, err := rest.Fetch(d.client, href)
 	if err != nil {

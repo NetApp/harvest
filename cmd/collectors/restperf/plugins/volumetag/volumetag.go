@@ -41,7 +41,10 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	data := dataMap[v.Object]
 	query := "api/storage/volumes"
 
-	href := rest.BuildHref("", "comment", nil, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"comment"}).
+		Build()
 
 	records, err := rest.Fetch(v.client, href)
 	if err != nil {

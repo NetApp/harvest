@@ -708,7 +708,9 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 			}
 		}
 	}
-	href := rest.BuildHref(model.Query, "", nil, "", "", "", "", model.Query)
+	href := rest.NewHrefBuilder().
+		APIPath(model.Query).
+		Build()
 	records, err = rest.Fetch(client, href)
 	if err != nil {
 		fmt.Printf("error while invoking api %+v\n", err)

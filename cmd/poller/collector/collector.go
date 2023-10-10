@@ -335,7 +335,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					c.SetStatus(1, errs.ErrConnection.Error())
 				// there are no instances to collect
 				case errors.Is(err, errs.ErrNoInstance):
-					c.Schedule.SetStandByMode(task, 5*time.Minute)
+					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
 					c.SetStatus(1, errs.ErrNoInstance.Error())
 					c.Logger.Info().
 						Str("task", task.Name).
@@ -343,7 +343,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				// no metrics available
 				case errors.Is(err, errs.ErrNoMetric):
 					c.SetStatus(1, errs.ErrNoMetric.Error())
-					c.Schedule.SetStandByMode(task, 1*time.Hour)
+					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 					c.Logger.Info().
 						Str("task", task.Name).
 						Str("object", c.Object).
@@ -351,11 +351,11 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				// not an error we are expecting, so enter failed or standby state
 				default:
 					if errors.Is(err, errs.ErrPermissionDenied) {
-						c.Schedule.SetStandByMode(task, 1*time.Hour)
+						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 						c.Logger.Error().Err(err).Str("task", task.Name).Msg("Entering standby mode")
 					} else if errors.Is(err, errs.ErrAPIRequestRejected) {
 						// API was rejected, this happens when a resource is not available or does not exist
-						c.Schedule.SetStandByMode(task, 1*time.Hour)
+						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 						// Log as info since some of these aren't errors
 						c.Logger.Info().Err(err).Str("task", task.Name).Msg("Entering standby mode")
 					} else {

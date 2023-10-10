@@ -5,7 +5,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"strings"
 	"time"
 )
 
@@ -37,8 +36,10 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	data := dataMap[f.Object]
 	query := "api/private/cli/metrocluster/interconnect/adapter"
 	fields := []string{"node", "adapter", "port_name"}
-	href := rest.BuildHref("", strings.Join(fields, ","), nil, "", "", "", "", query)
-
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Build()
 	records, err := rest.Fetch(f.client, href)
 	if err != nil {
 		f.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")

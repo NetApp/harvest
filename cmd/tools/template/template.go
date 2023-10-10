@@ -29,6 +29,7 @@ type Model struct {
 		InstanceLabels   []string `yaml:"instance_labels"`
 		IncludeAllLabels bool     `yaml:"include_all_labels"`
 	} `yaml:"export_options"`
+	Override          map[string]string `yaml:"override"`
 	metrics           []Metric
 	pluginLabels      []string
 	PluginMetrics     []plugin.DerivedMetric
@@ -91,9 +92,31 @@ func unmarshalModel(data []byte) (Model, error) {
 	flattenCounters(countersNode, &metrics, make([]string, 0))
 	addEndpoints(&tm, searchNode(contentNode, "endpoints"), make([]string, 0))
 	addExportOptions(&tm, searchNode(contentNode, "export_options"))
+	addOverride(&tm, searchNode(contentNode, "override"))
 
 	tm.metrics = metrics
 	return tm, nil
+}
+
+func addOverride(tm *Model, n *y3.Node) {
+	if n == nil {
+		return
+	}
+
+	if tm.Override == nil {
+		tm.Override = make(map[string]string)
+	}
+
+	switch n.Tag {
+	case "!!seq":
+		for _, child := range n.Content {
+			if child.Tag == "!!map" && len(child.Content) >= 2 {
+				key := child.Content[0].Value
+				val := child.Content[1].Value
+				tm.Override[key] = val
+			}
+		}
+	}
 }
 
 func readPlugins(path string, model *Model) error {
