@@ -90,6 +90,7 @@ var excludeCounters = []string{
 	"svm_read_total",
 	"svm_vscan",
 	"svm_write_total",
+	"change_log",
 	"nfs_clients_",
 }
 

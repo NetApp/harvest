@@ -3,7 +3,7 @@ query:                    api/storage/volumes
 object:                   volume
 
 counters:
-  - ^^uuid                                        => instance_uuid
+  - ^^uuid                                        => uuid
   - ^name                                         => volume
   - ^svm.name                                     => svm
   - filter:

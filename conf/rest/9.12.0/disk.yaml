@@ -4,7 +4,7 @@ query:            api/storage/disks
 object:           disk
 
 counters:
-  - ^^uid
+  - ^^uid                       => uuid
   - ^bay                        => shelf_bay
   - ^container_type
   - ^home_node.name             => owner_node
@@ -25,7 +25,7 @@ counters:
 endpoints:
   - query: api/private/cli/disk
     counters:
-      - ^^uid                   => uid
+      - ^^uid                   => uuid
       - ^type
       - disk_io_kbps_total      => stats_io_kbps
       - sectors_read            => stats_sectors_read
