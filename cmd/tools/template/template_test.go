@@ -313,6 +313,43 @@ func TestExportLabelsExist(t *testing.T) {
 	}, allTemplatesButEms...)
 }
 
+func TestOverrideMetricsExist(t *testing.T) {
+	// ignore base counters which are not collected in templates but used in collector to cook values
+	ignore := map[string]bool{
+		"compound.total":    true,
+		"compound_total":    true,
+		"read_io_type_base": true,
+	}
+
+	visitTemplates(t, func(path string, model TemplateModel) {
+		// Check if the path contains "zapiperf" or "restperf"
+		isPerf := strings.Contains(path, "zapiperf") || strings.Contains(path, "restperf")
+
+		// If the path is not a performance path, skip the rest of the loop
+		if !isPerf {
+			return
+		}
+
+		override := make(map[string]bool)
+		for key := range model.override {
+			override[key] = false
+		}
+
+		for _, m := range model.metrics {
+			if _, exists := model.override[m.left]; exists {
+				override[m.left] = true
+			}
+		}
+
+		// Check if each key in the override map exists and is not ignored
+		for k, v := range override {
+			if !v && !ignore[k] {
+				t.Errorf("override option=%s does not exist in counters path=%s", k, shortPath(path))
+			}
+		}
+	}, allTemplatesButEms...)
+}
+
 type sorted struct {
 	got  string
 	want string
@@ -702,9 +739,31 @@ func unmarshalModel(data []byte) (TemplateModel, error) {
 	flattenCounters(countersNode, &metrics, make([]string, 0))
 	addEndpoints(&tm, searchNode(contentNode, "endpoints"), make([]string, 0))
 	addExportOptions(&tm, searchNode(contentNode, "export_options"))
+	addOverride(&tm, searchNode(contentNode, "override"))
 
 	tm.metrics = metrics
 	return tm, nil
+}
+
+func addOverride(tm *TemplateModel, n *y3.Node) {
+	if n == nil {
+		return
+	}
+
+	if tm.override == nil {
+		tm.override = make(map[string]string)
+	}
+
+	switch n.Tag {
+	case "!!seq":
+		for _, child := range n.Content {
+			if child.Tag == "!!map" && len(child.Content) >= 2 {
+				key := child.Content[0].Value
+				val := child.Content[1].Value
+				tm.override[key] = val
+			}
+		}
+	}
 }
 
 func addExportOptions(tm *TemplateModel, n *y3.Node) {
@@ -799,6 +858,7 @@ type TemplateModel struct {
 	} `yaml:"export_options"`
 	metrics      []metric
 	pluginLabels []string
+	override     map[string]string `yaml:"override"`
 }
 
 func collectorPath(path string) string {
