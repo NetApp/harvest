@@ -12,6 +12,10 @@ counters:
   - vol_name                => volume
   - vserver_name            => svm
 
+plugins:
+  - FabricPool:
+      - include_constituents: false
+
 export_options:
   instance_keys:
     - cloud_target
