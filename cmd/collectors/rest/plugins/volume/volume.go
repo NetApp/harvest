@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
+	"slices"
 	"strconv"
 	"time"
 )
@@ -86,6 +87,8 @@ func (v *Volume) Init() error {
 
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[v.Object]
+	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
+	isArwSupportedVersion := slices.Contains(data.GetExportOptions().GetChildS("instance_labels").GetAllChildContentS(), "antiRansomwareState")
 	if v.currentVal >= v.PluginInvocationRate {
 		v.currentVal = 0
 
@@ -102,7 +105,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		}
 	}
 
-	if err := v.getVolumeInfo(); err != nil {
+	if err := v.getVolumeInfo(isArwSupportedVersion); err != nil {
 		v.Logger.Error().Err(err).Msg("Failed to collect volume info data")
 	}
 
@@ -237,20 +240,27 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 	return result, nil
 }
 
-func (v *Volume) getVolumeInfo() error {
+func (v *Volume) getVolumeInfo(supportedVersion bool) error {
 	v.volumeMap = make(map[string]volumeInfo)
-	if err := v.invokeVolumeRest("is_constituent=true"); err != nil {
+	fields := []string{"name", "svm.name", "space.snapshot.autodelete_enabled", "clone.parent_snapshot.name", "clone.split_estimate"}
+	if !supportedVersion {
+		return v.invokeVolumeRest("", fields)
+	}
+
+	// Only ask this field when ARW would be supported
+	fields = append(fields, "anti_ransomware.dry_run_start_time")
+	// is_constituent is supported from 9.10 onwards in public api same as ARW
+	if err := v.invokeVolumeRest("is_constituent=false", fields); err != nil {
 		return err
 	}
-	return v.invokeVolumeRest("is_constituent=false")
+	return v.invokeVolumeRest("is_constituent=true", fields)
 }
 
-func (v *Volume) invokeVolumeRest(field string) error {
+func (v *Volume) invokeVolumeRest(field string, fields []string) error {
 	var (
 		result []gjson.Result
 		err    error
 	)
-	fields := []string{"name", "svm.name", "anti_ransomware.dry_run_start_time", "space.snapshot.autodelete_enabled", "clone.parent_snapshot.name", "clone.split_estimate"}
 	query := "api/storage/volumes"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
