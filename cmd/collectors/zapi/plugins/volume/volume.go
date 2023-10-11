@@ -56,7 +56,7 @@ func (v *Volume) Init() error {
 	v.currentVal = v.SetPluginInterval()
 
 	// Read template to decide inclusion of flexgroup constituents
-	v.includeConstituents = collectors.ReadPluginKey(v.Params, "includeConstituents")
+	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	return nil
 }
 
