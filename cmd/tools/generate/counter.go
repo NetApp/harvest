@@ -2,7 +2,9 @@ package generate
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -250,15 +252,18 @@ func processRestConfigCounters(path string) map[string]Counter {
 	)
 	t, err := tree.ImportYaml(path)
 	if t == nil || err != nil {
-		fmt.Printf("Unable to import template file %s. File is invalid or empty\n", path)
+		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
 		return nil
 	}
 
-	query := t.GetChildContentS("query")
-	object := t.GetChildContentS("object")
+	model, err := template2.ReadTemplate(path)
+	if err != nil {
+		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
+		return nil
+	}
+	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
 	templateCounters := t.GetChildS("counters")
-	exportData := t.GetChildContentS("export_data")
-	if exportData == "false" {
+	if model.ExportData == "false" && noExtraMetrics {
 		return nil
 	}
 
@@ -272,8 +277,8 @@ func processRestConfigCounters(path string) map[string]Counter {
 			if _, ok := excludeCounters[name]; ok {
 				continue
 			}
-			description := searchDescriptionSwagger(object, name)
-			harvestName := strings.Join([]string{object, display}, "_")
+			description := searchDescriptionSwagger(model.Object, name)
+			harvestName := strings.Join([]string{model.Object, display}, "_")
 			if m == "float" {
 				co := Counter{
 					Name:        harvestName,
@@ -281,16 +286,40 @@ func processRestConfigCounters(path string) map[string]Counter {
 					APIs: []MetricDef{
 						{
 							API:          "REST",
-							Endpoint:     query,
+							Endpoint:     model.Query,
 							Template:     path,
 							ONTAPCounter: name,
 						},
 					},
 				}
 				counters[harvestName] = co
+
+				// If the template has any MultiplierMetrics, add them
+				for _, metric := range model.MultiplierMetrics {
+					mc := co
+					addAggregatedCounter(&mc, metric, harvestName, display)
+					counters[mc.Name] = mc
+				}
 			}
 		}
 	}
+
+	// If the template has any PluginMetrics, add them
+	for _, metric := range model.PluginMetrics {
+		co := Counter{
+			Name: model.Object + "_" + metric.Name,
+			APIs: []MetricDef{
+				{
+					API:          "REST",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
+	}
+
 	return counters
 }
 
@@ -309,14 +338,17 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		fmt.Printf("Unable to import template file %s. File is invalid or empty\n", path)
 		return nil
 	}
+	model, err := template2.ReadTemplate(path)
+	if err != nil {
+		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
+		return nil
+	}
 
-	query := t.GetChildContentS("query")
-	object := t.GetChildContentS("object")
+	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
 	templateCounters := t.GetChildS("counters")
 	override := t.GetChildS("override")
 
-	exportData := t.GetChildContentS("export_data")
-	if exportData == "false" {
+	if model.ExportData == "false" && noExtraMetrics {
 		return nil
 	}
 
@@ -326,7 +358,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 
 	// build request
 	request = node.NewXMLS("perf-object-counter-list-info")
-	request.NewChildS("objectname", query)
+	request.NewChildS("objectname", model.Query)
 
 	if err = client.BuildRequest(request); err != nil {
 		fmt.Printf("error while building request %+v\n", err)
@@ -364,11 +396,11 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
-			if strings.HasPrefix(display, object) {
-				display = strings.TrimPrefix(display, object)
+			if strings.HasPrefix(display, model.Object) {
+				display = strings.TrimPrefix(display, model.Object)
 				display = strings.TrimPrefix(display, "_")
 			}
-			harvestName := strings.Join([]string{object, display}, "_")
+			harvestName := strings.Join([]string{model.Object, display}, "_")
 			if m == "float" {
 				if _, ok := excludeCounters[name]; ok {
 					continue
@@ -380,7 +412,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 						APIs: []MetricDef{
 							{
 								API:          "ZAPI",
-								Endpoint:     strings.Join([]string{"perf-object-get-instances", query}, " "),
+								Endpoint:     strings.Join([]string{"perf-object-get-instances", model.Query}, " "),
 								Template:     path,
 								ONTAPCounter: name,
 								Unit:         zapiUnitMap[name],
@@ -390,9 +422,32 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 						},
 					}
 					counters[harvestName] = co
+
+					// If the template has any MultiplierMetrics, add them
+					for _, metric := range model.MultiplierMetrics {
+						mc := co
+						addAggregatedCounter(&mc, metric, harvestName, name)
+						counters[mc.Name] = mc
+					}
 				}
 			}
 		}
+	}
+
+	// If the template has any PluginMetrics, add them
+	for _, metric := range model.PluginMetrics {
+		co := Counter{
+			Name: model.Object + "_" + metric.Name,
+			APIs: []MetricDef{
+				{
+					API:          "ZAPI",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
 	}
 	return counters
 }
@@ -406,12 +461,14 @@ func processZapiConfigCounters(path string) map[string]Counter {
 		fmt.Printf("Unable to import template file %s. File is invalid or empty\n", path)
 		return nil
 	}
-
-	query := t.GetChildContentS("query")
-	object := t.GetChildContentS("object")
+	model, err := template2.ReadTemplate(path)
+	if err != nil {
+		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
+		return nil
+	}
+	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
 	templateCounters := t.GetChildS("counters")
-	exportData := t.GetChildContentS("export_data")
-	if exportData == "false" {
+	if model.ExportData == "false" && noExtraMetrics {
 		return nil
 	}
 	if templateCounters == nil {
@@ -421,7 +478,7 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	zc := make(map[string]string)
 
 	for _, c := range templateCounters.GetChildren() {
-		parseZapiCounters(c, []string{}, object, zc)
+		parseZapiCounters(c, []string{}, model.Object, zc)
 	}
 
 	for k, v := range zc {
@@ -433,13 +490,36 @@ func processZapiConfigCounters(path string) map[string]Counter {
 			APIs: []MetricDef{
 				{
 					API:          "ZAPI",
-					Endpoint:     query,
+					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: v,
 				},
 			},
 		}
 		counters[k] = co
+
+		// If the template has any MultiplierMetrics, add them
+		for _, metric := range model.MultiplierMetrics {
+			mc := co
+			addAggregatedCounter(&mc, metric, co.Name, model.Object)
+			counters[mc.Name] = mc
+		}
+	}
+
+	// If the template has any PluginMetrics, add them
+	for _, metric := range model.PluginMetrics {
+		co := Counter{
+			Name: model.Object + "_" + metric.Name,
+			APIs: []MetricDef{
+				{
+					API:          "ZAPI",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
 	}
 	return counters
 }
@@ -454,7 +534,9 @@ func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path stri
 		if ext != ".yaml" {
 			return nil
 		}
-
+		if strings.HasSuffix(path, "default.yaml") {
+			return nil
+		}
 		r := eachTemp(path, client)
 		for k, v := range r {
 			result[k] = v
@@ -534,7 +616,7 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 						break
 					}
 				}
-				//missing Rest Mapping
+				// missing Rest Mapping
 				if isPrint {
 					fmt.Printf("Missing %s mapping for %v \n", "REST", counter)
 				}
@@ -601,29 +683,33 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 		fmt.Printf("Unable to import template file %s. File is invalid or empty\n", path)
 		return nil
 	}
-
-	query := t.GetChildContentS("query")
-	object := t.GetChildContentS("object")
+	model, err := template2.ReadTemplate(path)
+	if err != nil {
+		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
+		return nil
+	}
+	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
 	templateCounters := t.GetChildS("counters")
 	override := t.GetChildS("override")
-	exportData := t.GetChildContentS("export_data")
-	if exportData == "false" {
+	if model.ExportData == "false" && noExtraMetrics {
 		return nil
 	}
 	if templateCounters == nil {
 		return nil
 	}
 	counterMap := make(map[string]string)
+	counterMapNoPrefix := make(map[string]string)
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
 			if m == "float" {
-				counterMap[name] = strings.Join([]string{object, display}, "_")
+				counterMap[name] = strings.Join([]string{model.Object, display}, "_")
+				counterMapNoPrefix[name] = display
 			}
 		}
 	}
 	href := rest.NewHrefBuilder().
-		APIPath(query).
+		APIPath(model.Query).
 		Build()
 	records, err = rest.Fetch(client, href)
 	if err != nil {
@@ -661,7 +747,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 				APIs: []MetricDef{
 					{
 						API:          "REST",
-						Endpoint:     query,
+						Endpoint:     model.Query,
 						Template:     path,
 						ONTAPCounter: ontapCounterName,
 						Unit:         r.Get("unit").String(),
@@ -671,10 +757,49 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 				},
 			}
 			counters[c.Name] = c
+
+			// If the template has any MultiplierMetrics, add them
+			for _, metric := range model.MultiplierMetrics {
+				mc := c
+				addAggregatedCounter(&mc, metric, v, counterMapNoPrefix[ontapCounterName])
+				counters[mc.Name] = mc
+			}
 		}
 		return true
 	})
+
+	// If the template has any PluginMetrics, add them
+	for _, metric := range model.PluginMetrics {
+		co := Counter{
+			Name: model.Object + "_" + metric.Name,
+			APIs: []MetricDef{
+				{
+					API:          "REST",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
+	}
+
 	return counters
+}
+
+func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix string, noPrefix string) {
+	if !strings.HasSuffix(c.Description, ".") {
+		c.Description = c.Description + "."
+	}
+	if metric.IsMax {
+		c.Name = metric.Name + "_" + noPrefix
+		c.Description = fmt.Sprintf("%s %s is the maximum of [%s](#%s) for label `%s`.",
+			c.Description, c.Name, withPrefix, withPrefix, metric.Source)
+	} else {
+		c.Name = metric.Name + "_" + c.Name
+		c.Description = fmt.Sprintf("%s %s is [%s](#%s) aggregated by `%s`.",
+			c.Description, c.Name, withPrefix, withPrefix, metric.Name)
+	}
 }
 
 func processExternalCounters(counters map[string]Counter) map[string]Counter {

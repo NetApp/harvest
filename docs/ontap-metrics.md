@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Aug-14
+Creation Date : 2023-Oct-11
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -35,6 +35,362 @@ Performance related metrics also include:
 |ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml|
 
 ## Metrics
+
+
+### aggr_disk_busy
+
+The utilization percent of the disk. aggr_disk_busy is [disk_busy](#disk_busy) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_capacity
+
+Disk capacity in MB. aggr_disk_capacity is [disk_capacity](#disk_capacity) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_cp_read_chain
+
+Average number of blocks transferred in each consistency point read operation during a CP. aggr_disk_cp_read_chain is [disk_cp_read_chain](#disk_cp_read_chain) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_cp_read_latency
+
+Average latency per block in microseconds for consistency point read operations. aggr_disk_cp_read_latency is [disk_cp_read_latency](#disk_cp_read_latency) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_cp_reads
+
+Number of disk read operations initiated each second for consistency point processing. aggr_disk_cp_reads is [disk_cp_reads](#disk_cp_reads) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_io_pending
+
+Average number of I/Os issued to the disk for which we have not yet received the response. aggr_disk_io_pending is [disk_io_pending](#disk_io_pending) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_io_queued
+
+Number of I/Os queued to the disk but not yet issued. aggr_disk_io_queued is [disk_io_queued](#disk_io_queued) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_busy
+
+The utilization percent of the disk. aggr_disk_max_busy is the maximum of [disk_busy](#disk_busy) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+
+
+### aggr_disk_max_capacity
+
+Disk capacity in MB. aggr_disk_max_capacity is the maximum of [disk_capacity](#disk_capacity) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+
+
+### aggr_disk_max_cp_read_chain
+
+Average number of blocks transferred in each consistency point read operation during a CP. aggr_disk_max_cp_read_chain is the maximum of [disk_cp_read_chain](#disk_cp_read_chain) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_cp_read_latency
+
+Average latency per block in microseconds for consistency point read operations. aggr_disk_max_cp_read_latency is the maximum of [disk_cp_read_latency](#disk_cp_read_latency) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_cp_reads
+
+Number of disk read operations initiated each second for consistency point processing. aggr_disk_max_cp_reads is the maximum of [disk_cp_reads](#disk_cp_reads) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_disk_busy
+
+The utilization percent of the disk. aggr_disk_max_disk_busy is the maximum of [disk_busy](#disk_busy) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_disk_capacity
+
+Disk capacity in MB. aggr_disk_max_disk_capacity is the maximum of [disk_capacity](#disk_capacity) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_io_pending
+
+Average number of I/Os issued to the disk for which we have not yet received the response. aggr_disk_max_io_pending is the maximum of [disk_io_pending](#disk_io_pending) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_io_queued
+
+Number of I/Os queued to the disk but not yet issued. aggr_disk_max_io_queued is the maximum of [disk_io_queued](#disk_io_queued) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_total_data
+
+Total throughput for user operations per second. aggr_disk_max_total_data is the maximum of [disk_total_data](#disk_total_data) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_total_transfers
+
+Total number of disk operations involving data transfer initiated per second. aggr_disk_max_total_transfers is the maximum of [disk_total_transfers](#disk_total_transfers) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_read_blocks
+
+Number of blocks transferred for user read operations per second. aggr_disk_max_user_read_blocks is the maximum of [disk_user_read_blocks](#disk_user_read_blocks) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_read_chain
+
+Average number of blocks transferred in each user read operation. aggr_disk_max_user_read_chain is the maximum of [disk_user_read_chain](#disk_user_read_chain) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_read_latency
+
+Average latency per block in microseconds for user read operations. aggr_disk_max_user_read_latency is the maximum of [disk_user_read_latency](#disk_user_read_latency) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_reads
+
+Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. aggr_disk_max_user_reads is the maximum of [disk_user_reads](#disk_user_reads) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_write_blocks
+
+Number of blocks transferred for user write operations per second. aggr_disk_max_user_write_blocks is the maximum of [disk_user_write_blocks](#disk_user_write_blocks) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_write_chain
+
+Average number of blocks transferred in each user write operation. aggr_disk_max_user_write_chain is the maximum of [disk_user_write_chain](#disk_user_write_chain) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_write_latency
+
+Average latency per block in microseconds for user write operations. aggr_disk_max_user_write_latency is the maximum of [disk_user_write_latency](#disk_user_write_latency) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_max_user_writes
+
+Number of disk write operations initiated each second for storing data or metadata associated with user requests. aggr_disk_max_user_writes is the maximum of [disk_user_writes](#disk_user_writes) for label `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_total_data
+
+Total throughput for user operations per second. aggr_disk_total_data is [disk_total_data](#disk_total_data) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_total_transfers
+
+Total number of disk operations involving data transfer initiated per second. aggr_disk_total_transfers is [disk_total_transfers](#disk_total_transfers) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_read_blocks
+
+Number of blocks transferred for user read operations per second. aggr_disk_user_read_blocks is [disk_user_read_blocks](#disk_user_read_blocks) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_read_chain
+
+Average number of blocks transferred in each user read operation. aggr_disk_user_read_chain is [disk_user_read_chain](#disk_user_read_chain) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_read_latency
+
+Average latency per block in microseconds for user read operations. aggr_disk_user_read_latency is [disk_user_read_latency](#disk_user_read_latency) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_reads
+
+Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. aggr_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_write_blocks
+
+Number of blocks transferred for user write operations per second. aggr_disk_user_write_blocks is [disk_user_write_blocks](#disk_user_write_blocks) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_write_chain
+
+Average number of blocks transferred in each user write operation. aggr_disk_user_write_chain is [disk_user_write_chain](#disk_user_write_chain) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_write_latency
+
+Average latency per block in microseconds for user write operations. aggr_disk_user_write_latency is [disk_user_write_latency](#disk_user_write_latency) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### aggr_disk_user_writes
+
+Number of disk write operations initiated each second for storing data or metadata associated with user requests. aggr_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `aggr`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### aggr_efficiency_savings
@@ -199,8 +555,8 @@ Total Data Reduction Physical Used Without Snapshots
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `space.efficiency_without_snapshots.logical_used, space.efficiency_without_snapshots.savings` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-physical-used-wo-snapshots` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 
 
 ### aggr_physical_used_wo_snapshots_flexclones
@@ -209,8 +565,8 @@ Total Data Reduction Physical Used without snapshots and flexclones
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `space.efficiency_without_snapshots_flexclones.logical_used, space.efficiency_without_snapshots_flexclones.savings` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-physical-used-wo-snapshots-flexclones` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 
 
 ### aggr_power
@@ -238,8 +594,8 @@ Number of disks in the aggregate.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `block_storage.primary.disk_count, block_storage.hybrid_cache.disk_count` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-raid-attributes.disk-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 
 
 ### aggr_raid_plex_count
@@ -307,8 +663,8 @@ The largest value to which the maxfiles-available parameter can be increased by 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `snapshot.max_files_available, snapshot.max_files_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.maxfiles-possible` | conf/zapi/cdot/9.8.0/aggr.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 
 
 ### aggr_snapshot_maxfiles_used
@@ -441,6 +797,24 @@ The percentage of inactive user data in the block storage. This property is only
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.performance-tier-inactive-user-data-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+### aggr_space_performance_tier_used
+
+A summation of volume footprints (including volume guarantees), in bytes. This includes all of the volume footprints in the block_storage tier and the cloud_storage tier.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `space.footprint` | conf/rest/9.12.0/aggr.yaml |
+
+
+### aggr_space_performance_tier_used_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `space.footprint_percent` | conf/rest/9.12.0/aggr.yaml |
+
+
 ### aggr_space_physical_used
 
 Total physical used size of an aggregate in bytes.
@@ -526,8 +900,8 @@ The percentage of disk space currently in use on the referenced file system
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `space.block_storage.used, space.block_storage.size` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.percent-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 
 
 ### aggr_total_logical_used
@@ -546,8 +920,8 @@ Total Physical Used
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/storage/aggregates` | `space.efficiency.logical_used, space.efficiency.savings` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-physical-used` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 
 
 ### aggr_volume_count_flexvol
@@ -577,6 +951,7 @@ The amount of cloud space used by all the aggregates attached to the target, in 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cloud/targets` | `used` | conf/rest/9.12.0/cloud_target.yaml |
+| ZAPI | `aggr-object-store-config-get-iter` | `aggr-object-store-config-info.used-space` | conf/zapi/cdot/9.10.0/aggr_object_store_config.yaml |
 
 
 ### cluster_new_status
@@ -659,6 +1034,16 @@ Current number of copy requests being processed by the SpinCE.
 | ZAPI | `perf-object-get-instances copy_manager` | `spince_copy_count_curr`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/copy_manager.yaml | 
 
 
+### disk_busy
+
+The utilization percent of the disk
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
 ### disk_bytes_per_sector
 
 Bytes per sector.
@@ -667,6 +1052,66 @@ Bytes per sector.
 |--------|----------|--------|---------|
 | REST | `api/storage/disks` | `bytes_per_sector` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-inventory-info.bytes-per-sector` | conf/zapi/cdot/9.8.0/disk.yaml |
+
+
+### disk_capacity
+
+Disk capacity in MB
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_cp_read_chain
+
+Average number of blocks transferred in each consistency point read operation during a CP
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_cp_read_latency
+
+Average latency per block in microseconds for consistency point read operations
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_cp_reads
+
+Number of disk read operations initiated each second for consistency point processing
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_io_pending
+
+Average number of I/Os issued to the disk for which we have not yet received the response
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_io_queued
+
+Number of I/Os queued to the disk but not yet issued
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### disk_power_on_hours
@@ -728,14 +1173,34 @@ Number of Sectors Written
 | REST | `api/private/cli/disk` | `sectors_written` | conf/rest/9.12.0/disk.yaml |
 
 
+### disk_total_data
+
+Total throughput for user operations per second
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_total_transfers
+
+Total number of disk operations involving data transfer initiated per second
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
 ### disk_uptime
 
 Number of seconds the drive has been powered on
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/storage/disks` | `stats.power_on_hours, 60, 60` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.power-on-time-interval` | conf/zapi/cdot/9.8.0/disk.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/disk.yaml |
 
 
 ### disk_usable_size
@@ -745,6 +1210,86 @@ Usable size of each disk, in bytes.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/disks` | `usable_size` | conf/rest/9.12.0/disk.yaml |
+
+
+### disk_user_read_blocks
+
+Number of blocks transferred for user read operations per second
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_user_read_chain
+
+Average number of blocks transferred in each user read operation
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_user_read_latency
+
+Average latency per block in microseconds for user read operations
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_user_reads
+
+Number of disk read operations initiated each second for retrieving data or metadata associated with user requests
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_user_write_blocks
+
+Number of blocks transferred for user write operations per second
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_user_write_chain
+
+Average number of blocks transferred in each user write operation
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_user_write_latency
+
+Average latency per block in microseconds for user write operations
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### disk_user_writes
+
+Number of disk write operations initiated each second for storing data or metadata associated with user requests
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### environment_sensor_average_ambient_temperature
@@ -2050,7 +2595,7 @@ This is the storage aggregate average latency per message at the disk level.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2060,7 +2605,7 @@ Total number of I/Os processed by the aggregate per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2070,7 +2615,7 @@ This is the storage aggregate average utilization of all the data disks in the a
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_denominator | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_denominator | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2080,7 +2625,7 @@ Daily exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2090,7 +2635,7 @@ Hourly exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2100,7 +2645,7 @@ Monthly exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2110,7 +2655,7 @@ Weekly exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2120,7 +2665,7 @@ The confidence factor for the optimal point value based on the observed resource
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2130,7 +2675,7 @@ The latency component of the optimal point of the latency/utilization curve.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2140,7 +2685,7 @@ The ops component of the optimal point derived from the latency/utilzation curve
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2150,7 +2695,7 @@ The utilization component of the optimal point of the latency/utilization curve.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2160,7 +2705,7 @@ Current operation latency of the resource.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2170,7 +2715,7 @@ Total number of operations per second (also referred to as dblade ops).
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2180,7 +2725,7 @@ Average processor utilization across all processors in the system.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> elapsed_time | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> elapsed_time | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2190,7 +2735,7 @@ Daily exponential weighted moving average for current_ops, optimal_point_ops, cu
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2200,7 +2745,7 @@ Hourly exponential weighted moving average for current_ops, optimal_point_ops, c
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2210,7 +2755,7 @@ Monthly exponential weighted moving average for current_ops, optimal_point_ops, 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2220,7 +2765,7 @@ Weekly exponential weighted moving average for current_ops, optimal_point_ops, c
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2230,7 +2775,7 @@ Confidence factor for the optimal point value based on the observed resource lat
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2240,7 +2785,7 @@ Latency component of the optimal point of the latency/utilization curve. This co
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2250,7 +2795,7 @@ Ops component of the optimal point derived from the latency/utilization curve. T
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2260,7 +2805,7 @@ Utilization component of the optimal point of the latency/utilization curve. Thi
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2638,6 +3183,16 @@ The amount of space consumed by the main data stream of the LUN.<br/>This value 
 | ZAPI | `lun-get-iter` | `lun-info.size-used` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 
+### lun_size_used_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/luns` | `size_used, size` | conf/rest/9.12.0/lun.yaml |
+| ZAPI | `lun-get-iter` | `size_used, size` | conf/zapi/cdot/9.8.0/lun.yaml |
+
+
 ### lun_unmap_reqs
 
 Number of unmap command requests
@@ -2966,6 +3521,26 @@ The total provisioned size of the NVMe namespace. Valid in POST and PATCH. The N
 |--------|----------|--------|---------|
 | REST | `api/storage/namespaces` | `space.size` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.size` | conf/zapi/cdot/9.8.0/namespace.yaml |
+
+
+### namespace_size_available
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/namespaces` | `size, size_used` | conf/rest/9.12.0/namespace.yaml |
+| ZAPI | `nvme-namespace-get-iter` | `size, size_used` | conf/zapi/cdot/9.8.0/namespace.yaml |
+
+
+### namespace_size_available_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/namespaces` | `size_available, size` | conf/rest/9.12.0/namespace.yaml |
+| ZAPI | `nvme-namespace-get-iter` | `size_available, size` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
 
 ### namespace_size_used
@@ -3699,6 +4274,56 @@ Elapsed time since boot
 | ZAPI | `perf-object-get-instances system:node` | `cpu_elapsed_time`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-display<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
 
 
+### node_disk_busy
+
+The utilization percent of the disk. node_disk_busy is [disk_busy](#disk_busy) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_capacity
+
+Disk capacity in MB. node_disk_capacity is [disk_capacity](#disk_capacity) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_cp_read_chain
+
+Average number of blocks transferred in each consistency point read operation during a CP. node_disk_cp_read_chain is [disk_cp_read_chain](#disk_cp_read_chain) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_cp_read_latency
+
+Average latency per block in microseconds for consistency point read operations. node_disk_cp_read_latency is [disk_cp_read_latency](#disk_cp_read_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_cp_reads
+
+Number of disk read operations initiated each second for consistency point processing. node_disk_cp_reads is [disk_cp_reads](#disk_cp_reads) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
 ### node_disk_data_read
 
 Number of disk kilobytes (KB) read per second
@@ -3717,6 +4342,312 @@ Number of disk kilobytes (KB) written per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
 | ZAPI | `perf-object-get-instances system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
+
+
+### node_disk_io_pending
+
+Average number of I/Os issued to the disk for which we have not yet received the response. node_disk_io_pending is [disk_io_pending](#disk_io_pending) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_io_queued
+
+Number of I/Os queued to the disk but not yet issued. node_disk_io_queued is [disk_io_queued](#disk_io_queued) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_busy
+
+The utilization percent of the disk. node_disk_max_busy is the maximum of [disk_busy](#disk_busy) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+
+
+### node_disk_max_capacity
+
+Disk capacity in MB. node_disk_max_capacity is the maximum of [disk_capacity](#disk_capacity) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+
+
+### node_disk_max_cp_read_chain
+
+Average number of blocks transferred in each consistency point read operation during a CP. node_disk_max_cp_read_chain is the maximum of [disk_cp_read_chain](#disk_cp_read_chain) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_cp_read_latency
+
+Average latency per block in microseconds for consistency point read operations. node_disk_max_cp_read_latency is the maximum of [disk_cp_read_latency](#disk_cp_read_latency) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_cp_reads
+
+Number of disk read operations initiated each second for consistency point processing. node_disk_max_cp_reads is the maximum of [disk_cp_reads](#disk_cp_reads) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_disk_busy
+
+The utilization percent of the disk. node_disk_max_disk_busy is the maximum of [disk_busy](#disk_busy) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_disk_capacity
+
+Disk capacity in MB. node_disk_max_disk_capacity is the maximum of [disk_capacity](#disk_capacity) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_io_pending
+
+Average number of I/Os issued to the disk for which we have not yet received the response. node_disk_max_io_pending is the maximum of [disk_io_pending](#disk_io_pending) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_io_queued
+
+Number of I/Os queued to the disk but not yet issued. node_disk_max_io_queued is the maximum of [disk_io_queued](#disk_io_queued) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_total_data
+
+Total throughput for user operations per second. node_disk_max_total_data is the maximum of [disk_total_data](#disk_total_data) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_total_transfers
+
+Total number of disk operations involving data transfer initiated per second. node_disk_max_total_transfers is the maximum of [disk_total_transfers](#disk_total_transfers) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_read_blocks
+
+Number of blocks transferred for user read operations per second. node_disk_max_user_read_blocks is the maximum of [disk_user_read_blocks](#disk_user_read_blocks) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_read_chain
+
+Average number of blocks transferred in each user read operation. node_disk_max_user_read_chain is the maximum of [disk_user_read_chain](#disk_user_read_chain) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_read_latency
+
+Average latency per block in microseconds for user read operations. node_disk_max_user_read_latency is the maximum of [disk_user_read_latency](#disk_user_read_latency) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_reads
+
+Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. node_disk_max_user_reads is the maximum of [disk_user_reads](#disk_user_reads) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_write_blocks
+
+Number of blocks transferred for user write operations per second. node_disk_max_user_write_blocks is the maximum of [disk_user_write_blocks](#disk_user_write_blocks) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_write_chain
+
+Average number of blocks transferred in each user write operation. node_disk_max_user_write_chain is the maximum of [disk_user_write_chain](#disk_user_write_chain) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_write_latency
+
+Average latency per block in microseconds for user write operations. node_disk_max_user_write_latency is the maximum of [disk_user_write_latency](#disk_user_write_latency) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_max_user_writes
+
+Number of disk write operations initiated each second for storing data or metadata associated with user requests. node_disk_max_user_writes is the maximum of [disk_user_writes](#disk_user_writes) for label `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_total_data
+
+Total throughput for user operations per second. node_disk_total_data is [disk_total_data](#disk_total_data) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_total_transfers
+
+Total number of disk operations involving data transfer initiated per second. node_disk_total_transfers is [disk_total_transfers](#disk_total_transfers) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_read_blocks
+
+Number of blocks transferred for user read operations per second. node_disk_user_read_blocks is [disk_user_read_blocks](#disk_user_read_blocks) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_read_chain
+
+Average number of blocks transferred in each user read operation. node_disk_user_read_chain is [disk_user_read_chain](#disk_user_read_chain) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_read_latency
+
+Average latency per block in microseconds for user read operations. node_disk_user_read_latency is [disk_user_read_latency](#disk_user_read_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_reads
+
+Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. node_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_write_blocks
+
+Number of blocks transferred for user write operations per second. node_disk_user_write_blocks is [disk_user_write_blocks](#disk_user_write_blocks) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_write_chain
+
+Average number of blocks transferred in each user write operation. node_disk_user_write_chain is [disk_user_write_chain](#disk_user_write_chain) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_write_latency
+
+Average latency per block in microseconds for user write operations. node_disk_user_write_latency is [disk_user_write_latency](#disk_user_write_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### node_disk_user_writes
+
+Number of disk write operations initiated each second for storing data or metadata associated with user requests. node_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### node_failed_fan
@@ -3885,7 +4816,7 @@ Total number of NFSv4.2 BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
@@ -4705,7 +5636,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv3:node` | `read_symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
@@ -5657,6 +6588,276 @@ Average latency in microseconds for the WAFL filesystem to process write request
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume_node.yaml | 
 | ZAPI | `perf-object-get-instances volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml | 
+
+
+### node_volume_avg_latency
+
+Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_access_latency
+
+Average time for the WAFL filesystem to process NFS protocol access requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_access_latency is [volume_nfs_access_latency](#volume_nfs_access_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.access_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_access_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_access_ops
+
+Number of NFS accesses per second to the volume. node_volume_nfs_access_ops is [volume_nfs_access_ops](#volume_nfs_access_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_getattr_latency
+
+Average time for the WAFL filesystem to process NFS protocol getattr requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_getattr_latency is [volume_nfs_getattr_latency](#volume_nfs_getattr_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.getattr_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_getattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_getattr_ops
+
+Number of NFS getattr per second to the volume. node_volume_nfs_getattr_ops is [volume_nfs_getattr_ops](#volume_nfs_getattr_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_lookup_latency
+
+Average time for the WAFL filesystem to process NFS protocol lookup requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_lookup_latency is [volume_nfs_lookup_latency](#volume_nfs_lookup_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.lookup_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_lookup_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_lookup_ops
+
+Number of NFS lookups per second to the volume. node_volume_nfs_lookup_ops is [volume_nfs_lookup_ops](#volume_nfs_lookup_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_other_latency
+
+Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.other_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_other_ops
+
+Number of other NFS operations per second to the volume. node_volume_nfs_other_ops is [volume_nfs_other_ops](#volume_nfs_other_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_punch_hole_latency
+
+Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume. node_volume_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.punch_hole_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_punch_hole_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_punch_hole_ops
+
+Number of NFS hole-punch requests per second to the volume. node_volume_nfs_punch_hole_ops is [volume_nfs_punch_hole_ops](#volume_nfs_punch_hole_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_read_latency
+
+Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_read_latency is [volume_nfs_read_latency](#volume_nfs_read_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.read_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_read_ops
+
+Number of NFS read operations per second from the volume. node_volume_nfs_read_ops is [volume_nfs_read_ops](#volume_nfs_read_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_setattr_latency
+
+Average time for the WAFL filesystem to process NFS protocol setattr requests to the volume. node_volume_nfs_setattr_latency is [volume_nfs_setattr_latency](#volume_nfs_setattr_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.setattr_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_setattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_setattr_ops
+
+Number of NFS setattr requests per second to the volume. node_volume_nfs_setattr_ops is [volume_nfs_setattr_ops](#volume_nfs_setattr_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_total_ops
+
+Number of total NFS operations per second to the volume. node_volume_nfs_total_ops is [volume_nfs_total_ops](#volume_nfs_total_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_write_latency
+
+Average time for the WAFL filesystem to process NFS protocol write requests to the volume; not including NFS protocol request processing or network communication time, which will also be included in client observed NFS request latency. node_volume_nfs_write_latency is [volume_nfs_write_latency](#volume_nfs_write_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.write_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_nfs_write_ops
+
+Number of NFS write operations per second to the volume. node_volume_nfs_write_ops is [volume_nfs_write_ops](#volume_nfs_write_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `nfs.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_other_latency
+
+Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time. node_volume_other_latency is [volume_other_latency](#volume_other_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_other_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_other_ops
+
+Number of other operations per second to the volume. node_volume_other_ops is [volume_other_ops](#volume_other_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_read_data
+
+Bytes read per second. node_volume_read_data is [volume_read_data](#volume_read_data) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `bytes_read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_read_latency
+
+Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_read_ops
+
+Number of read operations per second from the volume. node_volume_read_ops is [volume_read_ops](#volume_read_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `total_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_total_ops
+
+Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_write_data
+
+Bytes written per second. node_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_write_latency
+
+Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time. node_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### node_volume_write_ops
+
+Number of write operations per second to the volume. node_volume_write_ops is [volume_write_ops](#volume_write_ops) aggregated by `node`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 
 ### nvme_lif_avg_latency
@@ -7127,6 +8328,15 @@ Number of Upload Part operations.
 | ZAPI | `perf-object-get-instances object_store_server` | `upload_part_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
 
 
+### ontaps3_used_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/protocols/s3/buckets` | `logical_used_size, size` | conf/rest/9.7.0/ontap_s3.yaml |
+
+
 ### path_read_data
 
 The average read throughput in kilobytes per second read from the indicated target port by the controller.
@@ -7205,6 +8415,176 @@ The average latency of I/O write operations sent from this controller to the ind
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/restperf/9.12.0/path.yaml | 
 | ZAPI | `perf-object-get-instances path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/zapiperf/cdot/9.8.0/path.yaml | 
+
+
+### plex_disk_busy
+
+The utilization percent of the disk. plex_disk_busy is [disk_busy](#disk_busy) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_capacity
+
+Disk capacity in MB. plex_disk_capacity is [disk_capacity](#disk_capacity) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_cp_read_chain
+
+Average number of blocks transferred in each consistency point read operation during a CP. plex_disk_cp_read_chain is [disk_cp_read_chain](#disk_cp_read_chain) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_cp_read_latency
+
+Average latency per block in microseconds for consistency point read operations. plex_disk_cp_read_latency is [disk_cp_read_latency](#disk_cp_read_latency) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_cp_reads
+
+Number of disk read operations initiated each second for consistency point processing. plex_disk_cp_reads is [disk_cp_reads](#disk_cp_reads) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_io_pending
+
+Average number of I/Os issued to the disk for which we have not yet received the response. plex_disk_io_pending is [disk_io_pending](#disk_io_pending) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_io_queued
+
+Number of I/Os queued to the disk but not yet issued. plex_disk_io_queued is [disk_io_queued](#disk_io_queued) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_total_data
+
+Total throughput for user operations per second. plex_disk_total_data is [disk_total_data](#disk_total_data) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_total_transfers
+
+Total number of disk operations involving data transfer initiated per second. plex_disk_total_transfers is [disk_total_transfers](#disk_total_transfers) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_read_blocks
+
+Number of blocks transferred for user read operations per second. plex_disk_user_read_blocks is [disk_user_read_blocks](#disk_user_read_blocks) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_read_chain
+
+Average number of blocks transferred in each user read operation. plex_disk_user_read_chain is [disk_user_read_chain](#disk_user_read_chain) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_read_latency
+
+Average latency per block in microseconds for user read operations. plex_disk_user_read_latency is [disk_user_read_latency](#disk_user_read_latency) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_reads
+
+Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. plex_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_write_blocks
+
+Number of blocks transferred for user write operations per second. plex_disk_user_write_blocks is [disk_user_write_blocks](#disk_user_write_blocks) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_write_chain
+
+Average number of blocks transferred in each user write operation. plex_disk_user_write_chain is [disk_user_write_chain](#disk_user_write_chain) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_write_latency
+
+Average latency per block in microseconds for user write operations. plex_disk_user_write_latency is [disk_user_write_latency](#disk_user_write_latency) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### plex_disk_user_writes
+
+Number of disk write operations initiated each second for storing data or metadata associated with user requests. plex_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `plex`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### qos_concurrency
@@ -7522,6 +8902,176 @@ Disk space threshold, in kilobytes, for the quota target. The value is -1 if the
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `quota-report-iter` | `threshold` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+### raid_disk_busy
+
+The utilization percent of the disk. raid_disk_busy is [disk_busy](#disk_busy) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_capacity
+
+Disk capacity in MB. raid_disk_capacity is [disk_capacity](#disk_capacity) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_cp_read_chain
+
+Average number of blocks transferred in each consistency point read operation during a CP. raid_disk_cp_read_chain is [disk_cp_read_chain](#disk_cp_read_chain) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_cp_read_latency
+
+Average latency per block in microseconds for consistency point read operations. raid_disk_cp_read_latency is [disk_cp_read_latency](#disk_cp_read_latency) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_cp_reads
+
+Number of disk read operations initiated each second for consistency point processing. raid_disk_cp_reads is [disk_cp_reads](#disk_cp_reads) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_io_pending
+
+Average number of I/Os issued to the disk for which we have not yet received the response. raid_disk_io_pending is [disk_io_pending](#disk_io_pending) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_io_queued
+
+Number of I/Os queued to the disk but not yet issued. raid_disk_io_queued is [disk_io_queued](#disk_io_queued) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_total_data
+
+Total throughput for user operations per second. raid_disk_total_data is [disk_total_data](#disk_total_data) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_total_transfers
+
+Total number of disk operations involving data transfer initiated per second. raid_disk_total_transfers is [disk_total_transfers](#disk_total_transfers) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_read_blocks
+
+Number of blocks transferred for user read operations per second. raid_disk_user_read_blocks is [disk_user_read_blocks](#disk_user_read_blocks) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_read_chain
+
+Average number of blocks transferred in each user read operation. raid_disk_user_read_chain is [disk_user_read_chain](#disk_user_read_chain) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_read_latency
+
+Average latency per block in microseconds for user read operations. raid_disk_user_read_latency is [disk_user_read_latency](#disk_user_read_latency) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_reads
+
+Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. raid_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_write_blocks
+
+Number of blocks transferred for user write operations per second. raid_disk_user_write_blocks is [disk_user_write_blocks](#disk_user_write_blocks) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_write_chain
+
+Average number of blocks transferred in each user write operation. raid_disk_user_write_chain is [disk_user_write_chain](#disk_user_write_chain) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_write_latency
+
+Average latency per block in microseconds for user write operations. raid_disk_user_write_latency is [disk_user_write_latency](#disk_user_write_latency) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### raid_disk_user_writes
+
+Number of disk write operations initiated each second for storing data or metadata associated with user requests. raid_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `raid`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### security_audit_destination_port
@@ -8086,7 +9636,7 @@ Number of connections
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8096,7 +9646,7 @@ Number of established SMB and SMB2 sessions
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `established_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `established_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `established_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8106,7 +9656,7 @@ Average latency for CIFS operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> latency_base | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> latency_base | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_latency_base | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8116,7 +9666,7 @@ Array of select CIFS operation counts
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8126,7 +9676,7 @@ Number of open files over SMB and SMB2
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8136,7 +9686,7 @@ Total number of CIFS operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8146,7 +9696,7 @@ Average latency for CIFS read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_read_ops | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8156,7 +9706,7 @@ Total number of CIFS read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `total_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `total_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8166,7 +9716,7 @@ Number of signed SMB and SMB2 sessions.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `signed_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `signed_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `signed_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8176,7 +9726,7 @@ Average latency for CIFS write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_write_ops | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8186,7 +9736,7 @@ Total number of CIFS write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_cifs` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_svm.yaml | 
+| REST | `api/cluster/counter/tables/svm_cifs` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
 
 
@@ -8246,7 +9796,7 @@ Total number of NFSv4.2 BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v42` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
@@ -9066,7 +10616,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv3` | `read_symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
@@ -9886,8 +11436,8 @@ volume_inode_files_used / volume_inode_total
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/volume.yaml |
-| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
+| REST | `api/storage/volumes` | `inode_files_used, inode_files_total` | conf/rest/9.9.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `inode_files_used, inode_files_total` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_nfs_access_latency
@@ -10086,8 +11636,8 @@ amount of storage space that is currently available for overwrites, calculated b
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/volume.yaml |
-| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
+| REST | `api/storage/volumes` | `overwrite_reserve_total, overwrite_reserve_used` | conf/rest/9.9.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `overwrite_reserve_total, overwrite_reserve_used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_overwrite_reserve_total
@@ -10296,8 +11846,8 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/volume.yaml |
-| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
+| REST | `api/storage/volumes` | `snapshot_reserve_size, snapshot_reserve_available` | conf/rest/9.9.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `snapshot_reserve_size, snapshot_reserve_available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_snapshot_reserve_used_percent

@@ -20,7 +20,7 @@ type Max struct {
 	rules []*rule
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
+func New(p *plugin.AbstractPlugin) *Max {
 	return &Max{AbstractPlugin: p}
 }
 
@@ -238,4 +238,14 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	}
 
 	return matricesArray, nil
+}
+
+// NewMetrics returns the new metrics the receiver creates
+func (m *Max) NewMetrics() []plugin.DerivedMetric {
+	var derivedMetrics []plugin.DerivedMetric
+	for _, r := range m.rules {
+		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{Name: r.object, Source: r.label, IsMax: true})
+	}
+
+	return derivedMetrics
 }
