@@ -11,7 +11,8 @@ counters:
   - cloud_bin_op_latency_average
 
 plugins:
-  - FabricPool
+  - FabricPool:
+      - include_constituents: false
 
 export_options:
   instance_keys:

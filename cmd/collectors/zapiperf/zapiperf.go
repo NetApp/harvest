@@ -28,6 +28,7 @@ import (
 	"errors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/externalserviceoperation"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fabricpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcvi"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
@@ -123,6 +124,8 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		return nic.New(abc)
 	case "Fcp":
 		return fcp.New(abc)
+	case "FabricPool":
+		return fabricpool.New(abc)
 	case "Headroom":
 		return headroom.New(abc)
 	case "Volume":
