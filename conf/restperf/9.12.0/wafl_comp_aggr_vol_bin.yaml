@@ -20,4 +20,4 @@ export_options:
     - volume
 
 override:
-  - cloud_bin_operation: delta
+  - cloud_bin_op: delta

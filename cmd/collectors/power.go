@@ -23,10 +23,14 @@ const (
 // `system chassis fru show`.
 // Chassis FRU information is only available via private CLI
 func collectChassisFRU(client *rest.Client, logger *logging.Logger) (map[string]int, error) {
-	fields := "fru-name,type,status,connected-nodes,num-nodes"
+	fields := []string{"fru-name", "type", "status", "connected-nodes", "num-nodes"}
 	query := "api/private/cli/system/chassis/fru"
 	filter := []string{"type=psu"}
-	href := rest.BuildHref("", fields, filter, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter(filter).
+		Build()
 
 	result, err := rest.Fetch(client, href)
 	if err != nil {

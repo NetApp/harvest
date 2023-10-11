@@ -630,3 +630,5 @@ compute_metric:
 #  "inode_files_total" and multiplying the result by 100.
 # inode_used_percent = inode_files_used / inode_files_total * 100
 ```
+
+# ChangeLog

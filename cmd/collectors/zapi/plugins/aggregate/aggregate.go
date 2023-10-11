@@ -63,11 +63,11 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	}
 
 	// update aggregate instance label with cloud stores info
-	for aggrUUID, aggr := range data.GetInstances() {
+	for uuid, aggr := range data.GetInstances() {
 		if !aggr.IsExportable() {
 			continue
 		}
-		aggr.SetLabel("cloud_stores", strings.Join(a.aggrCloudStoresMap[aggrUUID], ","))
+		aggr.SetLabel("cloud_stores", strings.Join(a.aggrCloudStoresMap[uuid], ","))
 
 		// Handling aggr footprint metrics
 		aggrName := aggr.GetLabel("aggr")
