@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var re = regexp.MustCompile(`^(.*)__(\d{4})$`)
+
 func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object string, opName string, includeConstituents bool, l *logging.Logger) (*matrix.Matrix, error) {
 	var (
 		err error
@@ -15,7 +17,6 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 	data := dataMap[object]
 	opsKeyPrefix := "temp_"
-	re := regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".FabricPool"
@@ -36,7 +37,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		}
 	}
 
-	l.Logger.Debug().Msgf("extracted %d flexgroup volumes", len(cache.GetInstances()))
+	l.Logger.Debug().Int("size", len(cache.GetInstances())).Msg("extracted  flexgroup volumes")
 
 	// create summary
 	for _, i := range data.GetInstances() {
@@ -46,7 +47,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 			fg := cache.GetInstance(key)
 			if fg == nil {
-				l.Logger.Error().Str("key", key).Msgf("instance not in local cache")
+				l.Logger.Error().Str("key", key).Msg("instance not in local cache")
 				continue
 			}
 
@@ -57,7 +58,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 				fgm := cache.GetMetric(mkey)
 				if fgm == nil {
-					l.Logger.Error().Str("key", mkey).Msgf("metric not in local cache")
+					l.Logger.Error().Str("key", mkey).Msg("metric not in local cache")
 					continue
 				}
 
