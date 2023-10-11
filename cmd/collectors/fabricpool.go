@@ -127,7 +127,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		}
 		for _, mKey := range latencyCacheMetrics {
 			m := cache.GetMetric(mKey)
-			if m.IsExportable() {
+			if m != nil && m.IsExportable() {
 				if value, ok := m.GetValueFloat64(i); ok {
 					opsKey := strings.Replace(mKey, "cloud_bin_op_latency_average", opName, 1)
 
