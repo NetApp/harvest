@@ -12,7 +12,8 @@ var re = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object string, opName string, includeConstituents bool, l *logging.Logger) (*matrix.Matrix, error) {
 	var (
-		err error
+		err                 error
+		latencyCacheMetrics []string
 	)
 
 	data := dataMap[object]
@@ -20,6 +21,13 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".FabricPool"
+
+	// collect latency_average metrics names
+	for mKey := range cache.GetMetrics() {
+		if strings.HasPrefix(mKey, "cloud_bin_op_latency_average") {
+			latencyCacheMetrics = append(latencyCacheMetrics, mKey)
+		}
+	}
 
 	// create flexgroup instance cache
 	for _, i := range data.GetInstances() {
@@ -117,10 +125,11 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		if !i.IsExportable() {
 			continue
 		}
-		for mkey, m := range cache.GetMetrics() {
-			if m.IsExportable() && strings.HasPrefix(mkey, "cloud_bin_op_latency_average") {
+		for _, mKey := range latencyCacheMetrics {
+			m := cache.GetMetric(mKey)
+			if m.IsExportable() {
 				if value, ok := m.GetValueFloat64(i); ok {
-					opsKey := strings.Replace(mkey, "cloud_bin_op_latency_average", opName, 1)
+					opsKey := strings.Replace(mKey, "cloud_bin_op_latency_average", opName, 1)
 
 					// fetch from temp metrics
 					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
