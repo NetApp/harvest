@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Oct-05
+Creation Date : 2023-Oct-11
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -2595,7 +2595,7 @@ This is the storage aggregate average latency per message at the disk level.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2605,7 +2605,7 @@ Total number of I/Os processed by the aggregate per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2615,7 +2615,7 @@ This is the storage aggregate average utilization of all the data disks in the a
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_denominator | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_denominator | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2625,7 +2625,7 @@ Daily exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2635,7 +2635,7 @@ Hourly exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2645,7 +2645,7 @@ Monthly exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2655,7 +2655,7 @@ Weekly exponential weighted moving average.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2665,7 +2665,7 @@ The confidence factor for the optimal point value based on the observed resource
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2675,7 +2675,7 @@ The latency component of the optimal point of the latency/utilization curve.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2685,7 +2685,7 @@ The ops component of the optimal point derived from the latency/utilzation curve
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2695,7 +2695,7 @@ The utilization component of the optimal point of the latency/utilization curve.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_aggregate` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
+| REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml | 
 
 
@@ -2705,7 +2705,7 @@ Current operation latency of the resource.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2715,7 +2715,7 @@ Total number of operations per second (also referred to as dblade ops).
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2725,7 +2725,7 @@ Average processor utilization across all processors in the system.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> elapsed_time | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> elapsed_time | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2735,7 +2735,7 @@ Daily exponential weighted moving average for current_ops, optimal_point_ops, cu
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2745,7 +2745,7 @@ Hourly exponential weighted moving average for current_ops, optimal_point_ops, c
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2755,7 +2755,7 @@ Monthly exponential weighted moving average for current_ops, optimal_point_ops, 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2765,7 +2765,7 @@ Weekly exponential weighted moving average for current_ops, optimal_point_ops, c
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2775,7 +2775,7 @@ Confidence factor for the optimal point value based on the observed resource lat
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2785,7 +2785,7 @@ Latency component of the optimal point of the latency/utilization curve. This co
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2795,7 +2795,7 @@ Ops component of the optimal point derived from the latency/utilization curve. T
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -2805,7 +2805,7 @@ Utilization component of the optimal point of the latency/utilization curve. Thi
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `/api/cluster/counter/tables/headroom_cpu` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
+| REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
 
 
@@ -4816,7 +4816,7 @@ Total number of NFSv4.2 BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
@@ -5636,7 +5636,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv3:node` | `read_symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
@@ -9796,7 +9796,7 @@ Total number of NFSv4.2 BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v42` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
@@ -10616,7 +10616,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv3` | `read_symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 

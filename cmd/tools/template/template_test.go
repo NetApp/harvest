@@ -352,6 +352,14 @@ func (m Metric) pathString() string {
 	return strings.Join(m.parents, "/") + "/" + m.left
 }
 
+func TestQueryPrefix(t *testing.T) {
+	visitTemplates(t, func(path string, model Model) {
+		if !strings.HasPrefix(model.Query, "api/") {
+			t.Errorf("query should be prefixed with api/, got=%s path=[%s]", model.Query, shortPath(path))
+		}
+	}, []string{"rest", "restperf"}...)
+}
+
 // Tests that keys and metrics are sorted in the following order:
 // - double hats (alphabetically)
 // - single hats (alphabetically)

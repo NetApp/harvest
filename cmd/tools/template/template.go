@@ -215,13 +215,13 @@ func flattenCounters(n *y3.Node, metrics *[]Metric, parents []string) {
 			flattenCounters(c, metrics, parents)
 		}
 	case "!!str":
-		*metrics = append(*metrics, newZapiMetric(n, parents))
+		*metrics = append(*metrics, newMetric(n, parents))
 	}
 }
 
 var sigilReplacer = strings.NewReplacer("^", "", "- ", "")
 
-func newZapiMetric(n *y3.Node, parents []string) Metric {
+func newMetric(n *y3.Node, parents []string) Metric {
 	// separate left and right and remove all sigils
 	text := n.Value
 	noSigils := sigilReplacer.Replace(text)
