@@ -16,13 +16,8 @@ type Volume struct {
 	*plugin.AbstractPlugin
 	currentVal          int
 	client              *zapi.Client
-	aggrsMap            map[string]string // aggregate-uuid -> aggregate-name map
+	aggrsMap            map[string]string // aggregate-name -> exist map
 	includeConstituents bool
-}
-
-type aggrData struct {
-	uuid string
-	name string
 }
 
 type volumeClone struct {
@@ -122,10 +117,9 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {
 			volume.SetExportable(v.includeConstituents)
-			continue
 		}
-		aggrUUID := volume.GetLabel("aggrUuid")
-		_, exist := v.aggrsMap[aggrUUID]
+
+		_, exist := v.aggrsMap[volume.GetLabel("aggr")]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
 
 		name := volume.GetLabel("volume")
@@ -303,29 +297,31 @@ func (v *Volume) getEncryptedDisks() ([]string, error) {
 	return diskNames, nil
 }
 
-func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]aggrData) {
+func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]string) {
 	if disks != nil && aggrDiskMap != nil {
 		// Clean aggrsMap map
 		v.aggrsMap = make(map[string]string)
 
 		for _, disk := range disks {
-			aggr := aggrDiskMap[disk]
-			v.aggrsMap[aggr.uuid] = aggr.name
+			if aggr, exist := aggrDiskMap[disk]; exist {
+				// Add the entry for hardware encrypted aggrs only.
+				v.aggrsMap[aggr] = ""
+			}
 		}
 	}
 }
 
-func (v *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
+func (v *Volume) getAggrDiskMapping() (map[string]string, error) {
 	var (
 		result        []*node.Node
-		aggrsDisksMap map[string]aggrData
+		aggrsDisksMap map[string]string
 		diskName      string
 		err           error
 	)
 
 	request := node.NewXMLS("aggr-status-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
-	aggrsDisksMap = make(map[string]aggrData)
+	aggrsDisksMap = make(map[string]string)
 
 	if result, err = v.client.InvokeZapiCall(request); err != nil {
 		return nil, err
@@ -335,13 +331,13 @@ func (v *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
+	// TODO: check the disk api response and validate the map population
 	for _, aggrDiskData := range result {
-		aggrUUID := aggrDiskData.GetChildContentS("aggregate-uuid")
 		aggrName := aggrDiskData.GetChildContentS("aggregate")
 		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
 		for _, aggrDisk := range aggrDiskList {
 			diskName = aggrDisk.GetChildContentS("disk")
-			aggrsDisksMap[diskName] = aggrData{uuid: aggrUUID, name: aggrName}
+			aggrsDisksMap[diskName] = aggrName
 		}
 	}
 	return aggrsDisksMap, nil

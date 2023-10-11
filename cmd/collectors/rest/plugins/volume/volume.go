@@ -23,9 +23,17 @@ type Volume struct {
 	*plugin.AbstractPlugin
 	currentVal          int
 	client              *rest.Client
-	aggrsMap            map[string]string // aggregate-uuid -> aggregate-name map
+	aggrsMap            map[string]string // aggregate-name -> exist map
 	arw                 *matrix.Matrix
 	includeConstituents bool
+	volumeMap           map[string]volumeInfo // [volume-name+svm-name] -> volume info map
+}
+
+type volumeInfo struct {
+	arwStartTime             string
+	snapshotAutodelete       string
+	cloneSnapshotName        string
+	cloneSplitEstimateMetric float64
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -41,6 +49,7 @@ func (v *Volume) Init() error {
 	}
 
 	v.aggrsMap = make(map[string]string)
+	v.volumeMap = make(map[string]volumeInfo)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -93,6 +102,10 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		}
 	}
 
+	if err := v.getVolumeInfo(); err != nil {
+		v.Logger.Error().Err(err).Msg("Failed to collect volume info data")
+	}
+
 	// update volume instance labels
 	v.updateVolumeLabels(data)
 
@@ -104,6 +117,13 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 }
 
 func (v *Volume) updateVolumeLabels(data *matrix.Matrix) {
+	var err error
+	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
+	if cloneSplitEstimateMetric == nil {
+		if cloneSplitEstimateMetric, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
+			v.Logger.Error().Stack().Msg("error while creating clone split estimate metric")
+		}
+	}
 	for _, volume := range data.GetInstances() {
 		if !volume.IsExportable() {
 			continue
@@ -111,16 +131,21 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix) {
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {
 			volume.SetExportable(v.includeConstituents)
-			continue
 		}
-		// For flexgroup, aggrUuid in Rest should be empty for parity with Zapi response
-		if volumeStyle := volume.GetLabel("style"); volumeStyle == "flexgroup" {
-			volume.SetLabel("aggrUuid", "")
-		}
-		aggrUUID := volume.GetLabel("aggrUuid")
 
-		_, exist := v.aggrsMap[aggrUUID]
+		_, exist := v.aggrsMap[volume.GetLabel("aggr")]
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+
+		if vInfo, ok := v.volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
+			volume.SetLabel("anti_ransomware_start_time", vInfo.arwStartTime)
+			volume.SetLabel("snapshot_autodelete", vInfo.snapshotAutodelete)
+			if volume.GetLabel("is_flexclone") == "true" {
+				volume.SetLabel("clone_parent_snapshot", vInfo.cloneSnapshotName)
+				if err = cloneSplitEstimateMetric.SetValueFloat64(volume, vInfo.cloneSplitEstimateMetric); err != nil {
+					v.Logger.Error().Err(err).Str("metric", "cloneSplitEstimateMetric").Msg("Unable to set value on metric")
+				}
+			}
+		}
 	}
 }
 
@@ -198,8 +223,7 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 		result []gjson.Result
 		err    error
 	)
-
-	fields := []string{"aggregates.name", "aggregates.uuid"}
+	fields := []string{"aggregates.name"}
 	query := "api/storage/disks"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
@@ -213,16 +237,53 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 	return result, nil
 }
 
+func (v *Volume) getVolumeInfo() error {
+	v.volumeMap = make(map[string]volumeInfo)
+	if err := v.invokeVolumeRest("is_constituent=true"); err != nil {
+		return err
+	}
+	return v.invokeVolumeRest("is_constituent=false")
+}
+
+func (v *Volume) invokeVolumeRest(field string) error {
+	var (
+		result []gjson.Result
+		err    error
+	)
+	fields := []string{"name", "svm.name", "anti_ransomware.dry_run_start_time", "space.snapshot.autodelete_enabled", "clone.parent_snapshot.name", "clone.split_estimate"}
+	query := "api/storage/volumes"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter([]string{field}).
+		Build()
+
+	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+		return err
+	}
+
+	for _, volume := range result {
+		volName := volume.Get("name").String()
+		svmName := volume.Get("svm.name").String()
+		arwStartTime := volume.Get("anti_ransomware.dry_run_start_time").String()
+		snapshotAutodelete := volume.Get("space.snapshot.autodelete_enabled").String()
+		cloneSnapshotName := volume.Get("clone.parent_snapshot.name").String()
+		cloneSplitEstimate := volume.Get("clone.split_estimate").Float()
+		v.volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, snapshotAutodelete: snapshotAutodelete, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate}
+	}
+	return nil
+}
+
 func (v *Volume) updateAggrMap(disks []gjson.Result) {
 	if disks != nil {
 		// Clean aggrsMap map
 		v.aggrsMap = make(map[string]string)
 
+		// TODO: check the disk api response and validate the map population
 		for _, disk := range disks {
 			aggrName := disk.Get("aggregates.name").String()
-			aggrUUID := disk.Get("aggregates.uuid").String()
-			if aggrUUID != "" {
-				v.aggrsMap[aggrUUID] = aggrName
+			if aggrName != "" {
+				v.aggrsMap[aggrName] = ""
 			}
 		}
 	}
