@@ -14,7 +14,7 @@ Harvest is container-ready and supports several deployment options:
   stands up Harvest, Grafana, and Prometheus.
 
 - Want to run Harvest on a Mac
-  via [containerd and Racher Desktop](containerd.md)? We got you
+  via [containerd and Rancher Desktop](containerd.md)? We got you
   covered.
 
 - [K8 Deployment](k8.md) via Kompose
@@ -206,4 +206,12 @@ To upgrade Harvest:
 
 ```
 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+```
+
+## Building Harvest Docker Image
+
+Building a custom Harvest Docker image is only necessary if you require a tailored solution. If your intention is to run Harvest using Docker without any customizations, please refer to the [Overview](#docker-compose) section above.
+
+```sh
+docker build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
 ```
