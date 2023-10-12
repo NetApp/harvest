@@ -296,31 +296,31 @@ func (v *Volume) getEncryptedDisks() ([]string, error) {
 	return diskNames, nil
 }
 
-func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]string) {
+func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string][]string) {
 	if disks != nil && aggrDiskMap != nil {
 		// Clean aggrsMap map
 		clear(v.aggrsMap)
-
 		for _, disk := range disks {
-			if aggr, exist := aggrDiskMap[disk]; exist {
-				// Add the entry for hardware encrypted aggrs only.
-				v.aggrsMap[aggr] = true
+			if aggrList, exist := aggrDiskMap[disk]; exist {
+				for _, aggr := range aggrList {
+					v.aggrsMap[aggr] = true
+				}
 			}
 		}
 	}
 }
 
-func (v *Volume) getAggrDiskMapping() (map[string]string, error) {
+func (v *Volume) getAggrDiskMapping() (map[string][]string, error) {
 	var (
 		result        []*node.Node
-		aggrsDisksMap map[string]string
+		aggrsDisksMap map[string][]string
 		diskName      string
 		err           error
 	)
 
 	request := node.NewXMLS("aggr-status-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
-	aggrsDisksMap = make(map[string]string)
+	aggrsDisksMap = make(map[string][]string)
 
 	if result, err = v.client.InvokeZapiCall(request); err != nil {
 		return nil, err
@@ -330,13 +330,15 @@ func (v *Volume) getAggrDiskMapping() (map[string]string, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
-	// TODO: check the disk api response and validate the map population
 	for _, aggrDiskData := range result {
 		aggrName := aggrDiskData.GetChildContentS("aggregate")
-		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
-		for _, aggrDisk := range aggrDiskList {
-			diskName = aggrDisk.GetChildContentS("disk")
-			aggrsDisksMap[diskName] = aggrName
+		for _, plexList := range aggrDiskData.GetChildS("aggr-plex-list").GetChildren() {
+			for _, raidGroupList := range plexList.GetChildS("aggr-raidgroup-list").GetChildren() {
+				for _, diskList := range raidGroupList.GetChildS("aggr-disk-list").GetChildren() {
+					diskName = diskList.GetChildContentS("disk")
+					aggrsDisksMap[diskName] = append(aggrsDisksMap[diskName], aggrName)
+				}
+			}
 		}
 	}
 	return aggrsDisksMap, nil

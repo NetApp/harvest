@@ -291,12 +291,10 @@ func (v *Volume) updateAggrMap(disks []gjson.Result) {
 	if disks != nil {
 		// Clean aggrsMap map
 		clear(v.aggrsMap)
-
-		// TODO: check the disk api response and validate the map population
 		for _, disk := range disks {
-			aggrName := disk.Get("aggregates.name").String()
-			if aggrName != "" {
-				v.aggrsMap[aggrName] = true
+			aggrName := disk.Get("aggregates.#.name").Array()
+			for _, aggr := range aggrName {
+				v.aggrsMap[aggr.String()] = true
 			}
 		}
 	}
