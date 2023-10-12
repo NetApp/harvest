@@ -16,6 +16,7 @@ objects:
   Disk:                        disk.yaml
   EmsDestination:              ems_destination.yaml
 #  ExportRule:                  exports.yaml
+  FCP:                         fcp.yaml
   LIF:                         lif.yaml
   Health:                      health.yaml
   Lun:                         lun.yaml

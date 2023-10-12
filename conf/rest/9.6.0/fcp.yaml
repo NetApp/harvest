@@ -1,0 +1,35 @@
+name:               FCP
+query:              api/network/fc/ports
+object:             fcp
+
+counters:
+  - ^^uuid
+  - ^fabric.connected       => fabric_connected
+  - ^fabric.name            => fabric_name
+  - ^fabric.port_address    => fabric_port_address
+  - ^fabric.switch_port     => fabric_switch_port
+  - ^name                   => port_name
+  - ^node.name              => node
+  - ^physical_protocol
+  - ^speed.configured       => speed_configured
+  - ^state
+  - ^supported_protocols    => supported_protocols
+  - fabric.connected_speed  => fabric_connected_speed
+  - speed.maximum           => max_speed
+  - hidden_fields:
+    - fabric
+
+export_options:
+  instance_keys:
+    - node
+    - port_name
+  instance_labels:
+    - fabric_connected
+    - fabric_name
+    - fabric_port_address
+    - fabric_switch_port
+    - physical_protocol
+    - speed_configured
+    - state
+    - supported_protocols
+
