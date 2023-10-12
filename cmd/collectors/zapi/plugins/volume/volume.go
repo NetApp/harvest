@@ -16,7 +16,7 @@ type Volume struct {
 	*plugin.AbstractPlugin
 	currentVal          int
 	client              *zapi.Client
-	aggrsMap            map[string]string // aggregate-name -> exist map
+	aggrsMap            map[string]bool // aggregate-name -> exist map
 	includeConstituents bool
 }
 
@@ -50,7 +50,7 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	v.aggrsMap = make(map[string]string)
+	v.aggrsMap = make(map[string]bool)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -119,8 +119,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			volume.SetExportable(v.includeConstituents)
 		}
 
-		_, exist := v.aggrsMap[volume.GetLabel("aggr")]
-		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(v.aggrsMap[volume.GetLabel("aggr")]))
 
 		name := volume.GetLabel("volume")
 		svm := volume.GetLabel("svm")
@@ -300,12 +299,12 @@ func (v *Volume) getEncryptedDisks() ([]string, error) {
 func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]string) {
 	if disks != nil && aggrDiskMap != nil {
 		// Clean aggrsMap map
-		v.aggrsMap = make(map[string]string)
+		clear(v.aggrsMap)
 
 		for _, disk := range disks {
 			if aggr, exist := aggrDiskMap[disk]; exist {
 				// Add the entry for hardware encrypted aggrs only.
-				v.aggrsMap[aggr] = ""
+				v.aggrsMap[aggr] = true
 			}
 		}
 	}

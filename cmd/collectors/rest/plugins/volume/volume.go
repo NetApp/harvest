@@ -22,12 +22,12 @@ const HoursInMonth = 24 * 30
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	currentVal          int
-	client              *rest.Client
-	aggrsMap            map[string]string // aggregate-name -> exist map
-	arw                 *matrix.Matrix
-	includeConstituents bool
-	volumeMap           map[string]volumeInfo // [volume-name+svm-name] -> volume info map
+	currentVal            int
+	client                *rest.Client
+	aggrsMap              map[string]bool // aggregate-name -> exist map
+	arw                   *matrix.Matrix
+	includeConstituents   bool
+	isArwSupportedVersion bool
 }
 
 type volumeInfo struct {
@@ -49,8 +49,7 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	v.aggrsMap = make(map[string]string)
-	v.volumeMap = make(map[string]volumeInfo)
+	v.aggrsMap = make(map[string]bool)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -82,13 +81,18 @@ func (v *Volume) Init() error {
 
 	// Read template to decide inclusion of flexgroup constituents
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
+	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
+	if exportOption := v.ParentParams.GetChildS("export_options"); exportOption != nil {
+		if instanceLabels := exportOption.GetChildS("instance_labels"); instanceLabels != nil {
+			v.isArwSupportedVersion = slices.Contains(instanceLabels.GetAllChildContentS(), "antiRansomwareState")
+		}
+	}
+
 	return nil
 }
 
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[v.Object]
-	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
-	isArwSupportedVersion := slices.Contains(data.GetExportOptions().GetChildS("instance_labels").GetAllChildContentS(), "antiRansomwareState")
 	if v.currentVal >= v.PluginInvocationRate {
 		v.currentVal = 0
 
@@ -105,12 +109,13 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		}
 	}
 
-	if err := v.getVolumeInfo(isArwSupportedVersion); err != nil {
+	volumeMap, err := v.getVolumeInfo()
+	if err != nil {
 		v.Logger.Error().Err(err).Msg("Failed to collect volume info data")
 	}
 
 	// update volume instance labels
-	v.updateVolumeLabels(data)
+	v.updateVolumeLabels(data, volumeMap)
 
 	// parse anti_ransomware_start_time, antiRansomwareState for all volumes and export at cluster level
 	v.handleARWProtection(data)
@@ -119,7 +124,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	return []*matrix.Matrix{v.arw}, nil
 }
 
-func (v *Volume) updateVolumeLabels(data *matrix.Matrix) {
+func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]volumeInfo) {
 	var err error
 	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
 	if cloneSplitEstimateMetric == nil {
@@ -136,10 +141,9 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix) {
 			volume.SetExportable(v.includeConstituents)
 		}
 
-		_, exist := v.aggrsMap[volume.GetLabel("aggr")]
-		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(v.aggrsMap[volume.GetLabel("aggr")]))
 
-		if vInfo, ok := v.volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
+		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
 			volume.SetLabel("anti_ransomware_start_time", vInfo.arwStartTime)
 			volume.SetLabel("snapshot_autodelete", vInfo.snapshotAutodelete)
 			if volume.GetLabel("is_flexclone") == "true" {
@@ -240,23 +244,22 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 	return result, nil
 }
 
-func (v *Volume) getVolumeInfo(supportedVersion bool) error {
-	v.volumeMap = make(map[string]volumeInfo)
+func (v *Volume) getVolumeInfo() (map[string]volumeInfo, error) {
+	volumeMap := make(map[string]volumeInfo)
 	fields := []string{"name", "svm.name", "space.snapshot.autodelete_enabled", "clone.parent_snapshot.name", "clone.split_estimate"}
-	if !supportedVersion {
-		return v.invokeVolumeRest("", fields)
+	if !v.isArwSupportedVersion {
+		return v.getVolume("", fields, volumeMap)
 	}
 
-	// Only ask this field when ARW would be supported
+	// Only ask this field when ARW would be supported, is_constituent is supported from 9.10 onwards in public api same as ARW
 	fields = append(fields, "anti_ransomware.dry_run_start_time")
-	// is_constituent is supported from 9.10 onwards in public api same as ARW
-	if err := v.invokeVolumeRest("is_constituent=false", fields); err != nil {
-		return err
+	if _, err := v.getVolume("is_constituent=false", fields, volumeMap); err != nil {
+		return nil, err
 	}
-	return v.invokeVolumeRest("is_constituent=true", fields)
+	return v.getVolume("is_constituent=true", fields, volumeMap)
 }
 
-func (v *Volume) invokeVolumeRest(field string, fields []string) error {
+func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]volumeInfo) (map[string]volumeInfo, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -269,7 +272,7 @@ func (v *Volume) invokeVolumeRest(field string, fields []string) error {
 		Build()
 
 	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, volume := range result {
@@ -279,21 +282,21 @@ func (v *Volume) invokeVolumeRest(field string, fields []string) error {
 		snapshotAutodelete := volume.Get("space.snapshot.autodelete_enabled").String()
 		cloneSnapshotName := volume.Get("clone.parent_snapshot.name").String()
 		cloneSplitEstimate := volume.Get("clone.split_estimate").Float()
-		v.volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, snapshotAutodelete: snapshotAutodelete, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate}
+		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, snapshotAutodelete: snapshotAutodelete, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate}
 	}
-	return nil
+	return volumeMap, nil
 }
 
 func (v *Volume) updateAggrMap(disks []gjson.Result) {
 	if disks != nil {
 		// Clean aggrsMap map
-		v.aggrsMap = make(map[string]string)
+		clear(v.aggrsMap)
 
 		// TODO: check the disk api response and validate the map population
 		for _, disk := range disks {
 			aggrName := disk.Get("aggregates.name").String()
 			if aggrName != "" {
-				v.aggrsMap[aggrName] = ""
+				v.aggrsMap[aggrName] = true
 			}
 		}
 	}
