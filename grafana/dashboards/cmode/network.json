@@ -1660,6 +1660,158 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {},
+              "unit": "string"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Gbits"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Connected Speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Gbits"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 23
+          },
+          "id": 115,
+          "interval": "",
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port_name=~\"$FCP\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "fcp_max_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port_name=~\"$FCP\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "fcp_fabric_connected_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port_name=~\"$FCP\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "FC ports with Fabric detail",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "fabric_connected",
+                    "fabric_name",
+                    "fabric_switch_port",
+                    "node",
+                    "physical_protocol",
+                    "port_name",
+                    "speed_configured",
+                    "state",
+                    "supported_protocols",
+                    "Value #B",
+                    "Value #A",
+                    "fabric_port_address"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #A": 12,
+                  "Value #B": 11,
+                  "Value #C": 10,
+                  "fabric_connected": 2,
+                  "fabric_name": 3,
+                  "fabric_port_address": 4,
+                  "fabric_switch_port": 5,
+                  "node": 1,
+                  "physical_protocol": 6,
+                  "port_name": 0,
+                  "speed_configured": 7,
+                  "state": 8,
+                  "supported_protocols": 9
+                },
+                "renameByName": {
+                  "Value #A": "Connected Speed",
+                  "Value #B": "Max Speed",
+                  "fabric_connected": "Fabric Connected",
+                  "fabric_name": "Fabric Name",
+                  "fabric_port_address": "Fabric Port",
+                  "fabric_switch_port": "Fabric Switch Port",
+                  "node": "Node",
+                  "physical_protocol": "Physical Protocol",
+                  "port_name": "Port Name",
+                  "speed_configured": "Speed Configured",
+                  "state": "State",
+                  "supported_protocols": "Supported Protocols"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
@@ -1715,7 +1867,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 34
           },
           "id": 67,
           "options": {
@@ -1808,7 +1960,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 34
           },
           "id": 69,
           "options": {
@@ -1900,7 +2052,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 33
+            "y": 44
           },
           "id": 77,
           "options": {
@@ -1993,7 +2145,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 33
+            "y": 44
           },
           "id": 78,
           "options": {
@@ -2086,7 +2238,7 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 43
+            "y": 54
           },
           "id": 75,
           "options": {
@@ -2206,7 +2358,7 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 43
+            "y": 54
           },
           "id": 76,
           "options": {
@@ -2332,7 +2484,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 43
+            "y": 54
           },
           "id": 73,
           "options": {
@@ -2424,7 +2576,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 43
+            "y": 54
           },
           "id": 74,
           "options": {
@@ -3291,7 +3443,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(fcp_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
+        "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port_name)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3301,7 +3453,7 @@
         "name": "FCP",
         "options": [],
         "query": {
-          "query": "label_values(fcp_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
+          "query": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port_name)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
