@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Oct-12
+Creation Date : 2023-Oct-13
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -4767,137 +4767,193 @@ Average latency of ACCESS procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_access_total
 
-Total number of ACCESS procedures
+Total number of ACCESS operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_backchannel_ctl_avg_latency
 
-Average latency of NFSv4.2 BACKCHANNEL_CTL operations.
+Average latency of BACKCHANNEL_CTL operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `backchannel_ctl.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> backchannel_ctl.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `backchannel_ctl.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> backchannel_ctl.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_backchannel_ctl_total
 
-Total number of NFSv4.2 BACKCHANNEL_CTL operations.
+Total number of BACKCHANNEL_CTL operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `backchannel_ctl.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `backchannel_ctl.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `backchannel_ctl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `backchannel_ctl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_bind_conn_to_session_avg_latency
 
-Average latency of NFSv4.2 BIND_CONN_TO_SESSION operations.
+Average latency of BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `bind_conn_to_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> bind_conn_to_session.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `bind_connections_to_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> bind_connections_to_session.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `bind_conn_to_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> bind_conn_to_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `bind_conn_to_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> bind_conn_to_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_bind_conn_to_session_total
 
-Total number of NFSv4.2 BIND_CONN_TO_SESSION operations.
+Total number of BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `bind_connections_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_close_avg_latency
 
-Average latency of CLOSE procedures
+Average latency of CLOSE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `close.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `close.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `close.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_close_total
 
-Total number of CLOSE procedures
+Total number of CLOSE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `close.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `close.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `close.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_commit_avg_latency
 
-Average latency of COMMIT procedures
+Average latency of Commit procedure requests. The counter keeps track of the average response time of Commit requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
 ### node_nfs_commit_total
 
-Total number of COMMIT procedures
+Total number of COMMIT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
 ### node_nfs_create_avg_latency
 
-Average latency of CREATE procedures
+Average latency of CREATE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_create_session_avg_latency
 
-Average latency of NFSv4.2 CREATE_SESSION operations.
+Average latency of CREATE_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `create_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_session.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `create_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_session.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `create_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `create_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_create_session_total
 
-Total number of NFSv4.2 CREATE_SESSION operations.
+Total number of CREATE_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `create_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `create_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_create_total
 
-Total number of CREATE procedures
+Total number of CREATE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_delegpurge_avg_latency
@@ -4907,117 +4963,149 @@ Average latency of DELEGPURGE procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `delegpurge.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegpurge.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `delegpurge.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegpurge.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `delegpurge.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegpurge.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_delegpurge_total
 
-Total number of DELEGPURGE procedures
+Total number of DELEGPURGE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `delegpurge.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `delegpurge.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `delegpurge.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_delegreturn_avg_latency
 
-Average latency of DELEGRETURN procedures
+Average latency of DELEGRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `delegreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegreturn.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `delegreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegreturn.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `delegreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegreturn.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_delegreturn_total
 
-Total number of DELEGRETURN procedures
+Total number of DELEGRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `delegreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `delegreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `delegreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_destroy_clientid_avg_latency
 
-Average latency of NFSv4.2 DESTROY_CLIENTID operations.
+Average latency of DESTROY_CLIENTID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `destroy_clientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_clientid.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `destroy_clientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_clientid.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_destroy_clientid_total
 
-Total number of NFSv4.2 DESTROY_CLIENTID operations.
+Total number of DESTROY_CLIENTID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `destroy_clientid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `destroy_clientid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `destroy_clientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_clientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_destroy_session_avg_latency
 
-Average latency of NFSv4.2 DESTROY_SESSION operations.
+Average latency of DESTROY_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `destroy_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_session.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `destroy_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_session.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_destroy_session_total
 
-Total number of NFSv4.2 DESTROY_SESSION operations.
+Total number of DESTROY_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `destroy_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `destroy_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `destroy_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_exchange_id_avg_latency
 
-Average latency of NFSv4.2 EXCHANGE_ID operations.
+Average latency of EXCHANGE_ID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `exchange_id.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> exchange_id.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `exchange_id.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> exchange_id.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_exchange_id_total
 
-Total number of NFSv4.2 EXCHANGE_ID operations.
+Total number of EXCHANGE_ID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `exchange_id.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `exchange_id.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `exchange_id_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `exchange_id_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_free_stateid_avg_latency
 
-Average latency of NFSv4.2 FREE_STATEID operations.
+Average latency of FREE_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `free_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> free_stateid.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `free_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> free_stateid.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_free_stateid_total
 
-Total number of NFSv4.2 FREE_STATEID operations.
+Total number of FREE_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `free_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `free_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `free_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `free_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_fsinfo_avg_latency
@@ -5062,82 +5150,106 @@ Total number FSStat of procedure requests. It is the total number of FSStat succ
 
 ### node_nfs_get_dir_delegation_avg_latency
 
-Average latency of NFSv4.2 GET_DIR_DELEGATION operations.
+Average latency of GET_DIR_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `get_dir_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_dir_delegation.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `get_dir_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_dir_delegation.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `get_dir_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_dir_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `get_dir_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_dir_delegation_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_get_dir_delegation_total
 
-Total number of NFSv4.2 GET_DIR_DELEGATION operations.
+Total number of GET_DIR_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `get_dir_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `get_dir_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_getattr_avg_latency
 
-Average latency of GETATTR procedures
+Average latency of GetAttr procedure requests. This counter keeps track of the average response time of GetAttr requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_getattr_total
 
-Total number of GETATTR procedures
+Total number of Getattr procedure requests. It is the total number of getattr success and getattr error requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_getdeviceinfo_avg_latency
 
-Average latency of NFSv4.2 GETDEVICEINFO operations.
+Average latency of GETDEVICEINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getdeviceinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdeviceinfo.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getdeviceinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdeviceinfo.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_getdeviceinfo_total
 
-Total number of NFSv4.2 GETDEVICEINFO operations.
+Total number of GETDEVICEINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getdeviceinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getdeviceinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdeviceinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `getdeviceinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_getdevicelist_avg_latency
 
-Average latency of NFSv4.2 GETDEVICELIST operations.
+Average latency of GETDEVICELIST operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getdevicelist.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdevicelist.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getdevicelist.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdevicelist.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdevicelist_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdevicelist_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `getdevicelist_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdevicelist_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_getdevicelist_total
 
-Total number of NFSv4.2 GETDEVICELIST operations.
+Total number of GETDEVICELIST operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getdevicelist.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getdevicelist.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_getfh_avg_latency
@@ -5147,6 +5259,10 @@ Average latency of GETFH procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `getfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getfh.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getfh.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getfh.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5157,7 +5273,11 @@ Total number of GETFH procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `getfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `getfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_latency
@@ -5167,96 +5287,130 @@ Average latency of NFSv4 requests. This counter keeps track of the average respo
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_layoutcommit_avg_latency
 
-Average latency of NFSv4.2 LAYOUTCOMMIT operations.
+Average latency of LAYOUTCOMMIT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `layoutcommit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutcommit.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutcommit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutcommit.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_layoutcommit_total
 
-Total number of NFSv4.2 LAYOUTCOMMIT operations.
+Total number of LAYOUTCOMMIT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `layoutcommit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutcommit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutcommit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutcommit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_layoutget_avg_latency
 
-Average latency of NFSv4.2 LAYOUTGET operations.
+Average latency of LAYOUTGET operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutget.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutget.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `layoutget.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutget.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_layoutget_total
 
-Total number of NFSv4.2 LAYOUTGET operations.
+Total number of LAYOUTGET operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutget.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `layoutget.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutget_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutget_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_layoutreturn_avg_latency
 
-Average latency of NFSv4.2 LAYOUTRETURN operations.
+Average latency of LAYOUTRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `layoutreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutreturn.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutreturn.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_layoutreturn_total
 
-Total number of NFSv4.2 LAYOUTRETURN operations.
+Total number of LAYOUTRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `layoutreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_link_avg_latency
 
-Average latency of LINK procedures
+Average latency of LINK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_link_total
 
-Total number of LINK procedures
+Total number of LINK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_lock_avg_latency
 
-Average latency of LOCK procedures
+Average latency of LOCK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lock.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lock.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lock.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5267,86 +5421,126 @@ Total number of LOCK procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lock.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lock.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lock.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_lockt_avg_latency
 
-Average latency of LOCKT procedures
+Average latency of LOCKT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lockt.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lockt.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lockt.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lockt.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lockt.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lockt.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_lockt_total
 
-Total number of LOCKT procedures
+Total number of LOCKT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lockt.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lockt.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lockt.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_locku_avg_latency
 
-Average latency of LOCKU procedures
+Average latency of LOCKU operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `locku.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> locku.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `locku.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> locku.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `locku.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> locku.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_locku_total
 
-Total number of LOCKU procedures
+Total number of LOCKU operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `locku.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `locku.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `locku.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_lookup_avg_latency
 
-Average latency of LOOKUP procedures
+Average latency of LOOKUP operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_lookup_total
 
-Total number of LOOKUP procedures
+Total number of Lookup procedure requests. It is the total number of lookup success and lookup error requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_lookupp_avg_latency
 
-Average latency of LOOKUPP procedures
+Average latency of LOOKUPP operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lookupp.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookupp.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lookupp.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookupp.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lookupp.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookupp.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_lookupp_total
 
-Total number of LOOKUPP procedures
+Total number of LOOKUPP operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `lookupp.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `lookupp.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `lookupp.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5397,47 +5591,71 @@ Average Latency of NULL procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_null_total
 
-Total number of NULL procedures
+Total number of NULL procedures.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_nverify_avg_latency
 
-Average latency of NVERIFY procedures
+Average latency of NVERIFY operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `nverify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nverify.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `nverify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nverify.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `nverify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nverify.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_nverify_total
 
-Total number of NVERIFY procedures
+Total number of NVERIFY operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `nverify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `nverify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `nverify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_open_avg_latency
 
-Average latency of OPEN procedures
+Average latency of OPEN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `open.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `open.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `open.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_open_confirm_avg_latency
@@ -5462,12 +5680,16 @@ Total number of OPEN_CONFIRM procedures
 
 ### node_nfs_open_downgrade_avg_latency
 
-Average latency of OPEN_DOWNGRADE procedures
+Average latency of OPEN_DOWNGRADE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `open_downgrade.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open_downgrade.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `open_downgrade.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open_downgrade.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `open_downgrade.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open_downgrade.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_open_downgrade_total
@@ -5477,17 +5699,25 @@ Total number of OPEN_DOWNGRADE procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `open_downgrade.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `open_downgrade.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `open_downgrade.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_open_total
 
-Total number of OPEN procedures
+Total number of OPEN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `open.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `open.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `open.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_openattr_avg_latency
@@ -5497,7 +5727,11 @@ Average latency of OPENATTR procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `openattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> openattr.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `openattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> openattr.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `openattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> openattr.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_openattr_total
@@ -5507,7 +5741,11 @@ Total number of OPENATTR procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `openattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `openattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `openattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_ops
@@ -5547,16 +5785,24 @@ Average latency of PUTFH procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `putfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putfh.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `putfh.average_latency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `putfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putfh.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_putfh_total
 
-Total number of PUTFH procedures
+Total number of PUTFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `putfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `putfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `putfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5567,47 +5813,69 @@ Average latency of PUTPUBFH procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `putpubfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putpubfh.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `putpubfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putpubfh.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `putpubfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putpubfh.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_putpubfh_total
 
-Total number of PUTPUBFH procedures
+Total number of PUTPUBFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `putpubfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `putpubfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `putpubfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_putrootfh_avg_latency
 
-Average latency of PUTROOTFH procedures
+Average latency of PUTROOTFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `putrootfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putrootfh.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `putrootfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putrootfh.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `putrootfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putrootfh.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_putrootfh_total
 
-Total number of PUTROOTFH procedures
+Total number of PUTROOTFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `putrootfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `putrootfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `putrootfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_read_avg_latency
 
-Average latency of READ procedures
+Average latency of READ operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_read_ops
@@ -5642,21 +5910,33 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 ### node_nfs_read_throughput
 
-NFSv4 read data transfers
+read data transfers.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
 ### node_nfs_read_total
 
-Total number of READ procedures
+Total number of READ operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5667,16 +5947,28 @@ Average latency of READDIR procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
 ### node_nfs_readdir_total
 
-Total number of READDIR procedures
+Total number of READDIR operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5707,7 +5999,11 @@ Average latency of READLINK procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `readlink.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readlink.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `readlink.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readlink.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `readlink.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readlink.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_readlink_total
@@ -5717,27 +6013,35 @@ Total number of READLINK procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `readlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `readlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `readlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_reclaim_complete_avg_latency
 
-Average latency of NFSv4.2 RECLAIM_complete operations.
+Average latency of RECLAIM_complete operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `reclaim_complete.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> reclaim_complete.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `reclaim_complete.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> reclaim_complete.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_reclaim_complete_total
 
-Total number of NFSv4.2 RECLAIM_complete operations.
+Total number of RECLAIM_complete operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `reclaim_complete.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `reclaim_complete.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `reclaim_complete_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `reclaim_complete_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_release_lock_owner_avg_latency
@@ -5767,17 +6071,29 @@ Average latency of REMOVE procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_remove_total
 
-Total number of REMOVE procedures
+Total number of REMOVE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_rename_avg_latency
@@ -5787,17 +6103,29 @@ Average latency of RENAME procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_rename_total
 
-Total number of RENAME procedures
+Total number of RENAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_renew_avg_latency
@@ -5822,11 +6150,15 @@ Total number of RENEW procedures
 
 ### node_nfs_restorefh_avg_latency
 
-Average latency of RESTOREFH procedures
+Average latency of RESTOREFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `restorefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> restorefh.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `restorefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> restorefh.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `restorefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> restorefh.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5837,6 +6169,10 @@ Total number of RESTOREFH procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `restorefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `restorefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `restorefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
@@ -5862,12 +6198,16 @@ Total number RmDir of procedure requests. It is the total number of RmDir succes
 
 ### node_nfs_savefh_avg_latency
 
-Average latency of SAVEFH procedures
+Average latency of SAVEFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `savefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> savefh.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `savefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> savefh.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `savefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> savefh.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_savefh_total
@@ -5877,86 +6217,110 @@ Total number of SAVEFH procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `savefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `savefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `savefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_secinfo_avg_latency
 
-Average latency of SECINFO procedures
+Average latency of SECINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `secinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `secinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `secinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_secinfo_no_name_avg_latency
 
-Average latency of NFSv4.2 SECINFO_NO_NAME operations.
+Average latency of SECINFO_NO_NAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `secinfo_no_name.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo_no_name.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `secinfo_no_name.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo_no_name.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `secinfo_no_name_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_no_name_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `secinfo_no_name_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_no_name_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_secinfo_no_name_total
 
-Total number of NFSv4.2 SECINFO_NO_NAME operations.
+Total number of SECINFO_NO_NAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `secinfo_no_name.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `secinfo_no_name.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_secinfo_total
 
-Total number of SECINFO procedures
+Total number of SECINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `secinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `secinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `secinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_sequence_avg_latency
 
-Average latency of NFSv4.2 SEQUENCE operations.
+Average latency of SEQUENCE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `sequence.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> sequence.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `sequence.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> sequence.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_sequence_total
 
-Total number of NFSv4.2 SEQUENCE operations.
+Total number of SEQUENCE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `sequence.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `sequence.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `sequence_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `sequence_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_set_ssv_avg_latency
 
-Average latency of NFSv4.2 SET_SSV operations.
+Average latency of SET_SSV operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `set_ssv.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_ssv.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `set_ssv.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_ssv.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `set_ssv_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> set_ssv_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `set_ssv_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> set_ssv_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_set_ssv_total
 
-Total number of NFSv4.2 SET_SSV operations.
+Total number of SET_SSV operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `set_ssv.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `set_ssv.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
@@ -5967,7 +6331,13 @@ Average latency of SETATTR procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
 ### node_nfs_setattr_total
@@ -5977,7 +6347,13 @@ Total number of SETATTR procedures
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_setclientid_avg_latency
@@ -6042,21 +6418,25 @@ Total number SymLink of procedure requests. It is the total number of SymLink su
 
 ### node_nfs_test_stateid_avg_latency
 
-Average latency of NFSv4.2 TEST_STATEID operations.
+Average latency of TEST_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `test_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> test_stateid.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `test_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> test_stateid.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `test_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> test_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `test_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> test_stateid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_test_stateid_total
 
-Total number of NFSv4.2 TEST_STATEID operations.
+Total number of TEST_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `test_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `test_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
@@ -6067,67 +6447,97 @@ NFSv4 data transfers
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_total_ops
 
-Total number of NFSv4 requests per second.
+Total number of requests per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_verify_avg_latency
 
-Average latency of VERIFY procedures
+Average latency of VERIFY operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `verify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> verify.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `verify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> verify.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `verify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> verify.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_verify_total
 
-Total number of VERIFY procedures
+Total number of VERIFY operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `verify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `verify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `verify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_want_delegation_avg_latency
 
-Average latency of NFSv4.2 WANT_DELEGATION operations.
+Average latency of WANT_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `want_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> want_delegation.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `want_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> want_delegation.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `want_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> want_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `want_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> want_delegation_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
 
 
 ### node_nfs_want_delegation_total
 
-Total number of NFSv4.2 WANT_DELEGATION operations.
+Total number of WANT_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `want_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `want_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_write_avg_latency
 
-Average Latency of WRITE procedures
+Average latency of WRITE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_write_ops
@@ -6142,22 +6552,34 @@ Total observed NFSv3 write operations per second.
 
 ### node_nfs_write_throughput
 
-NFSv4 write data transfers
+write data transfers.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
 
 
 ### node_nfs_write_total
 
-Total number of WRITE procedures
+Total number of WRITE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
 
 
 ### node_nvmf_data_recv
@@ -9742,262 +10164,350 @@ Total number of CIFS write operations
 
 ### svm_nfs_access_avg_latency
 
-Average latency of NFSv4.2 ACCESS operations.
+Average latency of Access procedure requests. The counter keeps track of the average response time of Access requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `access.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> access.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_access_total
 
-Total number of NFSv4.2 ACCESS operations.
+Total number of ACCESS procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `access.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_backchannel_ctl_avg_latency
 
-Average latency of NFSv4.2 BACKCHANNEL_CTL operations.
+Average latency of BACKCHANNEL_CTL operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `backchannel_ctl.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> backchannel_ctl.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `backchannel_ctl.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> backchannel_ctl.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_backchannel_ctl_total
 
-Total number of NFSv4.2 BACKCHANNEL_CTL operations.
+Total number of BACKCHANNEL_CTL operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `backchannel_ctl.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `backchannel_ctl.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `backchannel_ctl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `backchannel_ctl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_bind_conn_to_session_avg_latency
 
-Average latency of NFSv4.2 BIND_CONN_TO_SESSION operations.
+Average latency of BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `bind_connections_to_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> bind_connections_to_session.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `bind_conn_to_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> bind_conn_to_session.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `bind_conn_to_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> bind_conn_to_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `bind_conn_to_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> bind_conn_to_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_bind_conn_to_session_total
 
-Total number of NFSv4.2 BIND_CONN_TO_SESSION operations.
+Total number of BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `bind_connections_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_close_avg_latency
 
-Average latency of NFSv4.2 CLOSE operations.
+Average latency of CLOSE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `close.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `close.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `close.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_close_total
 
-Total number of NFSv4.2 CLOSE operations.
+Total number of CLOSE procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `close.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `close.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `close.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_commit_avg_latency
 
-Average latency of NFSv4.2 COMMIT operations.
+Average latency of Commit procedure requests. The counter keeps track of the average response time of Commit requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `commit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> commit.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_commit_total
 
-Total number of NFSv4.2 COMMIT operations.
+Total number of COMMIT procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `commit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_create_avg_latency
 
-Average latency of NFSv4.2 CREATE operations.
+Average latency of CREATE procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `create.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create.total | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_create_session_avg_latency
 
-Average latency of NFSv4.2 CREATE_SESSION operations.
+Average latency of CREATE_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `create_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_session.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `create_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_session.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `create_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `create_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_create_session_total
 
-Total number of NFSv4.2 CREATE_SESSION operations.
+Total number of CREATE_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `create_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `create_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_create_total
 
-Total number of NFSv4.2 CREATE operations.
+Total number Create of procedure requests. It is the total number of create success and create error requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `create.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_delegpurge_avg_latency
 
-Average latency of NFSv4.2 DELEGPURGE operations.
+Average latency of DELEGPURGE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `delegpurge.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegpurge.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `delegpurge.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegpurge.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `delegpurge.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegpurge.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_delegpurge_total
 
-Total number of NFSv4.2 DELEGPURGE operations.
+Total number of DELEGPURGE procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `delegpurge.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `delegpurge.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `delegpurge.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_delegreturn_avg_latency
 
-Average latency of NFSv4.2 DELEGRETURN operations.
+Average latency of DELEGRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `delegreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegreturn.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `delegreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegreturn.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `delegreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delegreturn.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_delegreturn_total
 
-Total number of NFSv4.2 DELEGRETURN operations.
+Total number of DELEGRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `delegreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `delegreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `delegreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_destroy_clientid_avg_latency
 
-Average latency of NFSv4.2 DESTROY_CLIENTID operations.
+Average latency of DESTROY_CLIENTID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `destroy_clientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_clientid.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `destroy_clientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_clientid.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_destroy_clientid_total
 
-Total number of NFSv4.2 DESTROY_CLIENTID operations.
+Total number of DESTROY_CLIENTID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `destroy_clientid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `destroy_clientid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `destroy_clientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_clientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_destroy_session_avg_latency
 
-Average latency of NFSv4.2 DESTROY_SESSION operations.
+Average latency of DESTROY_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `destroy_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_session.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `destroy_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_session.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_destroy_session_total
 
-Total number of NFSv4.2 DESTROY_SESSION operations.
+Total number of DESTROY_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `destroy_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `destroy_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `destroy_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_exchange_id_avg_latency
 
-Average latency of NFSv4.2 EXCHANGE_ID operations.
+Average latency of EXCHANGE_ID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `exchange_id.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> exchange_id.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `exchange_id.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> exchange_id.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_exchange_id_total
 
-Total number of NFSv4.2 EXCHANGE_ID operations.
+Total number of EXCHANGE_ID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `exchange_id.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `exchange_id.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `exchange_id_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `exchange_id_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_free_stateid_avg_latency
 
-Average latency of NFSv4.2 FREE_STATEID operations.
+Average latency of FREE_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `free_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> free_stateid.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `free_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> free_stateid.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_free_stateid_total
 
-Total number of NFSv4.2 FREE_STATEID operations.
+Total number of FREE_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `free_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `free_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `free_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `free_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_fsinfo_avg_latency
@@ -10042,292 +10552,398 @@ Total number FSStat of procedure requests. It is the total number of FSStat succ
 
 ### svm_nfs_get_dir_delegation_avg_latency
 
-Average latency of NFSv4.2 GET_DIR_DELEGATION operations.
+Average latency of GET_DIR_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `get_dir_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_dir_delegation.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `get_dir_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_dir_delegation.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `get_dir_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_dir_delegation_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `get_dir_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_dir_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_get_dir_delegation_total
 
-Total number of NFSv4.2 GET_DIR_DELEGATION operations.
+Total number of GET_DIR_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `get_dir_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `get_dir_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_getattr_avg_latency
 
-Average latency of NFSv4.2 GETATTR operations.
+Average latency of GetAttr procedure requests. This counter keeps track of the average response time of GetAttr requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getattr.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_getattr_total
 
-Total number of NFSv4.2 GETATTR operations.
+Total number of Getattr procedure requests. It is the total number of getattr success and getattr error requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_getdeviceinfo_avg_latency
 
-Average latency of NFSv4.2 GETDEVICEINFO operations.
+Average latency of GETDEVICEINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getdeviceinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdeviceinfo.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getdeviceinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdeviceinfo.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_getdeviceinfo_total
 
-Total number of NFSv4.2 GETDEVICEINFO operations.
+Total number of GETDEVICEINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getdeviceinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getdeviceinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getdeviceinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getdeviceinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_getdevicelist_avg_latency
 
-Average latency of NFSv4.2 GETDEVICELIST operations.
+Average latency of GETDEVICELIST operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getdevicelist.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdevicelist.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getdevicelist.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdevicelist.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getdevicelist_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdevicelist_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getdevicelist_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdevicelist_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_getdevicelist_total
 
-Total number of NFSv4.2 GETDEVICELIST operations.
+Total number of GETDEVICELIST operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getdevicelist.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getdevicelist.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_getfh_avg_latency
 
-Average latency of NFSv4.2 GETFH operations.
+Average latency of GETFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getfh.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getfh.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `getfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getfh.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_getfh_total
 
-Total number of NFSv4.2 GETFH operations.
+Total number of GETFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `getfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `getfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_latency
 
-Average latency of nfsv42 requests. This counter keeps track of the average response time of nfsv42 requests.
+Average latency of requests. This counter keeps track of the average response time of requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_layoutcommit_avg_latency
 
-Average latency of NFSv4.2 LAYOUTCOMMIT operations.
+Average latency of LAYOUTCOMMIT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `layoutcommit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutcommit.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutcommit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutcommit.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_layoutcommit_total
 
-Total number of NFSv4.2 LAYOUTCOMMIT operations.
+Total number of LAYOUTCOMMIT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `layoutcommit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutcommit.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutcommit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `layoutcommit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_layoutget_avg_latency
 
-Average latency of NFSv4.2 LAYOUTGET operations.
+Average latency of LAYOUTGET operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `layoutget.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutget.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutget.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutget.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_layoutget_total
 
-Total number of NFSv4.2 LAYOUTGET operations.
+Total number of LAYOUTGET operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `layoutget.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutget.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `layoutget_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutget_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_layoutreturn_avg_latency
 
-Average latency of NFSv4.2 LAYOUTRETURN operations.
+Average latency of LAYOUTRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `layoutreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutreturn.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutreturn.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutreturn.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `layoutreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_layoutreturn_total
 
-Total number of NFSv4.2 LAYOUTRETURN operations.
+Total number of LAYOUTRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `layoutreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_link_avg_latency
 
-Average latency of NFSv4.2 LINK operations.
+Average latency of LINK procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `link.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> link.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_link_total
 
-Total number of NFSv4.2 LINK operations.
+Total number of LINK procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `link.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_lock_avg_latency
 
-Average latency of NFSv4.2 LOCK operations.
+Average latency of LOCK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lock.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lock.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lock.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_lock_total
 
-Total number of NFSv4.2 LOCK operations.
+Total number of LOCK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lock.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lock.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lock.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_lockt_avg_latency
 
-Average latency of NFSv4.2 LOCKT operations.
+Average latency of LOCKT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lockt.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lockt.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lockt.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lockt.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lockt.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lockt.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_lockt_total
 
-Total number of NFSv4.2 LOCKT operations.
+Total number of LOCKT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lockt.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lockt.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lockt.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_locku_avg_latency
 
-Average latency of NFSv4.2 LOCKU operations.
+Average latency of LOCKU operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `locku.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> locku.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `locku.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> locku.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `locku.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> locku.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_locku_total
 
-Total number of NFSv4.2 LOCKU operations.
+Total number of LOCKU procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `locku.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `locku.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `locku.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_lookup_avg_latency
 
-Average latency of NFSv4.2 LOOKUP operations.
+Average latency of LookUp procedure requests. This shows the average time it takes for the LookUp operation to reply to the request.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lookup.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookup.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_lookup_total
 
-Total number of NFSv4.2 LOOKUP operations.
+Total number of LOOKUP procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `lookup.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_lookupp_avg_latency
 
-Average latency of NFSv4.2 LOOKUPP operations.
+Average latency of LOOKUPP procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lookupp.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookupp.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lookupp.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookupp.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lookupp.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lookupp.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_lookupp_total
 
-Total number of NFSv4.2 LOOKUPP operations.
+Total number of LOOKUPP procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `lookupp.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `lookupp.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `lookupp.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_mkdir_avg_latency
@@ -10372,52 +10988,76 @@ Total number MkNod of procedure requests. It is the total number of MkNod succes
 
 ### svm_nfs_null_avg_latency
 
-Average latency of NFSv4.2 NULL procedures.
+Average latency of NULL procedures.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `null.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> null.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_null_total
 
-Total number of NFSv4.2 NULL procedures.
+Total number of NULL procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `null.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_nverify_avg_latency
 
-Average latency of NFSv4.2 NVERIFY operations.
+Average latency of NVERIFY procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `nverify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nverify.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `nverify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nverify.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `nverify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nverify.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_nverify_total
 
-Total number of NFSv4.2 NVERIFY operations.
+Total number of NVERIFY operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `nverify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `nverify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `nverify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_open_avg_latency
 
-Average latency of NFSv4.2 OPEN operations.
+Average latency of OPEN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `open.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `open.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `open.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_open_confirm_avg_latency
@@ -10442,52 +11082,72 @@ Total number of OPEN_CONFIRM procedures
 
 ### svm_nfs_open_downgrade_avg_latency
 
-Average latency of NFSv4.2 OPEN_DOWNGRADE operations.
+Average latency of OPEN_DOWNGRADE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `open_downgrade.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open_downgrade.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `open_downgrade.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open_downgrade.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `open_downgrade.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> open_downgrade.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_open_downgrade_total
 
-Total number of NFSv4.2 OPEN_DOWNGRADE operations.
+Total number of OPEN_DOWNGRADE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `open_downgrade.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `open_downgrade.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `open_downgrade.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_open_total
 
-Total number of NFSv4.2 OPEN operations.
+Total number of OPEN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `open.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `open.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `open.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_openattr_avg_latency
 
-Average latency of NFSv4.2 OPENATTR operations.
+Average latency of OPENATTR operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `openattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> openattr.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `openattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> openattr.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `openattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> openattr.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_openattr_total
 
-Total number of NFSv4.2 OPENATTR operations.
+Total number of OPENATTR procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `openattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `openattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `openattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_ops
@@ -10497,7 +11157,13 @@ Total number of nfsv42 requests per sec.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_pathconf_avg_latency
@@ -10522,72 +11188,102 @@ Total number PathConf of procedure requests. It is the total number of PathConf 
 
 ### svm_nfs_putfh_avg_latency
 
-Average latency of NFSv4.2 PUTFH operations.
+Average latency of PUTFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `putfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putfh.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `putfh.average_latency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `putfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putfh.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_putfh_total
 
-Total number of NFSv4.2 PUTFH operations.
+Total number of PUTFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `putfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `putfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `putfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_putpubfh_avg_latency
 
-Average latency of NFSv4.2 PUTPUBFH operations.
+Average latency of PUTPUBFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `putpubfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putpubfh.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `putpubfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putpubfh.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `putpubfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putpubfh.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_putpubfh_total
 
-Total number of NFSv4.2 PUTPUBFH operations.
+Total number of PUTPUBFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `putpubfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `putpubfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `putpubfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_putrootfh_avg_latency
 
-Average latency of NFSv4.2 PUTROOTFH operations.
+Average latency of PUTROOTFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `putrootfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putrootfh.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `putrootfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putrootfh.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `putrootfh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> putrootfh.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_putrootfh_total
 
-Total number of NFSv4.2 PUTROOTFH operations.
+Total number of PUTROOTFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `putrootfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `putrootfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `putrootfh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_read_avg_latency
 
-Average latency of NFSv4.2 READ operations.
+Average latency of READ procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `read.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_read_ops
@@ -10622,42 +11318,66 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 ### svm_nfs_read_throughput
 
-NFSv4.2 read data transfers.
+read data transfers.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_read_total
 
-Total number of NFSv4.2 READ operations.
+Total number of READ operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `read.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_readdir_avg_latency
 
-Average latency of NFSv4.2 READDIR operations.
+Average latency of READDIR procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `readdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readdir.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_readdir_total
 
-Total number of NFSv4.2 READDIR operations.
+Total number ReadDir of procedure requests. It is the total number of ReadDir success and ReadDir error requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `readdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_readdirplus_avg_latency
@@ -10682,41 +11402,53 @@ Total number ReadDirPlus of procedure requests. It is the total number of ReadDi
 
 ### svm_nfs_readlink_avg_latency
 
-Average latency of NFSv4.2 READLINK operations.
+Average latency of READLINK procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `readlink.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readlink.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `readlink.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readlink.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `readlink.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> readlink.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_readlink_total
 
-Total number of NFSv4.2 READLINK operations.
+Total number of READLINK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `readlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `readlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `readlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_reclaim_complete_avg_latency
 
-Average latency of NFSv4.2 RECLAIM_complete operations.
+Average latency of RECLAIM_COMPLETE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `reclaim_complete.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> reclaim_complete.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `reclaim_complete.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> reclaim_complete.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_reclaim_complete_total
 
-Total number of NFSv4.2 RECLAIM_complete operations.
+Total number of RECLAIM_complete operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `reclaim_complete.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `reclaim_complete.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `reclaim_complete_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `reclaim_complete_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
@@ -10742,41 +11474,65 @@ Total number of RELEASE_LOCKOWNER procedures
 
 ### svm_nfs_remove_avg_latency
 
-Average latency of NFSv4.2 REMOVE operations.
+Average latency of REMOVE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv3.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `remove.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> remove.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_remove_total
 
-Total number of NFSv4.2 REMOVE operations.
+Total number of REMOVE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `remove.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_rename_avg_latency
 
-Average latency of NFSv4.2 RENAME operations.
+Average latency of RENAME procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `rename.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rename.total | conf/restperf/9.12.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_rename_total
 
-Total number of NFSv4.2 RENAME operations.
+Total number of RENAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `rename.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
@@ -10802,22 +11558,30 @@ Total number of RENEW procedures
 
 ### svm_nfs_restorefh_avg_latency
 
-Average latency of NFSv4.2 RESTOREFH operations.
+Average latency of RESTOREFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `restorefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> restorefh.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `restorefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> restorefh.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `restorefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> restorefh.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_restorefh_total
 
-Total number of NFSv4.2 RESTOREFH operations.
+Total number of RESTOREFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `restorefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `restorefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `restorefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_rmdir_avg_latency
@@ -10842,122 +11606,162 @@ Total number RmDir of procedure requests. It is the total number of RmDir succes
 
 ### svm_nfs_savefh_avg_latency
 
-Average latency of NFSv4.2 SAVEFH operations.
+Average latency of SAVEFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `savefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> savefh.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `savefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> savefh.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `savefh.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> savefh.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_savefh_total
 
-Total number of NFSv4.2 SAVEFH operations.
+Total number of SAVEFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `savefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `savefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `savefh.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_secinfo_avg_latency
 
-Average latency of NFSv4.2 SECINFO operations.
+Average latency of SECINFO procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `secinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `secinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `secinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_secinfo_no_name_avg_latency
 
-Average latency of NFSv4.2 SECINFO_NO_NAME operations.
+Average latency of SECINFO_NO_NAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `secinfo_no_name.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo_no_name.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `secinfo_no_name.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> secinfo_no_name.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `secinfo_no_name_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_no_name_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_no_name_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_no_name_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_secinfo_no_name_total
 
-Total number of NFSv4.2 SECINFO_NO_NAME operations.
+Total number of SECINFO_NO_NAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `secinfo_no_name.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `secinfo_no_name.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_secinfo_total
 
-Total number of NFSv4.2 SECINFO operations.
+Total number of SECINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `secinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `secinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `secinfo.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_sequence_avg_latency
 
-Average latency of NFSv4.2 SEQUENCE operations.
+Average latency of SEQUENCE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `sequence.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> sequence.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `sequence.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> sequence.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_sequence_total
 
-Total number of NFSv4.2 SEQUENCE operations.
+Total number of SEQUENCE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `sequence.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `sequence.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `sequence_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `sequence_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_set_ssv_avg_latency
 
-Average latency of NFSv4.2 SET_SSV operations.
+Average latency of SET_SSV operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `set_ssv.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_ssv.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `set_ssv.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_ssv.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `set_ssv_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> set_ssv_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `set_ssv_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> set_ssv_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_set_ssv_total
 
-Total number of NFSv4.2 SET_SSV operations.
+Total number of SET_SSV operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `set_ssv.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `set_ssv.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_setattr_avg_latency
 
-Average latency of NFSv4.2 SETATTR operations.
+Average latency of SETATTR procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `setattr.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setattr.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_setattr_total
 
-Total number of NFSv4.2 SETATTR operations.
+Total number of SETATTR operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `setattr.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_setclientid_avg_latency
@@ -11022,82 +11826,110 @@ Total number SymLink of procedure requests. It is the total number of SymLink su
 
 ### svm_nfs_test_stateid_avg_latency
 
-Average latency of NFSv4.2 TEST_STATEID operations.
+Average latency of TEST_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `test_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> test_stateid.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `test_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> test_stateid.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `test_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> test_stateid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `test_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> test_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_test_stateid_total
 
-Total number of NFSv4.2 TEST_STATEID operations.
+Total number of TEST_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `test_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `test_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_throughput
 
-NFSv4.2 write data transfers.
+NFSv4 data transfers
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_verify_avg_latency
 
-Average latency of NFSv4.2 VERIFY operations.
+Average latency of VERIFY procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `verify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> verify.total | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `verify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> verify.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `verify.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> verify.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_verify_total
 
-Total number of NFSv4.2 VERIFY operations.
+Total number of VERIFY procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `verify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `verify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `verify.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_want_delegation_avg_latency
 
-Average latency of NFSv4.2 WANT_DELEGATION operations.
+Average latency of WANT_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `want_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> want_delegation.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `want_delegation.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> want_delegation.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `want_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> want_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `want_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> want_delegation_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
 
 
 ### svm_nfs_want_delegation_total
 
-Total number of NFSv4.2 WANT_DELEGATION operations.
+Total number of WANT_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `want_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `want_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_write_avg_latency
 
-Average latency of NFSv4.2 WRITE operations.
+Average latency of WRITE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `write.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write.total | conf/restperf/9.12.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_nfs_write_ops
@@ -11112,22 +11944,34 @@ Total observed NFSv3 write operations per second.
 
 ### svm_nfs_write_throughput
 
-NFSv4.2 data transfers.
+data transfers.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
 
 
 ### svm_nfs_write_total
 
-Total number of NFSv4.2 WRITE operations.
+Total number of WRITE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `write.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
 
 
 ### svm_vol_avg_latency

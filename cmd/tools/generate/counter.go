@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"text/template"
@@ -62,6 +63,11 @@ var (
 		"fabricpool_stats",
 		"fabricpool_throughput_ops",
 		"iw_",
+	}
+	// Special handling perf objects
+	specialPerfObjects = map[string]bool{
+		"svm_nfs":  true,
+		"node_nfs": true,
 	}
 )
 
@@ -449,6 +455,10 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		}
 		counters[co.Name] = co
 	}
+	// handling for templates with common object names
+	if specialPerfObjects[model.Object] {
+		return specialHandlingPerfCounters(counters, model)
+	}
 	return counters
 }
 
@@ -651,10 +661,46 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 	}
 }
 
+// Regex to match NFS version and operation
+var reRemove = regexp.MustCompile(`NFSv\d+\.\d+`)
+
 func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Counter) map[string]Counter {
+	// handle special counters
+	for k, v := range restCounters {
+		hashIndex := strings.Index(k, "#")
+		if hashIndex != -1 {
+			if v1, ok := restCounters[v.Name]; !ok {
+				v.Description = reRemove.ReplaceAllString(v.Description, "")
+				// Remove extra spaces from the description
+				v.Description = strings.Join(strings.Fields(v.Description), " ")
+				restCounters[v.Name] = v
+			} else {
+				v1.APIs = append(v1.APIs, v.APIs...)
+				restCounters[v.Name] = v1
+			}
+			delete(restCounters, k)
+		}
+	}
+
+	for k, v := range zapiCounters {
+		hashIndex := strings.Index(k, "#")
+		if hashIndex != -1 {
+			if v1, ok := zapiCounters[v.Name]; !ok {
+				v.Description = reRemove.ReplaceAllString(v.Description, "")
+				// Remove extra spaces from the description
+				v.Description = strings.Join(strings.Fields(v.Description), " ")
+				zapiCounters[v.Name] = v
+			} else {
+				v1.APIs = append(v1.APIs, v.APIs...)
+				zapiCounters[v.Name] = v1
+			}
+			delete(zapiCounters, k)
+		}
+	}
+
 	for k, v := range zapiCounters {
 		if v1, ok := restCounters[k]; ok {
-			v1.APIs = append(v1.APIs, v.APIs[0])
+			v1.APIs = append(v1.APIs, v.APIs...)
 			restCounters[k] = v1
 		} else {
 			zapiDef := v.APIs[0]
@@ -783,8 +829,21 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 		}
 		counters[co.Name] = co
 	}
-
+	// handling for templates with common object names/metric name
+	if specialPerfObjects[model.Object] {
+		return specialHandlingPerfCounters(counters, model)
+	}
 	return counters
+}
+
+func specialHandlingPerfCounters(counters map[string]Counter, model template2.Model) map[string]Counter {
+	// handling for templates with common object names
+	modifiedCounters := make(map[string]Counter)
+	for originalKey, value := range counters {
+		modifiedKey := model.Name + "#" + originalKey
+		modifiedCounters[modifiedKey] = value
+	}
+	return modifiedCounters
 }
 
 func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix string, noPrefix string) {
