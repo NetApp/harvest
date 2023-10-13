@@ -4,11 +4,12 @@ object:             fcp
 
 counters:
   - ^^uuid
+  - ^enabled                => enabled
   - ^fabric.connected       => fabric_connected
   - ^fabric.name            => fabric_name
   - ^fabric.port_address    => fabric_port_address
   - ^fabric.switch_port     => fabric_switch_port
-  - ^name                   => port_name
+  - ^name                   => port
   - ^node.name              => node
   - ^physical_protocol
   - ^speed.configured       => speed_configured
@@ -22,8 +23,9 @@ counters:
 export_options:
   instance_keys:
     - node
-    - port_name
+    - port
   instance_labels:
+    - enabled
     - fabric_connected
     - fabric_name
     - fabric_port_address

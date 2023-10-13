@@ -1711,7 +1711,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port_name=~\"$FCP\"}",
+              "expr": "fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1721,7 +1721,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_max_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port_name=~\"$FCP\"}",
+              "expr": "fcp_max_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1731,7 +1731,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_fabric_connected_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port_name=~\"$FCP\"}",
+              "expr": "fcp_fabric_connected_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1754,13 +1754,14 @@
                     "fabric_switch_port",
                     "node",
                     "physical_protocol",
-                    "port_name",
+                    "port",
                     "speed_configured",
                     "state",
                     "supported_protocols",
                     "Value #B",
                     "Value #A",
-                    "fabric_port_address"
+                    "fabric_port_address",
+                    "enabled"
                   ]
                 }
               }
@@ -1776,28 +1777,29 @@
                 "indexByName": {
                   "Value #A": 12,
                   "Value #B": 11,
-                  "Value #C": 10,
-                  "fabric_connected": 2,
-                  "fabric_name": 3,
-                  "fabric_port_address": 4,
-                  "fabric_switch_port": 5,
+                  "enabled": 2,
+                  "fabric_connected": 3,
+                  "fabric_name": 4,
+                  "fabric_port_address": 5,
+                  "fabric_switch_port": 6,
                   "node": 1,
-                  "physical_protocol": 6,
-                  "port_name": 0,
-                  "speed_configured": 7,
-                  "state": 8,
-                  "supported_protocols": 9
+                  "physical_protocol": 7,
+                  "port": 0,
+                  "speed_configured": 8,
+                  "state": 9,
+                  "supported_protocols": 10
                 },
                 "renameByName": {
                   "Value #A": "Connected Speed",
                   "Value #B": "Max Speed",
+                  "enabled": "Enabled",
                   "fabric_connected": "Fabric Connected",
                   "fabric_name": "Fabric Name",
                   "fabric_port_address": "Fabric Port",
                   "fabric_switch_port": "Fabric Switch Port",
                   "node": "Node",
                   "physical_protocol": "Physical Protocol",
-                  "port_name": "Port Name",
+                  "port": "Port Name",
                   "speed_configured": "Speed Configured",
                   "state": "State",
                   "supported_protocols": "Supported Protocols"
@@ -3443,7 +3445,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port_name)",
+        "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -3453,7 +3455,7 @@
         "name": "FCP",
         "options": [],
         "query": {
-          "query": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port_name)",
+          "query": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
