@@ -503,6 +503,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#building-harvest-docker-image" class="md-nav__link">
+    Building Harvest Docker Image
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1360,6 +1367,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#building-harvest-docker-image" class="md-nav__link">
+    Building Harvest Docker Image
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1396,7 +1410,7 @@
 </li>
 <li>
 <p>Want to run Harvest on a Mac
-  via <a href="../containerd/">containerd and Racher Desktop</a>? We got you
+  via <a href="../containerd/">containerd and Rancher Desktop</a>? We got you
   covered.</p>
 </li>
 <li>
@@ -1556,6 +1570,10 @@ before continuing with the upgrade steps below.</p>
 </li>
 </ol>
 <div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+</code></pre></div>
+<h2 id="building-harvest-docker-image">Building Harvest Docker Image<a class="headerlink" href="#building-harvest-docker-image" title="Permanent link">&para;</a></h2>
+<p>Building a custom Harvest Docker image is only necessary if you require a tailored solution. If your intention is to run Harvest using Docker without any customizations, please refer to the <a href="#docker-compose">Overview</a> section above.</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>docker/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache
 </code></pre></div>
 
 

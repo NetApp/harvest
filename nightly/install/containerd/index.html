@@ -1165,8 +1165,8 @@ are considered alpha. They work, but are still undergoing a lot of change.</p>
 </code></pre></div>
 <p>After Rancher Desktop installs, start it <code>Cmd + Space</code> type: Rancher and wait for it to start a VM and download images. Once everything is started continue.</p>
 <h2 id="create-harvest-docker-image">Create Harvest Docker image<a class="headerlink" href="#create-harvest-docker-image" title="Permanent link">&para;</a></h2>
-<p>You only need to <a href="https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer#building-harvest-docker-image">create a new image</a> if you've made changes to Harvest. If you just want to use the latest version of Harvest, skip this step.</p>
-<p>These are the same steps outline on <a href="https://github.com/NetApp/harvest/tree/main/container/onePollerPerContainer#building-harvest-docker-image">Building Harvest Docker Image</a> except we replace <code>docker build</code> with <code>nerdctl</code> like so:</p>
+<p>You only need to <a href="../containers/#building-harvest-docker-image">create a new image</a> if you've made changes to Harvest. If you just want to use the latest version of Harvest, skip this step.</p>
+<p>These are the same steps outline on <a href="../containers/#building-harvest-docker-image">Building Harvest Docker Image</a> except we replace <code>docker build</code> with <code>nerdctl</code> like so:</p>
 <div class="highlight"><pre><span></span><code>nerdctl<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache<span class="w"> </span>
 </code></pre></div>
 <h2 id="generate-a-harvest-compose-file">Generate a Harvest compose file<a class="headerlink" href="#generate-a-harvest-compose-file" title="Permanent link">&para;</a></h2>
