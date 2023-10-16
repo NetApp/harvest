@@ -77,7 +77,7 @@ plugins:
   - Volume:
       schedule:
         - data: 15m  # should be multiple of poll duration
-      include_constituents: true
+      include_constituents: false
   - MetricAgent:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
