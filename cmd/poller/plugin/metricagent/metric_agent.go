@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"strconv"
+	"strings"
 )
 
 type MetricAgent struct {
@@ -17,7 +18,7 @@ type MetricAgent struct {
 	computeMetricRules []computeMetricRule
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
+func New(p *plugin.AbstractPlugin) *MetricAgent {
 	return &MetricAgent{AbstractPlugin: p}
 }
 
@@ -143,4 +144,16 @@ func (a *MetricAgent) getMetric(m *matrix.Matrix, name string) *matrix.Metric {
 		return metric
 	}
 	return m.GetMetric(name)
+}
+
+// NewMetrics returns the new metrics the receiver creates
+func (a *MetricAgent) NewMetrics() []plugin.DerivedMetric {
+	var derivedMetrics []plugin.DerivedMetric
+	for _, rule := range a.computeMetricRules {
+		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{
+			Name:   rule.metric,
+			Source: strings.Join(rule.metricNames, ", "),
+		})
+	}
+	return derivedMetrics
 }

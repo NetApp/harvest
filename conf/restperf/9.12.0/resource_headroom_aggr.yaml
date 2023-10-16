@@ -1,5 +1,5 @@
 name:                     HeadroomAggr
-query:                    /api/cluster/counter/tables/headroom_aggregate
+query:                    api/cluster/counter/tables/headroom_aggregate
 object:                   headroom_aggr
 
 counters:

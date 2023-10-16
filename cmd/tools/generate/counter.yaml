@@ -86,11 +86,11 @@ counters:
       - API: REST
         Endpoint: NA
         ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/subsystem.yaml
+        Template: conf/rest/9.12.0/status.yaml
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
-        Template: conf/zapi/cdot/9.8.0/subsystem.yaml
+        Template: conf/zapi/cdot/9.8.0/status.yaml
 
   - Name: cluster_subsystem_outstanding_alerts
     Description: Number of outstanding alerts
