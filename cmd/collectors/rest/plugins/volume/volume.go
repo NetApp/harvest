@@ -5,6 +5,7 @@
 package volume
 
 import (
+	"github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -13,12 +14,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
-	"slices"
 	"strconv"
 	"time"
 )
 
 const HoursInMonth = 24 * 30
+const ARWSupportedVersion = "9.10.0"
 
 type Volume struct {
 	*plugin.AbstractPlugin
@@ -32,6 +33,7 @@ type Volume struct {
 
 type volumeInfo struct {
 	arwStartTime             string
+	arwState                 string
 	snapshotAutodelete       string
 	cloneSnapshotName        string
 	cloneSplitEstimateMetric float64
@@ -82,12 +84,7 @@ func (v *Volume) Init() error {
 	// Read template to decide inclusion of flexgroup constituents
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
-	if exportOption := v.ParentParams.GetChildS("export_options"); exportOption != nil {
-		if instanceLabels := exportOption.GetChildS("instance_labels"); instanceLabels != nil {
-			v.isArwSupportedVersion = slices.Contains(instanceLabels.GetAllChildContentS(), "antiRansomwareState")
-		}
-	}
-
+	v.isArwSupportedVersion = v.versionHigherThan(ARWSupportedVersion)
 	return nil
 }
 
@@ -145,6 +142,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
 			volume.SetLabel("anti_ransomware_start_time", vInfo.arwStartTime)
+			volume.SetLabel("antiRansomwareState", vInfo.arwState)
 			volume.SetLabel("snapshot_autodelete", vInfo.snapshotAutodelete)
 			if volume.GetLabel("is_flexclone") == "true" {
 				volume.SetLabel("clone_parent_snapshot", vInfo.cloneSnapshotName)
@@ -252,7 +250,7 @@ func (v *Volume) getVolumeInfo() (map[string]volumeInfo, error) {
 	}
 
 	// Only ask this field when ARW would be supported, is_constituent is supported from 9.10 onwards in public api same as ARW
-	fields = append(fields, "anti_ransomware.dry_run_start_time")
+	fields = append(fields, "anti_ransomware.dry_run_start_time", "anti_ransomware.state")
 	if _, err := v.getVolume("is_constituent=false", fields, volumeMap); err != nil {
 		return nil, err
 	}
@@ -279,10 +277,11 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 		volName := volume.Get("name").String()
 		svmName := volume.Get("svm.name").String()
 		arwStartTime := volume.Get("anti_ransomware.dry_run_start_time").String()
+		arwState := volume.Get("anti_ransomware.state").String()
 		snapshotAutodelete := volume.Get("space.snapshot.autodelete_enabled").String()
 		cloneSnapshotName := volume.Get("clone.parent_snapshot.name").String()
 		cloneSplitEstimate := volume.Get("clone.split_estimate").Float()
-		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, snapshotAutodelete: snapshotAutodelete, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate}
+		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, arwState: arwState, snapshotAutodelete: snapshotAutodelete, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate}
 	}
 	return volumeMap, nil
 }
@@ -298,4 +297,16 @@ func (v *Volume) updateAggrMap(disks []gjson.Result) {
 			}
 		}
 	}
+}
+
+func (v *Volume) versionHigherThan(minVersion string) bool {
+	currentVersion, err := version.NewVersion(v.client.Cluster().GetVersion())
+	if err != nil {
+		return false
+	}
+	minSupportedVersion, err := version.NewVersion(minVersion)
+	if err != nil {
+		return false
+	}
+	return currentVersion.GreaterThanOrEqual(minSupportedVersion)
 }

@@ -99,7 +99,7 @@
       },
       "id": 29,
       "options": {
-        "content": "For viewing FlexGroup Constituents details, You must modify the `include_constituents` flag to `true` in all volume.yaml templates.",
+        "content": "You must modify the `include_constituents` flag to `true` in all volume.yaml templates. Please see [flexGroup dashboard](https://github.com/NetApp/harvest/wiki/FAQ#flexgroup-dashboard) for more details. Enabling flexgroup constituents counters may slow down data collection due to a high number of constituents metrics.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
