@@ -1573,7 +1573,7 @@ before continuing with the upgrade steps below.</p>
 </code></pre></div>
 <h2 id="building-harvest-docker-image">Building Harvest Docker Image<a class="headerlink" href="#building-harvest-docker-image" title="Permanent link">&para;</a></h2>
 <p>Building a custom Harvest Docker image is only necessary if you require a tailored solution. If your intention is to run Harvest using Docker without any customizations, please refer to the <a href="#docker-compose">Overview</a> section above.</p>
-<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>docker/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache
 </code></pre></div>
 
 
