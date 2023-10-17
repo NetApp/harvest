@@ -213,5 +213,5 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 Building a custom Harvest Docker image is only necessary if you require a tailored solution. If your intention is to run Harvest using Docker without any customizations, please refer to the [Overview](#docker-compose) section above.
 
 ```sh
-docker build -f docker/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
+docker build -f container/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache
 ```
