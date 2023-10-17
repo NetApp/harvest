@@ -14,14 +14,10 @@ import (
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	currentVal int
-	client     *zapi.Client
-	aggrsMap   map[string]string // aggregate-uuid -> aggregate-name map
-}
-
-type aggrData struct {
-	uuid string
-	name string
+	currentVal          int
+	client              *zapi.Client
+	aggrsMap            map[string]bool // aggregate-name -> exist map
+	includeConstituents bool
 }
 
 type volumeClone struct {
@@ -54,11 +50,13 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	v.aggrsMap = make(map[string]string)
+	v.aggrsMap = make(map[string]bool)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
 
+	// Read template to decide inclusion of flexgroup constituents
+	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	return nil
 }
 
@@ -116,9 +114,12 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 		if !volume.IsExportable() {
 			continue
 		}
-		aggrUUID := volume.GetLabel("aggrUuid")
-		_, exist := v.aggrsMap[aggrUUID]
-		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+
+		if volume.GetLabel("style") == "flexgroup_constituent" {
+			volume.SetExportable(v.includeConstituents)
+		}
+
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(v.aggrsMap[volume.GetLabel("aggr")]))
 
 		name := volume.GetLabel("volume")
 		svm := volume.GetLabel("svm")
@@ -295,29 +296,31 @@ func (v *Volume) getEncryptedDisks() ([]string, error) {
 	return diskNames, nil
 }
 
-func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]aggrData) {
+func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string][]string) {
 	if disks != nil && aggrDiskMap != nil {
 		// Clean aggrsMap map
-		v.aggrsMap = make(map[string]string)
-
+		clear(v.aggrsMap)
 		for _, disk := range disks {
-			aggr := aggrDiskMap[disk]
-			v.aggrsMap[aggr.uuid] = aggr.name
+			if aggrList, exist := aggrDiskMap[disk]; exist {
+				for _, aggr := range aggrList {
+					v.aggrsMap[aggr] = true
+				}
+			}
 		}
 	}
 }
 
-func (v *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
+func (v *Volume) getAggrDiskMapping() (map[string][]string, error) {
 	var (
 		result        []*node.Node
-		aggrsDisksMap map[string]aggrData
+		aggrsDisksMap map[string][]string
 		diskName      string
 		err           error
 	)
 
 	request := node.NewXMLS("aggr-status-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
-	aggrsDisksMap = make(map[string]aggrData)
+	aggrsDisksMap = make(map[string][]string)
 
 	if result, err = v.client.InvokeZapiCall(request); err != nil {
 		return nil, err
@@ -328,12 +331,14 @@ func (v *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	}
 
 	for _, aggrDiskData := range result {
-		aggrUUID := aggrDiskData.GetChildContentS("aggregate-uuid")
 		aggrName := aggrDiskData.GetChildContentS("aggregate")
-		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
-		for _, aggrDisk := range aggrDiskList {
-			diskName = aggrDisk.GetChildContentS("disk")
-			aggrsDisksMap[diskName] = aggrData{uuid: aggrUUID, name: aggrName}
+		for _, plexList := range aggrDiskData.GetChildS("aggr-plex-list").GetChildren() {
+			for _, raidGroupList := range plexList.GetChildS("aggr-raidgroup-list").GetChildren() {
+				for _, diskList := range raidGroupList.GetChildS("aggr-disk-list").GetChildren() {
+					diskName = diskList.GetChildContentS("disk")
+					aggrsDisksMap[diskName] = append(aggrsDisksMap[diskName], aggrName)
+				}
+			}
 		}
 	}
 	return aggrsDisksMap, nil

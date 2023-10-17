@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -233,4 +234,13 @@ func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, l
 
 func IsValidUnit(unit string) bool {
 	return validUnits[unit]
+}
+
+func ReadPluginKey(param *node.Node, key string) bool {
+	if val := param.GetChildContentS(key); val != "" {
+		if boolValue, err := strconv.ParseBool(val); err == nil {
+			return boolValue
+		}
+	}
+	return false
 }
