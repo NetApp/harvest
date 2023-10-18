@@ -114,6 +114,7 @@ export_options:
     - svm
     - volume
   instance_labels:
+    - antiRansomwareState
     - clone_parent_snapshot
     - clone_parent_svm
     - clone_parent_volume
