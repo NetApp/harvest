@@ -4,8 +4,8 @@ object:                   ontaps3_svm
 
 counters:
   - ^^id
-  - ^node.name                         => node
-  - ^svm.name                          => svm
+  - ^node.name                                      => node
+  - ^svm.name                                       => svm
   - abort_multipart_upload_failed
   - abort_multipart_upload_failed_client_close
   - abort_multipart_upload_latency
@@ -15,7 +15,7 @@ counters:
   - anonymous_access
   - anonymous_deny_access
   - authentication_failures
-  - chunked_upload_requests
+  - chunked_upload_requests                         => chunked_upload_reqs
   - complete_multipart_upload_failed
   - complete_multipart_upload_failed_client_close
   - complete_multipart_upload_latency
@@ -101,13 +101,13 @@ counters:
   - list_uploads_latency
   - list_uploads_rate
   - list_uploads_total
-  - maximum_commands_per_connection
-  - maximum_connected_connections
-  - maximum_requests_outstanding
-  - multiple_delete_requests
+  - maximum_commands_per_connection                 => max_cmds_per_connection
+  - maximum_connected_connections                   => max_connected_connections
+  - maximum_requests_outstanding                    => max_requests_outstanding
+  - multiple_delete_requests                        => multi_delete_reqs
   - output_flow_control_entry
   - output_flow_control_exit
-  - presigned_url_requests
+  - presigned_url_requests                          => presigned_url_reqs
   - put_bucket_versioning_failed
   - put_bucket_versioning_total
   - put_data
@@ -126,8 +126,8 @@ counters:
   - requests_outstanding
   - root_user_access
   - server_connection_close
-  - signature_v2_requests
-  - signature_v4_requests
+  - signature_v2_requests                           => signature_v2_reqs
+  - signature_v4_requests                           => signature_v4_reqs
   - tagging
   - upload_part_failed
   - upload_part_failed_client_close
