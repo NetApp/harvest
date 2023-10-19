@@ -5,6 +5,7 @@
 package volume
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -16,7 +17,8 @@ import (
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	styleType string
+	styleType           string
+	includeConstituents bool
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -35,6 +37,9 @@ func (v *Volume) Init() error {
 	if v.Params.HasChildS("historicalLabels") {
 		v.styleType = "type"
 	}
+
+	// Read template to decide inclusion of flexgroup constituents
+	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	return nil
 }
 
@@ -103,7 +108,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 			fgAggrMap[key].Add(i.GetLabel("aggr"))
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel(style, "flexgroup_constituent")
-			i.SetExportable(false)
+			i.SetExportable(v.includeConstituents)
 		} else {
 			i.SetLabel(style, "flexvol")
 			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
