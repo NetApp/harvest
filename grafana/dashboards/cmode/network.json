@@ -1657,7 +1657,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel requires a cluster with ONTAP 9.6+ and the Harvest REST collector",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1691,6 +1691,58 @@
                   {
                     "id": "unit",
                     "value": "Gbits"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Enabled"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Fabric Connected"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
                   }
                 ]
               }
