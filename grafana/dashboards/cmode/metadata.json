@@ -2390,7 +2390,7 @@
               "refId": "C"
             }
           ],
-          "title": "XML Parse Time",
+          "title": "Parse Time",
           "type": "timeseries"
         },
         {
