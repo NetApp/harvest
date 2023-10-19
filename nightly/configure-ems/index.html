@@ -1365,14 +1365,14 @@ See <a href="../prepare-cdot-clusters/">prepare an ONTAP cDOT cluster</a> for de
 <p>This collector collects EMS events from ONTAP and for each received EMS event, creates new metrics prefixed
 with <code>ems_events</code>.</p>
 <p>Harvest supports two types of ONTAP EMS events:</p>
-<ol>
+<ul>
 <li><strong>Normal EMS events</strong></li>
-</ol>
+</ul>
 <p>Single shot events. When ONTAP detects a problem, an event is raised.
 When the issue is addressed, ONTAP does <strong>not</strong> raise another event reflecting that the problem was resolved.</p>
-<ol>
+<ul>
 <li><strong>Bookend EMS events</strong></li>
-</ol>
+</ul>
 <p>ONTAP creates bookend events in matching pairs.
 ONTAP creates an event when an issue is detected and another paired event when the event is resolved.
 Typically, these events share a common set of properties.</p>
@@ -1503,7 +1503,7 @@ The EMS event template parameters are explained below along with an example for 
 <li><code>resolve_after</code> (optional, Go duration, default = 28 days) resolve the issuing EMS after the specified duration
   has elapsed (<code>672h</code> = <code>28d</code>).
   If the bookend pair is not received within the <code>resolve_after</code> duration, the Issuing EMS event expires. When that
-  happens, Harvest will mark the event as auto resolved by adding the <code>autoresolve=true</code> label to the Issuing EMS event.</li>
+  happens, Harvest will mark the event as auto resolved by adding the <code>autoresolved=true</code> label to the issuing EMS event.</li>
 <li><code>resolve_key</code> (optional) bookend key used to match bookend EMS events. Defaults to prefixed (<code>^^</code>) labels
   in <code>exports</code> section. <code>resolve_key</code> allows you to override what is defined in the <code>exports</code> section.</li>
 </ul>
