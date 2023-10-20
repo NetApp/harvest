@@ -1657,6 +1657,23 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 23
+          },
+          "id": 117,
+          "options": {
+            "content": "",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "title": "FC ports with Fabric detail panel needs a cluster running ONTAP 9.6+, along with the Harvest REST collector.",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel requires a cluster with ONTAP 9.6+ and the Harvest REST collector",
           "fieldConfig": {
             "defaults": {
@@ -1752,7 +1769,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 23
+            "y": 24
           },
           "id": 115,
           "interval": "",
@@ -1921,7 +1938,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 34
+            "y": 35
           },
           "id": 67,
           "options": {
@@ -2014,7 +2031,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 34
+            "y": 35
           },
           "id": 69,
           "options": {
@@ -2106,7 +2123,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 44
+            "y": 45
           },
           "id": 77,
           "options": {
@@ -2199,7 +2216,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 44
+            "y": 45
           },
           "id": 78,
           "options": {
@@ -2292,7 +2309,7 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 54
+            "y": 55
           },
           "id": 75,
           "options": {
@@ -2412,7 +2429,7 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 54
+            "y": 55
           },
           "id": 76,
           "options": {
@@ -2538,7 +2555,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 54
+            "y": 55
           },
           "id": 73,
           "options": {
@@ -2630,7 +2647,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 54
+            "y": 55
           },
           "id": 74,
           "options": {
