@@ -26,7 +26,7 @@ func GetPerfFileWithQosCounters(source string, target string) string {
 	writeBuffer := bufio.NewWriter(writeFile)
 	file, err := os.Open(utils.GetHarvestRootDir() + "/" + source)
 	if err != nil {
-		log.Error().Err(err)
+		log.Error().Err(err).Send()
 	}
 	defer func(file *os.File) { _ = file.Close() }(file)
 
@@ -40,7 +40,7 @@ func GetPerfFileWithQosCounters(source string, target string) string {
 		_, _ = writeBuffer.WriteString(lineString + "\n")
 	}
 	if err := scanner.Err(); err != nil {
-		log.Error().Err(err)
+		log.Error().Err(err).Send()
 	}
 	_ = writeBuffer.Flush()
 	return modifiedFilePath
