@@ -313,16 +313,16 @@ func copyFiles(srcPath, destPath string) error {
 		"bin":         true,
 		"autosupport": true,
 	}
-	// requires 755 permissions
-	dirsPermissions := map[string]bool{
-		"container":  true,
-		"prometheus": true,
+	// requires specific permissions
+	dirsPermissions := map[string]os.FileMode{
+		"container":  0755,
+		"prometheus": 0755,
 	}
-	// requires 644 permissions
-	filePermissions := map[string]bool{
-		"container":  true,
-		"prometheus": true,
-		"grafana":    true,
+	// requires specific permissions
+	filePermissions := map[string]os.FileMode{
+		"container":  0644,
+		"prometheus": 0644,
+		"grafana":    0640,
 	}
 
 	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
@@ -342,10 +342,9 @@ func copyFiles(srcPath, destPath string) error {
 			if dirsToExclude[info.Name()] {
 				return filepath.SkipDir
 			}
-			// Check if the directory is in the dirsToInclude map
-			if dirsPermissions[info.Name()] {
-				// #nosec G301
-				return os.MkdirAll(dest, 0755)
+			// Check if the directory is in the dirsPermissions map
+			if perm, ok := dirsPermissions[info.Name()]; ok {
+				return os.MkdirAll(dest, perm)
 			}
 			return os.MkdirAll(dest, 0750)
 		}
@@ -356,9 +355,9 @@ func copyFiles(srcPath, destPath string) error {
 		}
 
 		// Check if the file is under a directory in the filePermissions map
-		for dir := range filePermissions {
+		for dir, perm := range filePermissions {
 			if strings.HasPrefix(relPath, dir) {
-				return copyFile(path, dest, 0644)
+				return copyFile(path, dest, perm)
 			}
 		}
 		return copyFile(path, dest, 0600)
