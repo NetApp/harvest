@@ -1277,5 +1277,44 @@ func checkRowNames(t *testing.T, path string, data []byte) {
 			}
 		}
 	})
+}
 
+func TestDescription(t *testing.T) {
+	count := 0
+	// This is temp, after all dashboard description changes will be finished, It would use dashboards var
+	path := []string{"../../../grafana/dashboards/cmode/aggregate.json"}
+	visitDashboards(
+		path,
+		func(path string, data []byte) {
+			checkDescription(t, path, data, &count)
+		})
+}
+
+func checkDescription(t *testing.T, path string, data []byte, count *int) {
+	dashPath := shortPath(path)
+	visitAllPanels(data, func(path string, key, value gjson.Result) {
+		kind := value.Get("type").String()
+		if kind == "row" {
+			return
+		}
+		description := value.Get("description").String()
+		targetsSlice := value.Get("targets").Array()
+		if len(targetsSlice) == 1 {
+			if description == "" {
+				*count = *count + 1
+				expr := targetsSlice[0].Get("expr").String()
+				if strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") {
+					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
+					//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+					fmt.Printf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+				} else {
+					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, value.Get("title").String(), *count)
+				}
+			}
+		} else {
+			// This indicates table/timeseries with more than 1 expressions, After deciding next steps, this will be uncommented.
+			//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+			fmt.Printf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+		}
+	})
 }
