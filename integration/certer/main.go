@@ -187,7 +187,7 @@ func addCertificateAuthToHarvestUser() error {
 		if err != nil {
 			var oe models.OntapError
 			if errors.As(err, &oe) {
-				if oe.StatusCode == 409 {
+				if oe.StatusCode == http.StatusConflict {
 					// duplicate entry - that's fine, ignore
 					continue
 				}
@@ -355,7 +355,7 @@ func deleteCertificates(certificates models.Certificates) error {
 			Pathf("/api/security/certificates/%s", record.UUID).
 			ToString(&resp).
 			AddValidator(func(response *http.Response) error {
-				if response.StatusCode != 200 {
+				if response.StatusCode != http.StatusOK {
 					return fmt.Errorf("failed to delete ertificates. statusCode=%d status=%s", response.StatusCode, response.Status)
 				}
 				return nil
