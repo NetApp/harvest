@@ -331,7 +331,8 @@ func copyFiles(srcPath, destPath string) error {
 				return filepath.SkipDir
 			}
 			// Create the directory
-			return os.MkdirAll(dest, 0750)
+			// #nosec G301
+			return os.MkdirAll(dest, 0755)
 		}
 
 		// Skip excluded files
@@ -351,7 +352,8 @@ func copyFile(srcPath, destPath string) error {
 	}
 	defer silentClose(srcFile)
 
-	destFile, err := os.Create(destPath)
+	// #nosec G302
+	destFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}

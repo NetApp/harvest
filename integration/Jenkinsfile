@@ -149,15 +149,21 @@ pipeline {
                                 sh '''
                                 echo "Installing"
                                 export PATH=$PATH:/usr/local/go/bin
-                                #export BUILD_PATH=$DOCKER
                                 export VERSION=$VERSION
                                 cd $WORKSPACE/harvest
-                                cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
-                                make build
-                                ./bin/harvest stop
-                                ./bin/harvest generate docker full --port --output harvest-compose.yml
                                 docker login -u $DOCKER_USER -p $DOCKER_PWD
                                 docker build -f container/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest -t cr.netapp.io/harvest:latest -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg VERSION=$VERSION
+                                rm -rf $WORKSPACE/docker
+                                mkdir $WORKSPACE/docker
+                                cd $WORKSPACE/docker
+                                cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
+                                docker run --rm \
+                                  --entrypoint "bin/harvest" \
+                                  --volume "$(pwd):/opt/temp" \
+                                  --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
+                                  ghcr.io/netapp/harvest \
+                                  generate docker full \
+                                  --output harvest-compose.yml
                                 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 sleep 1m
                                 INSTALL_DOCKER=1 bash $WORKSPACE/harvest/integration/test/test.sh
