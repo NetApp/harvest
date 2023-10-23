@@ -274,8 +274,6 @@ def void stopAndRemoveDockers() {
         volumes=$(docker volume ls -qf dangling=true)
         if [ "$volumes" ]; then
             docker volume rm $volumes
-        else
-            echo "No dangling volumes to remove"
         fi
     '''
 }
