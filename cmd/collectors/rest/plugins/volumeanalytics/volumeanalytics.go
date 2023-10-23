@@ -274,9 +274,8 @@ func (v *VolumeAnalytics) getLabelBucket(label string) string {
 		return "Monthly"
 	} else if strings.Contains(label, "unknown") {
 		return "Unknown"
-	} else {
-		return "Yearly"
 	}
+	return "Yearly"
 }
 
 func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, gjson.Result, error) {

@@ -15,6 +15,7 @@ linters:
     - exhaustive
     - exportloopref
     - gocheckcompilerdirectives
+    - gochecksumtype
     - gocritic
     - gosec
     - gosimple
@@ -26,11 +27,13 @@ linters:
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
+    - perfsprint
     - reassign
     - revive
     - staticcheck
     - stylecheck
     - tenv
+    - testifylint
     - thelper
     - testableexamples
     - typecheck

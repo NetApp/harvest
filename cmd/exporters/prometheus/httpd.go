@@ -25,7 +25,7 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 	mux.HandleFunc("/metrics", p.ServeMetrics)
 
 	server := &http.Server{
-		Addr:              addr + ":" + fmt.Sprint(port),
+		Addr:              addr + ":" + strconv.Itoa(port),
 		Handler:           mux,
 		ReadHeaderTimeout: 60 * time.Second,
 	}
