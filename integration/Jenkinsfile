@@ -148,11 +148,7 @@ pipeline {
                             steps {
                                 sh '''
                                 echo "Installing"
-                                export PATH=$PATH:/usr/local/go/bin
-                                export VERSION=$VERSION
-                                cd $WORKSPACE/harvest
-                                docker login -u $DOCKER_USER -p $DOCKER_PWD
-                                docker build -f container/onePollerPerContainer/Dockerfile -t rahulguptajss/harvest:latest -t cr.netapp.io/harvest:latest -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg VERSION=$VERSION
+                                curl -O $DOCKER && docker load -i docker_harvest.tar
                                 rm -rf $WORKSPACE/docker
                                 mkdir $WORKSPACE/docker
                                 cd $WORKSPACE/docker

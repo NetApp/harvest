@@ -138,7 +138,7 @@ pipeline {
                     targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                     docker login
                     docker build -f container/onePollerPerContainer/Dockerfile --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
-                    docker save -o ${targetLocation}/docker_harvest.tar ${imageName}:latest
+                    docker save -o ${targetLocation}/docker_harvest.tar ${ghcrImage}:latest
                     '''
                   }
                 }
