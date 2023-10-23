@@ -682,10 +682,8 @@ func addPrefixToMetricNames(expr, prefix string) string {
 			return expr
 		} else if isMatch {
 			return strings.Replace(expr, "label_values(", "label_values("+prefix, 1)
-		} else {
-			// no metric name
-			return expr
 		}
+		return expr
 	}
 	// everything else is for graph queries
 	regex = regexp.MustCompile(`([a-zA-Z0-9_+-]+)\s?{.+?}`)
