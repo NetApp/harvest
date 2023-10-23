@@ -172,6 +172,7 @@ func exportFiles(dir string, folder *Folder) error {
 				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
 				return err
 			}
+			// creating dashboards with group and other permissions of read are OK
 			if err = os.WriteFile(fp, data, gPerm); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
 				return err
