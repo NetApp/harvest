@@ -313,9 +313,16 @@ func copyFiles(srcPath, destPath string) error {
 		"bin":         true,
 		"autosupport": true,
 	}
+	// requires 755 permissions
 	dirsPermissions := map[string]bool{
 		"container":  true,
 		"prometheus": true,
+	}
+	// requires 644 permissions
+	filePermissions := map[string]bool{
+		"container":  true,
+		"prometheus": true,
+		"grafana":    true,
 	}
 
 	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
@@ -348,8 +355,8 @@ func copyFiles(srcPath, destPath string) error {
 			return nil
 		}
 
-		// Check if the file is under a directory in the dirsPermissions map
-		for dir := range dirsPermissions {
+		// Check if the file is under a directory in the filePermissions map
+		for dir := range filePermissions {
 			if strings.HasPrefix(relPath, dir) {
 				return copyFile(path, dest, 0644)
 			}
