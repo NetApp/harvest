@@ -410,7 +410,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Specifies the bucket logical used size up to this point.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -501,7 +501,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Specifies the bucket logical used percent.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -619,7 +619,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "You must enable the Rest collector in your harvest.yml config",
+      "description": "You must enable the Rest collector in your harvest.yml config.",
       "fieldConfig": {
         "defaults": {
           "color": {

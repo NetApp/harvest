@@ -100,7 +100,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of disks.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -172,7 +172,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of failed disks.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -244,7 +244,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of raid groups.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -316,7 +316,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of plexes.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -388,7 +388,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of disks in the aggregate.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -981,7 +981,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Highest Disk Utilization per Aggregate in the selected time range",
+      "description": "Highest Disk Utilization per Aggregate in the selected time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1072,7 +1072,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of disk operations involving data transfer initiated per second\n",
+      "description": "Total number of disk operations involving data transfer initiated per second.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1360,7 +1360,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency per block in microseconds for user read operations",
+          "description": "Average latency per block in microseconds for user read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1452,7 +1452,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency per block in microseconds for user write operations",
+          "description": "Average latency per block in microseconds for user write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1544,7 +1544,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of disk operations involving data transfer initiated per second",
+          "description": "Total number of disk operations involving data transfer initiated per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1636,7 +1636,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The utilization percent of the disk in the selected time range",
+          "description": "The utilization percent of the disk in the selected time range.",
           "fieldConfig": {
             "defaults": {
               "color": {

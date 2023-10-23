@@ -1282,7 +1282,15 @@ func checkRowNames(t *testing.T, path string, data []byte) {
 func TestDescription(t *testing.T) {
 	count := 0
 	// This is temp, after all dashboard description changes will be finished, It would use dashboards var
-	path := []string{"../../../grafana/dashboards/cmode/aggregate.json"}
+	path := []string{
+		"../../../grafana/dashboards/cmode/aggregate.json",
+		"../../../grafana/dashboards/cmode/flexgroup.json",
+		"../../../grafana/dashboards/cmode/cluster.json",
+		"../../../grafana/dashboards/cmode/disk.json",
+		"../../../grafana/dashboards/cmode/metadata.json",
+		"../../../grafana/dashboards/cmode/qtree.json",
+		"../../../grafana/dashboards/cmode/s3ObjectStorage.json",
+	}
 	visitDashboards(
 		path,
 		func(path string, data []byte) {
@@ -1301,20 +1309,23 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		targetsSlice := value.Get("targets").Array()
 		if len(targetsSlice) == 1 {
 			if description == "" {
-				*count = *count + 1
 				expr := targetsSlice[0].Get("expr").String()
 				if strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
 					//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
-					fmt.Printf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, value.Get("title").String())
 				} else {
+					*count = *count + 1
 					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, value.Get("title").String(), *count)
 				}
+			} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
+				// Few panels have description text from variable, which would be ignored.
+				t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, value.Get("title").String())
 			}
 		} else {
 			// This indicates table/timeseries with more than 1 expressions, After deciding next steps, this will be uncommented.
 			//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
-			fmt.Printf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+			fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, value.Get("title").String())
 		}
 	})
 }

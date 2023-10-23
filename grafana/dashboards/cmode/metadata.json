@@ -112,7 +112,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of datacenters.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -175,7 +175,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of pollers.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -250,6 +250,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of collectors.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -324,7 +325,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of exporters.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -398,7 +399,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Data points collected last 24h",
+      "description": "Data points collected last 24h.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -472,7 +473,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Data points collected per minute",
+      "description": "Data points collected per minute.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -547,7 +548,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Data points exported per minute",
+      "description": "Data points exported per minute.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -969,7 +970,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "System Memory used by Harvest Pollers",
+      "description": "System Memory used by Harvest Pollers.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1046,7 +1047,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Detail of pollers.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1286,7 +1287,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Detail of collectors.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1528,7 +1529,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Detail of exporters.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1751,7 +1752,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average duration of data poll of all collectors",
+      "description": "Average duration of data poll of all collectors.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1842,7 +1843,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average duration of data poll (includes API time and plugins)",
+      "description": "Average duration of data poll (includes API time and plugins).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1928,12 +1929,12 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Average  time per Collector",
+      "title": "Average time per Collector",
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average export time (includes render time)",
+      "description": "Average export time (includes render time).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2019,7 +2020,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Average  time per Exporter",
+      "title": "Average time per Exporter",
       "type": "timeseries"
     },
     {
@@ -2035,7 +2036,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of time it took for the poll to finish.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2125,7 +2126,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "API wait time of each data poll",
+          "description": "API wait time of each data poll.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2215,7 +2216,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "API wait time of each data poll",
+          "description": "API wait time of each data poll.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2305,7 +2306,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of time to parse XML, JSON, etc. for cluster object.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2395,7 +2396,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.",
           "fieldConfig": {
             "defaults": {
               "color": {
