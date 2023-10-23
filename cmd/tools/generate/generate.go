@@ -363,13 +363,13 @@ func copyFile(srcPath, destPath string, perm os.FileMode) error {
 	if err != nil {
 		return err
 	}
-	silentClose(srcFile)
+	defer silentClose(srcFile)
 
 	destFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
 	}
-	silentClose(destFile)
+	defer silentClose(destFile)
 
 	_, err = io.Copy(destFile, srcFile)
 	return err
