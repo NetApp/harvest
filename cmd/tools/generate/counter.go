@@ -656,9 +656,8 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 	err = t.Execute(out, c)
 	if err != nil {
 		panic(err)
-	} else {
-		fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
 	}
+	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
 }
 
 // Regex to match NFS version and operation

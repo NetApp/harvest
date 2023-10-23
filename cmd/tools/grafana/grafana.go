@@ -31,8 +31,9 @@ import (
 )
 
 const (
-	clientTimeout     = 5
-	grafanaDataSource = "Prometheus"
+	clientTimeout                 = 5
+	grafanaDataSource             = "Prometheus"
+	gPerm             os.FileMode = 644
 )
 
 var (
@@ -171,8 +172,8 @@ func exportFiles(dir string, folder *Folder) error {
 				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
 				return err
 			}
-			// #nosec G306 -- creating dashboards with group and other permissions of read are OK
-			if err = os.WriteFile(fp, data, 0644); err != nil {
+			// creating dashboards with group and other permissions of read are OK
+			if err = os.WriteFile(fp, data, gPerm); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
 				return err
 			}
@@ -682,10 +683,8 @@ func addPrefixToMetricNames(expr, prefix string) string {
 			return expr
 		} else if isMatch {
 			return strings.Replace(expr, "label_values(", "label_values("+prefix, 1)
-		} else {
-			// no metric name
-			return expr
 		}
+		return expr
 	}
 	// everything else is for graph queries
 	regex = regexp.MustCompile(`([a-zA-Z0-9_+-]+)\s?{.+?}`)
