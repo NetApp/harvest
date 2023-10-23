@@ -313,6 +313,11 @@ func copyFiles(srcPath, destPath string) error {
 		"bin":         true,
 		"autosupport": true,
 	}
+	dirsPermissions := map[string]bool{
+		"container":  true,
+		"prometheus": true,
+	}
+
 	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -330,9 +335,12 @@ func copyFiles(srcPath, destPath string) error {
 			if dirsToExclude[info.Name()] {
 				return filepath.SkipDir
 			}
-			// Create the directory
-			// #nosec G301
-			return os.MkdirAll(dest, 0755)
+			// Check if the directory is in the dirsToInclude map
+			if dirsPermissions[info.Name()] {
+				// #nosec G301
+				return os.MkdirAll(dest, 0755)
+			}
+			return os.MkdirAll(dest, 0750)
 		}
 
 		// Skip excluded files
@@ -340,24 +348,28 @@ func copyFiles(srcPath, destPath string) error {
 			return nil
 		}
 
-		// Copy the file
-		return copyFile(path, dest)
+		// Check if the file is under a directory in the dirsPermissions map
+		for dir := range dirsPermissions {
+			if strings.HasPrefix(relPath, dir) {
+				return copyFile(path, dest, 0644)
+			}
+		}
+		return copyFile(path, dest, 0600)
 	})
 }
 
-func copyFile(srcPath, destPath string) error {
+func copyFile(srcPath, destPath string, perm os.FileMode) error {
 	srcFile, err := os.Open(srcPath)
 	if err != nil {
 		return err
 	}
-	defer silentClose(srcFile)
+	silentClose(srcFile)
 
-	// #nosec G302
-	destFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	destFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
 	}
-	defer silentClose(destFile)
+	silentClose(destFile)
 
 	_, err = io.Copy(destFile, srcFile)
 	return err
