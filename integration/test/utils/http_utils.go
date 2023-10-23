@@ -28,12 +28,12 @@ func GetResponseBody(url string) ([]byte, error) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 		return nil, err
 	}
+	resp.Body.Close()
 	return body, nil
 }
 

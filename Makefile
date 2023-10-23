@@ -86,6 +86,7 @@ ifeq (${LINT_EXISTS}, )
 	@exit 1
 endif
 	golangci-lint run
+	@cd integration && golangci-lint run
 
 govulncheck: ## run govulncheck on the source files
 ifeq (${GOVULNCHECK_EXISTS}, )
