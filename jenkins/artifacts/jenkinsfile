@@ -271,6 +271,10 @@ def void stopAndRemoveDockers() {
         mkdir -p /opt/home/nightly/
         for container_id in $(docker ps -a -q);do docker stop $container_id;done
         docker system prune --all --force --volumes
+        volumes=$(docker volume ls -qf dangling=true)
+        if [ "$volumes" ]; then
+            docker volume rm $volumes
+        fi
     '''
 }
 
