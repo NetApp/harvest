@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#1-configuration-file" class="md-skip">
+        <a href="#1-install-harvest" class="md-skip">
           Skip to content
         </a>
       
@@ -301,36 +301,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-configuration-file" class="md-nav__link">
-    1. Configuration file
+  <a href="#1-install-harvest" class="md-nav__link">
+    1. Install Harvest
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-start-harvest" class="md-nav__link">
-    2. Start Harvest
+  <a href="#2-configuration-file" class="md-nav__link">
+    2. Configuration file
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-import-grafana-dashboards" class="md-nav__link">
-    3. Import Grafana dashboards
+  <a href="#3-start-harvest" class="md-nav__link">
+    3. Start Harvest
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-verify-the-metrics" class="md-nav__link">
-    4. Verify the metrics
+  <a href="#4-import-grafana-dashboards" class="md-nav__link">
+    4. Import Grafana dashboards
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-optional-setup-systemd-service-files" class="md-nav__link">
-    5. (Optional) Setup Systemd service files
+  <a href="#5-verify-the-metrics" class="md-nav__link">
+    5. Verify the metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-optional-setup-systemd-service-files" class="md-nav__link">
+    6. (Optional) Setup Systemd service files
   </a>
   
 </li>
@@ -1188,36 +1195,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-configuration-file" class="md-nav__link">
-    1. Configuration file
+  <a href="#1-install-harvest" class="md-nav__link">
+    1. Install Harvest
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-start-harvest" class="md-nav__link">
-    2. Start Harvest
+  <a href="#2-configuration-file" class="md-nav__link">
+    2. Configuration file
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-import-grafana-dashboards" class="md-nav__link">
-    3. Import Grafana dashboards
+  <a href="#3-start-harvest" class="md-nav__link">
+    3. Start Harvest
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-verify-the-metrics" class="md-nav__link">
-    4. Verify the metrics
+  <a href="#4-import-grafana-dashboards" class="md-nav__link">
+    4. Import Grafana dashboards
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-optional-setup-systemd-service-files" class="md-nav__link">
-    5. (Optional) Setup Systemd service files
+  <a href="#5-verify-the-metrics" class="md-nav__link">
+    5. Verify the metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-optional-setup-systemd-service-files" class="md-nav__link">
+    6. (Optional) Setup Systemd service files
   </a>
   
 </li>
@@ -1239,7 +1253,11 @@
 
   <h1>Quickstart</h1>
 
-<h2 id="1-configuration-file">1. Configuration file<a class="headerlink" href="#1-configuration-file" title="Permanent link">&para;</a></h2>
+<h2 id="1-install-harvest">1. Install Harvest<a class="headerlink" href="#1-install-harvest" title="Permanent link">&para;</a></h2>
+<p>Harvest is distributed as a container, tarball, and RPM and Debs.
+Pick the one that works best for you.
+More details can be found in the <a href="../install/overview/">installation</a> documentation.</p>
+<h2 id="2-configuration-file">2. Configuration file<a class="headerlink" href="#2-configuration-file" title="Permanent link">&para;</a></h2>
 <p>Harvest's configuration information is defined in <code>harvest.yml</code>. There are a few ways to tell Harvest how to load this file:</p>
 <ul>
 <li>
@@ -1255,7 +1273,7 @@ This is useful if you want to monitor resource usage by Harvest and serves as a 
 Feel free to delete it if you want.</p>
 <p>The next step is to add pollers for your ONTAP clusters in the <a href="../configure-harvest-basic/#pollers">Pollers</a> 
 section of the Harvest configuration file, <code>harvest.yml</code>.</p>
-<h2 id="2-start-harvest">2. Start Harvest<a class="headerlink" href="#2-start-harvest" title="Permanent link">&para;</a></h2>
+<h2 id="3-start-harvest">3. Start Harvest<a class="headerlink" href="#3-start-harvest" title="Permanent link">&para;</a></h2>
 <p>Start all Harvest pollers as daemons:</p>
 <div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>start
 </code></pre></div>
@@ -1264,13 +1282,13 @@ section of the Harvest configuration file, <code>harvest.yml</code>.</p>
 </code></pre></div>
 <p>Replace <code>jamaica</code> and <code>grenada</code> with the poller names you defined in <code>harvest.yml</code>. 
 The logs of each poller can be found in <code>/var/log/harvest/</code>.</p>
-<h2 id="3-import-grafana-dashboards">3. Import Grafana dashboards<a class="headerlink" href="#3-import-grafana-dashboards" title="Permanent link">&para;</a></h2>
+<h2 id="4-import-grafana-dashboards">4. Import Grafana dashboards<a class="headerlink" href="#4-import-grafana-dashboards" title="Permanent link">&para;</a></h2>
 <p>The Grafana dashboards are located in the <code>$HARVEST_HOME/grafana</code> directory. 
 You can manually import the dashboards or use the <code>bin/harvest grafana</code> command
 (<a href="../dashboards/">more documentation</a>).</p>
 <p>Note: the current dashboards specify Prometheus as the datasource. 
 If you use the InfluxDB exporter, you will need to create your own dashboards.</p>
-<h2 id="4-verify-the-metrics">4. Verify the metrics<a class="headerlink" href="#4-verify-the-metrics" title="Permanent link">&para;</a></h2>
+<h2 id="5-verify-the-metrics">5. Verify the metrics<a class="headerlink" href="#5-verify-the-metrics" title="Permanent link">&para;</a></h2>
 <p>If you use a Prometheus Exporter, open a browser and navigate to <a href="http://0.0.0.0:12990/">http://0.0.0.0:12990/</a>
 (replace <code>12990</code> with the port number of your poller). 
 This is the Harvest created HTTP end-point for your Prometheus exporter. 
@@ -1280,7 +1298,7 @@ available at <a href="http://0.0.0.0:12990/metrics/">http://0.0.0.0:12990/metric
 <p>More information on configuring the exporter can be found in the
 <a href="../prometheus-exporter/">Prometheus exporter</a> documentation.</p>
 <p>If you can't access the URL, check the logs of your pollers. These are located in <code>/var/log/harvest/</code>.</p>
-<h2 id="5-optional-setup-systemd-service-files">5. (Optional) Setup Systemd service files<a class="headerlink" href="#5-optional-setup-systemd-service-files" title="Permanent link">&para;</a></h2>
+<h2 id="6-optional-setup-systemd-service-files">6. (Optional) Setup Systemd service files<a class="headerlink" href="#6-optional-setup-systemd-service-files" title="Permanent link">&para;</a></h2>
 <p>If you're running Harvest on a system with Systemd, you may want 
 to <a href="https://github.com/NetApp/harvest/tree/main/service/contrib">take advantage of systemd instantiated units</a> 
 to manage your pollers.  </p>
