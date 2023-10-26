@@ -545,7 +545,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1410,7 +1410,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of SAML authentication.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1574,7 +1574,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of certificate authentication.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1656,7 +1656,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of password authentication.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1738,7 +1738,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of certificates expiring within 60 days.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1820,7 +1820,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of certificates expired.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1913,6 +1913,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Volume encryption & anti-ransomware status.",
           "fieldConfig": {
             "defaults": {
               "color": {

@@ -1281,18 +1281,8 @@ func checkRowNames(t *testing.T, path string, data []byte) {
 
 func TestDescription(t *testing.T) {
 	count := 0
-	// This is temp, after all dashboard description changes will be finished, It would use dashboards var
-	path := []string{
-		"../../../grafana/dashboards/cmode/aggregate.json",
-		"../../../grafana/dashboards/cmode/flexgroup.json",
-		"../../../grafana/dashboards/cmode/cluster.json",
-		"../../../grafana/dashboards/cmode/disk.json",
-		"../../../grafana/dashboards/cmode/metadata.json",
-		"../../../grafana/dashboards/cmode/qtree.json",
-		"../../../grafana/dashboards/cmode/s3ObjectStorage.json",
-	}
 	visitDashboards(
-		path,
+		[]string{"../../../grafana/dashboards/cmode"},
 		func(path string, data []byte) {
 			checkDescription(t, path, data, &count)
 		})
@@ -1300,6 +1290,30 @@ func TestDescription(t *testing.T) {
 
 func checkDescription(t *testing.T, path string, data []byte, count *int) {
 	dashPath := shortPath(path)
+	ignoreDashboards := []string{
+		"cmode/health.json", "cmode/headroom.json",
+	}
+	if slices.Contains(ignoreDashboards, dashPath) {
+		fmt.Printf(`dashboard=%s skipped\n`, dashPath)
+		return
+	}
+
+	// we don't get description for below panels, we need to manually formed them as per our need.
+	ignoreList := []string{
+		// These are from fsa
+		"Volume Access ($Activity) History", "Volume Access ($Activity) History By Percent", "Volume Modify ($Activity) History", "Volume Modify ($Activity) History By Percent",
+		// These are from snapmirror
+		"Destination Relationships per Node", "Source Relationships per SVM", "Destination Relationships per SVM",
+		// This is from workload
+		"Service Latency by Resources",
+		// These are from svm
+		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap",
+		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap",
+		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap",
+		// This is from volume
+		"Top $TopResources Volumes by Inode Files Used Percentage", "Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail",
+	}
+
 	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		kind := value.Get("type").String()
 		if kind == "row" {
@@ -1307,25 +1321,30 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		}
 		description := value.Get("description").String()
 		targetsSlice := value.Get("targets").Array()
+		title := value.Get("title").String()
+		if slices.Contains(ignoreList, title) {
+			fmt.Printf(`dashboard=%s panel="%s" has different description\n`, dashPath, title)
+			return
+		}
 		if len(targetsSlice) == 1 {
 			if description == "" {
 				expr := targetsSlice[0].Get("expr").String()
 				if strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
 					//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
-					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, value.Get("title").String())
+					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 				} else {
 					*count = *count + 1
-					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, value.Get("title").String(), *count)
+					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, title, *count)
 				}
 			} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
 				// Few panels have description text from variable, which would be ignored.
-				t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, value.Get("title").String())
+				t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
 			}
 		} else {
 			// This indicates table/timeseries with more than 1 expressions, After deciding next steps, this will be uncommented.
 			//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
-			fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, value.Get("title").String())
+			fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 		}
 	})
 }

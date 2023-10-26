@@ -93,7 +93,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average read latency in microseconds for all operations on the namespace.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -184,7 +184,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Read bytes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -276,7 +276,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of read operations.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -367,7 +367,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average write latency in microseconds for all operations on the Namespace.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -458,7 +458,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Write bytes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -550,7 +550,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of write operations.",
       "fieldConfig": {
         "defaults": {
           "color": {

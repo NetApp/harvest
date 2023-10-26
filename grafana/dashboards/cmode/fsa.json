@@ -147,7 +147,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "The virtual space used (includes volume reserves) before storage efficiency, in bytes.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -215,7 +215,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "The available space, in bytes.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -272,7 +272,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Total size of AFS, excluding snap-reserve, in bytes.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -390,7 +390,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total directory count including the root and children directories",
+      "description": "Total directory count including the root and children directories.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -448,6 +448,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "The actual number of bytes used on disk by this file. If byte_offset and length parameters are specified, this will return the bytes used by the file within the given range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -535,7 +536,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of files in root and child directories",
+      "description": "Total number of files in root and child directories.",
       "fieldConfig": {
         "defaults": {
           "color": {

@@ -106,7 +106,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of nodes.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -179,7 +179,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of aggregates.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -251,7 +251,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is volume_avg_latency aggregated by node.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -372,7 +372,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is volume_total_ops aggregated by node.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -484,7 +484,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is volume_avg_latency aggregated by node.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -666,7 +666,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is volume_total_ops aggregated by node.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -757,7 +757,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average processor utilization across all processors in the system",
+      "description": "Average processor utilization across all processors in the system.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -813,7 +813,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "The utilization percent of the disk. node_disk_max_busy is the maximum of disk_busy for label node.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -869,7 +869,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "The total time, in seconds, that the node has been up.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -928,7 +928,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Specifies a count of the number of chassis fans that are not operating within the recommended RPM range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1010,7 +1010,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of failed power supply units.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1103,7 +1103,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1201,7 +1201,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Array of processor time in percentage spent in various domains.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1289,7 +1289,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "CPU Busy Domains ",
+          "title": "CPU Busy Domains",
           "transformations": [],
           "type": "timeseries"
         }
@@ -1310,7 +1310,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Percentage of bytes transferred.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1402,7 +1402,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Percent of data access from the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2117,7 +2117,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Percent of reads on node that are supplied from, and had to wait on, various media types",
+          "description": "Percent of reads on node that are supplied from, and had to wait on, various media types.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2382,6 +2382,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of READ operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2446,7 +2447,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency of NFSv3 requests. This counter keeps track of the average response time of NFSv3 requests.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2511,6 +2512,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of WRITE operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3128,7 +3130,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for CIFS operations.",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -3195,7 +3197,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of CIFS operations per second.",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -3254,7 +3256,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Array of select CIFS operation counts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3472,7 +3474,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for FCP operations.",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -3538,7 +3540,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -3595,7 +3597,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for FCP operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3779,7 +3781,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3886,7 +3888,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for NVMF operations.",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -3953,7 +3955,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -4011,7 +4013,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for NVMF operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4195,7 +4197,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4302,7 +4304,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for iSCSI operations.",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -4425,7 +4427,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for iSCSI operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
