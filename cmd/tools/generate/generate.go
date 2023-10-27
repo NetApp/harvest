@@ -310,8 +310,9 @@ func copyFiles(srcPath, destPath string) error {
 		"prom-stack.tmpl":     true,
 	}
 	dirsToExclude := map[string]bool{
-		"bin":         true,
-		"autosupport": true,
+		"bin":                   true,
+		"autosupport":           true,
+		"onePollerPerContainer": true,
 	}
 	// requires specific permissions
 	dirsPermissions := map[string]os.FileMode{
