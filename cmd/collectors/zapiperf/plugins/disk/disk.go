@@ -852,7 +852,6 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 							Str("shelfID", shelfID).
 							Str("key", combinedKey).
 							Msg("add instance")
-						d.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, combinedKey)
 
 						for label, labelDisplay := range d.instanceLabels[attribute] {
 							if value := obj.GetChildContentS(label); value != "" {
