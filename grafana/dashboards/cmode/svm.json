@@ -4604,7 +4604,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
