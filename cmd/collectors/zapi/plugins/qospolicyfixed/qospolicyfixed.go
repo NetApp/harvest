@@ -83,11 +83,11 @@ var iopsRe = regexp.MustCompile(`(\d+)iops`)
 var bpsRe = regexp.MustCompile(`(\d+(\.\d+)?)(\w+)/s`)
 
 var unitToMb = map[string]float32{
-	"b":  1 / float32(1024*1024),
-	"kb": 1 / float32(1024),
+	"b":  1 / float32(1000*1000),
+	"kb": 1 / float32(1000),
 	"mb": 1,
-	"gb": 1024,
-	"tb": 1024 * 1024,
+	"gb": 1000,
+	"tb": 1000 * 1000,
 }
 
 type MaxXput struct {

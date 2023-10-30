@@ -1,4 +1,10 @@
-## 1. Configuration file
+## 1. Install Harvest
+
+Harvest is distributed as a container, tarball, and RPM and Debs.
+Pick the one that works best for you.
+More details can be found in the [installation](install/overview.md) documentation.
+
+## 2. Configuration file
 
 Harvest's configuration information is defined in `harvest.yml`. There are a few ways to tell Harvest how to load this file:
 
@@ -14,7 +20,7 @@ Feel free to delete it if you want.
 The next step is to add pollers for your ONTAP clusters in the [Pollers](configure-harvest-basic.md#pollers) 
 section of the Harvest configuration file, `harvest.yml`.
 
-## 2. Start Harvest
+## 3. Start Harvest
 
 Start all Harvest pollers as daemons:
 
@@ -31,7 +37,7 @@ bin/harvest start jamaica jamaica
 Replace `jamaica` and `grenada` with the poller names you defined in `harvest.yml`. 
 The logs of each poller can be found in `/var/log/harvest/`.
 
-## 3. Import Grafana dashboards
+## 4. Import Grafana dashboards
 
 The Grafana dashboards are located in the `$HARVEST_HOME/grafana` directory. 
 You can manually import the dashboards or use the `bin/harvest grafana` command
@@ -40,7 +46,7 @@ You can manually import the dashboards or use the `bin/harvest grafana` command
 Note: the current dashboards specify Prometheus as the datasource. 
 If you use the InfluxDB exporter, you will need to create your own dashboards.
 
-## 4. Verify the metrics
+## 5. Verify the metrics
 
 If you use a Prometheus Exporter, open a browser and navigate to [http://0.0.0.0:12990/](http://0.0.0.0:12990/)
 (replace `12990` with the port number of your poller). 
@@ -55,7 +61,7 @@ More information on configuring the exporter can be found in the
 
 If you can't access the URL, check the logs of your pollers. These are located in `/var/log/harvest/`.
 
-## 5. (Optional) Setup Systemd service files
+## 6. (Optional) Setup Systemd service files
 
 If you're running Harvest on a system with Systemd, you may want 
 to [take advantage of systemd instantiated units](https://github.com/NetApp/harvest/tree/main/service/contrib) 
