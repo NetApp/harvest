@@ -459,7 +459,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Disk capacity per aggregate detail.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -754,7 +754,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Highest Disk Utilization per Aggregate for latest record (independent of time range selected)",
+      "description": "Highest Disk Utilization per Aggregate for latest record (independent of time range selected).",
       "fieldConfig": {
         "defaults": {
           "custom": {

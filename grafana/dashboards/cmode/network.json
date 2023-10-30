@@ -564,7 +564,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Ethernet port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1415,7 +1415,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "FC port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1673,6 +1673,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "FC ports with fabric details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -2694,7 +2695,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "NVMe/FC port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {

@@ -622,7 +622,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Target system details.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2621,7 +2621,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Two values:\n- IN: number of data points pushed from collectors to the exporter\n- OUT: number of data points delivered to the Prometheus database over HTTP (might be more than IN, if Prometheus scrapes Harvest with a higher interval)",
+          "description": "Two values:\n- IN: number of data points pushed from collectors to the exporter\n- OUT: number of data points delivered to the Prometheus database over HTTP (might be more than IN, if Prometheus scrapes Harvest with a higher interval).",
           "fieldConfig": {
             "defaults": {
               "color": {

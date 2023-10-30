@@ -502,7 +502,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Aggregate details.",
       "fieldConfig": {
         "defaults": {
           "color": {

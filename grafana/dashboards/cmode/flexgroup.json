@@ -406,7 +406,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "FlexGroup constituents details.",
           "fieldConfig": {
             "defaults": {
               "custom": {

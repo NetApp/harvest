@@ -1316,7 +1316,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 
 	visitAllPanels(data, func(path string, key, value gjson.Result) {
 		kind := value.Get("type").String()
-		if kind == "row" {
+		if kind == "row" || kind == "text" {
 			return
 		}
 		description := value.Get("description").String()
@@ -1326,8 +1326,9 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 			fmt.Printf(`dashboard=%s panel="%s" has different description\n`, dashPath, title)
 			return
 		}
-		if len(targetsSlice) == 1 {
-			if description == "" {
+
+		if description == "" {
+			if len(targetsSlice) == 1 {
 				expr := targetsSlice[0].Get("expr").String()
 				if strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
@@ -1337,14 +1338,14 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 					*count = *count + 1
 					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, title, *count)
 				}
-			} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
-				// Few panels have description text from variable, which would be ignored.
-				t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
+			} else {
+				// This indicates table/timeseries with more than 1 expressions, After deciding next steps, this will be uncommented.
+				//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+				fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 			}
-		} else {
-			// This indicates table/timeseries with more than 1 expressions, After deciding next steps, this will be uncommented.
-			//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
-			fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
+		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
+			// Few panels have description text from variable, which would be ignored.
+			t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
 		}
 	})
 }

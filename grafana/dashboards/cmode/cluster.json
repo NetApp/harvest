@@ -1203,7 +1203,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Node details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1710,7 +1710,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Cluster subsystem details.",
           "fieldConfig": {
             "defaults": {
               "custom": {

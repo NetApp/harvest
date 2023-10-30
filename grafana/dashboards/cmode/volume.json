@@ -567,7 +567,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Volume details.",
           "fieldConfig": {
             "defaults": {
               "custom": {

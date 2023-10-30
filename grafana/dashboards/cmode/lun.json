@@ -1171,7 +1171,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "LUN details.",
           "fieldConfig": {
             "defaults": {
               "custom": {

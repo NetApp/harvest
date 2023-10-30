@@ -481,7 +481,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select Source Volume/Destination Volume for detail of single relationship",
+      "description": "Must select Source Volume/Destination Volume for detail of single relationship.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -2164,7 +2164,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volumes Protected With Snapmirror (Local And Remote)",
+          "description": "Volumes Protected With Snapmirror (Local And Remote).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2413,7 +2413,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume Relationships Experiencing Lag",
+          "description": "Volume Relationships Experiencing Lag.",
           "fieldConfig": {
             "defaults": {
               "color": {

@@ -652,6 +652,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "NVMe namespace details.",
           "fieldConfig": {
             "defaults": {
               "color": {

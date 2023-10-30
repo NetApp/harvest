@@ -594,7 +594,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Shows Top 100 directories per volume",
+      "description": "Shows Top 100 directories per volume.",
       "fieldConfig": {
         "defaults": {
           "color": {
