@@ -11,7 +11,13 @@ counters:
   - read_ops             => read_ops
   - write_ops            => write_ops
 
+plugins:
+  LabelAgent:
+    split:
+      # id stiA800-mccip-htp-003:iWARP_0
+      - id `:` ,adapter
 
 export_options:
   instance_keys:
+    - adapter
     - node
