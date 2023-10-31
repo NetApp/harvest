@@ -9,6 +9,7 @@ objects:
   Aggregate:                   aggr.yaml
   AggregateEfficiency:         aggr_efficiency.yaml
   CIFSSession:                 cifs_session.yaml
+#  CIFSShare:                   cifs_share.yaml
   CloudTarget:                 aggr_object_store_config.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
@@ -38,4 +39,3 @@ objects:
   Support:                     support.yaml
   SVM:                         svm.yaml
   Volume:                      volume.yaml
-

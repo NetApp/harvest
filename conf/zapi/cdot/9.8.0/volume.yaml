@@ -12,7 +12,7 @@ counters:
         - grow-threshold-percent
         - maximum-size
     - volume-id-attributes:
-        - ^^instance-uuid                       => instance_uuid
+        - ^^instance-uuid                       => uuid
         - ^containing-aggregate-uuid            => aggrUuid
         - ^junction-path                        => junction_path
         - ^name                                 => volume
@@ -73,14 +73,13 @@ plugins:
   - Volume:
       schedule:
         - data: 15m  # should be multiple of data poll duration
+      include_constituents: false
   - MetricAgent:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
         - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
         - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
   - LabelAgent:
-      exclude_equals:
-        - style `flexgroup_constituent`
       # metric label zapi_value rest_value `default_value`
       value_to_num:
         - new_status state online online `0`
@@ -103,6 +102,7 @@ plugins:
         - svm_root root_volume `false` `No`
         - node_root root_volume `true` `Yes`
         - svm_root root_volume `true` `Yes`
+#  - ChangeLog
 
 export_options:
   instance_keys:

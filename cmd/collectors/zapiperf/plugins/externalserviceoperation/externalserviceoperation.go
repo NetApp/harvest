@@ -19,7 +19,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (e *ExternalServiceOperation) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	data := dataMap[e.Object]
-	datacenterClusterKey := data.GetGlobalLabels().Get("datacenter") + Hyphen + data.GetGlobalLabels().Get("cluster") + Hyphen
+	datacenterClusterKey := data.GetGlobalLabels()["datacenter"] + Hyphen + data.GetGlobalLabels()["cluster"] + Hyphen
 	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
 			continue

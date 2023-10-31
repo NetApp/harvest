@@ -14,14 +14,10 @@ import (
 
 type Volume struct {
 	*plugin.AbstractPlugin
-	currentVal int
-	client     *zapi.Client
-	aggrsMap   map[string]string // aggregate-uuid -> aggregate-name map
-}
-
-type aggrData struct {
-	uuid string
-	name string
+	currentVal          int
+	client              *zapi.Client
+	aggrsMap            map[string]bool // aggregate-name -> exist map
+	includeConstituents bool
 }
 
 type volumeClone struct {
@@ -54,11 +50,13 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	v.aggrsMap = make(map[string]string)
+	v.aggrsMap = make(map[string]bool)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
 
+	// Read template to decide inclusion of flexgroup constituents
+	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	return nil
 }
 
@@ -92,27 +90,36 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	}
 
 	volumeCloneMap, err := v.getVolumeCloneInfo()
-
 	if err != nil {
 		v.Logger.Error().Err(err).Msg("Failed to update clone data")
 	}
 
+	volumeFootprintMap, err := v.getVolumeFootprint()
+	if err != nil {
+		v.Logger.Error().Err(err).Msg("Failed to update footprint data")
+		// clean the map in case of the error
+		clear(volumeFootprintMap)
+	}
+
 	// update volume instance labels
-	v.updateVolumeLabels(data, volumeCloneMap)
+	v.updateVolumeLabels(data, volumeCloneMap, volumeFootprintMap)
 
 	v.currentVal++
 	return nil, nil
 }
 
-func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone) {
+func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone, volumeFootprintMap map[string]map[string]string) {
 	var err error
 	for _, volume := range data.GetInstances() {
 		if !volume.IsExportable() {
 			continue
 		}
-		aggrUUID := volume.GetLabel("aggrUuid")
-		_, exist := v.aggrsMap[aggrUUID]
-		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(exist))
+
+		if volume.GetLabel("style") == "flexgroup_constituent" {
+			volume.SetExportable(v.includeConstituents)
+		}
+
+		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(v.aggrsMap[volume.GetLabel("aggr")]))
 
 		name := volume.GetLabel("volume")
 		svm := volume.GetLabel("svm")
@@ -141,6 +148,31 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			if err = splitEstimate.SetValueFloat64(volume, splitEstimateBytes); err != nil {
 				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("set clone_split_estimate")
 				continue
+			}
+		}
+
+		// Handling volume footprint metrics
+		if vf, ok := volumeFootprintMap[key]; ok {
+			for vfKey, vfVal := range vf {
+				vfMetric := data.GetMetric(vfKey)
+				if vfMetric == nil {
+					if vfMetric, err = data.NewMetricFloat64(vfKey); err != nil {
+						v.Logger.Error().Err(err).Str("metric", vfKey).Msg("add metric")
+						continue
+					}
+				}
+
+				if vfVal != "" {
+					vfMetricVal, err := strconv.ParseFloat(vfVal, 64)
+					if err != nil {
+						v.Logger.Error().Err(err).Str(vfKey, vfVal).Msg("parse")
+						continue
+					}
+					if err = vfMetric.SetValueFloat64(volume, vfMetricVal); err != nil {
+						v.Logger.Error().Err(err).Str(vfKey, vfVal).Msg("set")
+						continue
+					}
+				}
 			}
 		}
 	}
@@ -186,6 +218,53 @@ func (v *Volume) getVolumeCloneInfo() (map[string]volumeClone, error) {
 	return volumeCloneMap, nil
 }
 
+func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
+	var (
+		result             []*node.Node
+		volumeFootprintMap map[string]map[string]string
+		err                error
+	)
+
+	volumeFootprintMap = make(map[string]map[string]string)
+	request := node.NewXMLS("volume-footprint-get-iter")
+	request.NewChildS("max-records", collectors.DefaultBatchSize)
+	desired := node.NewXMLS("desired-attributes")
+	footprintInfo := node.NewXMLS("footprint-info")
+	footprintInfo.NewChildS("volume", "")
+	footprintInfo.NewChildS("vserver", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin0", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin0-percent", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin1", "")
+	footprintInfo.NewChildS("volume-blocks-footprint-bin1-percent", "")
+	desired.AddChild(footprintInfo)
+	request.AddChild(desired)
+
+	if result, err = v.client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 {
+		return volumeFootprintMap, nil
+	}
+
+	for _, footprint := range result {
+		footprintMetrics := make(map[string]string)
+		volume := footprint.GetChildContentS("volume")
+		svm := footprint.GetChildContentS("vserver")
+		performanceTierFootprint := footprint.GetChildContentS("volume-blocks-footprint-bin0")
+		performanceTierFootprintPerc := footprint.GetChildContentS("volume-blocks-footprint-bin0-percent")
+		capacityTierFootprint := footprint.GetChildContentS("volume-blocks-footprint-bin1")
+		capacityTierFootprintPerc := footprint.GetChildContentS("volume-blocks-footprint-bin1-percent")
+		footprintMetrics["performance_tier_footprint"] = performanceTierFootprint
+		footprintMetrics["performance_tier_footprint_percent"] = performanceTierFootprintPerc
+		footprintMetrics["capacity_tier_footprint"] = capacityTierFootprint
+		footprintMetrics["capacity_tier_footprint_percent"] = capacityTierFootprintPerc
+		volumeFootprintMap[volume+svm] = footprintMetrics
+	}
+
+	return volumeFootprintMap, nil
+}
+
 func (v *Volume) getEncryptedDisks() ([]string, error) {
 	var (
 		result    []*node.Node
@@ -217,29 +296,31 @@ func (v *Volume) getEncryptedDisks() ([]string, error) {
 	return diskNames, nil
 }
 
-func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string]aggrData) {
+func (v *Volume) updateAggrMap(disks []string, aggrDiskMap map[string][]string) {
 	if disks != nil && aggrDiskMap != nil {
 		// Clean aggrsMap map
-		v.aggrsMap = make(map[string]string)
-
+		clear(v.aggrsMap)
 		for _, disk := range disks {
-			aggr := aggrDiskMap[disk]
-			v.aggrsMap[aggr.uuid] = aggr.name
+			if aggrList, exist := aggrDiskMap[disk]; exist {
+				for _, aggr := range aggrList {
+					v.aggrsMap[aggr] = true
+				}
+			}
 		}
 	}
 }
 
-func (v *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
+func (v *Volume) getAggrDiskMapping() (map[string][]string, error) {
 	var (
 		result        []*node.Node
-		aggrsDisksMap map[string]aggrData
+		aggrsDisksMap map[string][]string
 		diskName      string
 		err           error
 	)
 
 	request := node.NewXMLS("aggr-status-get-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
-	aggrsDisksMap = make(map[string]aggrData)
+	aggrsDisksMap = make(map[string][]string)
 
 	if result, err = v.client.InvokeZapiCall(request); err != nil {
 		return nil, err
@@ -250,12 +331,14 @@ func (v *Volume) getAggrDiskMapping() (map[string]aggrData, error) {
 	}
 
 	for _, aggrDiskData := range result {
-		aggrUUID := aggrDiskData.GetChildContentS("aggregate-uuid")
 		aggrName := aggrDiskData.GetChildContentS("aggregate")
-		aggrDiskList := aggrDiskData.GetChildS("aggr-plex-list").GetChildS("aggr-plex-info").GetChildS("aggr-raidgroup-list").GetChildS("aggr-raidgroup-info").GetChildS("aggr-disk-list").GetChildren()
-		for _, aggrDisk := range aggrDiskList {
-			diskName = aggrDisk.GetChildContentS("disk")
-			aggrsDisksMap[diskName] = aggrData{uuid: aggrUUID, name: aggrName}
+		for _, plexList := range aggrDiskData.GetChildS("aggr-plex-list").GetChildren() {
+			for _, raidGroupList := range plexList.GetChildS("aggr-raidgroup-list").GetChildren() {
+				for _, diskList := range raidGroupList.GetChildS("aggr-disk-list").GetChildren() {
+					diskName = diskList.GetChildContentS("disk")
+					aggrsDisksMap[diskName] = append(aggrsDisksMap[diskName], aggrName)
+				}
+			}
 		}
 	}
 	return aggrsDisksMap, nil

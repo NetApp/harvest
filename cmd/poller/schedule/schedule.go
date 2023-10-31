@@ -109,9 +109,25 @@ func (s *Schedule) IsTaskStandBy(t *Task) bool {
 	return t.Name == s.standByTask.Name
 }
 
+// SetStandByModeMax initializes StandbyMode: Schedule will suspend all tasks until
+// the critical task t has succeeded. The amount of time to standby will be the maximum of the task's current interval
+// and i. That interval will be used for the task until the Schedule recovers to normal mode.
+func (s *Schedule) SetStandByModeMax(t *Task, i time.Duration) {
+	for _, x := range s.tasks {
+		if x.Name == t.Name {
+			s.standByTask = t
+			t.interval = max(i, t.interval)
+			t.timer = time.Now()
+			s.standByMode = true
+			return
+		}
+	}
+	panic("invalid task: " + t.Name)
+}
+
 // SetStandByMode initializes StandbyMode: Schedule will suspend all tasks until
 // the critical task t has succeeded. The temporary interval i will be used for
-// the task until Schedule recovers to normal mode.
+// the task until the Schedule recovers to normal mode.
 func (s *Schedule) SetStandByMode(t *Task, i time.Duration) {
 	for _, x := range s.tasks {
 		if x.Name == t.Name {

@@ -1,0 +1,26 @@
+name:               CIFSShare
+query:              cifs-share-get-iter
+object:             cifs_share
+
+counters:
+  cifs-share:
+    - ^^share-name                         => name
+    - ^^vserver                            => svm
+    - ^path                                => path
+    - ^volume                              => volume
+    - share-properties:
+        - ^cifs-share-properties           => properties
+    - symlink-properties:
+        - ^cifs-share-symlink-properties   => symlink_properties
+
+collect_only_labels: true
+
+export_options:
+  instance_keys:
+    - name
+    - svm
+  instance_labels:
+    - path
+    - properties
+    - symlink_properties
+    - volume

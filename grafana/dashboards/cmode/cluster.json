@@ -3967,7 +3967,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "SVM Performance Drilldown",
+      "title": "SVM Performance",
       "type": "row"
     }
   ],

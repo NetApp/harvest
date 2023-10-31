@@ -3,7 +3,6 @@ package collectors
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
@@ -27,7 +26,7 @@ func loadTestdata() {
 	// setup matrix data
 	var err error
 	var fetch func(*matrix.Instance, *node.Node, []string)
-	dat, err := os.Open(testxml)
+	dat, err := os.ReadFile(testxml)
 	if err != nil {
 		abs, _ := filepath.Abs(testxml)
 		fmt.Printf("failed to load %s\n", abs)
@@ -94,7 +93,7 @@ func loadTestdata() {
 
 	sensor.data = matrix.New("Sensor", "environment_sensor", "environment_sensor")
 	sensor.instanceKeys = make(map[string]string)
-	sensor.instanceLabels = make(map[string]*dict.Dict)
+	sensor.instanceLabels = make(map[string]map[string]string)
 	sensor.AbstractPlugin.Logger = logging.Get()
 
 	for _, k := range eMetrics {

@@ -16,11 +16,13 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/color"
+	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 	"path"
 	"strconv"
@@ -233,7 +235,10 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		records []gjson.Result
 	)
 
-	href := rest.BuildHref(r.Prop.Query, "", nil, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
+	href := rest.NewHrefBuilder().
+		APIPath(r.Prop.Query).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
@@ -637,7 +642,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
-	href := rest.BuildHref(dataQuery, strings.Join(r.Prop.Fields, ","), nil, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+	href := rest.NewHrefBuilder().
+		APIPath(dataQuery).
+		Fields(r.Prop.Fields).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -1226,7 +1235,12 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	var filter []string
 	filter = append(filter, "counters.name=ops")
-	href := rest.BuildHref(dataQuery, "*", filter, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+	href := rest.NewHrefBuilder().
+		APIPath(dataQuery).
+		Fields([]string{"*"}).
+		Filter(filter).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -1340,7 +1354,12 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	href := rest.BuildHref(dataQuery, fields, filter, "", "", "", r.Prop.ReturnTimeOut, dataQuery)
+	href := rest.NewHrefBuilder().
+		APIPath(dataQuery).
+		Fields([]string{fields}).
+		Filter(filter).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	r.Logger.Debug().Str("href", href).Msg("")
 	if href == "" {
@@ -1450,7 +1469,13 @@ func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, 
 				r.Logger.Trace().Str("label", label).Str("key", key).Msg("Missing label")
 			}
 		}
-		r.Logger.Debug().Str("query", r.Prop.Query).Str("key", key).Str("qos labels", instance.GetLabels().String()).Send()
+		if r.Logger.GetLevel() == zerolog.DebugLevel {
+			r.Logger.Debug().
+				Str("query", r.Prop.Query).
+				Str("key", key).
+				Str("qos labels", dict.String(instance.GetLabels())).
+				Send()
+		}
 	}
 }
 

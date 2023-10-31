@@ -186,7 +186,11 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	)
 
 	query := "api/private/cli/vserver"
-	href := rest.BuildHref("", "type", []string{"type=admin"}, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"type"}).
+		Filter([]string{"type=admin"}).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return "", err
@@ -208,7 +212,11 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	)
 
 	query := "api/private/cli/security/ssl"
-	href := rest.BuildHref("", "serial", []string{"vserver=" + adminSvm}, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"serial"}).
+		Filter([]string{"vserver=" + adminSvm}).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
 		return "", err

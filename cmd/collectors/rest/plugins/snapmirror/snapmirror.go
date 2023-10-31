@@ -91,7 +91,7 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	if my.currentVal >= PluginInvocationRate {
 		my.currentVal = 0
 
-		if cluster, ok := data.GetGlobalLabels().GetHas("cluster"); ok {
+		if cluster, ok := data.GetGlobalLabels()["cluster"]; ok {
 			if err := my.getSVMPeerData(cluster); err != nil {
 				return nil, err
 			}
@@ -111,7 +111,11 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	my.svmPeerDataMap = make(map[string]Peer)
 	fields := []string{"name", "peer.svm.name", "peer.cluster.name"}
 	query := "api/svm/peers"
-	href := rest.BuildHref("", strings.Join(fields, ","), []string{"peer.cluster.name=!" + cluster}, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter([]string{"peer.cluster.name=!" + cluster}).
+		Build()
 
 	result, err := rest.Fetch(my.client, href)
 	if err != nil {
@@ -135,7 +139,7 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 
 func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 	var keys []string
-	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
+	cluster := data.GetGlobalLabels()["cluster"]
 
 	lastTransferSizeMetric := data.GetMetric("last_transfer_size")
 	lagTimeMetric := data.GetMetric("lag_time")
@@ -204,7 +208,7 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 					continue
 				}
 
-				for k, v := range cgInstance.GetLabels().Map() {
+				for k, v := range cgInstance.GetLabels() {
 					cgVolumeInstance.SetLabel(k, v)
 				}
 				cgVolumeInstance.SetLabel("relationship_id", cgVolumeInstanceKey)

@@ -11,7 +11,8 @@ counters:
   - cloud_bin_op_latency_average
 
 plugins:
-  - FabricPool
+  - FabricPool:
+      - include_constituents: false
 
 export_options:
   instance_keys:
@@ -20,4 +21,4 @@ export_options:
     - volume
 
 override:
-  - cloud_bin_operation: delta
+  - cloud_bin_op: delta

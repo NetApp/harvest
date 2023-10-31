@@ -1,5 +1,5 @@
 name:                     HeadroomCPU
-query:                    /api/cluster/counter/tables/headroom_cpu
+query:                    api/cluster/counter/tables/headroom_cpu
 object:                   headroom_cpu
 
 counters:

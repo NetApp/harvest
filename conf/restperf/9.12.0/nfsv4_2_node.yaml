@@ -122,7 +122,7 @@ counters:
 override:
   - access.total: rate
   - backchannel_ctl.total: rate
-  - bind_connections_to_session.total: rate
+  - bind_conn_to_session.total: rate
   - close.total: rate
   - commit.total: rate
   - compound.total: rate

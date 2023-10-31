@@ -10,11 +10,13 @@ schedule:
 objects:
   Aggregate:                   aggr.yaml
   CIFSSession:                 cifs_session.yaml
+#  CIFSShare:                    cifs_share.yaml
   CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
   EmsDestination:              ems_destination.yaml
 #  ExportRule:                  exports.yaml
+  FCP:                         fcp.yaml
   LIF:                         lif.yaml
   Health:                      health.yaml
   Lun:                         lun.yaml

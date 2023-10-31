@@ -23,6 +23,12 @@
       "version": "1.0.0"
     },
     {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
       "id": "text",
       "name": "Text",
       "type": "panel",
@@ -59,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1690889588293,
+  "iteration": 1698231915371,
   "links": [
     {
       "asDropdown": true,
@@ -199,7 +205,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadOps\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -286,7 +292,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWriteOps\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -373,7 +379,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSOtherOps\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -460,7 +466,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSOps\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -547,7 +553,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadData\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -634,7 +640,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSwriteData\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -721,7 +727,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadLatency\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -808,7 +814,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWriteLatency\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -895,7 +901,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSLatency\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -982,7 +988,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSConcurrency\"})",
           "interval": "",
-          "legendFormat": "{{workload}}",
+          "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
         }
       ],
@@ -999,6 +1005,596 @@
         "w": 24,
         "x": 0,
         "y": 58
+      },
+      "id": 217,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The Fixed QoS Utilized IOPs (%) panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 59
+          },
+          "id": 219,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSIOPsPercent\"} / on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Utilized IOPs (%)",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The \"Fixed QoS Bandwidth Utilization (%)\" panel represents the proportion of the allocated bandwidth that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 59
+          },
+          "id": 221,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSMBsPercent\"} / on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Bandwidth Utilization (%)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The Fixed QoS Utilized IOPs (%) panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "QOS Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Avg IOPs"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max IOPS"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 69
+          },
+          "id": 223,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "QOS Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Utilized IOPs (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "file",
+                    "lun",
+                    "max_throughput_iops",
+                    "policy_group",
+                    "svm",
+                    "volume",
+                    "workload",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "binary": {
+                  "left": "Value",
+                  "operator": "/",
+                  "reducer": "sum",
+                  "right": "max_throughput_iops"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "QOS Used %",
+                "binary": {
+                  "left": "Value / max_throughput_iops",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": "100"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Value / max_throughput_iops": true
+                },
+                "indexByName": {
+                  "QOS Used %": 7,
+                  "Value": 9,
+                  "Value / max_throughput_iops": 11,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "file": 4,
+                  "lun": 5,
+                  "max_throughput_iops": 10,
+                  "policy_group": 8,
+                  "svm": 2,
+                  "volume": 3,
+                  "workload": 6
+                },
+                "renameByName": {
+                  "Value": "Avg IOPs",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "file": "File",
+                  "lun": "Lun",
+                  "max_throughput_iops": "Max IOPS",
+                  "policy_group": "Policy",
+                  "svm": "SVM",
+                  "volume": "Volume",
+                  "workload": "Workload"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The Fixed QoS Bandwidth Utilization (%) represents the proportion of the allocated bandwidth that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "QOS Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Throughput MB/s"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "MBs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Throughput"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "binBps"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 78
+          },
+          "id": 224,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "QOS Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}) * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Bandwidth Utilization (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "file",
+                    "lun",
+                    "max_throughput_mbps",
+                    "policy_group",
+                    "svm",
+                    "volume",
+                    "workload",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "binary": {
+                  "left": "Value",
+                  "operator": "/",
+                  "reducer": "sum",
+                  "right": "max_throughput_mbps"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "QOS Used %",
+                "binary": {
+                  "left": "Value / max_throughput_mbps",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": "1000000"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Value / max_throughput_iops": true,
+                  "Value / max_throughput_mbps": true
+                },
+                "indexByName": {
+                  "QOS Used %": 7,
+                  "Value": 9,
+                  "Value / max_throughput_iops": 11,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "file": 4,
+                  "lun": 5,
+                  "max_throughput_iops": 10,
+                  "policy_group": 8,
+                  "svm": 2,
+                  "volume": 3,
+                  "workload": 6
+                },
+                "renameByName": {
+                  "Value": "Throughput",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "file": "File",
+                  "lun": "Lun",
+                  "max_throughput_iops": "Max IOPS",
+                  "max_throughput_mbps": "Max Throughput MB/s",
+                  "policy_group": "Policy",
+                  "svm": "SVM",
+                  "volume": "Volume",
+                  "workload": "Workload"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "QOS Fixed Utilized %",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 59
       },
       "id": 175,
       "panels": [
@@ -1081,7 +1677,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeBamboo\", metric=\"bamboo_ssd\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1169,7 +1765,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeCache\", metric=\"cache\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1257,7 +1853,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeCloud\", metric=\"cloud\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1345,7 +1941,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeClouds2c\", metric=\"cloud_s2c\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1433,7 +2029,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeDisk\", metric=\"disk\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1521,7 +2117,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeExtCache\", metric=\"ext_cache\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1609,7 +2205,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeFcmiss\", metric=\"fc_miss\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1697,7 +2293,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeHyaCache\", metric=\"hya_cache\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1785,7 +2381,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeHyahdd\", metric=\"hya_hdd\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1873,7 +2469,7 @@
               "exemplar": false,
               "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeHyaNon\", metric=\"hya_non_cache\"})",
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -1893,7 +2489,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 60
       },
       "id": 186,
       "panels": [
@@ -2080,7 +2676,7 @@
               "expr": "100 * topk($TopResources, (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceFrontend\",resource=\"frontend\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2181,7 +2777,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceBackend\",resource=\"backend\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2286,7 +2882,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceCluster\",resource=\"cluster\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2391,7 +2987,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceCP\",resource=\"cp\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2496,7 +3092,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceDisk\",resource=\"disk\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2601,7 +3197,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceNetwork\",resource=\"network\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2706,7 +3302,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceNVLog\",resource=\"nvlog\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2811,7 +3407,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceSuspend\",resource=\"suspend\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2916,7 +3512,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceThrottle\",resource=\"throttle\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3021,7 +3617,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceQosMin\",resource=\"qos_min\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3126,7 +3722,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceCloud\",resource=\"cloud\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3230,7 +3826,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceSyncRepl\",resource=\"sync_repl\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3334,7 +3930,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceFlexcacheRal\",resource=\"flexcache_ral\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3438,7 +4034,7 @@
               "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3458,7 +4054,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 61
       },
       "id": 127,
       "panels": [
@@ -3645,7 +4241,7 @@
               "expr": "100 * topk($TopResources, (qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",resource=\"frontend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3746,7 +4342,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",resource=\"backend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3851,7 +4447,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCluster\",resource=\"cluster\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -3956,7 +4552,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCP\",resource=\"cp\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4061,7 +4657,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSDisk\",resource=\"disk\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4166,7 +4762,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNetwork\",resource=\"network\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4271,7 +4867,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNVLog\",resource=\"nvlog\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4376,7 +4972,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSuspend\",resource=\"suspend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4481,7 +5077,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSThrottle\",resource=\"throttle\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4586,7 +5182,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSQosMin\",resource=\"qos_min\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4691,7 +5287,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCloud\",resource=\"cloud\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4795,7 +5391,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSyncRepl\",resource=\"sync_repl\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -4899,7 +5495,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRal\",resource=\"flexcache_ral\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -5003,7 +5599,7 @@
               "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"}))",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -6364,6 +6960,52 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFixedQOSIOPsPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*workload=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopFixedQOSMBsPercent",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*workload=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -6387,5 +7029,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "",
-  "version": 2
+  "version": 3
 }

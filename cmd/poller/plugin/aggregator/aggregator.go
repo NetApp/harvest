@@ -6,8 +6,11 @@ package aggregator
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/rs/zerolog"
+	"golang.org/x/exp/maps"
 	"regexp"
 	"strings"
 )
@@ -150,7 +153,9 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 			continue
 		}
 
-		a.Logger.Trace().Msgf("handling instance with labels [%s]", instance.GetLabels().String())
+		if a.Logger.GetLevel() == zerolog.TraceLevel {
+			a.Logger.Trace().Msgf("handling instance with labels [%s]", dict.String(instance.GetLabels()))
+		}
 
 		for i, rule := range a.rules {
 
@@ -172,7 +177,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 			}
 
 			if rule.allLabels {
-				objKey = strings.Join(instance.GetLabels().Values(), ".")
+				objKey = strings.Join(maps.Values(instance.GetLabels()), ".")
 			} else if len(rule.includeLabels) != 0 {
 				objKey = objName
 				for _, k := range rule.includeLabels {
@@ -300,4 +305,14 @@ func (a *Aggregator) NewLabels() []string {
 	}
 
 	return newLabelNames
+}
+
+// NewMetrics returns the new metrics the receiver creates
+func (a *Aggregator) NewMetrics() []plugin.DerivedMetric {
+	var derivedMetrics []plugin.DerivedMetric
+	for _, r := range a.rules {
+		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{Name: r.label, Source: r.object})
+	}
+
+	return derivedMetrics
 }

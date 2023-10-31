@@ -1,0 +1,16 @@
+Tools:
+  grafana_api_token: token
+
+Poller_files:
+  - testdata/pollerFiles/many/*.yml
+  - testdata/pollerFiles/single.yml
+  - testdata/pollerFiles/missing1.yml
+  - testdata/pollerFiles/missing2.yml
+  - testdata/pollerFiles/single.yml    # will cause duplicate because it is listed twice
+  - testdata/pollerFiles/dup.yml       # will cause duplicate because it contains star again
+
+Pollers:
+  star:
+    addr: localhost
+    collectors:
+      - Simple

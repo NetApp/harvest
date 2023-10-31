@@ -29,7 +29,6 @@ type PollerInfo struct {
 	ContainerName string
 	ShowPorts     bool
 	IsFull        bool
-	TemplateDir   string
 	CertDir       string
 	Mounts        []string
 }
@@ -61,11 +60,12 @@ type options struct {
 	filesdPath  string
 	showPorts   bool
 	outputPath  string
-	templateDir string
 	certDir     string
 	promPort    int
 	grafanaPort int
 	mounts      []string
+	configPath  string
+	confPath    string
 }
 
 var opts = &options{
@@ -105,22 +105,28 @@ var metricCmd = &cobra.Command{
 }
 
 func doDockerFull(cmd *cobra.Command, _ []string) {
-	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateDocker(conf.ConfigPath(config.Value.String()), full)
+	addRootOptions(cmd)
+	generateDocker(full)
 }
+
 func doSystemd(cmd *cobra.Command, _ []string) {
-	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateSystemd(conf.ConfigPath(config.Value.String()))
+	addRootOptions(cmd)
+	generateSystemd()
 }
 
 func doDockerCompose(cmd *cobra.Command, _ []string) {
-	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateDocker(conf.ConfigPath(config.Value.String()), harvest)
+	addRootOptions(cmd)
+	generateDocker(harvest)
 }
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
-	var config = cmd.Root().PersistentFlags().Lookup("config")
-	generateMetrics(conf.ConfigPath(config.Value.String()))
+	addRootOptions(cmd)
+	generateMetrics()
+}
+
+func addRootOptions(cmd *cobra.Command) {
+	opts.configPath = conf.ConfigPath(cmd.Root().PersistentFlags().Lookup("config").Value.String())
+	opts.confPath = cmd.Root().PersistentFlags().Lookup("confpath").Value.String()
 }
 
 const (
@@ -134,15 +140,13 @@ func normalizeContainerNames(name string) string {
 	return strings.ToLower(re.ReplaceAllString(name, "-"))
 }
 
-func generateDocker(path string, kind int) {
+func generateDocker(kind int) {
 	var (
-		pollerTemplate  PollerTemplate
-		configFilePath  string
-		templateDirPath string
-		certDirPath     string
-		filesd          []string
-		extraMounts     []string
-		out             *os.File
+		pollerTemplate PollerTemplate
+		configFilePath string
+		certDirPath    string
+		filesd         []string
+		out            *os.File
 	)
 
 	pollerTemplate = PollerTemplate{}
@@ -150,18 +154,12 @@ func generateDocker(path string, kind int) {
 		opts.grafanaPort,
 		opts.promPort,
 	}
-	_, err := conf.LoadHarvestConfig(path)
+	_, err := conf.LoadHarvestConfig(opts.configPath)
 	if err != nil {
 		logErrAndExit(err)
 	}
-	configFilePath = asComposePath(path)
-	templateDirPath = asComposePath(opts.templateDir)
+	configFilePath = asComposePath(opts.configPath)
 	certDirPath = asComposePath(opts.certDir)
-
-	extraMounts = make([]string, 0, len(opts.mounts))
-	for _, mount := range opts.mounts {
-		extraMounts = append(extraMounts, asComposePath(mount))
-	}
 
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v, true)
@@ -175,9 +173,8 @@ func generateDocker(path string, kind int) {
 			ContainerName: normalizeContainerNames("poller_" + v),
 			ShowPorts:     opts.showPorts,
 			IsFull:        kind == full,
-			TemplateDir:   templateDirPath,
 			CertDir:       certDirPath,
-			Mounts:        extraMounts,
+			Mounts:        makeMounts(v),
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
@@ -272,6 +269,40 @@ func generateDocker(path string, kind int) {
 	}
 }
 
+// setup mount(s) for the confpath and any CLI-passed mounts
+func makeMounts(pollerName string) []string {
+	var mounts = opts.mounts
+
+	p, err := conf.PollerNamed(pollerName)
+	if err != nil {
+		logErrAndExit(err)
+	}
+
+	confPath := opts.confPath
+	if confPath == "conf" {
+		confPath = p.ConfPath
+	}
+
+	if confPath == "" {
+		mounts = append(mounts, toMount("./conf"))
+	} else {
+		paths := strings.Split(confPath, ":")
+		for _, path := range paths {
+			mounts = append(mounts, toMount(path))
+		}
+	}
+
+	return mounts
+}
+
+func toMount(hostPath string) string {
+	hostPath = asComposePath(hostPath)
+	if strings.HasPrefix(hostPath, "./") {
+		return hostPath + ":" + "/opt/harvest/" + hostPath[2:]
+	}
+	return hostPath + ":" + hostPath
+}
+
 func copyFiles(srcPath, destPath string) error {
 	filesToExclude := map[string]bool{
 		"harvest.yml":         true,
@@ -279,9 +310,22 @@ func copyFiles(srcPath, destPath string) error {
 		"prom-stack.tmpl":     true,
 	}
 	dirsToExclude := map[string]bool{
-		"bin":         true,
-		"autosupport": true,
+		"bin":                   true,
+		"autosupport":           true,
+		"onePollerPerContainer": true,
 	}
+	// requires specific permissions
+	dirsPermissions := map[string]os.FileMode{
+		"container":  0755,
+		"prometheus": 0755,
+	}
+	// requires specific permissions
+	filePermissions := map[string]os.FileMode{
+		"container":  0644,
+		"prometheus": 0644,
+		"grafana":    0640,
+	}
+
 	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -299,7 +343,10 @@ func copyFiles(srcPath, destPath string) error {
 			if dirsToExclude[info.Name()] {
 				return filepath.SkipDir
 			}
-			// Create the directory
+			// Check if the directory is in the dirsPermissions map
+			if perm, ok := dirsPermissions[info.Name()]; ok {
+				return os.MkdirAll(dest, perm)
+			}
 			return os.MkdirAll(dest, 0750)
 		}
 
@@ -308,19 +355,24 @@ func copyFiles(srcPath, destPath string) error {
 			return nil
 		}
 
-		// Copy the file
-		return copyFile(path, dest)
+		// Check if the file is under a directory in the filePermissions map
+		for dir, perm := range filePermissions {
+			if strings.HasPrefix(relPath, dir) {
+				return copyFile(path, dest, perm)
+			}
+		}
+		return copyFile(path, dest, 0600)
 	})
 }
 
-func copyFile(srcPath, destPath string) error {
+func copyFile(srcPath, destPath string, perm os.FileMode) error {
 	srcFile, err := os.Open(srcPath)
 	if err != nil {
 		return err
 	}
 	defer silentClose(srcFile)
 
-	destFile, err := os.Create(destPath)
+	destFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
 	}
@@ -346,9 +398,9 @@ func silentClose(body io.ReadCloser) {
 	_ = body.Close()
 }
 
-func generateSystemd(path string) {
+func generateSystemd() {
 	var adminService string
-	_, err := conf.LoadHarvestConfig(path)
+	_, err := conf.LoadHarvestConfig(opts.configPath)
 	if err != nil {
 		logErrAndExit(err)
 	}
@@ -367,7 +419,7 @@ func generateSystemd(path string) {
 		println("and " + color.Colorize("cp "+harvestAdminService+" /etc/systemd/system/", color.Green))
 	}
 	println("and then run " + color.Colorize("systemctl daemon-reload", color.Green))
-	writeAdminSystemd(path)
+	writeAdminSystemd(opts.configPath)
 	// reorder list of pollers so that unix collectors are last, see https://github.com/NetApp/harvest/issues/643
 	pollers := make([]string, 0)
 	unixPollers := make([]string, 0)
@@ -422,7 +474,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func generateMetrics(path string) {
+func generateMetrics() {
 	var (
 		poller     *conf.Poller
 		err        error
@@ -430,7 +482,7 @@ func generateMetrics(path string) {
 		zapiClient *zapi.Client
 	)
 
-	_, err = conf.LoadHarvestConfig(path)
+	_, err = conf.LoadHarvestConfig(opts.configPath)
 	if err != nil {
 		logErrAndExit(err)
 	}
@@ -480,7 +532,6 @@ func init() {
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)
 	dFlags.StringVar(&opts.image, "image", "ghcr.io/netapp/harvest:latest", "Harvest image. Use rahulguptajss/harvest:latest to pull from Docker Hub")
-	dFlags.StringVar(&opts.templateDir, "templatedir", "./conf", "Harvest template dir path")
 	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
 	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
 	dFlags.BoolVarP(&opts.showPorts, "port", "p", true, "Expose poller ports to host machine")

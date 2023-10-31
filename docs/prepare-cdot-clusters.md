@@ -131,12 +131,14 @@ Check that the harvest role has web access for ONTAPI and REST.
 ```bash
 vserver services web access show -role harvest2-role -name ontapi
 vserver services web access show -role harvest2-role -name rest
+vserver services web access show -role harvest2-role -name docs-api
 ```
 
 If either entry is missing, enable access by running the following. Replace `$ADMIN_VSERVER` with your SVM admin name.
 ```bash
 vserver services web access create -vserver $ADMIN_VSERVER -name ontapi -role harvest2-role
 vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-role
+vserver services web access create -vserver $ADMIN_VSERVER -name docs-api -role harvest2-role
 ```
 
 #### 7-Mode CLI

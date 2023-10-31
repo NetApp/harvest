@@ -5,7 +5,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -24,10 +23,14 @@ const (
 // `system chassis fru show`.
 // Chassis FRU information is only available via private CLI
 func collectChassisFRU(client *rest.Client, logger *logging.Logger) (map[string]int, error) {
-	fields := "fru-name,type,status,connected-nodes,num-nodes"
+	fields := []string{"fru-name", "type", "status", "connected-nodes", "num-nodes"}
 	query := "api/private/cli/system/chassis/fru"
 	filter := []string{"type=psu"}
-	href := rest.BuildHref("", fields, filter, "", "", "", "", query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter(filter).
+		Build()
 
 	result, err := rest.Fetch(client, href)
 	if err != nil {
@@ -384,7 +387,7 @@ type Sensor struct {
 	data           *matrix.Matrix
 	client         *rest.Client
 	instanceKeys   map[string]string
-	instanceLabels map[string]*dict.Dict
+	instanceLabels map[string]map[string]string
 }
 
 func (my *Sensor) Init() error {
@@ -406,7 +409,7 @@ func (my *Sensor) Init() error {
 
 	my.data = matrix.New(my.Parent+".Sensor", "environment_sensor", "environment_sensor")
 	my.instanceKeys = make(map[string]string)
-	my.instanceLabels = make(map[string]*dict.Dict)
+	my.instanceLabels = make(map[string]map[string]string)
 
 	// init environment metrics in plugin matrix
 	// create environment metric if not exists

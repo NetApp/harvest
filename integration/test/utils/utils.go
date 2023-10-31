@@ -14,6 +14,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -203,9 +204,12 @@ func CreateGrafanaToken() string {
 	log.Info().Msg("Creating grafana API Key.")
 	url := GetGrafanaHTTPURL() + "/api/auth/keys"
 	method := "POST"
-	name := fmt.Sprint(time.Now().Unix())
+	name := strconv.FormatInt(time.Now().Unix(), 10)
 	values := map[string]string{"name": name, "role": "Admin"}
-	jsonValue, _ := json.Marshal(values)
+	jsonValue, err := json.Marshal(values)
+	if err != nil {
+		panic(err)
+	}
 	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["key"])
 	if len(key) > 0 {
@@ -310,7 +314,7 @@ func RemoveDuplicateStr(strSlice []string) []string {
 
 func SetupLogging() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	zerolog.ErrorStackMarshaler = MarshalStack
+	zerolog.ErrorStackMarshaler = MarshalStack //nolint:reassign
 	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, NoColor: true}).
 		With().Caller().Stack().Timestamp().Logger()
 }

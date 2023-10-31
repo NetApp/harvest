@@ -4,15 +4,16 @@ object:     lif
 
 counters:
   net-interface-info:
+    - ^^address                     => address
     - ^^interface-name              => lif
     - ^^vserver                     => svm
-    - ^address                      => address
     - ^current-node                 => node
     - ^current-port                 => port
     - ^home-node                    => home_node
     - ^home-port                    => home_port
     - ^ipspace                      => ipspace
     - ^is-home                      => is_home
+    - ^lif-uuid                     => uuid
     - ^operational-status           => status
     - ^subnet-name                  => subnet
     - data-protocols:
@@ -24,10 +25,10 @@ collect_only_labels: true
 
 export_options:
   instance_keys:
+    - address
     - lif
     - svm
   instance_labels:
-    - address
     - home_node
     - home_port
     - ipspace

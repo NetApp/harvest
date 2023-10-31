@@ -54,7 +54,7 @@ type prop struct {
 	InstanceLabels map[string]string
 	Metrics        map[string]*Metric
 	Counters       map[string]string
-	ReturnTimeOut  string
+	ReturnTimeOut  *int
 	Fields         []string
 	APIType        string // public, private
 	Filter         []string
@@ -297,7 +297,12 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	startTime = time.Now()
 
-	href := rest.BuildHref(r.Prop.Query, strings.Join(r.Prop.Fields, ","), r.Prop.Filter, "", "", "", r.Prop.ReturnTimeOut, r.Prop.Query)
+	href := rest.NewHrefBuilder().
+		APIPath(r.Prop.Query).
+		Fields(r.Prop.Fields).
+		Filter(r.Prop.Filter).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	if records, err = r.GetRestData(href); err != nil {
 		return nil, err
@@ -341,7 +346,12 @@ func (r *Rest) pollData(startTime time.Time, records []gjson.Result, endpointFun
 }
 
 func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, error) {
-	href := rest.BuildHref(r.query(e), strings.Join(r.fields(e), ","), r.filter(e), "", "", "", r.Prop.ReturnTimeOut, r.query(e))
+	href := rest.NewHrefBuilder().
+		APIPath(r.query(e)).
+		Fields(r.fields(e)).
+		Filter(r.filter(e)).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	return r.GetRestData(href)
 }
@@ -365,7 +375,7 @@ func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, 
 		}
 
 		if len(records) == 0 {
-			r.Logger.Debug().Str("ApiPath", endpoint.prop.Query).Msg("no instances on cluster")
+			r.Logger.Debug().Str("APIPath", endpoint.prop.Query).Msg("no instances on cluster")
 			continue
 		}
 		count = r.HandleResults(records, endpoint.prop, true)
@@ -502,6 +512,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 						labelString := r.String()
 						labelArray = append(labelArray, labelString)
 					}
+					sort.Strings(labelArray)
 					instance.SetLabel(display, strings.Join(labelArray, ","))
 				} else {
 					instance.SetLabel(display, value.String())
@@ -665,7 +676,11 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 	)
 	query := "api/cluster/nodes"
 
-	href := rest.BuildHref(query, "serial_number,system_id", nil, "", "", "", r.Prop.ReturnTimeOut, query)
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"serial_number", "system_id"}).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		Build()
 
 	if records, err = r.GetRestData(href); err != nil {
 		return nil, err

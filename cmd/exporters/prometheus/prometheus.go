@@ -317,7 +317,7 @@ func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
 
 	prefix = p.globalPrefix + data.Object
 
-	for key, value := range data.GetGlobalLabels().Map() {
+	for key, value := range data.GetGlobalLabels() {
 		globalLabels = append(globalLabels, escape(replacer, key, value))
 	}
 
@@ -337,12 +337,13 @@ func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
 		instanceLabelsSet := make(map[string]struct{})
 
 		if includeAllLabels {
-			for label, value := range instance.GetLabels().Map() {
+			for label, value := range instance.GetLabels() {
 				// temporary fix for the rarely happening duplicate labels
 				// known case is: ZapiPerf -> 7mode -> disk.yaml
 				// actual cause is the Aggregator plugin, which is adding node as
 				// instance label (even though it's already a global label for 7modes)
-				if !data.GetGlobalLabels().Has(label) {
+				_, ok := data.GetGlobalLabels()[label]
+				if !ok {
 					instanceKeys = append(instanceKeys, escape(replacer, label, value)) //nolint:makezero
 				}
 			}
@@ -442,8 +443,8 @@ func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
 						histogram.values[index] = value
 						continue
 					}
-					metricLabels := make([]string, 0, metric.GetLabels().Size())
-					for k, v := range metric.GetLabels().Map() {
+					metricLabels := make([]string, 0, len(metric.GetLabels()))
+					for k, v := range metric.GetLabels() {
 						metricLabels = append(metricLabels, escape(replacer, k, v))
 					}
 					x := fmt.Sprintf(

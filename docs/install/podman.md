@@ -76,7 +76,7 @@ podman info | grep runRoot
 
 By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091 so we can run both Cockpit and Prometheus. Line `2` below does that.
 
-With these changes, the [standard Harvest compose instructions](../containers/#docker-compose) can be followed as normal now. In summary,
+With these changes, the [standard Harvest compose instructions](containers.md#docker-compose) can be followed as normal now. In summary,
 
 1. Add the clusters, exporters, etc. to your `harvest.yml` file
 2. Generate a compose file from your `harvest.yml` by running 

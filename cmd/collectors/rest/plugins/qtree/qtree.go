@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -24,7 +23,7 @@ type Qtree struct {
 	*plugin.AbstractPlugin
 	data             *matrix.Matrix
 	instanceKeys     map[string]string
-	instanceLabels   map[string]*dict.Dict
+	instanceLabels   map[string]map[string]string
 	client           *rest.Client
 	query            string
 	quotaType        []string
@@ -44,13 +43,13 @@ func (q *Qtree) Init() error {
 		"space.used.hard_limit_percent => disk_used_pct_disk_limit",
 		"space.used.soft_limit_percent => disk_used_pct_soft_disk_limit",
 		"space.soft_limit => soft_disk_limit",
-		//"disk-used-pct-threshold" # deprecated and workaround to use same as disk_used_pct_soft_disk_limit
+		// "disk-used-pct-threshold" # deprecated and workaround to use same as disk_used_pct_soft_disk_limit
 		"files.hard_limit => file_limit",
 		"files.used.total => files_used",
 		"files.used.hard_limit_percent => files_used_pct_file_limit",
 		"files.used.soft_limit_percent => files_used_pct_soft_file_limit",
 		"files.soft_limit => soft_file_limit",
-		//"threshold",   # deprecated
+		// "threshold",   # deprecated
 	}
 
 	if err = q.InitAbc(); err != nil {
@@ -78,7 +77,7 @@ func (q *Qtree) Init() error {
 
 	q.data = matrix.New(q.Parent+".Qtree", "quota", "quota")
 	q.instanceKeys = make(map[string]string)
-	q.instanceLabels = make(map[string]*dict.Dict)
+	q.instanceLabels = make(map[string]map[string]string)
 	q.historicalLabels = false
 
 	if q.Params.HasChildS("historicalLabels") {
@@ -87,7 +86,7 @@ func (q *Qtree) Init() error {
 
 		// apply all instance keys, instance labels from parent (qtree.yaml) to all quota metrics
 		if exportOption := q.ParentParams.GetChildS("export_options"); exportOption != nil {
-			//parent instancekeys would be added in plugin metrics
+			// parent instancekeys would be added in plugin metrics
 			if parentKeys := exportOption.GetChildS("instance_keys"); parentKeys != nil {
 				for _, parentKey := range parentKeys.GetAllChildContentS() {
 					instanceKeys.NewChildS("", parentKey)
@@ -160,14 +159,18 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		filter = []string{"return_unmatched_nested_array_objects=true", "show_default_records=true", "type=" + strings.Join(q.quotaType[:], "|")}
 	}
 
-	href := rest.BuildHref("", "*", filter, "", "", "", "", q.query)
+	href := rest.NewHrefBuilder().
+		APIPath(q.query).
+		Fields([]string{"*"}).
+		Filter(filter).
+		Build()
 
 	if result, err = collectors.InvokeRestCall(q.client, href, q.Logger); err != nil {
 		return nil, err
 	}
 
 	quotaCount := 0
-	cluster, _ := data.GetGlobalLabels().GetHas("cluster")
+	cluster := data.GetGlobalLabels()["cluster"]
 
 	if q.historicalLabels {
 		// In 22.05, populate metrics with qtree prefix and old labels
@@ -251,7 +254,7 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 			}
 		}
 
-		//set labels
+		// set labels
 		quotaInstance.SetLabel("type", quotaType)
 		quotaInstance.SetLabel("qtree", tree)
 		quotaInstance.SetLabel("volume", volume)
@@ -320,7 +323,7 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 				q.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
 				return err
 			}
-			//set labels
+			// set labels
 			quotaInstance.SetLabel("type", quotaType)
 			quotaInstance.SetLabel("qtree", tree)
 			quotaInstance.SetLabel("volume", volume)
