@@ -171,7 +171,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2297,7 +2297,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "SVM cifs total Iops.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3359,7 +3359,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "FCP total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4422,7 +4422,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Iscsi total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4480,7 +4480,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Iscsi total Iops.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9289,7 +9289,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "NVMe/FC total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10607,6 +10607,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Qos toal throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {

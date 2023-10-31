@@ -213,7 +213,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Volume total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {

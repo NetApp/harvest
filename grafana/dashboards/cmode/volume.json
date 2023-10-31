@@ -374,7 +374,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -6073,7 +6073,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Percent of compress fail.",
           "fieldConfig": {
             "defaults": {
               "color": {

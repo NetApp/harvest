@@ -443,7 +443,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percent of space used.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2396,6 +2396,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio of space used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2451,6 +2452,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshot.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2507,6 +2509,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshots and flexclones.",
           "fieldConfig": {
             "defaults": {
               "color": {

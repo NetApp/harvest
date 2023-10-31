@@ -654,6 +654,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "SVM space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -784,6 +785,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Volume space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -914,6 +916,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Aggregate space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1052,6 +1055,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "SVM space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1141,6 +1145,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Volume space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1230,6 +1235,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Aggregate space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1423,6 +1429,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "SVM total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1706,7 +1713,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Volume total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
