@@ -5,7 +5,7 @@ object:                   iw
 
 counters:
   - ^^id
-  - ^node_name           => node
+  - ^node.name           => node
   - average_latency      => avg_latency
   - ops                  => ops
   - read_ops             => read_ops
