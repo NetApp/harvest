@@ -33,7 +33,7 @@ import (
 const (
 	clientTimeout                 = 5
 	grafanaDataSource             = "Prometheus"
-	gPerm             os.FileMode = 644
+	GPerm             os.FileMode = 644
 )
 
 var (
@@ -173,7 +173,7 @@ func exportFiles(dir string, folder *Folder) error {
 				return err
 			}
 			// creating dashboards with group and other permissions of read are OK
-			if err = os.WriteFile(fp, data, gPerm); err != nil {
+			if err = os.WriteFile(fp, data, GPerm); err != nil {
 				fmt.Printf("error write to [%s]: %v\n", fp, err)
 				return err
 			}
@@ -1038,7 +1038,6 @@ func init() {
 
 	metricsCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d",
 		"", "local directory that contains dashboards (searched recursively).")
-
 }
 
 func addFlags(commands ...*cobra.Command) {

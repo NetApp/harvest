@@ -17,7 +17,7 @@ import (
 var dashboards = []string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"}
 
 func TestThreshold(t *testing.T) {
-	visitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkThreshold(t, path, data)
 	})
 }
@@ -25,7 +25,7 @@ func TestThreshold(t *testing.T) {
 var aggregationPattern = regexp.MustCompile(`\b(sum|count|min|max)\b`)
 
 func checkThreshold(t *testing.T, path string, data []byte) {
-	path = shortPath(path)
+	path = ShortPath(path)
 	var thresholdMap = map[string][]string{
 		// _latencies are in microseconds
 		"_latency": {
@@ -38,7 +38,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 		},
 	}
 	// visit all panels for datasource test
-	visitAllPanels(data, func(p string, key, value gjson.Result) {
+	VisitAllPanels(data, func(p string, key, value gjson.Result) {
 		panelTitle := value.Get("title").String()
 		kind := value.Get("type").String()
 		if kind == "table" || kind == "stat" {
@@ -113,15 +113,15 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 }
 
 func TestDatasource(t *testing.T) {
-	visitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
 	})
 }
 
 func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
-	path = shortPath(path)
+	path = ShortPath(path)
 	// visit all panels for datasource test
-	visitAllPanels(data, func(p string, key, value gjson.Result) {
+	VisitAllPanels(data, func(p string, key, value gjson.Result) {
 		dsResult := value.Get("datasource")
 		panelTitle := value.Get("title").String()
 		if !dsResult.Exists() {
@@ -210,7 +210,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 	reg := regexp.MustCompile(pattern)
 	mt := newMetricsTable()
 	expectedMt := parseUnits()
-	visitDashboards(dashboards,
+	VisitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkUnits(t, path, mt, data)
 		})
@@ -371,7 +371,7 @@ func newMetricsTable() *metricsTable {
 }
 
 func checkUnits(t *testing.T, dashboardPath string, mt *metricsTable, data []byte) {
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		doPanel(t, "", key, value, mt, dashboardPath)
 	})
 }
@@ -398,7 +398,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 	targetsSlice := value.Get("targets").Array()
 	transformationsSlice := value.Get("transformations").Array()
 	title := value.Get("title").String()
-	sPath := shortPath(dashboardPath)
+	sPath := ShortPath(dashboardPath)
 
 	propertiesMap := make(map[string]map[string]string)
 	overrides := make([]override, 0, len(overridesSlice))
@@ -540,7 +540,7 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 }
 
 func TestVariablesAreSorted(t *testing.T) {
-	visitDashboards(dashboards,
+	VisitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkVariablesAreSorted(t, path, data)
 		})
@@ -565,14 +565,14 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 		if sortVal != 1 {
 			varName := value.Get("name").String()
 			t.Errorf("dashboard=%s path=templating.list[%s].sort variable=%s is not 1. Should be \"sort\": 1,",
-				shortPath(path), key.String(), varName)
+				ShortPath(path), key.String(), varName)
 		}
 		return true
 	})
 }
 
 func TestNoUnusedVariables(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkUnusedVariables(t, path, data)
@@ -595,7 +595,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		return true
 	})
 
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		d := value.Get("description").String()
 		if d != "" {
 			description = append(description, d)
@@ -624,7 +624,7 @@ varLoop:
 			}
 		}
 
-		t.Errorf("dashboard=%s has unused variable [%s]", shortPath(path), variable)
+		t.Errorf("dashboard=%s has unused variable [%s]", ShortPath(path), variable)
 	}
 }
 
@@ -666,7 +666,7 @@ func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc fu
 }
 
 func TestIDIsBlank(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkUIDIsBlank(t, path, data)
@@ -675,7 +675,7 @@ func TestIDIsBlank(t *testing.T) {
 }
 
 func TestExemplarIsFalse(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkExemplarIsFalse(t, path, data)
@@ -684,26 +684,26 @@ func TestExemplarIsFalse(t *testing.T) {
 
 func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 	if strings.Contains(string(data), "\"exemplar\": true") {
-		t.Errorf(`dashboard=%s exemplar should be "false" but is "true"`, shortPath(path))
+		t.Errorf(`dashboard=%s exemplar should be "false" but is "true"`, ShortPath(path))
 	}
 }
 
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
 	uid := gjson.GetBytes(data, "uid").String()
 	if uid != "" {
-		t.Errorf(`dashboard=%s uid should be "" but is %s`, shortPath(path), uid)
+		t.Errorf(`dashboard=%s uid should be "" but is %s`, ShortPath(path), uid)
 	}
 }
 
 func checkIDIsNull(t *testing.T, path string, data []byte) {
 	id := gjson.GetBytes(data, "id").String()
 	if id != "" {
-		t.Errorf(`dashboard=%s id should be null but is %s`, shortPath(path), id)
+		t.Errorf(`dashboard=%s id should be null but is %s`, ShortPath(path), id)
 	}
 }
 
 func TestUniquePanelIDs(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkUniquePanelIDs(t, path, data)
@@ -713,9 +713,9 @@ func TestUniquePanelIDs(t *testing.T) {
 func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 	ids := make(map[int64]struct{})
 
-	sPath := shortPath(path)
+	sPath := ShortPath(path)
 	// visit all panel ids
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		id := value.Get("id").Int()
 		_, ok := ids[id]
 		if ok {
@@ -734,7 +734,7 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 //   b) otherwise fail, printing the expression, path, dashboard
 
 func TestTopKRange(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkTopKRange(t, path, data)
@@ -745,7 +745,7 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	// collect all expressions
 	expressions := make([]exprP, 0)
 
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		doTarget("", key, value, func(path string, expr string, format string) {
 			if format == "table" || format == "stat" {
 				return
@@ -776,7 +776,7 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 		}
 		if !hasRange {
 			t.Errorf(`dashboard=%s path=%s use topk but no variable has range. expr=%s`,
-				shortPath(path), expr.path, expr.expr)
+				ShortPath(path), expr.path, expr.expr)
 		}
 	}
 
@@ -790,13 +790,13 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				// Test if text and value match, except for the special case with "All" and "$__all"
 				if text != value && !(text == "All" && value == "$__all") {
 					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' does not match value '%s'",
-						shortPath(path), v.name, text, value)
+						ShortPath(path), v.name, text, value)
 				}
 
 				// Test if the selected value matches the expected text "5"
 				if (text == "5") != selected {
 					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
-						shortPath(path), v.name, text, selected)
+						ShortPath(path), v.name, text, selected)
 				}
 			}
 		}
@@ -806,7 +806,7 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 
 		if v.refresh != "2" {
 			t.Errorf("dashboard=%s name=%s use topk, refresh should be set to \"On time range change\". query=%s",
-				shortPath(path), v.name, v.query)
+				ShortPath(path), v.name, v.query)
 		}
 	}
 
@@ -823,7 +823,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"storagegrid/fabricpool.json": 2,
 	}
 	// count number of expanded sections in dashboard and ensure num expanded = 1
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkExpansion(t, exceptions, path, data)
@@ -834,7 +834,7 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 	pathCollapsed := make(map[string]bool)
 	titles := make([]string, 0)
 	// visit all panel
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		collapsed := value.Get("collapsed")
 		if !collapsed.Exists() {
 			return
@@ -848,7 +848,7 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 	if len(titles) == 0 {
 		return
 	}
-	dashPath := shortPath(path)
+	dashPath := ShortPath(path)
 	// By default, a single expanded row is allowed.
 	allowed := 1
 	v, ok := exceptions[dashPath]
@@ -860,22 +860,8 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 	}
 }
 
-func visitAllPanels(data []byte, handle func(path string, key gjson.Result, value gjson.Result)) {
-	visitPanels(data, "panels", "", handle)
-}
-
-func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(path string, key gjson.Result, value gjson.Result)) {
-	gjson.GetBytes(data, panelPath).ForEach(func(key, value gjson.Result) bool {
-		path := fmt.Sprintf("%s[%d]", panelPath, key.Int())
-		fullPath := fmt.Sprintf("%s%s", pathPrefix, path)
-		handle(fullPath, key, value)
-		visitPanels([]byte(value.Raw), "panels", fullPath, handle)
-		return true
-	})
-}
-
 func TestLegends(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkLegends(t, path, data)
@@ -884,9 +870,9 @@ func TestLegends(t *testing.T) {
 
 func checkLegends(t *testing.T, path string, data []byte) {
 	// collect all legends
-	dashPath := shortPath(path)
+	dashPath := ShortPath(path)
 
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		doLegends(t, value, dashPath)
 	})
 }
@@ -944,7 +930,7 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 }
 
 func TestConnectNullValues(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkConnectNullValues(t, path, data)
@@ -952,9 +938,9 @@ func TestConnectNullValues(t *testing.T) {
 }
 
 func checkConnectNullValues(t *testing.T, path string, data []byte) {
-	dashPath := shortPath(path)
+	dashPath := ShortPath(path)
 
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		spanNulls := value.Get("fieldConfig.defaults.custom.spanNulls")
 		if !spanNulls.Exists() {
 			return
@@ -966,10 +952,10 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 }
 
 func TestPanelChildPanels(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkPanelChildPanels(t, shortPath(path), data)
+			checkPanelChildPanels(t, ShortPath(path), data)
 		})
 }
 
@@ -984,10 +970,10 @@ func checkPanelChildPanels(t *testing.T, path string, data []byte) {
 }
 
 func TestRatesAreNot1m(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkRate1m(t, shortPath(path), data)
+			checkRate1m(t, ShortPath(path), data)
 		},
 	)
 }
@@ -1002,7 +988,7 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 }
 
 func TestTableFilter(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkTableFilter(t, path, data)
@@ -1010,8 +996,8 @@ func TestTableFilter(t *testing.T) {
 }
 
 func checkTableFilter(t *testing.T, path string, data []byte) {
-	dashPath := shortPath(path)
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	dashPath := ShortPath(path)
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType == "table" {
 			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").String()
@@ -1023,10 +1009,10 @@ func checkTableFilter(t *testing.T, path string, data []byte) {
 }
 
 func TestTitlesOfTopN(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkTitlesOfTopN(t, shortPath(path), data)
+			checkTitlesOfTopN(t, ShortPath(path), data)
 		},
 	)
 }
@@ -1061,7 +1047,7 @@ func asTitle(id string) string {
 }
 
 func TestPercentHasMinMax(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkPercentHasMinMax(t, path, data)
@@ -1069,9 +1055,9 @@ func TestPercentHasMinMax(t *testing.T) {
 }
 
 func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
-	dashPath := shortPath(path)
+	dashPath := ShortPath(path)
 
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType != "timeseries" {
 			return
@@ -1098,10 +1084,10 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 }
 
 func TestRefreshIsOff(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkDashboardRefresh(t, shortPath(path), data)
+			checkDashboardRefresh(t, ShortPath(path), data)
 		},
 	)
 }
@@ -1116,21 +1102,21 @@ func checkDashboardRefresh(t *testing.T, path string, data []byte) {
 }
 
 func TestHeatmapSettings(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkHeatmapSettings(t, shortPath(path), data)
+			checkHeatmapSettings(t, ShortPath(path), data)
 		},
 	)
 }
 
 func checkHeatmapSettings(t *testing.T, path string, data []byte) {
-	dashPath := shortPath(path)
+	dashPath := ShortPath(path)
 	const (
 		wantColorScheme = "interpolateRdYlGn"
 		wantColorMode   = "spectrum"
 	)
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType != "heatmap" {
 			return
@@ -1149,7 +1135,7 @@ func checkHeatmapSettings(t *testing.T, path string, data []byte) {
 }
 
 func TestBytePanelsHave2Decimals(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
 			checkBytePanelsHave2Decimals(t, path, data)
@@ -1157,7 +1143,7 @@ func TestBytePanelsHave2Decimals(t *testing.T) {
 }
 
 func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
-	dashPath := shortPath(path)
+	dashPath := ShortPath(path)
 	byteTypes := map[string]bool{
 		"bytes":     true,
 		"decbytes":  true,
@@ -1175,7 +1161,7 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 		"decpbytes": true,
 	}
 
-	visitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType != "timeseries" {
 			return
@@ -1193,10 +1179,10 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 }
 
 func TestDashboardKeysAreSorted(t *testing.T) {
-	visitDashboards(
+	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			path = shortPath(path)
+			path = ShortPath(path)
 			sorted := pretty.PrettyOptions(data, &pretty.Options{
 				SortKeys: true,
 				Indent:   "  ",
@@ -1240,13 +1226,13 @@ func writeSorted(t *testing.T, path string, sorted []byte) string {
 }
 
 func TestDashboardTime(t *testing.T) {
-	visitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkDashboardTime(t, path, data)
 	})
 }
 
 func checkDashboardTime(t *testing.T, path string, data []byte) {
-	dashPath := shortPath(path)
+	dashPath := ShortPath(path)
 	from := gjson.GetBytes(data, "time.from")
 	to := gjson.GetBytes(data, "time.to")
 
@@ -1261,14 +1247,14 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 }
 
 func TestNoDrillDownRows(t *testing.T) {
-	visitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkRowNames(t, path, data)
 	})
 }
 
 func checkRowNames(t *testing.T, path string, data []byte) {
-	path = shortPath(path)
-	visitAllPanels(data, func(p string, key, value gjson.Result) {
+	path = ShortPath(path)
+	VisitAllPanels(data, func(p string, key, value gjson.Result) {
 		kind := value.Get("type").String()
 		if kind == "row" {
 			title := value.Get("title").String()
@@ -1277,5 +1263,75 @@ func checkRowNames(t *testing.T, path string, data []byte) {
 			}
 		}
 	})
+}
 
+func TestDescription(t *testing.T) {
+	count := 0
+	VisitDashboards(
+		[]string{"../../../grafana/dashboards/cmode/volume.json"},
+		func(path string, data []byte) {
+			checkDescription(t, path, data, &count)
+		})
+}
+
+func checkDescription(t *testing.T, path string, data []byte, count *int) {
+	dashPath := ShortPath(path)
+	ignoreDashboards := []string{
+		"cmode/health.json", "cmode/headroom.json",
+	}
+	if slices.Contains(ignoreDashboards, dashPath) {
+		fmt.Printf(`dashboard=%s skipped\n`, dashPath)
+		return
+	}
+
+	// we don't get description for below panels, we need to manually formed them as per our need.
+	ignoreList := []string{
+		// These are from fsa
+		"Volume Access ($Activity) History", "Volume Access ($Activity) History By Percent", "Volume Modify ($Activity) History", "Volume Modify ($Activity) History By Percent",
+		// These are from snapmirror
+		"Destination Relationships per Node", "Source Relationships per SVM", "Destination Relationships per SVM",
+		// This is from workload
+		"Service Latency by Resources",
+		// These are from svm
+		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap",
+		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap",
+		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap",
+		// This is from volume
+		"Top $TopResources Volumes by Inode Files Used Percentage", "Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail",
+	}
+
+	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+		kind := value.Get("type").String()
+		if kind == "row" || kind == "text" {
+			return
+		}
+		description := value.Get("description").String()
+		targetsSlice := value.Get("targets").Array()
+		title := value.Get("title").String()
+		if slices.Contains(ignoreList, title) {
+			fmt.Printf(`dashboard=%s panel="%s" has different description\n`, dashPath, title)
+			return
+		}
+
+		if description == "" {
+			if len(targetsSlice) == 1 {
+				expr := targetsSlice[0].Get("expr").String()
+				if strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") {
+					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
+					//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
+				} else {
+					*count = *count + 1
+					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, title, *count)
+				}
+			} else {
+				// This indicates table/timeseries with more than 1 expressions, After deciding next steps, this will be uncommented.
+				//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+				fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
+			}
+		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
+			// Few panels have description text from variable, which would be ignored.
+			t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
+		}
+	})
 }

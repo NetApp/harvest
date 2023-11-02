@@ -105,7 +105,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average Latency of top $TopResources volumes",
+      "description": "Average Latency of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -169,7 +169,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Throughput of top $TopResources volumes",
+      "description": "Throughput of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -227,7 +227,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "IOPs of top $TopResources volumes",
+      "description": "IOPs of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -283,7 +283,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -465,7 +465,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of operations per second serviced by the volume.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -567,7 +567,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -981,6 +981,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1124,6 +1125,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Bytes read per second from the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1235,6 +1237,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of reads per second from the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1346,6 +1349,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1488,6 +1492,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Bytes written per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1599,6 +1604,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of writes per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1725,7 +1731,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1815,7 +1821,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1905,7 +1911,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1996,7 +2002,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of reads per second from the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2086,7 +2092,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of writes per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2176,7 +2182,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of other operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2267,7 +2273,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes read per second from the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2358,7 +2364,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes written per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2671,6 +2677,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the average response time for read requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2761,6 +2768,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the average response time for write requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2851,6 +2859,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the rate of this workload&apos;s read operations that completed during the measurement interval.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2941,6 +2950,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the workload&apos;s write operations that completed during the measurement interval; measured per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3031,6 +3041,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the amount of data read per second from the filer by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3121,6 +3132,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the amount of data written per second to the filer by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3211,6 +3223,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the percentage of reads, performed on behalf of the workload, that were sequential.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3302,6 +3315,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the percentage of writes, performed on behalf of the workload, that were sequential. This counter is only available on platforms with more than 4GB of NVRAM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3425,7 +3439,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3515,7 +3529,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3606,7 +3620,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3697,7 +3711,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3787,7 +3801,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3877,7 +3891,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3968,7 +3982,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4059,7 +4073,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4150,7 +4164,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4240,7 +4254,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4330,7 +4344,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4435,7 +4449,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4548,7 +4562,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4658,7 +4672,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4775,7 +4789,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4900,7 +4914,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency per GET operation to object storage",
+          "description": "Average latency per GET operation to object storage.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5086,7 +5100,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency per PUT operation to object storage",
+          "description": "Average latency per PUT operation to object storage.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5372,7 +5386,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5466,7 +5480,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5561,7 +5575,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5655,7 +5669,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": ".",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5765,6 +5779,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of user-visible files (inodes) used. This field is valid only when the volume is online.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5852,6 +5867,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total user-visible file (inode) count, i.e., current maximum number of user-visible files (inodes) that this volume can currently hold.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5938,6 +5954,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "volume_inode_files_used / volume_inode_total.",
           "fieldConfig": {
             "defaults": {
               "color": {

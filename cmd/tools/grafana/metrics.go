@@ -25,7 +25,7 @@ var metricsCmd = &cobra.Command{
 func doMetrics(_ *cobra.Command, _ []string) {
 	adjustOptions()
 	validateImport()
-	visitDashboards([]string{opts.dir}, func(path string, data []byte) {
+	VisitDashboards([]string{opts.dir}, func(path string, data []byte) {
 		visitExpressionsAndQueries(path, data)
 	})
 }
@@ -78,7 +78,7 @@ func visitExpressionsAndQueries(path string, data []byte) {
 		}
 	}
 
-	fmt.Printf("%s\n", shortPath(path))
+	fmt.Printf("%s\n", ShortPath(path))
 	metrics := setToList(metricsSeen)
 	for _, metric := range metrics {
 		fmt.Printf("- %s\n", metric)
@@ -153,7 +153,7 @@ func doTarget(pathPrefix string, key gjson.Result, value gjson.Result,
 	}
 }
 
-func visitDashboards(dirs []string, eachDash func(path string, data []byte)) {
+func VisitDashboards(dirs []string, eachDash func(path string, data []byte)) {
 	for _, dir := range dirs {
 		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 			if strings.Contains(path, "influxdb") {
@@ -179,7 +179,21 @@ func visitDashboards(dirs []string, eachDash func(path string, data []byte)) {
 	}
 }
 
-func shortPath(dashPath string) string {
+func VisitAllPanels(data []byte, handle func(path string, key gjson.Result, value gjson.Result)) {
+	visitPanels(data, "panels", "", handle)
+}
+
+func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(path string, key gjson.Result, value gjson.Result)) {
+	gjson.GetBytes(data, panelPath).ForEach(func(key, value gjson.Result) bool {
+		path := fmt.Sprintf("%s[%d]", panelPath, key.Int())
+		fullPath := fmt.Sprintf("%s%s", pathPrefix, path)
+		handle(fullPath, key, value)
+		visitPanels([]byte(value.Raw), "panels", fullPath, handle)
+		return true
+	})
+}
+
+func ShortPath(dashPath string) string {
 	splits := strings.Split(dashPath, string(filepath.Separator))
 	return strings.Join(splits[len(splits)-2:], string(filepath.Separator))
 }
