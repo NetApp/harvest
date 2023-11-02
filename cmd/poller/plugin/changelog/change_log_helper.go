@@ -56,27 +56,31 @@ func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger 
 	)
 	object := parentParams.GetChildS("object").GetContentS()
 
+	useDefault := true
+
 	if len(overwriteConfig) > 0 {
 		entry, err = preprocessOverwrite(object, overwriteConfig)
 		if err != nil {
 			logger.Warn().Err(err).Str("template", string(overwriteConfig)).Msg("failed to parse changelog dsl. Trying default")
 		} else {
-			return entry, nil
+			useDefault = false
 		}
 	}
 
-	err = yaml.Unmarshal([]byte(defaultChangeLogTemplate), &config)
-	if err != nil {
-		return Entry{}, err
+	if useDefault {
+		err = yaml.Unmarshal([]byte(defaultChangeLogTemplate), &config)
+		if err != nil {
+			return Entry{}, err
+		}
+		i := slices.IndexFunc(config.ChangeLogs, func(entry Entry) bool {
+			return entry.Object == object
+		})
+		if i == -1 {
+			return Entry{}, nil
+		}
+		entry = config.ChangeLogs[i]
 	}
 
-	i := slices.IndexFunc(config.ChangeLogs, func(entry Entry) bool {
-		return entry.Object == object
-	})
-	if i == -1 {
-		return Entry{}, nil
-	}
-	entry = config.ChangeLogs[i]
 	// populate publish_labels if they are empty
 	if entry.PublishLabels == nil {
 		if exportOption := parentParams.GetChildS("export_options"); exportOption != nil {
