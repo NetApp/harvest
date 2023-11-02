@@ -106,7 +106,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of shelves.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -182,7 +182,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Power consumed by shelf in Watts.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -257,7 +257,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Maximum temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -333,7 +333,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Temperature, in degrees celsius.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -407,7 +407,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Fan speed, in rpm.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -465,7 +465,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Maximum fan speed for shelf in rpm.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -522,7 +522,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Current, in milliamps.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -594,7 +594,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Power consumed by shelf in Watts.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -684,7 +684,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1424,7 +1424,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Temperature, in degrees celsius.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1490,7 +1490,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Fan speed, in rpm.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1570,7 +1570,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Voltage, in volts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1635,7 +1635,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Power drawn, in watts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1698,7 +1698,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Power rating, in watts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1776,7 +1776,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Current, in milliamps.",
           "fieldConfig": {
             "defaults": {
               "color": {

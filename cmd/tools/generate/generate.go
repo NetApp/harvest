@@ -143,7 +143,7 @@ func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
 	counters := generateMetricsWithDoc(false)
 	grafana.VisitDashboards(
-		[]string{"grafana/dashboards/cmode/volume.json"},
+		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
 			checkDesc(path, data, counters)
 		})
@@ -555,20 +555,6 @@ func checkDesc(dPath string, data []byte, counters map[string]Counter) {
 		return
 	}
 
-	// we don't get description for below panels, we need to manually formed them as per our need.
-	ignoreList := []string{
-		// These are from fsa
-		"Volume Access ($Activity) History", "Volume Access ($Activity) History By Percent", "Volume Modify ($Activity) History", "Volume Modify ($Activity) History By Percent",
-		// These are from snapmirror
-		"Destination Relationships per Node", "Source Relationships per SVM", "Destination Relationships per SVM",
-		// This is from workload
-		"Service Latency by Resources",
-		// These are from svm
-		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap",
-		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap",
-		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap",
-	}
-
 	grafana.VisitAllPanels(data, func(path string, key, value gjson.Result) {
 		kind := value.Get("type").String()
 		if kind == "row" || kind == "text" {
@@ -576,10 +562,6 @@ func checkDesc(dPath string, data []byte, counters map[string]Counter) {
 		}
 		description := value.Get("description").String()
 		targetsSlice := value.Get("targets").Array()
-		title := value.Get("title").String()
-		if slices.Contains(ignoreList, title) {
-			return
-		}
 
 		if description == "" {
 			if len(targetsSlice) == 1 {

@@ -90,7 +90,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of CIFS operations per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -180,7 +180,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of NFS operations per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -270,7 +270,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -548,6 +548,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1333,6 +1334,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1509,6 +1511,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1612,7 +1615,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1794,7 +1797,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {

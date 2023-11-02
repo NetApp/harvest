@@ -105,7 +105,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -229,7 +229,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of operations per second serviced by the volume.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -287,7 +287,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -353,7 +353,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -419,7 +419,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Bytes read per second.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -477,7 +477,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Bytes written per second.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -535,7 +535,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of read operations per second from the volume.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -593,7 +593,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of write operations per second to the volume.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -972,7 +972,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1062,6 +1062,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Bytes read per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1151,6 +1152,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of read operations per second from the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1240,6 +1242,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1329,6 +1332,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Bytes written per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1418,6 +1422,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of write operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1522,6 +1527,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Details of LIFs.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1670,6 +1676,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of bytes sent per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1759,6 +1766,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of bytes received per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1848,6 +1856,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1937,6 +1946,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2026,6 +2036,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data read from the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2115,6 +2126,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data written to the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2219,7 +2231,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for CIFS operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2443,7 +2455,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for CIFS read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2509,7 +2521,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for CIFS write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2575,7 +2587,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of CIFS read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2633,7 +2645,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of CIFS write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2897,7 +2909,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Array of select CIFS operation counts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2988,7 +3000,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "dispatch_latency: Latency by ONTAP to select a scanner and until the selected scanner pulls the request.\n\nscan_latency: Latency by the scanner after it pulls the request and until it responds, including scan time of the AV software.\n\nNote, the scan latency is per request (file) and not per IOP",
+          "description": "dispatch_latency: Latency by ONTAP to select a scanner and until the selected scanner pulls the request.\n\nscan_latency: Latency by the scanner after it pulls the request and until it responds, including scan time of the AV software.\n\nNote, the scan latency is per request (file) and not per IOP.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3083,7 +3095,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "scan_request_dispatched_rate: Number of virus-scanning requests sent from Data ONTAP to the Vscan servers per second.\n\nscan_noti_received_rate: Number of virus-scanning requests received back by Data ONTAP from the Vscan servers per second.\n\nIf (dispatched > received) then requests are failing or delayed and deeper troubleshooting is recommended.\n\nNote, the rate is per request (file) and not per IOP",
+          "description": "scan_request_dispatched_rate: Number of virus-scanning requests sent from Data ONTAP to the Vscan servers per second.\n\nscan_noti_received_rate: Number of virus-scanning requests received back by Data ONTAP from the Vscan servers per second.\n\nIf (dispatched \u003e received) then requests are failing or delayed and deeper troubleshooting is recommended.\n\nNote, the rate is per request (file) and not per IOP.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3178,7 +3190,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "connections_active: Number of active connections from ONTAP nodes to virus scan servers",
+          "description": "connections_active: Number of active connections from ONTAP nodes to virus scan servers.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3281,7 +3293,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for FCP operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3405,7 +3417,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3463,7 +3475,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3529,7 +3541,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3595,7 +3607,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3653,7 +3665,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3711,7 +3723,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3769,7 +3781,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4147,6 +4159,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4237,6 +4250,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4342,7 +4356,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for iSCSI operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4524,7 +4538,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4656,7 +4670,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data read from the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4714,7 +4728,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data written to the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4772,7 +4786,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "iSCSI read operations per second on this logical interface (LIF).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4830,7 +4844,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "iSCSI write operations per second on this logical interface (LIF).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4888,6 +4902,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data read from the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4978,6 +4993,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data written to the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5289,6 +5305,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of NFSv4 requests. This counter keeps track of the average response time of NFSv4 requests.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5354,6 +5371,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Rate of NFSv3 data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5453,6 +5471,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of NFSv3 procedure requests per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5552,6 +5571,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of READ operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5617,6 +5637,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of WRITE operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5682,6 +5703,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Rate of NFSv3 read data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5781,6 +5803,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "data transfers.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5880,6 +5903,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total observed NFSv3 read operations per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5979,6 +6003,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total observed NFSv3 write operations per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -6572,6 +6597,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of NFSv4 requests. This counter keeps track of the average response time of NFSv4 requests.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -6637,6 +6663,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Rate of NFSv3 data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -6736,6 +6763,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of NFSv3 procedure requests per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -6835,6 +6863,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of READ operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -6900,6 +6929,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of WRITE operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -6965,6 +6995,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Rate of NFSv3 read data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -7064,6 +7095,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "data transfers.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -7163,6 +7195,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of READ operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -7262,6 +7295,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of WRITE procedures.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -7872,6 +7906,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of NFSv4 requests. This counter keeps track of the average response time of NFSv4 requests.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -7937,6 +7972,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Rate of NFSv3 data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -8036,6 +8072,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of NFSv3 procedure requests per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -8135,6 +8172,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of READ operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -8200,6 +8238,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency of WRITE operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -8265,6 +8304,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Rate of NFSv3 read data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -8364,6 +8404,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "data transfers.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -8463,6 +8504,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of READ operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -8562,6 +8604,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of WRITE procedures.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9180,7 +9223,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for NVMF operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9304,7 +9347,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9362,7 +9405,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9428,7 +9471,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9494,7 +9537,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9552,7 +9595,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9610,7 +9653,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9668,7 +9711,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10047,6 +10090,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10137,6 +10181,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10242,6 +10287,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Sum of kilo-bytes copied.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10496,6 +10542,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the average response time for requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10616,6 +10663,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This field is the workload's rate of operations that completed during the measurement interval; measured per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10673,6 +10721,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the average response time for read requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10737,6 +10786,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the average response time for write requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10801,6 +10851,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the amount of data read per second from the filer by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10857,6 +10908,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the amount of data written per second to the filer by the workload.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10913,6 +10965,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the rate of this workload's read operations that completed during the measurement interval.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -10970,6 +11023,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This is the workload's write operations that completed during the measurement interval; measured per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -11433,6 +11487,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -11523,6 +11578,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -11613,6 +11669,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -11703,6 +11760,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -11793,6 +11851,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -11883,6 +11942,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -11973,6 +12033,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12063,6 +12124,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12153,6 +12215,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12258,6 +12321,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "percentage of utilized storage space in a volume relative to its total capacity.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12348,6 +12412,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Percentage of snapshot reserve size that has been used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12438,6 +12503,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Percentage of the total disk space that is saved by deduplication and file cloning.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12528,6 +12594,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "The total disk space (in bytes) that is saved by deduplication and file cloning.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12617,6 +12684,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Percentage of the total disk space that is saved by compressing blocks on the referenced file system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12707,6 +12775,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "The total disk space (in bytes) that is saved by compressing blocks on the referenced file system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -12797,6 +12866,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total space saved (in bytes) in the volume due to deduplication, compression, and file cloning.",
           "fieldConfig": {
             "defaults": {
               "color": {

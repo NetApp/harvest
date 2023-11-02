@@ -1268,7 +1268,7 @@ func checkRowNames(t *testing.T, path string, data []byte) {
 func TestDescription(t *testing.T) {
 	count := 0
 	VisitDashboards(
-		[]string{"../../../grafana/dashboards/cmode/volume.json"},
+		[]string{"../../../grafana/dashboards/cmode"},
 		func(path string, data []byte) {
 			checkDescription(t, path, data, &count)
 		})

@@ -200,7 +200,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average Power per used TB",
+      "description": "Average Power per used TB.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -260,7 +260,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Maximum temperature of all non-ambient sensors for node in Celsius.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -336,7 +336,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Maximum fan speed for shelf in rpm.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -393,7 +393,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average IOPs per Watt",
+      "description": "Average IOPs per Watt.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -453,7 +453,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Maximum temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -529,7 +529,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Maximum fan speed for node in rpm.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -731,7 +731,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Power consumed by a node in Watts.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -822,7 +822,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average temperature of all non-ambient sensors for node in Celsius.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -912,7 +912,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Power consumed by shelf in Watts.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1003,7 +1003,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1094,7 +1094,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "View the power usage at the aggregate level, track down any \"hot\" aggregates and their corresponding workloads.\n\nThe line chart provides the ability to see how read/write IOs directly affect the power usage of the system. ",
+      "description": "View the power usage at the aggregate level, track down any \"hot\" aggregates and their corresponding workloads.\n\nThe line chart provides the ability to see how read/write IOs directly affect the power usage of the system. .",
       "fieldConfig": {
         "defaults": {
           "color": {

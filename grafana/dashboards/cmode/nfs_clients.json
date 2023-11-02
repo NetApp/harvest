@@ -108,7 +108,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector",
+      "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -168,7 +168,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector",
+      "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -298,7 +298,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector",
+      "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector.",
       "fieldConfig": {
         "defaults": {
           "color": {

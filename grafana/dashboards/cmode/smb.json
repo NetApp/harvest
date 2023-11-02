@@ -334,6 +334,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Detail of CIFS sessions.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -516,7 +517,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel includes sum of read and write SMB OP’s /sec",
+          "description": "This panel includes sum of read and write SMB OP’s /sec.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -610,7 +611,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel includes average SMB read and write latency",
+          "description": "This panel includes average SMB read and write latency.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1040,7 +1041,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for Session Setups and gives good indication of Client Authentication Latency Breakdown",
+          "description": "This panel tracks histograms for Session Setups and gives good indication of Client Authentication Latency Breakdown.",
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -1109,7 +1110,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for file opens and creates",
+          "description": "This panel tracks histograms for file opens and creates.",
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -1178,7 +1179,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for file closes",
+          "description": "This panel tracks histograms for file closes.",
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -1247,7 +1248,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for file locks",
+          "description": "This panel tracks histograms for file locks.",
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -1316,7 +1317,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for readdir",
+          "description": "This panel tracks histograms for readdir.",
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -1385,7 +1386,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for getattr",
+          "description": "This panel tracks histograms for getattr.",
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -1454,7 +1455,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for setattr",
+          "description": "This panel tracks histograms for setattr.",
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -1523,7 +1524,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel tracks histograms for oplock breaks",
+          "description": "This panel tracks histograms for oplock breaks.",
           "gridPos": {
             "h": 8,
             "w": 12,
