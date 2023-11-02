@@ -136,12 +136,12 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	generateMetrics(true)
+	generateMetricsWithDoc(true)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters := generateMetrics(false)
+	counters := generateMetricsWithDoc(false)
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode/volume.json"},
 		func(path string, data []byte) {
@@ -499,7 +499,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func generateMetrics(isUpdateMetricDoc bool) map[string]Counter {
+func generateMetricsWithDoc(isUpdateMetricDoc bool) map[string]Counter {
 	var (
 		poller     *conf.Poller
 		err        error
@@ -581,24 +581,26 @@ func checkDesc(dPath string, data []byte, counters map[string]Counter) {
 			return
 		}
 
-		if description == "" && len(targetsSlice) == 1 {
-			expr := targetsSlice[0].Get("expr").String()
-			if !(strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on")) {
-				allMatches := metricRe.FindAllStringSubmatch(expr, -1)
-				for _, match := range allMatches {
-					m := match[1]
-					if len(m) == 0 {
-						continue
+		if description == "" {
+			if len(targetsSlice) == 1 {
+				expr := targetsSlice[0].Get("expr").String()
+				if !(strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on")) {
+					allMatches := metricRe.FindAllStringSubmatch(expr, -1)
+					for _, match := range allMatches {
+						m := match[1]
+						if len(m) == 0 {
+							continue
+						}
+						expr = m
 					}
-					expr = m
+					panelPath := strings.Replace(strings.Replace(path, "[", ".", -1), "]", ".", -1) + "description"
+					// description should end with period
+					desc := counters[expr].Description
+					if desc != "" && !strings.HasSuffix(desc, ".") {
+						desc = desc + "."
+					}
+					panelDescriptionMap[panelPath] = desc
 				}
-				panelPath := strings.Replace(strings.Replace(path, "[", ".", -1), "]", ".", -1) + "description"
-				// description should end with period
-				desc := counters[expr].Description
-				if desc != "" && !strings.HasSuffix(desc, ".") {
-					desc = desc + "."
-				}
-				panelDescriptionMap[panelPath] = desc
 			}
 		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
 			// Few panels have description text from variable, which would be ignored.

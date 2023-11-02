@@ -567,7 +567,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -4449,7 +4449,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4562,7 +4562,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4672,7 +4672,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4789,7 +4789,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5386,7 +5386,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "Footprint of blocks written to the volume in bytes for the performance tier (bin 0).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5480,7 +5480,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "Footprint of blocks written to the volume in performance tier (bin 0) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5575,7 +5575,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "Footprint of blocks written to the volume in bytes for capacity tier (bin 1).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5669,7 +5669,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": ".",
+          "description": "Footprint of blocks written to the volume in capacity tier (bin 1) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
               "color": {
