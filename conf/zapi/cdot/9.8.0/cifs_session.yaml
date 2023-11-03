@@ -1,3 +1,5 @@
+# The CIFSSession template may slow down data collection due to a high number of metrics.
+
 name:               CIFSSession
 query:              cifs-session-get-iter
 object:             cifs_session
