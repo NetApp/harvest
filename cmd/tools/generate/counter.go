@@ -665,7 +665,9 @@ var reRemove = regexp.MustCompile(`NFSv\d+\.\d+`)
 
 func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Counter) map[string]Counter {
 	// handle special counters
-	for k, v := range restCounters {
+	restKeys := sortedKeys(restCounters)
+	for _, k := range restKeys {
+		v := restCounters[k]
 		hashIndex := strings.Index(k, "#")
 		if hashIndex != -1 {
 			if v1, ok := restCounters[v.Name]; !ok {
@@ -681,7 +683,10 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 		}
 	}
 
-	for k, v := range zapiCounters {
+	zapiKeys := sortedKeys(zapiCounters)
+	sort.Strings(zapiKeys)
+	for _, k := range zapiKeys {
+		v := zapiCounters[k]
 		hashIndex := strings.Index(k, "#")
 		if hashIndex != -1 {
 			if v1, ok := zapiCounters[v.Name]; !ok {
@@ -697,7 +702,10 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 		}
 	}
 
-	for k, v := range zapiCounters {
+	// special keys are deleted hence sort again
+	zapiKeys = sortedKeys(zapiCounters)
+	for _, k := range zapiKeys {
+		v := zapiCounters[k]
 		if v1, ok := restCounters[k]; ok {
 			v1.APIs = append(v1.APIs, v.APIs...)
 			restCounters[k] = v1
@@ -715,6 +723,15 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 		}
 	}
 	return restCounters
+}
+
+func sortedKeys(m map[string]Counter) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func processRestPerfCounters(path string, client *rest.Client) map[string]Counter {
