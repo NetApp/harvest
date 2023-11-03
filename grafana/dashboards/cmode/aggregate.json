@@ -443,7 +443,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percent of space used.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -502,7 +502,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Aggregate details.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2396,6 +2396,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio of space used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2451,6 +2452,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshot.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2507,6 +2509,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshots and flexclones.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4998,7 +5001,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5087,7 +5090,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes read per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5177,7 +5180,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of read operations per second from the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5266,7 +5269,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5355,7 +5358,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes written per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5444,7 +5447,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of write operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {

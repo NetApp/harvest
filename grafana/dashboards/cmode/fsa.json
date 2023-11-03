@@ -329,6 +329,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Volume space used percent.",
       "fieldConfig": {
         "defaults": {
           "color": {

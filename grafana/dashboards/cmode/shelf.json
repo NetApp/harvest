@@ -773,7 +773,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Storage shelf details.",
       "fieldConfig": {
         "defaults": {
           "color": {

@@ -459,7 +459,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Disk capacity per aggregate detail.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1161,7 +1161,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average number of blocks transferred in each user read operation. aggr_disk_max_user_read_chain is the maximum of [disk_user_read_chain](#disk_user_read_chain) for label `aggr`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1253,7 +1253,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Average number of blocks transferred in each user write operation. aggr_disk_max_user_write_chain is the maximum of [disk_user_write_chain](#disk_user_write_chain) for label `aggr`.",
       "fieldConfig": {
         "defaults": {
           "color": {

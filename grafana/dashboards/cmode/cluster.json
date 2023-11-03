@@ -351,6 +351,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Node total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -886,6 +887,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Node total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1203,7 +1205,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Node details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1710,7 +1712,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Cluster subsystem details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -2113,7 +2115,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Aggregate space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2467,6 +2469,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Volume total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3035,6 +3038,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio of space used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3090,6 +3094,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshot.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3145,6 +3150,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshot and flexclone.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3805,7 +3811,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "SVM total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {

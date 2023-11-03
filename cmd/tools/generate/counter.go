@@ -591,7 +591,7 @@ func updateDescription(description string) string {
 	return s
 }
 
-func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
+func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 	targetPath := "docs/ontap-metrics.md"
 	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/generate/counter.tmpl")
 	if err != nil {
@@ -644,7 +644,7 @@ func generateCounterTemplate(counters map[string]Counter, client *rest.Client) {
 		}
 	}
 
-	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(client.Cluster().Version)), "."), "[]")
+	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(version)), "."), "[]")
 	c := CounterTemplate{
 		Counters: values,
 		CounterMetaData: CounterMetaData{

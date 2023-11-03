@@ -731,7 +731,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Volumes details of snapshot copy reserve space.",
           "fieldConfig": {
             "defaults": {
               "custom": {

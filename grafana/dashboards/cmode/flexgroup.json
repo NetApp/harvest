@@ -213,7 +213,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Volume total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -406,7 +406,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "FlexGroup constituents details.",
           "fieldConfig": {
             "defaults": {
               "custom": {

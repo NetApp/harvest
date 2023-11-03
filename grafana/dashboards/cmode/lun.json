@@ -1171,7 +1171,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "LUN details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -3719,6 +3719,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "LUN used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3812,6 +3813,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "LUN used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {

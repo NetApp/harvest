@@ -136,12 +136,13 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	generateMetricsWithDoc(true)
+	counters, cluster := generateMetrics()
+	generateCounterTemplate(counters, cluster.Version)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters := generateMetricsWithDoc(false)
+	counters, _ := generateMetrics()
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
@@ -499,7 +500,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func generateMetricsWithDoc(isUpdateMetricDoc bool) map[string]Counter {
+func generateMetrics() (map[string]Counter, rest.Cluster) {
 	var (
 		poller     *conf.Poller
 		err        error
@@ -537,11 +538,7 @@ func generateMetricsWithDoc(isUpdateMetricDoc bool) map[string]Counter {
 	zapiCounters := processZapiCounters(zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(counters)
-	if !isUpdateMetricDoc {
-		return counters
-	}
-	generateCounterTemplate(counters, restClient)
-	return nil
+	return counters, restClient.Cluster()
 }
 
 func checkDesc(dPath string, data []byte, counters map[string]Counter) {
@@ -566,7 +563,7 @@ func checkDesc(dPath string, data []byte, counters map[string]Counter) {
 		if description == "" {
 			if len(targetsSlice) == 1 {
 				expr := targetsSlice[0].Get("expr").String()
-				if !(strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on")) {
+				if !(strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on")) {
 					allMatches := metricRe.FindAllStringSubmatch(expr, -1)
 					for _, match := range allMatches {
 						m := match[1]
@@ -575,23 +572,18 @@ func checkDesc(dPath string, data []byte, counters map[string]Counter) {
 						}
 						expr = m
 					}
-					panelPath := strings.Replace(strings.Replace(path, "[", ".", -1), "]", ".", -1) + "description"
-					// description should end with period
-					desc := counters[expr].Description
-					if desc != "" && !strings.HasSuffix(desc, ".") {
-						desc = desc + "."
-					}
-					panelDescriptionMap[panelPath] = desc
+					panelPath, updatedDescription := generatePanelPathWithDescription(path, counters[expr].Description)
+					panelDescriptionMap[panelPath] = updatedDescription
 				}
 			}
 		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
 			// Few panels have description text from variable, which would be ignored.
-			panelPath := strings.Replace(strings.Replace(path, "[", ".", -1), "]", ".", -1) + "description"
-			description = description + "."
-			panelDescriptionMap[panelPath] = description
+			panelPath, updatedDescription := generatePanelPathWithDescription(path, description)
+			panelDescriptionMap[panelPath] = updatedDescription
 		}
 	})
 
+	// Update the dashboard with description
 	for path, value := range panelDescriptionMap {
 		data, err = sjson.SetBytes(data, path, value)
 		if err != nil {
@@ -599,6 +591,7 @@ func checkDesc(dPath string, data []byte, counters map[string]Counter) {
 		}
 	}
 
+	// Sorted json
 	sorted := pretty.PrettyOptions(data, &pretty.Options{
 		SortKeys: true,
 		Indent:   "  ",
@@ -607,6 +600,13 @@ func checkDesc(dPath string, data []byte, counters map[string]Counter) {
 	if err = os.WriteFile(dPath, sorted, grafana.GPerm); err != nil {
 		log.Fatalf("failed to write dashboard=%s err=%v\n", dPath, err)
 	}
+}
+
+func generatePanelPathWithDescription(path string, desc string) (string, string) {
+	if desc != "" && !strings.HasSuffix(desc, ".") {
+		desc = desc + "."
+	}
+	return strings.Replace(strings.Replace(path, "[", ".", -1), "]", ".", -1) + "description", desc
 }
 
 func init() {
