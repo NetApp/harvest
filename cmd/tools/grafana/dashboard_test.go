@@ -1298,6 +1298,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap",
 		// This is from volume
 		"Top $TopResources Volumes by Inode Files Used Percentage", "Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail",
+		"Volume Latency by Op Type", "Volume IOPs per Type",
 	}
 
 	VisitAllPanels(data, func(path string, key, value gjson.Result) {
@@ -1316,7 +1317,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		if description == "" {
 			if len(targetsSlice) == 1 {
 				expr := targetsSlice[0].Get("expr").String()
-				if strings.Contains(expr, "/") || strings.Contains(expr, "*") || strings.Contains(expr, "+") || strings.Contains(expr, "-") {
+				if strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
 					//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
 					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
