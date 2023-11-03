@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
@@ -726,10 +727,7 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 }
 
 func sortedKeys(m map[string]Counter) []string {
-	keys := make([]string, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
+	keys := maps.Keys(m)
 	sort.Strings(keys)
 	return keys
 }
