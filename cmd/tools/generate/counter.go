@@ -17,6 +17,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 	"text/template"
@@ -685,7 +686,6 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 	}
 
 	zapiKeys := sortedKeys(zapiCounters)
-	sort.Strings(zapiKeys)
 	for _, k := range zapiKeys {
 		v := zapiCounters[k]
 		hashIndex := strings.Index(k, "#")
@@ -728,7 +728,7 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 
 func sortedKeys(m map[string]Counter) []string {
 	keys := maps.Keys(m)
-	sort.Strings(keys)
+	slices.Sort(keys)
 	return keys
 }
 
