@@ -217,6 +217,12 @@ func Init(c Collector) error {
 	md.SetGlobalLabel("object", object)
 	md.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
 
+	if params.HasChildS("labels") {
+		for _, l := range params.GetChildS("labels").GetChildren() {
+			md.SetGlobalLabel(l.GetNameS(), l.GetContentS())
+		}
+	}
+
 	_, _ = md.NewMetricInt64("poll_time")
 	_, _ = md.NewMetricInt64("task_time")
 	_, _ = md.NewMetricInt64("api_time")
