@@ -75,10 +75,8 @@ func New(c, n string, o *options.Options, p conf.Exporter, params *conf.Poller) 
 		labels := params.Labels
 		if labels != nil {
 			for _, labelPtr := range *labels {
-				if labelPtr != nil {
-					for key, value := range *labelPtr {
-						abc.Metadata.SetGlobalLabel(key, value)
-					}
+				for key, value := range labelPtr {
+					abc.Metadata.SetGlobalLabel(key, value)
 				}
 			}
 		}

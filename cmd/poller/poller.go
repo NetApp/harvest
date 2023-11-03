@@ -934,11 +934,9 @@ func (p *Poller) loadMetadata() {
 	labels := p.params.Labels
 	if labels != nil {
 		for _, labelPtr := range *labels {
-			if labelPtr != nil {
-				for key, value := range *labelPtr {
-					p.metadata.SetGlobalLabel(key, value)
-					p.status.SetGlobalLabel(key, value)
-				}
+			for key, value := range labelPtr {
+				p.metadata.SetGlobalLabel(key, value)
+				p.status.SetGlobalLabel(key, value)
 			}
 		}
 	}

@@ -421,32 +421,32 @@ type CertificateScript struct {
 }
 
 type Poller struct {
-	Addr              string                `yaml:"addr,omitempty"`
-	APIVersion        string                `yaml:"api_version,omitempty"`
-	APIVfiler         string                `yaml:"api_vfiler,omitempty"`
-	AuthStyle         string                `yaml:"auth_style,omitempty"`
-	CaCertPath        string                `yaml:"ca_cert,omitempty"`
-	ClientTimeout     string                `yaml:"client_timeout,omitempty"`
-	Collectors        []Collector           `yaml:"collectors,omitempty"`
-	CredentialsFile   string                `yaml:"credentials_file,omitempty"`
-	CredentialsScript CredentialsScript     `yaml:"credentials_script,omitempty"`
-	CertificateScript CertificateScript     `yaml:"certificate_script,omitempty"`
-	Datacenter        string                `yaml:"datacenter,omitempty"`
-	Exporters         []string              `yaml:"exporters,omitempty"`
-	IsKfs             bool                  `yaml:"is_kfs,omitempty"`
-	Labels            *[]*map[string]string `yaml:"labels,omitempty"`
-	LogMaxBytes       int64                 `yaml:"log_max_bytes,omitempty"`
-	LogMaxFiles       int                   `yaml:"log_max_files,omitempty"`
-	LogSet            *[]string             `yaml:"log,omitempty"`
-	Password          string                `yaml:"password,omitempty"`
-	PollerSchedule    string                `yaml:"poller_schedule,omitempty"`
-	SslCert           string                `yaml:"ssl_cert,omitempty"`
-	SslKey            string                `yaml:"ssl_key,omitempty"`
-	TLSMinVersion     string                `yaml:"tls_min_version,omitempty"`
-	UseInsecureTLS    *bool                 `yaml:"use_insecure_tls,omitempty"`
-	Username          string                `yaml:"username,omitempty"`
-	PreferZAPI        bool                  `yaml:"prefer_zapi,omitempty"`
-	ConfPath          string                `yaml:"conf_path,omitempty"`
+	Addr              string               `yaml:"addr,omitempty"`
+	APIVersion        string               `yaml:"api_version,omitempty"`
+	APIVfiler         string               `yaml:"api_vfiler,omitempty"`
+	AuthStyle         string               `yaml:"auth_style,omitempty"`
+	CaCertPath        string               `yaml:"ca_cert,omitempty"`
+	ClientTimeout     string               `yaml:"client_timeout,omitempty"`
+	Collectors        []Collector          `yaml:"collectors,omitempty"`
+	CredentialsFile   string               `yaml:"credentials_file,omitempty"`
+	CredentialsScript CredentialsScript    `yaml:"credentials_script,omitempty"`
+	CertificateScript CertificateScript    `yaml:"certificate_script,omitempty"`
+	Datacenter        string               `yaml:"datacenter,omitempty"`
+	Exporters         []string             `yaml:"exporters,omitempty"`
+	IsKfs             bool                 `yaml:"is_kfs,omitempty"`
+	Labels            *[]map[string]string `yaml:"labels,omitempty"`
+	LogMaxBytes       int64                `yaml:"log_max_bytes,omitempty"`
+	LogMaxFiles       int                  `yaml:"log_max_files,omitempty"`
+	LogSet            *[]string            `yaml:"log,omitempty"`
+	Password          string               `yaml:"password,omitempty"`
+	PollerSchedule    string               `yaml:"poller_schedule,omitempty"`
+	SslCert           string               `yaml:"ssl_cert,omitempty"`
+	SslKey            string               `yaml:"ssl_key,omitempty"`
+	TLSMinVersion     string               `yaml:"tls_min_version,omitempty"`
+	UseInsecureTLS    *bool                `yaml:"use_insecure_tls,omitempty"`
+	Username          string               `yaml:"username,omitempty"`
+	PreferZAPI        bool                 `yaml:"prefer_zapi,omitempty"`
+	ConfPath          string               `yaml:"conf_path,omitempty"`
 	promIndex         int
 	Name              string
 }
