@@ -1571,7 +1571,7 @@ Number of discarded frames.
 
 ### fcp_fabric_connected_speed
 
-
+The negotiated data rate between the target FC port and the fabric in gigabits per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1760,7 +1760,7 @@ Number of times this port lost sync
 
 ### fcp_max_speed
 
-
+The maximum speed supported by the FC port in gigabits per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

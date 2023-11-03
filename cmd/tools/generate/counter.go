@@ -34,6 +34,7 @@ var (
 		"ontaps3":            "xc_s3_bucket",
 		"security_ssh":       "cluster_ssh_server",
 		"namespace":          "nvme_namespace",
+		"fcp":                "fc_port",
 	}
 	swaggerBytes         []byte
 	excludePerfTemplates = map[string]struct{}{
