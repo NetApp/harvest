@@ -144,9 +144,9 @@ func Init(c Collector) error {
 	object := c.GetObject()
 
 	// Initialize schedule and tasks (polls)
-	tasks := params.GetChildS("schedule")
-	if tasks == nil || len(tasks.GetChildren()) == 0 {
-		return errs.New(errs.ErrMissingParam, "schedule")
+	tasks, err := schedule.LoadTasks(params)
+	if err != nil {
+		return err
 	}
 
 	s := schedule.New()
@@ -154,14 +154,14 @@ func Init(c Collector) error {
 	// Each task will be mapped to a collector method
 	// Example: "data" will be aligned to method PollData()
 	caser := cases.Title(language.Und)
-	for _, task := range tasks.GetChildren() {
+	for _, task := range tasks {
 
-		methodName := "Poll" + caser.String(task.GetNameS())
+		methodName := "Poll" + caser.String(task.Name)
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
-				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
-					return errs.New(errs.ErrInvalidParam, "schedule ("+task.GetNameS()+"): "+err.Error())
+				if err := s.NewJitterTask(task.Name, task.Interval, task.Jitter, foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
+					return errs.New(errs.ErrInvalidParam, "schedule ("+task.Name+"): "+err.Error())
 				}
 			} else {
 				return errs.New(errs.ErrImplement, methodName+" has not signature 'func() (*matrix.Matrix, error)'")

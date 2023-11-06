@@ -12,7 +12,7 @@
 //
 // Create Schedule:
 //  - Initialize empty Schedule with New(),
-//  - Add tasks with NewTask() or NewTaskString(),
+//  - Add tasks with newTask() or NewTaskString(),
 //    the task is marked as due immediately!
 //
 // Use Schedule (usually in a closed loop):
@@ -34,16 +34,20 @@ package schedule
 import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"math/rand"
 	"time"
 )
 
+type pollFunc = func() (map[string]*matrix.Matrix, error)
+
 // Task represents a scheduled task
 type Task struct {
-	Name       string                                    // name of the task
-	interval   time.Duration                             // the schedule interval
-	timer      time.Time                                 // last time task was executed
-	foo        func() (map[string]*matrix.Matrix, error) // pointer to the function that executes the task
-	identifier string                                    // optional additional information about schedule i.e. collector name
+	Name       string        // name of the task
+	interval   time.Duration // the schedule interval
+	timer      time.Time     // last time task was executed
+	foo        pollFunc      // pointer to the function that executes the task
+	identifier string        // optional additional information about schedule i.e. collector name
 }
 
 // Start marks the task as started by updating timer
@@ -60,23 +64,23 @@ func (t *Task) Run() (map[string]*matrix.Matrix, error) {
 	return t.foo()
 }
 
-// GetDuration tells duration of executing the task
+// GetDuration returns the duration of executing the task
 // it assumes that the task just completed
 func (t *Task) GetDuration() time.Duration {
 	return time.Since(t.timer)
 }
 
-// GetInterval tells the scheduled interval of the task
+// GetInterval returns the scheduled interval of the task
 func (t *Task) GetInterval() time.Duration {
 	return t.interval
 }
 
-// NextDue tells time until the task is due
+// NextDue returns time until the task is due
 func (t *Task) NextDue() time.Duration {
 	return t.interval - time.Since(t.timer)
 }
 
-// IsDue tells whether it's time to run the task
+// IsDue returns whether it's time to run the task
 func (t *Task) IsDue() bool {
 	return t.NextDue() <= 0
 }
@@ -165,20 +169,34 @@ func (s *Schedule) Recover() {
 	panic("recover in non-standByMode")
 }
 
-// NewTask creates new task named n with interval i. If f is not nil, f will be called
-// to execute task when task.Run() is called. Task name n should be unique. Interval i
-// should be positive.
-// The order in which tasks are added is maintained: GetTasks() will
-// return tasks in FIFO order.
-func (s *Schedule) NewTask(n string, i time.Duration, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
+// newTask creates a new task named n with an interval i.
+// If f is not nil, f will be called to execute task when task.Run() is called.
+// Task name n should be unique.
+// Interval i should be positive.
+// The order in which tasks are added is maintained: GetTasks() will return tasks in FIFO order.
+func (s *Schedule) newTask(n string, i time.Duration, j string, f pollFunc, runNow bool, identifier string) error {
+	var (
+		jitter time.Duration
+		err    error
+	)
+
+	if j != "" {
+		jitter, err = time.ParseDuration(j)
+		if err != nil {
+			return err
+		}
+		// no need for cryptographically secure random number
+		jitter = time.Duration(rand.Int63n(int64(jitter))) //nolint:gosec
+	}
+
 	if s.GetTask(n) == nil {
 		if i > 0 {
 			t := &Task{Name: n, interval: i, foo: f, identifier: identifier}
-			s.cachedInterval[n] = t.interval // remember normal interval of task
+			s.cachedInterval[n] = t.interval // remember the normal interval of the task
 			if runNow {
-				t.timer = time.Now().Add(-i) // set to run immediately
+				t.timer = time.Now().Add(-i + jitter) // set to run immediately
 			} else {
-				t.timer = time.Now().Add(0) // run after interval has elapsed
+				t.timer = time.Now().Add(jitter) // run after the interval has elapsed
 			}
 			s.tasks = append(s.tasks, t)
 			return nil
@@ -189,12 +207,17 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (map[string]*matr
 }
 
 // NewTaskString creates a new task, the interval is parsed from string i
-func (s *Schedule) NewTaskString(n, i string, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
+func (s *Schedule) NewTaskString(n, i string, f pollFunc, runNow bool, identifier string) error {
+	return s.NewJitterTask(n, i, "", f, runNow, identifier)
+}
+
+// NewJitterTask creates a new task with jitter j and interval i
+func (s *Schedule) NewJitterTask(n, i, j string, f pollFunc, runNow bool, identifier string) error {
 	d, err := time.ParseDuration(i)
 	if err != nil {
 		return err
 	}
-	return s.NewTask(n, d, f, runNow, identifier)
+	return s.newTask(n, d, j, f, runNow, identifier)
 }
 
 // GetTasks returns scheduled tasks
@@ -244,4 +267,80 @@ func (s *Schedule) NextDue() time.Duration {
 	}
 
 	return d
+}
+
+type TaskSpec struct {
+	Name     string
+	Interval string
+	Jitter   string
+}
+
+// LoadTasks creates a slice of TaskSpec from a node.Node.
+func LoadTasks(params *node.Node) ([]*TaskSpec, error) {
+	tasks, err := readTasks(params)
+	if err != nil {
+		return nil, err
+	}
+	err = addJitter(params, tasks)
+	if err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
+
+func addJitter(params *node.Node, tasks []*TaskSpec) error {
+	n := params.GetChildS("jitter")
+	if n == nil || len(n.GetChildren()) == 0 {
+		return nil
+	}
+
+	for _, jitterN := range n.GetChildren() {
+		name := jitterN.GetNameS()
+		interval := jitterN.GetContentS()
+		var task *TaskSpec
+
+		for i, ts := range tasks {
+			if ts.Name == name {
+				task = tasks[i]
+				break
+			}
+		}
+
+		if task == nil {
+			return errs.New(errs.ErrInvalidParam, "jitter item named="+name+" not found in tasks")
+		}
+		if interval == "" {
+			return errs.New(errs.ErrMissingParam, "jitter interval for task="+name)
+		}
+
+		task.Jitter = interval
+	}
+
+	return nil
+}
+
+func readTasks(params *node.Node) ([]*TaskSpec, error) {
+	sn := params.GetChildS("schedule")
+	if sn == nil || len(sn.GetChildren()) == 0 {
+		return nil, errs.New(errs.ErrMissingParam, "schedule")
+	}
+
+	var tss []*TaskSpec
+
+	for _, task := range sn.GetChildren() {
+		ts := TaskSpec{}
+		ts.Name = task.GetNameS()
+		ts.Interval = task.GetContentS()
+
+		if ts.Name == "" {
+			return nil, errs.New(errs.ErrMissingParam, "task name")
+		}
+		if ts.Interval == "" {
+			return nil, errs.New(errs.ErrMissingParam, "task interval")
+		}
+
+		tss = append(tss, &ts)
+	}
+
+	return tss, nil
 }

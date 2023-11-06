@@ -1,6 +1,8 @@
 package schedule
 
 import (
+	"github.com/netapp/harvest/v2/pkg/tree"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -41,5 +43,65 @@ func TestSchedule_Recover(t *testing.T) {
 				t.Errorf("expected = %b, got %b", 6e+11, task.interval)
 			}
 		}
+	}
+}
+
+func TestLoadTasks(t *testing.T) {
+	tests := []struct {
+		name    string
+		yaml    string
+		want    []*TaskSpec
+		wantErr bool
+	}{
+		{
+			name: "with jitter",
+			yaml: `
+schedule:
+  - counter: 1h
+  - instance: 5m
+  - data: 3m
+
+jitter:
+  - instance: 3m
+  - data: 1m
+`,
+			want: []*TaskSpec{
+				{Name: "counter", Interval: "1h", Jitter: ""},
+				{Name: "instance", Interval: "5m", Jitter: "3m"},
+				{Name: "data", Interval: "3m", Jitter: "1m"},
+			},
+		},
+
+		{
+			name: "no jitter",
+			yaml: `
+schedule:
+ - counter:  20m
+ - instance: 10m
+ - data:      3m`,
+			want: []*TaskSpec{
+				{Name: "counter", Interval: "20m", Jitter: ""},
+				{Name: "instance", Interval: "10m", Jitter: ""},
+				{Name: "data", Interval: "3m", Jitter: ""},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			node, err := tree.LoadYaml([]byte(tt.yaml))
+			if err != nil {
+				t.Errorf("LoadTasks() error = %v", err)
+				return
+			}
+			got, err := LoadTasks(node)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("LoadTasks() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("LoadTasks() got = %+v, want %+v", got, tt.want)
+			}
+		})
 	}
 }
