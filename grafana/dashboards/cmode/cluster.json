@@ -105,6 +105,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -227,6 +228,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time. node_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -349,6 +351,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Node total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -447,6 +450,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -545,7 +549,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average processor utilization across all processors in the system",
+      "description": "Average processor utilization across all processors in the system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -791,6 +795,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -882,6 +887,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Node total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -973,6 +979,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1064,6 +1071,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "The utilization percent of the disk. node_disk_busy is [disk_busy](#disk_busy) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1197,7 +1205,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Node details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1470,7 +1478,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "It is an indicator of the overall health status of the cluster, with a value of 1 indicating a healthy status and a value of 0 indicating an unhealthy status.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1630,7 +1638,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average processor utilization across all processors in the system",
+          "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1704,7 +1712,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Cluster subsystem details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1958,7 +1966,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The utilization percent of the disk. node_disk_max_busy is the maximum of [disk_busy](#disk_busy) for label `node`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2032,7 +2040,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The utilization percent of the disk. node_disk_busy is [disk_busy](#disk_busy) aggregated by `node`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2107,7 +2115,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Aggregate space used percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2267,7 +2275,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average processor utilization across all processors in the system",
+          "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2369,6 +2377,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2460,6 +2469,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Volume total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2550,6 +2560,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2640,7 +2651,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The utilization percent of the disk. aggr_disk_busy is [disk_busy](#disk_busy) aggregated by `aggr`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2733,7 +2744,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The percentage of disk space currently in use on the referenced file system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2826,7 +2837,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average processor utilization across all processors in the system",
+          "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3027,6 +3038,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio of space used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3082,6 +3094,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshot.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3137,6 +3150,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshot and flexclone.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3192,7 +3206,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3276,6 +3290,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Physical Used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3359,6 +3374,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3442,6 +3458,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Data Reduction Physical Used Without Snapshots.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3525,7 +3542,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3609,6 +3626,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total data reduction physical used without snapshots and flexclones.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3707,6 +3725,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3792,7 +3811,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "SVM total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3880,7 +3899,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {

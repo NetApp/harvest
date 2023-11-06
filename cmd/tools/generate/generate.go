@@ -2,6 +2,7 @@ package generate
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -9,10 +10,15 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/pretty"
+	"github.com/tidwall/sjson"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"text/template"
@@ -68,6 +74,8 @@ type options struct {
 	confPath    string
 }
 
+var metricRe = regexp.MustCompile(`(\w+)\{`)
+
 var opts = &options{
 	loglevel: 2,
 	image:    "harvest:latest",
@@ -104,6 +112,13 @@ var metricCmd = &cobra.Command{
 	Run:    doGenerateMetrics,
 }
 
+var descCmd = &cobra.Command{
+	Use:    "desc",
+	Short:  "generate Description of panels",
+	Hidden: true,
+	Run:    doDescription,
+}
+
 func doDockerFull(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
 	generateDocker(full)
@@ -121,7 +136,18 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	generateMetrics()
+	counters, cluster := generateMetrics()
+	generateCounterTemplate(counters, cluster.Version)
+}
+
+func doDescription(cmd *cobra.Command, _ []string) {
+	addRootOptions(cmd)
+	counters, _ := generateMetrics()
+	grafana.VisitDashboards(
+		[]string{"grafana/dashboards/cmode"},
+		func(path string, data []byte) {
+			generateDescription(path, data, counters)
+		})
 }
 
 func addRootOptions(cmd *cobra.Command) {
@@ -474,7 +500,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func generateMetrics() {
+func generateMetrics() (map[string]Counter, rest.Cluster) {
 	var (
 		poller     *conf.Poller
 		err        error
@@ -512,12 +538,81 @@ func generateMetrics() {
 	zapiCounters := processZapiCounters(zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(counters)
-	generateCounterTemplate(counters, restClient)
+	return counters, restClient.Cluster()
+}
+
+func generateDescription(dPath string, data []byte, counters map[string]Counter) {
+	var err error
+	dashPath := grafana.ShortPath(dPath)
+	panelDescriptionMap := make(map[string]string)
+	ignoreDashboards := []string{
+		"cmode/health.json", "cmode/headroom.json",
+	}
+	if slices.Contains(ignoreDashboards, dashPath) {
+		return
+	}
+
+	grafana.VisitAllPanels(data, func(path string, key, value gjson.Result) {
+		kind := value.Get("type").String()
+		if kind == "row" || kind == "text" {
+			return
+		}
+		description := value.Get("description").String()
+		targetsSlice := value.Get("targets").Array()
+
+		if description == "" {
+			if len(targetsSlice) == 1 {
+				expr := targetsSlice[0].Get("expr").String()
+				if !(strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on")) {
+					allMatches := metricRe.FindAllStringSubmatch(expr, -1)
+					for _, match := range allMatches {
+						m := match[1]
+						if len(m) == 0 {
+							continue
+						}
+						expr = m
+					}
+					panelPath, updatedDescription := generatePanelPathWithDescription(path, counters[expr].Description)
+					panelDescriptionMap[panelPath] = updatedDescription
+				}
+			}
+		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
+			// Few panels have description text from variable, which would be ignored.
+			panelPath, updatedDescription := generatePanelPathWithDescription(path, description)
+			panelDescriptionMap[panelPath] = updatedDescription
+		}
+	})
+
+	// Update the dashboard with description
+	for path, value := range panelDescriptionMap {
+		data, err = sjson.SetBytes(data, path, value)
+		if err != nil {
+			log.Fatalf("error while updating the panel in dashboard %s err: %+v", dPath, err)
+		}
+	}
+
+	// Sorted json
+	sorted := pretty.PrettyOptions(data, &pretty.Options{
+		SortKeys: true,
+		Indent:   "  ",
+	})
+
+	if err = os.WriteFile(dPath, sorted, grafana.GPerm); err != nil {
+		log.Fatalf("failed to write dashboard=%s err=%v\n", dPath, err)
+	}
+}
+
+func generatePanelPathWithDescription(path string, desc string) (string, string) {
+	if desc != "" && !strings.HasSuffix(desc, ".") {
+		desc = desc + "."
+	}
+	return strings.Replace(strings.Replace(path, "[", ".", -1), "]", ".", -1) + "description", desc
 }
 
 func init() {
 	Cmd.AddCommand(systemdCmd)
 	Cmd.AddCommand(metricCmd)
+	Cmd.AddCommand(descCmd)
 	Cmd.AddCommand(dockerCmd)
 	dockerCmd.AddCommand(fullCmd)
 
@@ -527,6 +622,10 @@ func init() {
 	flags := metricCmd.PersistentFlags()
 	flags.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
 	_ = metricCmd.MarkPersistentFlagRequired("poller")
+
+	flag := descCmd.PersistentFlags()
+	flag.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
+	_ = descCmd.MarkPersistentFlagRequired("poller")
 
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",

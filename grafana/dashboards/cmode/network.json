@@ -105,7 +105,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -255,7 +255,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Bytes received.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -311,7 +311,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -564,7 +564,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Ethernet port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -917,7 +917,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1010,7 +1010,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes received.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1102,7 +1102,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Percentage of bytes transferred.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1415,7 +1415,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "FC port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1673,6 +1673,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "FC ports with fabric details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1878,7 +1879,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1971,7 +1972,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2063,7 +2064,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for read operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2156,7 +2157,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2495,7 +2496,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of times the Fibre Channel link was lost.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2587,7 +2588,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of link failures.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2694,7 +2695,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "NVMe/FC port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -2869,7 +2870,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data read from the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2962,7 +2963,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Amount of data written to the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3054,7 +3055,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for read operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3147,7 +3148,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency for write operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3272,6 +3273,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Detail of network routes.",
           "fieldConfig": {
             "defaults": {
               "color": {

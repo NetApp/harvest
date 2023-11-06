@@ -73,7 +73,7 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 	)
 
 	prefix := "xx_"
-	visitDashboards(
+	VisitDashboards(
 		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
 			oldExpressions = readExprs(data)
@@ -106,7 +106,7 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 func TestAddSvmRegex(t *testing.T) {
 
 	regex := ".*ABC.*"
-	visitDashboards(
+	VisitDashboards(
 		[]string{"../../../grafana/dashboards/cmode/svm.json", "../../../grafana/dashboards/cmode/snapmirror.json"},
 		func(path string, data []byte) {
 			file := filepath.Base(path)

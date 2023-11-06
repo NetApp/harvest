@@ -1600,7 +1600,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from bamboo_ssd component",
+          "description": "This is the percentage of read requests served from bamboo_ssd component.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1688,7 +1688,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from cache",
+          "description": "This is the percentage of read requests served from cache.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1776,7 +1776,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from cloud",
+          "description": "This is the percentage of read requests served from cloud.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1864,7 +1864,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from cloud_s2c",
+          "description": "This is the percentage of read requests served from cloud_s2c.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1952,7 +1952,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from disk",
+          "description": "This is the percentage of read requests served from disk.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2040,7 +2040,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from ext_cache",
+          "description": "This is the percentage of read requests served from ext_cache.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2128,7 +2128,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from fc_miss",
+          "description": "This is the percentage of read requests served from fc_miss.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2216,7 +2216,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from hya_cache",
+          "description": "This is the percentage of read requests served from hya_cache.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2304,7 +2304,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from hya_hdd",
+          "description": "This is the percentage of read requests served from hya_hdd.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2392,7 +2392,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the percentage of read requests served from hya_non_cache",
+          "description": "This is the percentage of read requests served from hya_non_cache.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2495,6 +2495,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4060,6 +4061,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "average latency for workload on Data ONTAP subsystems.",
           "fieldConfig": {
             "defaults": {
               "color": {

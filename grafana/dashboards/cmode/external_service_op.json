@@ -212,7 +212,7 @@
       },
       "dataFormat": "tsbuckets",
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel tracks histograms for request latency values of this operation to the specified server",
+      "description": "This panel tracks histograms for request latency values of this operation to the specified server.",
       "gridPos": {
         "h": 9,
         "w": 12,

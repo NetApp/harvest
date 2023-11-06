@@ -102,7 +102,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volumes Protected With Snapshot Copies (local)",
+          "description": "Volumes Protected With Snapshot Copies (local).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -268,7 +268,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volumes Breaching Snapshot Copy Reserve Space",
+          "description": "Volumes Breaching Snapshot Copy Reserve Space.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -731,7 +731,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Volumes details of snapshot copy reserve space.",
           "fieldConfig": {
             "defaults": {
               "custom": {

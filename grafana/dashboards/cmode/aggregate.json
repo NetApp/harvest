@@ -100,7 +100,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of aggregates.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -176,7 +176,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of disks in the aggregate.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -252,7 +252,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of flexvol volumes in the aggregate.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -327,7 +327,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -385,7 +385,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Space available in bytes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -443,7 +443,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percent of space used.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -502,7 +502,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Aggregate details.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -977,7 +977,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Total physical used size of an aggregate in bytes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1068,7 +1068,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Space available in bytes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1159,7 +1159,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Used space in bytes in the cloud store. Only applicable for aggregates with a cloud store tier.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1250,7 +1250,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Space saved in bytes by compacting the data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1341,7 +1341,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Amount of space saved in bytes by storage efficiency.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1530,7 +1530,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "The percentage of disk space currently in use based on user-visible file count on the referenced file system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1911,7 +1911,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percentage of disk space used by Snapshot copies.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2002,7 +2002,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percentage of space reserved for Snapshot copies.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2093,7 +2093,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "The percentage of disk space currently in use based on user-visible file (inode) count on the referenced file system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2396,6 +2396,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio of space used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2451,6 +2452,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshot.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2507,6 +2509,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio without snapshots and flexclones.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2562,7 +2565,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2647,6 +2650,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Physical Used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2731,6 +2735,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2815,6 +2820,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Data Reduction Physical Used Without Snapshots.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2899,7 +2905,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2984,6 +2990,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total data deduction physical used without snapshots and Flexclones.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3083,7 +3090,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Disk Utilization per Aggregate for latest record (independent of time range selected)",
+          "description": "Disk Utilization per Aggregate for latest record (independent of time range selected).",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -3243,7 +3250,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Disk Utilization per Aggregate in the selected time range",
+          "description": "Disk Utilization per Aggregate in the selected time range.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3929,7 +3936,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "A summation of volume footprints (including volume guarantees), in bytes. This includes all of the volume footprints in the block_storage tier and the cloud_storage tier.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4023,7 +4030,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Volume footprints percent.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4118,7 +4125,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Used space in bytes in the cloud store. Only applicable for aggregates with a cloud store tier.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4506,7 +4513,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to exceed 100% of the space allocated.\n",
+          "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to exceed 100% of the space allocated.\n.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4601,7 +4608,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Footprint of blocks written to the volume in bytes for the performance tier (bin 0).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4695,7 +4702,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Footprint of blocks written to the volume in performance tier (bin 0) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4790,7 +4797,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Footprint of blocks written to the volume in bytes for capacity tier (bin 1).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4884,7 +4891,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Footprint of blocks written to the volume in capacity tier (bin 1) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4994,7 +5001,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5083,7 +5090,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes read per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5173,7 +5180,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of read operations per second from the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5262,7 +5269,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5351,7 +5358,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Bytes written per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5440,7 +5447,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Number of write operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
