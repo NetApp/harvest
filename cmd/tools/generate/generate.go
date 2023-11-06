@@ -146,7 +146,7 @@ func doDescription(cmd *cobra.Command, _ []string) {
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
-			checkDesc(path, data, counters)
+			generateDescription(path, data, counters)
 		})
 }
 
@@ -541,7 +541,7 @@ func generateMetrics() (map[string]Counter, rest.Cluster) {
 	return counters, restClient.Cluster()
 }
 
-func checkDesc(dPath string, data []byte, counters map[string]Counter) {
+func generateDescription(dPath string, data []byte, counters map[string]Counter) {
 	var err error
 	dashPath := grafana.ShortPath(dPath)
 	panelDescriptionMap := make(map[string]string)
