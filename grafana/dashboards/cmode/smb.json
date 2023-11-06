@@ -113,7 +113,7 @@
       },
       "id": 92,
       "options": {
-        "content": "The performance counters displayed on this dashboard require the ZapiPerf collector, which are currently unavailable via REST. You can find more information about this issue at https://github.com/NetApp/harvest/issues/1756",
+        "content": "The `Highlights` section of this dashboard is dependent on the `CIFSSession` template. By default, these templates are disabled to prevent any potential slowdown in data collection, which can occur due to the processing of a large number of metrics. If you're using the Zapi/Rest collector, it's necessary to enable the `CIFSSession` template within its configuration settings.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
