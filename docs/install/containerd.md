@@ -11,7 +11,7 @@ are considered alpha. They work, but are still undergoing a lot of change.
 We're going to:
 - Install and Start [Rancher Desktop](https://rancherdesktop.io/)
 - (Optional) Create Harvest Docker image by following Harvest's existing documentation
-- Generate a Compose file following Harvest' existing documentation
+- Generate a Compose file following Harvest existing documentation
 - Concatenate the Prometheus/Grafana compose file with the harvest compose file since Rancher doesn't support multiple compose files yet
   - Fixup the concatenated file
 - Start containers
@@ -40,7 +40,7 @@ nerdctl build -f container/onePollerPerContainer/Dockerfile -t harvest:latest . 
 
 ## Generate a Harvest compose file
 
-Follow the existing documentation to setup your `harvest.yml` [file](containers.md#setup-harvestyml)
+Follow the existing documentation to set up your `harvest.yml` [file](containers.md#setup-harvestyml)
 
 Create your `harvest-compose.yml` file like this:
 

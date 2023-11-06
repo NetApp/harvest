@@ -433,7 +433,7 @@ func exitIfMissing(fp string, s string) {
 
 func exitIfExist(fp string, s string) {
 	if _, err := os.Stat(fp); err == nil {
-		fmt.Printf("error: %s folder [%s] exists. Please specify an empty or non-existant directory\n", s, fp)
+		fmt.Printf("error: %s folder [%s] exists. Please specify an empty or non-existent directory\n", s, fp)
 		os.Exit(1)
 	}
 }
@@ -825,14 +825,14 @@ func checkVersion(inputVersion string) bool {
 		return false
 	}
 
-	min, _ := goversion.NewVersion(grafanaMinVers)
+	minV, _ := goversion.NewVersion(grafanaMinVers)
 
 	// Not using a constraint check since a pre-release version (e.g. 8.4.0-beta1) never matches
 	// a constraint specified without a pre-release https://github.com/hashicorp/go-version/pull/35
 
-	satisfies := v1.GreaterThanOrEqual(min)
+	satisfies := v1.GreaterThanOrEqual(minV)
 	if !satisfies {
-		fmt.Printf("%s is not >= %s", v1, min)
+		fmt.Printf("%s is not >= %s", v1, minV)
 	}
 	return satisfies
 }
@@ -1022,7 +1022,7 @@ var exportCmd = &cobra.Command{
 	Short: "export Grafana dashboards",
 	Run:   doExport,
 	Example: `
-# Export all of the dashboards contained in the server_folder on my.grafana.server and write them to the local directory
+# Export all the dashboards contained in the server_folder on my.grafana.server and write them to the local directory
 grafana export --addr my.grafana.server:3000 --serverfolder server_folder --directory local`,
 }
 

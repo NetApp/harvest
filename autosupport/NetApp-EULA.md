@@ -60,7 +60,7 @@ limited and revocable license, without the right to sublicense, to i) install
 and use the Software for Your internal business purposes, and ii) use the
 Documentation in support of Your use of the Software. Your Software license is
 either bundled with a specific storage controller identified by a unique serial
-number (“Controller- based”) or is independent of a storage controller
+number (“Controller-based”) or is independent of a storage controller
 (“Standalone”), and is one of the following license types: 
 
  a) **Life-of-controller**: Controller-based licenses granted for the period
@@ -78,7 +78,7 @@ number (“Controller- based”) or is independent of a storage controller
 Each storage controller deployed in a cluster or a high-availability pair or
 group must have the same Controller-based license as the other storage
 controllers in that cluster, high-availability pair or group. Subject to
-NetApp’s separate written agreement, and in the context of non- disruptive
+NetApp’s separate written agreement, and in the context of non-disruptive
 operations within a cluster, You may deploy storage controllers with different
 Controller-based licenses and failover from one storage controller to another
 for the time required to remedy a failure, provided that all storage controllers
@@ -110,7 +110,7 @@ Documentation. You will not, nor will You allow anyone else to:
  or has been otherwise agreed in writing with NetApp; 
  
  e) assign or otherwise transfer, in whole or in part, the Software or
- Documentation licenses to another party or Controller- based licenses to a
+ Documentation licenses to another party or Controller-based licenses to a
  different storage controller, unless otherwise agreed in writing with NetApp; 
  
  f) install Controller-based licenses on or use them with third party hardware
@@ -176,7 +176,7 @@ or any other liability that cannot be excluded under applicable laws.
 
 Upon reasonable notice, You grant NetApp and its independent accountants the
 right to examine Your Software usage annually to verify compliance with this
-EULA. If the audit discloses over- usage or any other material non-compliance,
+EULA. If the audit discloses over-usage or any other material non-compliance,
 then a) You will promptly pay to NetApp or to a NetApp Partner, as designated by
 NetApp, any additional fees that NetApp or a NetApp Partner notifies You are
 owed, and the reasonable costs of conducting the audit; and b) NetApp may
@@ -205,7 +205,7 @@ including encryption technology. You agree to comply with such laws and
 regulations and represent and warrant that You: 
 
 a) will not, unless authorized by U.S. export licenses or other government
-authorizations, directly or indirectly export or re- export the Software and
+authorizations, directly or indirectly export or re-export the Software and
 Documentation to or use the Software and Documentation in countries subject to
 U.S. embargoes or trade sanctions programs; 
 

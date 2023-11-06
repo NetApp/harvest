@@ -36,7 +36,7 @@ type Options struct {
 	Profiling  int      // in case of profiling, the HTTP port used to display results
 	Asup       bool     // if true, invoke autosupport at start-up
 	IsTest     bool     // true when run from unit test
-	ConfPath   string   // colon-seperated paths to search for templates
+	ConfPath   string   // colon-separated paths to search for templates
 	ConfPaths  []string // sliced version of `ConfPath`, list of paths to search for templates
 }
 

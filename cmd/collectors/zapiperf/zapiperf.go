@@ -233,7 +233,7 @@ func (z *ZapiPerf) loadParamInt(name string, defaultValue int) int {
 }
 
 // PollData updates the data cache of the collector. During first poll, no data will
-// be emitted. Afterwards, final metric values will be calculated from previous poll.
+// be emitted. Afterward, final metric values will be calculated from previous poll.
 func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (

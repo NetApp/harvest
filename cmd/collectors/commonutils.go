@@ -33,7 +33,7 @@ type embedShelf struct {
 // 1. The shelf's module type ends with E
 // 2. The shelf is listed in the link above
 var combinations = map[embedShelf]bool{
-	embedShelf{"FS424-12", "IOM12F"}: true,
+	{"FS424-12", "IOM12F"}: true,
 }
 
 func IsEmbedShelf(model string, moduleType string) bool {

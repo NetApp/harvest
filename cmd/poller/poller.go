@@ -1222,7 +1222,7 @@ func init() {
 	flags.StringVar(&opts.Config, "config", conf.HarvestYML, "Harvest config file path")
 	flags.StringSliceVarP(&opts.Collectors, "collectors", "c", []string{}, "Only start these collectors (overrides harvest.yml)")
 	flags.StringSliceVarP(&opts.Objects, "objects", "o", []string{}, "Only start these objects (overrides collector config)")
-	flags.StringVar(&opts.ConfPath, "confpath", conf.DefaultConfPath, "colon-seperated paths to search for Harvest templates")
+	flags.StringVar(&opts.ConfPath, "confpath", conf.DefaultConfPath, "colon-separated paths to search for Harvest templates")
 
 	// Used to test autosupport at startup. An environment variable is used instead of a cmdline
 	// arg, so we don't have to also add this testing arg to harvest cli

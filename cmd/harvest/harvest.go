@@ -296,7 +296,7 @@ func stopGhostPollers(skipPoller []string) {
 			// send terminate signal
 			if err := proc.Signal(syscall.SIGTERM); err != nil {
 				if os.IsPermission(err) {
-					fmt.Printf("Insufficient priviliges to terminate process %v \n", err)
+					fmt.Printf("Insufficient privileges to terminate process %v \n", err)
 				}
 			}
 		}
@@ -545,7 +545,7 @@ func init() {
 	rootCmd.AddCommand(admin.Cmd())
 
 	rootCmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "Harvest config file path")
-	rootCmd.PersistentFlags().StringVar(&opts.confPath, "confpath", "conf", "colon-seperated paths to search for Harvest templates")
+	rootCmd.PersistentFlags().StringVar(&opts.confPath, "confpath", "conf", "colon-separated paths to search for Harvest templates")
 
 	rootCmd.Version = version.String()
 	rootCmd.SetVersionTemplate(version.String())

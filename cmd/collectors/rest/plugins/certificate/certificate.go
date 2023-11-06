@@ -121,13 +121,13 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 		instance.SetLabel("certificateIssuerType", "self_signed")
 		certDecoded, _ := pem.Decode([]byte(certificatePEM))
 		if certDecoded == nil {
-			my.Logger.Warn().Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Warn().Msg("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
 
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			my.Logger.Warn().Err(err).Msg("PEM formatted object is not a X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			my.Logger.Warn().Err(err).Msg("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
