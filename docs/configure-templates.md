@@ -97,8 +97,8 @@ After restarting your pollers, `aggr.yaml` and `custom_aggr.yaml` will be merged
 
 ### Create a new object template
 
-In this example, imagine that Harvest doesn't already collect environment sensor data and you wanted to collect it.
-Sensor does comes from the `environment-sensors-get-iter` ZAPI. Here are the steps to add a new object template.
+In this example, imagine that Harvest doesn't already collect environment sensor data, and you wanted to collect it.
+Sensor does come from the `environment-sensors-get-iter` ZAPI. Here are the steps to add a new object template.
 
 Create the file `conf/zapi/cdot/9.8.0/sensor.yaml` (optionally replace `9.8.0` with the earliest version of ONTAP that
 supports sensor data. Refer to [Harvest Versioned Templates](configure-templates.md#harvest-versioned-templates) for

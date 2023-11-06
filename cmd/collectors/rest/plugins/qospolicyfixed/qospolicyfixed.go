@@ -51,20 +51,20 @@ func (p *QosPolicyFixed) setFixed(data *matrix.Matrix, instance *matrix.Instance
 		p.Logger.Warn().Str("label", label).Msg("Unable to parse fixed xput label")
 		return
 	}
-	min, err := qospolicyfixed.ZapiXputToRest(before)
+	minV, err := qospolicyfixed.ZapiXputToRest(before)
 	if err != nil {
 		p.Logger.Error().Err(err).Str("label", before).Msg("Failed to parse fixed xput label")
 		return
 	}
-	max, err := qospolicyfixed.ZapiXputToRest(after)
+	maxV, err := qospolicyfixed.ZapiXputToRest(after)
 	if err != nil {
 		p.Logger.Error().Err(err).Str("label", after).Msg("Failed to parse fixed xput label")
 		return
 	}
-	p.setLabel("min_throughput_iops", data, instance, min.IOPS)
-	p.setLabel("max_throughput_iops", data, instance, max.IOPS)
-	p.setLabel("min_throughput_mbps", data, instance, min.Mbps)
-	p.setLabel("max_throughput_mbps", data, instance, max.Mbps)
+	p.setLabel("min_throughput_iops", data, instance, minV.IOPS)
+	p.setLabel("max_throughput_iops", data, instance, maxV.IOPS)
+	p.setLabel("min_throughput_mbps", data, instance, minV.Mbps)
+	p.setLabel("max_throughput_mbps", data, instance, maxV.Mbps)
 }
 
 func (p *QosPolicyFixed) setLabel(labelName string, data *matrix.Matrix, instance *matrix.Instance, value string) {

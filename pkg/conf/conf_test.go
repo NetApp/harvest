@@ -62,7 +62,7 @@ func TestPollerStructDefaults(t *testing.T) {
 			t.Fatalf(`expected exporters to not be nil, but it was`)
 		}
 		if len(poller.Exporters) != 1 {
-			t.Fatalf(`expected 1 exporters but got %v`, poller.Exporters)
+			t.Fatalf(`expected 1 exporter but got %v`, poller.Exporters)
 		}
 		expected := []string{"prometheusrange"}
 		if !reflect.DeepEqual(poller.Exporters, expected) {
@@ -132,7 +132,7 @@ func TestPollerUnion(t *testing.T) {
 		t.Fatalf(`expected IsKfs to be [false] but was [%v]`, p.IsKfs)
 	}
 	if len(p.Collectors) != 4 {
-		t.Fatalf(`expected collectors to be have four elements but was [%v]`, p.Collectors)
+		t.Fatalf(`expected collectors to have four elements but was [%v]`, p.Collectors)
 	}
 	for i := 0; i < len(p.Collectors); i++ {
 		actual := p.Collectors[i].Name

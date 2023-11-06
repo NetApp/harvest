@@ -261,7 +261,7 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 		quotaInstance.SetLabel("svm", vserver)
 		quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(*quotaIndex))
 
-		// If the Qtree is the volume itself, than qtree label is empty, so copy the volume name to qtree.
+		// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
 		if tree == "" {
 			quotaInstance.SetLabel("qtree", volume)
 		}

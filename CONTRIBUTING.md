@@ -39,7 +39,7 @@ The changelog is one of the most important ways we communicate with stakeholders
 
 Creating the changelog is a mixture of auto-generated commands and careful curation. We use [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/#summary) titles to help:
 * improve communication
-* make this process less error prone and faster
+* make this process less error-prone and faster
 
 ## Commit Message
 

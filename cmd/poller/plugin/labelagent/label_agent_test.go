@@ -46,7 +46,7 @@ func newLabelAgent() *LabelAgent {
 	params.NewChildS("value_to_num", "").NewChildS("", "new_status state up ok")
 	// create metric "new_stage", but if none of the values is matching, use default value "4"
 	params.NewChildS("value_to_num", "").NewChildS("", "new_stage stage init start `4`")
-	// create metric "new_outage", if empty value is expected and non empty means wrong, use default value "0"
+	// create metric "new_outage", if empty value is expected and non-empty means wrong, use default value "0"
 	params.NewChildS("value_to_num", "").NewChildS("", "new_outage outage - - `0`")
 	// create metric "status", if label "state" contains one of the up/ok[zapi/rest], map metric value to respective index
 	params.NewChildS("value_to_num_regex", "").NewChildS("", "status state ^up$ ^ok$ `0`")

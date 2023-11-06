@@ -51,7 +51,7 @@ To run Podman rootless, we'll create a non-root user named: `harvest` to run Har
 usermod --append --groups wheel harvest
 ```
 
-Login with the harvest user, setup the podman.socket, and make sure the curl below works. `su` or `sudo` aren't sufficient, you need to `ssh` into the machine as the harvest user or use `machinectl login`. See [sudo-rootless-podman](https://www.redhat.com/sysadmin/sudo-rootless-podman) for details.
+Login with the harvest user, set up the podman.socket, and make sure the curl below works. `su` or `sudo` aren't sufficient, you need to `ssh` into the machine as the harvest user or use `machinectl login`. See [sudo-rootless-podman](https://www.redhat.com/sysadmin/sudo-rootless-podman) for details.
 
 ```bash
 # these must be run as the harvest user
@@ -74,7 +74,7 @@ podman info | grep runRoot
 
 ## Running Harvest
 
-By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091 so we can run both Cockpit and Prometheus. Line `2` below does that.
+By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091, so we can run both Cockpit and Prometheus. Line `2` below does that.
 
 With these changes, the [standard Harvest compose instructions](containers.md#docker-compose) can be followed as normal now. In summary,
 
@@ -135,7 +135,7 @@ podman ps -a
 ERRO[0000] error joining network namespace for container 424df6c: error retrieving network namespace at /run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09: failed to Statfs "/run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09": no such file or directory
 ```
 
-Run `podman info` and make sure `runRoot` points to `/run/user/$UID/containers` (see below). If it instead points to `/tmp/podman-run-$UID` you will likely have problems when restarting the machine. Typically this happens because you used su to become the harvest user or ran podman as root. You can fix this by logging in as the `harvest` user and running `podman system reset`.
+Run `podman info` and make sure `runRoot` points to `/run/user/$UID/containers` (see below). If it instead points to `/tmp/podman-run-$UID` you will likely have problems when restarting the machine. Typically, this happens because you used su to become the harvest user or ran podman as root. You can fix this by logging in as the `harvest` user and running `podman system reset`.
 
 ```bash
 podman info | grep runRoot

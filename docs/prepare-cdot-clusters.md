@@ -384,7 +384,7 @@ required to name the key/cert pair after the hostname, but if you do, Harvest wi
 specify `auth_style: certificate_auth` otherwise you can point to them directly.
 See [Pollers](https://github.com/NetApp/harvest#pollers) for details.
 
-Change the common name to the ONTAP user you setup with the harvest role above. e.g `harvest2`
+Change the common name to the ONTAP user you set up with the harvest role above. e.g `harvest2`
 
 ```
 cd /opt/harvest
