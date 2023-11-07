@@ -18,6 +18,7 @@ counters:
   - link_down
   - link_failure
   - link_speed             => speed
+  - link_up
   - loss_of_signal
   - loss_of_sync
   - node_name              => node
