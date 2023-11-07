@@ -934,10 +934,8 @@ func (p *Poller) loadMetadata() {
 	labels := p.params.Labels
 	if labels != nil {
 		for _, labelPtr := range *labels {
-			for key, value := range labelPtr {
-				p.metadata.SetGlobalLabel(key, value)
-				p.status.SetGlobalLabel(key, value)
-			}
+			p.metadata.SetGlobalLabels(labelPtr)
+			p.status.SetGlobalLabels(labelPtr)
 		}
 	}
 	p.status.SetExportOptions(matrix.DefaultExportOptions())
