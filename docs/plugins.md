@@ -455,7 +455,7 @@ include_regex:
 
 ## value_mapping
 
-value_mapping was deprecated in 21.11 and removed in 22.02. Use [value_to_num mapping](#valuetonum) instead.
+value_mapping was deprecated in 21.11 and removed in 22.02. Use [value_to_num](#value_to_num) mapping instead.
 
 ## value_to_num
 
@@ -633,11 +633,11 @@ compute_metric:
 
 # ChangeLog Plugin
 
-The ChangeLog plugin is a feature of Harvest, designed to detect and track changes related to the creation, modification, and deletion of an object. By default, it supports volume, svm, and node objects. However, its functionality can be extended to track changes in any other objects by making relevant changes in the template.
+The ChangeLog plugin is a feature of Harvest, designed to detect and track changes related to the creation, modification, and deletion of an object. By default, it supports volume, svm, and node objects. Its functionality can be extended to track changes in other objects by making relevant changes in the template.
 
 Please note that the ChangeLog plugin requires the `uuid` label, which is unique, to be collected by the template. Without the `uuid` label, the plugin will not function.
 
-The ChangeLog feature only detects changes when Harvest is up and running. It does not detect any changes that occur when Harvest is down. Additionally, the plugin currently does not detect changes in metric values.
+The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values.
 
 ## Enabling the Plugin
 
@@ -650,7 +650,7 @@ plugins:
   - ChangeLog
 ```
 
-For other objects, you need to specify the labels to track in the plugin configuration. These labels should be relevant to the object you want to track. If these labels are not specified in template, the plugin will not be able to track changes for the object.
+For other objects, you need to specify the labels to track in the plugin configuration. These labels should be relevant to the object you want to track. If these labels are not specified in the template, the plugin will not be able to track changes for the object.
 
 Here's an example of how to enable the plugin for an aggregate object:
 
@@ -673,7 +673,7 @@ By default, the plugin tracks changes in the following labels for svm, node, and
 - node: node, location, healthy
 - volume: node, volume, svm, style, type, aggr, state, status
 
-For any other objects, defaults are not available and need to be defined in the plugin.
+Other objects are not tracked by default.
 
 These default settings can be overwritten as needed in the relevant templates. For instance, if you want to track `junction_path` labels for Volume, you can overwrite this in the volume template.
 
@@ -700,9 +700,11 @@ The ChangeLog plugin publishes a metric with various labels providing detailed i
 
 When a new object is created, the ChangeLog plugin will publish a metric with the following labels:
 
-- The name of the ONTAP object that was changed (object)
-- The type of change that was made (op)
-- The timestamp when Harvest Poller captured the change (Metric Value)
+| Label        | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| object       | name of the ONTAP object that was changed                                   |
+| op           | type of change that was made                                                |
+| metric value | timestamp when Harvest captured the change. 1698735558 in the example below |
 
 Example of metric shape for object creation:
 
@@ -714,12 +716,14 @@ change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="
 
 When an existing object is modified, the ChangeLog plugin will publish a metric with the following labels:
 
-- The name of the ONTAP object that was changed (object)
-- The type of change that was made (op)
-- The property of the object which was modified (Track)
-- The new value of the object after the change was made (New Value)
-- The previous value of the object before the change was made (Old Value)
-- The timestamp when Harvest Poller captured the change (Metric Value)
+| Label        | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| object       | name of the ONTAP object that was changed                                   |
+| op           | type of change that was made                                                |
+| track        | property of the object which was modified                                   |
+| new_value    | new value of the object after the change                                    |
+| old_value    | previous value of the object before the change                              |
+| metric value | timestamp when Harvest captured the change. 1698735677 in the example below |
 
 Example of metric shape for object modification:
 
@@ -731,9 +735,12 @@ change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="
 
 When an object is deleted, the ChangeLog plugin will publish a metric with the following labels:
 
-- The name of the ONTAP object that was changed (object)
-- The type of change that was made (op)
-- The timestamp when Harvest Poller captured the change (Metric Value)
+
+| Label        | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| object       | name of the ONTAP object that was changed                                   |
+| op           | type of change that was made                                                |
+| metric value | timestamp when Harvest captured the change. 1698735708 in the example below |
 
 Example of metric shape for object deletion:
 
