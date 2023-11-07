@@ -16,6 +16,7 @@ counters:
   - invalid.transmission_word           => invalid_transmission_word
   - isr.count                           => isr_count
   - link.down                           => link_down
+  - link.up                             => link_up
   - link_failure                        => link_failure
   - loss_of_signal
   - loss_of_sync
