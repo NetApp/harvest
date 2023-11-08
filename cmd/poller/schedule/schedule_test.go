@@ -45,7 +45,7 @@ func TestSchedule_Recover(t *testing.T) {
 	}
 }
 
-func TestNewTaskString_RunNow_True(t *testing.T) {
+func TestNewTaskString(t *testing.T) {
 	// Define a dummy function for the task
 	f := func() (map[string]*matrix.Matrix, error) {
 		return nil, nil

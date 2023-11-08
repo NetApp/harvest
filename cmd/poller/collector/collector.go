@@ -146,8 +146,7 @@ func Init(c Collector) error {
 	object := c.GetObject()
 	logger := c.GetLogger()
 	var jitterR time.Duration
-	// Define interval between tasks. This is applicable only if jitterR > 0
-	interval := time.Second * 5
+
 	// Initialize schedule and tasks (polls)
 	tasks := params.GetChildS("schedule")
 	if tasks == nil || len(tasks.GetChildren()) == 0 {
@@ -176,7 +175,7 @@ func Init(c Collector) error {
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
-				logger.Debug().Str("task", task.GetNameS()).
+				logger.Info().Str("task", task.GetNameS()).
 					Str("delay", jitterR.String()).
 					Str("schedule", task.GetContentS()).
 					Send()
@@ -188,10 +187,6 @@ func Init(c Collector) error {
 			}
 		} else {
 			return errs.New(errs.ErrImplement, methodName)
-		}
-		if jitterR > 0 {
-			// Increment delay by interval for each task
-			jitterR += interval
 		}
 	}
 	c.SetSchedule(s)
