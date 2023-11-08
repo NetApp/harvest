@@ -931,6 +931,13 @@ func (p *Poller) loadMetadata() {
 	if p.options.PromPort != 0 {
 		p.status.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
 	}
+	labels := p.params.Labels
+	if labels != nil {
+		for _, labelPtr := range *labels {
+			p.metadata.SetGlobalLabels(labelPtr)
+			p.status.SetGlobalLabels(labelPtr)
+		}
+	}
 	p.status.SetExportOptions(matrix.DefaultExportOptions())
 }
 

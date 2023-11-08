@@ -22,8 +22,8 @@ import (
 type Exporter interface {
 	Init() error      // initialize exporter
 	GetClass() string // the class of the exporter, e.g. Prometheus, InfluxDB
-	GetName() string  // the name of the exporter instance
-	// Name is different from Class, since we can have multiple instances of the same Class
+	// GetName is different from Class, since we can have multiple instances of the same Class
+	GetName() string                    // the name of the exporter instance
 	GetExportCount() uint64             // return and reset number of exported data points, used by Poller to keep stats
 	AddExportCount(uint64)              // add count to the export count, called by the exporter itself
 	GetStatus() (uint8, string, string) // return current state of the exporter
@@ -72,6 +72,12 @@ func New(c, n string, o *options.Options, p conf.Exporter, params *conf.Poller) 
 	}
 	if params != nil {
 		abc.Metadata.SetGlobalLabel("datacenter", params.Datacenter)
+		labels := params.Labels
+		if labels != nil {
+			for _, labelPtr := range *labels {
+				abc.Metadata.SetGlobalLabels(labelPtr)
+			}
+		}
 	}
 	return &abc
 }
