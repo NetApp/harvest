@@ -21,3 +21,9 @@ dist/
 cert/
 asup/
 site/
+
+# Go workspace files
+# These should not be committed
+# https://go.googlesource.com/proposal/+/master/design/45713-workspace.md#preventing-files-from-being-checked-in-to-repositories
+go.work
+go.work.sum
