@@ -107,7 +107,7 @@
       },
       "id": 305,
       "options": {
-        "content": "To use this dashboard, enable the ChangeLog plugin for node, svm, and volume templates. For more details, visit the [ChangeLog documentation](https://netapp.github.io/harvest/latest/plugins/#changelog).",
+        "content": "<br>\n\nTo use this dashboard, enable the ChangeLog plugin for node, svm, and volume templates. For more details, visit the [ChangeLog documentation](https://netapp.github.io/harvest/latest/plugins/#changelog).\n",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",

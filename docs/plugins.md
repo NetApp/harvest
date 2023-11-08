@@ -455,7 +455,7 @@ include_regex:
 
 ## value_mapping
 
-value_mapping was deprecated in 21.11 and removed in 22.02. Use [value_to_num mapping](#valuetonum) instead.
+value_mapping was deprecated in 21.11 and removed in 22.02. Use [value_to_num](#value_to_num) mapping instead.
 
 ## value_to_num
 
@@ -631,4 +631,123 @@ compute_metric:
 # inode_used_percent = inode_files_used / inode_files_total * 100
 ```
 
-# ChangeLog
+# ChangeLog Plugin
+
+The ChangeLog plugin is a feature of Harvest, designed to detect and track changes related to the creation, modification, and deletion of an object. By default, it supports volume, svm, and node objects. Its functionality can be extended to track changes in other objects by making relevant changes in the template.
+
+Please note that the ChangeLog plugin requires the `uuid` label, which is unique, to be collected by the template. Without the `uuid` label, the plugin will not function.
+
+The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values.
+
+## Enabling the Plugin
+
+The plugin can be enabled in the templates under the plugins section.
+
+For volume, svm, and node objects, you can enable the plugin with the following configuration:
+
+```yaml
+plugins:
+  - ChangeLog
+```
+
+For other objects, you need to specify the labels to track in the plugin configuration. These labels should be relevant to the object you want to track. If these labels are not specified in the template, the plugin will not be able to track changes for the object.
+
+Here's an example of how to enable the plugin for an aggregate object:
+
+```yaml
+plugins:
+  - ChangeLog:
+      track:
+        - aggr
+        - node
+        - state
+```
+
+In the above configuration, the plugin will track changes in the `aggr`, `node`, and `state` labels for the aggregate object.
+
+## Default Tracking for svm, node, volume
+
+By default, the plugin tracks changes in the following labels for svm, node, and volume objects:
+
+- svm: svm, state, type, anti_ransomware_state
+- node: node, location, healthy
+- volume: node, volume, svm, style, type, aggr, state, status
+
+Other objects are not tracked by default.
+
+These default settings can be overwritten as needed in the relevant templates. For instance, if you want to track `junction_path` labels for Volume, you can overwrite this in the volume template.
+
+```yaml
+plugins:
+  - ChangeLog:
+      - track:
+        - node
+        - volume
+        - svm
+        - style
+        - type
+        - aggr
+        - state
+        - status
+        - junction_path
+```
+
+## Change Types and Metrics
+
+The ChangeLog plugin publishes a metric with various labels providing detailed information about the change when an object is created, modified, or deleted.
+
+### Object Creation
+
+When a new object is created, the ChangeLog plugin will publish a metric with the following labels:
+
+| Label        | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| object       | name of the ONTAP object that was changed                                   |
+| op           | type of change that was made                                                |
+| metric value | timestamp when Harvest captured the change. 1698735558 in the example below |
+
+Example of metric shape for object creation:
+
+```
+change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="0", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="create", style="flexvol", svm="harvest", volume="harvest_demo"} 1698735558
+```
+
+### Object Modification
+
+When an existing object is modified, the ChangeLog plugin will publish a metric with the following labels:
+
+| Label        | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| object       | name of the ONTAP object that was changed                                   |
+| op           | type of change that was made                                                |
+| track        | property of the object which was modified                                   |
+| new_value    | new value of the object after the change                                    |
+| old_value    | previous value of the object before the change                              |
+| metric value | timestamp when Harvest captured the change. 1698735677 in the example below |
+
+Example of metric shape for object modification:
+
+```
+change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="1", instance="localhost:12993", job="prometheus", new_value="offline", node="umeng-aff300-01", object="volume", old_value="online", op="update", style="flexvol", svm="harvest", track="state", volume="harvest_demo"} 1698735677
+```
+
+### Object Deletion
+
+When an object is deleted, the ChangeLog plugin will publish a metric with the following labels:
+
+
+| Label        | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| object       | name of the ONTAP object that was changed                                   |
+| op           | type of change that was made                                                |
+| metric value | timestamp when Harvest captured the change. 1698735708 in the example below |
+
+Example of metric shape for object deletion:
+
+```
+change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="2", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="delete", style="flexvol", svm="harvest", volume="harvest_demo"} 1698735708
+```
+
+## Viewing the Metrics
+
+You can view the metrics published by the ChangeLog plugin in the `ChangeLog Monitor` dashboard in `Grafana`. This dashboard provides a visual representation of the changes tracked by the plugin for volume, svm, and node objects.
