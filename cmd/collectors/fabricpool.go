@@ -35,7 +35,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 			continue
 		}
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
-			key := i.GetLabel("svm") + "." + match[1]
+			key := i.GetLabel("svm") + "." + match[1] + i.GetLabel("cloud_target")
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(maps.Clone(i.GetLabels()))
@@ -50,8 +50,8 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 	// create summary
 	for _, i := range data.GetInstances() {
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
-			// instance key is svm.flexgroup-volume
-			key := i.GetLabel("svm") + "." + match[1]
+			// instance key is svm.flexgroup-volume.cloud-target-name
+			key := i.GetLabel("svm") + "." + match[1] + i.GetLabel("cloud_target")
 
 			fg := cache.GetInstance(key)
 			if fg == nil {
