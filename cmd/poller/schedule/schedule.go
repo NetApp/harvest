@@ -170,15 +170,15 @@ func (s *Schedule) Recover() {
 // should be positive.
 // The order in which tasks are added is maintained: GetTasks() will
 // return tasks in FIFO order.
-func (s *Schedule) NewTask(n string, i time.Duration, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
+func (s *Schedule) NewTask(n string, i time.Duration, jitter time.Duration, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
 	if s.GetTask(n) == nil {
 		if i > 0 {
 			t := &Task{Name: n, interval: i, foo: f, identifier: identifier}
 			s.cachedInterval[n] = t.interval // remember normal interval of task
 			if runNow {
-				t.timer = time.Now().Add(-i) // set to run immediately
+				t.timer = time.Now().Add(-i + jitter) // set to run after jitter
 			} else {
-				t.timer = time.Now().Add(0) // run after interval has elapsed
+				t.timer = time.Now().Add(jitter) // run after interval has elapsed
 			}
 			s.tasks = append(s.tasks, t)
 			return nil
@@ -189,12 +189,12 @@ func (s *Schedule) NewTask(n string, i time.Duration, f func() (map[string]*matr
 }
 
 // NewTaskString creates a new task, the interval is parsed from string i
-func (s *Schedule) NewTaskString(n, i string, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
+func (s *Schedule) NewTaskString(n, i string, jitter time.Duration, f func() (map[string]*matrix.Matrix, error), runNow bool, identifier string) error {
 	d, err := time.ParseDuration(i)
 	if err != nil {
 		return err
 	}
-	return s.NewTask(n, d, f, runNow, identifier)
+	return s.NewTask(n, d, jitter, f, runNow, identifier)
 }
 
 // GetTasks returns scheduled tasks
