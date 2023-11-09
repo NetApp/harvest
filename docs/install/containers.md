@@ -82,7 +82,8 @@ By default, the above command uses the harvest configuration file(`harvest.yml`)
     Use the following docker run command, updating the `HYML` variable with the absolute path to your `harvest.yml`.
 
     ```sh
-    HYML="/opt/custom_harvest.yml"; docker run --rm \
+    HYML="/opt/custom_harvest.yml"; \
+    docker run --rm \
     --entrypoint "bin/harvest" \
     --volume "$(pwd):/opt/temp" \
     --volume "${HYML}:${HYML}" \
