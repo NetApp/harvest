@@ -99,7 +99,7 @@
       },
       "id": 29,
       "options": {
-        "content": "You must modify the `include_constituents` flag to `true` in all volume.yaml templates. Please see [flexGroup dashboard](https://github.com/NetApp/harvest/wiki/FAQ#flexgroup-dashboard) for more details. Enabling flexgroup constituents counters may slow down data collection due to a high number of constituents metrics.",
+        "content": "You must modify the `include_constituents` flag to `true` in all volume.yaml templates. Please see [FlexGroup dashboard](https://github.com/NetApp/harvest/wiki/FAQ#flexgroup-dashboard) for more details. Enabling FlexGroup constituents counters may slow down data collection due to a high number of constituents metrics.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -201,7 +201,7 @@
           "exemplar": false,
           "expr": "topk($TopResources, volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$TopVolumeAvgLatency\"})",
           "interval": "",
-          "legendFormat": "{{aggr}} / {{volume}}",
+          "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -695,7 +695,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Flexgroup Constituents in Cluster",
+          "title": "FlexGroup Constituents in Cluster",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -858,7 +858,7 @@
               "format": "table",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{aggr}} / {{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}}",
               "refId": "A"
             }
           ],
@@ -948,7 +948,7 @@
               "format": "table",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{aggr}} / {{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}}",
               "refId": "A"
             }
           ],
@@ -1038,7 +1038,7 @@
               "format": "table",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{aggr}} / {{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}}",
               "refId": "A"
             }
           ],
@@ -1159,7 +1159,7 @@
               "format": "table",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{aggr}} / {{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}}",
               "refId": "A"
             }
           ],
@@ -1251,7 +1251,7 @@
               "format": "table",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{aggr}} / {{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}}",
               "refId": "A"
             }
           ],
@@ -1342,7 +1342,7 @@
               "format": "table",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{aggr}} / {{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}}",
               "refId": "A"
             }
           ],
@@ -3137,7 +3137,7 @@
     ]
   },
   "timezone": "",
-  "title": "ONTAP: Flexgroup",
+  "title": "ONTAP: FlexGroup",
   "uid": "",
   "version": 52
 }
