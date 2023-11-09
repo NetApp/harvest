@@ -24,6 +24,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"math"
+	"math/rand"
 	"reflect"
 	"strconv"
 	"strings"
@@ -52,6 +53,7 @@ type Collector interface {
 	Start(*sync.WaitGroup)
 	GetName() string
 	GetObject() string
+	GetLogger() *logging.Logger
 	GetParams() *node.Node
 	GetOptions() *options.Options
 	GetCollectCount() uint64
@@ -142,11 +144,24 @@ func Init(c Collector) error {
 	opts := c.GetOptions()
 	name := c.GetName()
 	object := c.GetObject()
+	logger := c.GetLogger()
+	var jitterR time.Duration
 
 	// Initialize schedule and tasks (polls)
 	tasks := params.GetChildS("schedule")
 	if tasks == nil || len(tasks.GetChildren()) == 0 {
 		return errs.New(errs.ErrMissingParam, "schedule")
+	}
+
+	jitterS := params.GetChildContentS("jitter")
+	if jitterS != "" {
+		jitter, err := time.ParseDuration(jitterS)
+		if err != nil {
+			return errs.New(errs.ErrInvalidParam, "jitter ("+jitterS+"): "+err.Error())
+		}
+		if jitter > 0 {
+			jitterR = time.Duration(rand.Int63n(int64(jitter))) //nolint:gosec
+		}
 	}
 
 	s := schedule.New()
@@ -160,7 +175,11 @@ func Init(c Collector) error {
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
-				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
+				logger.Debug().Str("task", task.GetNameS()).
+					Str("delay", jitterR.String()).
+					Str("schedule", task.GetContentS()).
+					Send()
+				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), jitterR, foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
 					return errs.New(errs.ErrInvalidParam, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
 			} else {
@@ -494,6 +513,11 @@ func (c *AbstractCollector) logMetadata() {
 // GetName returns name of the collector
 func (c *AbstractCollector) GetName() string {
 	return c.Name
+}
+
+// GetLogger returns logger of the collector
+func (c *AbstractCollector) GetLogger() *logging.Logger {
+	return c.Logger
 }
 
 // GetObject returns object of the collector
