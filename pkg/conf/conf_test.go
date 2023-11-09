@@ -363,7 +363,7 @@ func TestMultiplePollerFiles(t *testing.T) {
 	}
 
 	if len(named.Collectors) != 1 {
-		t.Fatalf("got %d collectors, want 2", len(named.Collectors))
+		t.Fatalf("got %d collectors, want 1", len(named.Collectors))
 	}
 
 	if named.Collectors[0].Name != "Simple" {
