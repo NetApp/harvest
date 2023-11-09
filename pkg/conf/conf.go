@@ -110,7 +110,12 @@ func LoadHarvestConfig(configPath string) (string, error) {
 					duplicates = append(duplicates, fmt.Errorf("poller name=%s from poller_file=%s is not unique", pName, filename))
 					continue
 				}
-				Config.Pollers[pName] = cfg.Pollers[pName]
+				// Merge poller and defaults
+				child := cfg.Pollers[pName]
+				if Config.Defaults != nil {
+					child.Union(Config.Defaults)
+				}
+				Config.Pollers[pName] = child
 				Config.PollersOrdered = append(Config.PollersOrdered, pName)
 			}
 			fmt.Printf("add %d poller(s) from poller_file=%s\n", len(cfg.PollersOrdered), filename)

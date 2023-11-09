@@ -355,4 +355,18 @@ func TestMultiplePollerFiles(t *testing.T) {
 			t.Errorf("got promIndex=%d, want promIndex=%d", named.promIndex, i)
 		}
 	}
+
+	// Ensure that parent's `Defaults` is merged with children pollers
+	named, err := PollerNamed("netapp1")
+	if err != nil {
+		t.Fatalf("got no poller, want poller named=%s", "netapp1")
+	}
+
+	if len(named.Collectors) != 1 {
+		t.Fatalf("got %d collectors, want 1", len(named.Collectors))
+	}
+
+	if named.Collectors[0].Name != "Simple" {
+		t.Fatalf("got collector name=%s, want collector name=%s", named.Collectors[0].Name, "Simple")
+	}
 }
