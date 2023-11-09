@@ -1230,9 +1230,70 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#changelog" class="md-nav__link">
-    ChangeLog
+  <a href="#changelog-plugin" class="md-nav__link">
+    ChangeLog Plugin
   </a>
+  
+    <nav class="md-nav" aria-label="ChangeLog Plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-the-plugin" class="md-nav__link">
+    Enabling the Plugin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-tracking-for-svm-node-volume" class="md-nav__link">
+    Default Tracking for svm, node, volume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-types-and-metrics" class="md-nav__link">
+    Change Types and Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Change Types and Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#object-creation" class="md-nav__link">
+    Object Creation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-modification" class="md-nav__link">
+    Object Modification
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-deletion" class="md-nav__link">
+    Object Deletion
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-the-metrics" class="md-nav__link">
+    Viewing the Metrics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1572,9 +1633,70 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#changelog" class="md-nav__link">
-    ChangeLog
+  <a href="#changelog-plugin" class="md-nav__link">
+    ChangeLog Plugin
   </a>
+  
+    <nav class="md-nav" aria-label="ChangeLog Plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-the-plugin" class="md-nav__link">
+    Enabling the Plugin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-tracking-for-svm-node-volume" class="md-nav__link">
+    Default Tracking for svm, node, volume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-types-and-metrics" class="md-nav__link">
+    Change Types and Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Change Types and Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#object-creation" class="md-nav__link">
+    Object Creation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-modification" class="md-nav__link">
+    Object Modification
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-deletion" class="md-nav__link">
+    Object Deletion
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-the-metrics" class="md-nav__link">
+    Viewing the Metrics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1900,7 +2022,7 @@ matching instances will be included and all non-matching will not be exported.</
 <span class="c1"># &quot;flex&quot; will be exported</span>
 </code></pre></div>
 <h2 id="value_mapping">value_mapping<a class="headerlink" href="#value_mapping" title="Permanent link">&para;</a></h2>
-<p>value_mapping was deprecated in 21.11 and removed in 22.02. Use <a href="#valuetonum">value_to_num mapping</a> instead.</p>
+<p>value_mapping was deprecated in 21.11 and removed in 22.02. Use <a href="#value_to_num">value_to_num</a> mapping instead.</p>
 <h2 id="value_to_num">value_to_num<a class="headerlink" href="#value_to_num" title="Permanent link">&para;</a></h2>
 <p>Map values of a given label to a numeric metric (of type <code>uint8</code>).
 This rule maps values of a given label to a numeric metric (of type <code>unit8</code>). Healthy is mapped to 1 and all non-healthy
@@ -2020,7 +2142,145 @@ value of a given metric, perform the requested mathematical operation, and store
 <span class="c1">#  &quot;inode_files_total&quot; and multiplying the result by 100.</span>
 <span class="c1"># inode_used_percent = inode_files_used / inode_files_total * 100</span>
 </code></pre></div>
-<h1 id="changelog">ChangeLog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h1 id="changelog-plugin">ChangeLog Plugin<a class="headerlink" href="#changelog-plugin" title="Permanent link">&para;</a></h1>
+<p>The ChangeLog plugin is a feature of Harvest, designed to detect and track changes related to the creation, modification, and deletion of an object. By default, it supports volume, svm, and node objects. Its functionality can be extended to track changes in other objects by making relevant changes in the template.</p>
+<p>Please note that the ChangeLog plugin requires the <code>uuid</code> label, which is unique, to be collected by the template. Without the <code>uuid</code> label, the plugin will not function.</p>
+<p>The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values.</p>
+<h2 id="enabling-the-plugin">Enabling the Plugin<a class="headerlink" href="#enabling-the-plugin" title="Permanent link">&para;</a></h2>
+<p>The plugin can be enabled in the templates under the plugins section.</p>
+<p>For volume, svm, and node objects, you can enable the plugin with the following configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChangeLog</span>
+</code></pre></div>
+<p>For other objects, you need to specify the labels to track in the plugin configuration. These labels should be relevant to the object you want to track. If these labels are not specified in the template, the plugin will not be able to track changes for the object.</p>
+<p>Here's an example of how to enable the plugin for an aggregate object:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ChangeLog</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">track</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span>
+</code></pre></div>
+<p>In the above configuration, the plugin will track changes in the <code>aggr</code>, <code>node</code>, and <code>state</code> labels for the aggregate object.</p>
+<h2 id="default-tracking-for-svm-node-volume">Default Tracking for svm, node, volume<a class="headerlink" href="#default-tracking-for-svm-node-volume" title="Permanent link">&para;</a></h2>
+<p>By default, the plugin tracks changes in the following labels for svm, node, and volume objects:</p>
+<ul>
+<li>svm: svm, state, type, anti_ransomware_state</li>
+<li>node: node, location, healthy</li>
+<li>volume: node, volume, svm, style, type, aggr, state, status</li>
+</ul>
+<p>Other objects are not tracked by default.</p>
+<p>These default settings can be overwritten as needed in the relevant templates. For instance, if you want to track <code>junction_path</code> labels for Volume, you can overwrite this in the volume template.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ChangeLog</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">track</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">junction_path</span>
+</code></pre></div>
+<h2 id="change-types-and-metrics">Change Types and Metrics<a class="headerlink" href="#change-types-and-metrics" title="Permanent link">&para;</a></h2>
+<p>The ChangeLog plugin publishes a metric with various labels providing detailed information about the change when an object is created, modified, or deleted.</p>
+<h3 id="object-creation">Object Creation<a class="headerlink" href="#object-creation" title="Permanent link">&para;</a></h3>
+<p>When a new object is created, the ChangeLog plugin will publish a metric with the following labels:</p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>object</td>
+<td>name of the ONTAP object that was changed</td>
+</tr>
+<tr>
+<td>op</td>
+<td>type of change that was made</td>
+</tr>
+<tr>
+<td>metric value</td>
+<td>timestamp when Harvest captured the change. 1698735558 in the example below</td>
+</tr>
+</tbody>
+</table>
+<p>Example of metric shape for object creation:</p>
+<div class="highlight"><pre><span></span><code>change_log{aggr=&quot;umeng_aff300_aggr2&quot;, cluster=&quot;umeng-aff300-01-02&quot;, datacenter=&quot;u2&quot;, index=&quot;0&quot;, instance=&quot;localhost:12993&quot;, job=&quot;prometheus&quot;, node=&quot;umeng-aff300-01&quot;, object=&quot;volume&quot;, op=&quot;create&quot;, style=&quot;flexvol&quot;, svm=&quot;harvest&quot;, volume=&quot;harvest_demo&quot;} 1698735558
+</code></pre></div>
+<h3 id="object-modification">Object Modification<a class="headerlink" href="#object-modification" title="Permanent link">&para;</a></h3>
+<p>When an existing object is modified, the ChangeLog plugin will publish a metric with the following labels:</p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>object</td>
+<td>name of the ONTAP object that was changed</td>
+</tr>
+<tr>
+<td>op</td>
+<td>type of change that was made</td>
+</tr>
+<tr>
+<td>track</td>
+<td>property of the object which was modified</td>
+</tr>
+<tr>
+<td>new_value</td>
+<td>new value of the object after the change</td>
+</tr>
+<tr>
+<td>old_value</td>
+<td>previous value of the object before the change</td>
+</tr>
+<tr>
+<td>metric value</td>
+<td>timestamp when Harvest captured the change. 1698735677 in the example below</td>
+</tr>
+</tbody>
+</table>
+<p>Example of metric shape for object modification:</p>
+<div class="highlight"><pre><span></span><code>change_log{aggr=&quot;umeng_aff300_aggr2&quot;, cluster=&quot;umeng-aff300-01-02&quot;, datacenter=&quot;u2&quot;, index=&quot;1&quot;, instance=&quot;localhost:12993&quot;, job=&quot;prometheus&quot;, new_value=&quot;offline&quot;, node=&quot;umeng-aff300-01&quot;, object=&quot;volume&quot;, old_value=&quot;online&quot;, op=&quot;update&quot;, style=&quot;flexvol&quot;, svm=&quot;harvest&quot;, track=&quot;state&quot;, volume=&quot;harvest_demo&quot;} 1698735677
+</code></pre></div>
+<h3 id="object-deletion">Object Deletion<a class="headerlink" href="#object-deletion" title="Permanent link">&para;</a></h3>
+<p>When an object is deleted, the ChangeLog plugin will publish a metric with the following labels:</p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>object</td>
+<td>name of the ONTAP object that was changed</td>
+</tr>
+<tr>
+<td>op</td>
+<td>type of change that was made</td>
+</tr>
+<tr>
+<td>metric value</td>
+<td>timestamp when Harvest captured the change. 1698735708 in the example below</td>
+</tr>
+</tbody>
+</table>
+<p>Example of metric shape for object deletion:</p>
+<div class="highlight"><pre><span></span><code>change_log{aggr=&quot;umeng_aff300_aggr2&quot;, cluster=&quot;umeng-aff300-01-02&quot;, datacenter=&quot;u2&quot;, index=&quot;2&quot;, instance=&quot;localhost:12993&quot;, job=&quot;prometheus&quot;, node=&quot;umeng-aff300-01&quot;, object=&quot;volume&quot;, op=&quot;delete&quot;, style=&quot;flexvol&quot;, svm=&quot;harvest&quot;, volume=&quot;harvest_demo&quot;} 1698735708
+</code></pre></div>
+<h2 id="viewing-the-metrics">Viewing the Metrics<a class="headerlink" href="#viewing-the-metrics" title="Permanent link">&para;</a></h2>
+<p>You can view the metrics published by the ChangeLog plugin in the <code>ChangeLog Monitor</code> dashboard in <code>Grafana</code>. This dashboard provides a visual representation of the changes tracked by the plugin for volume, svm, and node objects.</p>
 
 
 
