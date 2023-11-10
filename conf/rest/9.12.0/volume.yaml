@@ -17,6 +17,7 @@ counters:
   - ^snapshot_policy                              => snapshot_policy
   - ^state                                        => state
   - ^type                                         => type
+  - ^uuid                                         => uuid
   - ^volume_style_extended                        => style
   - ^vsroot                                       => svm_root
   - autosize_grow_threshold_percent               => autosize_grow_threshold_percent
