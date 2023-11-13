@@ -137,6 +137,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		request, response *node.Node
 		quotas            []*node.Node
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
+		start             time.Time
 		err               error
 		numMetrics        int
 	)
@@ -144,6 +145,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 	data := dataMap[q.Object]
 	apiT := 0 * time.Second
 	parseT := 0 * time.Second
+	pluginParseT := 0 * time.Second
 
 	// Purge and reset data
 	q.data.PurgeInstances()
@@ -176,17 +178,17 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 
 	for {
 		response, tag, ad, pd, err = q.client.InvokeBatchWithTimers(request, tag)
-
 		if err != nil {
 			return nil, err
 		}
 
+		apiT += ad
+		parseT += pd
+		start = time.Now()
+
 		if response == nil {
 			break
 		}
-
-		apiT += ad
-		parseT += pd
 
 		if q.client.IsClustered() {
 			if x := response.GetChildS("attributes-list"); x != nil {
@@ -214,6 +216,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		if err != nil {
 			return nil, err
 		}
+		pluginParseT += time.Since(start)
 	}
 
 	q.Logger.Info().
@@ -222,6 +225,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		Str("apiD", apiT.Round(time.Millisecond).String()).
 		Str("parseD", parseT.Round(time.Millisecond).String()).
 		Str("batchSize", q.batchSize).
+		Str("pluginParseT", pluginParseT.Round(time.Millisecond).String()).
 		Msg("Collected")
 
 	// metrics with qtree prefix and quota prefix are available to support backward compatibility

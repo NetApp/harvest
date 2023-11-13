@@ -137,10 +137,13 @@ func (q *Qtree) Init() error {
 func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 	var (
 		result     []gjson.Result
+		start      time.Time
 		err        error
 		numMetrics int
 	)
 	data := dataMap[q.Object]
+	pluginParseT := 0 * time.Second
+	start = time.Now()
 	// Purge and reset data
 	q.data.PurgeInstances()
 	q.data.Reset()
@@ -183,10 +186,12 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 	if err != nil {
 		return nil, err
 	}
+	pluginParseT += time.Since(start)
 
 	q.Logger.Info().
 		Int("numQuotas", quotaCount).
 		Int("metrics", numMetrics).
+		Str("pluginParseT", pluginParseT.Round(time.Millisecond).String()).
 		Msg("Collected")
 
 	// metrics with qtree prefix and quota prefix are available to support backward compatibility
