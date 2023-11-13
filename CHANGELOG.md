@@ -3,6 +3,8 @@
 
 ## 23.11.0 / 2023-11-13 Release
 :pushpin: Highlights of this major release include:
+## 23.11.0 / 2023-11-13 Release
+:pushpin: Highlights of this major release include:
 
 - Support for multiple poller files in Harvest, enabling the refactoring of large configuration files. Thanks to @llelik and @Pengng88 for raising.
 
@@ -11,6 +13,8 @@
 - Harvest [ChangeLog](https://netapp.github.io/harvest/latest/plugins/#changelog-plugin) plugin to detect and monitor changes related to object creation, modification, and deletion.
 
 - Harvest Power [Algorithm](https://netapp.github.io/harvest/latest/resources/power-algorithm/) changes. As a result, you may observe a noticeable decrease in the reported power metrics compared to previous versions. Thanks to Evan Lee for reporting!
+
+- Added `conf_path` variable for specifying the search path of Harvest templates.
 
 - :package: Streamlined the Harvest Container Installation process by eliminating the need to download a tar file. Running Harvest in a container is now simpler and more convenient.
 
@@ -71,7 +75,7 @@ this release:
 
 @Garydep, @MrObvious, @Pengng88, @Sandromuc, @ewilts, @faguayot, @jmg011, @kinderr95, @llelik, @mamoep, @rodenj1, @s-kuchi, @shawnahall71, @slater0013, @sriniji, @statdigger, @wyahn1219, AlessandroN, Dave, Diane, Evan Lee, Francesco, Heaven7, Johnathan Warlick, Madaan, Martijn Moret, Marvin Montanus, NicoSeiberth, RBrown, TonyHsieh, Watson9121, dbakerletn, imthenightbird, roller, twodot0h, tymercer
 
-:seedling: This release includes 39 features, 27 bug fixes, 24 documentation, 5 performance, 2 refactoring, 12 miscellaneous, and 7 ci pull requests.
+:seedling: This release includes 38 features, 26 bug fixes, 24 documentation, 5 performance, 2 refactoring, 12 miscellaneous, and 7 ci pull requests.
 
 ### :rocket: Features
 - Change Log Detection In Harvest ([#2178](https://github.com/NetApp/harvest/pull/2178))
@@ -139,6 +143,7 @@ this release:
 - Handled Cloud_target For Fabricpool ([#2467](https://github.com/NetApp/harvest/pull/2467))
 - Harvest.yml Defaults Should Be Applied To Child Harvest.yml ([#2471](https://github.com/NetApp/harvest/pull/2471))
 - Update Flexgroup Text In Dashboard ([#2474](https://github.com/NetApp/harvest/pull/2474))
+- Handled Missing Uuid In Volume For Change_log (#2478) ([#2479](https://github.com/NetApp/harvest/pull/2479))
 
 ### :closed_book: Documentation
 - Add Workload Information To Release Notes ([#2316](https://github.com/NetApp/harvest/pull/2316))
@@ -164,6 +169,7 @@ this release:
 - Changelog Doc ([#2453](https://github.com/NetApp/harvest/pull/2453))
 - Generate Ordered Api List For Metrics Doc ([#2458](https://github.com/NetApp/harvest/pull/2458))
 - Fix Docker Run Steps ([#2473](https://github.com/NetApp/harvest/pull/2473))
+- Describe `Conf_path` ([#2480](https://github.com/NetApp/harvest/pull/2480))
 
 ### :zap: Performance
 - Zapi Allocs Improvements ([#2380](https://github.com/NetApp/harvest/pull/2380))
