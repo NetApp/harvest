@@ -76,8 +76,8 @@ groups:
       summary: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"
       description: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"
 
-  # Object created. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
-  - alert: Object Created
+  # Volume created. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
+  - alert: Volume Created
     expr: change_log{op="create"} > 0
     labels:
       severity: "info"
@@ -85,8 +85,8 @@ groups:
       summary: "{{ $labels.object }} [{{ $labels.volume }}] created"
       description: "{{ $labels.object }} [{{ $labels.volume }}] created"
 
-    # Object modified. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
-  - alert: Object Modified
+    # Volume modified. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
+  - alert: Volume Modified
     expr: change_log{op="update"} > 0
     labels:
       severity: "info"
@@ -94,8 +94,8 @@ groups:
       summary: "{{ $labels.object }} [{{ $labels.volume }}] updated"
       description: "The [{{ $labels.track }}] of {{ $labels.object }} [{{ $labels.volume }}] has been updated. The previous value was [{{ $labels.old_value }}], and the new value is [{{ $labels.new_value }}]."
 
-    # Object deleted. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
-  - alert: Object Deleted
+    # Volume deleted. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
+  - alert: Volume Deleted
     expr: change_log{op="delete"} > 0
     labels:
       severity: "warning"
