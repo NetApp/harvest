@@ -3,25 +3,21 @@
 
 ## 23.11.0 / 2023-11-13 Release
 :pushpin: Highlights of this major release include:
-## 23.11.0 / 2023-11-13 Release
-:pushpin: Highlights of this major release include:
 
-- Support for multiple poller files in Harvest, enabling the refactoring of large configuration files. Thanks to @llelik and @Pengng88 for raising.
-
-- FlexGroup Dashboard in Harvest, allowing monitoring of FlexGroup constituents. Thanks to @sandromuc and @ewilts for raising.
+- New FlexGroup dashboard that includes FlexGroup constituents. Thanks to @sandromuc and @ewilts for raising.
 
 - Harvest [ChangeLog](https://netapp.github.io/harvest/latest/plugins/#changelog-plugin) plugin to detect and monitor changes related to object creation, modification, and deletion.
 
-- Harvest Power [Algorithm](https://netapp.github.io/harvest/latest/resources/power-algorithm/) changes. As a result, you may observe a noticeable decrease in the reported power metrics compared to previous versions. Thanks to Evan Lee for reporting!
+- We improved how Harvest calculates power. As a result, you may notice a decrease in the reported power metrics compared to previous versions. Details [here](https://netapp.github.io/harvest/latest/resources/power-algorithm/). Thanks to Evan Lee for reporting!
 
 - Added `conf_path` variable for specifying the search path of Harvest templates.
 
-- :package: Streamlined the Harvest Container Installation process by eliminating the need to download a tar file. Running Harvest in a container is now simpler and more convenient.
+- :package: Streamlined the Harvest container installation process by eliminating the need to download a tar file. Running Harvest in a container is now simpler and more convenient.
 
 - :star: Several of the existing dashboards include new panels in this release:
-  - Aggregate and Volume dashboard includes performance and capacity tier data. Thanks to @ewilts for raising
+  - Aggregate and Volume dashboard includes performance and capacity tier data. Thanks to @ewilts for raising.
   - Workload dashboard includes QoS fixed Utilization % panels. Thanks to @faguayot for raising.
-  - The Disk Dashboard features performance panels at the disk raid-group level. Thanks @kinderr95 for raising.
+  - Disk Dashboard features performance panels at the disk raid-group level. Thanks to @kinderr95 for raising.
 
 - :ear_of_rice: Harvest includes new templates to collect:
   - Cloud target metrics. Thanks to @mamoep for raising
@@ -32,28 +28,30 @@
 
 - :closed_book: Documentation additions
   - Enhanced Quickstart guide for Harvest
-  - Instructions on running the Docker Compose generate command without downloading the Harvest tar.gz file.
-  - Expand Harvest metrics guide to include metrics published via built-in Harvest plugins
   - NABox logs collection guide
   - Document poller `ca_cert` property. Thanks to Marvin Montanus for reporting!
   - Describe how Harvest calculates power. Thanks to Evan Lee for reporting!
   - Details about hidden_fields and filter for the Rest Collector. Thanks to Johnathan Warlick for raising!
 
-- Enhanced the Volume dashboard to include Clone information.
+- Enhanced the Volume dashboard to include clone information.
 
-- :zap: Optimized the Harvest Binary, significantly reducing its size.
+- :zap: Optimized the Harvest binaries, significantly reducing their size.
 
-- Metadata Dashboard Update: The Metadata dashboard is now fully compatible with container environments
+- The Metadata dashboard works inside container deployments. 
 
-- FabricPool panels in Volume dashboard now supports FlexGroup volumes. Thanks to @sriniji for reporting.
+- The FabricPool panels in the Volume dashboard now support FlexGroup volumes. Thanks to @sriniji for reporting.
 
-- :bulb: Added metric descriptions to several panels in Harvest dashboards.
+- Large `harvest.yml` files can be refactoring into smaller ones. Thanks to @llelik and @Pengng88 for raising.
+
+- :bulb: Added help text about metrics to more Harvest dashboard panels.
 
 ## Announcements
 
-:bangbang: **IMPORTANT** Release `23.11` disables the `CIFSSession` templates by default. This change was made to prevent the generation of a large number of metrics. If you require these templates, you can enable them. Please be aware that enabling them may result in a significant increase in metric collection. These metrics are utilized in the SMB2 dashboard.
+:bangbang: **IMPORTANT** Due to ONTAP bug [1585893](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1585893) the Harvest team recommends using ZapiPerf instead of RestPerf when collecting performance metrics. The RestPerf collector can be used once you upgrade your cluster to a version of ONTAP with the fix. Details in 1585893.
 
-:bangbang: **IMPORTANT** Release `23.11` has updated its power metric calculation algorithm. As a result, you may observe a noticeable decrease in the reported power metrics compared to previous versions. To collect these metrics, Rest API permissions are required. For detailed information on the power algorithm, please refer to the power algorithm [documentation](https://netapp.github.io/harvest/latest/resources/power-algorithm/).
+:bangbang: **IMPORTANT** Release `23.11` disables the `CIFSSession` templates by default. This change was made to prevent the generation of a large number of metrics. If you require these templates, you can enable them. Please be aware that enabling them may result in a significant increase in metric collection time, Harvest memory footprint, and Prometheus used disk space. These metrics are utilized in the SMB2 dashboard.
+
+:bangbang: **IMPORTANT** Release `23.11` has updated its power metric calculation algorithm. As a result, you may notice a decrease in the reported power metrics compared to previous versions. To collect these metrics, Rest API permissions are required. For detailed information on the power algorithm, please refer to the power algorithm [documentation](https://netapp.github.io/harvest/latest/resources/power-algorithm/).
 
 :bangbang: **IMPORTANT** NetApp moved their communities from Slack to [Discord](https://discord.gg/ZmmWPHTBHw), please join us [there](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
 
