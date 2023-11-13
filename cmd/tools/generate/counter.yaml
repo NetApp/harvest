@@ -474,7 +474,21 @@ counters:
         Template: conf/rest/9.12.0/node.yaml
 
   - Name: qos_detail_resource_latency
-    Description: average latency for workload on Data ONTAP subsystems
+    Description: This refers to the average latency for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/qos_detail
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/workload_detail.yaml
+        Unit: microseconds
+      - API: ZAPI
+        Endpoint: perf-object-get-instances workload_detail
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/9.12.0/workload_detail.yaml
+        Unit: microseconds
+
+  - Name: qos_detail_service_latency
+    Description: This refers to the average service time for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. This latency is the processing time within the subsystem.
     APIs:
       - API: REST
         Endpoint: api/cluster/counter/tables/qos_detail

@@ -75,3 +75,30 @@ groups:
     annotations:
       summary: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"
       description: "Snapmirror [{{ $labels.relationship_id }}] has [{{$value}}] lag time (in secs)"
+
+  # Volume created. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
+  - alert: Volume Created
+    expr: change_log{op="create",object="volume"} > 0
+    labels:
+      severity: "info"
+    annotations:
+      summary: "{{ $labels.object }} [{{ $labels.volume }}] created"
+      description: "{{ $labels.object }} [{{ $labels.volume }}] created"
+
+    # Volume modified. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
+  - alert: Volume Modified
+    expr: change_log{op="update",object="volume"} > 0
+    labels:
+      severity: "info"
+    annotations:
+      summary: "{{ $labels.object }} [{{ $labels.volume }}] updated"
+      description: "The [{{ $labels.track }}] of {{ $labels.object }} [{{ $labels.volume }}] has been updated. The previous value was [{{ $labels.old_value }}], and the new value is [{{ $labels.new_value }}]."
+
+    # Volume deleted. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
+  - alert: Volume Deleted
+    expr: change_log{op="delete",object="volume"} > 0
+    labels:
+      severity: "warning"
+    annotations:
+      summary: "{{ $labels.object }} [{{ $labels.volume }}] deleted"
+      description: "{{ $labels.object }} [{{ $labels.volume }}] deleted"

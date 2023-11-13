@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Nov-03
+Creation Date : 2023-Nov-13
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -1736,6 +1736,16 @@ Number of link failures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml | 
 | ZAPI | `perf-object-get-instances fcp_port` | `link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml | 
+
+
+### fcp_link_up
+
+Number of times the Fibre Channel link was established
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/fcp` | `link.up`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml | 
+| ZAPI | `perf-object-get-instances fcp_port` | `link_up`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml | 
 
 
 ### fcp_loss_of_signal
@@ -9039,7 +9049,17 @@ This is the average number of concurrent requests for the workload.
 
 ### qos_detail_resource_latency
 
-average latency for workload on Data ONTAP subsystems
+This refers to the average latency for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail.yaml | 
+| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
+
+
+### qos_detail_service_latency
+
+This refers to the average service time for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. This latency is the processing time within the subsystem.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
