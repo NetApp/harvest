@@ -78,7 +78,7 @@ groups:
 
   # Volume created. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
   - alert: Volume Created
-    expr: change_log{op="create"} > 0
+    expr: change_log{op="create",object="volume"} > 0
     labels:
       severity: "info"
     annotations:
@@ -87,7 +87,7 @@ groups:
 
     # Volume modified. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
   - alert: Volume Modified
-    expr: change_log{op="update"} > 0
+    expr: change_log{op="update",object="volume"} > 0
     labels:
       severity: "info"
     annotations:
@@ -96,7 +96,7 @@ groups:
 
     # Volume deleted. Refer https://netapp.github.io/harvest/latest/plugins/#changelog-plugin for more details.
   - alert: Volume Deleted
-    expr: change_log{op="delete"} > 0
+    expr: change_log{op="delete",object="volume"} > 0
     labels:
       severity: "warning"
     annotations:
