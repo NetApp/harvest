@@ -170,7 +170,6 @@ this release:
 - Describe `Conf_path` ([#2480](https://github.com/NetApp/harvest/pull/2480))
 
 ### :zap: Performance
-- Zapi Allocs Improvements ([#2380](https://github.com/NetApp/harvest/pull/2380))
 - Rest Client Allocs Improvements ([#2381](https://github.com/NetApp/harvest/pull/2381))
 - Use Parse Instead Of Getmany For Gjson ([#2385](https://github.com/NetApp/harvest/pull/2385))
 - Remove Extra Dict Wrapper ([#2396](https://github.com/NetApp/harvest/pull/2396))
