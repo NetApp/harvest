@@ -24,11 +24,14 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `log_max_files`        |                                                | Number of rotated log files to keep                                                                                                                                                                                                                                                                                                                                       | `5`              |
 | `log`                  | optional, list of collector names              | Matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                       |                  |
 | `prefer_zapi`          | optional, bool                                 | Use the ZAPI API if the cluster supports it, otherwise allow Harvest to choose REST or ZAPI, whichever is appropriate to the ONTAP version. See [rest-strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for details.                                                                                                              |                  |
+| `conf_path`            | optional, `:` seperated list of directories    | The search path Harvest uses to load its [templates](configure-templates.md). Harvest walks each directory in order, stopping at the first one that contains the desired template.                                                                                                                                                                                        | conf             |
 
 ## Defaults
 
-This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication
-method, login preferences), they can be grouped under this section. The poller section will be checked first and if the
+This section is optional.
+If there are parameters identical for all your pollers (e.g., datacenter, authentication
+method, login preferences), they can be grouped under this section.
+The poller section will be checked first, and if the
 values aren't found there, the defaults will be consulted.
 
 ## Exporters
@@ -36,7 +39,7 @@ values aren't found there, the defaults will be consulted.
 All exporters need two types of parameters:
 
 - `exporter parameters` - defined in `harvest.yml` under `Exporters` section
-- `export_options` - these options are defined in the `Matrix` data structure that is emitted from collectors and
+- `export_options` - these options are defined in the `Matrix` data structure emitted from collectors and
   plugins
 
 The following two parameters are required for all exporters:
@@ -110,7 +113,7 @@ Pollers:
 ```
 
 At runtime, all files will be read and combined into a single configuration.
-The example above would result in the following set of pollers, in this order.
+The example above would result in the following set of pollers in this order.
 ```yaml
 - u2
 - ntap3
@@ -128,10 +131,10 @@ Errors will be logged for all duplicate pollers and Harvest will refuse to start
 Collectors are configured by their own configuration files ([templates](configure-templates.md)), which are stored in subdirectories
 in [conf/](https://github.com/NetApp/harvest/tree/main/conf).
 Most collectors run concurrently and collect a subset of related metrics.
-For example, node related metrics are grouped together and run independently of the disk related metrics.
+For example, node related metrics are grouped together and run independently of the disk-related metrics.
 Below is a snippet from `conf/zapi/default.yaml`
 
-In this example, the `default.yaml` template contains a list of objects (e.g. Node) that reference sub-templates (e.g.
+In this example, the `default.yaml` template contains a list of objects (e.g., Node) that reference sub-templates (e.g.,
 node.yaml). This decomposition groups related metrics together and at runtime, a `Zapi` collector per object will be
 created and each of these collectors will run concurrently.
 
