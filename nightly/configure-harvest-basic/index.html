@@ -1616,17 +1616,25 @@
 <td>Use the ZAPI API if the cluster supports it, otherwise allow Harvest to choose REST or ZAPI, whichever is appropriate to the ONTAP version. See <a href="https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md">rest-strategy</a> for details.</td>
 <td></td>
 </tr>
+<tr>
+<td><code>conf_path</code></td>
+<td>optional, <code>:</code> seperated list of directories</td>
+<td>The search path Harvest uses to load its <a href="../configure-templates/">templates</a>. Harvest walks each directory in order, stopping at the first one that contains the desired template.</td>
+<td>conf</td>
+</tr>
 </tbody>
 </table>
 <h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
-<p>This section is optional. If there are parameters identical for all your pollers (e.g. datacenter, authentication
-method, login preferences), they can be grouped under this section. The poller section will be checked first and if the
+<p>This section is optional.
+If there are parameters identical for all your pollers (e.g., datacenter, authentication
+method, login preferences), they can be grouped under this section.
+The poller section will be checked first, and if the
 values aren't found there, the defaults will be consulted.</p>
 <h2 id="exporters">Exporters<a class="headerlink" href="#exporters" title="Permanent link">&para;</a></h2>
 <p>All exporters need two types of parameters:</p>
 <ul>
 <li><code>exporter parameters</code> - defined in <code>harvest.yml</code> under <code>Exporters</code> section</li>
-<li><code>export_options</code> - these options are defined in the <code>Matrix</code> data structure that is emitted from collectors and
+<li><code>export_options</code> - these options are defined in the <code>Matrix</code> data structure emitted from collectors and
   plugins</li>
 </ul>
 <p>The following two parameters are required for all exporters:</p>
@@ -1703,7 +1711,7 @@ For example:</p>
 <span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
 </code></pre></div>
 <p>At runtime, all files will be read and combined into a single configuration.
-The example above would result in the following set of pollers, in this order.
+The example above would result in the following set of pollers in this order.
 <div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">u2</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap3</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap4</span>
@@ -1717,9 +1725,9 @@ Errors will be logged for all duplicate pollers and Harvest will refuse to start
 <p>Collectors are configured by their own configuration files (<a href="../configure-templates/">templates</a>), which are stored in subdirectories
 in <a href="https://github.com/NetApp/harvest/tree/main/conf">conf/</a>.
 Most collectors run concurrently and collect a subset of related metrics.
-For example, node related metrics are grouped together and run independently of the disk related metrics.
+For example, node related metrics are grouped together and run independently of the disk-related metrics.
 Below is a snippet from <code>conf/zapi/default.yaml</code></p>
-<p>In this example, the <code>default.yaml</code> template contains a list of objects (e.g. Node) that reference sub-templates (e.g.
+<p>In this example, the <code>default.yaml</code> template contains a list of objects (e.g., Node) that reference sub-templates (e.g.,
 node.yaml). This decomposition groups related metrics together and at runtime, a <code>Zapi</code> collector per object will be
 created and each of these collectors will run concurrently.</p>
 <p>Using the snippet below, we expect there to be four <code>Zapi</code> collectors running, each with a different subtemplate and

@@ -2223,6 +2223,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#fcp_link_up" class="md-nav__link">
+    fcp_link_up
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fcp_loss_of_signal" class="md-nav__link">
     fcp_loss_of_signal
   </a>
@@ -7160,6 +7167,13 @@
           <li class="md-nav__item">
   <a href="#qos_detail_resource_latency" class="md-nav__link">
     qos_detail_resource_latency
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qos_detail_service_latency" class="md-nav__link">
+    qos_detail_service_latency
   </a>
   
 </li>
@@ -11137,6 +11151,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#fcp_link_up" class="md-nav__link">
+    fcp_link_up
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fcp_loss_of_signal" class="md-nav__link">
     fcp_loss_of_signal
   </a>
@@ -16079,6 +16100,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qos_detail_service_latency" class="md-nav__link">
+    qos_detail_service_latency
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qos_latency" class="md-nav__link">
     qos_latency
   </a>
@@ -18694,7 +18722,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2023-Nov-03
+<div class="highlight"><pre><span></span><code>Creation Date : 2023-Nov-13
 ONTAP Version: 9.13.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -23058,6 +23086,32 @@ ONTAP Version: 9.13.1
 <td><code>perf-object-get-instances fcp_port</code></td>
 <td><code>link_failure</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/fcp.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fcp_link_up">fcp_link_up<a class="headerlink" href="#fcp_link_up" title="Permanent link">&para;</a></h3>
+<p>Number of times the Fibre Channel link was established</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/fcp</code></td>
+<td><code>link.up</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/fcp.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances fcp_port</code></td>
+<td><code>link_up</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.10.1/fcp.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -42882,7 +42936,33 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="qos_detail_resource_latency">qos_detail_resource_latency<a class="headerlink" href="#qos_detail_resource_latency" title="Permanent link">&para;</a></h3>
-<p>average latency for workload on Data ONTAP subsystems</p>
+<p>This refers to the average latency for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/qos_detail</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/workload_detail.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances workload_detail</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/9.12.0/workload_detail.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qos_detail_service_latency">qos_detail_service_latency<a class="headerlink" href="#qos_detail_service_latency" title="Permanent link">&para;</a></h3>
+<p>This refers to the average service time for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. This latency is the processing time within the subsystem.</p>
 <table>
 <thead>
 <tr>
