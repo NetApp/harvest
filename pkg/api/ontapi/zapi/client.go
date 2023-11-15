@@ -485,6 +485,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	}
 	//goland:noinspection GoUnhandledErrorResult
 	defer response.Body.Close()
+	if withTimers {
+		responseT = time.Since(start)
+	}
 
 	if response.StatusCode != http.StatusOK {
 		if response.StatusCode == http.StatusUnauthorized {
