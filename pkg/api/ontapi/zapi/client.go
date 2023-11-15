@@ -496,6 +496,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, response.Status, errs.WithStatus(response.StatusCode))
 	}
 
+	if withTimers {
+		start = time.Now()
+	}
 	// read response body
 	if body, err = io.ReadAll(response.Body); err != nil {
 		return result, responseT, parseT, err
@@ -503,9 +506,6 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	defer c.printRequestAndResponse(zapiReq, body)
 
 	// parse xml
-	if withTimers {
-		start = time.Now()
-	}
 	if root, err = tree.LoadXML(body); err != nil {
 		return result, responseT, parseT, err
 	}
