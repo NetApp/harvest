@@ -1467,8 +1467,8 @@ adding these lines to <code>conf/zapi/custom.yaml</code>:</p>
 </code></pre></div>
 <p>After restarting your pollers, <code>aggr.yaml</code> and <code>custom_aggr.yaml</code> will be merged.</p>
 <h3 id="create-a-new-object-template">Create a new object template<a class="headerlink" href="#create-a-new-object-template" title="Permanent link">&para;</a></h3>
-<p>In this example, imagine that Harvest doesn't already collect environment sensor data and you wanted to collect it.
-Sensor does comes from the <code>environment-sensors-get-iter</code> ZAPI. Here are the steps to add a new object template.</p>
+<p>In this example, imagine that Harvest doesn't already collect environment sensor data, and you wanted to collect it.
+Sensor does come from the <code>environment-sensors-get-iter</code> ZAPI. Here are the steps to add a new object template.</p>
 <p>Create the file <code>conf/zapi/cdot/9.8.0/sensor.yaml</code> (optionally replace <code>9.8.0</code> with the earliest version of ONTAP that
 supports sensor data. Refer to <a href="./#harvest-versioned-templates">Harvest Versioned Templates</a> for
 more information. Add the following content to your new <code>sensor.yaml</code> file.</p>

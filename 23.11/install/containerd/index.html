@@ -1154,7 +1154,7 @@ are considered alpha. They work, but are still undergoing a lot of change.</p>
 <p>We're going to:
 - Install and Start <a href="https://rancherdesktop.io/">Rancher Desktop</a>
 - (Optional) Create Harvest Docker image by following Harvest's existing documentation
-- Generate a Compose file following Harvest' existing documentation
+- Generate a Compose file following Harvest existing documentation
 - Concatenate the Prometheus/Grafana compose file with the harvest compose file since Rancher doesn't support multiple compose files yet
   - Fixup the concatenated file
 - Start containers</p>
@@ -1170,7 +1170,7 @@ are considered alpha. They work, but are still undergoing a lot of change.</p>
 <div class="highlight"><pre><span></span><code>nerdctl<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache<span class="w"> </span>
 </code></pre></div>
 <h2 id="generate-a-harvest-compose-file">Generate a Harvest compose file<a class="headerlink" href="#generate-a-harvest-compose-file" title="Permanent link">&para;</a></h2>
-<p>Follow the existing documentation to setup your <code>harvest.yml</code> <a href="../containers/#setup-harvestyml">file</a></p>
+<p>Follow the existing documentation to set up your <code>harvest.yml</code> <a href="../containers/#setup-harvestyml">file</a></p>
 <p>Create your <code>harvest-compose.yml</code> file like this:</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
