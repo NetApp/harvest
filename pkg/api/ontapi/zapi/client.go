@@ -501,6 +501,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		return result, responseT, parseT, err
 	}
 	defer c.printRequestAndResponse(zapiReq, body)
+	if withTimers {
+		responseT = time.Since(start)
+	}
 
 	// parse xml
 	if withTimers {
