@@ -1814,7 +1814,7 @@ cd /opt/harvest
 required to name the key/cert pair after the hostname, but if you do, Harvest will load them automatically when you
 specify <code>auth_style: certificate_auth</code> otherwise you can point to them directly.
 See <a href="https://github.com/NetApp/harvest#pollers">Pollers</a> for details.</p>
-<p>Change the common name to the ONTAP user you setup with the harvest role above. e.g <code>harvest2</code></p>
+<p>Change the common name to the ONTAP user you set up with the harvest role above. e.g <code>harvest2</code></p>
 <div class="highlight"><pre><span></span><code>cd /opt/harvest
 mkdir cert
 openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/$(hostname).key -out cert/$(hostname).pem -subj &quot;/CN=harvest2&quot;

@@ -1345,7 +1345,7 @@ sudo<span class="w"> </span>ln<span class="w"> </span>-s<span class="w"> </span>
 <div class="highlight"><pre><span></span><code><span class="c1"># as root or sudo</span>
 usermod<span class="w"> </span>--append<span class="w"> </span>--groups<span class="w"> </span>wheel<span class="w"> </span>harvest
 </code></pre></div>
-<p>Login with the harvest user, setup the podman.socket, and make sure the curl below works. <code>su</code> or <code>sudo</code> aren't sufficient, you need to <code>ssh</code> into the machine as the harvest user or use <code>machinectl login</code>. See <a href="https://www.redhat.com/sysadmin/sudo-rootless-podman">sudo-rootless-podman</a> for details.</p>
+<p>Login with the harvest user, set up the podman.socket, and make sure the curl below works. <code>su</code> or <code>sudo</code> aren't sufficient, you need to <code>ssh</code> into the machine as the harvest user or use <code>machinectl login</code>. See <a href="https://www.redhat.com/sysadmin/sudo-rootless-podman">sudo-rootless-podman</a> for details.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># these must be run as the harvest user</span>
 systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>podman.socket
 systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>podman.socket
@@ -1360,7 +1360,7 @@ sudo<span class="w"> </span>curl<span class="w"> </span>-H<span class="w"> </spa
 <span class="w">  </span>runRoot:<span class="w"> </span>/run/user/1001/containers
 </code></pre></div>
 <h2 id="running-harvest">Running Harvest<a class="headerlink" href="#running-harvest" title="Permanent link">&para;</a></h2>
-<p>By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091 so we can run both Cockpit and Prometheus. Line <code>2</code> below does that.</p>
+<p>By default, Cockpit runs on port 9090, same as Prometheus. We'll change Prometheus's host port to 9091, so we can run both Cockpit and Prometheus. Line <code>2</code> below does that.</p>
 <p>With these changes, the <a href="../containers/#docker-compose">standard Harvest compose instructions</a> can be followed as normal now. In summary,</p>
 <ol>
 <li>Add the clusters, exporters, etc. to your <code>harvest.yml</code> file</li>
@@ -1406,7 +1406,7 @@ PING<span class="w"> </span>prometheus<span class="w"> </span><span class="o">(<
 <div class="highlight"><pre><span></span><code>podman ps -a
 ERRO[0000] error joining network namespace for container 424df6c: error retrieving network namespace at /run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09: failed to Statfs &quot;/run/user/1001/netns/cni-5fb97adc-b6ef-17e8-565b-0481b311ba09&quot;: no such file or directory
 </code></pre></div>
-<p>Run <code>podman info</code> and make sure <code>runRoot</code> points to <code>/run/user/$UID/containers</code> (see below). If it instead points to <code>/tmp/podman-run-$UID</code> you will likely have problems when restarting the machine. Typically this happens because you used su to become the harvest user or ran podman as root. You can fix this by logging in as the <code>harvest</code> user and running <code>podman system reset</code>.</p>
+<p>Run <code>podman info</code> and make sure <code>runRoot</code> points to <code>/run/user/$UID/containers</code> (see below). If it instead points to <code>/tmp/podman-run-$UID</code> you will likely have problems when restarting the machine. Typically, this happens because you used su to become the harvest user or ran podman as root. You can fix this by logging in as the <code>harvest</code> user and running <code>podman system reset</code>.</p>
 <div class="highlight"><pre><span></span><code>podman<span class="w"> </span>info<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>runRoot
 <span class="w">  </span>runRoot:<span class="w"> </span>/run/user/1001/containers
 </code></pre></div>
