@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Nov-13
+Creation Date : 2023-Nov-16
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -9057,7 +9057,7 @@ This refers to the average latency for workload within the subsystems of the Dat
 | ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
 
 
-### qos_detail_service_latency
+### qos_detail_service_time_latency
 
 This refers to the average service time for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. This latency is the processing time within the subsystem.
 
