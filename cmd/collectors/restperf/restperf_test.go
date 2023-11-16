@@ -78,12 +78,12 @@ func TestMain(m *testing.M) {
 
 	benchPerf = newRestPerf("Volume", "volume.yaml")
 	counters := jsonToPerfRecords("testdata/volume-counters.json")
-	_, _ = benchPerf.pollCounter(counters[0].Records.Array())
+	_, _ = benchPerf.pollCounter(counters[0].Records.Array(), 0)
 	now := time.Now().Truncate(time.Second)
 	propertiesData = jsonToPerfRecords("testdata/volume-poll-properties.json.gz")
 	fullPollData = jsonToPerfRecords("testdata/volume-poll-full.json.gz")
 	fullPollData[0].Timestamp = now.UnixNano()
-	_, _ = benchPerf.pollInstance(propertiesData[0].Records.Array())
+	_, _ = benchPerf.pollInstance(propertiesData[0].Records.Array(), 0)
 	_, _ = benchPerf.pollData(now, fullPollData)
 
 	os.Exit(m.Run())
@@ -97,7 +97,7 @@ func BenchmarkRestPerf_PollData(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		now = now.Add(time.Minute * 15)
 		fullPollData[0].Timestamp = now.UnixNano()
-		mi, _ := benchPerf.pollInstance(propertiesData[0].Records.Array())
+		mi, _ := benchPerf.pollInstance(propertiesData[0].Records.Array(), 0)
 		for _, mm := range mi {
 			ms = append(ms, mm)
 		}
@@ -142,13 +142,13 @@ func TestRestPerf_pollData(t *testing.T) {
 			r := newRestPerf("Volume", "volume.yaml")
 
 			counters := jsonToPerfRecords(tt.pollCounters)
-			_, err := r.pollCounter(counters[0].Records.Array())
+			_, err := r.pollCounter(counters[0].Records.Array(), 0)
 			if err != nil {
 				t.Fatal(err)
 			}
 			pollInstance := jsonToPerfRecords(tt.pollInstance)
 			pollData := jsonToPerfRecords(tt.pollDataPath1)
-			_, err = r.pollInstance(pollInstance[0].Records.Array())
+			_, err = r.pollInstance(pollInstance[0].Records.Array(), 0)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -277,13 +277,13 @@ func TestQosVolume(t *testing.T) {
 			r := newRestPerf("WorkloadVolume", "workload_volume.yaml")
 
 			counters := jsonToPerfRecords(tt.pollCounters)
-			_, err := r.pollCounter(counters[0].Records.Array())
+			_, err := r.pollCounter(counters[0].Records.Array(), 0)
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			pollInst := jsonToPerfRecords(tt.pollInstance)
-			_, err = r.pollInstance(pollInst[0].Records.Array())
+			_, err = r.pollInstance(pollInst[0].Records.Array(), 0)
 			if err != nil {
 				t.Fatal(err)
 			}

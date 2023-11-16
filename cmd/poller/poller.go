@@ -501,10 +501,10 @@ func (p *Poller) Run() {
 
 			// @TODO if there are no "master" exporters, don't collect metadata
 			for _, ee := range p.exporters {
-				if err := ee.Export(p.metadata); err != nil {
+				if _, err := ee.Export(p.metadata); err != nil {
 					logger.Error().Stack().Err(err).Msg("export component metadata:")
 				}
-				if err := ee.Export(p.status); err != nil {
+				if _, err := ee.Export(p.status); err != nil {
 					logger.Error().Stack().Err(err).Msg("export target metadata:")
 				}
 			}

@@ -117,7 +117,7 @@ func TestExportDebug(t *testing.T) {
 	}
 
 	// render data
-	if err := influx.Export(data); err != nil {
+	if _, err := influx.Export(data); err != nil {
 		t.Fatal(err)
 	}
 }
