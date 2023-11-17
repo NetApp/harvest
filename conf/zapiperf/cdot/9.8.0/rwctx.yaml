@@ -1,0 +1,24 @@
+name:                     Rwctx
+query:                    rw_ctx
+object:                   rw_ctx
+
+counters:
+  - cifs_giveups
+  - cifs_rewinds
+  - instance_uuid
+  - nfs_giveups
+  - nfs_rewinds
+  - node_name          => node
+  - qos_giveups
+  - qos_rewinds
+
+plugins:
+  LabelAgent:
+    split:
+      # instance_uuid  umeng-aff300-06:kernel:rw_ctx
+      - instance_uuid `:` ,type,
+
+export_options:
+  instance_keys:
+    - node
+    - type
