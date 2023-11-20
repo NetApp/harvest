@@ -10,7 +10,7 @@ counters:
   - nfs_rewinds
   - node_name          => node
   - qos_flowcontrol
-  - qos_giveups
+  - qos_rewinds
 
 plugins:
   LabelAgent:

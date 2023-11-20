@@ -4718,6 +4718,22 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 91,
+          "options": {
+            "content": "The APIs for this panel are only available via ZapiPerf. Enable the ZapiPerf collector in your `harvest.yml` config.<br>\nSee https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#why-do-i-have-rewind-view-panels-empty-in-node-dashboard for more details.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Array of number of rewinds for nfs ops based on their reasons.",
           "fieldConfig": {
             "defaults": {
@@ -4753,15 +4769,7 @@
                 }
               },
               "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
+              "thresholds": {},
               "unit": "short"
             },
             "overrides": []
@@ -4770,7 +4778,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 20
+            "y": 22
           },
           "id": 82,
           "options": {
@@ -4840,19 +4848,7 @@
                 }
               },
               "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
+              "thresholds": {},
               "unit": "short"
             },
             "overrides": []
@@ -4861,7 +4857,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 20
+            "y": 22
           },
           "id": 83,
           "options": {
@@ -4932,19 +4928,7 @@
                 }
               },
               "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
+              "thresholds": {},
               "unit": "short"
             },
             "overrides": []
@@ -4953,7 +4937,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 29
+            "y": 31
           },
           "id": 85,
           "options": {
@@ -5025,23 +5009,7 @@
               "mappings": [],
               "max": 100,
               "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "transparent",
-                    "value": null
-                  },
-                  {
-                    "color": "orange",
-                    "value": 60
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
+              "thresholds": {},
               "unit": "short"
             },
             "overrides": []
@@ -5050,7 +5018,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 29
+            "y": 31
           },
           "id": 86,
           "options": {
@@ -5123,19 +5091,7 @@
               "mappings": [],
               "max": 100,
               "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
+              "thresholds": {},
               "unit": "short"
             },
             "overrides": []
@@ -5144,7 +5100,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 38
+            "y": 40
           },
           "id": 87,
           "options": {
@@ -5216,19 +5172,7 @@
               },
               "mappings": [],
               "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
+              "thresholds": {},
               "unit": "short"
             },
             "overrides": []
@@ -5237,7 +5181,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 38
+            "y": 40
           },
           "id": 89,
           "options": {
