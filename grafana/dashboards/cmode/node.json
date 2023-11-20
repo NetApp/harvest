@@ -5003,12 +5003,10 @@
                   "mode": "none"
                 },
                 "thresholdsStyle": {
-                  "mode": "area"
+                  "mode": "off"
                 }
               },
               "mappings": [],
-              "max": 100,
-              "min": 0,
               "thresholds": {},
               "unit": "short"
             },
@@ -5089,8 +5087,6 @@
                 }
               },
               "mappings": [],
-              "max": 100,
-              "min": 0,
               "thresholds": {},
               "unit": "short"
             },
@@ -5171,7 +5167,6 @@
                 }
               },
               "mappings": [],
-              "min": 0,
               "thresholds": {},
               "unit": "short"
             },

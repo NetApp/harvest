@@ -12,13 +12,6 @@ counters:
   - qos_flowcontrol
   - qos_rewinds
 
-plugins:
-  LabelAgent:
-    split:
-      # instance_uuid  umeng-aff300-06:kernel:rw_ctx
-      - instance_uuid `:` ,type,
-
 export_options:
   instance_keys:
     - node
-    - type
