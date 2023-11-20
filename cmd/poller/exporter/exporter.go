@@ -23,19 +23,25 @@ type Exporter interface {
 	Init() error      // initialize exporter
 	GetClass() string // the class of the exporter, e.g. Prometheus, InfluxDB
 	// GetName is different from Class, since we can have multiple instances of the same Class
-	GetName() string                    // the name of the exporter instance
-	GetExportCount() uint64             // return and reset number of exported data points, used by Poller to keep stats
-	AddExportCount(uint64)              // add count to the export count, called by the exporter itself
-	GetStatus() (uint8, string, string) // return current state of the exporter
-	Export(*matrix.Matrix) error        // render data in matrix to the desired format and emit
+	GetName() string                      // the name of the exporter instance
+	GetExportCount() uint64               // return and reset number of exported data points, used by Poller to keep stats
+	AddExportCount(uint64)                // add count to the export count, called by the exporter itself
+	GetStatus() (uint8, string, string)   // return current state of the exporter
+	Export(*matrix.Matrix) (Stats, error) // render data in matrix to the desired format and emit
 	// this is the only function that should be implemented by "real" exporters
 }
 
-// ExporterStatus defines the possible states of an exporter
-var ExporterStatus = [3]string{
+// status defines the possible states of an exporter
+var status = [3]string{
 	"up",
 	"standby",
 	"failed",
+}
+
+// Stats capture the number of instances and metrics exported
+type Stats struct {
+	InstancesExported uint64
+	MetricsExported   uint64
 }
 
 // AbstractExporter implements all methods of the Exporter interface, except Export()
@@ -97,7 +103,7 @@ func (e *AbstractExporter) InitAbc() error {
 		return err
 	}
 
-	//e.Metadata.AddLabel("task", "")
+	// e.Metadata.AddLabel("task", "")
 	if instance, err := e.Metadata.NewInstance("export"); err == nil {
 		instance.SetLabel("task", "export")
 	} else {
@@ -144,12 +150,12 @@ func (e *AbstractExporter) AddExportCount(n uint64) {
 
 // GetStatus returns current state of exporter
 func (e *AbstractExporter) GetStatus() (uint8, string, string) {
-	return e.Status, ExporterStatus[e.Status], e.Message
+	return e.Status, status[e.Status], e.Message
 }
 
 // SetStatus sets the current state of exporter
 func (e *AbstractExporter) SetStatus(code uint8, msg string) {
-	if code >= uint8(len(ExporterStatus)) {
+	if code >= uint8(len(status)) {
 		panic("invalid status code " + strconv.Itoa(int(code)))
 	}
 	e.Status = code

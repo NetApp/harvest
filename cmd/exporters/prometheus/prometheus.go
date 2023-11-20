@@ -189,18 +189,19 @@ func (p *Prometheus) Init() error {
 	return nil
 }
 
-// Export - Unlike other Harvest exporters, we don't actually export data
-// but put it in cache, for the HTTP daemon to serve on request
+// Export - Unlike other Harvest exporters, we don't export data
+// but put it in cache. The HTTP daemon serves that cache on request.
 //
 // An important aspect of the whole mechanism is that all incoming
 // data should have a unique UUID and object pair, otherwise they'll
 // overwrite other data in the cache.
 // This key is also used by the HTTP daemon to trace back the name
 // of the collectors and plugins where the metrics come from (for the info page)
-func (p *Prometheus) Export(data *matrix.Matrix) error {
+func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	var (
 		metrics [][]byte
+		stats   exporter.Stats
 		err     error
 	)
 
@@ -212,7 +213,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 
 	// render metrics into Prometheus format
 	start := time.Now()
-	metrics = p.render(data)
+	metrics, stats = p.render(data)
 
 	// fix render time for metadata
 	d := time.Since(start)
@@ -223,7 +224,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 		for _, m := range metrics {
 			p.Logger.Debug().Msgf("M= %s", string(m))
 		}
-		return nil
+		return stats, nil
 	}
 
 	// store metrics in cache
@@ -239,14 +240,14 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 	p.AddExportCount(uint64(len(metrics)))
 	err = p.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("error")
+		p.Logger.Error().Err(err).Msg("error")
 	}
 	err = p.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("error")
+		p.Logger.Error().Err(err).Msg("error")
 	}
 
-	return nil
+	return stats, nil
 }
 
 // Render metrics and labels into the exposition format, as described in
@@ -265,18 +266,19 @@ func (p *Prometheus) Export(data *matrix.Matrix) error {
 // volume_read_ops{node="my-node",vol="some_vol"} 2523
 // fcp_lif_read_ops{vserver="nas_svm",port_id="e02"} 771
 
-func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
+func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	var (
-		rendered         [][]byte
-		tagged           *set.Set
-		labelsToInclude  []string
-		keysToInclude    []string
-		globalLabels     []string
-		prefix           string
-		err              error
-		replacer         *strings.Replacer
-		histograms       map[string]*histogram
-		normalizedLabels map[string][]string // cache of histogram normalized labels
+		rendered          [][]byte
+		tagged            *set.Set
+		labelsToInclude   []string
+		keysToInclude     []string
+		globalLabels      []string
+		prefix            string
+		err               error
+		replacer          *strings.Replacer
+		histograms        map[string]*histogram
+		normalizedLabels  map[string][]string // cache of histogram normalized labels
+		instancesExported uint64
 	)
 
 	rendered = make([][]byte, 0)
@@ -327,7 +329,7 @@ func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
 			p.Logger.Trace().Msgf("skip instance [%s]: disabled for export", key)
 			continue
 		}
-
+		instancesExported++
 		p.Logger.Trace().Msgf("rendering instance [%s] (%v)", key, instance.GetLabels())
 
 		instanceKeys := make([]string, len(globalLabels))
@@ -411,11 +413,11 @@ func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
 		for mkey, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
-				p.Logger.Trace().Msgf("skip metric [%s]: disabled for export", mkey)
+				p.Logger.Trace().Str("mkey", mkey).Msg("metric disabled for export")
 				continue
 			}
 
-			p.Logger.Trace().Msgf("rendering metric [%s]", mkey)
+			p.Logger.Trace().Str("mkey", mkey).Msg("rendering metric")
 
 			if value, ok := metric.GetValueString(instance); ok {
 
@@ -556,7 +558,13 @@ func (p *Prometheus) render(data *matrix.Matrix) [][]byte {
 		Int("rendered", len(rendered)).
 		Int("instances", len(data.GetInstances())).
 		Msg("Rendered data points for instances")
-	return rendered
+
+	stats := exporter.Stats{
+		InstancesExported: instancesExported,
+		MetricsExported:   uint64(len(rendered)),
+	}
+
+	return rendered, stats
 }
 
 var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)

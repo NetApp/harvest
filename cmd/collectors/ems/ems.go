@@ -19,7 +19,7 @@ import (
 )
 
 const defaultDataPollDuration = 3 * time.Minute
-const maxURLSize = 8_000 //bytes
+const maxURLSize = 8_000 // bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 const MaxBookendInstances = 1000
@@ -213,7 +213,7 @@ func (e *Ems) InitCache() error {
 			continue
 		}
 
-		//populate prop counter for asup
+		// populate prop counter for asup
 		eventName := line.GetChildContentS("name")
 		e.Prop.Counters[eventName] = eventName
 
@@ -243,7 +243,7 @@ func (e *Ems) InitCache() error {
 		}
 		e.emsProp[prop.Name] = append(e.emsProp[prop.Name], &prop)
 	}
-	//add severity filter
+	// add severity filter
 	e.Filter = append(e.Filter, e.severityFilter)
 	return nil
 }
@@ -294,10 +294,13 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(e.ReturnTimeOut).
 		Build()
 
+	apiT := time.Now()
 	if records, err = e.GetRestData(href); err != nil {
 		return nil, err
 	}
+	apiD := time.Since(apiT)
 
+	parseT := time.Now()
 	if len(records) == 0 {
 		return nil, errs.New(errs.ErrNoInstance, e.Object+" no ems message found on cluster")
 	}
@@ -316,7 +319,8 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		names = append(names, key)
 	}
 
-	//filter out names which exists on the cluster. ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
+	// Filter out names which exist on the cluster.
+	// ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
 	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
 	e.Logger.Debug().Strs("querying for events", filteredNames).Msg("")
 	_, missingNames := util.Intersection(filteredNames, names)
@@ -337,6 +341,12 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	if bookendCacheSize > MaxBookendInstances {
 		e.Logger.Warn().Int("total instances", bookendCacheSize).Msg("cache has more than 1000 instances")
 	}
+
+	// update metadata for collector logs
+	_ = e.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
+	_ = e.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
+	_ = e.Metadata.LazySetValueUint64("instances", "instance", uint64(bookendCacheSize))
+
 	return nil, nil
 }
 
@@ -440,13 +450,13 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 		value := gjson.Get(instanceData.String(), property)
 		return value
 	}
-	//strip parameters. from property name
+	// strip parameters. from property name
 	_, after, found := strings.Cut(property, "parameters.")
 	if found {
 		property = after
 	}
 
-	//process parameter search
+	// process parameter search
 	t := gjson.Get(instanceData.String(), "parameters.#.name")
 
 	for _, name := range t.Array() {
@@ -536,7 +546,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 		} else {
 			if _, ok := m[msgName]; !ok {
-				//create matrix if not exists for the ems event
+				// create matrix if not exists for the ems event
 				mx = matrix.New(msgName, e.Prop.Object, msgName)
 				mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
 				m[msgName] = mx
@@ -594,12 +604,12 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						}
 					}
 
-					//set labels
+					// set labels
 					for k, v := range p.Labels {
 						instance.SetLabel(k, v)
 					}
 
-					//matches filtering
+					// matches filtering
 					if len(p.Matches) == 0 {
 						isMatchPs = true
 					} else {
@@ -610,7 +620,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 									break
 								}
 							} else {
-								//value not found
+								// value not found
 								e.Logger.Warn().
 									Str("Instance key", instanceKey).
 									Str("name", match.Name).

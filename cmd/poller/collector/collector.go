@@ -251,6 +251,13 @@ func Init(c Collector) error {
 	_, _ = md.NewMetricUint64("metrics")
 	_, _ = md.NewMetricUint64("instances")
 
+	// Used by collector logging but not exported
+	loggingOnly := []string{"begin", "export_time"}
+	for _, mName := range loggingOnly {
+		metric, _ := md.NewMetricUint64(mName)
+		metric.SetExportable(false)
+	}
+
 	// add tasks of the collector as metadata instances
 	for _, task := range s.GetTasks() {
 		instance, _ := md.NewInstance(task.Name)
@@ -294,6 +301,10 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				Msgf("Collector panicked %s", r)
 		}
 	}()
+
+	var (
+		exportStart time.Time
+	)
 
 	// keep track of connection errors
 	// to increment time before retry
@@ -435,45 +446,65 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					_ = c.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
 				}
 			}
-			if task.Name == "data" {
-				c.logMetadata()
-			}
 
 			// update task metadata
 			_ = c.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
 			_ = c.Metadata.LazySetValueInt64("task_time", task.Name, taskTime.Microseconds())
+			_ = c.Metadata.LazySetValueInt64("begin", task.Name, start.UnixMilli())
+
+			// Log non-data tasks immediately. Data task is logged after export
+			if task.Name != "data" {
+				c.logMetadata(task.Name, exporter.Stats{})
+			}
 		}
 
 		// pass results to exporters
 
-		c.Logger.Debug().Msgf("exporting collected (%d) data", len(results))
+		c.Logger.Debug().Int("results", len(results)).Msg("exporting data")
 
-		// @TODO better handling when exporter is standby/failed state
+		exportStart = time.Now()
+		exporterStats := exporter.Stats{}
+
 		for _, e := range c.Exporters {
 			if code, status, reason := e.GetStatus(); code != 0 {
-				c.Logger.Warn().Msgf("exporter [%s] down (%d - %s) (%s), skip export", e.GetName(), code, status, reason)
+				c.Logger.Warn().
+					Str("exporter", e.GetName()).
+					Str("status", status).
+					Str("reason", reason).
+					Uint8("code", code).
+					Msg("skip export")
 				continue
 			}
 
-			if err := e.Export(c.Metadata); err != nil {
+			// Export metadata first
+			if _, err := e.Export(c.Metadata); err != nil {
 				c.Logger.Warn().Err(err).Str("exporter", e.GetName()).Msg("Unable to export metadata")
 			}
 
-			// continue if metadata failed, since it might be specific to metadata
+			// Continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
 				if data.IsExportable() {
-					if err := e.Export(data); err != nil {
-						c.Logger.Error().Stack().Err(err).Msgf("export data to [%s]:", e.GetName())
+					stats, err := e.Export(data)
+					if err != nil {
+						c.Logger.Error().Err(err).Str("exporter", e.GetName()).Msg("export data")
 						break
 					}
+					exporterStats.InstancesExported += stats.InstancesExported
+					exporterStats.MetricsExported += stats.MetricsExported
 				} else {
-					c.Logger.Debug().Msgf("skipped data (%s) (%s) - set non-exportable", data.UUID, data.Object)
+					c.Logger.Debug().Str("UUID", data.UUID).Str("object", data.Object).Msg("skipped non-exportable data")
 				}
 			}
 		}
 
+		// Only pollData adds results
+		if len(results) > 0 {
+			_ = c.Metadata.LazySetValueInt64("export_time", "data", time.Since(exportStart).Microseconds())
+			c.logMetadata("data", exporterStats)
+		}
+
 		if nd := c.Schedule.NextDue(); nd > 0 {
-			c.Logger.Debug().Msgf("sleeping %s until next poll", nd.String()) // DEBUG
+			c.Logger.Debug().Str("dur", nd.String()).Msg("sleep until next poll")
 			c.Schedule.Sleep()
 			// log if lagging by more than 500 ms
 			// < is used since larger durations are more negative
@@ -485,28 +516,55 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 	}
 }
 
-func (c *AbstractCollector) logMetadata() {
+func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 	metrics := c.Metadata.GetMetrics()
 	info := c.Logger.Info()
-	dataInstance := c.Metadata.GetInstance("data")
-	if dataInstance == nil {
+	inst := c.Metadata.GetInstance(taskName)
+	if inst == nil {
 		return
 	}
-	for _, metric := range metrics {
-		mName := metric.GetName()
-		if mName == "poll_time" || mName == "task_time" {
-			// don't log these since they're covered by other durations
-			continue
+
+	if taskName == "data" {
+		for _, metric := range metrics {
+			mName := metric.GetName()
+			if mName == "task_time" {
+				// don't log since it is covered by other durations
+				continue
+			}
+			value, _ := metric.GetValueFloat64(inst)
+			if strings.HasSuffix(mName, "_time") {
+				// convert microseconds to milliseconds and names ending with _time into -> *Ms
+				v := int64(math.Round(value / 1000))
+				info.Int64(mName[0:len(mName)-5]+"Ms", v)
+			} else {
+				info.Int64(mName, int64(value))
+			}
 		}
-		value, _ := metric.GetValueFloat64(dataInstance)
-		if strings.HasSuffix(mName, "_time") {
-			// convert microseconds to milliseconds and names ending with _time into -> *Ms
+
+		info.Uint64("instancesExported", stats.InstancesExported)
+		info.Uint64("metricsExported", stats.MetricsExported)
+	} else {
+		logFields := []string{"api_time", "begin", "poll_time"}
+		for _, field := range logFields {
+			value, _ := c.Metadata.GetMetric(field).GetValueFloat64(inst)
 			v := int64(math.Round(value / 1000))
-			info.Int64(mName[0:len(mName)-5]+"Ms", v)
-		} else {
-			info.Int64(mName, int64(value))
+			if strings.HasSuffix(field, "_time") {
+				field = field[0:len(field)-5] + "Ms"
+			}
+			info.Int64(field, v)
 		}
+
+		if taskName == "counter" {
+			v, _ := c.Metadata.GetMetric("metrics").GetValueInt64(inst)
+			info.Int64("metrics", v)
+		} else if taskName == "instance" {
+			v, _ := c.Metadata.GetMetric("instances").GetValueInt64(inst)
+			info.Int64("instances", v)
+		}
+
+		info.Str("task", taskName)
 	}
+
 	info.Msg("Collected")
 }
 

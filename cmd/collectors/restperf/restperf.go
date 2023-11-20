@@ -244,21 +244,26 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
+	apiT := time.Now()
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		return r.handleError(err, href)
 	}
 
-	return r.pollCounter(records)
+	return r.pollCounter(records, time.Since(apiT))
 }
 
-func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matrix, error) {
+func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[string]*matrix.Matrix, error) {
 	var (
 		err           error
 		counterSchema gjson.Result
+		parseT        time.Time
 	)
 	mat := r.Matrix[r.Object]
 	firstRecord := records[0]
+
+	parseT = time.Now()
+
 	if firstRecord.Exists() {
 		counterSchema = firstRecord.Get("counter_schemas")
 	} else {
@@ -343,6 +348,11 @@ func (r *RestPerf) pollCounter(records []gjson.Result) (map[string]*matrix.Matri
 	if err != nil {
 		return nil, err
 	}
+
+	// update metadata for collector logs
+	_ = r.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
+	_ = r.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
+	_ = r.Metadata.LazySetValueUint64("metrics", "counter", uint64(len(r.perfProp.counterInfo)))
 
 	return nil, nil
 }
@@ -1366,15 +1376,16 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
+	apiT := time.Now()
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		return r.handleError(err, href)
 	}
 
-	return r.pollInstance(records)
+	return r.pollInstance(records, time.Since(apiT))
 }
 
-func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matrix, error) {
+func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map[string]*matrix.Matrix, error) {
 	var (
 		err                              error
 		oldInstances                     *set.Set
@@ -1383,6 +1394,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matr
 
 	mat := r.Matrix[r.Object]
 	oldInstances = set.New()
+	parseT := time.Now()
 	for key := range mat.GetInstances() {
 		oldInstances.Add(key)
 	}
@@ -1450,7 +1462,12 @@ func (r *RestPerf) pollInstance(records []gjson.Result) (map[string]*matrix.Matr
 	newSize = len(mat.GetInstances())
 	added = newSize - (oldSize - removed)
 
-	r.Logger.Debug().Msgf("added %d new, removed %d (total instances %d)", added, removed, newSize)
+	r.Logger.Debug().Int("new", added).Int("removed", removed).Int("total", newSize).Msg("instances")
+
+	// update metadata for collector logs
+	_ = r.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
+	_ = r.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
+	_ = r.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
 
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "")

@@ -240,6 +240,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		instanceKeys []string
 		err          error
 		skips        int
+		apiT         time.Duration
+		parseT       time.Duration
 	)
 
 	z.Logger.Trace().Msg("updating data cache")
@@ -256,8 +258,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// for updating metadata
 	count := uint64(0)
 	batchCount := 0
-	apiT := 0 * time.Second
-	parseT := 0 * time.Second
 
 	// determine what will serve as instance key (either "uuid" or "instance")
 	keyName := "instance-uuid"
@@ -914,6 +914,8 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		wanted                                   map[string]string
 		oldMetricsSize, oldLabelsSize            int
 		counters                                 map[string]*node.Node
+		apiT, parseT                             time.Time
+		apiD                                     time.Duration
 	)
 
 	z.scalarCounters = make([]string, 0)
@@ -968,9 +970,12 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
+	apiT = time.Now()
 	if response, err = z.Client.Invoke(z.testFilePath); err != nil {
 		return nil, err
 	}
+	apiD = time.Since(apiT)
+	parseT = time.Now()
 
 	// fetch counter elements
 	if elems := response.GetChildS("counters"); elems != nil && len(elems.GetChildren()) != 0 {
@@ -1178,13 +1183,19 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		z.Logger.Debug().Msgf("removed label [%s]", key)
 	}
 
-	metricsAdded := len(mat.GetMetrics()) - (oldMetricsSize - oldMetrics.Size())
+	numMetrics := len(mat.GetMetrics())
+	metricsAdded := numMetrics - (oldMetricsSize - oldMetrics.Size())
 	labelsAdded := len(z.instanceLabels) - (oldLabelsSize - oldLabels.Size())
 
-	z.Logger.Debug().Msgf("added %d new, removed %d metrics (total: %d)", metricsAdded, oldMetrics.Size(), len(mat.GetMetrics()))
-	z.Logger.Debug().Msgf("added %d new, removed %d labels (total: %d)", labelsAdded, oldLabels.Size(), len(z.instanceLabels))
+	z.Logger.Debug().Int("new", metricsAdded).Int("removed", oldMetrics.Size()).Int("total", numMetrics).Msg("metrics")
+	z.Logger.Debug().Int("new", labelsAdded).Int("removed", oldLabels.Size()).Int("total", len(z.instanceLabels)).Msg("labels")
 
-	if len(mat.GetMetrics()) == 0 {
+	// update metadata for collector logs
+	_ = z.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
+	_ = z.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
+	_ = z.Metadata.LazySetValueUint64("metrics", "counter", uint64(numMetrics))
+
+	if numMetrics == 0 {
 		return nil, errs.New(errs.ErrNoMetric, "")
 	}
 
@@ -1390,6 +1401,8 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		oldInstances                               *set.Set
 		oldSize, newSize, removed, added           int
 		keyAttr, instancesAttr, nameAttr, uuidAttr string
+		apiD, parseD                               time.Duration
+		apiT, parseT                               time.Time
 	)
 
 	oldInstances = set.New()
@@ -1443,6 +1456,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	batchTag := "initial"
 
 	for {
+		apiT = time.Now()
 		if results, batchTag, err = z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath); err != nil {
 			if errors.Is(err, errs.ErrAPIRequestRejected) {
 				z.Logger.Info().
@@ -1455,8 +1469,12 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 					Str("batchTag", batchTag).
 					Msg("InvokeBatchRequest failed")
 			}
+			apiD += time.Since(apiT)
 			break
 		}
+
+		apiD += time.Since(apiT)
+		parseT = time.Now()
 
 		if results == nil {
 			break
@@ -1491,6 +1509,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				z.updateQosLabels(i, instance, key)
 			}
 		}
+		parseD += time.Since(parseT)
 	}
 
 	for key := range oldInstances.Iter() {
@@ -1502,7 +1521,12 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	newSize = len(mat.GetInstances())
 	added = newSize - (oldSize - removed)
 
-	z.Logger.Debug().Msgf("added %d new, removed %d (total instances %d)", added, removed, newSize)
+	z.Logger.Debug().Int("new", added).Int("removed", removed).Int("total", newSize).Msg("instances")
+
+	// update metadata for collector logs
+	_ = z.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
+	_ = z.Metadata.LazySetValueInt64("parse_time", "instance", parseD.Microseconds())
+	_ = z.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
 
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "")

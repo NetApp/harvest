@@ -129,7 +129,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
-	md := p.render(p.Metadata)
+	md, _ := p.render(p.Metadata)
 	data = append(data, md...)
 	count += len(md)
 	/*
