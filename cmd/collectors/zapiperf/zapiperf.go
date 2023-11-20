@@ -1273,11 +1273,6 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			}
 		}
 
-		baseKey := baseCounter
-		if baseCounter != "" && len(baseLabels) != 0 {
-			baseKey += "." + baseLabels[0]
-		}
-
 		// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
 		// if a counter is a histogram
 		isHistogram = false
@@ -1293,6 +1288,10 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 					return ""
 				}
 			}
+			baseKey := baseCounter
+			if baseCounter != "" && len(baseLabels) != 0 {
+				baseKey += "." + baseLabels[0]
+			}
 			histogramMetric.SetProperty(property)
 			histogramMetric.SetComment(baseKey)
 			histogramMetric.SetExportable(enabled)
@@ -1305,7 +1304,10 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			var m *matrix.Metric
 
 			key := name + "." + label
-
+			baseKey := baseCounter
+			if baseKey != "" && len(baseLabels) != 0 {
+				baseKey += "." + baseLabels[i]
+			}
 			if m = mat.GetMetric(key); m != nil {
 				z.Logger.Trace().Msgf("updating array metric [%s] attributes", key)
 			} else if m, err = mat.NewMetricFloat64(key, display); err == nil {
