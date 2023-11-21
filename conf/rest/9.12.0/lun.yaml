@@ -21,10 +21,12 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
-    # path is something like "/vol/vol_georg_fcp401/lun401"
-    # we only want lun name, which is 4th element
-      split:
-        - path `/` ,,,lun
+    # There are two flavors of path names
+    # /vol/volName/lunName
+    # /vol/volName/lun401/lunName
+      split_regex:
+        - path `^\/(?:[^/])+\/(?:[^/])+\/((?:[^/])+)$` lun
+        - path `^\/(?:[^/])+\/(?:[^/])+\/(?:[^/])+\/((?:[^/])+)$` lun
 
 export_options:
   instance_keys:
