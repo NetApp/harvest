@@ -3,7 +3,7 @@ collector:          ZapiPerf
 
 # Order here matters!
 schedule:
-  - counter:  20m
+  - counter:  24h
   - instance: 10m
   - data:      1m
 
