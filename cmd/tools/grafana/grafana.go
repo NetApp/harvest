@@ -33,7 +33,7 @@ import (
 const (
 	clientTimeout                 = 5
 	grafanaDataSource             = "Prometheus"
-	GPerm             os.FileMode = 644
+	GPerm             os.FileMode = 0644
 )
 
 var (
