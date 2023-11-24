@@ -518,40 +518,39 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 	metrics := c.Metadata.GetMetrics()
-	info := c.Logger.Info()
+	info := c.Logger.Info() //nolint:zerologlint
 	inst := c.Metadata.GetInstance(taskName)
 	if inst == nil {
 		return
+	}
+
+	logMetricValue := func(name string, value float64, convert bool) {
+		if convert {
+			value = value / 1000
+			if strings.HasSuffix(name, "_time") {
+				name = name[0:len(name)-5] + "Ms"
+			}
+		}
+		info.Int64(name, int64(math.Round(value)))
 	}
 
 	if taskName == "data" {
 		for _, metric := range metrics {
 			mName := metric.GetName()
 			if mName == "task_time" {
-				// don't log since it is covered by other durations
 				continue
 			}
 			value, _ := metric.GetValueFloat64(inst)
-			if strings.HasSuffix(mName, "_time") {
-				// convert microseconds to milliseconds and names ending with _time into -> *Ms
-				v := int64(math.Round(value / 1000))
-				info.Int64(mName[0:len(mName)-5]+"Ms", v)
-			} else {
-				info.Int64(mName, int64(value))
-			}
+			convert := strings.HasSuffix(mName, "_time") || mName == "begin"
+			logMetricValue(mName, value, convert)
 		}
-
 		info.Uint64("instancesExported", stats.InstancesExported)
 		info.Uint64("metricsExported", stats.MetricsExported)
 	} else {
 		logFields := []string{"api_time", "begin", "poll_time"}
 		for _, field := range logFields {
 			value, _ := c.Metadata.GetMetric(field).GetValueFloat64(inst)
-			v := int64(math.Round(value / 1000))
-			if strings.HasSuffix(field, "_time") {
-				field = field[0:len(field)-5] + "Ms"
-			}
-			info.Int64(field, v)
+			logMetricValue(field, value, true)
 		}
 
 		if taskName == "counter" {
@@ -561,7 +560,6 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 			v, _ := c.Metadata.GetMetric("instances").GetValueInt64(inst)
 			info.Int64("instances", v)
 		}
-
 		info.Str("task", taskName)
 	}
 
