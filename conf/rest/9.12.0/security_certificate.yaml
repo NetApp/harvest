@@ -11,7 +11,7 @@ counters:
   - ^serial_number           => serial_number
   - ^svm.name                => svm
   - ^type                    => type
-  - expiry_time(timestamp)   => expiry_time
+#?  - expiry_time(timestamp)   => expiry_time
   - filter:
       - scope=!"svm"
       - type="server"

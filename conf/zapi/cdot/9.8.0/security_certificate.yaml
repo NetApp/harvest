@@ -10,7 +10,7 @@ counters:
     - ^^vserver                => svm
     - ^public-certificate      => certificatePEM
     - ^type                    => type
-    - expiration-date          => expiry_time
+#?    - expiration-date          => expiry_time
 
 plugins:
   - LabelAgent:

@@ -10,7 +10,7 @@ counters:
   - ^^volume.name         => volume
   - ^export_policy.name   => export_policy
   - ^security_style       => security_style
-  - id                    => id
+#?  - id                    => id
   - filter:
       - name=!""
 

@@ -16,11 +16,11 @@ counters:
   - ^serial_number
   - ^shelf.uid                  => shelf
   - ^state
-  - bytes_per_sector            => bytes_per_sector
+#?  - bytes_per_sector            => bytes_per_sector
   - sector_count                => sectors
   - stats.average_latency       => stats_average_latency
-  - stats.power_on_hours        => power_on_hours
-  - usable_size
+#?  - stats.power_on_hours        => power_on_hours
+#?  - usable_size
 
 endpoints:
   - query: api/private/cli/disk

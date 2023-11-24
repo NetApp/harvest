@@ -20,29 +20,29 @@ counters:
   - ^uuid                                         => uuid
   - ^volume_style_extended                        => style
   - ^vsroot                                       => svm_root
-  - autosize_grow_threshold_percent               => autosize_grow_threshold_percent
+#?  - autosize_grow_threshold_percent               => autosize_grow_threshold_percent
   - available                                     => size_available
   - compression_space_saved                       => sis_compress_saved
   - compression_space_saved_percent               => sis_compress_saved_percent
   - dedupe_space_saved                            => sis_dedup_saved
   - dedupe_space_saved_percent                    => sis_dedup_saved_percent
-  - expected_available                            => space_expected_available
+#?  - expected_available                            => space_expected_available
   - files                                         => inode_files_total
   - files_used                                    => inode_files_used
-  - filesystem_size                               => filesystem_size
+#?  - filesystem_size                               => filesystem_size
   - logical_used                                  => space_logical_used
-  - logical_used_by_afs                           => space_logical_used_by_afs
-  - logical_used_by_snapshots                     => space_logical_used_by_snapshots
+#?  - logical_used_by_afs                           => space_logical_used_by_afs
+#?  - logical_used_by_snapshots                     => space_logical_used_by_snapshots
   - logical_used_percent                          => space_logical_used_percent
-  - max_autosize                                  => autosize_maximum_size
-  - overwrite_reserve                             => overwrite_reserve_total
-  - overwrite_reserve_used                        => overwrite_reserve_used
+#?  - max_autosize                                  => autosize_maximum_size
+#?  - overwrite_reserve                             => overwrite_reserve_total
+#?  - overwrite_reserve_used                        => overwrite_reserve_used
   - percent_snapshot_space                        => snapshot_reserve_percent
   - percent_used                                  => size_used_percent
   - physical_used                                 => space_physical_used
   - physical_used_percent                         => space_physical_used_percent
   - sis_space_saved                               => sis_total_saved
-  - sis_space_saved_percent                       => sis_total_saved_percent
+#?  - sis_space_saved_percent                       => sis_total_saved_percent
   - size                                          => size
   - size_available_for_snapshots                  => snapshots_size_available
   - size_used_by_snapshots                        => snapshots_size_used
@@ -83,8 +83,8 @@ plugins:
   - MetricAgent:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
-        - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
-        - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
+#?        - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
+#?        - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`

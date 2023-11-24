@@ -7,26 +7,26 @@ object:                   flashcache
 instance_key:             uuid
 
 counters:
-  - accesses
+#?  - accesses
   - disk_reads_replaced
-  - evicts
-  - hit
-  - hit_directory
-  - hit_indirect
-  - hit_metadata_file
-  - hit_normal_lev0
+#?  - evicts
+#?  - hit
+#?  - hit_directory
+#?  - hit_indirect
+#?  - hit_metadata_file
+#?  - hit_normal_lev0
   - hit_percent
-  - inserts
+#?  - inserts
   - instance_name
   - instance_uuid
-  - invalidates
-  - miss
-  - miss_directory
-  - miss_indirect
-  - miss_metadata_file
-  - miss_normal_lev0
+#?  - invalidates
+#?  - miss
+#?  - miss_directory
+#?  - miss_indirect
+#?  - miss_metadata_file
+#?  - miss_normal_lev0
   - node_name              => node
-  - usage
+#?  - usage
 
 export_options:
   instance_keys:

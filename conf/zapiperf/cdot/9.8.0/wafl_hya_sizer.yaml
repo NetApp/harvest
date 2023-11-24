@@ -6,7 +6,7 @@ object:                   flashpool
 instance_key:             uuid
 
 counters:
-  - cache_stats
+#?  - cache_stats
   - instance_name
   - node_name              => node
 

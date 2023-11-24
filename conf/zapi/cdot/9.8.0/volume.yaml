@@ -9,8 +9,8 @@ counters:
   volume-attributes:
     - ^encrypt                                  => isEncrypted
     - volume-autosize-attributes:
-        - grow-threshold-percent
-        - maximum-size
+#?        - grow-threshold-percent
+#?        - maximum-size
     - volume-id-attributes:
         - ^^instance-uuid                       => uuid
         - ^containing-aggregate-uuid            => aggrUuid
@@ -32,8 +32,8 @@ counters:
         - deduplication-space-saved             => sis_dedup_saved
         - percentage-compression-space-saved    => sis_compress_saved_percent
         - percentage-deduplication-space-saved  => sis_dedup_saved_percent
-        - percentage-total-space-saved          => sis_total_saved_percent
-        - total-space-saved                     => sis_total_saved
+#?        - percentage-total-space-saved          => sis_total_saved_percent
+#?        - total-space-saved                     => sis_total_saved
     - volume-snapshot-attributes:
         - ^auto-snapshots-enabled               => auto_snapshots_enabled
         - ^snapshot-policy
@@ -41,15 +41,15 @@ counters:
     - volume-snapshot-autodelete-attributes:
         - ^is-autodelete-enabled                => snapshot_autodelete
     - volume-space-attributes:
-        - expected-available
-        - filesystem-size                       => filesystem_size
-        - logical-available
+#?        - expected-available
+#?        - filesystem-size                       => filesystem_size
+#?        - logical-available
         - logical-used
-        - logical-used-by-afs
-        - logical-used-by-snapshots
+#?        - logical-used-by-afs
+#?        - logical-used-by-snapshots
         - logical-used-percent
-        - overwrite-reserve                     => overwrite_reserve_total
-        - overwrite-reserve-used                => overwrite_reserve_used
+#?        - overwrite-reserve                     => overwrite_reserve_total
+#?        - overwrite-reserve-used                => overwrite_reserve_used
         - percentage-size-used                  => size_used_percent
         - percentage-snapshot-reserve           => snapshot_reserve_percent
         - percentage-snapshot-reserve-used      => snapshot_reserve_used_percent
@@ -77,8 +77,8 @@ plugins:
   - MetricAgent:
       compute_metric:
         - inode_used_percent PERCENT inode_files_used inode_files_total
-        - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
-        - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
+#?        - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
+#?        - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
   - LabelAgent:
       # metric label zapi_value rest_value `default_value`
       value_to_num:

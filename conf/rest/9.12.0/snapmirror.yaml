@@ -25,13 +25,13 @@ counters:
   - break_successful_count                   => break_successful_count
   - lag_time(duration)                       => lag_time
   - last_transfer_duration(duration)         => last_transfer_duration
-  - last_transfer_end_timestamp(timestamp)   => last_transfer_end_timestamp
+#?  - last_transfer_end_timestamp(timestamp)   => last_transfer_end_timestamp
   - last_transfer_size                       => last_transfer_size
-  - newest_snapshot_timestamp(timestamp)     => newest_snapshot_timestamp
+#?  - newest_snapshot_timestamp(timestamp)     => newest_snapshot_timestamp
   - resync_failed_count                      => resync_failed_count
   - resync_successful_count                  => resync_successful_count
-  - total_transfer_bytes                     => total_transfer_bytes
-  - total_transfer_time_secs                 => total_transfer_time_secs
+#?  - total_transfer_bytes                     => total_transfer_bytes
+#?  - total_transfer_time_secs                 => total_transfer_time_secs
   - update_failed_count                      => update_failed_count
   - update_successful_count                  => update_successful_count
   - filter:

@@ -6,7 +6,7 @@ object:           security_ssh
 counters:
   - ^^ciphers          => ciphers
   - ^mac_algorithms    => mac_algorithms
-  - max_instances      => max_instances
+#?  - max_instances      => max_instances
 
 export_options:
   instance_keys:

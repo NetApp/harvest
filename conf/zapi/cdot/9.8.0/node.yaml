@@ -29,7 +29,7 @@ counters:
 #    - ^node-storage-configuration          => storage_configuration
     - ^node-vendor                          => vendor
     - ^product-version                      => version
-    - cpu-busytime
+#?    - cpu-busytime
     - env-failed-fan-count                  => failed_fan
     - env-failed-power-supply-count         => failed_power
 #    - node-nvram-id

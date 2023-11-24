@@ -14,7 +14,7 @@ counters:
         - ^serial-number          => serial_number
         - ^shelf-bay              => shelf_bay
         - ^shelf-uid              => shelf
-        - bytes-per-sector        => bytes_per_sector
+#?        - bytes-per-sector        => bytes_per_sector
         - capacity-sectors        => sectors
     - disk-ownership-info:
         - ^home-node-name         => node
@@ -29,8 +29,8 @@ counters:
 #        - disk-iops
         - disk-io-kbps
         - power-on-time-interval  => uptime
-        - sectors-read
-        - sectors-written
+#?        - sectors-read
+#?        - sectors-written
 
 plugins:
   - LabelAgent:

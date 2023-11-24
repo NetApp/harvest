@@ -14,14 +14,14 @@ counters:
     - ^subsystem                 => subsystem
     - ^volume                    => volume
     - ^vserver                   => svm
-    - block-size                 => block_size
+#?    - block-size                 => block_size
     - size                       => size
     - size-used                  => size_used
 
 plugins:
   - MetricAgent:
       compute_metric:
-        - size_available SUBTRACT size size_used
+#?        - size_available SUBTRACT size size_used
         - size_available_percent PERCENT size_available size
 
 

@@ -13,14 +13,14 @@ counters:
   - ^subsystem                 => subsystem
   - ^subsystem_map.nsid        => nsid
   - ^svm.name                  => svm
-  - space.block_size           => block_size
+#?  - space.block_size           => block_size
   - space.size                 => size
   - space.used                 => size_used
 
 plugins:
   - MetricAgent:
       compute_metric:
-        - size_available SUBTRACT size size_used
+#?        - size_available SUBTRACT size size_used
         - size_available_percent PERCENT size_available size
 
 export_options:

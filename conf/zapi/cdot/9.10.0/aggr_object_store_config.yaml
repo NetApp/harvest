@@ -16,7 +16,7 @@ counters:
     - ^s3-name                           => name
     - ^server                            => server
     - ^ssl-enabled                       => ssl_enabled
-    - used-space                         => used
+#?    - used-space                         => used
 
 export_options:
   instance_keys:

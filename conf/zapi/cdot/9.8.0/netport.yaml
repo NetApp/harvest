@@ -17,7 +17,7 @@ counters:
     - ^vlan-id                                 => vlan_id
     - ^vlan-node                               => vlan_node
     - ^vlan-port                               => vlan_port
-    - mtu                                      => mtu
+#?    - mtu                                      => mtu
 
 plugins:
   LabelAgent:

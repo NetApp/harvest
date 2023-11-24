@@ -16,7 +16,7 @@ counters:
   - ^provider_type                  => provider_type
   - ^server                         => server
   - ^ssl_enabled                    => ssl_enabled
-  - used                            => used
+#?  - used                            => used
 
 export_options:
   instance_keys:

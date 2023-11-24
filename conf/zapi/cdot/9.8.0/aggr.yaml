@@ -8,14 +8,14 @@ counters:
     - ^^aggregate-uuid                           => uuid
     - ^aggregate-name                            => aggr
     - aggr-inode-attributes:
-        - files-private-used
+#?        - files-private-used
         - files-total
         - files-used
         - inodefile-private-capacity
         - inodefile-public-capacity
-        - maxfiles-available
-        - maxfiles-possible
-        - maxfiles-used
+#?        - maxfiles-available
+#?        - maxfiles-possible
+#?        - maxfiles-used
         - percent-inode-used-capacity            => inode_used_percent
     - aggr-ownership-attributes:
         - ^home-name                             => node
@@ -25,8 +25,8 @@ counters:
         - ^is-root-aggregate                     => root_aggr
         - ^state                                 => state
         - disk-count
-        - plex-count
-        - raid-size
+#?        - plex-count
+#?        - raid-size
     - aggr-snapshot-attributes:
         - files-total
         - files-used
@@ -36,27 +36,27 @@ counters:
         - percent-inode-used-capacity            => snapshot_inode_used_percent
         - percent-used-capacity                  => snapshot_used_percent
         - size-available
-        - size-total
+#?        - size-total
         - size-used
         - snapshot-reserve-percent
     - aggr-space-attributes:
         - capacity-tier-used
-        - data-compacted-count
+#?        - data-compacted-count
         - data-compaction-space-saved
         - data-compaction-space-saved-percent
-        - hybrid-cache-size-total                => hybrid_cache_size_total
+#?        - hybrid-cache-size-total                => hybrid_cache_size_total
         - percent-used-capacity                  => space_used_percent
-        - performance-tier-inactive-user-data
-        - performance-tier-inactive-user-data-percent
+#?        - performance-tier-inactive-user-data
+#?        - performance-tier-inactive-user-data-percent
         - physical-used
-        - physical-used-percent
-        - sis-shared-count
+#?        - physical-used-percent
+#?        - sis-shared-count
         - sis-space-saved
         - sis-space-saved-percent
         - size-available                         => space_available
         - size-total                             => space_total
         - size-used                              => space_used
-        - total-reserved-space                   => space_reserved
+#?        - total-reserved-space                   => space_reserved
     - aggr-volume-count-attributes:
         - flexvol-count
 

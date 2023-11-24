@@ -6,7 +6,7 @@ object:     security_audit_destination
 counters:
   cluster-log-forward-info:
     - ^^protocol                 => protocol
-    - port                       => port
+#?    - port                       => port
 
 
 plugins:

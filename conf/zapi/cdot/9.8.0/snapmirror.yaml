@@ -23,13 +23,13 @@ counters:
     - break-successful-count
     - lag-time
     - last-transfer-duration
-    - last-transfer-end-timestamp
+#?    - last-transfer-end-timestamp
     - last-transfer-size
-    - newest-snapshot-timestamp
+#?    - newest-snapshot-timestamp
     - resync-failed-count
     - resync-successful-count
-    - total-transfer-bytes
-    - total-transfer-time-secs
+#?    - total-transfer-bytes
+#?    - total-transfer-time-secs
     - update-failed-count
     - update-successful-count
 

@@ -18,7 +18,7 @@ counters:
   - ^vlan.base_port.name                     => vlan_port
   - ^vlan.base_port.node.name                => vlan_node
   - ^vlan.tag                                => vlan_id
-  - mtu                                      => mtu
+#?  - mtu                                      => mtu
 
 endpoints:
   - query: api/private/cli/network/port
