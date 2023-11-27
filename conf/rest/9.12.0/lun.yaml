@@ -25,8 +25,7 @@ plugins:
     # /vol/volName/lunName
     # /vol/volName/lun401/lunName
       split_regex:
-        - path `^\/(?:[^/])+\/(?:[^/])+\/((?:[^/])+)$` lun
-        - path `^\/(?:[^/])+\/(?:[^/])+\/(?:[^/])+\/((?:[^/])+)$` lun
+        - path `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` volume,lun
 
 export_options:
   instance_keys:

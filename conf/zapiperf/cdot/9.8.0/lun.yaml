@@ -41,8 +41,7 @@ plugins:
     # /vol/vol_georg_fcp401/lun401
     # /vol/vol_georg_fcp401/lun401/lun401
     split_regex:
-      - lun `^\/(?:[^/])+\/((?:[^/])+)\/((?:[^/])+)$` volume,lun
-      - lun `^\/(?:[^/])+\/((?:[^/])+)\/(?:[^/])+\/((?:[^/])+)$` volume,lun
+      - lun `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` volume,lun
 
 export_options:
   instance_keys:

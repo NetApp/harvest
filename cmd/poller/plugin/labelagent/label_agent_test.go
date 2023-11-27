@@ -92,8 +92,7 @@ func TestSplitSimpleRule(t *testing.T) {
 func TestSplitRegexQtree(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
 	params := node.NewS("LabelAgent")
-	params.NewChildS("split_regex", "").NewChildS("", "X `^\\/(?:[^/])+\\/(?:[^/])+\\/((?:[^/])+)$` lun")
-	params.NewChildS("split_regex", "").NewChildS("", "X `^\\/(?:[^/])+\\/(?:[^/])+\\/(?:[^/])+\\/((?:[^/])+)$` lun")
+	params.NewChildS("split_regex", "").NewChildS("", "X `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` vol,lun")
 
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &LabelAgent{AbstractPlugin: abc}
@@ -104,7 +103,6 @@ func TestSplitRegexQtree(t *testing.T) {
 
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "/vol/vol_georg_fcp401/lun401/lun-1")
-
 	_ = p.splitRegex(m)
 
 	if instance.GetLabel("lun") != "lun-1" {
