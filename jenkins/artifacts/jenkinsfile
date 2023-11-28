@@ -70,11 +70,11 @@ pipeline {
                apt install -y git-all
                apt-get install -y build-essential
                apt install -y python3-pip
-               pip install mkdocs
-               pip install mike
-               pip install mkdocs-material-extensions
-               pip install mkdocs-material
-               pip install mkdocs-macros-plugin
+               pip install mkdocs==1.4.3
+               pip install mike==1.1.2
+               pip install mkdocs-material-extensions==1.1.1
+               pip install mkdocs-material==9.1.11
+               pip install mkdocs-macros-plugin==0.7.0
                 '''
             }
         }
