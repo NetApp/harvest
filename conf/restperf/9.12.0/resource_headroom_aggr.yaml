@@ -13,7 +13,7 @@ counters:
   - ewma.hourly                       => ewma_hourly
   - ewma.monthly                      => ewma_monthly
   - ewma.weekly                       => ewma_weekly
-  - optimal_point.confidence_factor   => optimal_point_confidence_factor
+#?  - optimal_point.confidence_factor   => optimal_point_confidence_factor
   - optimal_point.latency             => optimal_point_latency
   - optimal_point.ops                 => optimal_point_ops
   - optimal_point.utilization         => optimal_point_utilization

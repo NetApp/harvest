@@ -9,54 +9,54 @@ global_labels:
 counters:
   - ^^id
   - ^name                          => svm
-  - access.average_latency         => access_avg_latency
-  - access.total                   => access_total
-  - commit.average_latency         => commit_avg_latency
-  - commit.total                   => commit_total
-  - create.average_latency         => create_avg_latency
-  - create.total                   => create_total
-  - fsinfo.average_latency         => fsinfo_avg_latency
-  - fsinfo.total                   => fsinfo_total
-  - fsstat.average_latency         => fsstat_avg_latency
-  - fsstat.total                   => fsstat_total
-  - getattr.average_latency        => getattr_avg_latency
-  - getattr.total                  => getattr_total
+#?  - access.average_latency         => access_avg_latency
+#?  - access.total                   => access_total
+#?  - commit.average_latency         => commit_avg_latency
+#?  - commit.total                   => commit_total
+#?  - create.average_latency         => create_avg_latency
+#?  - create.total                   => create_total
+#?  - fsinfo.average_latency         => fsinfo_avg_latency
+#?  - fsinfo.total                   => fsinfo_total
+#?  - fsstat.average_latency         => fsstat_avg_latency
+#?  - fsstat.total                   => fsstat_total
+#?  - getattr.average_latency        => getattr_avg_latency
+#?  - getattr.total                  => getattr_total
   - latency
   - latency_histogram              => latency_hist
-  - link.average_latency           => link_avg_latency
-  - link.total                     => link_total
-  - lookup.average_latency         => lookup_avg_latency
-  - lookup.total                   => lookup_total
-  - mkdir.average_latency          => mkdir_avg_latency
-  - mkdir.total                    => mkdir_total
-  - mknod.average_latency          => mknod_avg_latency
-  - mknod.total                    => mknod_total
-  - null.average_latency           => null_avg_latency
-  - null.total                     => null_total
+#?  - link.average_latency           => link_avg_latency
+#?  - link.total                     => link_total
+#?  - lookup.average_latency         => lookup_avg_latency
+#?  - lookup.total                   => lookup_total
+#?  - mkdir.average_latency          => mkdir_avg_latency
+#?  - mkdir.total                    => mkdir_total
+#?  - mknod.average_latency          => mknod_avg_latency
+#?  - mknod.total                    => mknod_total
+#?  - null.average_latency           => null_avg_latency
+#?  - null.total                     => null_total
   - ops
-  - pathconf.average_latency       => pathconf_avg_latency
-  - pathconf.total                 => pathconf_total
+#?  - pathconf.average_latency       => pathconf_avg_latency
+#?  - pathconf.total                 => pathconf_total
   - read.average_latency           => read_avg_latency
   - read.total                     => read_total
   - read_latency_histogram         => read_latency_hist
   - read_ops
-  - read_symlink.average_latency   => read_symlink_avg_latency
-  - read_symlink.total             => read_symlink_total
+#?  - read_symlink.average_latency   => read_symlink_avg_latency
+#?  - read_symlink.total             => read_symlink_total
   - read_throughput
-  - readdir.average_latency        => readdir_avg_latency
-  - readdir.total                  => readdir_total
-  - readdirplus.average_latency    => readdirplus_avg_latency
-  - readdirplus.total              => readdirplus_total
-  - remove.average_latency         => remove_avg_latency
-  - remove.total                   => remove_total
-  - rename.average_latency         => rename_avg_latency
-  - rename.total                   => rename_total
-  - rmdir.average_latency          => rmdir_avg_latency
-  - rmdir.total                    => rmdir_total
-  - setattr.average_latency        => setattr_avg_latency
-  - setattr.total                  => setattr_total
-  - symlink.average_latency        => symlink_avg_latency
-  - symlink.total                  => symlink_total
+#?  - readdir.average_latency        => readdir_avg_latency
+#?  - readdir.total                  => readdir_total
+#?  - readdirplus.average_latency    => readdirplus_avg_latency
+#?  - readdirplus.total              => readdirplus_total
+#?  - remove.average_latency         => remove_avg_latency
+#?  - remove.total                   => remove_total
+#?  - rename.average_latency         => rename_avg_latency
+#?  - rename.total                   => rename_total
+#?  - rmdir.average_latency          => rmdir_avg_latency
+#?  - rmdir.total                    => rmdir_total
+#?  - setattr.average_latency        => setattr_avg_latency
+#?  - setattr.total                  => setattr_total
+#?  - symlink.average_latency        => symlink_avg_latency
+#?  - symlink.total                  => symlink_total
   - throughput
   - write.average_latency          => write_avg_latency
   - write.total                    => write_total
@@ -65,27 +65,27 @@ counters:
   - write_throughput
 
 override:
-  - access.total: rate
-  - commit.total: rate
-  - create.total: rate
-  - fsinfo.total: rate
-  - fsstat.total: rate
-  - getattr.total: rate
-  - link.total: rate
-  - lookup.total: rate
-  - mkdir.total: rate
-  - mknod.total: rate
-  - null.total: rate
-  - pathconf.total: rate
-  - read_symlink.total: rate
+#?  - access.total: rate
+#?  - commit.total: rate
+#?  - create.total: rate
+#?  - fsinfo.total: rate
+#?  - fsstat.total: rate
+#?  - getattr.total: rate
+#?  - link.total: rate
+#?  - lookup.total: rate
+#?  - mkdir.total: rate
+#?  - mknod.total: rate
+#?  - null.total: rate
+#?  - pathconf.total: rate
+#?  - read_symlink.total: rate
   - read.total: rate
-  - readdir.total: rate
-  - readdirplus.total: rate
-  - remove.total: rate
-  - rename.total: rate
-  - rmdir.total: rate
-  - setattr.total: rate
-  - symlink.total: rate
+#?  - readdir.total: rate
+#?  - readdirplus.total: rate
+#?  - remove.total: rate
+#?  - rename.total: rate
+#?  - rmdir.total: rate
+#?  - setattr.total: rate
+#?  - symlink.total: rate
   - write.total: rate
 
 

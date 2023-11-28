@@ -7,7 +7,7 @@ counters:
   - ^link.speed                         => speed
   - ^name                               => port
   - ^node.name                          => node
-  - average_other_latency               => avg_other_latency
+#?  - average_other_latency               => avg_other_latency
   - average_read_latency                => avg_read_latency
   - average_write_latency               => avg_write_latency
   - discarded_frames_count
@@ -16,48 +16,48 @@ counters:
   - invalid.transmission_word           => invalid_transmission_word
   - isr.count                           => isr_count
   - link.down                           => link_down
-  - link.up                             => link_up
+#?  - link.up                             => link_up
   - link_failure                        => link_failure
   - loss_of_signal
   - loss_of_sync
-  - nvmf.average_other_latency          => nvmf_avg_other_latency
+#?  - nvmf.average_other_latency          => nvmf_avg_other_latency
   - nvmf.average_read_latency           => nvmf_avg_read_latency
-  - nvmf.average_remote_other_latency   => nvmf_avg_remote_other_latency
-  - nvmf.average_remote_read_latency    => nvmf_avg_remote_read_latency
-  - nvmf.average_remote_write_latency   => nvmf_avg_remote_write_latency
+#?  - nvmf.average_remote_other_latency   => nvmf_avg_remote_other_latency
+#?  - nvmf.average_remote_read_latency    => nvmf_avg_remote_read_latency
+#?  - nvmf.average_remote_write_latency   => nvmf_avg_remote_write_latency
   - nvmf.average_write_latency          => nvmf_avg_write_latency
-  - nvmf.caw_data                       => nvmf_caw_data
-  - nvmf.caw_ops                        => nvmf_caw_ops
-  - nvmf.command_slots                  => nvmf_command_slots
-  - nvmf.other_ops                      => nvmf_other_ops
+#?  - nvmf.caw_data                       => nvmf_caw_data
+#?  - nvmf.caw_ops                        => nvmf_caw_ops
+#?  - nvmf.command_slots                  => nvmf_command_slots
+#?  - nvmf.other_ops                      => nvmf_other_ops
   - nvmf.read_data                      => nvmf_read_data
   - nvmf.read_ops                       => nvmf_read_ops
   - nvmf.total_data                     => nvmf_total_data
   - nvmf.total_ops                      => nvmf_total_ops
   - nvmf.write_data                     => nvmf_write_data
   - nvmf.write_ops                      => nvmf_write_ops
-  - nvmf_remote.caw_data                => nvmf_remote_caw_data
-  - nvmf_remote.caw_ops                 => nvmf_remote_caw_ops
-  - nvmf_remote.other_ops               => nvmf_remote_other_ops
-  - nvmf_remote.read_data               => nvmf_remote_read_data
-  - nvmf_remote.read_ops                => nvmf_remote_read_ops
-  - nvmf_remote.total_data              => nvmf_remote_total_data
-  - nvmf_remote.total_ops               => nvmf_remote_total_ops
-  - nvmf_remote.write_data              => nvmf_remote_write_data
-  - nvmf_remote.write_ops               => nvmf_remote_write_ops
-  - other_ops
+#?  - nvmf_remote.caw_data                => nvmf_remote_caw_data
+#?  - nvmf_remote.caw_ops                 => nvmf_remote_caw_ops
+#?  - nvmf_remote.other_ops               => nvmf_remote_other_ops
+#?  - nvmf_remote.read_data               => nvmf_remote_read_data
+#?  - nvmf_remote.read_ops                => nvmf_remote_read_ops
+#?  - nvmf_remote.total_data              => nvmf_remote_total_data
+#?  - nvmf_remote.total_ops               => nvmf_remote_total_ops
+#?  - nvmf_remote.write_data              => nvmf_remote_write_data
+#?  - nvmf_remote.write_ops               => nvmf_remote_write_ops
+#?  - other_ops
   - primitive_seq_err                   => prim_seq_err
   - queue_full
   - read_data
-  - read_ops
-  - reset_count
-  - shared_interrupt_count              => shared_int_count
+#?  - read_ops
+#?  - reset_count
+#?  - shared_interrupt_count              => shared_int_count
   - spurious_interrupt_count            => spurious_int_count
   - threshold_full
-  - total_data
-  - total_ops
+#?  - total_data
+#?  - total_ops
   - write_data
-  - write_ops
+#?  - write_ops
 
 plugins:
   - Fcp

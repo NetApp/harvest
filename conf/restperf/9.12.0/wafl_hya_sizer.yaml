@@ -5,7 +5,7 @@ object:                   flashpool
 counters:
   - ^^id
   - ^node.name              => node
-  - cache_stats
+#?  - cache_stats
 
 export_options:
   instance_keys:

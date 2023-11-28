@@ -9,11 +9,11 @@ counters:
   - ^node.name               => node
   - ^svm.name                => svm
   - received_data            => recv_data
-  - received_errors          => recv_errors
-  - received_packets         => recv_packet
+#?  - received_errors          => recv_errors
+#?  - received_packets         => recv_packet
   - sent_data
-  - sent_errors
-  - sent_packets             => sent_packet
+#?  - sent_errors
+#?  - sent_packets             => sent_packet
 
 export_options:
   instance_keys:
