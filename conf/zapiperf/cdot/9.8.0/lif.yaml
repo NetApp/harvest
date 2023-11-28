@@ -9,11 +9,11 @@ counters:
   - instance_uuid
   - node_name                => node
   - recv_data
-  - recv_errors
-  - recv_packet
+#?  - recv_errors
+#?  - recv_packet
   - sent_data
-  - sent_errors
-  - sent_packet
+#?  - sent_errors
+#?  - sent_packet
   - vserver_name             => svm
 
 export_options:

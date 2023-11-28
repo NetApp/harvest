@@ -6,29 +6,29 @@ object:                   wafl
 instance_key:             uuid
 
 counters:
-  - avg_non_wafl_msg_latency                              # latency
-  - avg_wafl_msg_latency      => avg_msg_latency
-  - avg_wafl_repl_msg_latency => avg_repl_msg_latency
+#?  - avg_non_wafl_msg_latency                              # latency
+#?  - avg_wafl_msg_latency      => avg_msg_latency
+#?  - avg_wafl_repl_msg_latency => avg_repl_msg_latency
   - cp_count                                              # consistency point
   - cp_phase_times
   - instance_uuid
   - node_name                 => node
-  - non_wafl_msg_total
+#?  - non_wafl_msg_total
   - read_io_type
-  - total_cp_msecs
-  - total_cp_util
-  - wafl_memory_free
-  - wafl_memory_used                                     # memory
-  - wafl_msg_total            => msg_total               # iops
-  - wafl_reads_from_cache                                # reads from
-  - wafl_reads_from_cloud
-  - wafl_reads_from_cloud_s2c_bin
-  - wafl_reads_from_disk
-  - wafl_reads_from_ext_cache
-  - wafl_reads_from_fc_miss
-  - wafl_reads_from_pmem
-  - wafl_reads_from_ssd
-  - wafl_repl_msg_total
+#?  - total_cp_msecs
+#?  - total_cp_util
+#?  - wafl_memory_free
+#?  - wafl_memory_used                                     # memory
+#?  - wafl_msg_total            => msg_total               # iops
+#?  - wafl_reads_from_cache                                # reads from
+#?  - wafl_reads_from_cloud
+#?  - wafl_reads_from_cloud_s2c_bin
+#?  - wafl_reads_from_disk
+#?  - wafl_reads_from_ext_cache
+#?  - wafl_reads_from_fc_miss
+#?  - wafl_reads_from_pmem
+#?  - wafl_reads_from_ssd
+#?  - wafl_repl_msg_total
 
 override:
   - read_io_type_base: delta

@@ -12,8 +12,8 @@ counters:
   - read_data
   - read_iops
   - read_latency
-  - total_data
-  - total_iops
+#?  - total_data
+#?  - total_iops
   - write_data
   - write_iops
   - write_latency

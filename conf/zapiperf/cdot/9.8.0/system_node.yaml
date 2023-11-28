@@ -9,28 +9,28 @@ counters:
   - avg_processor_busy
   - cifs_ops
   - cpu_busy
-  - cpu_elapsed_time
+#?  - cpu_elapsed_time
   - disk_data_read
   - disk_data_written
   - domain_busy            =>  cpu_domain_busy
-  - fcp_data_recv
-  - fcp_data_sent
+#?  - fcp_data_recv
+#?  - fcp_data_sent
   - fcp_ops
-  - hdd_data_read
-  - hdd_data_written
+#?  - hdd_data_read
+#?  - hdd_data_written
   - instance_name
   - iscsi_ops
-  - memory
-  - net_data_recv
-  - net_data_sent
+#?  - memory
+#?  - net_data_recv
+#?  - net_data_sent
   - nfs_ops
-  - nvmf_data_recv
-  - nvmf_data_sent
+#?  - nvmf_data_recv
+#?  - nvmf_data_sent
   - nvmf_ops
-  - ssd_data_read
-  - ssd_data_written
-  - total_data
-  - total_latency
+#?  - ssd_data_read
+#?  - ssd_data_written
+#?  - total_data
+#?  - total_latency
   - total_ops
 
 export_options:

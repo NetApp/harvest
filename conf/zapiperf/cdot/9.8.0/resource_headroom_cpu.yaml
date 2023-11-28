@@ -12,7 +12,7 @@ counters:
   - ewma_weekly
   - instance_name
   - node_name              => node
-  - optimal_point_confidence_factor
+#?  - optimal_point_confidence_factor
   - optimal_point_latency
   - optimal_point_ops
   - optimal_point_utilization
