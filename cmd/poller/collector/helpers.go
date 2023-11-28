@@ -61,7 +61,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 		customTemplate                *node.Node
 	)
 
-	// Filename will be the name of a template (volume.yaml) or, when merging templates, a comma-seperated
+	// Filename will be the name of a template (volume.yaml) or, when merging templates, a comma-separated
 	// string like "volume.yaml,custom_volume.yaml"
 	filenames := strings.Split(filename, ",")
 
