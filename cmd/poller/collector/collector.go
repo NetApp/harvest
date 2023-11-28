@@ -70,6 +70,10 @@ type Collector interface {
 	CollectAutoSupport(p *Payload)
 }
 
+const (
+	begin = "zBegin"
+)
+
 // Status defines the possible states of a collector
 var Status = [3]string{
 	"up",
@@ -252,7 +256,7 @@ func Init(c Collector) error {
 	_, _ = md.NewMetricUint64("instances")
 
 	// Used by collector logging but not exported
-	loggingOnly := []string{"begin", "export_time"}
+	loggingOnly := []string{begin, "export_time"}
 	for _, mName := range loggingOnly {
 		metric, _ := md.NewMetricUint64(mName)
 		metric.SetExportable(false)
@@ -450,7 +454,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			// update task metadata
 			_ = c.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
 			_ = c.Metadata.LazySetValueInt64("task_time", task.Name, taskTime.Microseconds())
-			_ = c.Metadata.LazySetValueInt64("begin", task.Name, start.UnixMilli())
+			_ = c.Metadata.LazySetValueInt64(begin, task.Name, start.UnixMilli())
 
 			// Log non-data tasks immediately. Data task is logged after export
 			if task.Name != "data" {
@@ -554,8 +558,8 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 			microToMilli(value, field)
 		}
 
-		epoch, _ := c.Metadata.GetMetric("begin").GetValueFloat64(inst)
-		info.Int64("begin", int64(epoch))
+		epoch, _ := c.Metadata.GetMetric(begin).GetValueFloat64(inst)
+		info.Int64(begin, int64(epoch))
 
 		if taskName == "counter" {
 			v, _ := c.Metadata.GetMetric("metrics").GetValueInt64(inst)
