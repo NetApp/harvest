@@ -37,8 +37,11 @@ override:
 
 plugins:
   LabelAgent:
-    split:
-      - lun `/` ,,volume,lun
+    # There are two flavors of lun names
+    # /vol/vol_georg_fcp401/lun401
+    # /vol/vol_georg_fcp401/lun401/lun401
+    split_regex:
+      - lun `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` volume,lun
 
 export_options:
   instance_keys:
