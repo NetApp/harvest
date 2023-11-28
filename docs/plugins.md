@@ -631,7 +631,7 @@ compute_metric:
 # inode_used_percent = inode_files_used / inode_files_total * 100
 ```
 
-# ChangeLog Plugin
+# ChangeLog
 
 The ChangeLog plugin is a feature of Harvest, designed to detect and track changes related to the creation, modification, and deletion of an object. By default, it supports volume, svm, and node objects. Its functionality can be extended to track changes in other objects by making relevant changes in the template.
 
