@@ -14,7 +14,7 @@ import (
 )
 
 var varRe = regexp.MustCompile(`\$(\w+)`)
-var metricRe = regexp.MustCompile(`(\w+)\{`)
+var MetricRe = regexp.MustCompile(`(\w+)\{`)
 
 var metricsCmd = &cobra.Command{
 	Use:   "metrics",
@@ -55,7 +55,7 @@ func visitExpressionsAndQueries(path string, data []byte) {
 
 	metricsSeen := make(map[string]struct{})
 	for _, expr := range expressions {
-		allMatches := metricRe.FindAllStringSubmatch(expr.expr, -1)
+		allMatches := MetricRe.FindAllStringSubmatch(expr.expr, -1)
 		for _, match := range allMatches {
 			m := match[1]
 			if len(m) == 0 {
@@ -68,7 +68,7 @@ func visitExpressionsAndQueries(path string, data []byte) {
 	// collect all variables
 	variables := allVariables(data)
 	for _, v := range variables {
-		allMatches := metricRe.FindAllStringSubmatch(v.query, -1)
+		allMatches := MetricRe.FindAllStringSubmatch(v.query, -1)
 		for _, match := range allMatches {
 			m := match[1]
 			if len(m) == 0 {
@@ -196,4 +196,22 @@ func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(p
 func ShortPath(dashPath string) string {
 	splits := strings.Split(dashPath, string(filepath.Separator))
 	return strings.Join(splits[len(splits)-2:], string(filepath.Separator))
+}
+
+func Short(dashPath string) string {
+	splits := strings.Split(dashPath, string(filepath.Separator))
+	return strings.Join(splits[len(splits)-4:], string(filepath.Separator))
+}
+
+func CheckSpecialExpr(expr string) ([]string, bool) {
+	if strings.Contains(expr, "/") {
+		return strings.Split(expr, "/"), true
+	} else if strings.Contains(expr, "+") {
+		return strings.Split(expr, "+"), true
+	} else if strings.Contains(expr, "-") {
+		return strings.Split(expr, "-"), true
+	} else if strings.Contains(expr, " on ") {
+		return strings.Split(expr, " on "), true
+	}
+	return nil, false
 }

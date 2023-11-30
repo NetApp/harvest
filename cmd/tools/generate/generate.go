@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/cmd/tools/utils"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
@@ -500,7 +501,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func generateMetrics() (map[string]Counter, rest.Cluster) {
+func generateMetrics() (map[string]utils.Counter, rest.Cluster) {
 	var (
 		poller     *conf.Poller
 		err        error
@@ -533,15 +534,15 @@ func generateMetrics() (map[string]Counter, rest.Cluster) {
 		os.Exit(1)
 	}
 
-	swaggerBytes = readSwaggerJSON()
-	restCounters := processRestCounters(restClient)
-	zapiCounters := processZapiCounters(zapiClient)
+	utils.SwaggerBytes = readSwaggerJSON()
+	restCounters := utils.ProcessRestCounters(restClient, nil, "conf/rest", "conf/restperf")
+	zapiCounters := utils.ProcessZapiCounters(zapiClient, nil, "conf/zapi/cdot", "conf/zapiperf/cdot")
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(counters)
 	return counters, restClient.Cluster()
 }
 
-func generateDescription(dPath string, data []byte, counters map[string]Counter) {
+func generateDescription(dPath string, data []byte, counters map[string]utils.Counter) {
 	var err error
 	dashPath := grafana.ShortPath(dPath)
 	panelDescriptionMap := make(map[string]string)

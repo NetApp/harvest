@@ -61,9 +61,9 @@ objects:
   VscanSVM:                 vscan_svm.yaml
 
 #  Uncomment to collect workload/QOS counters.
-#  Workload:             workload.yaml
-#  WorkloadVolume:       workload_volume.yaml
+  Workload:             workload.yaml
+  WorkloadVolume:       workload_volume.yaml
 
 # The following workload templates may slow down data collection due to a high number of metrics.
-#  WorkloadDetail:       workload_detail.yaml
-#  WorkloadDetailVolume: workload_detail_volume.yaml
+  WorkloadDetail:       workload_detail.yaml
+  WorkloadDetailVolume: workload_detail_volume.yaml
