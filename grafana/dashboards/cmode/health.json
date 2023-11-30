@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1681988994523,
+  "iteration": 1701339995739,
   "links": [
     {
       "asDropdown": true,
@@ -213,7 +213,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
+          "expr": "(count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"}) or vector(0))\n+\n(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -487,6 +487,24 @@
           "interval": "",
           "legendFormat": "License Non Compliant",
           "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "HA Down",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"}) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Sensor Failures",
+          "refId": "G"
         }
       ],
       "title": "Errors",
@@ -801,7 +819,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 28
           },
           "id": 253,
           "options": {
@@ -863,12 +881,284 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 28
+      },
+      "id": 283,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "No"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Takeover Possible"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "No"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 35
+          },
+          "id": 281,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(cluster,node,datacenter) group_left(severity,takeover_possible) health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "HA Issues",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "instance": true,
+                  "job": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 11,
+                  "cluster": 1,
+                  "datacenter": 2,
+                  "healthy": 5,
+                  "instance": 9,
+                  "job": 10,
+                  "node": 3,
+                  "severity": 7,
+                  "state": 6,
+                  "takeover_possible": 4,
+                  "version": 8
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "healthy": "Healthy",
+                  "node": "Node",
+                  "severity": "Severity",
+                  "state": "State",
+                  "takeover_possible": "Takeover Possible",
+                  "version": "Version"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "HA",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 287,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Displays sensors with failed state.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 30
+          },
+          "id": 285,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"}",
+              "format": "table",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Sensor Issues",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "critical_high",
+                    "critical_low",
+                    "datacenter",
+                    "node",
+                    "sensor",
+                    "threshold_state",
+                    "type",
+                    "unit",
+                    "warning_high",
+                    "warning_low",
+                    "Value #A"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "critical_high": true,
+                  "critical_low": true,
+                  "threshold_state": false,
+                  "warning_high": true,
+                  "warning_low": true
+                },
+                "indexByName": {
+                  "Value #A": 6,
+                  "cluster": 1,
+                  "critical_high": 8,
+                  "critical_low": 9,
+                  "datacenter": 0,
+                  "node": 2,
+                  "sensor": 3,
+                  "threshold_state": 5,
+                  "type": 4,
+                  "unit": 7,
+                  "warning_high": 10,
+                  "warning_low": 11
+                },
+                "renameByName": {
+                  "Value #A": "Value",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "node": "Node",
+                  "sensor": "Sensor Name",
+                  "threshold_state": "State",
+                  "type": "Type"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Sensor",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
       },
       "id": 230,
       "panels": [
@@ -1004,7 +1294,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 31
       },
       "id": 245,
       "panels": [
@@ -1651,7 +1941,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 32
       },
       "id": 266,
       "panels": [
@@ -2451,7 +2741,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 33
       },
       "id": 274,
       "panels": [
@@ -2488,7 +2778,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 32
+            "y": 34
           },
           "id": 276,
           "options": {
@@ -2552,7 +2842,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 34
       },
       "id": 255,
       "panels": [
@@ -2719,7 +3009,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 35
       },
       "id": 259,
       "panels": [
@@ -2912,7 +3202,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 36
       },
       "id": 235,
       "panels": [
@@ -3012,7 +3302,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 37
       },
       "id": 247,
       "panels": [
@@ -3263,5 +3553,5 @@
   "timezone": "",
   "title": "ONTAP: Health",
   "uid": "",
-  "version": 2
+  "version": 3
 }

@@ -23,6 +23,7 @@ const (
 	shelfHealthMatrix                             = "health_shelf"
 	supportHealthMatrix                           = "health_support"
 	nodeHealthMatrix                              = "health_node"
+	haHealthMatrix                                = "health_ha"
 	networkEthernetPortHealthMatrix               = "health_network_ethernet_port"
 	networkFCPortHealthMatrix                     = "health_network_fc_port"
 	lifHealthMatrix                               = "health_lif"
@@ -72,7 +73,7 @@ func (h *Health) initAllMatrix() error {
 	h.data = make(map[string]*matrix.Matrix)
 	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
 		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, lifHealthMatrix,
-		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix}
+		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix, haHealthMatrix}
 	for _, m := range mats {
 		if err := h.initMatrix(m); err != nil {
 			return err
@@ -135,6 +136,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	h.collectShelfAlerts()
 	h.collectSupportAlerts()
 	h.collectNodeAlerts()
+	h.collectHAAlerts()
 	h.collectNetworkEthernetPortAlerts()
 	h.collectNetworkFCPortAlerts()
 	h.collectNetworkInterfacesAlerts()
@@ -400,6 +402,40 @@ func (h *Health) collectNodeAlerts() {
 	}
 }
 
+func (h *Health) collectHAAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+	records, err := h.getHADown()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			h.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := h.data[haHealthMatrix]
+	for _, record := range records {
+		nodeName := record.Get("node").String()
+		takeoverPossible := record.Get("possible").String()
+		if takeoverPossible == "" {
+			takeoverPossible = "false"
+		}
+
+		instance, err = mat.NewInstance(nodeName)
+		if err != nil {
+			h.Logger.Warn().Str("key", nodeName).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("node", nodeName)
+		instance.SetLabel("takeover_possible", takeoverPossible)
+		instance.SetLabel(severityLabel, string(errr))
+
+		h.setAlertMetric(mat, instance)
+	}
+}
+
 func (h *Health) collectShelfAlerts() {
 	var (
 		instance *matrix.Instance
@@ -575,6 +611,26 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 		APIPath(query).
 		Fields(fields).
 		Filter([]string{"health=false"}).
+		Build()
+
+	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (h *Health) getHADown() ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+
+	fields := []string{"possible"}
+	query := "api/private/cli/storage/failover"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter([]string{"possible=!true"}).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
