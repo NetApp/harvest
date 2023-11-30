@@ -23,7 +23,6 @@ const (
 )
 
 var restDataCollectors = []string{"Rest"}
-var zapiDataCollectors = []string{"Zapi"}
 
 var fileSet []string
 
@@ -250,7 +249,7 @@ func counterIsMissing(flavor string, counter string, waitFor time.Duration) bool
 	}
 	query := counter + `{datacenter=~"` + strings.Join(restDataCollectors, "|") + `"}`
 	if flavor == zapi {
-		query = counter + `{datacenter!~"` + strings.Join(zapiDataCollectors, "|") + `"}`
+		query = counter + `{datacenter!~"` + strings.Join(restDataCollectors, "|") + `"}`
 	}
 	return !hasDataInDB(query, waitFor)
 }
