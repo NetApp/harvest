@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1701339995739,
+  "iteration": 1701348143356,
   "links": [
     {
       "asDropdown": true,
@@ -964,7 +964,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 35
+            "y": 29
           },
           "id": 281,
           "options": {
@@ -990,8 +990,12 @@
                 "excludeByName": {
                   "Time": true,
                   "Value": true,
+                  "cpu_firmware_release": true,
                   "instance": true,
-                  "job": true
+                  "job": true,
+                  "max_aggr_size": true,
+                  "max_vol_num": true,
+                  "max_vol_size": true
                 },
                 "indexByName": {
                   "Time": 0,
@@ -1009,6 +1013,7 @@
                 },
                 "renameByName": {
                   "cluster": "Cluster",
+                  "cpu_firmware_release": "",
                   "datacenter": "Datacenter",
                   "healthy": "Healthy",
                   "node": "Node",
