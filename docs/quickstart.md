@@ -28,10 +28,10 @@ Start all Harvest pollers as daemons:
 bin/harvest start
 ```
 
-Or start a specific poller(s). In this case, we're staring two pollers named `jamaica` and `jamaica`.
+Or start a specific poller(s). In this case, we're staring two pollers named `jamaica` and `grenada`.
 
 ```bash
-bin/harvest start jamaica jamaica
+bin/harvest start jamaica grenada
 ```
 
 Replace `jamaica` and `grenada` with the poller names you defined in `harvest.yml`. 
