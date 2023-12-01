@@ -419,6 +419,9 @@ func (h *Health) collectHAAlerts() {
 	for _, record := range records {
 		nodeName := record.Get("node").String()
 		takeoverPossible := record.Get("possible").String()
+		partnerName := record.Get("partner_name").String()
+		stateDescription := record.Get("state_description").String()
+		partnerState := record.Get("partner_state").String()
 		if takeoverPossible == "" {
 			takeoverPossible = "false"
 		}
@@ -430,6 +433,9 @@ func (h *Health) collectHAAlerts() {
 		}
 		instance.SetLabel("node", nodeName)
 		instance.SetLabel("takeover_possible", takeoverPossible)
+		instance.SetLabel("partner", partnerName)
+		instance.SetLabel("state_description", stateDescription)
+		instance.SetLabel("partner_state", partnerState)
 		instance.SetLabel(severityLabel, string(errr))
 
 		h.setAlertMetric(mat, instance)
@@ -625,7 +631,7 @@ func (h *Health) getHADown() ([]gjson.Result, error) {
 		err    error
 	)
 
-	fields := []string{"possible"}
+	fields := []string{"possible,partner_name,state_description,partner_state"}
 	query := "api/private/cli/storage/failover"
 	href := rest.NewHrefBuilder().
 		APIPath(query).

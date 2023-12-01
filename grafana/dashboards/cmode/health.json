@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1701348143356,
+  "iteration": 1701427047225,
   "links": [
     {
       "asDropdown": true,
@@ -851,8 +851,8 @@
                 "indexByName": {
                   "Time": 0,
                   "Value": 10,
-                  "cluster": 1,
-                  "datacenter": 2,
+                  "cluster": 2,
+                  "datacenter": 1,
                   "healthy": 4,
                   "instance": 8,
                   "job": 9,
@@ -974,7 +974,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(cluster,node,datacenter) group_left(severity,takeover_possible) health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(cluster,node,datacenter) group_left(severity,takeover_possible,partner,partner_state,state_description) health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -999,17 +999,29 @@
                 },
                 "indexByName": {
                   "Time": 0,
-                  "Value": 11,
-                  "cluster": 1,
-                  "datacenter": 2,
+                  "Value": 14,
+                  "cluster": 2,
+                  "cpu_firmware_release": 15,
+                  "datacenter": 1,
                   "healthy": 5,
-                  "instance": 9,
-                  "job": 10,
+                  "instance": 12,
+                  "job": 13,
+                  "location": 16,
+                  "max_aggr_size": 17,
+                  "max_vol_num": 18,
+                  "max_vol_size": 19,
+                  "model": 20,
                   "node": 3,
-                  "severity": 7,
+                  "partner": 7,
+                  "partner_state": 8,
+                  "serial": 21,
+                  "severity": 10,
                   "state": 6,
+                  "state_description": 9,
                   "takeover_possible": 4,
-                  "version": 8
+                  "vendor": 22,
+                  "version": 11,
+                  "warnings": 23
                 },
                 "renameByName": {
                   "cluster": "Cluster",
@@ -1017,8 +1029,11 @@
                   "datacenter": "Datacenter",
                   "healthy": "Healthy",
                   "node": "Node",
+                  "partner": "Partner Node",
+                  "partner_state": "Partner State",
                   "severity": "Severity",
                   "state": "State",
+                  "state_description": "State Description",
                   "takeover_possible": "Takeover Possible",
                   "version": "Version"
                 }
