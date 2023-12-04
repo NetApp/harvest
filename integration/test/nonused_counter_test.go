@@ -73,6 +73,18 @@ func TestCounterUsage(t *testing.T) {
 }
 
 func counterUsage(t *testing.T, counters map[string]utils.Counter) {
+	// These disk perf counters roll over at aggr, node, raid and plex level and also apply Max plugin, but not all are used in dashboard.
+	ignoreCounters := []string{"disk_user_read_chain", "aggr_disk_max_user_read_latency", "disk_user_write_latency", "aggr_disk_user_read_latency", "aggr_disk_user_read_chain",
+		"disk_total_transfers", "disk_user_read_latency", "disk_user_write_chain", "node_disk_user_write_chain", "plex_disk_total_transfers", "node_disk_max_user_write_chain",
+		"node_disk_max_user_write_latency", "node_disk_max_user_read_chain", "plex_disk_user_read_chain", "raid_disk_user_write_chain", "node_disk_user_read_latency",
+		"node_disk_max_total_transfers", "node_disk_user_write_latency", "node_disk_max_user_read_latency", "node_disk_total_transfers", "raid_disk_user_read_chain",
+		"node_disk_user_read_chain", "aggr_disk_user_write_latency", "disk_busy", "aggr_disk_user_write_chain", "plex_disk_user_write_chain", "aggr_disk_max_user_write_latency",
+		"aggr_disk_max_disk_busy", "node_disk_max_disk_busy", "plex_disk_user_reads", "plex_disk_user_writes", "aggr_disk_user_reads", "aggr_disk_user_writes", "aggr_disk_total_data",
+		"node_disk_max_user_writes", "plex_disk_total_data", "disk_user_reads", "node_disk_max_user_reads", "node_disk_max_total_data", "aggr_disk_max_user_reads", "aggr_disk_max_user_writes",
+		"node_disk_total_data", "node_disk_user_reads", "node_disk_user_writes", "aggr_disk_max_total_data", "raid_disk_user_writes", "disk_user_writes", "disk_total_data",
+		"raid_disk_user_reads", "raid_disk_total_data",
+	}
+
 	tempMap := make(map[string]utils.Counter)
 	// handled few special cases
 	for counterName := range counters {
@@ -125,6 +137,8 @@ func counterUsage(t *testing.T, counters map[string]utils.Counter) {
 					continue
 				}
 				countMap[counter.Template] = append(countMap[counter.Template], counterName)
+			} else if slices.Contains(ignoreCounters, counterName) {
+				continue
 			} else {
 				countMap[counter.Template] = append(countMap[counter.Template], counterName)
 			}

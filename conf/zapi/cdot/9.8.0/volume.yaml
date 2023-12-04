@@ -33,7 +33,7 @@ counters:
         - percentage-compression-space-saved    => sis_compress_saved_percent
         - percentage-deduplication-space-saved  => sis_dedup_saved_percent
 #?        - percentage-total-space-saved          => sis_total_saved_percent
-#?        - total-space-saved                     => sis_total_saved
+        - total-space-saved                     => sis_total_saved
     - volume-snapshot-attributes:
         - ^auto-snapshots-enabled               => auto_snapshots_enabled
         - ^snapshot-policy

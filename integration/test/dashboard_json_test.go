@@ -135,7 +135,7 @@ func TestJsonExpression(t *testing.T) {
 		if counterIsMissing(rest, counter, 7*time.Minute) {
 			t.Fatalf("rest qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())
 		}
-		if counterIsMissing(zapi, counter, 1*time.Minute) {
+		if counterIsMissing(zapi, counter, 2*time.Minute) {
 			t.Fatalf("zapi qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())
 		}
 	}

@@ -12,6 +12,8 @@ counters:
     - ^type                    => type
 #?    - expiration-date          => expiry_time
 
+collect_only_labels: true
+
 plugins:
   - LabelAgent:
       include_equals:

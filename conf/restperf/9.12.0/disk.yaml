@@ -15,19 +15,19 @@ counters:
 #?  - cp_read_chain
 #?  - cp_read_count            => cp_reads
 #?  - cp_read_latency
-#?  - disk_busy_percent        => busy
+  - disk_busy_percent        => busy
 #?  - io_pending
 #?  - io_queued
-#?  - total_data
-#?  - total_transfer_count     => total_transfers
+  - total_data
+  - total_transfer_count     => total_transfers
 #?  - user_read_block_count    => user_read_blocks
-#?  - user_read_chain
-#?  - user_read_count          => user_reads
-#?  - user_read_latency
+  - user_read_chain
+  - user_read_count          => user_reads
+  - user_read_latency
 #?  - user_write_block_count   => user_write_blocks
-#?  - user_write_chain
-#?  - user_write_count         => user_writes
-#?  - user_write_latency
+  - user_write_chain
+  - user_write_count         => user_writes
+  - user_write_latency
 
 plugins:
   - LabelAgent:
