@@ -323,7 +323,6 @@ export_options:
     - serial_number
   instance_labels:
     - name
-    - node
     - status
 ```
 
