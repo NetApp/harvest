@@ -310,12 +310,14 @@ outer:
 		}
 	}
 
-	pretty, err := json.MarshalIndent(results, "", " ")
-	if err != nil {
-		stderr("error marshalling json %+v\n", err)
-		return
+	if results != nil {
+		pretty, err := json.MarshalIndent(results, "", " ")
+		if err != nil {
+			stderr("error marshalling json %+v\n", err)
+			return
+		}
+		fmt.Printf("%s\n", pretty)
 	}
-	fmt.Printf("%s\n", pretty)
 }
 
 func GetPollerAndAddr(pName string) (*conf.Poller, string, error) {
