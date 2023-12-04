@@ -23,7 +23,7 @@ import (
 func TestCounterUsage(t *testing.T) {
 	utils2.SkipIfMissing(t, utils2.Regression)
 	log.Info().Msg("Testing unused counters")
-	pollerName := "dc1"
+	pollerName := "dc1-zapi"
 	var (
 		restClient *rest2.Client
 		zapiClient *zapi2.Client

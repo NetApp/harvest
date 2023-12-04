@@ -14,9 +14,9 @@ schedule:
 
 counters:
   - ^^id
-#?  - service_time
-#?  - visits
-#?  - wait_time
+  - service_time
+  - visits
+  - wait_time
 
 resource_map:
   CPU_dblade : backend
