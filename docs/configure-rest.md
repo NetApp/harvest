@@ -260,3 +260,81 @@ the missing data won't be exported.
 #### `export_options`
 
 Refer [Export Options](configure-rest.md#export_options)
+
+## Private CLI
+
+The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collectors support the use of the private CLI to address these gaps. This means that even if certain data cannot be collected via the Public REST API, it can still be collected using the private CLI.
+
+For more information on using the ONTAP private CLI with the REST API, you can refer to the following resources:
+
+- [NetApp Documentation: Accessing ONTAP CLI through REST APIs](https://docs.netapp.com/us-en/ontap-automation/rest/access_ontap_cli.html)
+- [NetApp Blog: Private CLI Passthrough with ONTAP REST API](https://netapp.io/2020/11/09/private-cli-passthrough-ontap-rest-api/)
+
+
+### Creating Templates with Private CLI
+
+Let's take an example of how a CLI command:
+
+```bash
+system fru-check show
+```
+
+REST APIs endpoint:
+
+```http
+/api/private/cli/system/fru-check?fields=node,fru_name,fru_status
+```
+
+In this example, the CLI command `system fru-check show` gets converted to the API endpoint with a forward slash for every word prefixing `/api/private/cli/`.
+
+The `show` command gets converted to the HTTP method GET call. From the CLI, look at the required field names and pass them as a comma-separated value in `fields=` in the API endpoint.
+
+Note: If the field name contains a hyphen (-), convert it to an underscore in the REST API field. For example, `fru-name` → `fru_name`.
+
+### Advanced and Diagnostic Mode Commands
+
+CLI Pass through allows you to execute even advanced and diagnostic mode CLI commands with just one setting in the API endpoint. You should add `privilege_level=diagnostic` or `privilege_level=advanced` under the filter setting.
+
+```
+counters:
+  - filter:
+      - privilege_level=diagnostic
+```          
+
+
+### Creating a Harvest Template for Private CLI
+
+Here's an example of a Harvest template that uses the private CLI to collect data about the FRU status:
+
+```yaml
+name:                         FruCheck
+query:                        api/private/cli/system/fru-check
+object:                       fru_check
+
+counters:
+  - ^^node
+  - ^^serial_number              => serial_number
+  - ^fru_name                    => name
+  - ^fru_status                  => status
+
+export_options:
+  instance_keys:
+    - node
+    - serial_number
+  instance_labels:
+    - name
+    - node
+    - status
+```
+
+In this template, the `query` field specifies the private CLI command to be used (`system fru-check show`). The `counters` field maps the output of the private CLI command to the fields of the `fru_check` object.
+
+The `export_options` field specifies how the data should be exported. The `instance_keys` field lists the fields that should be used as unique identifiers for each instance of the `fru_check` object. The `instance_labels` field lists the fields that should be included as labels in the exported data.
+
+The output of this template would look like:
+
+```
+fru_check_labels{name="PCIe Devices",node="umeng-aff300-02",status="pass",datacenter="u2",cluster="umeng-aff300-01-02",serial_number="s1"} 1.0
+fru_check_labels{name="DIMM-1",node="umeng-aff300-02",status="pass",datacenter="u2",cluster="umeng-aff300-01-02",serial_number="s2"} 1.0
+...
+```
