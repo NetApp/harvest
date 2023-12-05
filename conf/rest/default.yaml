@@ -22,7 +22,7 @@ objects:
   Health:                      health.yaml
   Lun:                         lun.yaml
   Namespace:                   namespace.yaml
-  NDMPSession:                 ndmp_sessions.yaml
+#  NDMPSession:                 ndmp_sessions.yaml
 #  NetConnections:              netconnections.yaml
 #  NetPort:                     netport.yaml
   NetRoute:                    netroute.yaml
