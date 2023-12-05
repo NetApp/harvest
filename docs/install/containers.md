@@ -99,7 +99,6 @@ By default, the above command uses the harvest configuration file(`harvest.yml`)
 2. Creates a matching Prometheus service discovery file for each Harvest poller (located
    in `container/prometheus/harvest_targets.yml`). Prometheus uses this file to scrape the Harvest pollers.
 
-
 ### Start everything
 
 Bring everything up :rocket:
@@ -107,6 +106,12 @@ Bring everything up :rocket:
 ```
 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```
+
+### Note on Docker Logging Configuration
+
+By default, Docker uses the `json-file` logging driver which does not limit the size of the logs. This can cause your system to run out of disk space. Docker provides several options for logging configuration, including different logging drivers and options for log rotation.
+
+Docker recommends using the `local` driver to prevent disk-exhaustion. More details can be found in [Docker logging documentation](https://docs.docker.com/config/containers/logging/configure/)
 
 ## Prometheus and Grafana
 
