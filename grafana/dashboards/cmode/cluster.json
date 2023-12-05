@@ -3279,7 +3279,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node) (aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3363,7 +3363,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node) (aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3447,7 +3447,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node) (aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3531,7 +3531,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node) (aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3615,7 +3615,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node) (aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3699,7 +3699,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node) (aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -4346,5 +4346,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 20
+  "version": 21
 }
