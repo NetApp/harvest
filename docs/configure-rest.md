@@ -261,19 +261,19 @@ the missing data won't be exported.
 
 Refer [Export Options](configure-rest.md#export_options)
 
-## Private CLI
+## ONTAP Private CLI
 
-The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collectors support the use of the private CLI to address these gaps. This means that even if certain data cannot be collected via the Public REST API, it can still be collected using the private CLI.
+The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collector can make full use of ONTAP's private CLI. This means when ONTAP's public REST API is missing counters, Harvest can still collect them as long as those counters are available via ONTAP's CLI.
 
 For more information on using the ONTAP private CLI with the REST API, you can refer to the following resources:
 
-- [NetApp Documentation: Accessing ONTAP CLI through REST APIs](https://docs.netapp.com/us-en/ontap-automation/rest/access_ontap_cli.html)
+- [NetApp Documentation: Accessing ONTAP CLI through REST APIs](https://library.netapp.com/ecmdocs/ECMLP2885799/html/#/Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API)
 - [NetApp Blog: Private CLI Passthrough with ONTAP REST API](https://netapp.io/2020/11/09/private-cli-passthrough-ontap-rest-api/)
 
 
-### Creating Templates with Private CLI
+### Creating Templates That Use ONTAP's Private CLI
 
-Let's take an example of how a CLI command:
+Let's take an example of how we can make Harvest use the `system fru-check show` CLI command.
 
 ```bash
 system fru-check show
@@ -285,16 +285,15 @@ REST APIs endpoint:
 /api/private/cli/system/fru-check?fields=node,fru_name,fru_status
 ```
 
-In this example, the CLI command `system fru-check show` gets converted to the API endpoint with a forward slash for every word prefixing `/api/private/cli/`.
+The CLI command `system fru-check show` into a private CLI REST API can be achieved by adhering to the path rules outlined in the ONTAP [documentation]((https://library.netapp.com/ecmdocs/ECMLP2885799/html#Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API)). Generally, this involves substituting all spaces within the CLI command with a forward slash (/), and transforming the ONTAP CLI verb into its corresponding REST verb.
 
 The `show` command gets converted to the HTTP method GET call. From the CLI, look at the required field names and pass them as a comma-separated value in `fields=` in the API endpoint.
 
-Note: If the field name contains a hyphen (-), convert it to an underscore in the REST API field. For example, `fru-name` → `fru_name`.
+Note: If the field name contains a hyphen (`-`), it should be converted to an underscore (`_`) in the REST API field. For example, `fru-name` becomes `fru_name`. ONTAP is flexible with the input format and can freely convert between hyphen (`-`) and underscore (`_`) forms. However, when it comes to output, ONTAP returns field names with underscores. For compatibility and consistency, it is mandatory to use underscores in field names when working with Harvest REST templates for ONTAP private CLI.
 
 ### Advanced and Diagnostic Mode Commands
 
-CLI Pass through allows you to execute even advanced and diagnostic mode CLI commands with just one setting in the API endpoint. You should add `privilege_level=diagnostic` or `privilege_level=advanced` under the filter setting.
-
+The CLI pass through allows you to execute advanced and diagnostic mode CLI commands by including the `privilege_level` field in your request under the `filter` setting like so:
 ```
 counters:
   - filter:
@@ -304,7 +303,7 @@ counters:
 
 ### Creating a Harvest Template for Private CLI
 
-Here's an example of a Harvest template that uses the private CLI to collect data about the FRU status:
+Here's a Harvest template that uses ONTAP's private CLI to collect field-replaceable units (FRU) counters by using ONTAP's CLI command `system fru-check show`
 
 ```yaml
 name:                         FruCheck
@@ -327,13 +326,27 @@ export_options:
 ```
 
 In this template, the `query` field specifies the private CLI command to be used (`system fru-check show`). The `counters` field maps the output of the private CLI command to the fields of the `fru_check` object.
+To identify the ONTAP counter names (the left side of the '=>' symbol in the template, such as `fru_name`), you can use establish an SSH connection to your ONTAP cluster. Once connected, leverage ONTAP's command completion functionality to reveal the counter names. For instance, you can type `system fru-check show -fields`, then press the '?' key. This will display a list of ONTAP field names, as demonstrated below.
 
-The `export_options` field specifies how the data should be exported. The `instance_keys` field lists the fields that should be used as unique identifiers for each instance of the `fru_check` object. The `instance_labels` field lists the fields that should be included as labels in the exported data.
+```
+cluster-01::> system fru-check show -fields ?
+  node                        Node
+  serial-number               FRU Serial Number
+  fru-name                    FRU Name
+  fru-type                    FRU Type
+  fru-status                  Status
+  display-name                Display Name
+  location                    Location
+  additional-info             Additional Info
+  reason                      Details
+```
+
+The `export_options` field specifies how the data should be exported. The `instance_keys` field lists the fields that will be added as labels to all exported instances of the `fru_check` object. The `instance_labels` field lists the fields that should be included as labels in the exported data.
 
 The output of this template would look like:
 
 ```
-fru_check_labels{name="PCIe Devices",node="umeng-aff300-02",status="pass",datacenter="u2",cluster="umeng-aff300-01-02",serial_number="s1"} 1.0
-fru_check_labels{name="DIMM-1",node="umeng-aff300-02",status="pass",datacenter="u2",cluster="umeng-aff300-01-02",serial_number="s2"} 1.0
+fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="DIMM-1",node="umeng-aff300-02",serial_number="s2",status="pass"} 1.0
+fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="PCIe Devices",node="umeng-aff300-02",serial_number="s1",status="pass"} 1.0
 ...
 ```
