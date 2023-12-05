@@ -567,11 +567,6 @@ func (h *Health) collectDiskAlerts() {
 }
 
 func (h *Health) getDisks() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"name", "container_type"}
 	query := "api/storage/disks"
 	href := rest.NewHrefBuilder().
@@ -580,18 +575,10 @@ func (h *Health) getDisks() ([]gjson.Result, error) {
 		Filter([]string{"container_type=broken|unassigned"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getShelves() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"error_type", "error_severity", "error_text"}
 	query := "api/private/cli/storage/shelf"
 	href := rest.NewHrefBuilder().
@@ -599,18 +586,10 @@ func (h *Health) getShelves() ([]gjson.Result, error) {
 		Fields(fields).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getNodes() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"health"}
 	query := "api/private/cli/node"
 	href := rest.NewHrefBuilder().
@@ -619,18 +598,10 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 		Filter([]string{"health=false"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getHADown() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"possible,partner_name,state_description,partner_state"}
 	query := "api/private/cli/storage/failover"
 	href := rest.NewHrefBuilder().
@@ -639,36 +610,20 @@ func (h *Health) getHADown() ([]gjson.Result, error) {
 		Filter([]string{"possible=!true"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getRansomwareVolumes() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/storage/volumes"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Filter([]string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low|moderate|high"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/cluster/licensing/licenses"
 	fields := []string{"name,scope,state"}
 	href := rest.NewHrefBuilder().
@@ -677,18 +632,10 @@ func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
 		Filter([]string{"state=noncompliant"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/storage/volumes"
 	fields := []string{"uuid,name,movement.state,svm"}
 	href := rest.NewHrefBuilder().
@@ -697,18 +644,10 @@ func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 		Filter([]string{"movement.state=cutover_wait|failed|cutover_pending"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/network/ip/interfaces"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
@@ -716,18 +655,10 @@ func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
 		Filter([]string{"location.is_home=false"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getFCPorts() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"name,node"}
 	query := "api/network/fc/ports"
 	href := rest.NewHrefBuilder().
@@ -736,18 +667,10 @@ func (h *Health) getFCPorts() ([]gjson.Result, error) {
 		Filter([]string{"enabled=true", "state=offlined_by_system"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"name,node"}
 	query := "api/network/ethernet/ports"
 	href := rest.NewHrefBuilder().
@@ -756,28 +679,17 @@ func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
 		Filter([]string{"enabled=true", "state=down"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
 	query := "api/private/support/alerts"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Filter(filter).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 // returns time filter (clustertime - polldata duration)
