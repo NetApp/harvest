@@ -1441,7 +1441,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Max Throughput MB/s"
+                  "options": "Max Throughput"
                 },
                 "properties": [
                   {
@@ -1593,7 +1593,7 @@
                   "file": "File",
                   "lun": "Lun",
                   "max_throughput_iops": "Max IOPS",
-                  "max_throughput_mbps": "Max Throughput MB/s",
+                  "max_throughput_mbps": "Max Throughput",
                   "policy_group": "Policy",
                   "svm": "SVM",
                   "volume": "Volume",
