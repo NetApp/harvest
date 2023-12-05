@@ -1180,7 +1180,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSMBsPercent\"} * 8 / (1000 * 1000)) / on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "expr": "((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSMBsPercent\"} / (1000 * 1000)) / on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1521,7 +1521,7 @@
                   "left": "Value",
                   "operator": "*",
                   "reducer": "sum",
-                  "right": ".000008"
+                  "right": ".000001"
                 },
                 "mode": "binary",
                 "reduce": {
