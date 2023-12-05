@@ -109,9 +109,9 @@ docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 
 ### Note on Docker Logging Configuration
 
-By default, Docker uses the `json-file` logging driver which does not limit the size of the logs. This can lead to issues if your system runs out of space. Docker provides several options for logging configuration, including different logging drivers and options for log rotation.
+By default, Docker uses the `json-file` logging driver which does not limit the size of the logs. This can cause your system to run out of disk space. Docker provides several options for logging configuration, including different logging drivers and options for log rotation.
 
-We recommend reviewing the [Docker logging documentation](https://docs.docker.com/config/containers/logging/configure/) to understand how to configure logging to suit your needs.
+Docker recommends using the `local` driver to prevent disk-exhaustion. More details can be found in [Docker logging documentation](https://docs.docker.com/config/containers/logging/configure/)
 
 ## Prometheus and Grafana
 
