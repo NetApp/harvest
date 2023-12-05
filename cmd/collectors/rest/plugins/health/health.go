@@ -23,6 +23,7 @@ const (
 	shelfHealthMatrix                             = "health_shelf"
 	supportHealthMatrix                           = "health_support"
 	nodeHealthMatrix                              = "health_node"
+	haHealthMatrix                                = "health_ha"
 	networkEthernetPortHealthMatrix               = "health_network_ethernet_port"
 	networkFCPortHealthMatrix                     = "health_network_fc_port"
 	lifHealthMatrix                               = "health_lif"
@@ -72,7 +73,7 @@ func (h *Health) initAllMatrix() error {
 	h.data = make(map[string]*matrix.Matrix)
 	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
 		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, lifHealthMatrix,
-		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix}
+		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix, haHealthMatrix}
 	for _, m := range mats {
 		if err := h.initMatrix(m); err != nil {
 			return err
@@ -135,6 +136,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	h.collectShelfAlerts()
 	h.collectSupportAlerts()
 	h.collectNodeAlerts()
+	h.collectHAAlerts()
 	h.collectNetworkEthernetPortAlerts()
 	h.collectNetworkFCPortAlerts()
 	h.collectNetworkInterfacesAlerts()
@@ -400,6 +402,46 @@ func (h *Health) collectNodeAlerts() {
 	}
 }
 
+func (h *Health) collectHAAlerts() {
+	var (
+		instance *matrix.Instance
+	)
+	records, err := h.getHADown()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			h.Logger.Debug().Err(err).Msg("API not found")
+		} else {
+			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+		}
+		return
+	}
+	mat := h.data[haHealthMatrix]
+	for _, record := range records {
+		nodeName := record.Get("node").String()
+		takeoverPossible := record.Get("possible").String()
+		partnerName := record.Get("partner_name").String()
+		stateDescription := record.Get("state_description").String()
+		partnerState := record.Get("partner_state").String()
+		if takeoverPossible == "" {
+			takeoverPossible = "false"
+		}
+
+		instance, err = mat.NewInstance(nodeName)
+		if err != nil {
+			h.Logger.Warn().Str("key", nodeName).Msg("error while creating instance")
+			continue
+		}
+		instance.SetLabel("node", nodeName)
+		instance.SetLabel("takeover_possible", takeoverPossible)
+		instance.SetLabel("partner", partnerName)
+		instance.SetLabel("state_description", stateDescription)
+		instance.SetLabel("partner_state", partnerState)
+		instance.SetLabel(severityLabel, string(errr))
+
+		h.setAlertMetric(mat, instance)
+	}
+}
+
 func (h *Health) collectShelfAlerts() {
 	var (
 		instance *matrix.Instance
@@ -525,11 +567,6 @@ func (h *Health) collectDiskAlerts() {
 }
 
 func (h *Health) getDisks() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"name", "container_type"}
 	query := "api/storage/disks"
 	href := rest.NewHrefBuilder().
@@ -538,18 +575,10 @@ func (h *Health) getDisks() ([]gjson.Result, error) {
 		Filter([]string{"container_type=broken|unassigned"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getShelves() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"error_type", "error_severity", "error_text"}
 	query := "api/private/cli/storage/shelf"
 	href := rest.NewHrefBuilder().
@@ -557,18 +586,10 @@ func (h *Health) getShelves() ([]gjson.Result, error) {
 		Fields(fields).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getNodes() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"health"}
 	query := "api/private/cli/node"
 	href := rest.NewHrefBuilder().
@@ -577,36 +598,32 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 		Filter([]string{"health=false"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
+}
+
+func (h *Health) getHADown() ([]gjson.Result, error) {
+	fields := []string{"possible,partner_name,state_description,partner_state"}
+	query := "api/private/cli/storage/failover"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Filter([]string{"possible=!true"}).
+		Build()
+
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getRansomwareVolumes() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/storage/volumes"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Filter([]string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low|moderate|high"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/cluster/licensing/licenses"
 	fields := []string{"name,scope,state"}
 	href := rest.NewHrefBuilder().
@@ -615,18 +632,10 @@ func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
 		Filter([]string{"state=noncompliant"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/storage/volumes"
 	fields := []string{"uuid,name,movement.state,svm"}
 	href := rest.NewHrefBuilder().
@@ -635,18 +644,10 @@ func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 		Filter([]string{"movement.state=cutover_wait|failed|cutover_pending"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	query := "api/network/ip/interfaces"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
@@ -654,18 +655,10 @@ func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
 		Filter([]string{"location.is_home=false"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getFCPorts() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"name,node"}
 	query := "api/network/fc/ports"
 	href := rest.NewHrefBuilder().
@@ -674,18 +667,10 @@ func (h *Health) getFCPorts() ([]gjson.Result, error) {
 		Filter([]string{"enabled=true", "state=offlined_by_system"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
-
 	fields := []string{"name,node"}
 	query := "api/network/ethernet/ports"
 	href := rest.NewHrefBuilder().
@@ -694,28 +679,17 @@ func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
 		Filter([]string{"enabled=true", "state=down"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
-	var (
-		result []gjson.Result
-		err    error
-	)
 	query := "api/private/support/alerts"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Filter(filter).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(h.client, href, h.Logger); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return collectors.InvokeRestCall(h.client, href, h.Logger)
 }
 
 // returns time filter (clustertime - polldata duration)
