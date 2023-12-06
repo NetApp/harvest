@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1698231915371,
+  "iteration": 1701755150043,
   "links": [
     {
       "asDropdown": true,
@@ -1089,7 +1089,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSIOPsPercent\"} / on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "expr": "(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSIOPsPercent\"} / on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1180,7 +1180,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSMBsPercent\"} / on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "expr": "((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSMBsPercent\"} / (1000 * 1000)) / on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1288,7 +1288,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1441,7 +1441,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Max Throughput MB/s"
+                  "options": "Max Throughput"
                 },
                 "properties": [
                   {
@@ -1484,7 +1484,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}) * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1516,8 +1516,25 @@
             {
               "id": "calculateField",
               "options": {
+                "alias": "MValue",
                 "binary": {
                   "left": "Value",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": ".000001"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                },
+                "replaceFields": false
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "binary": {
+                  "left": "MValue",
                   "operator": "/",
                   "reducer": "sum",
                   "right": "max_throughput_mbps"
@@ -1533,10 +1550,10 @@
               "options": {
                 "alias": "QOS Used %",
                 "binary": {
-                  "left": "Value / max_throughput_mbps",
+                  "left": "MValue / max_throughput_mbps",
                   "operator": "*",
                   "reducer": "sum",
-                  "right": "1000000"
+                  "right": "100"
                 },
                 "mode": "binary",
                 "reduce": {
@@ -1548,6 +1565,10 @@
               "id": "organize",
               "options": {
                 "excludeByName": {
+                  "BValue": true,
+                  "KValue": true,
+                  "MValue": true,
+                  "MValue / max_throughput_mbps": true,
                   "Value / max_throughput_iops": true,
                   "Value / max_throughput_mbps": true
                 },
@@ -1572,7 +1593,7 @@
                   "file": "File",
                   "lun": "Lun",
                   "max_throughput_iops": "Max IOPS",
-                  "max_throughput_mbps": "Max Throughput MB/s",
+                  "max_throughput_mbps": "Max Throughput",
                   "policy_group": "Policy",
                   "svm": "SVM",
                   "volume": "Volume",
@@ -6967,7 +6988,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+        "definition": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -6977,7 +6998,7 @@
         "name": "TopFixedQOSIOPsPercent",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+          "query": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -6990,7 +7011,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+        "definition": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -7000,7 +7021,7 @@
         "name": "TopFixedQOSMBsPercent",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,svm,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
+          "query": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -7031,5 +7052,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "",
-  "version": 3
+  "version": 4
 }
