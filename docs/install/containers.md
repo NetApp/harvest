@@ -10,7 +10,7 @@ Harvest is container-ready and supports several deployment options:
   recommended.
 
 - If you prefer Ansible, David Blackwell created
-  an [Ansible script](https://netapp.io/2021/05/21/monitor-all-of-your-ontap-clusters-with-harvest-easy-mode/) that
+  an [Ansible script](https://github.com/NetApp/harvest_install) that
   stands up Harvest, Grafana, and Prometheus.
 
 - Want to run Harvest on a Mac
