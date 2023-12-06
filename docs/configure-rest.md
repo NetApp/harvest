@@ -285,7 +285,7 @@ REST APIs endpoint:
 /api/private/cli/system/fru-check?fields=node,fru_name,fru_status
 ```
 
-The CLI command `system fru-check show` into a private CLI REST API can be achieved by adhering to the path rules outlined in the ONTAP [documentation]((https://library.netapp.com/ecmdocs/ECMLP2885799/html#Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API)). Generally, this involves substituting all spaces within the CLI command with a forward slash (/), and transforming the ONTAP CLI verb into its corresponding REST verb.
+Converting the CLI command `system fru-check show` for use with a private CLI REST API can be achieved by adhering to the path rules outlined in the ONTAP [documentation](https://library.netapp.com/ecmdocs/ECMLP2885799/html#Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API). Generally, this involves substituting all spaces within the CLI command with a forward slash (/), and converting the ONTAP CLI verb into the corresponding REST verb.
 
 The `show` command gets converted to the HTTP method GET call. From the CLI, look at the required field names and pass them as a comma-separated value in `fields=` in the API endpoint.
 
@@ -326,7 +326,7 @@ export_options:
 ```
 
 In this template, the `query` field specifies the private CLI command to be used (`system fru-check show`). The `counters` field maps the output of the private CLI command to the fields of the `fru_check` object.
-To identify the ONTAP counter names (the left side of the '=>' symbol in the template, such as `fru_name`), you can use establish an SSH connection to your ONTAP cluster. Once connected, leverage ONTAP's command completion functionality to reveal the counter names. For instance, you can type `system fru-check show -fields`, then press the '?' key. This will display a list of ONTAP field names, as demonstrated below.
+To identify the ONTAP counter names (the left side of the '=>' symbol in the template, such as `fru_name`), you can establish an SSH connection to your ONTAP cluster. Once connected, leverage ONTAP's command completion functionality to reveal the counter names. For instance, you can type `system fru-check show -fields`, then press the '?' key. This will display a list of ONTAP field names, as demonstrated below.
 
 ```
 cluster-01::> system fru-check show -fields ?
