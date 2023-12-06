@@ -18,7 +18,7 @@ const BatchSize = "500"
 type Shelf struct {
 	*plugin.AbstractPlugin
 	data                map[string]*matrix.Matrix
-	shelfData           *matrix.Matrix
+	shelfMetrics        *matrix.Matrix
 	instanceKeys        map[string]string
 	instanceLabels      map[string]map[string]string
 	shelfInstanceKeys   []string
@@ -63,6 +63,7 @@ func (my *Shelf) Init() error {
 
 	my.Logger.Debug().Msg("plugin connected!")
 
+	// populating shelfMetrics metric shape from template parsing
 	my.create7ModeShelfMetrics()
 
 	my.data = make(map[string]*matrix.Matrix)
@@ -191,8 +192,8 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		return output, err
 	}
 
-	my.Logger.Debug().Int("Shelves instance count", len(my.shelfData.GetInstances())).Send()
-	output = append(output, my.shelfData)
+	my.Logger.Debug().Int("Shelves instance count", len(data.GetInstances())).Send()
+	output = append(output, data)
 	return output, nil
 }
 
@@ -222,13 +223,18 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 		data1.Reset()
 	}
 
-	// Purge and reset data
-	my.shelfData.PurgeInstances()
-	my.shelfData.Reset()
+	// reset instance and matrix of shelfMetrics
+	my.shelfMetrics.PurgeInstances()
+	my.shelfMetrics.Reset()
 
-	my.shelfData.SetGlobalLabels(data.GetGlobalLabels())
-	for _, instance := range data.GetInstances() {
-		instance.SetExportable(false)
+	// Purge instances generated from template and updated data metrics from shelfMetrics
+	data.PurgeInstances()
+	for metricName, m := range my.shelfMetrics.GetMetrics() {
+		_, err := data.NewMetricFloat64(metricName, m.GetName())
+		if err != nil {
+			my.Logger.Error().Err(err).Msg("add metric")
+		}
+		my.Logger.Debug().Str("metric", m.GetName()).Msg("added")
 	}
 
 	for _, channel := range channels {
@@ -246,7 +252,8 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 			shelfID := uid
 
 			shelfInstanceKey := shelfID + "." + channelName
-			newShelfInstance, err := my.shelfData.NewInstance(shelfInstanceKey)
+			// generating new instances from plugin and adding into data
+			newShelfInstance, err := data.NewInstance(shelfInstanceKey)
 			if err != nil {
 				my.Logger.Error().Err(err).Msg("Error while creating shelf instance")
 				return nil, err
@@ -268,7 +275,7 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 			newShelfInstance.SetLabel("shelf", newShelfInstance.GetLabel("shelf_id"))
 
 			// populate numeric data
-			for metricKey, m := range my.shelfData.GetMetrics() {
+			for metricKey, m := range data.GetMetrics() {
 				if value := strings.Split(shelf.GetChildContentS(metricKey), " ")[0]; value != "" {
 					if err := m.SetValueString(newShelfInstance, value); err != nil {
 						my.Logger.Debug().Str("metricKey", metricKey).Str("value", value).Err(err).Msg("failed to parse")
@@ -348,7 +355,7 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 }
 
 func (my *Shelf) create7ModeShelfMetrics() {
-	my.shelfData = matrix.New(my.Parent+".Shelf", "shelf", "shelf")
+	my.shelfMetrics = matrix.New(my.Parent+".Shelf", "shelf", "shelf")
 	my.shelfInstanceKeys = make([]string, 0)
 	my.shelfInstanceLabels = []shelfInstanceLabel{}
 	shelfExportOptions := node.NewS("export_options")
@@ -367,7 +374,6 @@ func (my *Shelf) create7ModeShelfMetrics() {
 
 	shelfInstanceKeys.NewChildS("", "channel")
 	shelfInstanceKeys.NewChildS("", "shelf")
-	my.shelfData.SetExportOptions(shelfExportOptions)
 }
 
 func (my *Shelf) parse7ModeTemplate(shelfInfo *node.Node, shelfInstanceKeys, shelfInstanceLabels *node.Node, parent string) {
@@ -387,7 +393,7 @@ func (my *Shelf) parse7ModeTemplate(shelfInfo *node.Node, shelfInstanceKeys, she
 				shelfInstanceLabels.NewChildS("", display)
 				my.Logger.Debug().Str("instance label", display).Msg("added")
 			case "float":
-				_, err := my.shelfData.NewMetricFloat64(metricName, display)
+				_, err := my.shelfMetrics.NewMetricFloat64(metricName, display)
 				if err != nil {
 					my.Logger.Error().Err(err).Msg("add metric")
 				}
