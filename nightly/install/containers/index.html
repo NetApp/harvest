@@ -437,6 +437,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#note-on-docker-logging-configuration" class="md-nav__link">
+    Note on Docker Logging Configuration
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1301,6 +1308,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#note-on-docker-logging-configuration" class="md-nav__link">
+    Note on Docker Logging Configuration
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1494,6 +1508,9 @@ generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w
 <p>Bring everything up <img alt="🚀" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f680.svg" title=":rocket:" /></p>
 <div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
+<h3 id="note-on-docker-logging-configuration">Note on Docker Logging Configuration<a class="headerlink" href="#note-on-docker-logging-configuration" title="Permanent link">&para;</a></h3>
+<p>By default, Docker uses the <code>json-file</code> logging driver which does not limit the size of the logs. This can cause your system to run out of disk space. Docker provides several options for logging configuration, including different logging drivers and options for log rotation.</p>
+<p>Docker recommends using the <code>local</code> driver to prevent disk-exhaustion. More details can be found in <a href="https://docs.docker.com/config/containers/logging/configure/">Docker logging documentation</a></p>
 <h2 id="prometheus-and-grafana">Prometheus and Grafana<a class="headerlink" href="#prometheus-and-grafana" title="Permanent link">&para;</a></h2>
 <p>The <code>prom-stack.yml</code> compose file creates a <code>frontend</code> and <code>backend</code> network. Prometheus and Grafana publish their admin
 ports on the front-end network and are routable to the local machine. By default, the Harvest pollers are part of the
