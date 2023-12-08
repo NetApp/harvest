@@ -323,8 +323,12 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 		}
 
 		if instanceKey == "" {
-			s.Logger.Trace().Msg("Instance key is empty, skipping")
-			continue
+			if s.Params.GetChildContentS("only_cluster_instance") == "true" {
+				instanceKey = "cluster"
+			} else {
+				s.Logger.Trace().Msg("Instance key is empty, skipping")
+				continue
+			}
 		}
 
 		instance = mat.GetInstance(instanceKey)
