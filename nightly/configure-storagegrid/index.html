@@ -1467,6 +1467,12 @@ of these parameters can be defined in the Harvest or object configuration files 
 <td>how frequently this collector/object should retrieve metrics from StorageGRID</td>
 <td>5 minutes</td>
 </tr>
+<tr>
+<td><code>only_cluster_instance</code></td>
+<td>bool, optional</td>
+<td>don't require instance key. assume the only instance is the cluster itself</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <p>The template should define objects in the <code>objects</code> section. Example:</p>
