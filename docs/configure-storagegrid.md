@@ -76,11 +76,12 @@ explained in the next section).
 Additionally, this file contains the parameters that are applied as defaults to all objects. As mentioned before, any
 of these parameters can be defined in the Harvest or object configuration files as well.
 
-| parameter        | type                 | description                                                                   | default   |
-|------------------|----------------------|-------------------------------------------------------------------------------|-----------|
-| `client_timeout` | duration (Go-syntax) | how long to wait for server responses                                         | 30s       |
-| `schedule`       | list, **required**   | how frequently to retrieve metrics from StorageGRID                           |           |
-| - `data`         | duration (Go-syntax) | how frequently this collector/object should retrieve metrics from StorageGRID | 5 minutes |
+| parameter               | type                 | description                                                                   | default   |
+|-------------------------|----------------------|-------------------------------------------------------------------------------|-----------|
+| `client_timeout`        | duration (Go-syntax) | how long to wait for server responses                                         | 30s       |
+| `schedule`              | list, **required**   | how frequently to retrieve metrics from StorageGRID                           |           |
+| - `data`                | duration (Go-syntax) | how frequently this collector/object should retrieve metrics from StorageGRID | 5 minutes |
+| `only_cluster_instance` | bool, optional       | don't require instance key. assume the only instance is the cluster itself    |           |
 
 The template should define objects in the `objects` section. Example:
 
