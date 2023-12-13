@@ -352,9 +352,9 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 				curMetric.values[currIndex] -= prevRaw[prevIndex]
 				curCooked := curMetric.values[currIndex]
 				// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
-				// It also ensures that the current cooked metric (curCooked) is not zero when either the current raw metric (curRaw) or the previous raw metric (prevRaw[prevIndex]) is zero.
+				// Detect these cases and don't publish them, otherwise the subsequent poll will have large spikes.
+				// Ensure that the current cooked metric (curCooked) is not zero when either the current raw metric (curRaw) or the previous raw metric (prevRaw[prevIndex]) is zero.
 				// A non-zero curCooked under these conditions indicates an issue with the current or previous poll.
-				// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
 				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && curCooked != 0
 				isNegative := curCooked < 0
 				if isInvalidZero || isNegative {
