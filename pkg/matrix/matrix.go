@@ -350,16 +350,18 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 			prevIndex := prevInstance.index
 			if curMetric.record[currIndex] && prevRecord[prevIndex] {
 				curMetric.values[currIndex] -= prevRaw[prevIndex]
+				curCooked := curMetric.values[currIndex]
 				// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
-				// Detect and don't publish negative deltas or the subsequent poll will show a large spike.
-				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && curMetric.values[prevIndex] != 0
-				isNegative := curMetric.values[currIndex] < 0
+				// Detect these cases and don't publish them, otherwise the subsequent poll will have large spikes.
+				// Ensure that the current cooked metric (curCooked) is not zero when either the current raw metric (curRaw) or the previous raw metric (prevRaw[prevIndex]) is zero.
+				// A non-zero curCooked under these conditions indicates an issue with the current or previous poll.
+				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && curCooked != 0
+				isNegative := curCooked < 0
 				if isInvalidZero || isNegative {
 					curMetric.record[currIndex] = false
 					skips++
 					logger.Trace().
 						Str("metric", curMetric.GetName()).
-						Str("key", key).
 						Float64("currentRaw", curRaw).
 						Float64("previousRaw", prevRaw[prevIndex]).
 						Str("instKey", key).
@@ -370,7 +372,6 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 				skips++
 				logger.Trace().
 					Str("metric", curMetric.GetName()).
-					Str("key", key).
 					Float64("currentRaw", curRaw).
 					Float64("previousRaw", prevRaw[prevIndex]).
 					Str("instKey", key).
@@ -381,7 +382,6 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 			skips++
 			logger.Trace().
 				Str("metric", curMetric.GetName()).
-				Str("key", key).
 				Float64("currentRaw", curRaw).
 				Str("instKey", key).
 				Msg("New instance added")
@@ -455,9 +455,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 				Float64("numerator", v).
 				Float64("denominator", sValues[i]).
 				Msg("Negative values")
-			return skips, nil
-		}
-		if metric.record[i] && sRecord[i] {
+		} else if metric.record[i] && sRecord[i] {
 			if sValues[i] >= x {
 				metric.values[i] /= sValues[i]
 			} else {
