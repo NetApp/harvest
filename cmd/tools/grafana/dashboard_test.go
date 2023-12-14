@@ -1055,6 +1055,8 @@ func TestPercentHasMinMax(t *testing.T) {
 }
 
 func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
+	// These panels can show percent value more than 100.
+	exceptions := []string{"CPU Busy Domains"}
 	dashPath := ShortPath(path)
 
 	VisitAllPanels(data, func(path string, key, value gjson.Result) {
@@ -1072,7 +1074,7 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, min should be 0 got=%s`,
 				dashPath, path, value.Get("title").String(), defaultUnit, theMin)
 		}
-		if defaultUnit == "percent" && theMax != "100" {
+		if defaultUnit == "percent" && !slices.Contains(exceptions, value.Get("title").String()) && theMax != "100" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 100 got=%s`,
 				dashPath, path, value.Get("title").String(), defaultUnit, theMax)
 		}
