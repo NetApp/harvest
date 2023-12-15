@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Nov-16
+Creation Date : 2023-Dec-15
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -1466,7 +1466,7 @@ This histogram holds the latency values for requests of this operation to the sp
 
 ### fabricpool_average_latency
 
-This counter is deprecated.Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing a operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send a operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to to receive the first byte of a response since the command's request execution started. These counters can be used to identify performance bottlenecks within the object store client module.
+This counter is deprecated.Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing an operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send an operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to receive the first byte of a response since the command's request execution started. These counters can be used to identify performance bottlenecks within the object store client module.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9053,8 +9053,8 @@ This refers to the average latency for workload within the subsystems of the Dat
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail.yaml | 
-| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
+| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.12.0/workload_detail.yaml | 
+| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/zapiperf/9.12.0/workload_detail.yaml | 
 
 
 ### qos_detail_service_time_latency
@@ -9063,8 +9063,8 @@ This refers to the average service time for workload within the subsystems of th
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail.yaml | 
-| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
+| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.12.0/workload_detail.yaml | 
+| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/zapiperf/9.12.0/workload_detail.yaml | 
 
 
 ### qos_latency
@@ -9532,6 +9532,60 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+
+
+### rw_ctx_cifs_giveups
+
+Array of number of given-ups of cifs ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances rw_ctx` | `cifs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
+
+
+### rw_ctx_cifs_rewinds
+
+Array of number of rewinds for cifs ops based on their reasons.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances rw_ctx` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
+
+
+### rw_ctx_nfs_giveups
+
+Array of number of given-ups of nfs ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances rw_ctx` | `nfs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
+
+
+### rw_ctx_nfs_rewinds
+
+Array of number of rewinds for nfs ops based on their reasons.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances rw_ctx` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
+
+
+### rw_ctx_qos_flowcontrol
+
+The number of times QoS limiting has enabled stream flowcontrol.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances rw_ctx` | `qos_flowcontrol`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
+
+
+### rw_ctx_qos_rewinds
+
+The number of restarts after a rewind because of QoS limiting.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances rw_ctx` | `qos_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### security_audit_destination_port

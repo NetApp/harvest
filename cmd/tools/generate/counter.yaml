@@ -481,11 +481,15 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/workload_detail.yaml
         Unit: microseconds
+        Type: average
+        BaseCounter: ops
       - API: ZAPI
         Endpoint: perf-object-get-instances workload_detail
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/9.12.0/workload_detail.yaml
         Unit: microseconds
+        Type: average
+        BaseCounter: ops
 
   - Name: qos_detail_service_time_latency
     Description: This refers to the average service time for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. This latency is the processing time within the subsystem.
@@ -495,11 +499,15 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/workload_detail.yaml
         Unit: microseconds
+        Type: average
+        BaseCounter: ops
       - API: ZAPI
         Endpoint: perf-object-get-instances workload_detail
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/9.12.0/workload_detail.yaml
         Unit: microseconds
+        Type: average
+        BaseCounter: ops
 
   - Name: quota_disk_limit
     Description: Maximum amount of disk space, in kilobytes, allowed for the quota target
