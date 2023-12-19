@@ -7508,6 +7508,48 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#rw_ctx_cifs_giveups" class="md-nav__link">
+    rw_ctx_cifs_giveups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_cifs_rewinds" class="md-nav__link">
+    rw_ctx_cifs_rewinds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_nfs_giveups" class="md-nav__link">
+    rw_ctx_nfs_giveups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_nfs_rewinds" class="md-nav__link">
+    rw_ctx_nfs_rewinds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_qos_flowcontrol" class="md-nav__link">
+    rw_ctx_qos_flowcontrol
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_qos_rewinds" class="md-nav__link">
+    rw_ctx_qos_rewinds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#security_audit_destination_port" class="md-nav__link">
     security_audit_destination_port
   </a>
@@ -16436,6 +16478,48 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#rw_ctx_cifs_giveups" class="md-nav__link">
+    rw_ctx_cifs_giveups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_cifs_rewinds" class="md-nav__link">
+    rw_ctx_cifs_rewinds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_nfs_giveups" class="md-nav__link">
+    rw_ctx_nfs_giveups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_nfs_rewinds" class="md-nav__link">
+    rw_ctx_nfs_rewinds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_qos_flowcontrol" class="md-nav__link">
+    rw_ctx_qos_flowcontrol
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rw_ctx_qos_rewinds" class="md-nav__link">
+    rw_ctx_qos_rewinds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#security_audit_destination_port" class="md-nav__link">
     security_audit_destination_port
   </a>
@@ -18722,7 +18806,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2023-Nov-16
+<div class="highlight"><pre><span></span><code>Creation Date : 2023-Dec-15
 ONTAP Version: 9.13.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -22398,7 +22482,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="fabricpool_average_latency">fabricpool_average_latency<a class="headerlink" href="#fabricpool_average_latency" title="Permanent link">&para;</a></h3>
-<p>This counter is deprecated.Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing a operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send a operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to to receive the first byte of a response since the command's request execution started. These counters can be used to identify performance bottlenecks within the object store client module.</p>
+<p>This counter is deprecated.Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing an operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send an operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to receive the first byte of a response since the command's request execution started. These counters can be used to identify performance bottlenecks within the object store client module.</p>
 <table>
 <thead>
 <tr>
@@ -42950,13 +43034,13 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/qos_detail</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops</td>
 <td>conf/restperf/9.12.0/workload_detail.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances workload_detail</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops</td>
 <td>conf/zapiperf/9.12.0/workload_detail.yaml</td>
 </tr>
 </tbody>
@@ -42976,13 +43060,13 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/qos_detail</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops</td>
 <td>conf/restperf/9.12.0/workload_detail.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances workload_detail</code></td>
-<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops</td>
 <td>conf/zapiperf/9.12.0/workload_detail.yaml</td>
 </tr>
 </tbody>
@@ -44188,6 +44272,126 @@ ONTAP Version: 9.13.1
 <td><code>perf-object-get-instances disk:constituent</code></td>
 <td><code>user_writes</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/disk.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rw_ctx_cifs_giveups">rw_ctx_cifs_giveups<a class="headerlink" href="#rw_ctx_cifs_giveups" title="Permanent link">&para;</a></h3>
+<p>Array of number of given-ups of cifs ops because they rewind more than a certain threshold, categorized by their rewind reasons.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances rw_ctx</code></td>
+<td><code>cifs_giveups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rw_ctx_cifs_rewinds">rw_ctx_cifs_rewinds<a class="headerlink" href="#rw_ctx_cifs_rewinds" title="Permanent link">&para;</a></h3>
+<p>Array of number of rewinds for cifs ops based on their reasons.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances rw_ctx</code></td>
+<td><code>cifs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rw_ctx_nfs_giveups">rw_ctx_nfs_giveups<a class="headerlink" href="#rw_ctx_nfs_giveups" title="Permanent link">&para;</a></h3>
+<p>Array of number of given-ups of nfs ops because they rewind more than a certain threshold, categorized by their rewind reasons.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances rw_ctx</code></td>
+<td><code>nfs_giveups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rw_ctx_nfs_rewinds">rw_ctx_nfs_rewinds<a class="headerlink" href="#rw_ctx_nfs_rewinds" title="Permanent link">&para;</a></h3>
+<p>Array of number of rewinds for nfs ops based on their reasons.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances rw_ctx</code></td>
+<td><code>nfs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rw_ctx_qos_flowcontrol">rw_ctx_qos_flowcontrol<a class="headerlink" href="#rw_ctx_qos_flowcontrol" title="Permanent link">&para;</a></h3>
+<p>The number of times QoS limiting has enabled stream flowcontrol.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances rw_ctx</code></td>
+<td><code>qos_flowcontrol</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rw_ctx_qos_rewinds">rw_ctx_qos_rewinds<a class="headerlink" href="#rw_ctx_qos_rewinds" title="Permanent link">&para;</a></h3>
+<p>The number of restarts after a rewind because of QoS limiting.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances rw_ctx</code></td>
+<td><code>qos_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
 </tr>
 </tbody>
 </table>
