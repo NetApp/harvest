@@ -1236,7 +1236,6 @@
                 }
               },
               "mappings": [],
-              "max": 100,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",
@@ -1253,7 +1252,32 @@
               },
               "unit": "percent"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "include",
+                    "names": [
+                      "idle"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 9,
@@ -1289,7 +1313,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "CPU Busy Domains ",
+          "title": "CPU Busy Domains",
           "transformations": [],
           "type": "timeseries"
         }
