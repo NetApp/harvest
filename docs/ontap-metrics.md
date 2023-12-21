@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Dec-15
+Creation Date : 2023-Dec-21
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -5942,14 +5942,14 @@ Rate of NFSv3 read data transfers per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_read_total
@@ -6474,14 +6474,14 @@ Rate of NFSv3 data transfers per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_total_ops
@@ -6584,14 +6584,14 @@ Rate of NFSv3 write data transfers per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41:node` | `total.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `total.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `total.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1:node` | `nfs41_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
 ### node_nfs_write_total
@@ -11414,14 +11414,14 @@ Rate of NFSv3 read data transfers per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_read_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_read_total
@@ -11946,14 +11946,14 @@ Rate of NFSv3 data transfers per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_verify_avg_latency
@@ -12040,14 +12040,14 @@ Rate of NFSv3 write data transfers per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
-| REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
-| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
-| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_write_throughput`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v3` | `write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v4` | `total.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v41` | `total.throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_1.yaml | 
+| REST | `api/cluster/counter/tables/svm_nfs_v42` | `total.throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml | 
+| ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4` | `nfs4_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml | 
+| ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
 ### svm_nfs_write_total
