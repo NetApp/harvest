@@ -2,19 +2,9 @@ counters:
 
   - Name: aggr_physical_used_wo_snapshots
     Description: Total Data Reduction Physical Used Without Snapshots
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_physical_used_wo_snapshots_flexclones
     Description: Total Data Reduction Physical Used without snapshots and flexclones
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_power
     Description: Power consumed by aggregate in Watts.
@@ -30,11 +20,6 @@ counters:
 
   - Name: aggr_raid_disk_count
     Description: Number of disks in the aggregate.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_raid_plex_count
     Description: Number of plexes in the aggregate
@@ -46,11 +31,6 @@ counters:
   - Name: aggr_snapshot_maxfiles_possible
     Description: The largest value to which the maxfiles-available parameter can be
       increased by reconfiguration, on the referenced file system.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_space_reserved
     Description: The total disk space in bytes that is reserved on the referenced file
@@ -61,19 +41,9 @@ counters:
   - Name: aggr_space_used_percent
     Description: The percentage of disk space currently in use on the referenced file
       system
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_total_physical_used
     Description: Total Physical Used
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/aggr.yaml
 
   - Name: aggr_volume_count_flexvol
     Description: Number of flexvol volumes in the aggregate.
@@ -124,11 +94,6 @@ counters:
 
   - Name: disk_uptime
     Description: Number of seconds the drive has been powered on
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/disk.yaml
 
   - Name: disk_usable_size
     Description: Usable size of each disk, in bytes.
@@ -473,6 +438,27 @@ counters:
         ONTAPCounter: cpu_busy_time
         Template: conf/rest/9.12.0/node.yaml
 
+  - Name: node_nfs_read_throughput
+    APIs:
+      - API: REST
+        Unit: b_per_sec
+      - API: ZAPI
+        Unit: b_per_sec
+
+  - Name: node_nfs_throughput
+    APIs:
+      - API: REST
+        Unit: b_per_sec
+      - API: ZAPI
+        Unit: b_per_sec
+
+  - Name: node_nfs_write_throughput
+    APIs:
+      - API: REST
+        Unit: b_per_sec
+      - API: ZAPI
+        Unit: b_per_sec
+
   - Name: qos_detail_resource_latency
     Description: This refers to the average latency for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem.
     APIs:
@@ -808,6 +794,27 @@ counters:
   - Name: snapshot_policy_total_schedules
     Description: Total Number of Schedules in this Policy
 
+  - Name: svm_nfs_read_throughput
+    APIs:
+      - API: REST
+        Unit: b_per_sec
+      - API: ZAPI
+        Unit: b_per_sec
+
+  - Name: svm_nfs_throughput
+    APIs:
+      - API: REST
+        Unit: b_per_sec
+      - API: ZAPI
+        Unit: b_per_sec
+
+  - Name: svm_nfs_write_throughput
+    APIs:
+      - API: REST
+        Unit: b_per_sec
+      - API: ZAPI
+        Unit: b_per_sec
+
   - Name: volume_inode_files_total
     Description: Total user-visible file (inode) count, i.e., current maximum number
       of user-visible files (inodes) that this volume can currently hold.
@@ -828,29 +835,11 @@ counters:
 
   - Name: volume_inode_used_percent
     Description: volume_inode_files_used / volume_inode_total
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/volume.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapi/cdot/9.8.0/volume.yaml
 
   - Name: volume_overwrite_reserve_available
     Description: amount of storage space that is currently available for overwrites,
       calculated by subtracting the total amount of overwrite reserve space from the
       amount that has already been used.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/volume.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapi/cdot/9.8.0/volume.yaml
 
   - Name: volume_sis_compress_saved
     Description: The total disk space (in bytes) that is saved by compressing blocks
@@ -909,26 +898,8 @@ counters:
   - Name: volume_size_used_percent
     Description: percentage of utilized storage space in a volume relative to its total
       capacity
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/volume.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapi/cdot/9.8.0/volume.yaml
 
   - Name: volume_snapshot_reserve_used
     Description: amount of storage space currently used by a volume's snapshot reserve,
       which is calculated by subtracting the snapshot reserve available space from the
       snapshot reserve size.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/volume.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapi/cdot/9.8.0/volume.yaml

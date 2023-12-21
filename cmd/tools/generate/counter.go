@@ -897,27 +897,30 @@ func processExternalCounters(counters map[string]Counter) map[string]Counter {
 				v1.Description = v.Description
 			}
 			for _, m := range v.APIs {
-				r := findAPI(v1.APIs, m)
-				if r == nil {
+				indices := findAPI(v1.APIs, m)
+				if len(indices) == 0 {
 					v1.APIs = append(v1.APIs, m)
 				} else {
-					if m.ONTAPCounter != "" {
-						r.ONTAPCounter = m.ONTAPCounter
-					}
-					if m.Template != "" {
-						r.Template = m.Template
-					}
-					if m.Endpoint != "" {
-						r.Endpoint = m.Endpoint
-					}
-					if m.Type != "" {
-						r.Type = m.Type
-					}
-					if m.Unit != "" {
-						r.Unit = m.Unit
-					}
-					if m.BaseCounter != "" {
-						r.BaseCounter = m.BaseCounter
+					for _, index := range indices {
+						r := &v1.APIs[index]
+						if m.ONTAPCounter != "" {
+							r.ONTAPCounter = m.ONTAPCounter
+						}
+						if m.Template != "" {
+							r.Template = m.Template
+						}
+						if m.Endpoint != "" {
+							r.Endpoint = m.Endpoint
+						}
+						if m.Type != "" {
+							r.Type = m.Type
+						}
+						if m.Unit != "" {
+							r.Unit = m.Unit
+						}
+						if m.BaseCounter != "" {
+							r.BaseCounter = m.BaseCounter
+						}
 					}
 				}
 			}
@@ -927,11 +930,12 @@ func processExternalCounters(counters map[string]Counter) map[string]Counter {
 	return counters
 }
 
-func findAPI(apis []MetricDef, other MetricDef) *MetricDef {
-	for _, a := range apis {
+func findAPI(apis []MetricDef, other MetricDef) []int {
+	var indices []int
+	for i, a := range apis {
 		if a.API == other.API {
-			return &a
+			indices = append(indices, i)
 		}
 	}
-	return nil
+	return indices
 }
