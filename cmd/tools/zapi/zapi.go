@@ -21,6 +21,7 @@ import (
 )
 
 var (
+	defaultTimeout  = "1m"
 	maxSearchDepth  = 5
 	validShowArgs   = []string{"data", "apis", "attrs", "objects", "instances", "counters", "counter", "system"}
 	validExportArgs = []string{"attrs", "counters"}
@@ -49,6 +50,7 @@ type Args struct {
 	Parameters   []string
 	Config       string // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 	OutputFormat string
+	Timeout      string
 }
 
 var Cmd = &cobra.Command{
@@ -144,6 +146,8 @@ func doCmd(cmd string) {
 	if err = connection.Init(2); err != nil {
 		log.Fatal(err)
 	}
+
+	connection.SetTimeout(args.Timeout)
 
 	color.DetectConsole("")
 	_, _ = fmt.Fprintf(os.Stderr, "connected to %s%s%s (%s)\n", color.Bold, connection.Name(), color.End, connection.Release())
@@ -348,6 +352,7 @@ func init() {
 	_ = flags.MarkDeprecated("max", "Please use --max-records instead")
 	flags.StringSliceVarP(&args.Parameters, "parameters", "r", []string{}, "parameter to add to the ZAPI query")
 	flags.StringVar(&args.Config, "config", configPath, "harvest config file path")
+	flags.StringVar(&args.Timeout, "timeout", defaultTimeout, "Go duration how long to wait for server responses")
 
 	showCmd.SetUsageTemplate("item to show should be one of: " + strings.Join(validShowArgs, ", "))
 
