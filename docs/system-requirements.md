@@ -10,7 +10,7 @@ With the default configuration, when monitoring 10 clusters, we recommend:
 
 Harvest is compatible with:
 
-- Prometheus: `2.26` or higher
+- Prometheus: `2.33` or higher
 - InfluxDB: `v2`
 - Grafana: `8.1.X` or higher
 - Docker: `20.10.0` or higher and compatible Docker Compose
