@@ -26,17 +26,6 @@ func (h *Harvest) Start() {
 	h.AllRunning()
 }
 
-func (h *Harvest) StartByHarvestUser() {
-	status, err := utils.Exec(HarvestHome, "sudo", nil, "-u", "harvest", HarvestBin, "start")
-	if err != nil {
-		log.Printf("error %s", err)
-		panic(err)
-	}
-	fmt.Println(status)
-	time.Sleep(30 * time.Second)
-	h.AllRunning()
-
-}
 func (h *Harvest) Stop() {
 	status, err := utils.Exec(HarvestHome, HarvestBin, nil, "stop")
 	if err != nil {
@@ -56,16 +45,6 @@ func (h *Harvest) AllRunning() bool {
 	return true
 }
 
-func (h *Harvest) AllStopped() bool {
-	pollerArray := h.GetPollerInfo()
-	for _, poller := range pollerArray {
-		if poller.Status != "not running" {
-			return false
-		}
-	}
-	return true
-}
-
 func (h *Harvest) GetPollerInfo() []core.Poller {
 	log.Println("Getting all pollers details")
 	harvestStatus, err := utils.Exec(HarvestHome, HarvestBin, nil, "status")
@@ -79,7 +58,7 @@ func (h *Harvest) GetPollerInfo() []core.Poller {
 	for i := range rows {
 		columns := strings.Split(rows[i], `|`)
 		count := len(columns)
-		if count != 5 || i == 0 { //ignore header and junk entries
+		if count != 5 || i == 0 { // ignore header and junk entries
 			continue
 		}
 		dataCenter := columns[0]
