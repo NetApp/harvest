@@ -64,3 +64,44 @@ This will add the `Org` and `Dept` variables, as shown below, and modify the exi
 Results in
 
 ![Import Labels](assets/grafana/importLabels.png)
+
+
+## Creating a Custom Grafana Dashboard with Harvest Metrics Stored in Prometheus
+
+This guide assumes that you have already installed and configured Harvest, Prometheus, and Grafana. Instead of creating a new Grafana dashboard from scratch, you might find it more efficient to clone and modify an existing one. Alternatively, you can copy/paste an existing dashboard's panel from an existing dashboard into your new one.
+
+Harvest collects a wide range of metrics from ONTAP and StorageGRID clusters, which are documented [here](https://netapp.github.io/harvest/latest/ontap-metrics/). These metrics can be used to create dashboards in Grafana.
+
+### Step 1: Confirm that Prometheus is Receiving Metrics from Harvest
+
+Before creating a dashboard, make sure the relevant metric is present via a PromQL query in the Prometheus UI. If the metric is not present, navigate to `Status -> Targets` in the Prometheus UI to check the state and any potential errors of the scrape target.
+
+### Step 2: Add Prometheus as a Data Source in Grafana
+
+If you haven't already, add Prometheus as a data source in Grafana:
+
+1. In the Grafana UI, go to `Configuration > Data Sources`.
+2. Click `Add data source`.
+3. Select `Prometheus`.
+4. Enter the URL of your Prometheus server, and click `Save & Test`.
+
+### Step 3: Create a New Dashboard
+
+Now you're ready to create a new dashboard:
+
+1. In the Grafana UI, click the `+` icon on the left menu and select `Dashboard`.
+2. Click `Add new panel`.
+
+### Step 4: Add Queries to Visualize Harvest Metrics
+
+In the new panel, you can add queries to visualize the Harvest metrics:
+
+1. In the query editor, select `Prometheus` as the data source.
+2. Write your query to visualize the Harvest counters. Prometheus uses a language called PromQL for querying data. The exact query will depend on the specific Harvest counters you want to visualize. You can refer to the [Harvest metrics documentation](https://netapp.github.io/harvest/latest/ontap-metrics/) for details on the available metrics.
+3. Adjust the visualization settings as needed, and click `Apply` to add the panel to the dashboard.
+
+### Step 5: Save the Dashboard
+
+Once you're satisfied with the panels and layout of your dashboard, don't forget to save it. You can then share it with others, or keep it for your own use.
+
+Remember, the specifics of these steps can vary depending on your exact setup and requirements. This guide provides a general approach, but you may need to adjust it for your situation.
