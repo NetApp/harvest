@@ -19,7 +19,7 @@ func (p *Prometheus) Init(image string) {
 }
 
 func (p *Prometheus) Install() bool {
-	p.image = "prom/prometheus:v2.26.0"
+	p.image = "prom/prometheus:v2.33.0"
 	log.Println("Prometheus image : " + p.image)
 	imageName := "prometheus"
 	err := docker.StopContainers(imageName)
