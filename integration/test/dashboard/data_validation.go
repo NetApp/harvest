@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"net/url"
+	"strings"
 )
 
 const PrometheusURL string = "http://localhost:9090"
@@ -25,6 +26,7 @@ func HasValidData(query string) bool {
 }
 
 func HasMinRecord(query string, limit int) bool {
+	query = strings.Replace(query, "$__range", "3h", -1)
 	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", PrometheusURL,
 		url.QueryEscape(query))
 	resp, err := utils.GetResponse(queryURL)
