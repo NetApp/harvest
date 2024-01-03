@@ -68,7 +68,7 @@ Results in
 
 ## Creating a Custom Grafana Dashboard with Harvest Metrics Stored in Prometheus
 
-This guide assumes that you have already installed and configured Harvest, Prometheus, and Grafana.
+This guide assumes that you have already installed and configured Harvest, Prometheus, and Grafana. Instead of creating a new Grafana dashboard from scratch, you might find it more efficient to clone and modify an existing one. Alternatively, you can copy/paste an existing dashboard's panel from an existing dashboard into your new one.
 
 Harvest collects a wide range of metrics from ONTAP and StorageGRID clusters, which are documented [here](https://netapp.github.io/harvest/latest/ontap-metrics/). These metrics can be used to create dashboards in Grafana.
 
