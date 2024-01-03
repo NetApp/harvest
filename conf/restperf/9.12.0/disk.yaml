@@ -45,7 +45,43 @@ plugins:
   - Max:
       - node<>node_disk_max
       - aggr<>aggr_disk_max ...
-  - Disk
+
+  - Disk:
+      objects:
+        - fans => fan:
+            - ^^id => fan_id
+            - ^location
+            - ^state => status
+            - rpm
+        - current_sensors => sensor:
+            - ^^id => sensor_id
+            - ^location
+            - ^state => status
+            - current => reading
+        - frus => psu:
+            - ^^id => psu_id
+            - ^installed => enabled
+            #  - ^location
+            - ^part_number
+            - ^serial_number => serial
+            - ^psu.model => type
+            - ^state => status
+            - psu.power_drawn => power_drawn
+            - psu.power_rating => power_rating
+        - temperature_sensors => temperature:
+            - ^^id => sensor_id
+            - ^threshold.high.critical => high_critical
+            - ^threshold.high.warning => high_warning
+            - ^ambient => temp_is_ambient
+            - ^threshold.low.critical => low_critical
+            - ^threshold.low.warning => low_warning
+            - ^state => status
+            - temperature => reading
+        - voltage_sensors => voltage:
+            - ^^id => sensor_id
+            - ^location
+            - ^state => status
+            - voltage => reading
 
 # only export node/aggr aggregations from plugin
 # set this true or comment, to get data for each disk
