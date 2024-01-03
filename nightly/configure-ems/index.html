@@ -1354,7 +1354,7 @@ EMS) events via the ONTAP REST API.</p>
 <p>This collector uses a YAML template file to define which events to collect, export, and what labels to attach to each
 metric. This means you can collect new EMS events or attach new labels by editing
 the <a href="https://github.com/NetApp/harvest/blob/main/conf/ems/default.yaml">default template</a> file or by <a href="../configure-templates/#how-to-extend-a-restrestperfems-collectors-existing-object-template">extending existing
-templates</a>.</p>
+templates</a>. Events that occurred when the EMS collector was not running will not be captured.</p>
 <p>The <a href="https://github.com/NetApp/harvest/blob/main/conf/ems/default.yaml">default template</a> file contains 98 EMS events.</p>
 <h3 id="supported-ontap-systems">Supported ONTAP Systems<a class="headerlink" href="#supported-ontap-systems" title="Permanent link">&para;</a></h3>
 <p>Any cDOT ONTAP system using 9.6 or higher.</p>
