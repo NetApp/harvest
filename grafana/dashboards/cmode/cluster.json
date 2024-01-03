@@ -105,6 +105,239 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 277,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 279,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Used and Reserved Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Space available in bytes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 278,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Available Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Percent of space used.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 281,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Space Used %",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
@@ -172,7 +405,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 1
+        "y": 8
       },
       "id": 238,
       "options": {
@@ -295,7 +528,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 1
+        "y": 8
       },
       "id": 233,
       "options": {
@@ -394,7 +627,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 1
+        "y": 8
       },
       "id": 232,
       "options": {
@@ -493,7 +726,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 7
+        "y": 14
       },
       "id": 230,
       "options": {
@@ -616,7 +849,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 7
+        "y": 14
       },
       "id": 236,
       "options": {
@@ -739,7 +972,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 7
+        "y": 14
       },
       "id": 239,
       "options": {
@@ -853,7 +1086,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 13
+        "y": 20
       },
       "id": 234,
       "options": {
@@ -945,7 +1178,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 13
+        "y": 20
       },
       "id": 231,
       "options": {
@@ -1037,7 +1270,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 13
+        "y": 20
       },
       "id": 235,
       "options": {
@@ -1138,7 +1371,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 21
+        "y": 28
       },
       "id": 237,
       "options": {
@@ -1199,7 +1432,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 34
       },
       "id": 79,
       "panels": [
@@ -1329,7 +1562,7 @@
             "h": 7,
             "w": 18,
             "x": 0,
-            "y": 28
+            "y": 35
           },
           "id": 52,
           "interval": "",
@@ -1519,7 +1752,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 28
+            "y": 35
           },
           "id": 156,
           "links": [],
@@ -1605,7 +1838,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 31
+            "y": 38
           },
           "id": 181,
           "links": [],
@@ -1679,7 +1912,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 34
+            "y": 41
           },
           "id": 240,
           "links": [],
@@ -1880,7 +2113,7 @@
             "h": 11,
             "w": 18,
             "x": 0,
-            "y": 35
+            "y": 42
           },
           "id": 177,
           "interval": "",
@@ -2007,7 +2240,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 37
+            "y": 44
           },
           "id": 157,
           "links": [],
@@ -2081,7 +2314,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 40
+            "y": 47
           },
           "id": 220,
           "links": [],
@@ -2156,7 +2389,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 43
+            "y": 50
           },
           "id": 158,
           "links": [],
@@ -2243,7 +2476,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 46
+            "y": 53
           },
           "id": 222,
           "options": {
@@ -2329,7 +2562,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 46
+            "y": 53
           },
           "id": 242,
           "options": {
@@ -2371,7 +2604,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 35
       },
       "id": 97,
       "panels": [
@@ -2435,7 +2668,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 57
+            "y": 64
           },
           "id": 106,
           "options": {
@@ -2527,7 +2760,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 57
+            "y": 64
           },
           "id": 107,
           "options": {
@@ -2618,7 +2851,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 57
+            "y": 64
           },
           "id": 108,
           "options": {
@@ -2710,7 +2943,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 65
+            "y": 72
           },
           "id": 136,
           "options": {
@@ -2803,7 +3036,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 65
+            "y": 72
           },
           "id": 180,
           "options": {
@@ -2896,7 +3129,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 65
+            "y": 72
           },
           "id": 2,
           "options": {
@@ -2989,7 +3222,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 74
+            "y": 81
           },
           "id": 241,
           "options": {
@@ -3032,13 +3265,13 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 36
       },
       "id": 184,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Storage efficiency ratio of space used.",
+          "description": "Storage efficiency ratio.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3061,119 +3294,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 42
-          },
-          "id": 187,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Total",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Storage efficiency ratio without snapshot.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 8,
-            "x": 8,
-            "y": 42
-          },
-          "id": 189,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Total w/o Snapshots",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Storage efficiency ratio without snapshot and flexclone.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 8,
-            "x": 16,
-            "y": 42
+            "y": 49
           },
           "id": 188,
           "options": {
@@ -3201,7 +3322,119 @@
               "refId": "A"
             }
           ],
-          "title": "Total w/o Snapshots & FlexClones",
+          "title": "Data Reduction",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio with FlexClones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 8,
+            "y": 49
+          },
+          "id": 189,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Data Reduction with FlexClones",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage efficiency ratio of total space used.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 16,
+            "y": 49
+          },
+          "id": 187,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Data Reduction with Snapshots &FlexClones",
           "type": "stat"
         },
         {
@@ -3259,343 +3492,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 46
-          },
-          "id": 191,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum by (cluster) (aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Logical Used",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Total Physical Used.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 46
-          },
-          "id": 194,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum by (cluster) (aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Physical Used",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Logical used.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 54
-          },
-          "id": 193,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Logical Used w/o Snapshots",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Total Data Reduction Physical Used Without Snapshots.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 54
-          },
-          "id": 196,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Physical Used w/o Snapshots",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Logical used.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 62
+            "y": 53
           },
           "id": 195,
           "options": {
@@ -3621,12 +3518,12 @@
               "refId": "A"
             }
           ],
-          "title": "Logical Used w/o Snapshots & FlexClones",
+          "title": "Logical Used",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total data reduction physical used without snapshots and flexclones.",
+          "description": "Total data reduction physical used.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3679,7 +3576,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 62
+            "y": 53
           },
           "id": 192,
           "options": {
@@ -3705,7 +3602,343 @@
               "refId": "A"
             }
           ],
-          "title": "Physical Used w/o Snapshots & FlexClones",
+          "title": "Physical Used",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Logical used with flexclones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 61
+          },
+          "id": 193,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Logical Used with FlexClones",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total Data Reduction Physical Used with FlexClones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 61
+          },
+          "id": 196,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Physical Used with FlexClones",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Logical used with snapshots & flexclones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 69
+          },
+          "id": 191,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (cluster) (aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Logical Used with Snapshots & FlexClones",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Physical Used with snapshots & flexclones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 69
+          },
+          "id": 194,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (cluster) (aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Physical Used with Snapshots & FlexClones",
           "type": "timeseries"
         }
       ],
@@ -3719,7 +3952,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 37
       },
       "id": 214,
       "panels": [
@@ -3780,7 +4013,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 43
+            "y": 50
           },
           "id": 216,
           "options": {
@@ -3866,7 +4099,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 43
+            "y": 50
           },
           "id": 218,
           "options": {
@@ -3954,7 +4187,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 43
+            "y": 50
           },
           "id": 219,
           "options": {

@@ -438,7 +438,7 @@
           "refId": "A"
         }
       ],
-      "title": "Used Space",
+      "title": "Used and Reserved Space",
       "type": "stat"
     },
     {
