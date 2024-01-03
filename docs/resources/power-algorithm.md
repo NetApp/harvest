@@ -2,7 +2,7 @@
 Gathering power metrics requires a cluster with:
 
 * ONTAP versions 9.6+
-* [REST enabled](../prepare-cdot-clusters.md), even when using the ZAPI collector
+* [REST enabled](../prepare-cdot-clusters.md), even when using the ZAPI collector. After granting REST permissions, restart Harvest.
 
 REST is required because it is the only way to collect chassis field-replaceable-unit (FRU) information via the
 REST API `/api/private/cli/system/chassis/fru`.
