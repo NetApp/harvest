@@ -1,22 +1,32 @@
-
 ## Redhat
 
 > Installation and upgrade of the Harvest package may require root or administrator privileges
 
-Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases
-tab and install or upgrade with yum.
+### Installation
 
-```
+Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases
+tab and install with yum.
+
+```bash
 sudo yum install harvest.XXX.rpm
 ```
 
-Once the installation has finished, edit the [harvest.yml configuration](../configure-harvest-basic.md) file
+### Upgrade
+
+Download the latest rpm of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases
+tab and upgrade with yum.
+
+```bash
+sudo yum upgrade harvest.XXX.rpm
+```
+
+Once the installation or upgrade has finished, edit the [harvest.yml configuration](../configure-harvest-basic.md) file
 located in `/opt/harvest/harvest.yml`
 
 After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`.
 
 After upgrade, re-import all dashboards (either `bin/harvest grafana import` cli or via the Grafana UI) to
-get any new enhancements in dashboards.
+get any new enhancements in dashboards. For more details, see the [dashboards documentation](../dashboards.md).
 
 > To ensure that you don't run
 > into [permission issues](https://github.com/NetApp/harvest/issues/122#issuecomment-856138831), make sure you manage
@@ -32,21 +42,33 @@ get any new enhancements in dashboards.
 
 > Installation and upgrade of the Harvest package may require root or administrator privileges
 
+### Installation
+
 Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases
-tab and install or upgrade with apt.
+tab and install with apt.
 
-```
+```bash
 sudo apt update
-sudo apt install|upgrade ./harvest-<RELEASE>.amd64.deb  
+sudo apt install ./harvest-<RELEASE>.amd64.deb  
 ```
 
-Once the installation has finished, edit the [harvest.yml configuration](../configure-harvest-basic.md) file
+### Upgrade
+
+Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/latest) from the releases
+tab and upgrade with apt.
+
+```bash
+sudo apt update
+sudo apt upgrade ./harvest-<RELEASE>.amd64.deb  
+```
+
+Once the installation or upgrade has finished, edit the [harvest.yml configuration](../configure-harvest-basic.md) file
 located in `/opt/harvest/harvest.yml`
 
 After editing `/opt/harvest/harvest.yml`, manage Harvest with `systemctl start|stop|restart harvest`.
 
 After upgrade, re-import all dashboards (either `bin/harvest grafana import` cli or via the Grafana UI) to
-get any new enhancements in dashboards.
+get any new enhancements in dashboards. For more details, see the [dashboards documentation](../dashboards.md).
 
 > To ensure that you don't run
 > into [permission issues](https://github.com/NetApp/harvest/issues/122#issuecomment-856138831), make sure you manage
