@@ -42,7 +42,7 @@ type Disk struct {
 	*plugin.AbstractPlugin
 	shelfData      map[string]*matrix.Matrix
 	powerData      map[string]*matrix.Matrix
-	instanceKeys   map[string]string
+	instanceKeys   map[string][]string
 	instanceLabels map[string]map[string]string
 	client         *rest.Client
 	query          string
@@ -104,49 +104,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (d *Disk) Init() error {
-
 	var err error
-	shelfMetric := make(map[string][]string)
-
-	shelfMetric["fans => fan"] = []string{
-		"^^id => fan_id",
-		"^location",
-		"^state => status",
-		"rpm",
-	}
-	shelfMetric["current_sensors => sensor"] = []string{
-		"^^id => sensor_id",
-		"^location",
-		"^state => status",
-		"current => reading",
-	}
-	shelfMetric["frus => psu"] = []string{
-		"^^id => psu_id",
-		"^installed => enabled",
-		// "^location",
-		"^part_number",
-		"^serial_number => serial",
-		"^psu.model => type",
-		"^state => status",
-		"psu.power_drawn => power_drawn",
-		"psu.power_rating => power_rating",
-	}
-	shelfMetric["temperature_sensors => temperature"] = []string{
-		"^^id => sensor_id",
-		"^threshold.high.critical => high_critical",
-		"^threshold.high.warning => high_warning",
-		"^ambient => temp_is_ambient",
-		"^threshold.low.critical => low_critical",
-		"^threshold.low.warning => low_warning",
-		"^state => status",
-		"temperature => reading",
-	}
-	shelfMetric["voltage_sensors => voltage"] = []string{
-		"^^id => sensor_id",
-		"^location",
-		"^state => status",
-		"voltage => reading",
-	}
 
 	if err = d.InitAbc(); err != nil {
 		return err
@@ -167,11 +125,16 @@ func (d *Disk) Init() error {
 	d.shelfData = make(map[string]*matrix.Matrix)
 	d.powerData = make(map[string]*matrix.Matrix)
 
-	d.instanceKeys = make(map[string]string)
+	d.instanceKeys = make(map[string][]string)
 	d.instanceLabels = make(map[string]map[string]string)
 
-	for attribute, childObj := range shelfMetric {
+	objects := d.Params.GetChildS("objects")
+	if objects == nil {
+		return errs.New(errs.ErrMissingParam, "objects")
+	}
 
+	for _, obj := range objects.GetChildren() {
+		attribute := obj.GetNameS()
 		objectName := strings.ReplaceAll(attribute, "-", "_")
 
 		if x := strings.Split(attribute, "=>"); len(x) == 2 {
@@ -193,14 +156,14 @@ func (d *Disk) Init() error {
 		// artificial metric for status of child object of shelf
 		_, _ = d.shelfData[attribute].NewMetricUint8("status")
 
-		for _, c := range childObj {
-
+		for _, c := range obj.GetAllChildContentS() {
 			metricName, display, kind, _ := util.ParseMetric(c)
 
 			switch kind {
 			case "key":
-				d.instanceKeys[attribute] = metricName
+				d.instanceKeys[attribute] = append(d.instanceKeys[attribute], metricName)
 				d.instanceLabels[attribute][metricName] = display
+				instanceLabels.NewChildS("", display)
 				instanceKeys.NewChildS("", display)
 				d.Logger.Debug().Msgf("added instance key: (%s) [%s]", attribute, display)
 			case "label":
@@ -220,13 +183,11 @@ func (d *Disk) Init() error {
 		d.Logger.Debug().Msgf("added shelfData for [%s] with %d metrics", attribute, len(d.shelfData[attribute].GetMetrics()))
 
 		d.shelfData[attribute].SetExportOptions(exportOptions)
-
-		d.initShelfPowerMatrix()
-
-		d.initAggrPowerMatrix()
-
-		d.initMaps()
 	}
+
+	d.initShelfPowerMatrix()
+	d.initAggrPowerMatrix()
+	d.initMaps()
 
 	d.Logger.Debug().Msgf("initialized with shelfData [%d] objects", len(d.shelfData))
 	return nil
@@ -282,7 +243,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		for attribute, data1 := range d.shelfData {
 			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
 
-				if d.instanceKeys[attribute] == "" {
+				if len(d.instanceKeys[attribute]) == 0 {
 					d.Logger.Warn().Str("attribute", attribute).Msg("no instance keys defined for object, skipping")
 					continue
 				}
@@ -297,15 +258,23 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 								continue
 							}
 
-							if key := obj.Get(d.instanceKeys[attribute]); key.Exists() {
-								instanceKey := shelfSerialNumber + "#" + attribute + "#" + key.String()
+							if keys := d.instanceKeys[attribute]; len(keys) != 0 {
+
+								var skey []string
+								for _, k := range keys {
+									v := obj.Get(k)
+									skey = append(skey, v.String())
+								}
+
+								combinedKey := strings.Join(skey, "")
+								instanceKey := shelfSerialNumber + "#" + attribute + "#" + combinedKey
 								shelfChildInstance, err2 := data1.NewInstance(instanceKey)
 
 								if err2 != nil {
 									d.Logger.Error().Err(err).Str("attribute", attribute).Str("instanceKey", instanceKey).Msg("Failed to add instance")
 									break
 								}
-								d.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, shelfSerialNumber, attribute, key)
+								d.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, shelfSerialNumber, attribute, combinedKey)
 
 								for label, labelDisplay := range d.instanceLabels[attribute] {
 									if value := obj.Get(label); value.Exists() {
