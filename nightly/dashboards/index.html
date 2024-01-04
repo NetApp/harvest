@@ -468,7 +468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../upgrade/" class="md-nav__link">
+      <a href="../upgrade.md" class="md-nav__link">
         Upgrade
       </a>
     </li>
@@ -843,6 +843,54 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus" class="md-nav__link">
+    Creating a Custom Grafana Dashboard with Harvest Metrics Stored in Prometheus
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a Custom Grafana Dashboard with Harvest Metrics Stored in Prometheus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-confirm-that-prometheus-is-receiving-metrics-from-harvest" class="md-nav__link">
+    Step 1: Confirm that Prometheus is Receiving Metrics from Harvest
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-add-prometheus-as-a-data-source-in-grafana" class="md-nav__link">
+    Step 2: Add Prometheus as a Data Source in Grafana
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-a-new-dashboard" class="md-nav__link">
+    Step 3: Create a New Dashboard
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-add-queries-to-visualize-harvest-metrics" class="md-nav__link">
+    Step 4: Add Queries to Visualize Harvest Metrics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-save-the-dashboard" class="md-nav__link">
+    Step 5: Save the Dashboard
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1206,6 +1254,54 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus" class="md-nav__link">
+    Creating a Custom Grafana Dashboard with Harvest Metrics Stored in Prometheus
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a Custom Grafana Dashboard with Harvest Metrics Stored in Prometheus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-confirm-that-prometheus-is-receiving-metrics-from-harvest" class="md-nav__link">
+    Step 1: Confirm that Prometheus is Receiving Metrics from Harvest
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-add-prometheus-as-a-data-source-in-grafana" class="md-nav__link">
+    Step 2: Add Prometheus as a Data Source in Grafana
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-a-new-dashboard" class="md-nav__link">
+    Step 3: Create a New Dashboard
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-add-queries-to-visualize-harvest-metrics" class="md-nav__link">
+    Step 4: Add Queries to Visualize Harvest Metrics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-save-the-dashboard" class="md-nav__link">
+    Step 5: Save the Dashboard
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1261,6 +1357,35 @@ different name, use the <code>--datasource</code> flag during import/export.</p>
 <p>This will add the <code>Org</code> and <code>Dept</code> variables, as shown below, and modify the existing variables as shown.</p>
 <p>Results in</p>
 <p><img alt="Import Labels" src="../assets/grafana/importLabels.png" /></p>
+<h2 id="creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus">Creating a Custom Grafana Dashboard with Harvest Metrics Stored in Prometheus<a class="headerlink" href="#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus" title="Permanent link">&para;</a></h2>
+<p>This guide assumes that you have already installed and configured Harvest, Prometheus, and Grafana. Instead of creating a new Grafana dashboard from scratch, you might find it more efficient to clone and modify an existing one. Alternatively, you can copy/paste an existing dashboard's panel from an existing dashboard into your new one.</p>
+<p>Harvest collects a wide range of metrics from ONTAP and StorageGRID clusters, which are documented <a href="https://netapp.github.io/harvest/latest/ontap-metrics/">here</a>. These metrics can be used to create dashboards in Grafana.</p>
+<h3 id="step-1-confirm-that-prometheus-is-receiving-metrics-from-harvest">Step 1: Confirm that Prometheus is Receiving Metrics from Harvest<a class="headerlink" href="#step-1-confirm-that-prometheus-is-receiving-metrics-from-harvest" title="Permanent link">&para;</a></h3>
+<p>Before creating a dashboard, make sure the relevant metric is present via a PromQL query in the Prometheus UI. If the metric is not present, navigate to <code>Status -&gt; Targets</code> in the Prometheus UI to check the state and any potential errors of the scrape target.</p>
+<h3 id="step-2-add-prometheus-as-a-data-source-in-grafana">Step 2: Add Prometheus as a Data Source in Grafana<a class="headerlink" href="#step-2-add-prometheus-as-a-data-source-in-grafana" title="Permanent link">&para;</a></h3>
+<p>If you haven't already, add Prometheus as a data source in Grafana:</p>
+<ol>
+<li>In the Grafana UI, go to <code>Configuration &gt; Data Sources</code>.</li>
+<li>Click <code>Add data source</code>.</li>
+<li>Select <code>Prometheus</code>.</li>
+<li>Enter the URL of your Prometheus server, and click <code>Save &amp; Test</code>.</li>
+</ol>
+<h3 id="step-3-create-a-new-dashboard">Step 3: Create a New Dashboard<a class="headerlink" href="#step-3-create-a-new-dashboard" title="Permanent link">&para;</a></h3>
+<p>Now you're ready to create a new dashboard:</p>
+<ol>
+<li>In the Grafana UI, click the <code>+</code> icon on the left menu and select <code>Dashboard</code>.</li>
+<li>Click <code>Add new panel</code>.</li>
+</ol>
+<h3 id="step-4-add-queries-to-visualize-harvest-metrics">Step 4: Add Queries to Visualize Harvest Metrics<a class="headerlink" href="#step-4-add-queries-to-visualize-harvest-metrics" title="Permanent link">&para;</a></h3>
+<p>In the new panel, you can add queries to visualize the Harvest metrics:</p>
+<ol>
+<li>In the query editor, select <code>Prometheus</code> as the data source.</li>
+<li>Write your query to visualize the Harvest counters. Prometheus uses a language called PromQL for querying data. The exact query will depend on the specific Harvest counters you want to visualize. You can refer to the <a href="https://netapp.github.io/harvest/latest/ontap-metrics/">Harvest metrics documentation</a> for details on the available metrics.</li>
+<li>Adjust the visualization settings as needed, and click <code>Apply</code> to add the panel to the dashboard.</li>
+</ol>
+<h3 id="step-5-save-the-dashboard">Step 5: Save the Dashboard<a class="headerlink" href="#step-5-save-the-dashboard" title="Permanent link">&para;</a></h3>
+<p>Once you're satisfied with the panels and layout of your dashboard, don't forget to save it. You can then share it with others, or keep it for your own use.</p>
+<p>Remember, the specifics of these steps can vary depending on your exact setup and requirements. This guide provides a general approach, but you may need to adjust it for your situation.</p>
 
 
 

@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#native" class="md-skip">
+        <a href="#installation" class="md-skip">
           Skip to content
         </a>
       
@@ -463,8 +463,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#native" class="md-nav__link">
-    Native
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
   </a>
   
 </li>
@@ -507,7 +514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../upgrade/" class="md-nav__link">
+      <a href="../../upgrade.md" class="md-nav__link">
         Upgrade
       </a>
     </li>
@@ -1162,8 +1169,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#native" class="md-nav__link">
-    Native
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
   </a>
   
 </li>
@@ -1185,22 +1199,44 @@
 
   <h1>Native</h1>
 
-<h2 id="native">Native<a class="headerlink" href="#native" title="Permanent link">&para;</a></h2>
-<p>Visit the <a href="https://github.com/NetApp/harvest/releases">Releases page</a> and copy the <code>tar.gz</code> link 
-for the latest release. For example, to download the <code>v22.08.0</code> release:
-<div class="highlight"><pre><span></span><code>wget https://github.com/NetApp/harvest/releases/download/v22.08.0/harvest-22.08.0-1_linux_amd64.tar.gz
-tar -xvf harvest-22.08.0-1_linux_amd64.tar.gz
-cd harvest-22.08.0-1_linux_amd64
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<p>Visit the <a href="https://github.com/NetApp/harvest/releases">Releases page</a> and copy the <code>tar.gz</code> link
+for the latest release. For example, to download the <code>23.08.0</code> release:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">VERSION</span><span class="o">=</span><span class="m">23</span>.08.0
+wget<span class="w"> </span>https://github.com/NetApp/harvest/releases/download/v<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>harvest-<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
+<span class="nb">cd</span><span class="w"> </span>harvest-<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>-1_linux_amd64
 
-# Run Harvest with the default unix localhost collector
-bin/harvest start
-</code></pre></div></p>
+<span class="c1"># Run Harvest with the default unix localhost collector</span>
+bin/harvest<span class="w"> </span>start
+</code></pre></div>
 <details class="info">
 <summary>With curl</summary>
 <p>If you don't have <code>wget</code> installed, you can use <code>curl</code> like so:</p>
 <div class="highlight"><pre><span></span><code>curl -L -O https://github.com/NetApp/harvest/releases/download/v22.08.0/harvest-22.08.0-1_linux_amd64.tar.gz
 </code></pre></div>
 </details>
+<h2 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">&para;</a></h2>
+<p>Stop Harvest:
+<div class="highlight"><pre><span></span><code>cd &lt;existing harvest directory&gt;
+bin/harvest stop
+</code></pre></div></p>
+<p>Verify that all pollers have stopped:
+<div class="highlight"><pre><span></span><code>bin/harvest status
+or
+pgrep --full &#39;\-\-poller&#39;  # should return nothing if all pollers are stopped
+</code></pre></div></p>
+<p>Download the latest release and extract it to a new directory. For example, to upgrade to the 23.11.0 release:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">VERSION</span><span class="o">=</span><span class="m">23</span>.11.0
+wget<span class="w"> </span>https://github.com/NetApp/harvest/releases/download/v<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>harvest-<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
+<span class="nb">cd</span><span class="w"> </span>harvest-<span class="si">${</span><span class="nv">VERSION</span><span class="si">}</span>-1_linux_amd64
+</code></pre></div>
+<p>Copy your old <code>harvest.yml</code> into the new install directory:
+<div class="highlight"><pre><span></span><code>cp /path/to/old/harvest/harvest.yml /path/to/new/harvest/harvest.yml
+</code></pre></div></p>
+<p>After upgrade, re-import all dashboards (either <code>bin/harvest grafana import</code> cli or via the Grafana UI) to
+get any new enhancements in dashboards. For more details, see the <a href="../../dashboards/">dashboards documentation</a>.</p>
 <p>It's best to run Harvest as a non-root user. Make sure the user running Harvest can write to <code>/var/log/harvest/</code> or tell Harvest to write the logs somewhere else with the <code>HARVEST_LOGS</code> environment variable.</p>
 <p>If something goes wrong, examine the logs files in <code>/var/log/harvest</code>, check out
 the <a href="https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest">troubleshooting</a> section on the wiki and jump

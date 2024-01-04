@@ -363,12 +363,52 @@
     Redhat
   </a>
   
+    <nav class="md-nav" aria-label="Redhat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#debian" class="md-nav__link">
     Debian
   </a>
+  
+    <nav class="md-nav" aria-label="Debian">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation_1" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade_1" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -514,7 +554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../upgrade/" class="md-nav__link">
+      <a href="../../upgrade.md" class="md-nav__link">
         Upgrade
       </a>
     </li>
@@ -1173,12 +1213,52 @@
     Redhat
   </a>
   
+    <nav class="md-nav" aria-label="Redhat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#debian" class="md-nav__link">
     Debian
   </a>
+  
+    <nav class="md-nav" aria-label="Debian">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation_1" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade_1" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1203,15 +1283,21 @@
 <blockquote>
 <p>Installation and upgrade of the Harvest package may require root or administrator privileges</p>
 </blockquote>
+<h3 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h3>
 <p>Download the latest rpm of <a href="https://github.com/NetApp/harvest/releases/latest">Harvest</a> from the releases
-tab and install or upgrade with yum.</p>
-<div class="highlight"><pre><span></span><code>sudo yum install harvest.XXX.rpm
+tab and install with yum.</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>harvest.XXX.rpm
 </code></pre></div>
-<p>Once the installation has finished, edit the <a href="../../configure-harvest-basic/">harvest.yml configuration</a> file
+<h3 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">&para;</a></h3>
+<p>Download the latest rpm of <a href="https://github.com/NetApp/harvest/releases/latest">Harvest</a> from the releases
+tab and upgrade with yum.</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>yum<span class="w"> </span>upgrade<span class="w"> </span>harvest.XXX.rpm
+</code></pre></div>
+<p>Once the installation or upgrade has finished, edit the <a href="../../configure-harvest-basic/">harvest.yml configuration</a> file
 located in <code>/opt/harvest/harvest.yml</code></p>
 <p>After editing <code>/opt/harvest/harvest.yml</code>, manage Harvest with <code>systemctl start|stop|restart harvest</code>.</p>
 <p>After upgrade, re-import all dashboards (either <code>bin/harvest grafana import</code> cli or via the Grafana UI) to
-get any new enhancements in dashboards.</p>
+get any new enhancements in dashboards. For more details, see the <a href="../../dashboards/">dashboards documentation</a>.</p>
 <blockquote>
 <p>To ensure that you don't run
 into <a href="https://github.com/NetApp/harvest/issues/122#issuecomment-856138831">permission issues</a>, make sure you manage
@@ -1229,16 +1315,23 @@ Harvest using <code>systemctl</code> instead of running the harvest binary direc
 <blockquote>
 <p>Installation and upgrade of the Harvest package may require root or administrator privileges</p>
 </blockquote>
+<h3 id="installation_1">Installation<a class="headerlink" href="#installation_1" title="Permanent link">&para;</a></h3>
 <p>Download the latest deb of <a href="https://github.com/NetApp/harvest/releases/latest">Harvest</a> from the releases
-tab and install or upgrade with apt.</p>
-<div class="highlight"><pre><span></span><code>sudo apt update
-sudo apt install|upgrade ./harvest-&lt;RELEASE&gt;.amd64.deb  
+tab and install with apt.</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./harvest-&lt;RELEASE&gt;.amd64.deb<span class="w">  </span>
 </code></pre></div>
-<p>Once the installation has finished, edit the <a href="../../configure-harvest-basic/">harvest.yml configuration</a> file
+<h3 id="upgrade_1">Upgrade<a class="headerlink" href="#upgrade_1" title="Permanent link">&para;</a></h3>
+<p>Download the latest deb of <a href="https://github.com/NetApp/harvest/releases/latest">Harvest</a> from the releases
+tab and upgrade with apt.</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>./harvest-&lt;RELEASE&gt;.amd64.deb<span class="w">  </span>
+</code></pre></div>
+<p>Once the installation or upgrade has finished, edit the <a href="../../configure-harvest-basic/">harvest.yml configuration</a> file
 located in <code>/opt/harvest/harvest.yml</code></p>
 <p>After editing <code>/opt/harvest/harvest.yml</code>, manage Harvest with <code>systemctl start|stop|restart harvest</code>.</p>
 <p>After upgrade, re-import all dashboards (either <code>bin/harvest grafana import</code> cli or via the Grafana UI) to
-get any new enhancements in dashboards.</p>
+get any new enhancements in dashboards. For more details, see the <a href="../../dashboards/">dashboards documentation</a>.</p>
 <blockquote>
 <p>To ensure that you don't run
 into <a href="https://github.com/NetApp/harvest/issues/122#issuecomment-856138831">permission issues</a>, make sure you manage
