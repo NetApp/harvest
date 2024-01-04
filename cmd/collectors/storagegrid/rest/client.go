@@ -362,6 +362,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 			return err
 		}
 		req.Header.Set("accept", "application/json")
+		req.Header.Set("Content-Type", "application/json")
 
 		// send request to server
 		client := &http.Client{
