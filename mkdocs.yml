@@ -17,7 +17,6 @@ nav:
           - 'Containerd': 'install/containerd.md'
       - 'Native': 'install/native.md'
   - System Requirements: 'system-requirements.md'
-  - Upgrade: 'upgrade.md'
   - Prepare Monitored Clusters:
       - 'ONTAP cDOT': 'prepare-cdot-clusters.md'
       - 'Amazon FSx for ONTAP': 'prepare-fsx-clusters.md'
@@ -49,6 +48,7 @@ nav:
       - 'Power Algorithm': 'resources/power-algorithm.md'
       - 'Plugins': 'plugins.md'
       - 'REST Perf Metrics': 'resources/rest-perf-metrics.md'
+      - 'REST Strategy': 'architecture/rest-strategy.md'
       - 'Templates And Metrics': 'resources/templates-and-metrics.md'
   - About:
       - 'License': 'license.md'
