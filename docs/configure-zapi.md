@@ -192,13 +192,13 @@ exporters, the following parameters can be defined:
 
 ### Filter
 
-This guide provides detailed instructions on how to use the `filter` feature in ZapiPerf.
+This guide provides instructions on how to use the `filter` feature in ZapiPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.
 
 #### Objects (Excluding Workload)
 
-In ZapiPerf templates, you can set up filters under `counters`. Wildcards like * are useful if you don't want to specify all instances.
+In ZapiPerf templates, you can set up filters under `counters`. Wildcards like * are useful if you don't want to specify all instances. Please note, ONTAP Zapi filtering does not support regular expressions, only wildcard matching with `*`.
 
-For instance, to filter Volume performance instances by instance name where the name is `NS_svm_nvme` or contains `Test`, use the following configuration in ZapiPerf `volume.yaml` under `counters`:
+For instance, to filter `volume` performance instances by instance name where the name is `NS_svm_nvme` or contains `Test`, use the following configuration in ZapiPerf `volume.yaml` under `counters`:
 
 ```yaml
 counters:
@@ -227,31 +227,25 @@ You can define multiple values within the filter array. These will be interprete
 
 #### Workload Templates
 
-Performance Workload Templates are treated differently in Harvest, hence they follow a unique approach. You can use filter fields provided via `qos-workload-get-iter` as shown below.
+Performance workload templates require a different syntax because instances are retrieved from the `qos-workload-get-iter` ZAPI instead of `perf-object-instance-list-info-iter`.
 
-The `qos-workload-get-iter` ZAPI supports the following fields as filters:
+The `qos-workload-get-iter` ZAPI supports filtering on the following fields:
 
-```xml
-<query>
-  <qos-workload-info>
-    <workload-uuid>Sample</workload-uuid>
-    <workload-name>Sample</workload-name>
-    <wid>12345</wid>
-    <category>Sample</category>
-    <policy-group>Sample</policy-group>
-    <vserver>Sample</vserver>
-    <volume>Sample</volume>
-    <lun>Sample</lun>
-    <file>Sample</file>
-    <qtree>Sample</qtree>
-    <read-ahead>Sample</read-ahead>
-    <max-throughput>Sample</max-throughput>
-    <min-throughput>Sample</min-throughput>
-    <is-adaptive>true/false</is-adaptive>
-    <is-constituent>true/false</is-constituent>
-  </qos-workload-info>
-</query>
-```
+- workload-uuid
+- workload-name
+- wid
+- category
+- policy-group
+- vserver
+- volume
+- lun
+- file
+- qtree
+- read-ahead
+- max-throughput
+- min-throughput
+- is-adaptive
+- is-constituent
 
 You can include these fields under the `filter` parameter. For example, to filter Workload performance instances by `workload-name` where the name contains `NS` or `Test` and `vserver` is `vs1`, use the following configuration in ZapiPerf `workload.yaml` under `counters`:
 
