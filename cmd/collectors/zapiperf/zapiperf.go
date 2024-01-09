@@ -72,6 +72,7 @@ var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
 type ZapiPerf struct {
 	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	object          string
+	filter          string
 	batchSize       int
 	latencyIoReqd   int
 	instanceKey     string
@@ -150,6 +151,7 @@ func (z *ZapiPerf) InitCache() error {
 	z.histogramLabels = make(map[string][]string)
 	z.instanceLabels = make(map[string]string)
 	z.instanceKey = z.loadParamStr("instance_key", instanceKey)
+	z.filter = z.loadFilter()
 	z.batchSize = z.loadParamInt("batch_size", batchSize)
 	z.latencyIoReqd = z.loadParamInt("latency_io_reqd", latencyIoReqd)
 	z.isCacheEmpty = true
@@ -181,6 +183,18 @@ func (z *ZapiPerf) loadParamStr(name, defaultValue string) string {
 	return defaultValue
 }
 
+func (z *ZapiPerf) loadFilter() string {
+
+	counters := z.Params.GetChildS("counters")
+	if counters != nil {
+		if x := counters.GetChildS("filter"); x != nil {
+			filter := strings.Join(x.GetAllChildContentS(), ",")
+			return filter
+		}
+	}
+	return ""
+}
+
 // load workload_class or use defaultValue
 func (z *ZapiPerf) loadWorkloadClassQuery(defaultValue string) string {
 
@@ -209,6 +223,36 @@ func (z *ZapiPerf) loadWorkloadClassQuery(defaultValue string) string {
 		Str("defaultValue", defaultValue).
 		Send()
 	return defaultValue
+}
+
+func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
+	// filter -> workload-class takes precedence over workload_class param at root level
+	workloadClass := ""
+	counters := z.Params.GetChildS("counters")
+	if counters != nil {
+		filter := counters.GetChildS("filter")
+		if filter != nil {
+			for _, n := range filter.GetChildren() {
+				name := n.GetNameS()
+				content := n.GetContentS()
+				query.NewChildS(name, content)
+				if name == "workload-class" {
+					workloadClass = content
+				}
+			}
+		}
+	}
+	if workloadClass != "" {
+		return
+	}
+
+	var workloadClassQuery string
+	if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+		workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadVolumeClass)
+	} else {
+		workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadClass)
+	}
+	query.NewChildS("workload-class", workloadClassQuery)
 }
 
 // load an int parameter or use defaultValue
@@ -1425,12 +1469,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		request = node.NewXMLS("qos-workload-get-iter")
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
-		if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
-			infoElem.NewChildS("workload-class", z.loadWorkloadClassQuery(objWorkloadVolumeClass))
-		} else {
-			infoElem.NewChildS("workload-class", z.loadWorkloadClassQuery(objWorkloadClass))
-		}
-
+		z.updateWorkloadQuery(infoElem)
 		instancesAttr = "attributes-list"
 		nameAttr = "workload-name"
 		uuidAttr = "workload-uuid"
@@ -1443,9 +1482,12 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	} else if z.Client.IsClustered() {
 		request = node.NewXMLS("perf-object-instance-list-info-iter")
 		request.NewChildS("objectname", z.Query)
+		if z.filter != "" {
+			request.NewChildS("filter-data", z.filter)
+		}
 		instancesAttr = "attributes-list"
-		// syntax for 7mode/perf
 	} else {
+		// syntax for 7mode/perf
 		request = node.NewXMLS("perf-object-instance-list-info")
 		request.NewChildS("objectname", z.Query)
 		instancesAttr = "instances"

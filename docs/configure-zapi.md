@@ -189,3 +189,70 @@ exporters, the following parameters can be defined:
 * `instances_keys` (list): display names of labels to export with each data-point
 * `instance_labels` (list): display names of labels to export as a separate data-point
 * `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
+
+### Filter
+
+This guide provides instructions on how to use the `filter` feature in ZapiPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.
+
+#### Objects (Excluding Workload)
+
+In ZapiPerf templates, you can set up filters under `counters`. Wildcards like * are useful if you don't want to specify all instances. Please note, ONTAP Zapi filtering does not support regular expressions, only wildcard matching with `*`.
+
+For instance, to filter `volume` performance instances by instance name where the name is `NS_svm_nvme` or contains `Test`, use the following configuration in ZapiPerf `volume.yaml` under `counters`:
+
+```yaml
+counters:
+  ...
+  - filter:
+     - instance_name=NS_svm_nvme|instance_name=*Test*
+```
+
+You can define multiple values within the filter array. These will be interpreted as `AND` conditions by ONTAP. Alternatively, you can specify a complete expression within a single array element, as described in the ONTAP filtering section below.
+
+??? info "ONTAP Filtering Details"
+
+    For a better understanding of ONTAP's filtering mechanism, it allows the use of `filter-data` for the `perf-object-instance-list-info-iter` Zapi.
+
+    The `filter-data` is a string that signifies filter data, adhering to the format: `counter_name=counter_value`. You can define multiple pairs, separated by either a comma (",") or a pipe ("|").
+
+    Here's the interpretation:
+
+    - A comma (",") signifies an AND operation.
+    - A pipe ("|") signifies an OR operation.
+    - The precedence order is AND first, followed by OR.
+
+    For instance, the filter string `instance_name=volA,vserver_name=vs1|vserver_name=vs2` translates to `(instance_name=volA && vserver_name=vs1) || (vserver_name=vs2)`.
+
+    This filter will return instances on Vserver `vs1` named `volA`, and all instances on Vserver `vs2`.
+
+#### Workload Templates
+
+Performance workload templates require a different syntax because instances are retrieved from the `qos-workload-get-iter` ZAPI instead of `perf-object-instance-list-info-iter`.
+
+The `qos-workload-get-iter` ZAPI supports filtering on the following fields:
+
+- workload-uuid
+- workload-name
+- wid
+- category
+- policy-group
+- vserver
+- volume
+- lun
+- file
+- qtree
+- read-ahead
+- max-throughput
+- min-throughput
+- is-adaptive
+- is-constituent
+
+You can include these fields under the `filter` parameter. For example, to filter Workload performance instances by `workload-name` where the name contains `NS` or `Test` and `vserver` is `vs1`, use the following configuration in ZapiPerf `workload.yaml` under `counters`:
+
+```yaml
+counters:
+  ...
+  - filter:
+      - workload-name: "*NS*|*Test*"
+      - vserver: vs1
+```   
