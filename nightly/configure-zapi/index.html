@@ -842,6 +842,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    Filter
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-excluding-workload" class="md-nav__link">
+    Objects (Excluding Workload)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-templates" class="md-nav__link">
+    Workload Templates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1427,6 +1454,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    Filter
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-excluding-workload" class="md-nav__link">
+    Objects (Excluding Workload)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-templates" class="md-nav__link">
+    Workload Templates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1788,6 +1842,57 @@ exporters, the following parameters can be defined:</p>
 <li><code>instance_labels</code> (list): display names of labels to export as a separate data-point</li>
 <li><code>include_all_labels</code> (bool): export all labels with each data-point (overrides previous two parameters)</li>
 </ul>
+<h3 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
+<p>This guide provides instructions on how to use the <code>filter</code> feature in ZapiPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.</p>
+<h4 id="objects-excluding-workload">Objects (Excluding Workload)<a class="headerlink" href="#objects-excluding-workload" title="Permanent link">&para;</a></h4>
+<p>In ZapiPerf templates, you can set up filters under <code>counters</code>. Wildcards like * are useful if you don't want to specify all instances. Please note, ONTAP Zapi filtering does not support regular expressions, only wildcard matching with <code>*</code>.</p>
+<p>For instance, to filter <code>volume</code> performance instances by instance name where the name is <code>NS_svm_nvme</code> or contains <code>Test</code>, use the following configuration in ZapiPerf <code>volume.yaml</code> under <code>counters</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">- filter</span><span class="p p-Indicator">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">instance_name=NS_svm_nvme|instance_name=*Test*</span>
+</code></pre></div>
+<p>You can define multiple values within the filter array. These will be interpreted as <code>AND</code> conditions by ONTAP. Alternatively, you can specify a complete expression within a single array element, as described in the ONTAP filtering section below.</p>
+<details class="info">
+<summary>ONTAP Filtering Details</summary>
+<p>For a better understanding of ONTAP's filtering mechanism, it allows the use of <code>filter-data</code> for the <code>perf-object-instance-list-info-iter</code> Zapi.</p>
+<p>The <code>filter-data</code> is a string that signifies filter data, adhering to the format: <code>counter_name=counter_value</code>. You can define multiple pairs, separated by either a comma (",") or a pipe ("|").</p>
+<p>Here's the interpretation:</p>
+<ul>
+<li>A comma (",") signifies an AND operation.</li>
+<li>A pipe ("|") signifies an OR operation.</li>
+<li>The precedence order is AND first, followed by OR.</li>
+</ul>
+<p>For instance, the filter string <code>instance_name=volA,vserver_name=vs1|vserver_name=vs2</code> translates to <code>(instance_name=volA &amp;&amp; vserver_name=vs1) || (vserver_name=vs2)</code>.</p>
+<p>This filter will return instances on Vserver <code>vs1</code> named <code>volA</code>, and all instances on Vserver <code>vs2</code>.</p>
+</details>
+<h4 id="workload-templates">Workload Templates<a class="headerlink" href="#workload-templates" title="Permanent link">&para;</a></h4>
+<p>Performance workload templates require a different syntax because instances are retrieved from the <code>qos-workload-get-iter</code> ZAPI instead of <code>perf-object-instance-list-info-iter</code>.</p>
+<p>The <code>qos-workload-get-iter</code> ZAPI supports filtering on the following fields:</p>
+<ul>
+<li>workload-uuid</li>
+<li>workload-name</li>
+<li>wid</li>
+<li>category</li>
+<li>policy-group</li>
+<li>vserver</li>
+<li>volume</li>
+<li>lun</li>
+<li>file</li>
+<li>qtree</li>
+<li>read-ahead</li>
+<li>max-throughput</li>
+<li>min-throughput</li>
+<li>is-adaptive</li>
+<li>is-constituent</li>
+</ul>
+<p>You can include these fields under the <code>filter</code> parameter. For example, to filter Workload performance instances by <code>workload-name</code> where the name contains <code>NS</code> or <code>Test</code> and <code>vserver</code> is <code>vs1</code>, use the following configuration in ZapiPerf <code>workload.yaml</code> under <code>counters</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">- filter</span><span class="p p-Indicator">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">workload-name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*NS*|*Test*&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">vserver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vs1</span>
+</code></pre></div>
 
 
 
