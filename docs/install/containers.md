@@ -69,6 +69,7 @@ Pollers:
 
 ```sh
 docker run --rm \
+  --env UID=$(id -u) --env GID=$(id -g) \
   --entrypoint "bin/harvest" \
   --volume "$(pwd):/opt/temp" \
   --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
@@ -84,6 +85,7 @@ By default, the above command uses the harvest configuration file(`harvest.yml`)
     ```sh
     HYML="/opt/custom_harvest.yml"; \
     docker run --rm \
+    --env UID=$(id -u) --env GID=$(id -g) \
     --entrypoint "bin/harvest" \
     --volume "$(pwd):/opt/temp" \
     --volume "${HYML}:${HYML}" \
@@ -198,6 +200,7 @@ To upgrade Harvest:
 
         ```sh
         docker run --rm \
+          --env UID=$(id -u) --env GID=$(id -g) \
           --entrypoint "bin/harvest" \
           --volume "$(pwd):/opt/temp" \
           --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \

@@ -212,6 +212,7 @@ func generateDocker(kind int) {
 	}
 
 	color.DetectConsole("")
+
 	out, err = os.Create(opts.outputPath)
 	if err != nil {
 		logErrAndExit(err)
@@ -342,14 +343,14 @@ func copyFiles(srcPath, destPath string) error {
 	}
 	// requires specific permissions
 	dirsPermissions := map[string]os.FileMode{
-		"container":  0755,
-		"prometheus": 0755,
+		"container": 0755,
+		"grafana":   0755,
 	}
 	// requires specific permissions
-	filePermissions := map[string]os.FileMode{
+	filePermissionsInDir := map[string]os.FileMode{
 		"container":  0644,
 		"prometheus": 0644,
-		"grafana":    0640,
+		"grafana":    0644,
 	}
 
 	return filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
@@ -369,11 +370,30 @@ func copyFiles(srcPath, destPath string) error {
 			if dirsToExclude[info.Name()] {
 				return filepath.SkipDir
 			}
-			// Check if the directory is in the dirsPermissions map
-			if perm, ok := dirsPermissions[info.Name()]; ok {
-				return os.MkdirAll(dest, perm)
+			// Check if the current directory or any of its parent directories are in dirsPermissions
+			dirCreated := false
+			for dir, perm := range dirsPermissions {
+				if strings.HasPrefix(relPath, dir) {
+					err = os.MkdirAll(dest, perm)
+					if err != nil {
+						return err
+					}
+					dirCreated = true
+					break
+				}
 			}
-			return os.MkdirAll(dest, 0750)
+			if !dirCreated {
+				err = os.MkdirAll(dest, 0750)
+				if err != nil {
+					return err
+				}
+			}
+			err = changeOwner(dest)
+			if err != nil {
+				return err
+			}
+
+			return nil
 		}
 
 		// Skip excluded files
@@ -382,7 +402,7 @@ func copyFiles(srcPath, destPath string) error {
 		}
 
 		// Check if the file is under a directory in the filePermissions map
-		for dir, perm := range filePermissions {
+		for dir, perm := range filePermissionsInDir {
 			if strings.HasPrefix(relPath, dir) {
 				return copyFile(path, dest, perm)
 			}
@@ -405,7 +425,40 @@ func copyFile(srcPath, destPath string, perm os.FileMode) error {
 	defer silentClose(destFile)
 
 	_, err = io.Copy(destFile, srcFile)
-	return err
+	if err != nil {
+		return err
+	}
+
+	err = changeOwner(destPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func changeOwner(path string) error {
+	// Get the UID and GID from the environment variables
+	uidStr := os.Getenv("UID")
+	gidStr := os.Getenv("GID")
+
+	// If the UID and GID are set, change the owner and group of the file
+	if uidStr != "" && gidStr != "" {
+		uid, err := strconv.Atoi(uidStr)
+		if err != nil {
+			return err
+		}
+		gid, err := strconv.Atoi(gidStr)
+		if err != nil {
+			return err
+		}
+		err = os.Chown(path, uid, gid)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func asComposePath(path string) string {
