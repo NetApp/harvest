@@ -46,6 +46,7 @@ Create your `harvest-compose.yml` file like this:
 
 ```sh
 docker run --rm \
+  --env UID=$(id -u) --env GID=$(id -g) \
   --entrypoint "bin/harvest" \
   --volume "$(pwd):/opt/temp" \
   --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
