@@ -12,7 +12,7 @@
 name: "CodeQL"
 
 env:
-  GO_VERSION: "1.21.5"
+  GO_VERSION: "1.21.6"
 
 on:
   push:
