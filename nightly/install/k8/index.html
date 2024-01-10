@@ -1329,6 +1329,7 @@
 <li>After adding your clusters to <code>harvest.yml</code>, generate <code>harvest-compose.yml</code> and <code>prom-stack.yml</code>.</li>
 </ol>
 <div class="highlight"><pre><span></span><code>docker run --rm \
+  --env UID=$(id -u) --env GID=$(id -g) \
   --entrypoint &quot;bin/harvest&quot; \
   --volume &quot;$(pwd):/opt/temp&quot; \
   --volume &quot;$(pwd)/harvest.yml:/opt/harvest/harvest.yml&quot; \
@@ -1705,6 +1706,7 @@ Please note the following assumptions for the steps below:</p>
 </li>
 </ul>
 <div class="highlight"><pre><span></span><code>docker run --rm \
+  --env UID=$(id -u) --env GID=$(id -g) \
   --entrypoint &quot;bin/harvest&quot; \
   --volume &quot;$(pwd):/opt/temp&quot; \
   --volume &quot;$(pwd)/harvest.yml:/opt/harvest/harvest.yml&quot; \

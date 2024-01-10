@@ -1172,6 +1172,7 @@ are considered alpha. They work, but are still undergoing a lot of change.</p>
 <p>Follow the existing documentation to set up your <code>harvest.yml</code> <a href="../containers/#setup-harvestyml">file</a></p>
 <p>Create your <code>harvest-compose.yml</code> file like this:</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--env<span class="w"> </span><span class="nv">UID</span><span class="o">=</span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span><span class="w"> </span>--env<span class="w"> </span><span class="nv">GID</span><span class="o">=</span><span class="k">$(</span>id<span class="w"> </span>-g<span class="k">)</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/opt/temp&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/harvest.yml:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span><span class="se">\</span>
