@@ -31,6 +31,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fabricpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcp"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fcvi"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/flexcache"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/headroom"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
@@ -57,6 +58,7 @@ const (
 	instanceKey   = "uuid"
 	batchSize     = 500
 	latencyIoReqd = 10
+	keyToken      = "?#"
 	// objects that need special handling
 	objWorkload             = "workload"
 	objWorkloadDetail       = "workload_detail"
@@ -75,7 +77,7 @@ type ZapiPerf struct {
 	filter          string
 	batchSize       int
 	latencyIoReqd   int
-	instanceKey     string
+	instanceKeys    []string
 	instanceLabels  map[string]string
 	histogramLabels map[string][]string
 	scalarCounters  []string
@@ -141,6 +143,8 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		return externalserviceoperation.New(abc)
 	case "FCVI":
 		return fcvi.New(abc)
+	case "FlexCache":
+		return flexcache.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapiPerf plugin found for %s", kind)
 	}
@@ -150,7 +154,7 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 func (z *ZapiPerf) InitCache() error {
 	z.histogramLabels = make(map[string][]string)
 	z.instanceLabels = make(map[string]string)
-	z.instanceKey = z.loadParamStr("instance_key", instanceKey)
+	z.instanceKeys = z.loadParamArray("instance_key", instanceKey)
 	z.filter = z.loadFilter()
 	z.batchSize = z.loadParamInt("batch_size", batchSize)
 	z.latencyIoReqd = z.loadParamInt("latency_io_reqd", latencyIoReqd)
@@ -193,6 +197,26 @@ func (z *ZapiPerf) loadFilter() string {
 		}
 	}
 	return ""
+}
+
+// load a string parameter or use defaultValue
+func (z *ZapiPerf) loadParamArray(name, defaultValue string) []string {
+
+	if v := z.Params.GetChildContentS(name); v != "" {
+		z.Logger.Debug().Msgf("using %s = [%s]", name, v)
+		return []string{v}
+	}
+
+	p := z.Params.GetChildS(name)
+	if p != nil {
+		if v := p.GetAllChildContentS(); v != nil {
+			z.Logger.Debug().Msgf("using %s = [%s]", name, v)
+			return v
+		}
+	}
+
+	z.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	return []string{defaultValue}
 }
 
 // load workload_class or use defaultValue
@@ -305,8 +329,19 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// determine what will serve as instance key (either "uuid" or "instance")
 	keyName := "instance-uuid"
-	if z.instanceKey == "name" {
-		keyName = "instance"
+	keyNameIndex := 0
+	if len(z.instanceKeys) > 0 {
+		for i, k := range z.instanceKeys {
+			if k == "uuid" {
+				keyName = "instance-uuid"
+				keyNameIndex = i
+				break
+			} else if k == "name" {
+				keyName = "instance"
+				keyNameIndex = i
+				break
+			}
+		}
 	}
 
 	// list of instance keys (instance names or uuids) for which
@@ -368,8 +403,18 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		request.PopChildS(keyName + "s")
 		requestInstances := request.NewChildS(keyName+"s", "")
+		addedKeys := make(map[string]bool)
 		for _, key := range instanceKeys[startIndex:endIndex] {
-			requestInstances.NewChildS(keyName, key)
+			if strings.Contains(key, keyToken) {
+				v := strings.Split(key, keyToken)
+				if keyNameIndex < len(v) {
+					key = v[keyNameIndex]
+				}
+			}
+			if !addedKeys[key] {
+				requestInstances.NewChildS(keyName, key)
+				addedKeys[key] = true
+			}
 		}
 
 		startIndex = endIndex
@@ -416,7 +461,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		for instIndex, i := range instances.GetChildren() {
 
-			key := i.GetChildContentS(z.instanceKey)
+			key := z.buildKeyValue(i, z.instanceKeys)
 
 			var layer = "" // latency layer (resource) for workloads
 
@@ -447,7 +492,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 			if key == "" {
 				z.Logger.Debug().
-					Str("instanceKey", z.instanceKey).
+					Strs("instanceKey", z.instanceKeys).
 					Str("name", i.GetChildContentS("name")).
 					Str("uuid", i.GetChildContentS("uuid")).
 					Msg("Skip instance, key is empty")
@@ -907,10 +952,14 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 
 		for _, i := range instances.GetChildren() {
 
-			key := i.GetChildContentS(z.instanceKey)
+			key := z.buildKeyValue(i, z.instanceKeys)
 
 			if key == "" {
-				z.Logger.Debug().Msgf("skip instance, no key [%s] (name=%s, uuid=%s)", z.instanceKey, i.GetChildContentS("name"), i.GetChildContentS("uuid"))
+				z.Logger.Debug().
+					Strs("key", z.instanceKeys).
+					Str("name", i.GetChildContentS("name")).
+					Str("uuid", i.GetChildContentS("uuid")).
+					Msg("skip instance")
 				continue
 			}
 
@@ -1442,13 +1491,14 @@ func parseHistogramLabels(elem *node.Node) ([]string, string) {
 func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	var (
-		err                                        error
-		request, results                           *node.Node
-		oldInstances                               *set.Set
-		oldSize, newSize, removed, added           int
-		keyAttr, instancesAttr, nameAttr, uuidAttr string
-		apiD, parseD                               time.Duration
-		apiT, parseT                               time.Time
+		err                               error
+		request, results                  *node.Node
+		oldInstances                      *set.Set
+		oldSize, newSize, removed, added  int
+		instancesAttr, nameAttr, uuidAttr string
+		keyAttrs                          []string
+		apiD, parseD                      time.Duration
+		apiT, parseT                      time.Time
 	)
 
 	oldInstances = set.New()
@@ -1462,7 +1512,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	nameAttr = "name"
 	uuidAttr = "uuid"
-	keyAttr = z.instanceKey
+	keyAttrs = z.instanceKeys
 
 	// hack for workload objects: get instances from Zapi
 	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
@@ -1473,10 +1523,14 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		instancesAttr = "attributes-list"
 		nameAttr = "workload-name"
 		uuidAttr = "workload-uuid"
-		if z.instanceKey == "instance_name" || z.instanceKey == "name" {
-			keyAttr = "workload-name"
+		var ikey string
+		if len(z.instanceKeys) > 0 {
+			ikey = z.instanceKeys[0]
+		}
+		if ikey == "instance_name" || ikey == "name" {
+			keyAttrs = []string{"workload-name"}
 		} else {
-			keyAttr = "workload-uuid"
+			keyAttrs = []string{"workload-uuid"}
 		}
 		// syntax for cdot/perf
 	} else if z.Client.IsClustered() {
@@ -1532,11 +1586,16 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 		for _, i := range instances.GetChildren() {
 
-			if key := i.GetChildContentS(keyAttr); key == "" {
+			key := z.buildKeyValue(i, keyAttrs)
+			if key == "" {
 				// instance key missing
 				name := i.GetChildContentS(nameAttr)
 				uuid := i.GetChildContentS(uuidAttr)
-				z.Logger.Debug().Msgf("skip instance, missing key [%s] (name=%s, uuid=%s)", z.instanceKey, name, uuid)
+				z.Logger.Debug().
+					Strs("key", z.instanceKeys).
+					Str("name", name).
+					Str("uuid", uuid).
+					Msg("skip instance")
 			} else if oldInstances.Has(key) {
 				// instance already in cache
 				oldInstances.Remove(key)
@@ -1594,6 +1653,19 @@ func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, ke
 				Send()
 		}
 	}
+}
+
+func (z *ZapiPerf) buildKeyValue(i *node.Node, keys []string) string {
+	var values []string
+	for _, k := range keys {
+		value := i.GetChildContentS(k)
+		if value != "" {
+			values = append(values, value)
+		} else {
+			z.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+		}
+	}
+	return strings.Join(values, keyToken)
 }
 
 // Interface guards

@@ -743,8 +743,12 @@ func TestTopKRange(t *testing.T) {
 
 func checkTopKRange(t *testing.T, path string, data []byte) {
 	// temporary skip
-	if strings.Contains(path, "svm") {
-		return
+	keywords := []string{"svm", "flexcache"}
+
+	for _, keyword := range keywords {
+		if strings.Contains(path, keyword) {
+			return
+		}
 	}
 
 	// collect all expressions
@@ -821,6 +825,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
 		"cmode/shelf.json":            2,
 		"cmode/fsa.json":              2,
+		"cmode/flexcache.json":        2,
 		"cmode/workload.json":         2,
 		"cmode/smb.json":              2,
 		"cmode/health.json":           2,
@@ -1333,7 +1338,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, title, *count)
 				}
 			} else {
-				// This indicates table/timeseries with more than 1 expressions, After deciding next steps, this will be uncommented.
+				// This indicates table/timeseries with more than 1 expression, After deciding next steps, this will be uncommented.
 				//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
 				fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 			}

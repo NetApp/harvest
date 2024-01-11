@@ -18,7 +18,10 @@ func Test_ZapiPerf(t *testing.T) {
 
 	// PollCounter to update the counter detail in cache
 	z.testFilePath = "testdata/pollCounter.xml"
-	_, _ = z.PollCounter()
+	_, err := z.PollCounter()
+	if err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
 
 	// Case1: pollInstance has 5 records and pollData has 5 records, expected exported instances are 5
 	expectedInstances := 5
@@ -49,7 +52,7 @@ func NewZapiPerf(object, path string) *ZapiPerf {
 	}
 
 	z.Object = object
-	z.instanceKey = "name"
+	z.instanceKeys = []string{"name"}
 	z.isCacheEmpty = false
 	mx := matrix.New(z.Object, z.Object, z.Object)
 	z.Matrix = make(map[string]*matrix.Matrix)
