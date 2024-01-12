@@ -330,17 +330,16 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// determine what will serve as instance key (either "uuid" or "instance")
 	keyName := "instance-uuid"
 	keyNameIndex := 0
-	if len(z.instanceKeys) > 0 {
-		for i, k := range z.instanceKeys {
-			if k == "uuid" {
-				keyName = "instance-uuid"
-				keyNameIndex = i
-				break
-			} else if k == "name" {
-				keyName = "instance"
-				keyNameIndex = i
-				break
-			}
+	// either instance-uuid or instance can be passed as key not both
+	for i, k := range z.instanceKeys {
+		if k == "uuid" {
+			keyName = "instance-uuid"
+			keyNameIndex = i
+			break
+		} else if k == "name" {
+			keyName = "instance"
+			keyNameIndex = i
+			break
 		}
 	}
 
@@ -411,6 +410,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					key = v[keyNameIndex]
 				}
 			}
+			// avoid adding duplicate keys. It can happen for flex-cache case
 			if !addedKeys[key] {
 				requestInstances.NewChildS(keyName, key)
 				addedKeys[key] = true
