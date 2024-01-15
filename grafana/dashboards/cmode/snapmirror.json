@@ -3715,6 +3715,14 @@
                     "value": [
                       {
                         "options": {
+                          "automated_failover": {
+                            "index": 5,
+                            "text": "Automated Failover"
+                          },
+                          "automated_failover_duplex": {
+                            "index": 6,
+                            "text": "Automated Failover Duplex"
+                          },
                           "extended_data_protection": {
                             "index": 2,
                             "text": "Asynchronous Mirror"
