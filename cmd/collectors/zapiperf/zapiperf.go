@@ -83,6 +83,8 @@ type ZapiPerf struct {
 	scalarCounters  []string
 	qosLabels       map[string]string
 	isCacheEmpty    bool
+	keyName         string
+	keyNameIndex    int
 	testFilePath    string // Used only from unit test
 }
 
@@ -160,6 +162,7 @@ func (z *ZapiPerf) InitCache() error {
 	z.latencyIoReqd = z.loadParamInt("latency_io_reqd", latencyIoReqd)
 	z.isCacheEmpty = true
 	z.object = z.loadParamStr("object", "")
+	z.keyName, z.keyNameIndex = z.initKeyName()
 	// hack to override from AbstractCollector
 	// @TODO need cleaner solution
 	if z.object == "" {
@@ -172,6 +175,25 @@ func (z *ZapiPerf) InitCache() error {
 	_, _ = z.Metadata.NewMetricUint64("skips")
 
 	return nil
+}
+
+func (z *ZapiPerf) initKeyName() (string, int) {
+	// determine what will serve as instance key (either "uuid" or "instance")
+	keyName := "instance-uuid"
+	keyNameIndex := 0
+	// either instance-uuid or instance can be passed as key not both
+	for i, k := range z.instanceKeys {
+		if k == "uuid" {
+			keyName = "instance-uuid"
+			keyNameIndex = i
+			break
+		} else if k == "name" {
+			keyName = "instance"
+			keyNameIndex = i
+			break
+		}
+	}
+	return keyName, keyNameIndex
 }
 
 // load a string parameter or use defaultValue
@@ -203,19 +225,28 @@ func (z *ZapiPerf) loadFilter() string {
 func (z *ZapiPerf) loadParamArray(name, defaultValue string) []string {
 
 	if v := z.Params.GetChildContentS(name); v != "" {
-		z.Logger.Debug().Msgf("using %s = [%s]", name, v)
+		z.Logger.Debug().
+			Str("name", name).
+			Str("value", v).
+			Send()
 		return []string{v}
 	}
 
 	p := z.Params.GetChildS(name)
 	if p != nil {
 		if v := p.GetAllChildContentS(); v != nil {
-			z.Logger.Debug().Msgf("using %s = [%s]", name, v)
+			z.Logger.Debug().
+				Str("name", name).
+				Strs("values", v).
+				Send()
 			return v
 		}
 	}
 
-	z.Logger.Debug().Msgf("using %s = [%s] (default)", name, defaultValue)
+	z.Logger.Debug().
+		Str("name", name).
+		Str("defaultValue", defaultValue).
+		Send()
 	return []string{defaultValue}
 }
 
@@ -327,22 +358,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	count := uint64(0)
 	batchCount := 0
 
-	// determine what will serve as instance key (either "uuid" or "instance")
-	keyName := "instance-uuid"
-	keyNameIndex := 0
-	// either instance-uuid or instance can be passed as key not both
-	for i, k := range z.instanceKeys {
-		if k == "uuid" {
-			keyName = "instance-uuid"
-			keyNameIndex = i
-			break
-		} else if k == "name" {
-			keyName = "instance"
-			keyNameIndex = i
-			break
-		}
-	}
-
 	// list of instance keys (instance names or uuids) for which
 	// we will request counter data
 	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
@@ -400,20 +415,24 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			Int("endIndex", endIndex).
 			Msg("Starting batch poll for instances")
 
-		request.PopChildS(keyName + "s")
-		requestInstances := request.NewChildS(keyName+"s", "")
+		request.PopChildS(z.keyName + "s")
+		requestInstances := request.NewChildS(z.keyName+"s", "")
 		addedKeys := make(map[string]bool)
 		for _, key := range instanceKeys[startIndex:endIndex] {
-			if strings.Contains(key, keyToken) {
-				v := strings.Split(key, keyToken)
-				if keyNameIndex < len(v) {
-					key = v[keyNameIndex]
+			if len(z.instanceKeys) == 1 {
+				requestInstances.NewChildS(z.keyName, key)
+			} else {
+				if strings.Contains(key, keyToken) {
+					v := strings.Split(key, keyToken)
+					if z.keyNameIndex < len(v) {
+						key = v[z.keyNameIndex]
+					}
 				}
-			}
-			// avoid adding duplicate keys. It can happen for flex-cache case
-			if !addedKeys[key] {
-				requestInstances.NewChildS(keyName, key)
-				addedKeys[key] = true
+				// avoid adding duplicate keys. It can happen for flex-cache case
+				if !addedKeys[key] {
+					requestInstances.NewChildS(z.keyName, key)
+					addedKeys[key] = true
+				}
 			}
 		}
 
@@ -703,7 +722,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		Msg("Collected data points in batch polls")
 
 	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-		if rd, pd, err := z.getParentOpsCounters(curMat, keyName); err == nil {
+		if rd, pd, err := z.getParentOpsCounters(curMat, z.keyName); err == nil {
 			apiT += rd
 			parseT += pd
 		} else {
@@ -1656,6 +1675,9 @@ func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, ke
 }
 
 func (z *ZapiPerf) buildKeyValue(i *node.Node, keys []string) string {
+	if len(keys) == 1 {
+		return i.GetChildContentS(keys[0])
+	}
 	var values []string
 	for _, k := range keys {
 		value := i.GetChildContentS(k)
