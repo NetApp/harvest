@@ -3,19 +3,19 @@ query:                      api/storage/namespaces
 object:                     namespace
 
 counters:
-  - ^^uuid                     => uuid
-  - ^location.node.name        => node
-  - ^location.volume.name      => volume
-  - ^name                      => path
-  - ^os_type                   => os_type
-  - ^status.read_only          => is_read_only
-  - ^status.state              => state
-  - ^subsystem                 => subsystem
-  - ^subsystem_map.nsid        => nsid
-  - ^svm.name                  => svm
-  - space.block_size           => block_size
-  - space.size                 => size
-  - space.used                 => size_used
+  - ^^uuid                        => uuid
+  - ^location.node.name           => node
+  - ^location.volume.name         => volume
+  - ^name                         => path
+  - ^os_type                      => os_type
+  - ^status.read_only             => is_read_only
+  - ^status.state                 => state
+  - ^subsystem_map.nsid           => nsid
+  - ^subsystem_map.subsystem.name => subsystem
+  - ^svm.name                     => svm
+  - space.block_size              => block_size
+  - space.size                    => size
+  - space.used                    => size_used
 
 plugins:
   - MetricAgent:

@@ -11,7 +11,6 @@ counters:
   - ^lag.active_ports.name                   => lag_port
   - ^lag.distribution_policy                 => lag_distribution_policy
   - ^lag.mode                                => lag_mode
-  - ^operational_speed                       => op_speed
   - ^speed                                   => speed
   - ^state                                   => status
   - ^type                                    => port_type
