@@ -1213,7 +1213,7 @@ groups:
         annotations:
           summary: "ONTAP Mediator (version {{ $labels.version }}) is added on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
 
-      - alert: SMBC CA Certificate Expired
+      - alert: SnapMirror Active Sync CA Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.cacert.expired"}[5m]) == 1
         labels:
           severity: >
@@ -1235,7 +1235,7 @@ groups:
         annotations:
           summary: "CA certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
 
-      - alert: SMBC CA Certificate Expiring
+      - alert: SnapMirror Active Sync CA Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.cacert.expiring"}[5m]) == 1
         labels:
           severity: >
@@ -1257,7 +1257,7 @@ groups:
         annotations:
           summary: "CA certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
 
-      - alert: SMBC Client Certificate Expired
+      - alert: SnapMirror Active Sync Client Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.clientc.expired"}[5m]) == 1
         labels:
           severity: >
@@ -1279,7 +1279,7 @@ groups:
         annotations:
           summary: "Client certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
 
-      - alert: SMBC Client Certificate Expiring
+      - alert: SnapMirror Active Sync Client Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.clientc.expiring"}[5m]) == 1
         labels:
           severity: >
@@ -1345,7 +1345,7 @@ groups:
         annotations:
           summary: "ONTAP Mediator (version {{ $labels.version }}) was removed on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
 
-      - alert: SMBC Server Certificate Expired
+      - alert: SnapMirror Active Sync Server Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.serverc.expired"}[5m]) == 1
         labels:
           severity: >
@@ -1367,7 +1367,7 @@ groups:
         annotations:
           summary: "Server certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
 
-      - alert: SMBC Server Certificate Expiring
+      - alert: SnapMirror Active Sync Server Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.serverc.expiring"}[5m]) == 1
         labels:
           severity: >
@@ -1433,7 +1433,7 @@ groups:
         annotations:
           summary: "Source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" is in \"out-of-sync\" status due to the following reason: \"{{ $labels.error_msg }}\"."
 
-      - alert: SMBC Relationship Out of Sync
+      - alert: SnapMirror Active Sync Relationship Out of Sync
         expr: last_over_time(ems_events{message="sms.status.out.of.sync.cg"}[4w]) == 1
         labels:
           severity: >
@@ -1652,3 +1652,201 @@ groups:
             {{- end -}}
         annotations:
           summary: "vol=\"{{ $labels.vol }}\", app=\"{{ $labels.app }}\", volident=\"{{ $labels.volident }}\", instuuid=\"{{ $labels.instuuid }}\""
+
+      - alert: SnapMirror Relationship Resync Attempt Failed
+        expr: last_over_time(ems_events{message="sms.resync.attempt.failed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Resynchronize operation between source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed. The next auto-resync will be attempted after \"{{ $labels.next_resync_interval }}\" mins."
+
+      - alert: SnapMirror Relationship Common Snapshot Failed
+        expr: last_over_time(ems_events{message="sms.common.snapshot.failed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Creating a common Snapshot copy for source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed due to the following reason:\"{{ $labels.error_msg }}\". Elapsed time since the latest successful common Snapshot copy is \"{{ $labels.css_fail_interval }}\"."
+
+      - alert: SnapMirror Relationship Snapshot is not Replicated
+        expr: last_over_time(ems_events{message="sms.snap.not.replicated"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Snapshot copy \"{{ $labels.snapshot }}\" is not sucessfully replicated for the relationship \"{{ $labels.transferId }}\" with source volume DSID \"{{ $labels.volumeDSID }}\" and path \"{{ $labels.volumePath }}\". Reason: \"{{ $labels.failureReason }}\"."
+
+      - alert: Fanout SnapMirror Relationship Common Snapshot Deleted
+        expr: last_over_time(ems_events{message="sms.fanout.comm.snap.deleted"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SnapMirror Synchronous operation \"{{ $labels.sm_operation }}\" for relationship \"{{ $labels.relationship_id }}\" has cleaned up some of the old base Snapshot copies between the synchronous source and synchronous destination, which could result in no common Snapshot copy existing between the synchronous and asynchronous destinations."
+
+      - alert: SnapMirror Relationship Initialization Failed
+        expr: last_over_time(ems_events{message="smc.snapmir.init.fail"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Initialize from source volume \"{{ $labels.srcpath }}\" to destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" failed with error \"{{ $labels.error }}\"."
+
+      - alert: SnapMirror Active Sync Automatic Unplanned Failover Failed
+        expr: last_over_time(ems_events{message="smbc.aufo.failed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SnapMirror automatic failover failed for Destination path: \"{{ $labels.dstpath }}\"."
+
+      - alert: SnapMirror Active Sync Automatic Unplanned Failover Completed
+        expr: last_over_time(ems_events{message="smbc.aufo.completed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SnapMirror automatic failover completed for Destination path: \"{{ $labels.dstpath }}\"."
+
+      - alert: SnapMirror Active Sync Planned Failover Failed
+        expr: last_over_time(ems_events{message="smbc.pfo.failed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SnapMirror Active Sync planned failover operation failed for Destination path: \"{{ $labels.dstpath }}\"."
+
+      - alert: SnapMirror Active Sync Planned Failover Completed
+        expr: last_over_time(ems_events{message="smbc.pfo.completed"}[4w]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SnapMirror Active Sync planned failover operation completed for Destination path: \"{{ $labels.dstpath }}\"."

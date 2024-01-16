@@ -942,3 +942,57 @@ events:
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
+
+  - name: sms.resync.attempt.failed
+    exports:
+      - ^^parameters.relationship_id    => relationship_id
+      - parameters.dstpath              => dst_path
+      - parameters.srcpath              => src_path
+      - parameters.next_resync_interval => next_resync_interval
+
+  - name: sms.common.snapshot.failed
+    exports:
+      - ^^parameters.relationship_id => relationship_id
+      - parameters.dstpath           => dst_path
+      - parameters.srcpath           => src_path
+      - parameters.error_msg         => error_msg
+      - parameters.css_fail_interval => css_fail_interval
+
+  - name: sms.snap.not.replicated
+    exports:
+      - parameters.snapshot      => snapshot
+      - parameters.transferId    => transfer_id
+      - parameters.volumeDSID    => volume_DSID
+      - parameters.volumePath    => volume_path
+      - parameters.failureReason => failure_reason
+
+  - name: sms.fanout.comm.snap.deleted
+    exports:
+      - parameters.sm_operation      => sm_operation
+      - ^^parameters.relationship_id => relationship_id
+
+  - name: smc.snapmir.init.fail
+    exports:
+      - ^^parameters.relationship_id => relationship_id
+      - parameters.dstpath           => dst_path
+      - parameters.srcpath           => src_path
+      - parameters.error             => error
+    resolve_when_ems:
+      - name: sms.status.in.sync
+        resolve_after: 672h
+
+  - name: smbc.aufo.failed
+    exports:
+      - parameters.dstpath => dst_path
+
+  - name: smbc.aufo.completed
+    exports:
+      - parameters.dstpath => dst_path
+
+  - name: smbc.pfo.failed
+    exports:
+      - parameters.dstpath => dst_path
+
+  - name: smbc.pfo.completed
+    exports:
+      - parameters.dstpath => dst_path
