@@ -1,0 +1,18 @@
+name:                       FlexCache
+query:                      flexcache-get-iter
+object:                     flexcache
+
+
+counters:
+  flexcache-info:
+    - ^^volume                => volume
+    - ^^vserver               => svm
+    - ^origin-cluster         => origin_cluster
+    - ^origin-volume          => origin_volume
+    - ^origin-vserver         => origin_svm
+    - size                    => size
+    - aggr-list:
+        - ^aggr-name          => aggr
+
+export_options:
+  include_all_labels: true

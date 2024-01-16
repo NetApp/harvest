@@ -1,0 +1,15 @@
+name:       FlexCache
+query:      api/storage/flexcache/flexcaches
+object:     flexcache
+
+counters:
+  - ^^name                       => volume
+  - ^^svm.name                   => svm
+  - ^aggregates.#.name           => aggr
+  - ^origins.#.cluster.name      => origin_cluster
+  - ^origins.#.svm.name          => origin_svm
+  - ^origins.#.volume.name       => origin_volume
+  - size                         => size
+
+export_options:
+  include_all_labels: true

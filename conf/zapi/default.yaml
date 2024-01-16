@@ -15,6 +15,7 @@ objects:
   ClusterPeer:                 clusterpeer.yaml
   Disk:                        disk.yaml
   EmsDestination:              ems_destination.yaml
+  FlexCache:                   flexcache.yaml
   LIF:                         lif.yaml
   Lun:                         lun.yaml
 #  NetPort:                     netPort.yaml

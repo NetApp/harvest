@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2023-Dec-21
+Creation Date : 2024-Jan-12
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -2615,6 +2615,169 @@ Percentage of blocks overwritten to write-cache among all disk writes.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `write_blocks_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> estimated_write_blocks_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `write_blks_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> est_write_blks_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
+
+
+### flexcache_blocks_requested_from_client
+
+Total number of blocks requested from client
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_requested_from_client`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_blocks_retrieved_from_origin
+
+Total number of blocks retrieved from origin
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_retrieved_from_origin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_evict_rw_cache_skipped_reason_disconnected
+
+Total number of read-write cache evict operations skipped because cache is disconnected.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_rw_cache_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_evict_skipped_reason_config_noent
+
+Total number of evict operation is skipped because cache config is not available.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_evict_skipped_reason_disconnected
+
+Total number of evict operation is skipped because cache is disconnected.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_evict_skipped_reason_offline
+
+Total number of evict operation is skipped because cache volume is offline.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_invalidate_skipped_reason_config_noent
+
+Total number of invalidate operation is skipped because cache config is not available.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_invalidate_skipped_reason_disconnected
+
+Total number of invalidate operation is skipped because cache is disconnected.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_invalidate_skipped_reason_offline
+
+Total number of invalidate operation is skipped because cache volume is offline.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_miss_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `flexcache_per_volume` | `blocks_retrieved_from_origin, blocks_requested_from_client`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_nix_retry_skipped_reason_initiator_retrieve
+
+Total retry nix operations skipped because the initiator is retrieve operation.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_retry_skipped_reason_initiator_retrieve`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_nix_skipped_reason_config_noent
+
+Total number of nix operation is skipped because cache config is not available.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_nix_skipped_reason_disconnected
+
+Total number of nix operation is skipped because cache is disconnected.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_nix_skipped_reason_in_progress
+
+Total nix operations skipped because of an in-progress nix.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_in_progress`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_nix_skipped_reason_offline
+
+Total number of nix operation is skipped because cache volume is offline.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_reconciled_data_entries
+
+Total number of reconciled data entries at cache side.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `reconciled_data_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_reconciled_lock_entries
+
+Total number of reconciled lock entries at cache side.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances flexcache_per_volume` | `reconciled_lock_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
+
+
+### flexcache_size
+
+Physical size of the FlexCache. The recommended size for a FlexCache is 10% of the origin volume. The minimum FlexCache constituent size is 1GB.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/flexcache/flexcaches` | `size` | conf/rest/9.12.0/flexcache.yaml |
+| ZAPI | `flexcache-get-iter` | `flexcache-info.size` | conf/zapi/cdot/9.8.0/flexcache.yaml |
 
 
 ### headroom_aggr_current_latency
