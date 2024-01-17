@@ -27,6 +27,7 @@ func TestUpdateProtectedFields(t *testing.T) {
 	testSyncMirror(t, instance)
 	testMirrorVault(t, instance)
 	testAutomatedFailover(t, instance)
+	testAutomatedFailoverDuplex(t, instance)
 	testOtherPolicyType(t, instance)
 	testWithNoPolicyType(t, instance)
 	testWithNoPolicyTypeNoRelationshipType(t, instance)
@@ -167,8 +168,18 @@ func testAutomatedFailover(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "automated_failover")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "sync_mirror" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: sync_mirror", instance.GetLabel("derived_relationship_type"))
+	if instance.GetLabel("derived_relationship_type") != "automated_failover" {
+		t.Errorf("Labels derived_relationship_type= %s, expected: automated_failover", instance.GetLabel("derived_relationship_type"))
+	}
+}
+
+func testAutomatedFailoverDuplex(t *testing.T, instance *matrix.Instance) {
+	instance.SetLabel("relationship_type", "")
+	instance.SetLabel("policy_type", "automated_failover_duplex")
+	UpdateProtectedFields(instance)
+
+	if instance.GetLabel("derived_relationship_type") != "automated_failover_duplex" {
+		t.Errorf("Labels derived_relationship_type= %s, expected: automated_failover_duplex", instance.GetLabel("derived_relationship_type"))
 	}
 }
 

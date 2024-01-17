@@ -180,7 +180,9 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 		} else if policyType == "mirror_vault" {
 			instance.SetLabel("derived_relationship_type", "mirror_vault")
 		} else if policyType == "automated_failover" {
-			instance.SetLabel("derived_relationship_type", "sync_mirror")
+			instance.SetLabel("derived_relationship_type", "automated_failover")
+		} else if policyType == "automated_failover_duplex" {
+			instance.SetLabel("derived_relationship_type", "automated_failover_duplex")
 		} else {
 			instance.SetLabel("derived_relationship_type", relationshipType)
 		}
