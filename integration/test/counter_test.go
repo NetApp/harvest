@@ -52,7 +52,6 @@ func TestCounters(t *testing.T) {
 
 	if client, err = rest2.New(poller, timeout, auth.NewCredentials(poller, logging.Get())); err != nil {
 		log.Fatal().Err(err).Str("poller", pollerName).Msg("error creating new client")
-		os.Exit(1)
 	}
 
 	if err = client.Init(5); err != nil {
@@ -76,8 +75,7 @@ func invokeRestCall(client *rest2.Client, counters map[string][]counterData) err
 				Build()
 
 			if _, err := collectors.InvokeRestCall(client, href, logging.Get()); err != nil {
-				log.Info().Msgf("%s", href)
-				return err
+				return fmt.Errorf("failed to invoke rest href=%s call: %w", href, err)
 			}
 		}
 	}
@@ -101,7 +99,7 @@ func processRestCounters(client *rest2.Client) map[string][]counterData {
 
 func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path string, currentVersion string, client *rest2.Client) map[string][]counterData) map[string][]counterData {
 	result := make(map[string][]counterData)
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to read directory:")
 		}
@@ -119,10 +117,6 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 		return nil
 	})
 
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to read template:")
-		return nil
-	}
 	return result
 }
 
