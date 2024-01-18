@@ -69,26 +69,30 @@ func TestClientTimeout(t *testing.T) {
 		name         string
 		fromTemplate string
 		want         time.Duration
+		display      string
 		hasErr       bool
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
 	tests := []test{
-		{"no units", "180", 180 * time.Second, false},
-		{"no units", "123", 123 * time.Second, false},
-		{"empty", "", timeout, true},
-		{"zero", "0", 0 * time.Second, false},
-		{"with units", "5m4s", 5*time.Minute + 4*time.Second, false},
-		{"invalid", "bob", timeout, true},
+		{"no units", "180", 180 * time.Second, "180", false},
+		{"no units", "123", 123 * time.Second, "123", false},
+		{"empty", "", timeout, "30s", true},
+		{"zero", "0", 0 * time.Second, "0", false},
+		{"with units", "5m4s", 5*time.Minute + 4*time.Second, "5m4s", false},
+		{"invalid", "bob", timeout, "30s", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			timeout, err := parseClientTimeout(tt.fromTemplate)
+			clientTimeout, err := parseClientTimeout(tt.fromTemplate)
 			if err != nil && !tt.hasErr {
 				t.Errorf("parseClientTimeout() error = %v", err)
 			}
-			if timeout != tt.want {
-				t.Errorf("parseClientTimeout got=[%s] want=[%s]", timeout.String(), tt.want.String())
+			if err != nil && tt.display != clientTimeout.String() {
+				t.Errorf("clientTimeout.String() got=%s want=%s", clientTimeout.String(), tt.display)
+			}
+			if clientTimeout != tt.want {
+				t.Errorf("parseClientTimeout got=[%s] want=[%s]", clientTimeout.String(), tt.want.String())
 				return
 			}
 		})

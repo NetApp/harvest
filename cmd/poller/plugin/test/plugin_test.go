@@ -118,7 +118,7 @@ func TestMultipleRule(t *testing.T) {
 	var status *matrix.Metric
 	var expected uint8
 	if status = m.GetMetric("new_status"); status == nil {
-		t.Error("metric [status] missing")
+		t.Fatal("metric [status] missing")
 	}
 
 	expected = 1

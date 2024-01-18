@@ -284,7 +284,7 @@ func (n *Node) searchAncestor(ancestor string) *Node {
 	if p == nil {
 		return nil
 	}
-	if p != nil && p.GetNameS() == ancestor {
+	if p.GetNameS() == ancestor {
 		return n
 	}
 	return p.searchAncestor(ancestor)
@@ -415,11 +415,11 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 		} else {
 			newPath = slices.Clone(currentPath)
 		}
-		//fmt.Printf(" -> current_path=%v \t new_path=%v\n", currentPath, newPath)
+		// fmt.Printf(" -> current_path=%v \t new_path=%v\n", currentPath, newPath)
 		for _, path := range paths {
 			if slices.Equal(newPath, path) {
 				matches = append(matches, node.GetContentS())
-				//fmt.Println("    MATCH!")
+				// fmt.Println("    MATCH!")
 				break
 			}
 		}
@@ -432,7 +432,7 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 
 	search(n, []string{})
 
-	//fmt.Printf("matches (%d):\n%v\n", len(matches), matches)
+	// fmt.Printf("matches (%d):\n%v\n", len(matches), matches)
 	return matches, len(matches) > 0
 }
 

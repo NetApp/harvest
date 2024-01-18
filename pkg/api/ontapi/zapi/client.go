@@ -21,7 +21,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode"
 )
 
 const (
@@ -122,26 +121,23 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	return &client, nil
 }
 
+// parseClientTimeout converts clientTimeout to a duration
+// two formats are converted:
+// 1. a normal Go duration. e.g., 123m -> 123m
+// 2. sequences of numbers are converted to that many seconds. e.g., 123 -> 123s
+// If both conversions fail, return the defaultTimeout and an error
 func parseClientTimeout(clientTimeout string) (time.Duration, error) {
-	// does clientTimeout contain non digits?
-	charIndex := strings.IndexFunc(clientTimeout, func(r rune) bool {
-		return !unicode.IsDigit(r)
-	})
-	if charIndex != -1 {
-		duration, err := time.ParseDuration(clientTimeout)
-		if err != nil {
-			timeout, _ := time.ParseDuration(DefaultTimeout)
-			return timeout, err
-		}
+	// Assume clientTimeout is a normal Go duration
+	duration, err := time.ParseDuration(clientTimeout)
+	if err == nil { // is a normal Go duration
 		return duration, nil
 	}
-	t, err := strconv.Atoi(clientTimeout)
-	if err != nil {
-		// when there is an error return the default timeout
-		timeout, _ := time.ParseDuration(DefaultTimeout)
-		return timeout, nil //nolint:nilerr
+	digits, err2 := strconv.Atoi(clientTimeout)
+	if err2 != nil {
+		defaultDuration, _ := time.ParseDuration(DefaultTimeout)
+		return defaultDuration, err2
 	}
-	return time.Duration(t) * time.Second, nil
+	return time.Duration(digits) * time.Second, nil
 }
 
 // Init connects to the cluster and retrieves system info

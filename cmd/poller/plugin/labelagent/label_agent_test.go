@@ -371,15 +371,15 @@ func TestValueToNumRule(t *testing.T) {
 	}
 
 	if status = m.GetMetric("new_status"); status == nil {
-		t.Error("metric [status] missing")
+		t.Fatal("metric [status] missing")
 	}
 
 	if stage = m.GetMetric("new_stage"); stage == nil {
-		t.Error("metric [stage] missing")
+		t.Fatal("metric [stage] missing")
 	}
 
 	if outage = m.GetMetric("new_outage"); outage == nil {
-		t.Error("metric [outage] missing")
+		t.Fatal("metric [outage] missing")
 	}
 
 	// check "status" for instanceA
@@ -472,15 +472,15 @@ func TestValueToNumRegexRule(t *testing.T) {
 	}
 
 	if status = m.GetMetric("status"); status == nil {
-		t.Error("metric [status] missing")
+		t.Fatal("metric [status] missing")
 	}
 
 	if output = m.GetMetric("output"); output == nil {
-		t.Error("metric [output] missing")
+		t.Fatal("metric [output] missing")
 	}
 
 	if result = m.GetMetric("result"); result == nil {
-		t.Error("metric [result] missing")
+		t.Fatal("metric [result] missing")
 	}
 
 	// check "status" for instanceA
