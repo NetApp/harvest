@@ -138,9 +138,6 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 		r := bytes.NewReader(c.buffer.Bytes())
 		return io.NopCloser(r), nil
 	}
-	if err != nil {
-		return nil, err
-	}
 
 	result, err := c.invokeWithAuthRetry()
 	return result, err

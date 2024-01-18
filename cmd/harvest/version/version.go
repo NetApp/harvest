@@ -76,7 +76,7 @@ func checkLatest() {
 }
 
 func isNewerAvailable(current string, remote string) (bool, error) {
-	//fmt.Printf("isNewerAvail cur=%s remote=%s ", current, remote)
+	// fmt.Printf("isNewerAvail cur=%s remote=%s ", current, remote)
 	if remote == current {
 		return false, nil
 	}
@@ -118,6 +118,7 @@ func latestRelease() (string, error) {
 			lastSlash := strings.LastIndex(location.String(), "/")
 			return location.String()[lastSlash+1:], nil
 		}
+		return "", fmt.Errorf(" error checking GitHub %w", err)
 	}
 	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()

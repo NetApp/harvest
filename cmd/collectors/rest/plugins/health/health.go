@@ -462,7 +462,7 @@ func (h *Health) collectShelfAlerts() {
 		errorSeverity := record.Get("error_severity").String()
 		errorText := record.Get("error_text").String()
 
-		//errorSeverity possible values are unknown|notice|warning|error|critical
+		// errorSeverity possible values are unknown|notice|warning|error|critical
 		if errorSeverity == "error" || errorSeverity == "critical" || errorSeverity == "warning" {
 			instance, err = mat.NewInstance(shelf)
 			if err != nil {
@@ -474,7 +474,7 @@ func (h *Health) collectShelfAlerts() {
 			instance.SetLabel("error_text", errorText)
 			if errorSeverity == "error" || errorSeverity == "critical" {
 				instance.SetLabel(severityLabel, string(errr))
-			} else if errorSeverity == "warning" {
+			} else {
 				instance.SetLabel(severityLabel, string(warning))
 			}
 

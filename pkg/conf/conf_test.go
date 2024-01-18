@@ -310,7 +310,11 @@ func resetConfig() {
 func TestMultiplePollerFiles(t *testing.T) {
 	t.Helper()
 	resetConfig()
-	_, err := LoadHarvestConfig("testdata/pollerFiles/harvest.yml")
+	configYaml := "testdata/pollerFiles/harvest.yml"
+	_, err := LoadHarvestConfig(configYaml)
+	if err == nil {
+		t.Fatalf("want errors loading config: %s, got no errors", configYaml)
+	}
 
 	wantNumErrs := 2
 	numErrs := strings.Count(err.Error(), "\n") + 1
