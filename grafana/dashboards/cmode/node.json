@@ -41,6 +41,12 @@
       "version": ""
     },
     {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -71,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1679986832818,
+  "iteration": 1705065315225,
   "links": [
     {
       "asDropdown": true,
@@ -1165,7 +1171,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 18
+            "y": 22
           },
           "id": 54,
           "options": {
@@ -1283,7 +1289,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 18
+            "y": 22
           },
           "id": 55,
           "options": {
@@ -1392,7 +1398,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 23
           },
           "id": 109,
           "options": {
@@ -1413,7 +1419,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopNicUtilPercent\"})",
+              "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{node}} - {{nic}}",
               "refId": "A"
@@ -1484,7 +1490,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 23
           },
           "id": 110,
           "options": {
@@ -1505,7 +1511,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCUtilPercent\"})",
+              "expr": "fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} {{svm}} - {{node}} -{{port}}",
               "refId": "A"
@@ -1574,7 +1580,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 31
           },
           "id": 111,
           "options": {
@@ -1664,7 +1670,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 31
           },
           "id": 112,
           "options": {
@@ -1765,7 +1771,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 20
+            "y": 24
           },
           "id": 30,
           "options": {
@@ -1870,7 +1876,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 20
+            "y": 24
           },
           "id": 31,
           "options": {
@@ -1970,7 +1976,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 20
+            "y": 24
           },
           "id": 32,
           "options": {
@@ -2081,7 +2087,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 29
+            "y": 33
           },
           "id": 41,
           "options": {
@@ -2199,7 +2205,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 29
+            "y": 33
           },
           "id": 43,
           "options": {
@@ -2317,7 +2323,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 29
+            "y": 33
           },
           "id": 42,
           "options": {
@@ -2438,7 +2444,7 @@
             "h": 6,
             "w": 4,
             "x": 0,
-            "y": 21
+            "y": 25
           },
           "id": 90,
           "options": {
@@ -2503,7 +2509,7 @@
             "h": 6,
             "w": 4,
             "x": 4,
-            "y": 21
+            "y": 25
           },
           "id": 92,
           "options": {
@@ -2568,7 +2574,7 @@
             "h": 6,
             "w": 4,
             "x": 8,
-            "y": 21
+            "y": 25
           },
           "id": 93,
           "options": {
@@ -2651,7 +2657,7 @@
             "h": 6,
             "w": 6,
             "x": 12,
-            "y": 21
+            "y": 25
           },
           "id": 95,
           "options": {
@@ -2771,7 +2777,7 @@
             "h": 6,
             "w": 6,
             "x": 18,
-            "y": 21
+            "y": 25
           },
           "id": 97,
           "options": {
@@ -2900,7 +2906,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 27
+            "y": 31
           },
           "id": 99,
           "options": {
@@ -2995,7 +3001,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 27
+            "y": 31
           },
           "id": 100,
           "options": {
@@ -3091,7 +3097,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 27
+            "y": 31
           },
           "id": 101,
           "options": {
@@ -3185,7 +3191,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 22
+            "y": 26
           },
           "id": 68,
           "options": {
@@ -3244,7 +3250,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 22
+            "y": 26
           },
           "id": 63,
           "options": {
@@ -3336,7 +3342,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 22
+            "y": 26
           },
           "id": 64,
           "options": {
@@ -3427,7 +3433,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 22
+            "y": 26
           },
           "id": 65,
           "options": {
@@ -3529,7 +3535,7 @@
             "h": 5,
             "w": 3,
             "x": 0,
-            "y": 23
+            "y": 27
           },
           "id": 84,
           "options": {
@@ -3586,7 +3592,7 @@
             "h": 5,
             "w": 3,
             "x": 3,
-            "y": 23
+            "y": 27
           },
           "id": 69,
           "options": {
@@ -3677,7 +3683,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 23
+            "y": 27
           },
           "id": 72,
           "options": {
@@ -3769,7 +3775,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 23
+            "y": 27
           },
           "id": 73,
           "options": {
@@ -3861,7 +3867,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 23
+            "y": 27
           },
           "id": 74,
           "options": {
@@ -3943,7 +3949,7 @@
             "h": 5,
             "w": 3,
             "x": 0,
-            "y": 24
+            "y": 28
           },
           "id": 122,
           "options": {
@@ -4001,7 +4007,7 @@
             "h": 5,
             "w": 3,
             "x": 3,
-            "y": 24
+            "y": 28
           },
           "id": 124,
           "options": {
@@ -4093,7 +4099,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 24
+            "y": 28
           },
           "id": 120,
           "options": {
@@ -4185,7 +4191,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 24
+            "y": 28
           },
           "id": 126,
           "options": {
@@ -4277,7 +4283,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 24
+            "y": 28
           },
           "id": 128,
           "options": {
@@ -4359,7 +4365,7 @@
             "h": 5,
             "w": 3,
             "x": 0,
-            "y": 25
+            "y": 29
           },
           "id": 77,
           "options": {
@@ -4416,7 +4422,7 @@
             "h": 5,
             "w": 3,
             "x": 3,
-            "y": 25
+            "y": 29
           },
           "id": 78,
           "options": {
@@ -4507,7 +4513,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 25
+            "y": 29
           },
           "id": 79,
           "options": {
@@ -4599,7 +4605,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 25
+            "y": 29
           },
           "id": 80,
           "options": {
@@ -4691,7 +4697,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 25
+            "y": 29
           },
           "id": 81,
           "options": {
@@ -4736,7 +4742,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 29
       },
       "id": 38,
       "panels": [
@@ -4746,7 +4752,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 30
           },
           "id": 91,
           "options": {
@@ -4793,7 +4799,19 @@
                 }
               },
               "mappings": [],
-              "thresholds": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
               "unit": "short"
             },
             "overrides": []
@@ -4802,7 +4820,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 32
           },
           "id": 82,
           "options": {
@@ -4823,7 +4841,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, rw_ctx_nfs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"$TopNFSRewinds\"})",
+              "expr": "rw_ctx_nfs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(rw_ctx_nfs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{metric}}",
               "refId": "A"
@@ -4872,7 +4890,19 @@
                 }
               },
               "mappings": [],
-              "thresholds": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
               "unit": "short"
             },
             "overrides": []
@@ -4881,7 +4911,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 32
           },
           "id": 83,
           "options": {
@@ -4902,7 +4932,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, rw_ctx_nfs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"$TopNFSGiveups\"})",
+              "expr": "rw_ctx_nfs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(rw_ctx_nfs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{node}} - {{metric}}",
@@ -4952,7 +4982,19 @@
                 }
               },
               "mappings": [],
-              "thresholds": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
               "unit": "short"
             },
             "overrides": []
@@ -4961,7 +5003,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 41
           },
           "id": 85,
           "options": {
@@ -4982,7 +5024,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, rw_ctx_cifs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"$TopCIFSRewinds\"})",
+              "expr": "rw_ctx_cifs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(rw_ctx_cifs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{metric}}",
               "refId": "A"
@@ -5031,7 +5073,19 @@
                 }
               },
               "mappings": [],
-              "thresholds": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
               "unit": "short"
             },
             "overrides": []
@@ -5040,7 +5094,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 41
           },
           "id": 86,
           "options": {
@@ -5061,7 +5115,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, rw_ctx_cifs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"$TopCIFSGiveups\"})",
+              "expr": "rw_ctx_cifs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(rw_ctx_cifs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}} - {{metric}}",
@@ -5111,7 +5165,19 @@
                 }
               },
               "mappings": [],
-              "thresholds": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
               "unit": "short"
             },
             "overrides": []
@@ -5120,7 +5186,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 40
+            "y": 50
           },
           "id": 87,
           "options": {
@@ -5141,7 +5207,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, rw_ctx_qos_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopQoSRewinds\"})",
+              "expr": "rw_ctx_qos_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(rw_ctx_qos_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -5191,7 +5257,19 @@
                 }
               },
               "mappings": [],
-              "thresholds": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
               "unit": "short"
             },
             "overrides": []
@@ -5200,7 +5278,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 40
+            "y": 50
           },
           "id": 89,
           "options": {
@@ -5221,7 +5299,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, rw_ctx_qos_flowcontrol{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopQoSFlowcontrol\"})",
+              "expr": "rw_ctx_qos_flowcontrol{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(rw_ctx_qos_flowcontrol{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -5442,29 +5520,6 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNicUtilPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*nic=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
         "description": null,
         "error": null,
@@ -5480,29 +5535,6 @@
         },
         "refresh": 2,
         "regex": ".*nic=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCUtilPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
@@ -5529,144 +5561,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "Prometheus",
-        "definition": "query_result(topk($TopResources, avg_over_time(rw_ctx_nfs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNFSRewinds",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(rw_ctx_nfs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*metric=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "Prometheus",
-        "definition": "query_result(topk($TopResources, avg_over_time(rw_ctx_nfs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNFSGiveups",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(rw_ctx_nfs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*metric=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "Prometheus",
-        "definition": "query_result(topk($TopResources, avg_over_time(rw_ctx_cifs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopCIFSRewinds",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(rw_ctx_cifs_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*metric=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "Prometheus",
-        "definition": "query_result(topk($TopResources, avg_over_time(rw_ctx_cifs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopCIFSGiveups",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(rw_ctx_cifs_giveups{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*metric=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "Prometheus",
-        "definition": "query_result(topk($TopResources, avg_over_time(rw_ctx_qos_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQoSRewinds",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(rw_ctx_qos_rewinds{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "Prometheus",
-        "definition": "query_result(topk($TopResources, avg_over_time(rw_ctx_qos_flowcontrol{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQoSFlowcontrol",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(rw_ctx_qos_flowcontrol{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -5690,5 +5584,5 @@
   "timezone": "",
   "title": "ONTAP: Node",
   "uid": "",
-  "version": 7
+  "version": 8
 }

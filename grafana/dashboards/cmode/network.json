@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1679463827503,
+  "iteration": 1705064718442,
   "links": [
     {
       "asDropdown": true,
@@ -799,7 +799,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 12
           },
           "id": 58,
           "interval": "",
@@ -975,7 +975,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 23
           },
           "id": 12,
           "options": {
@@ -996,7 +996,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetSendXput\"})",
+              "expr": "nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"} \n  and \ntopk($TopResources, avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
@@ -1068,7 +1068,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 23
           },
           "id": 28,
           "options": {
@@ -1089,7 +1089,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopEthernetReceiveXput\"})",
+              "expr": "nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"} \n  and \ntopk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
               "refId": "A"
@@ -1161,7 +1161,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 32
+            "y": 33
           },
           "id": 61,
           "options": {
@@ -1181,7 +1181,8 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "exemplar": false,
+              "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"} \n  and \ntopk($TopResources, avg_over_time(nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} {{nic}}",
               "refId": "A"
@@ -1252,7 +1253,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 32
+            "y": 33
           },
           "id": 29,
           "options": {
@@ -1286,7 +1287,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources NICs by Send Errors",
+          "title": "NICs Send Errors by Cluster",
           "type": "timeseries"
         },
         {
@@ -1349,7 +1350,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 32
+            "y": 33
           },
           "id": 30,
           "options": {
@@ -1395,7 +1396,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources NICs by Receive Errors",
+          "title": "NICs Receive Errors by Cluster",
           "type": "timeseries"
         }
       ],
@@ -1583,7 +1584,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 13
           },
           "id": 71,
           "interval": "",
@@ -1661,7 +1662,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 23
+            "y": 24
           },
           "id": 117,
           "options": {
@@ -1682,7 +1683,19 @@
                 "filterable": true
               },
               "mappings": [],
-              "thresholds": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
               "unit": "string"
             },
             "overrides": [
@@ -1768,7 +1781,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 25
+            "y": 26
           },
           "id": 115,
           "interval": "",
@@ -1937,7 +1950,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 36
+            "y": 37
           },
           "id": 67,
           "options": {
@@ -1958,7 +1971,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendXput\"})",
+              "expr": "fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2030,7 +2043,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 36
+            "y": 37
           },
           "id": 69,
           "options": {
@@ -2051,7 +2064,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveXput\"})",
+              "expr": "fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -2122,7 +2135,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 46
+            "y": 47
           },
           "id": 77,
           "options": {
@@ -2143,7 +2156,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCSendLatency\"})",
+              "expr": "fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2215,7 +2228,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 46
+            "y": 47
           },
           "id": 78,
           "options": {
@@ -2236,7 +2249,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCReceiveLatency\"})",
+              "expr": "fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -2308,7 +2321,7 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 56
+            "y": 57
           },
           "id": 75,
           "options": {
@@ -2365,7 +2378,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources FCPs by Transmission interrupts",
+          "title": "FCPs Transmission interrupts",
           "type": "timeseries"
         },
         {
@@ -2428,7 +2441,7 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 56
+            "y": 57
           },
           "id": 76,
           "options": {
@@ -2491,7 +2504,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources FCPs by Transmission errors",
+          "title": "FCPs Transmission errors",
           "type": "timeseries"
         },
         {
@@ -2554,7 +2567,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 56
+            "y": 57
           },
           "id": 73,
           "options": {
@@ -2575,7 +2588,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkDown\"})",
+              "expr": "fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -2646,7 +2659,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 56
+            "y": 57
           },
           "id": 74,
           "options": {
@@ -2667,7 +2680,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCLinkFailure\"})",
+              "expr": "fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -2807,7 +2820,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 14
           },
           "id": 98,
           "interval": "",
@@ -2928,7 +2941,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 25
           },
           "id": 100,
           "options": {
@@ -2949,7 +2962,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendXPut\"})",
+              "expr": "fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3021,7 +3034,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 25
           },
           "id": 102,
           "options": {
@@ -3042,7 +3055,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveXPut\"})",
+              "expr": "fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -3113,7 +3126,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 34
+            "y": 35
           },
           "id": 104,
           "options": {
@@ -3134,7 +3147,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVSendLatency\"})",
+              "expr": "fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3206,7 +3219,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 34
+            "y": 35
           },
           "id": 106,
           "options": {
@@ -3227,7 +3240,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCNVReceiveLatency\"})",
+              "expr": "fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"} \n  and \ntopk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[$__range] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3631,282 +3644,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopEthernetSendXput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*nic=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopEthernetReceiveXput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*nic=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCSendXput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCReceiveXput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCSendLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCReceiveLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCLinkDown",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_link_down{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCLinkFailure",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_link_failure{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$FCP\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCNVSendXPut",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCNVReceiveXPut",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCNVSendLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCNVReceiveLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_nvmf_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -3930,5 +3667,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "",
-  "version": 7
+  "version": 8
 }

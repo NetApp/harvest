@@ -23,6 +23,18 @@
       "version": "1.0.0"
     },
     {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -51,11 +63,10 @@
   },
   "description": "",
   "editable": true,
-  "fiscalYearStartMonth": 0,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": "",
-  "iteration": 1679321054447,
+  "id": null,
+  "iteration": 1705066872201,
   "links": [
     {
       "asDropdown": true,
@@ -100,7 +111,7 @@
         "content": "This dashboard requires ONTAP 9.7+. One action is required to use this dashboard: <br>1. On Harvest, enable the Rest collector for OntapS3 template in your `harvest.yml` config for configuration metrics",
         "mode": "markdown"
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "type": "text"
     },
     {
@@ -266,7 +277,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -488,7 +499,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$TopS3LogicalUsedSize\"})",
+          "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"} \n  and \ntopk($TopResources, avg_over_time(ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[$__range] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} - {{bucket}}",
@@ -606,7 +617,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$TopS3UsedPercent\"})",
+          "expr": "ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"} \n  and \ntopk($TopResources, avg_over_time(ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[$__range] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} - {{bucket}}",
@@ -685,7 +696,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.4.11",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
@@ -746,7 +757,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 35,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [
     "harvest",
@@ -761,6 +772,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -778,8 +791,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(ontaps3_labels{system_type!=\"7mode\"}, datacenter)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": true,
         "name": "Datacenter",
         "options": [],
@@ -802,8 +818,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(ontaps3_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "multiFormat": "glob",
         "name": "Cluster",
@@ -824,8 +843,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "multiFormat": "glob",
         "name": "SVM",
@@ -846,8 +868,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, bucket)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "multiFormat": "glob",
         "name": "Bucket",
@@ -953,52 +978,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": null,
-        "definition": "query_result(topk($TopResources, avg_over_time(ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopS3LogicalUsedSize",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*bucket=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": null,
-        "definition": "query_result(topk($TopResources, avg_over_time(ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopS3UsedPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*bucket=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },

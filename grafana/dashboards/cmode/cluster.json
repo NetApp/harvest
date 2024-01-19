@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1691664436025,
+  "iteration": 1705052013312,
   "links": [
     {
       "asDropdown": true,
@@ -3294,7 +3294,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 49
+            "y": 91
           },
           "id": 188,
           "options": {
@@ -3350,7 +3350,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 49
+            "y": 91
           },
           "id": 189,
           "options": {
@@ -3406,7 +3406,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 49
+            "y": 91
           },
           "id": 187,
           "options": {
@@ -3492,7 +3492,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 53
+            "y": 95
           },
           "id": 195,
           "options": {
@@ -3576,7 +3576,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 53
+            "y": 95
           },
           "id": 192,
           "options": {
@@ -3660,7 +3660,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 61
+            "y": 103
           },
           "id": 193,
           "options": {
@@ -3744,7 +3744,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 61
+            "y": 103
           },
           "id": 196,
           "options": {
@@ -3828,7 +3828,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 69
+            "y": 111
           },
           "id": 191,
           "options": {
@@ -3912,7 +3912,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 69
+            "y": 111
           },
           "id": 194,
           "options": {
@@ -4013,7 +4013,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 50
+            "y": 38
           },
           "id": 216,
           "options": {
@@ -4033,13 +4033,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_avg_latency{cluster=~\"$Cluster\", svm=~\"$TopSVMLatency\"}",
+              "expr": "svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
             }
           ],
-          "title": "Top Latency",
+          "title": "Top $TopResources Latency",
           "type": "timeseries"
         },
         {
@@ -4099,7 +4099,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 50
+            "y": 38
           },
           "id": 218,
           "options": {
@@ -4127,7 +4127,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top Throughput",
+          "title": "Top $TopResources Throughput",
           "type": "timeseries"
         },
         {
@@ -4187,7 +4187,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 50
+            "y": 38
           },
           "id": 219,
           "options": {
@@ -4207,7 +4207,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_total_ops{cluster=~\"$Cluster\", svm=~\"$TopSVMIOPs\"}",
+              "expr": "svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -4215,7 +4215,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top IOPs",
+          "title": "Top $TopResources IOPs",
           "type": "timeseries"
         }
       ],
@@ -4424,52 +4424,6 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopSVMIOPs",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopSVMLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
         "description": null,
         "error": null,
@@ -4579,5 +4533,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 21
+  "version": 22
 }

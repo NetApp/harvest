@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1701755150043,
+  "iteration": 1705298276949,
   "links": [
     {
       "asDropdown": true,
@@ -203,7 +203,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadOps\"})",
+          "expr": "qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -290,7 +290,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWriteOps\"})",
+          "expr": "qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -377,7 +377,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSOtherOps\"})",
+          "expr": "qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -464,7 +464,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSOps\"})",
+          "expr": "qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -551,7 +551,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadData\"})",
+          "expr": "qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -638,7 +638,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSwriteData\"})",
+          "expr": "qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -725,7 +725,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadLatency\"})",
+          "expr": "qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -812,7 +812,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSWriteLatency\"})",
+          "expr": "qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -899,7 +899,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSLatency\"})",
+          "expr": "qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -986,7 +986,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSConcurrency\"})",
+          "expr": "qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -1090,6 +1090,7 @@
             {
               "exemplar": false,
               "expr": "(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSIOPsPercent\"} / on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1675,7 +1676,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 58
+            "y": 60
           },
           "id": 172,
           "options": {
@@ -1696,7 +1697,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeBamboo\", metric=\"bamboo_ssd\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1763,7 +1764,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 58
+            "y": 60
           },
           "id": 176,
           "options": {
@@ -1784,7 +1785,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeCache\", metric=\"cache\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1851,7 +1852,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 68
+            "y": 70
           },
           "id": 177,
           "options": {
@@ -1872,7 +1873,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeCloud\", metric=\"cloud\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1939,7 +1940,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 68
+            "y": 70
           },
           "id": 178,
           "options": {
@@ -1960,7 +1961,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeClouds2c\", metric=\"cloud_s2c\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2027,7 +2028,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 78
+            "y": 80
           },
           "id": 179,
           "options": {
@@ -2048,7 +2049,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeDisk\", metric=\"disk\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2115,7 +2116,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 78
+            "y": 80
           },
           "id": 180,
           "options": {
@@ -2136,7 +2137,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeExtCache\", metric=\"ext_cache\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2203,7 +2204,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 88
+            "y": 90
           },
           "id": 181,
           "options": {
@@ -2224,7 +2225,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeFcmiss\", metric=\"fc_miss\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2291,7 +2292,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 88
+            "y": 90
           },
           "id": 182,
           "options": {
@@ -2312,7 +2313,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeHyaCache\", metric=\"hya_cache\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2379,7 +2380,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 98
+            "y": 100
           },
           "id": 183,
           "options": {
@@ -2400,7 +2401,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeHyahdd\", metric=\"hya_hdd\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2467,7 +2468,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 98
+            "y": 100
           },
           "id": 184,
           "options": {
@@ -2488,7 +2489,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSReadIOTypeHyaNon\", metric=\"hya_non_cache\"})",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2574,7 +2575,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 60
+            "y": 61
           },
           "id": 187,
           "options": {
@@ -2674,7 +2675,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 70
+            "y": 71
           },
           "id": 189,
           "options": {
@@ -2695,7 +2696,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceFrontend\",resource=\"frontend\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -2775,7 +2776,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 70
+            "y": 71
           },
           "id": 191,
           "options": {
@@ -2796,7 +2797,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceBackend\",resource=\"backend\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -2880,7 +2881,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 80
+            "y": 81
           },
           "id": 193,
           "options": {
@@ -2901,7 +2902,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceCluster\",resource=\"cluster\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -2985,7 +2986,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 80
+            "y": 81
           },
           "id": 195,
           "options": {
@@ -3006,7 +3007,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceCP\",resource=\"cp\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3090,7 +3091,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 90
+            "y": 91
           },
           "id": 197,
           "options": {
@@ -3111,7 +3112,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceDisk\",resource=\"disk\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3195,7 +3196,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 90
+            "y": 91
           },
           "id": 199,
           "options": {
@@ -3216,7 +3217,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceNetwork\",resource=\"network\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3300,7 +3301,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 100
+            "y": 101
           },
           "id": 201,
           "options": {
@@ -3321,7 +3322,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceNVLog\",resource=\"nvlog\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3405,7 +3406,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 100
+            "y": 101
           },
           "id": 203,
           "options": {
@@ -3426,7 +3427,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceSuspend\",resource=\"suspend\"}/on() group_left  sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"})\n)\n",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3510,7 +3511,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 110
+            "y": 111
           },
           "id": 205,
           "options": {
@@ -3531,7 +3532,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceThrottle\",resource=\"throttle\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3615,7 +3616,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 110
+            "y": 111
           },
           "id": 207,
           "options": {
@@ -3636,7 +3637,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceQosMin\",resource=\"qos_min\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"})\n)\n",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3720,7 +3721,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 120
+            "y": 121
           },
           "id": 209,
           "options": {
@@ -3741,7 +3742,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceCloud\",resource=\"cloud\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3824,7 +3825,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 120
+            "y": 121
           },
           "id": 211,
           "options": {
@@ -3845,7 +3846,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceSyncRepl\",resource=\"sync_repl\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3928,7 +3929,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 130
+            "y": 131
           },
           "id": 213,
           "options": {
@@ -3949,7 +3950,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceFlexcacheRal\",resource=\"flexcache_ral\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4032,7 +4033,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 130
+            "y": 131
           },
           "id": 215,
           "options": {
@@ -4053,7 +4054,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSServiceFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}/on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"}))",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4140,7 +4141,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 2
+            "y": 62
           },
           "id": 129,
           "options": {
@@ -4240,7 +4241,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 12
+            "y": 72
           },
           "id": 133,
           "options": {
@@ -4261,7 +4262,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, (qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFrontend\",resource=\"frontend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4341,7 +4342,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 12
+            "y": 72
           },
           "id": 131,
           "options": {
@@ -4362,7 +4363,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSBackend\",resource=\"backend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4446,7 +4447,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 82
           },
           "id": 135,
           "options": {
@@ -4467,7 +4468,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCluster\",resource=\"cluster\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4551,7 +4552,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 82
           },
           "id": 137,
           "options": {
@@ -4572,7 +4573,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCP\",resource=\"cp\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4656,7 +4657,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 92
           },
           "id": 139,
           "options": {
@@ -4677,7 +4678,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSDisk\",resource=\"disk\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4761,7 +4762,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 92
           },
           "id": 141,
           "options": {
@@ -4782,7 +4783,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNetwork\",resource=\"network\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4866,7 +4867,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 42
+            "y": 102
           },
           "id": 143,
           "options": {
@@ -4887,7 +4888,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSNVLog\",resource=\"nvlog\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4971,7 +4972,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 42
+            "y": 102
           },
           "id": 145,
           "options": {
@@ -4992,7 +4993,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSuspend\",resource=\"suspend\"}/on() group_left  sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5076,7 +5077,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 52
+            "y": 112
           },
           "id": 147,
           "options": {
@@ -5097,7 +5098,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSThrottle\",resource=\"throttle\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5181,7 +5182,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 52
+            "y": 112
           },
           "id": 149,
           "options": {
@@ -5202,7 +5203,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSQosMin\",resource=\"qos_min\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5286,7 +5287,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 62
+            "y": 122
           },
           "id": 153,
           "options": {
@@ -5307,7 +5308,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSCloud\",resource=\"cloud\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5390,7 +5391,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 62
+            "y": 122
           },
           "id": 159,
           "options": {
@@ -5411,7 +5412,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSSyncRepl\",resource=\"sync_repl\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5494,7 +5495,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 72
+            "y": 132
           },
           "id": 157,
           "options": {
@@ -5515,7 +5516,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheRal\",resource=\"flexcache_ral\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5598,7 +5599,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 72
+            "y": 132
           },
           "id": 151,
           "options": {
@@ -5619,7 +5620,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * topk($TopResources, qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$TopQOSFlexcacheSpinhi\",resource=\"flexcache_spinhi\"}/on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"}))",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5884,1110 +5885,6 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSBackend",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSFrontend",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSThrottle",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSNetwork",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSCluster",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSCP",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSQosMin",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSSuspend",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSDisk",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSCloud",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSNVLog",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSFlexcacheRal",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSFlexcacheSpinhi",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSSyncRepl",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSWriteOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSOtherOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadData",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSwriteData",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSWriteLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSConcurrency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"bamboo_ssd\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeBamboo",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"bamboo_ssd\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"cache\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeCache",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"cache\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"cloud\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeCloud",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"cloud\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"cloud_s2c\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeClouds2c",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"cloud_s2c\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"disk\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeDisk",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"disk\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"ext_cache\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeExtCache",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"ext_cache\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"fc_miss\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeFcmiss",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"fc_miss\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"hya_cache\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeHyaCache",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"hya_cache\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"hya_hdd\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeHyahdd",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"hya_hdd\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"hya_non_cache\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSReadIOTypeHyaNon",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",metric=\"hya_non_cache\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceBackend",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceFrontend",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceThrottle",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceNetwork",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceCluster",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceCP",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceQosMin",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceSuspend",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceDisk",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceCloud",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceNVLog",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceFlexcacheRal",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceFlexcacheSpinhi",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopQOSServiceSyncRepl",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"0\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
         "description": null,
         "error": null,
@@ -7052,5 +5949,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "",
-  "version": 4
+  "version": 5
 }

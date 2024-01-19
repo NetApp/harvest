@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1694717870555,
+  "iteration": 1705065859515,
   "links": [
     {
       "asDropdown": true,
@@ -808,7 +808,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopNodeSensorPower\"})",
+          "expr": "environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}}",
@@ -899,7 +899,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopNodeSensorAvgTemp\"})",
+          "expr": "environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -989,7 +989,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfPower\"})",
+          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -1080,7 +1080,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfAvgTemp\"})",
+          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -1171,10 +1171,10 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"})",
+          "expr": "aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{aggr}} ({{cluster}})",
+          "legendFormat": "{{cluster}} - {{aggr}}",
           "refId": "B"
         }
       ],
@@ -1265,13 +1265,13 @@
           "expr": "sum(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (derivedType,cluster)",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{derivedType}}- ({{cluster}})",
+          "legendFormat": "{{cluster}} - {{derivedType}}",
           "refId": "B"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total $TopResources Aggregates by Power Disk Type",
+      "title": "Aggregates Power by Disk Type",
       "type": "timeseries"
     },
     {
@@ -1356,7 +1356,7 @@
           "expr": "sum(aggr_disk_user_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
           "hide": false,
           "interval": "",
-          "legendFormat": "Reads  - {{aggr}} ({{cluster}})",
+          "legendFormat": "Reads  - {{cluster}} - {{aggr}}",
           "refId": "B"
         },
         {
@@ -1364,7 +1364,7 @@
           "expr": "sum(aggr_disk_user_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
           "hide": false,
           "interval": "",
-          "legendFormat": "Writes  - {{aggr}} ({{cluster}})",
+          "legendFormat": "Writes  - {{cluster}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -1763,7 +1763,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 52
+            "y": 58
           },
           "id": 86,
           "options": {
@@ -2193,7 +2193,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 59
           },
           "id": 33,
           "interval": "1m",
@@ -3216,98 +3216,6 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNodeSensorPower",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNodeSensorAvgTemp",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopShelfPower",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*shelf=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopShelfAvgTemp",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*shelf=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(topk($TopResources, avg_over_time(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
         "description": null,
         "error": null,
@@ -3360,5 +3268,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 12
+  "version": 13
 }

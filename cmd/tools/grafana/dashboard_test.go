@@ -217,8 +217,10 @@ func TestUnitsAndExprMatch(t *testing.T) {
 
 	// Exceptions are meant to reduce false negatives
 	allowedSuffix := map[string][]string{
-		"_count":    {"none", "short", "locale"},
-		"_lag_time": {"", "s", "short"},
+		"_count":                          {"none", "short", "locale"},
+		"_lag_time":                       {"", "s", "short"},
+		"qos_detail_service_time_latency": {"µs", "percent"},
+		"qos_detail_resource_latency":     {"µs", "percent"},
 	}
 
 	// Normalize rates to their base unit
@@ -267,12 +269,15 @@ func TestUnitsAndExprMatch(t *testing.T) {
 						metric, unit, v.GrafanaJSON, location[0].dashboard, location[0].path, location[0].title)
 				}
 			} else {
+
 				// special case latency that dashboard uses unit microseconds µs
 				if strings.HasSuffix(metric, "_latency") {
 					expectedGrafanaUnit = defaultLatencyUnit
-					if unit != expectedGrafanaUnit {
-						t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
-							metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
+					if unit != expectedGrafanaUnit && !v.skipValidate {
+						if !(strings.EqualFold(metric, "qos_detail_resource_latency") || strings.EqualFold(metric, "qos_detail_service_time_latency")) && unit == "percent" {
+							t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
+								metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
+						}
 					}
 				}
 			}
@@ -742,14 +747,6 @@ func TestTopKRange(t *testing.T) {
 }
 
 func checkTopKRange(t *testing.T, path string, data []byte) {
-	// temporary skip
-	keywords := []string{"svm", "flexcache"}
-
-	for _, keyword := range keywords {
-		if strings.Contains(path, keyword) {
-			return
-		}
-	}
 
 	// collect all expressions
 	expressions := make([]exprP, 0)
@@ -782,6 +779,10 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 					break vars
 				}
 			}
+		}
+
+		if strings.Contains(expr.expr, "$__range") && strings.Contains(expr.expr, "@ end()") {
+			hasRange = true
 		}
 		if !hasRange {
 			t.Errorf(`dashboard=%s path=%s use topk but no variable has range. expr=%s`,

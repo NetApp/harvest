@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1676298907178,
+  "iteration": 1705067256206,
   "links": [
     {
       "asDropdown": true,
@@ -672,7 +672,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfPower\"})",
+          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"} \n  and \ntopk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}[$__range] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -762,7 +762,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$TopShelfAvgTemp\"})",
+          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"} \n  and \ntopk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
           "refId": "A"
@@ -1456,7 +1456,7 @@
             "h": 11,
             "w": 13,
             "x": 0,
-            "y": 8
+            "y": 23
           },
           "id": 28,
           "links": [],
@@ -1473,7 +1473,7 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "repeat": "TempShelf",
           "repeatDirection": "h",
           "targets": [
@@ -1522,7 +1522,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 34
           },
           "id": 29,
           "links": [],
@@ -1539,7 +1539,7 @@
             "showUnfilled": true,
             "text": {}
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "repeat": "FanShelf",
           "targets": [
             {
@@ -1908,7 +1908,7 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": null,
         "multi": true,
         "name": "Cluster",
@@ -2042,52 +2042,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopShelfPower",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*shelf=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopShelfAvgTemp",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*shelf=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -2122,5 +2076,5 @@
   "timezone": "",
   "title": "ONTAP: Shelf",
   "uid": "",
-  "version": 7
+  "version": 8
 }
