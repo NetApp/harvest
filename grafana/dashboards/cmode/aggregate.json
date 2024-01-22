@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1687427229307,
+  "iteration": 1705045330029,
   "links": [
     {
       "asDropdown": true,
@@ -2495,7 +2495,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -2552,7 +2552,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -2608,7 +2608,7 @@
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.11",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "exemplar": false,
@@ -3507,7 +3507,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 65
+            "y": 57
           },
           "id": 67,
           "options": {
@@ -3605,7 +3605,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 65
+            "y": 57
           },
           "id": 70,
           "options": {
@@ -3704,7 +3704,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 65
+            "y": 57
           },
           "id": 68,
           "options": {
@@ -3823,7 +3823,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 73
+            "y": 65
           },
           "id": 71,
           "options": {
@@ -3934,7 +3934,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 73
+            "y": 65
           },
           "id": 69,
           "options": {
@@ -4051,7 +4051,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 82
+            "y": 58
           },
           "id": 195,
           "options": {
@@ -4075,7 +4075,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (aggr_space_performance_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggregatePerformanceTierFootprint\"}))",
+              "expr": "aggr_space_performance_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_performance_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{aggr}}",
@@ -4146,7 +4146,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 82
+            "y": 58
           },
           "id": 197,
           "options": {
@@ -4170,7 +4170,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggregatePerformanceTierFootprintPerc\"}))",
+              "expr": "aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{aggr}}",
@@ -4240,7 +4240,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 94
+            "y": 70
           },
           "id": 199,
           "options": {
@@ -4264,7 +4264,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$TopAggregateCapacityTierFootprint\"})",
+              "expr": "aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{aggr}}",
@@ -4286,7 +4286,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 106
+        "y": 58
       },
       "id": 81,
       "panels": [
@@ -4345,7 +4345,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 107
+            "y": 59
           },
           "id": 83,
           "options": {
@@ -4369,7 +4369,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsed\"})",
+              "expr": "volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4440,7 +4440,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 107
+            "y": 59
           },
           "id": 84,
           "options": {
@@ -4464,7 +4464,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSizeUsedPercent\"})",
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4534,7 +4534,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 119
+            "y": 71
           },
           "id": 87,
           "options": {
@@ -4558,7 +4558,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsed\"})",
+              "expr": "volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4629,7 +4629,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 119
+            "y": 71
           },
           "id": 85,
           "options": {
@@ -4653,7 +4653,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeSnapshotSizeUsedPercent\"})",
+              "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -4723,7 +4723,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 131
+            "y": 83
           },
           "id": 95,
           "options": {
@@ -4747,10 +4747,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (volume_performance_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumePerformanceTierFootprint\"}))",
+              "expr": "volume_performance_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_performance_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{volume}} ",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
             }
           ],
@@ -4818,7 +4818,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 131
+            "y": 83
           },
           "id": 97,
           "options": {
@@ -4842,10 +4842,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumePerformanceTierFootprintPerc\"}))",
+              "expr": "volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
             }
           ],
@@ -4912,7 +4912,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 143
+            "y": 95
           },
           "id": 99,
           "options": {
@@ -4936,10 +4936,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_capacity_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeCapacityTierFootprint\"})",
+              "expr": "volume_capacity_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_capacity_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{volume}} ",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
             }
           ],
@@ -5007,7 +5007,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 143
+            "y": 95
           },
           "id": 101,
           "options": {
@@ -5031,10 +5031,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$TopVolumeCapacityTierFootprintPerc\"})",
+              "expr": "volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{volume}}",
+              "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
             }
           ],
@@ -5053,7 +5053,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 155
+        "y": 59
       },
       "id": 28,
       "panels": [
@@ -5115,7 +5115,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 156
+            "y": 60
           },
           "id": 88,
           "options": {
@@ -5136,7 +5136,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeReadLatency\"})",
+              "expr": "volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -5204,7 +5204,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 156
+            "y": 60
           },
           "id": 89,
           "options": {
@@ -5225,7 +5225,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeReadThroughput\"})",
+              "expr": "volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -5294,7 +5294,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 156
+            "y": 60
           },
           "id": 90,
           "options": {
@@ -5315,7 +5315,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeReadIOPS\"})",
+              "expr": "volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -5383,7 +5383,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 165
+            "y": 69
           },
           "id": 91,
           "options": {
@@ -5404,7 +5404,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeWriteLatency\"})",
+              "expr": "volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -5472,7 +5472,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 165
+            "y": 69
           },
           "id": 92,
           "options": {
@@ -5493,7 +5493,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeWriteThroughput\"})",
+              "expr": "volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -5561,7 +5561,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 165
+            "y": 69
           },
           "id": 93,
           "options": {
@@ -5582,7 +5582,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\",volume=~\"$TopVolumeWriteIOPS\"})",
+              "expr": "volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[$__range] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -5661,7 +5661,7 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": null,
         "multi": true,
         "name": "Cluster",
@@ -5844,397 +5844,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopVolumeSizeUsed",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopVolumeSizeUsedPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopVolumeSnapshotSizeUsed",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopVolumeSnapshotSizeUsedPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeReadLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeReadThroughput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeReadIOPS",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeWriteLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeWriteThroughput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeWriteIOPS",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\".*$Aggregate.*\"}[${__range}])))\n",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,avg_over_time(volume_capacity_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeCapacityTierFootprint",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources,avg_over_time(volume_capacity_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,avg_over_time(volume_performance_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumePerformanceTierFootprint",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources,avg_over_time(volume_performance_tier_footprint{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,avg_over_time(volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeCapacityTierFootprintPerc",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources,avg_over_time(volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,avg_over_time(volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumePerformanceTierFootprintPerc",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources,avg_over_time(volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,avg_over_time(aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopAggregateCapacityTierFootprint",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources,avg_over_time(aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*aggr=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,avg_over_time(aggr_space_performance_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$Aggregate\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopAggregatePerformanceTierFootprint",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources,avg_over_time(aggr_space_performance_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$Aggregate\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*aggr=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,avg_over_time(aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$Aggregate\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopAggregatePerformanceTierFootprintPerc",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources,avg_over_time(aggr_space_performance_tier_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", aggr=~\"$Aggregate\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*aggr=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -6246,5 +5855,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "",
-  "version": 8
+  "version": 9
 }

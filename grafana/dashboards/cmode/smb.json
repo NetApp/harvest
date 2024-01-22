@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1682326279659,
+  "iteration": 1705067583809,
   "links": [
     {
       "asDropdown": true,
@@ -211,7 +211,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", client_ip=~\"$TopClientConnectionCount\"})",
+          "expr": "cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"} \n  and \ntopk($TopResources, avg_over_time(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{client_ip}} - {{protocol}}",
           "refId": "A"
@@ -1782,29 +1782,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopClientConnectionCount",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*client_ip=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -1828,5 +1805,5 @@
   "timezone": "",
   "title": "ONTAP: SMB",
   "uid": "",
-  "version": 3
+  "version": 4
 }

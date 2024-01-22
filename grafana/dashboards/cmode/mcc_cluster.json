@@ -72,7 +72,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1687428442343,
+  "iteration": 1705059143435,
   "links": [
     {
       "asDropdown": true,
@@ -1687,7 +1687,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 39
+            "y": 7
           },
           "id": 104,
           "links": [],
@@ -1780,7 +1780,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 39
+            "y": 7
           },
           "id": 108,
           "links": [],
@@ -1873,7 +1873,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 39
+            "y": 7
           },
           "id": 109,
           "links": [],
@@ -1966,7 +1966,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 15
           },
           "id": 103,
           "links": [],
@@ -2103,7 +2103,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,plex_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggr\",plex=~\"$TopDiskUtilizationPerPlex\"})",
+              "expr": "plex_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggr\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2338,7 +2338,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\", plex=~\"$TopUserReadsDiskPerPlex\"})",
+              "expr": "plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2434,7 +2434,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\", plex=~\"$TopUserWritesDiskPerPlex\"})",
+              "expr": "plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2527,7 +2527,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\", plex=~\"$TopDiskUserReadLatencyPerPlex\"})",
+              "expr": "plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -2618,7 +2618,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\", plex=~\"$TopDiskUserWriteLatencyPerPlex\"})",
+              "expr": "plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2706,7 +2706,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 81
+            "y": 9
           },
           "id": 75,
           "links": [],
@@ -2728,7 +2728,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", hostadapter=~\"$TopHostAdapterReadData\"}) by (node)",
+              "expr": "hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}\n  and \ntopk($TopResources, avg_over_time(hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}} - {{hostadapter}}",
@@ -2800,7 +2800,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 81
+            "y": 9
           },
           "id": 76,
           "links": [],
@@ -2822,7 +2822,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", hostadapter=~\"$TopHostAdapterWriteData\"}) by (node)",
+              "expr": "hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}\n  and \ntopk($TopResources, avg_over_time(hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}} - {{hostadapter}}",
@@ -2910,7 +2910,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 90
+            "y": 18
           },
           "id": 86,
           "links": [],
@@ -3003,7 +3003,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 90
+            "y": 18
           },
           "id": 100,
           "links": [],
@@ -3096,7 +3096,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 90
+            "y": 18
           },
           "id": 97,
           "links": [],
@@ -3189,7 +3189,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 98
+            "y": 26
           },
           "id": 98,
           "links": [],
@@ -3282,7 +3282,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 98
+            "y": 26
           },
           "id": 96,
           "links": [],
@@ -3375,7 +3375,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 98
+            "y": 26
           },
           "id": 99,
           "links": [],
@@ -3657,144 +3657,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopUserReadsDiskPerPlex",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*plex=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopUserWritesDiskPerPlex",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*plex=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopDiskUserWriteLatencyPerPlex",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*plex=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopDiskUserReadLatencyPerPlex",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*plex=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopHostAdapterReadData",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*hostadapter=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopHostAdapterWriteData",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*hostadapter=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -3835,5 +3697,5 @@
   "timezone": "browser",
   "title": "ONTAP: MetroCluster",
   "uid": "",
-  "version": 8
+  "version": 9
 }

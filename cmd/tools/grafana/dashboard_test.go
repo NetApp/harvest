@@ -171,6 +171,12 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		"IncludeRoot":  true,
 	}
 
+	excludeTypes := map[string]bool{
+		"textbox":    true,
+		"custom":     true,
+		"datasource": true,
+	}
+
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		name := value.Get("name").String()
 		if value.Get("name").String() == "DS_PROMETHEUS" {
@@ -196,9 +202,15 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 					name,
 				)
 			}
+			ttype := value.Get("type").String()
+			datasource := value.Get("datasource").String()
+			if !excludeTypes[ttype] && datasource != "${DS_PROMETHEUS}" {
+				t.Errorf("dashboard=%s var=%s has %s datasource should be ${DS_PROMETHEUS}", path, name, datasource)
+			}
 		}
 		return true
 	})
+
 	if !doesDsPromExist {
 		t.Errorf("dashboard=%s should define variable has DS_PROMETHEUS", path)
 	}
@@ -217,8 +229,10 @@ func TestUnitsAndExprMatch(t *testing.T) {
 
 	// Exceptions are meant to reduce false negatives
 	allowedSuffix := map[string][]string{
-		"_count":    {"none", "short", "locale"},
-		"_lag_time": {"", "s", "short"},
+		"_count":                          {"none", "short", "locale"},
+		"_lag_time":                       {"", "s", "short"},
+		"qos_detail_service_time_latency": {"µs", "percent"},
+		"qos_detail_resource_latency":     {"µs", "percent"},
 	}
 
 	// Normalize rates to their base unit
@@ -267,10 +281,15 @@ func TestUnitsAndExprMatch(t *testing.T) {
 						metric, unit, v.GrafanaJSON, location[0].dashboard, location[0].path, location[0].title)
 				}
 			} else {
+
 				// special case latency that dashboard uses unit microseconds µs
 				if strings.HasSuffix(metric, "_latency") {
 					expectedGrafanaUnit = defaultLatencyUnit
 					if unit != expectedGrafanaUnit {
+						// Check if this metric is in the allowedSuffix map and has a matching unit
+						if slices.Contains(allowedSuffix[metric], unit) {
+							continue
+						}
 						t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
 							metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
 					}
@@ -742,14 +761,6 @@ func TestTopKRange(t *testing.T) {
 }
 
 func checkTopKRange(t *testing.T, path string, data []byte) {
-	// temporary skip
-	keywords := []string{"svm", "flexcache"}
-
-	for _, keyword := range keywords {
-		if strings.Contains(path, keyword) {
-			return
-		}
-	}
 
 	// collect all expressions
 	expressions := make([]exprP, 0)
@@ -782,6 +793,11 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 					break vars
 				}
 			}
+		}
+
+		noWhitespace := strings.ReplaceAll(expr.expr, " ", "")
+		if strings.Contains(noWhitespace, "[$__range]@end()") {
+			hasRange = true
 		}
 		if !hasRange {
 			t.Errorf(`dashboard=%s path=%s use topk but no variable has range. expr=%s`,
