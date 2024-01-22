@@ -44,6 +44,7 @@ objects:
   Sensor:                      sensor.yaml
   Shelf:                       shelf.yaml
   SnapMirror:                  snapmirror.yaml
+  SnapMirrorActiveSync:        snapmirror_active_sync.yaml
   SnapshotPolicy:              snapshotpolicy.yaml
   Status:                      status.yaml
   Subsystem:                   subsystem.yaml

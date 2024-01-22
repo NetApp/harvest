@@ -1,0 +1,22 @@
+
+name:               SnapMirrorActiveSync
+query:              api/cluster/mediators
+object:             mediator
+
+counters:
+  - ^^uuid                       => uuid
+  - ^ip_address                  => ip_address
+  - ^peer_cluster.name           => peer_name
+  - ^peer_mediator_connectivity  => peer_connectivity
+  - ^port                        => port
+  - ^reachable                   => reachable
+
+export_options:
+  instance_keys:
+    - uuid
+  instance_labels:
+    - ip_address
+    - peer_connectivity
+    - peer_name
+    - port
+    - reachable
