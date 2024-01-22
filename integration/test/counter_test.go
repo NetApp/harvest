@@ -29,6 +29,8 @@ type counterData struct {
 
 var replacer = strings.NewReplacer("{", "", "}", "", "^^", "", "^", "")
 
+// TestCounters extracts non-hidden counters from all of the rest and restperf templates and then invokes an HTTP GET for each api path + counters.
+// Valid responses are status code = 200. Objects do not need to exist on the cluster, only the api path and counter names are checked.
 func TestCounters(t *testing.T) {
 	var (
 		poller *conf.Poller
@@ -99,7 +101,7 @@ func processRestCounters(client *rest2.Client) map[string][]counterData {
 
 func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path string, currentVersion string, client *rest2.Client) map[string][]counterData) map[string][]counterData {
 	result := make(map[string][]counterData)
-	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to read directory:")
 		}
@@ -116,6 +118,10 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 		}
 		return nil
 	})
+
+	if err != nil {
+		log.Fatal().Err(err).Msgf("failed to walk directory: %s", dir)
+	}
 
 	return result
 }
