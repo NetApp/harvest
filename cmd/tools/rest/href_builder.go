@@ -8,6 +8,7 @@ import (
 type HrefBuilder struct {
 	apiPath       string
 	fields        string
+	counterSchema string
 	filter        []string
 	queryFields   string
 	queryValue    string
@@ -26,6 +27,11 @@ func (b *HrefBuilder) APIPath(apiPath string) *HrefBuilder {
 
 func (b *HrefBuilder) Fields(fields []string) *HrefBuilder {
 	b.fields = strings.Join(fields, ",")
+	return b
+}
+
+func (b *HrefBuilder) CounterSchema(counterSchema []string) *HrefBuilder {
+	b.counterSchema = strings.Join(counterSchema, ",")
 	return b
 }
 
@@ -63,6 +69,7 @@ func (b *HrefBuilder) Build() string {
 
 	href.WriteString("?return_records=true")
 	addArg(&href, "&fields=", b.fields)
+	addArg(&href, "&counter_schemas=", b.counterSchema)
 	for _, f := range b.filter {
 		addArg(&href, "&", f)
 	}
