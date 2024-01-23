@@ -25,6 +25,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -36,6 +37,10 @@ const (
 	arrayKeyToken          = "#"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
+)
+
+var (
+	constituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 )
 
 var qosQuery = "api/cluster/counter/tables/qos"
@@ -69,10 +74,11 @@ type counter struct {
 }
 
 type perfProp struct {
-	isCacheEmpty  bool
-	counterInfo   map[string]*counter
-	latencyIoReqd int
-	qosLabels     map[string]string
+	isCacheEmpty     bool
+	counterInfo      map[string]*counter
+	latencyIoReqd    int
+	qosLabels        map[string]string
+	withConstituents bool
 }
 
 type metricResponse struct {
@@ -126,7 +132,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err = r.InitQOSLabels(); err != nil {
+	if err = r.InitQOS(); err != nil {
 		return err
 	}
 
@@ -137,7 +143,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	return nil
 }
 
-func (r *RestPerf) InitQOSLabels() error {
+func (r *RestPerf) InitQOS() error {
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 		qosLabels := r.Params.GetChildS("qos_labels")
 		if qosLabels == nil {
@@ -153,6 +159,17 @@ func (r *RestPerf) InitQOSLabels() error {
 				display = strings.TrimSpace(after)
 			}
 			r.perfProp.qosLabels[label] = display
+		}
+	}
+	if counters := r.Params.GetChildS("counters"); counters != nil {
+		refine := counters.GetChildS("refine")
+		if refine != nil {
+			withConstituents := refine.GetChildContentS("with_constituents")
+			if withConstituents == "false" {
+				r.perfProp.withConstituents = false
+			} else {
+				r.perfProp.withConstituents = true
+			}
 		}
 	}
 	return nil
@@ -1411,6 +1428,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 	if len(records) == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
+
 	for _, instanceData := range records {
 		var (
 			instanceKey string
@@ -1419,6 +1437,17 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 		if !instanceData.IsObject() {
 			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
 			continue
+		}
+
+		if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+			// The API endpoint api/storage/qos/workloads lacks an is_constituent filter, unlike qos-workload-get-iter. As a result, we must perform client-side filtering.
+			// Although the api/private/cli/qos/workload endpoint includes this filter, it doesn't provide an option to fetch all records, both constituent and flexgroup types.
+			if !r.perfProp.withConstituents {
+				if match := constituentRegex.FindStringSubmatch(instanceData.Get("volume").String()); len(match) == 3 {
+					// skip constituent
+					continue
+				}
+			}
 		}
 
 		// extract instance key(s)
