@@ -1,5 +1,5 @@
 
-name:               SnapMirrorActiveSync
+name:               Mediator
 query:              api/cluster/mediators
 object:             mediator
 
