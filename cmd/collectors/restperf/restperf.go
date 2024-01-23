@@ -74,11 +74,11 @@ type counter struct {
 }
 
 type perfProp struct {
-	isCacheEmpty     bool
-	counterInfo      map[string]*counter
-	latencyIoReqd    int
-	qosLabels        map[string]string
-	withConstituents bool
+	isCacheEmpty        bool
+	counterInfo         map[string]*counter
+	latencyIoReqd       int
+	qosLabels           map[string]string
+	disableConstituents bool
 }
 
 type metricResponse struct {
@@ -166,9 +166,7 @@ func (r *RestPerf) InitQOS() error {
 		if refine != nil {
 			withConstituents := refine.GetChildContentS("with_constituents")
 			if withConstituents == "false" {
-				r.perfProp.withConstituents = false
-			} else {
-				r.perfProp.withConstituents = true
+				r.perfProp.disableConstituents = true
 			}
 		}
 	}
@@ -1442,7 +1440,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 		if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 			// The API endpoint api/storage/qos/workloads lacks an is_constituent filter, unlike qos-workload-get-iter. As a result, we must perform client-side filtering.
 			// Although the api/private/cli/qos/workload endpoint includes this filter, it doesn't provide an option to fetch all records, both constituent and flexgroup types.
-			if !r.perfProp.withConstituents {
+			if r.perfProp.disableConstituents {
 				if match := constituentRegex.FindStringSubmatch(instanceData.Get("volume").String()); len(match) == 3 {
 					// skip constituent
 					continue
