@@ -22,6 +22,7 @@ objects:
   LIF:                         lif.yaml
   Health:                      health.yaml
   Lun:                         lun.yaml
+  MetroclusterCheck:           metrocluster_check.yaml
 #  Mediator:                    mediator.yaml
   Namespace:                   namespace.yaml
 #  NetConnections:              netconnections.yaml

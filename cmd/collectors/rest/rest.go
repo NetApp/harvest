@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/metroclustercheck"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/netroute"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/ontaps3service"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyadaptive"
@@ -424,6 +425,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return qospolicyadaptive.New(abc)
 	case "OntapS3Service":
 		return ontaps3service.New(abc)
+	case "MetroclusterCheck":
+		return metroclustercheck.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
