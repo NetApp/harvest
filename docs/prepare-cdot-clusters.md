@@ -91,6 +91,7 @@ Warnings are fine.
 
 ```bash
 security login role create -role harvest2-role -access readonly -cmddirname "cluster"
+security login role create -role harvest2-role -access readonly -cmddirname "event notification destination show"
 security login role create -role harvest2-role -access readonly -cmddirname "lun"
 security login role create -role harvest2-role -access readonly -cmddirname "metrocluster configuration-settings mediator add"
 security login role create -role harvest2-role -access readonly -cmddirname "network interface"
@@ -105,6 +106,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "sto
 security login role create -role harvest2-role -access readonly -cmddirname "storage encryption disk"
 security login role create -role harvest2-role -access readonly -cmddirname "storage iscsi-initiator show"
 security login role create -role harvest2-role -access readonly -cmddirname "storage shelf"
+security login role create -role harvest2-role -access readonly -cmddirname "system health alert show"
 security login role create -role harvest2-role -access readonly -cmddirname "system health status show"
 security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
