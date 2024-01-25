@@ -282,7 +282,9 @@ func (z *ZapiPerf) loadWorkloadClassQuery(defaultValue string) string {
 
 func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
 	// filter -> workload-class takes precedence over workload_class param at root level
+	// filter -> is-constituent takes precedence over refine -> with_constituents
 	workloadClass := ""
+	isConstituent := ""
 	counters := z.Params.GetChildS("counters")
 	if counters != nil {
 		filter := counters.GetChildS("filter")
@@ -294,20 +296,32 @@ func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
 				if name == "workload-class" {
 					workloadClass = content
 				}
+				if name == "is-constituent" {
+					isConstituent = content
+				}
 			}
 		}
 	}
-	if workloadClass != "" {
-		return
+	if workloadClass == "" {
+		var workloadClassQuery string
+		if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadVolumeClass)
+		} else {
+			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadClass)
+		}
+		query.NewChildS("workload-class", workloadClassQuery)
 	}
-
-	var workloadClassQuery string
-	if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
-		workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadVolumeClass)
-	} else {
-		workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadClass)
+	if isConstituent == "" {
+		if counters != nil {
+			refine := counters.GetChildS("refine")
+			if refine != nil {
+				isConstituent = refine.GetChildContentS("with_constituents")
+				if isConstituent == "false" {
+					query.NewChildS("is-constituent", isConstituent)
+				}
+			}
+		}
 	}
-	query.NewChildS("workload-class", workloadClassQuery)
 }
 
 // load an int parameter or use defaultValue
