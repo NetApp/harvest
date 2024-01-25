@@ -15,7 +15,7 @@
         <link rel="next" href="../prepare-fsx-clusters/">
       
       <link rel="icon" href="../assets/harvest.svg">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -1585,9 +1585,14 @@ Click on <em>Add</em> in the pop-up window to save.</p>
 <p>Verify there are no errors when you copy/paste these.
 Warnings are fine.</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;cluster&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;lun&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;metrocluster configuration-settings mediator add&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network fcp adapter show&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network interface&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network port show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network route show&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos adaptive-policy-group&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos policy-group&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos workload show&quot;</span>
@@ -1597,10 +1602,14 @@ security<span class="w"> </span>login<span class="w"> </span>role<span class="w"
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage aggregate&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage disk&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage encryption disk&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage failover show&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage iscsi-initiator show&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage shelf&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system chassis fru show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health alert show&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health status show&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health subsystem show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system license show&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;version&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;volume&quot;</span>
@@ -2013,10 +2022,10 @@ cluster):</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>
