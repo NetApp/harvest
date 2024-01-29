@@ -6,15 +6,21 @@ counters:
   - ^^uuid                                        => uuid
   - ^name                                         => volume
   - ^svm.name                                     => svm
+  # The 'filter' section is used to collect File System Analytics (FSA) for the top 20 volumes.
+  # This includes both FlexVol and FlexGroup volumes, sorted by maximum size.
   - filter:
-      - analytics.state=on
-      - order_by=space.used desc
-      - max_records=20
+      - analytics.state=on  # Ensure analytics is turned on
+      - order_by=space.used desc  # Sort volumes in descending order based on used space
+      - max_records=20  # Limit the records to the top 20 volumes
 
 plugins:
+  # The 'VolumeAnalytics' plugin collects analytics data from directories within each volume.
   - VolumeAnalytics:
+      # 'MaxDirectoryCount' specifies the number of directories to collect per volume.
+      # In this case, data is collected from up to 100 directories, prioritizing those with the highest used bytes.
       - MaxDirectoryCount: 100
-
+      # Using the plugin settings shown above, the VolumeAnalytics plugin will make an additional request for each volume. Those per-volume requests will look something like:
+      # api/storage/volumes/{uuid}/files?return_records=true&order_by=analytics.bytes_used+desc&type=directory&max_records=100
 
 
 
