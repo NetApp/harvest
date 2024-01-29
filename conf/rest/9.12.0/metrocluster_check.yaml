@@ -8,10 +8,10 @@ counters:
   - ^node.details        => node_detail
   - ^volume.details      => volume_detail
   - hidden_fields:
-      - cluster
-      - aggregate
-      - node
-      - volume
+      - cluster.details
+      - aggregate.details
+      - node.details
+      - volume.details
 
 plugins:
   - MetroclusterCheck     # Creates metrics from details collected above

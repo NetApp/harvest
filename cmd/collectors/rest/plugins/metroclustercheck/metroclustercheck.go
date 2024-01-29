@@ -20,6 +20,8 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 func (m *MetroclusterCheck) Init() error {
 
 	var err error
+	pluginMetrics := []string{"cluster_status", "node_status", "aggr_status", "volume_status"}
+	pluginLabels := []string{"result", "name", "node", "aggregate", "volume"}
 
 	if err = m.InitAbc(); err != nil {
 		return err
@@ -28,26 +30,16 @@ func (m *MetroclusterCheck) Init() error {
 	m.data = matrix.New(m.Parent+".Metrocluster", "metrocluster_check", "metrocluster_check")
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "check_result")
-	instanceKeys.NewChildS("", "check_name")
-	instanceKeys.NewChildS("", "node")
-	instanceKeys.NewChildS("", "aggregate")
-	instanceKeys.NewChildS("", "volume")
+	for _, label := range pluginLabels {
+		instanceKeys.NewChildS("", label)
+	}
 	m.data.SetExportOptions(exportOptions)
 
-	if err = m.createMetric("cluster_status"); err != nil {
-		return err
+	for _, metric := range pluginMetrics {
+		if err = m.createMetric(metric); err != nil {
+			return err
+		}
 	}
-	if err = m.createMetric("node_status"); err != nil {
-		return err
-	}
-	if err = m.createMetric("aggr_status"); err != nil {
-		return err
-	}
-	if err = m.createMetric("volume_status"); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -114,8 +106,8 @@ func (m *MetroclusterCheck) update(objectDetail string, object string) {
 				m.Logger.Error().Err(err).Str("arwInstanceKey", key).Msg("Failed to create arw instance")
 				continue
 			}
-			newDetailInstance.SetLabel("check_name", name)
-			newDetailInstance.SetLabel("check_result", result)
+			newDetailInstance.SetLabel("name", name)
+			newDetailInstance.SetLabel("result", result)
 			newDetailInstance.SetLabel("volume", volumeName.String())
 			newDetailInstance.SetLabel("aggregate", aggregateName.String())
 			newDetailInstance.SetLabel("node", nodeName.String())
