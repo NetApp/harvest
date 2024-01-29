@@ -127,29 +127,64 @@ security login role create -role harvest2-role -access readonly -cmddirname "vse
 Use this for password authentication
 
 ```bash
+# If the harvest2 user does not exist, you will be prompted to enter a password
 security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method password
-security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method password   
 ```
 
 Or this for certificate authentication
 
 ```bash
 security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method cert
-security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method cert 
 ```
 
-Check that the harvest role has web access for ONTAPI and REST.
+#### Create REST role
+
+```bash
+security login rest-role create -role harvest2-rest-role -access readonly -api /api
+```
+
+#### Associate REST role with harvest user
+
+Using password authentication
+
+```bash
+security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method password
+```
+
+??? failure "If you get an error `command failed: duplicate entry` when running the previous command"
+    Remove the previous entry and recreate like so:
+
+    ```bash
+    security login delete -user-or-group-name harvest2 -application http -authentication-method *
+    security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method password
+    ```
+
+Using certificate authentication
+
+```bash
+security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method cert
+```
+
+??? failure "If you get an error `command failed: duplicate entry` when running the previous command"
+    Remove the previous entry and recreate like so:
+
+    ```bash
+    security login delete -user-or-group-name harvest2 -application http -authentication-method *
+    security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method cert
+    ```
+
+#### Verify that the harvest role has web access
 ```bash
 vserver services web access show -role harvest2-role -name ontapi
-vserver services web access show -role harvest2-role -name rest
-vserver services web access show -role harvest2-role -name docs-api
+vserver services web access show -role harvest2-rest-role -name rest
+vserver services web access show -role harvest2-rest-role -name docs-api
 ```
 
-If either entry is missing, enable access by running the following. Replace `$ADMIN_VSERVER` with your SVM admin name.
+If any entries are missing, enable access by running the following. Replace `$ADMIN_VSERVER` with your SVM admin name.
 ```bash
 vserver services web access create -vserver $ADMIN_VSERVER -name ontapi -role harvest2-role
-vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-role
-vserver services web access create -vserver $ADMIN_VSERVER -name docs-api -role harvest2-role
+vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-rest-role
+vserver services web access create -vserver $ADMIN_VSERVER -name docs-api -role harvest2-rest-role
 ```
 
 #### 7-Mode CLI
