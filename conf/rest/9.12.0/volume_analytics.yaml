@@ -19,9 +19,8 @@ plugins:
       # 'MaxDirectoryCount' specifies the number of directories to collect per volume.
       # In this case, data is collected from up to 100 directories, prioritizing those with the highest used bytes.
       - MaxDirectoryCount: 100
-      # The following sample URL gets called per volume in the VolumeAnalytics plugin:
-      # api/storage/volumes/375dd429-802b-11ed-a5cd-00a098d39e12/files?return_records=true&fields=analytics.file_count,analytics.bytes_used,analytics.subdir_count,analytics.by_modified_time.bytes_used,analytics.by_accessed_time.bytes_used&order_by=analytics.bytes_used+desc&type=directory&max_records=100
-
+      # Using the plugin settings shown above, the VolumeAnalytics plugin will make an additional request for each volume. Those per-volume requests will look something like:
+      # api/storage/volumes/{uuid}/files?return_records=true&order_by=analytics.bytes_used+desc&type=directory&max_records=100
 
 
 
