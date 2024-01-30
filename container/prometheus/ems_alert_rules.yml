@@ -1213,7 +1213,7 @@ groups:
         annotations:
           summary: "ONTAP Mediator (version {{ $labels.version }}) is added on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
 
-      - alert: SnapMirror Active Sync CA Certificate Expired
+      - alert: ONTAP Mediator CA Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.cacert.expired"}[5m]) == 1
         labels:
           severity: >
@@ -1235,7 +1235,7 @@ groups:
         annotations:
           summary: "CA certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
 
-      - alert: SnapMirror Active Sync CA Certificate Expiring
+      - alert: ONTAP Mediator CA Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.cacert.expiring"}[5m]) == 1
         labels:
           severity: >
@@ -1257,7 +1257,7 @@ groups:
         annotations:
           summary: "CA certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
 
-      - alert: SnapMirror Active Sync Client Certificate Expired
+      - alert: ONTAP Mediator Client Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.clientc.expired"}[5m]) == 1
         labels:
           severity: >
@@ -1279,7 +1279,7 @@ groups:
         annotations:
           summary: "Client certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
 
-      - alert: SnapMirror Active Sync Client Certificate Expiring
+      - alert: ONTAP Mediator Client Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.clientc.expiring"}[5m]) == 1
         labels:
           severity: >
@@ -1345,7 +1345,7 @@ groups:
         annotations:
           summary: "ONTAP Mediator (version {{ $labels.version }}) was removed on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
 
-      - alert: SnapMirror Active Sync Server Certificate Expired
+      - alert: ONTAP Mediator Server Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.serverc.expired"}[5m]) == 1
         labels:
           severity: >
@@ -1367,7 +1367,7 @@ groups:
         annotations:
           summary: "Server certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
 
-      - alert: SnapMirror Active Sync Server Certificate Expiring
+      - alert: ONTAP Mediator Server Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.serverc.expiring"}[5m]) == 1
         labels:
           severity: >
@@ -1433,7 +1433,7 @@ groups:
         annotations:
           summary: "Source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" is in \"out-of-sync\" status due to the following reason: \"{{ $labels.error_msg }}\"."
 
-      - alert: SnapMirror Active Sync Relationship Out of Sync
+      - alert: SnapMirror active sync Relationship Out of Sync
         expr: last_over_time(ems_events{message="sms.status.out.of.sync.cg"}[4w]) == 1
         labels:
           severity: >
@@ -1763,7 +1763,7 @@ groups:
         annotations:
           summary: "Initialize from source volume \"{{ $labels.srcpath }}\" to destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" failed with error \"{{ $labels.error }}\"."
 
-      - alert: SnapMirror Active Sync Automatic Unplanned Failover Failed
+      - alert: SnapMirror active sync Automatic Unplanned Failover Failed
         expr: last_over_time(ems_events{message="smbc.aufo.failed"}[4w]) == 1
         labels:
           severity: >
@@ -1785,7 +1785,7 @@ groups:
         annotations:
           summary: "SnapMirror automatic failover failed for Destination path: \"{{ $labels.dstpath }}\"."
 
-      - alert: SnapMirror Active Sync Automatic Unplanned Failover Completed
+      - alert: SnapMirror active sync Automatic Unplanned Failover Completed
         expr: last_over_time(ems_events{message="smbc.aufo.completed"}[4w]) == 1
         labels:
           severity: >
@@ -1807,7 +1807,7 @@ groups:
         annotations:
           summary: "SnapMirror automatic failover completed for Destination path: \"{{ $labels.dstpath }}\"."
 
-      - alert: SnapMirror Active Sync Planned Failover Failed
+      - alert: SnapMirror active sync Planned Failover Failed
         expr: last_over_time(ems_events{message="smbc.pfo.failed"}[4w]) == 1
         labels:
           severity: >
@@ -1827,9 +1827,9 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SnapMirror Active Sync planned failover operation failed for Destination path: \"{{ $labels.dstpath }}\"."
+          summary: "SnapMirror active sync planned failover operation failed for Destination path: \"{{ $labels.dstpath }}\"."
 
-      - alert: SnapMirror Active Sync Planned Failover Completed
+      - alert: SnapMirror active sync Planned Failover Completed
         expr: last_over_time(ems_events{message="smbc.pfo.completed"}[4w]) == 1
         labels:
           severity: >
@@ -1849,4 +1849,4 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SnapMirror Active Sync planned failover operation completed for Destination path: \"{{ $labels.dstpath }}\"."
+          summary: "SnapMirror active sync planned failover operation completed for Destination path: \"{{ $labels.dstpath }}\"."
