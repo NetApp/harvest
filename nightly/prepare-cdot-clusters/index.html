@@ -564,6 +564,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#create-rest-role" class="md-nav__link">
+    Create REST role
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#associate-rest-role-with-harvest-user" class="md-nav__link">
+    Associate REST role with harvest user
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify-that-the-harvest-role-has-web-access" class="md-nav__link">
+    Verify that the harvest role has web access
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#7-mode-cli" class="md-nav__link">
     7-Mode CLI
   </a>
@@ -1367,6 +1388,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#create-rest-role" class="md-nav__link">
+    Create REST role
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#associate-rest-role-with-harvest-user" class="md-nav__link">
+    Associate REST role with harvest user
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify-that-the-harvest-role-has-web-access" class="md-nav__link">
+    Verify that the harvest role has web access
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#7-mode-cli" class="md-nav__link">
     7-Mode CLI
   </a>
@@ -1617,22 +1659,45 @@ security<span class="w"> </span>login<span class="w"> </span>role<span class="w"
 </code></pre></div>
 <h4 id="create-harvest-user-and-associate-with-the-harvest-role">Create harvest user and associate with the harvest role<a class="headerlink" href="#create-harvest-user-and-associate-with-the-harvest-role" title="Permanent link">&para;</a></h4>
 <p>Use this for password authentication</p>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w">   </span>
+<div class="highlight"><pre><span></span><code><span class="c1"># If the harvest2 user does not exist, you will be prompted to enter a password</span>
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
 </code></pre></div>
 <p>Or this for certificate authentication</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert<span class="w"> </span>
 </code></pre></div>
-<p>Check that the harvest role has web access for ONTAPI and REST.
+<h4 id="create-rest-role">Create REST role<a class="headerlink" href="#create-rest-role" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api
+</code></pre></div>
+<h4 id="associate-rest-role-with-harvest-user">Associate REST role with harvest user<a class="headerlink" href="#associate-rest-role-with-harvest-user" title="Permanent link">&para;</a></h4>
+<p>Using password authentication</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+<details class="failure">
+<summary>If you get an error <code>command failed: duplicate entry</code> when running the previous command</summary>
+<p>Remove the previous entry and recreate like so:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>delete<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>*
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+</details>
+<p>Using certificate authentication</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+</code></pre></div>
+<details class="failure">
+<summary>If you get an error <code>command failed: duplicate entry</code> when running the previous command</summary>
+<p>Remove the previous entry and recreate like so:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>delete<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>*
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+</code></pre></div>
+</details>
+<h4 id="verify-that-the-harvest-role-has-web-access">Verify that the harvest role has web access<a class="headerlink" href="#verify-that-the-harvest-role-has-web-access" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>rest
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>docs-api
-</code></pre></div></p>
-<p>If either entry is missing, enable access by running the following. Replace <code>$ADMIN_VSERVER</code> with your SVM admin name.
+vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-name<span class="w"> </span>rest
+vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-name<span class="w"> </span>docs-api
+</code></pre></div>
+<p>If any entries are missing, enable access by running the following. Replace <code>$ADMIN_VSERVER</code> with your SVM admin name.
 <div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>rest<span class="w"> </span>-role<span class="w"> </span>harvest2-role
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>docs-api<span class="w"> </span>-role<span class="w"> </span>harvest2-role
+vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>rest<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role
+vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>docs-api<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role
 </code></pre></div></p>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
 <p>Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
