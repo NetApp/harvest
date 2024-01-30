@@ -137,8 +137,10 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 				}
 			}
 
+			if vc.splitEstimate == "" {
+				continue
+			}
 			// splitEstimate is 4KB blocks, Convert to bytes as in REST
-
 			var splitEstimateBytes float64
 			if splitEstimateBytes, err = strconv.ParseFloat(vc.splitEstimate, 64); err != nil {
 				v.Logger.Error().Err(err).Str("clone_split_estimate", vc.splitEstimate).Msg("parse clone_split_estimate")
