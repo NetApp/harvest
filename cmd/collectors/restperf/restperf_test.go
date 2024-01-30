@@ -269,7 +269,7 @@ func TestQosVolume(t *testing.T) {
 			pollDataPath2: "testdata/qos-volume-poll-2.json",
 			numInstances:  9,
 			numMetrics:    234,
-			sum:           81,
+			sum:           18,
 		},
 	}
 	for _, tt := range tests {
@@ -296,7 +296,7 @@ func TestQosVolume(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			future := now.Add(time.Minute * 15)
+			future := now.Add(time.Minute * 1)
 			pollData = jsonToPerfRecords(tt.pollDataPath2)
 			pollData[0].Timestamp = future.UnixNano()
 
