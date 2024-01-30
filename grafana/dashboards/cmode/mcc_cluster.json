@@ -3413,6 +3413,150 @@
       "repeat": null,
       "title": "MetroCluster FibreBridge/Array",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 94,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "id": 305,
+          "options": {
+            "content": "<br>\n\nBased on the `Object` column, subsequent columns data will be populated and remaining columns will be empty. For example, If `Object` is `Node`, then `Aggregate` and `Volume` columns will be empty.\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows diagnostics status detail of Metrocluster.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 87,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "metrocluster_check_volume_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} or metrocluster_check_aggr_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} or metrocluster_check_node_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} or metrocluster_check_cluster_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} ",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Metrocluster Diagnostics Check Details",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "result": false,
+                  "{__name__=\"metrocluster_check_aggr_status\", aggregate=\"aggr0_sti8300mcc_281\", cluster=\"sti8300mcc-281_siteA\", datacenter=\"DC\", instance=\"localhost:13010\", job=\"c10\", name=\"disk_pool_allocation\", node=\"sti8300mcc-281\", result=\"ok\"}": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 12,
+                  "__name__": 1,
+                  "aggregate": 5,
+                  "cluster": 3,
+                  "datacenter": 7,
+                  "instance": 8,
+                  "job": 9,
+                  "name": 10,
+                  "node": 4,
+                  "object": 2,
+                  "result": 11,
+                  "volume": 6
+                },
+                "renameByName": {
+                  "aggregate": "Aggregate",
+                  "cluster": "Cluster",
+                  "job": "",
+                  "name": "Name",
+                  "node": "Node",
+                  "object": "Object",
+                  "result": "Result",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "repeat": null,
+      "title": "MetroCluster Diagnostics",
+      "type": "row"
     }
   ],
   "refresh": "",

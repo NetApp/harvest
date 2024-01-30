@@ -21,7 +21,7 @@ func (m *MetroclusterCheck) Init() error {
 
 	var err error
 	pluginMetrics := []string{"cluster_status", "node_status", "aggr_status", "volume_status"}
-	pluginLabels := []string{"result", "name", "node", "aggregate", "volume"}
+	pluginLabels := []string{"result", "name", "node", "aggregate", "volume", "object"}
 
 	if err = m.InitAbc(); err != nil {
 		return err
@@ -108,6 +108,7 @@ func (m *MetroclusterCheck) update(objectDetail string, object string) {
 			}
 			newDetailInstance.SetLabel("name", name)
 			newDetailInstance.SetLabel("result", result)
+			newDetailInstance.SetLabel("object", object)
 			newDetailInstance.SetLabel("volume", volumeName.String())
 			newDetailInstance.SetLabel("aggregate", aggregateName.String())
 			newDetailInstance.SetLabel("node", nodeName.String())
