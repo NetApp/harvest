@@ -478,7 +478,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 				if metric.values[i] > 5_000_000 {
 					if len(metric.values) == len(curRawMetric.values) && len(curRawMetric.values) == len(prevRawMetric.values) &&
 						len(prevRawMetric.values) == len(curBaseRawMetric.values) && len(curBaseRawMetric.values) == len(prevBaseRawMetric.values) {
-						logger.Info().
+						logger.Debug().
 							Str("metric", metric.GetName()).
 							Str("key", metricKey).
 							Float64("numerator", v).
