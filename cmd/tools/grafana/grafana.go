@@ -1048,7 +1048,7 @@ func addFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 		cmd.PersistentFlags().StringVar(&opts.svmRegex, "svm-variable-regex", "", "SVM variable regex to filter SVM query results")
 		cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
-		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
+		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Name of your Grafana datasource of type Prometheus that should be used for the dashboards")
 		cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
 		cmd.PersistentFlags().BoolVarP(&opts.useHTTPS, "https", "S", false, "Use HTTPS")
 		cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", false, "Overwrite existing dashboard with same title")
