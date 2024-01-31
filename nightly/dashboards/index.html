@@ -1335,8 +1335,7 @@ Prometheus-based dashboards from the <code>grafana</code> directory. You would r
 <p>Similarly, to export:</p>
 <div class="highlight"><pre><span></span><code>$ bin/harvest grafana export --addr my.grafana.server:3000 --directory /path/to/export/directory --serverfolder grafanaFolderName
 </code></pre></div>
-<p>By default, the dashboards are connected to the <code>Prometheus</code> datasource defined in Grafana. If your datasource has a
-different name, use the <code>--datasource</code> flag during import/export.</p>
+<p>By default, the dashboards are connected to a datasource named <code>Prometheus</code>. This is a datasource of the Prometheus type, defined in Grafana. However, despite the type, the datasource can have any name. If you have a Prometheus type datasource with a name different from <code>Prometheus</code>, you can specify this name using the <code>--datasource</code> flag during import/export.</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>The <code>bin/harvest grafana</code> tool includes CLI help when passing the <code>--help</code> command line argument flag like so:</p>
 <div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>grafana<span class="w"> </span>import<span class="w"> </span>--help

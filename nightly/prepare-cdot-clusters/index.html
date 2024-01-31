@@ -1666,7 +1666,8 @@ security<span class="w"> </span>login<span class="w"> </span>create<span class="
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
 </code></pre></div>
 <h4 id="create-rest-role">Create REST role<a class="headerlink" href="#create-rest-role" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api
+<p>Replace <code>$ADMIN_VSERVER</code> with your SVM admin name.</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span>
 </code></pre></div>
 <h4 id="associate-rest-role-with-harvest-user">Associate REST role with harvest user<a class="headerlink" href="#associate-rest-role-with-harvest-user" title="Permanent link">&para;</a></h4>
 <p>Using password authentication</p>
