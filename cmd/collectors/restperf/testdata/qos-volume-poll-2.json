@@ -38,11 +38,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -158,11 +158,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -278,11 +278,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -398,11 +398,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -518,11 +518,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -638,11 +638,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -758,11 +758,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -878,11 +878,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -998,11 +998,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",
@@ -1118,11 +1118,11 @@
         },
         {
           "name": "read_latency",
-          "value": 100
+          "value": 2000
         },
         {
           "name": "read_ops",
-          "value": 110
+          "value": 1000
         },
         {
           "name": "sequential_reads_percent",

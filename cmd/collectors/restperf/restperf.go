@@ -1162,7 +1162,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, r.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, cachedData, prevMat, r.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator, r.Logger)
 			}

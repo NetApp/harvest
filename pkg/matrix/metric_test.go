@@ -2,7 +2,6 @@ package matrix
 
 import (
 	"github.com/netapp/harvest/v2/pkg/logging"
-	"math"
 	"testing"
 )
 
@@ -63,24 +62,28 @@ func setupMatrix(previousRaw float64, currentRaw float64, mop matrixOp) (*Matrix
 	return m, m1
 }
 
-func setupMatrixAdv(previousRaw [][]float64, currentRaw [][]float64, mop matrixOp) (*Matrix, *Matrix) {
+func setupMatrixAdv(latency string, previousRaw []rawData, currentRaw []rawData, mop matrixOp) (*Matrix, *Matrix) {
 	prevMat := New("Test", "test", "test")
-	averageLatency, _ := prevMat.NewMetricFloat64("average_latency")
+	averageLatency, _ := prevMat.NewMetricFloat64(latency)
 	totalOps, _ := prevMat.NewMetricFloat64("total_ops")
+	timestamp, _ := prevMat.NewMetricFloat64("timestamp")
 	names := instanceNames[mop]
 	for i, instanceName := range names.prev {
 		instance, _ := prevMat.NewInstance(instanceName)
-		_ = averageLatency.SetValueFloat64(instance, previousRaw[i][0])
-		_ = totalOps.SetValueFloat64(instance, previousRaw[i][1])
+		_ = averageLatency.SetValueFloat64(instance, previousRaw[i].latency)
+		_ = totalOps.SetValueFloat64(instance, previousRaw[i].ops)
+		_ = timestamp.SetValueFloat64(instance, previousRaw[i].timestamp)
 	}
 
 	currentMat := New("Test", "test", "test")
-	averageLatency1, _ := currentMat.NewMetricFloat64("average_latency")
+	averageLatency1, _ := currentMat.NewMetricFloat64(latency)
 	totalOps1, _ := currentMat.NewMetricFloat64("total_ops")
+	timestamp1, _ := currentMat.NewMetricFloat64("timestamp")
 	for i, instanceName := range names.cur {
 		instance, _ := currentMat.NewInstance(instanceName)
-		_ = averageLatency1.SetValueFloat64(instance, currentRaw[i][0])
-		_ = totalOps1.SetValueFloat64(instance, currentRaw[i][1])
+		_ = averageLatency1.SetValueFloat64(instance, currentRaw[i].latency)
+		_ = totalOps1.SetValueFloat64(instance, currentRaw[i].ops)
+		_ = timestamp1.SetValueFloat64(instance, currentRaw[i].timestamp)
 	}
 	return prevMat, currentMat
 }
@@ -95,15 +98,22 @@ type test struct {
 	record  []bool
 }
 
+type rawData struct {
+	latency   float64
+	ops       float64
+	timestamp float64
+}
+
 type testAdv struct {
 	name      string
-	curRaw    [][]float64 // combination of latency,ops
-	prevRaw   [][]float64 // combination of latency,ops
+	curRaw    []rawData
+	prevRaw   []rawData
 	cooked    []float64
 	skips     int
 	threshold int
 	record    []bool
 	matrixOp  matrixOp
+	latency   string
 }
 
 func TestMetricFloat64_Delta(t *testing.T) {
@@ -163,18 +173,22 @@ func testDelta(t *testing.T, op matrixOp) {
 
 func TestMetricFloat64_Divide(t *testing.T) {
 	testsAdv := []testAdv{
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{20, 10}}, cooked: []float64{2}, skips: 0, matrixOp: oneInstance, record: []bool{true}, name: "normal"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{20, 5}}, cooked: []float64{0}, skips: 0, matrixOp: oneInstance, record: []bool{true}, name: "allow zero den"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{10, 5}}, cooked: []float64{0}, skips: 0, matrixOp: oneInstance, record: []bool{true}, name: "allow zero both"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{20, 0}}, cooked: []float64{10}, skips: 1, matrixOp: oneInstance, record: []bool{false}, name: "bug negative den"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{5, 10}}, cooked: []float64{-5}, skips: 1, matrixOp: oneInstance, record: []bool{false}, name: "bug negative num"},
-		{prevRaw: [][]float64{{20, 5}}, curRaw: [][]float64{{10, 0}}, cooked: []float64{-10}, skips: 1, matrixOp: oneInstance, record: []bool{false}, name: "bug negative both"},
-		{prevRaw: [][]float64{{20, 5}, {10, 5}}, curRaw: [][]float64{{10, 10}, {20, 10}}, cooked: []float64{-10, 2}, skips: 1, record: []bool{false, true}, matrixOp: twoInstance, name: "verify multiple instance"},
+		{prevRaw: []rawData{{10, 5, 60}}, curRaw: []rawData{{20, 10, 120}}, cooked: []float64{2}, skips: 0, matrixOp: oneInstance, record: []bool{true}, name: "normal"},
+		{prevRaw: []rawData{{10, 5, 60}}, curRaw: []rawData{{20, 5, 120}}, cooked: []float64{0}, skips: 0, matrixOp: oneInstance, record: []bool{true}, name: "allow zero den"},
+		{prevRaw: []rawData{{10, 5, 60}}, curRaw: []rawData{{10, 5, 120}}, cooked: []float64{0}, skips: 0, matrixOp: oneInstance, record: []bool{true}, name: "allow zero both"},
+		{prevRaw: []rawData{{10, 5, 60}}, curRaw: []rawData{{20, 0, 120}}, cooked: []float64{10}, skips: 1, matrixOp: oneInstance, record: []bool{false}, name: "bug negative den"},
+		{prevRaw: []rawData{{10, 5, 60}}, curRaw: []rawData{{5, 10, 120}}, cooked: []float64{-5}, skips: 1, matrixOp: oneInstance, record: []bool{false}, name: "bug negative num"},
+		{prevRaw: []rawData{{20, 5, 60}}, curRaw: []rawData{{10, 0, 120}}, cooked: []float64{-10}, skips: 1, matrixOp: oneInstance, record: []bool{false}, name: "bug negative both"},
+		{prevRaw: []rawData{{20, 5, 60}, {10, 5, 60}}, curRaw: []rawData{{10, 10, 120}, {20, 10, 120}}, cooked: []float64{-10, 2}, skips: 1, record: []bool{false, true}, matrixOp: twoInstance, name: "verify multiple instance"},
 	}
 
 	for _, tt := range testsAdv {
 		t.Run(tt.name, func(t *testing.T) {
-			prevMat, curMat := setupMatrixAdv(tt.prevRaw, tt.curRaw, tt.matrixOp)
+			latency := tt.latency
+			if latency == "" {
+				latency = "average_latency"
+			}
+			prevMat, curMat := setupMatrixAdv(latency, tt.prevRaw, tt.curRaw, tt.matrixOp)
 			for k := range curMat.GetMetrics() {
 				_, err := curMat.Delta(k, prevMat, logging.Get())
 				if err != nil {
@@ -182,27 +196,34 @@ func TestMetricFloat64_Divide(t *testing.T) {
 					return
 				}
 			}
-			skips, err := curMat.Divide("average_latency", "total_ops", logging.Get())
-			matrixTestAdv(t, tt, curMat, skips, err)
+			skips, err := curMat.Divide(latency, "total_ops", logging.Get())
+			matrixTestAdv(t, tt, curMat, skips, err, latency)
 		})
 	}
 }
 
 func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 	testsAdv := []testAdv{
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{20, 10}}, threshold: 1, cooked: []float64{2}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "normal"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{20, 10}}, threshold: 15, cooked: []float64{0}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "normal < threshold"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{20, 0}}, threshold: 1, cooked: []float64{10}, skips: 1, record: []bool{false}, matrixOp: oneInstance, name: "bug negative den"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{5, 10}}, threshold: 1, cooked: []float64{-5}, skips: 1, record: []bool{false}, matrixOp: oneInstance, name: "bug negative num"},
-		{prevRaw: [][]float64{{20, 5}}, curRaw: [][]float64{{10, 0}}, threshold: 1, cooked: []float64{-10}, skips: 1, record: []bool{false}, matrixOp: oneInstance, name: "bug negative both"},
-		{prevRaw: [][]float64{{10, 10}}, curRaw: [][]float64{{20, 10}}, threshold: 0, cooked: []float64{math.Inf(1)}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "allow no threshold"},
-		{prevRaw: [][]float64{{10, 5}}, curRaw: [][]float64{{10, 5}}, threshold: 5, cooked: []float64{0}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "allow zero both"},
-		{prevRaw: [][]float64{{20, 5}, {10, 5}}, curRaw: [][]float64{{10, 10}, {20, 10}}, cooked: []float64{-10, 2}, skips: 1, record: []bool{false, true}, matrixOp: twoInstance, name: "verify multiple instance"},
+		{prevRaw: []rawData{{1000, 500, 60}}, curRaw: []rawData{{9000, 2500, 120}}, threshold: 10, cooked: []float64{4}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "normal"},
+		{prevRaw: []rawData{{1000, 500, 60}}, curRaw: []rawData{{9000, 1000, 120}}, threshold: 10, cooked: []float64{0}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "normal < threshold"},
+		{prevRaw: []rawData{{1000, 500, 60}}, curRaw: []rawData{{2000, 300, 120}}, threshold: 10, cooked: []float64{1000}, skips: 1, record: []bool{false}, matrixOp: oneInstance, name: "bug negative den"},
+		{prevRaw: []rawData{{1000, 500, 60}}, curRaw: []rawData{{500, 1000, 120}}, threshold: 10, cooked: []float64{-500}, skips: 1, record: []bool{false}, matrixOp: oneInstance, name: "bug negative num"},
+		{prevRaw: []rawData{{1000, 500, 60}}, curRaw: []rawData{{500, 300, 120}}, threshold: 10, cooked: []float64{-500}, skips: 1, record: []bool{false}, matrixOp: oneInstance, name: "bug negative both"},
+		{prevRaw: []rawData{{1000, 500, 60}}, curRaw: []rawData{{2000, 500, 120}}, threshold: 10, cooked: []float64{0}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "zero ops delta"},
+		{prevRaw: []rawData{{1000, 500, 60}}, curRaw: []rawData{{1000, 500, 120}}, threshold: 10, cooked: []float64{0}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "zero latency/ops delta"},
+		{prevRaw: []rawData{{2000, 500, 60}, {1000, 5000, 60}}, curRaw: []rawData{{1000, 1000, 120}, {10000, 8000, 120}}, threshold: 10, cooked: []float64{-1000, 3}, skips: 1, record: []bool{false, true}, matrixOp: twoInstance, name: "verify multiple instance"},
+		{prevRaw: []rawData{{10, 5, 60}}, curRaw: []rawData{{20, 10, 120}}, threshold: 10, cooked: []float64{2}, skips: 0, record: []bool{true}, matrixOp: oneInstance, name: "no threshold check for optimal_point_latency", latency: "optimal_point_latency"},
 	}
 
 	for _, tt := range testsAdv {
 		t.Run(tt.name, func(t *testing.T) {
-			prevMat, curMat := setupMatrixAdv(tt.prevRaw, tt.curRaw, tt.matrixOp)
+			latency := tt.latency
+			if latency == "" {
+				latency = "average_latency"
+			}
+			prevMat, curMat := setupMatrixAdv(latency, tt.prevRaw, tt.curRaw, tt.matrixOp)
+			cachedData := curMat.Clone(With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+
 			for k := range curMat.GetMetrics() {
 				_, err := curMat.Delta(k, prevMat, logging.Get())
 				if err != nil {
@@ -210,8 +231,9 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 					return
 				}
 			}
-			skips, err := curMat.DivideWithThreshold("average_latency", "total_ops", tt.threshold, logging.Get())
-			matrixTestAdv(t, tt, curMat, skips, err)
+
+			skips, err := curMat.DivideWithThreshold(latency, "total_ops", tt.threshold, cachedData, prevMat, logging.Get())
+			matrixTestAdv(t, tt, curMat, skips, err, latency)
 		})
 	}
 }
@@ -231,7 +253,7 @@ func TestMetricFloat64_MultiplyByScalar(t *testing.T) {
 	}
 }
 
-func matrixTestAdv(t *testing.T, tt testAdv, cur *Matrix, skips int, err error) {
+func matrixTestAdv(t *testing.T, tt testAdv, cur *Matrix, skips int, err error, latency string) {
 	if err != nil {
 		t.Error("unexpected error", err)
 		return
@@ -240,14 +262,14 @@ func matrixTestAdv(t *testing.T, tt testAdv, cur *Matrix, skips int, err error) 
 		t.Errorf("skips expected = %d, got %d", tt.skips, skips)
 	}
 
-	cooked := cur.GetMetric("average_latency").values
+	cooked := cur.GetMetric(latency).values
 	for i := range cooked {
 		if cooked[i] != tt.cooked[i] {
 			t.Errorf("cooked expected = %v, got %v", tt.cooked, cooked)
 		}
 	}
 
-	record := cur.GetMetric("average_latency").GetRecords()
+	record := cur.GetMetric(latency).GetRecords()
 	for i := range record {
 		if record[i] != tt.record[i] {
 			t.Errorf("record expected = %t, got %t", tt.record, record)
