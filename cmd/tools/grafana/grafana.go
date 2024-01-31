@@ -594,7 +594,7 @@ func writeCustomDashboard(dashboard map[string]interface{}, dir string, file os.
 		return fmt.Errorf("error makedir [%s]: %w", filepath.Dir(fp), err)
 	}
 	if err = os.WriteFile(fp, data, GPerm); err != nil {
-		return err
+		return fmt.Errorf("error writing customized dashboard to file %s: %w", fp, err)
 	}
 	fmt.Printf("OK - customized [%s]\n", fp)
 	return nil
