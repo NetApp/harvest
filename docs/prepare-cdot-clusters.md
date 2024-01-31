@@ -139,8 +139,10 @@ security login create -user-or-group-name harvest2 -application ontapi -role har
 
 #### Create REST role
 
+Replace `$ADMIN_VSERVER` with your SVM admin name.
+
 ```bash
-security login rest-role create -role harvest2-rest-role -access readonly -api /api
+security login rest-role create -role harvest2-rest-role -access readonly -api /api -vserver $ADMIN_VSERVER
 ```
 
 #### Associate REST role with harvest user
