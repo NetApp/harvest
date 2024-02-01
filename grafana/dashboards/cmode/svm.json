@@ -2066,19 +2066,19 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Available space for Snapshot copies from snap-reserve, in bytes.",
+          "description": "Physical size of the volume, in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
+                "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
                 "fillOpacity": 10,
-                "gradientMode": "none",
+                "gradientMode": "opacity",
                 "hideFrom": {
                   "legend": false,
                   "tooltip": false,
@@ -2108,10 +2108,6 @@
                   {
                     "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
                   }
                 ]
               },
@@ -2144,29 +2140,29 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "expr": "volume_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
-              "refId": "D"
+              "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Per Snapshot Size Available",
+          "title": "Top $TopResources Volumes Per Volume Total Size",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Size in the volume that has been set aside as a reserve for Snapshot copy usage, in bytes.",
+          "description": "Available space for Snapshot copies from snap-reserve, in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
+                "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -2237,29 +2233,29 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "expr": "volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
-              "refId": "B"
+              "refId": "D"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Per Snapshot Reserve Size",
+          "title": "Top $TopResources Volumes Per Snapshot Size Available",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Size available for Snapshot copies within the Snapshot copy reserve, in bytes.",
+          "description": "Size in the volume that has been set aside as a reserve for Snapshot copy usage, in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
+                "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -2330,29 +2326,29 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "expr": "volume_snapshot_reserve_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
-              "refId": "C"
+              "refId": "B"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Per Snapshot Reserve Available",
+          "title": "Top $TopResources Volumes Per Snapshot Reserve Size",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The total space used by Snapshot copies in the volume, in bytes.",
+          "description": "Size available for Snapshot copies within the Snapshot copy reserve, in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "IOPs/TB",
+                "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -2405,6 +2401,99 @@
             "y": 68
           },
           "id": 316,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "C"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Snapshot Reserve Available",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The total space used by Snapshot copies in the volume, in bytes.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 68
+          },
+          "id": 317,
           "options": {
             "legend": {
               "calcs": [
@@ -2695,7 +2784,7 @@
             "x": 0,
             "y": 22
           },
-          "id": 317,
+          "id": 318,
           "options": {
             "legend": {
               "calcs": [
@@ -2789,7 +2878,7 @@
             "x": 12,
             "y": 22
           },
-          "id": 318,
+          "id": 319,
           "options": {
             "legend": {
               "calcs": [
@@ -2883,7 +2972,7 @@
             "x": 0,
             "y": 44
           },
-          "id": 319,
+          "id": 320,
           "options": {
             "legend": {
               "calcs": [
@@ -2977,7 +3066,7 @@
             "x": 12,
             "y": 44
           },
-          "id": 320,
+          "id": 321,
           "options": {
             "legend": {
               "calcs": [
@@ -3071,7 +3160,7 @@
             "x": 0,
             "y": 56
           },
-          "id": 321,
+          "id": 322,
           "options": {
             "legend": {
               "calcs": [
