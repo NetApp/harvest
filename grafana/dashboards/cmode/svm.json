@@ -1527,279 +1527,6 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "percentage of utilized storage space in a volume relative to its total capacity.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 14
-          },
-          "id": 234,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "interval": "",
-              "legendFormat": "{{volume}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Volumes by % Used",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percentage of snapshot reserve size that has been used.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 14
-          },
-          "id": 235,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "interval": "",
-              "legendFormat": "{{volume}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Volumes by Snapshot Reserve % Used",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percentage of the total disk space that is saved by deduplication and file cloning.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 22
-          },
-          "id": 236,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "interval": "",
-              "legendFormat": "{{volume}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Volumes by Deduplication Saved %",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
           "description": "The total disk space (in bytes) that is saved by deduplication and file cloning.",
           "fieldConfig": {
             "defaults": {
@@ -1856,8 +1583,8 @@
           "gridPos": {
             "h": 8,
             "w": 12,
-            "x": 12,
-            "y": 22
+            "x": 0,
+            "y": 14
           },
           "id": 238,
           "options": {
@@ -1886,97 +1613,6 @@
             }
           ],
           "title": "Top $TopResources Volumes by Deduplication Savings",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percentage of the total disk space that is saved by compressing blocks on the referenced file system.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 30
-          },
-          "id": 237,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "interval": "",
-              "legendFormat": "{{volume}} - {{svm}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Volumes by Saved %",
           "type": "timeseries"
         },
         {
@@ -2039,7 +1675,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 30
+            "y": 14
           },
           "id": 239,
           "options": {
@@ -2130,7 +1766,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 38
+            "y": 22
           },
           "id": 240,
           "options": {
@@ -2163,7 +1799,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Size that is physically used in the volume, in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2216,7 +1852,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 48
+            "y": 32
           },
           "id": 310,
           "options": {
@@ -2237,53 +1873,207 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Volume Total Size",
-              "refId": "D"
-            },
-            {
-              "exemplar": false,
               "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Physical Space Used",
+              "legendFormat": "{{svm}} - {{volume}}",
               "refId": "B"
-            },
-            {
-              "exemplar": false,
-              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Logical Space Used",
-              "refId": "C"
-            },
-            {
-              "exemplar": false,
-              "expr": "volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
-              "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Per Volume Space Used",
+          "title": "Top $TopResources Volumes Per Physical Space Used",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Sum of (physical-used, shared_refs, compression_saved_in_plane0, vbn_zero, future_blk_cnt), in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
-                "axisLabel": "%",
+                "axisLabel": "Used",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 32
+          },
+          "id": 311,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "C"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Logical Space Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The virtual space used (includes volume reserves) before storage efficiency, in bytes.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Used",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "id": 312,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Volume Size Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Available space for Snapshot copies from snap-reserve, in bytes.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "IOPs/TB",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -2310,9 +2100,8 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
-              "max": 100,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2326,7 +2115,7 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "bytes"
             },
             "overrides": []
           },
@@ -2334,9 +2123,9 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 48
+            "y": 44
           },
-          "id": 312,
+          "id": 313,
           "options": {
             "legend": {
               "calcs": [
@@ -2355,38 +2144,22 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "expr": "volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Physical Space Used",
-              "refId": "B"
-            },
-            {
-              "exemplar": false,
-              "expr": "volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Logical Space Used",
-              "refId": "C"
-            },
-            {
-              "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
-              "refId": "A"
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "D"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Per Volume Space Used Percent",
+          "title": "Top $TopResources Volumes Per Snapshot Size Available",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Size in the volume that has been set aside as a reserve for Snapshot copy usage, in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2443,7 +2216,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 60
+            "y": 56
           },
           "id": 314,
           "options": {
@@ -2464,46 +2237,499 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Snapshot Size Available",
-              "refId": "D"
-            },
-            {
-              "exemplar": false,
               "expr": "volume_snapshot_reserve_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve Size",
+              "legendFormat": "{{svm}} - {{volume}}",
               "refId": "B"
-            },
-            {
-              "exemplar": false,
-              "expr": "volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve Available",
-              "refId": "C"
-            },
-            {
-              "exemplar": false,
-              "expr": "volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Snapshot Size Used",
-              "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Per Volume Snapshot Space Used",
+          "title": "Top $TopResources Volumes Per Snapshot Reserve Size",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Size available for Snapshot copies within the Snapshot copy reserve, in bytes.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "IOPs/TB",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 56
+          },
+          "id": 315,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "C"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Snapshot Reserve Available",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The total space used by Snapshot copies in the volume, in bytes.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "IOPs/TB",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 68
+          },
+          "id": 316,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Snapshot Size Used",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Volume Capacity",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 139,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Percentage of the total disk space that is saved by deduplication and file cloning.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 14
+          },
+          "id": 236,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "interval": "",
+              "legendFormat": "{{volume}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Deduplication Saved %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Percentage of the total disk space that is saved by compressing blocks on the referenced file system.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 14
+          },
+          "id": 237,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "interval": "",
+              "legendFormat": "{{volume}} - {{svm}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Compression Saved %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Size that is physically used in the volume, as a percentage.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "%",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 22
+          },
+          "id": 317,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Physical Space Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Sum of (physical-used, shared_refs, compression_saved_in_plane0, vbn_zero, future_blk_cnt), as a percentage.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2561,9 +2787,197 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 60
+            "y": 22
           },
-          "id": 316,
+          "id": 318,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "C"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Logical Space Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "percentage of utilized storage space in a volume relative to its total capacity.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "%",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "id": 319,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Volume Size Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The space that has been set aside as a reserve for Snapshot copy usage, in percent.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "%",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 44
+          },
+          "id": 320,
           "options": {
             "legend": {
               "calcs": [
@@ -2585,34 +2999,112 @@
               "expr": "volume_snapshot_reserve_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve",
+              "legendFormat": "{{svm}} - {{volume}}",
               "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes Per Snapshot Reserve",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Percentage of snapshot reserve size that has been used.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "%",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
             },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 56
+          },
+          "id": 321,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
             {
               "exemplar": false,
               "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve Used",
+              "legendFormat": "{{svm}} - {{volume}}",
               "refId": "C"
-            },
-            {
-              "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
-              "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Per Volume Snapshot Space Used Percent",
+          "title": "Top $TopResources Volumes Per Snapshot Reserve Used",
           "transformations": [],
           "type": "timeseries"
         }
       ],
-      "title": "Volume Capacity",
+      "title": "Volume Capacity in %",
       "type": "row"
     },
     {
@@ -2622,7 +3114,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 88,
       "panels": [
@@ -3326,7 +3818,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 20
       },
       "id": 98,
       "panels": [
@@ -4388,7 +4880,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 110,
       "panels": [
@@ -5451,7 +5943,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "id": 124,
       "panels": [
@@ -6400,7 +6892,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 37,
       "panels": [
@@ -7692,7 +8184,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 126,
       "panels": [
@@ -9001,7 +9493,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 130,
       "panels": [
@@ -10318,7 +10810,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 26
       },
       "id": 56,
       "panels": [
@@ -11382,7 +11874,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 27
       },
       "id": 132,
       "panels": [
@@ -11637,7 +12129,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 28
       },
       "id": 134,
       "panels": [
@@ -12584,7 +13076,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 136,
       "panels": [
@@ -13418,7 +13910,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 30
       },
       "id": 266,
       "panels": [
