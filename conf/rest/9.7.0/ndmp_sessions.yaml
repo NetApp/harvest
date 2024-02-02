@@ -1,0 +1,23 @@
+name:             NDMPSession
+query:            api/protocols/ndmp/sessions
+object:           ndmp_session
+
+counters:
+  - ^^uuid                         => uuid
+  - ^backup_engine                 => backup_engine
+  - ^client_address                => client_address
+  - ^client_port                   => client_port
+  - ^data.operation                => operation
+  - ^data_path                     => data_path
+  - ^mover.mode                    => mode
+  - ^node.name                     => node
+  - ^source_address                => source_address
+  - ^svm.name                      => svm
+  - ^tape_device                   => tape_device
+  - ^tape_mode                     => tape_mode
+  - data.bytes_processed           => data_bytes_processed
+  - mover.bytes_moved              => mover_bytes_moved
+
+
+export_options:
+  include_all_labels: true
