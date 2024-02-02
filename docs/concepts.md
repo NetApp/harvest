@@ -7,7 +7,7 @@ In order to understand how Harvest works, it's important to understand the follo
 - :simple-yaml: [Templates](#templates)
 - :material-export: [Exporters](#exporters)
 - :simple-grafana: [Dashboards](#dashboards)
-
+- :material-filter-plus: [Port Map](#port-map)
 </div>
 
 In addition to the above concepts, Harvest uses the following software that you will want to be familiar with:
@@ -100,7 +100,7 @@ Harvest's admin node implements Prometheus's HTTP service discovery API. Each po
 **More information:**
 
 - [Configure Prometheus to scrape Harvest pollers](prometheus-exporter.md#configure-prometheus-to-scrape-harvest-pollers)
-- [Prometheus Admin Node](prometheus-http-service-discovery.md#prometheus-http-service-discovery)
+- [Prometheus Admin Node](prometheus-exporter.md#prometheus-http-service-discovery)
 - [Prometheus HTTP Service Discovery](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#http_sd_config)
 
 ## Docker
@@ -116,9 +116,41 @@ Harvest runs natively in containers. The [Harvest container](https://github.com/
 
 NABox is a separate virtual applicance (.ova) that acts as a front-end to Harvest and includes Promethus and Grafana setup to use with Harvest. NABox is a great option for customers that prefer a virtual appliance over containers.
 
-More information:
+**More information:**
 
 - [NABox](https://nabox.org/documentation/installation/)
+
+## Port Map
+
+The default ports for ONTAP, Grafana, and Prometheus are shown below, along with three pollers. Poller1 is using the [PrometheusExporter](prometheus-exporter.md#static-scrape-targets) with a statically defined port in `harvest.yml`. Poller2 and Poller3 are using Harvest's admin node, [port range](prometheus-exporter.md#prometheus-http-service-discovery-and-port-range), and Prometheus HTTP service discovery. 
+
+``` mermaid
+graph LR
+  Poller1 -->|:443|ONTAP1;
+  Prometheus -->|:promPort1|Poller1;
+  Prometheus -->|:promPort2|Poller2;
+  Prometheus -->|:promPort3|Poller3;
+  Prometheus -->|:8887|AdminNode;
+  
+  Poller2 -->|:443|ONTAP2;
+  AdminNode <-->|:8887|Poller3;
+  Poller3 -->|:443|ONTAP3;
+  AdminNode <-->|:8887|Poller2;
+  
+  Grafana -->|:9090|Prometheus;
+  Browser -->|:3000|Grafana;
+```
+
+- Grafana's default port is `3000` and is used to access the Grafana user-interface via a web browser
+- Prometheus's default port is `9090` and Grafana talks to the Prometheus datasource on that port
+- Prometheus scrapes each poller-exposed Prometheus port (`promPort1`, `promPort2`, `promPort3`)
+- Poller2 and Poller3 are configured to use a PrometheusExporter with [port range](prometheus-exporter.md#prometheus-http-service-discovery-and-port-range). Each pollers picks a free port within the port_range and sends that port to the AdminNode.
+- The Prometheus config file, `prometheus.yml` is updated with two scrape targets:
+    1. the static `address:port` for Poller1
+    2. the `address:port` for the AdminNode
+
+- Poller1 creates an HTTP endpoint on the static port defined in the `harvest.yml` file
+- All pollers use ZAPI or REST to communicate with ONTAP on port `443`
 
 ## Reference
 - [Architecture.md](https://github.com/NetApp/harvest/blob/main/ARCHITECTURE.md)
