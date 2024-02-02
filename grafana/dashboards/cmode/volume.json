@@ -2650,7 +2650,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume WAFL Layer",
+      "title": "Volume Performance",
       "type": "row"
     },
     {
@@ -5182,7 +5182,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Per Volume Statistics",
+      "title": "Volume Capacity",
       "type": "row"
     },
     {
@@ -5667,7 +5667,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Per Volume Statistics in %",
+      "title": "Volume Capacity %",
       "type": "row"
     },
     {

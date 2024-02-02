@@ -3193,7 +3193,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume Capacity in %",
+      "title": "Volume Capacity %",
       "type": "row"
     },
     {
