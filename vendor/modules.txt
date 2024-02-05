@@ -56,13 +56,13 @@ github.com/power-devops/perfstat
 # github.com/rivo/uniseg v0.4.4
 ## explicit; go 1.18
 github.com/rivo/uniseg
-# github.com/rs/zerolog v1.31.0
+# github.com/rs/zerolog v1.32.0
 ## explicit; go 1.15
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
 github.com/rs/zerolog/log
-# github.com/shirou/gopsutil/v3 v3.23.12
+# github.com/shirou/gopsutil/v3 v3.24.1
 ## explicit; go 1.15
 github.com/shirou/gopsutil/v3/common
 github.com/shirou/gopsutil/v3/cpu
