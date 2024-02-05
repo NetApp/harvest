@@ -24,6 +24,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) destroyed (UUID: {{ $labels.object_uuid }})."
+          impact: "Availability"
 
       - alert: LUN Offline
         expr: last_over_time(ems_events{message="LUN.offline"}[5m]) == 1
@@ -46,6 +47,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought offline (UUID: {{ $labels.object_uuid }})."
+          impact: "Availability"
 
       - alert: NVMe Namespace Destroyed
         expr: last_over_time(ems_events{message="NVMeNS.destroy"}[5m]) == 1
@@ -68,6 +70,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "NVMe namespace {{ $labels.NVMeNS_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was destroyed (UUID: {{ $labels.object_uuid }})."
+          impact: "Availability"
 
       - alert: NVMe Namespace Offline
         expr: last_over_time(ems_events{message="NVMeNS.offline"}[5m]) == 1
@@ -90,6 +93,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought offline (UUID: {{ $labels.object_uuid }})."
+          impact: "Availability"
 
       - alert: NVMe Namespace Online
         expr: last_over_time(ems_events{message="NVMeNS.online"}[5m]) == 1
@@ -112,6 +116,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought online (UUID: {{ $labels.object_uuid }})."
+          impact: "Availability"
 
       - alert: Too Many CIFS Authentication
         expr: last_over_time(ems_events{message="Nblade.cifsManyAuths"}[1d]) == 1
@@ -134,6 +139,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Many simultaneous new CIFS connections are occurring on Vserver ID {{ $labels.vsId }} from IP address {{ $labels.remoteIpAddress }} object type is {{ $labels.object_type }} with UUID {{ $labels.object_uuid }}."
+          impact: "Availability"
 
       - alert: Max Times Open Per File Exceeded
         expr: last_over_time(ems_events{message="Nblade.cifsMaxOpenSameFile"}[4w]) == 1
@@ -156,6 +162,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Received too many open file requests for the same file by one user on a connection: clientIP:port {{ $labels.IpAddress }}:{{ $labels.port }}, file \"{{ $labels.filePath }}\" on share \"{{ $labels.shareName }}\", vserver: \"{{ $labels.vserverName }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          impact: "Availability"
 
       - alert: Max Sessions Per User Exceeded
         expr: last_over_time(ems_events{message="Nblade.cifsMaxSessPerUsrConn"}[4w]) == 1
@@ -178,6 +185,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Received too many session requests from the same user on one TCP connection: clientIP:port {{ $labels.IpAddress }}:{{ $labels.port }}, user \"{{ $labels.userName }}\", vserver: \"{{ $labels.vserverName }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          impact: "Availability"
 
       - alert: NetBIOS Name Conflict
         expr: last_over_time(ems_events{message="Nblade.cifsNbNameConflict"}[1d]) == 1
@@ -200,6 +208,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The NetBIOS Name Service received a negative name registration response. The name {{ $labels.nbName }} is owned by a remote machine. The IP address being registered is {{ $labels.IpAddress }}. Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          impact: "Availability"
 
       - alert: Nonexistent Admin Share
         expr: last_over_time(ems_events{message="Nblade.cifsNoPrivShare"}[1d]) == 1
@@ -222,6 +231,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Vserver ID: {{ $labels.vserverId }}, user name: {{ $labels.userName }}, client ip: {{ $labels.clientIp }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          impact: "Availability"
 
       - alert: NFSv4 Store Pool Exhausted
         expr: last_over_time(ems_events{message="Nblade.nfsV4PoolExhaust"}[1d]) == 1
@@ -244,6 +254,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "NFS Store Pool for {{ $labels.poolname }} exhausted. Associated object type is {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          impact: "Availability"
 
       - alert: Unauthorized User Access to Admin Share
         expr: last_over_time(ems_events{message="Nblade.vscanBadUserPrivAccess"}[1d]) == 1
@@ -266,6 +277,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "For Vserver \"{{ $labels.vserverName }}\", the attempt to connect to the privileged ONTAP_ADMIN$ share by the client \"{{ $labels.scannerIp }}\" is rejected because its logged-in user \"{{ $labels.userName }}\" is not configured in any of the Vserver active scanner pools."
+          impact: "Security"
 
       - alert: Antivirus Server Busy
         expr: last_over_time(ems_events{message="Nblade.vscanConnBackPressure"}[1d]) == 1
@@ -288,6 +300,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "For Vserver \"{{ $labels.vserverName }}\", AV server \"{{ $labels.scannerIp }}\" is too busy to accept new scan requests."
+          impact: "Availability"
 
       - alert: Non-responsive AntiVirus Server
         expr: last_over_time(ems_events{message="Nblade.vscanConnInactive"}[5m]) == 1
@@ -310,6 +323,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "For Vserver \"{{ $labels.vserverName }}\", ONTAP(R) forcibly closed the vscan connection originated from the nonresponsive AV server \"{{ $labels.scannerIp }}\"."
+          impact: "Availability"
 
       - alert: No Registered Scan Engine
         expr: last_over_time(ems_events{message="Nblade.vscanNoRegdScanner"}[1d]) == 1
@@ -332,6 +346,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "For Vserver \"{{ $labels.vserverName }}\", AV Connector running on the AV server \"{{ $labels.scannerIp }}\" does not have a registered scan-engine to it."
+          impact: "Availability"
 
       - alert: No Vscan Connection
         expr: last_over_time(ems_events{message="Nblade.vscanNoScannerConn"}[1d]) == 1
@@ -354,6 +369,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Vserver \"{{ $labels.vserverName }}\" has no virus scanner connection."
+          impact: "Availability"
 
       - alert: Virus Detected
         expr: last_over_time(ems_events{message="Nblade.vscanVirusDetected"}[1w]) == 1
@@ -376,6 +392,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Possible virus detected. Vserver: {{ $labels.vserverName }}, vscan server IP: {{ $labels.vscanServerIp }}, file path: {{ $labels.filePath }}, client IP: {{ $labels.clientIp }}, SID: {{ $labels.SID }}, vscan engine status: {{ $labels.vscanEngineStatus }}, vscan engine result string: {{ $labels.vscanEngineResultString }}."
+          impact: "Availability"
 
       - alert: Relocation of Storage Pool Failed
         expr: last_over_time(ems_events{message="arl.netra.ca.check.failed"}[4w]) == 1
@@ -398,6 +415,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Relocation of aggregate '{{ $labels.vol }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
+          impact: "Availability"
 
       - alert: Volume Anti-ransomware Monitoring
         expr: last_over_time(ems_events{message="arw.volume.state"}[4w]) == 1
@@ -420,6 +438,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Anti-ransomware state was changed to \"{{ $labels.op }}\" on volume \"{{ $labels.volumeName }}\" (UUID: \"{{ $labels.volumeUuid }}\") in Vserver \"{{ $labels.vserverName }}\" (UUID: \"{{ $labels.vserverUuid }}\")."
+          impact: "Security"
 
       - alert: Storage VM Anti-ransomware Monitoring
         expr: last_over_time(ems_events{message="arw.vserver.state"}[4w]) == 1
@@ -442,6 +461,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Anti-ransomware was changed to \"{{ $labels.op }}\" on Vserver \"{{ $labels.vserverName }}\" (UUID: \"{{ $labels.vserverUuid }}\")."
+          impact: "Security"
 
       - alert: Ransomware Activity Detected
         expr: last_over_time(ems_events{message="callhome.arw.activity.seen"}[4w]) == 1
@@ -464,6 +484,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Call-home message for {{ $labels.subject }}"
+          impact: "Security"
 
       - alert: NVRAM Battery Low
         expr: last_over_time(ems_events{message="callhome.battery.low"}[5m]) == 1
@@ -486,6 +507,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Call home for BATTERY_LOW."
+          impact: "Availability"
 
       - alert: HA Interconnect Down
         expr: last_over_time(ems_events{message="callhome.hainterconnect.down"}[1d]) == 1
@@ -508,6 +530,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Call home for {{ $labels.subject }} due to {{ $labels.reason }}."
+          impact: "Availability"
 
       - alert: Service Processor Heartbeat Missed
         expr: last_over_time(ems_events{message="callhome.sp.hbt.missed"}[1d]) == 1
@@ -530,6 +553,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Call home for SP HBT MISSED"
+          impact: "Availability"
 
       - alert: Service Processor Heartbeat Stopped
         expr: last_over_time(ems_events{message="callhome.sp.hbt.stopped"}[1d]) == 1
@@ -552,6 +576,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Call home for SP HBT STOPPED"
+          impact: "Availability"
 
       - alert: Shadow Copy Failed
         expr: last_over_time(ems_events{message="cifs.shadowcopy.failure"}[4w]) == 1
@@ -574,6 +599,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "A shadow copy operation has failed: {{ $labels.errMsg }}. ( Operation : {{ $labels.operation }} , Client Shadow Copy Set ID : {{ $labels.clientShadowCopySetId }} , Filer Shadow Copy Set ID : {{ $labels.filerShadowCopySetId }} , Client Shadow Copy ID : {{ $labels.clientShadowCopyId }} , Filer Shadow Copy ID : {{ $labels.filerShadowCopyId }} , Share Name : {{ $labels.shareName }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }} )"
+          impact: "Availability"
 
       - alert: AWS Credentials Not Initialized
         expr: last_over_time(ems_events{message="cloud.aws.iamNotInitialized"}[5m]) == 1
@@ -596,6 +622,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "A module attempted to access credential information before the cloud credential thread initialized on node {{ $labels.nodeUuid }}."
+          impact: "Availability"
 
       - alert: Storage Switch Power Supplies Failed
         expr: last_over_time(ems_events{message="cluster.switch.pwr.fail"}[4w]) == 1
@@ -618,6 +645,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Cluster switch: {{ $labels.switch_name }} power supply: {{ $labels.pwr_supply_name }} status: {{ $labels.status }}."
+          impact: "Availability"
 
       - alert: Disk Out of Service
         expr: last_over_time(ems_events{message="disk.outOfService"}[5m]) == 1
@@ -640,6 +668,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Drive {{ $labels.diskName }} ({{ $labels.serialno }}){{ $labels.reason }}. Power-On Hours: {{ $labels.powerOnHours }}, GList Count: {{ $labels.glistEntries }}, Drive Info: {{ $labels.disk_information }}."
+          impact: "Availability"
 
       - alert: Disk Shelf Power Supply Discovered
         expr: last_over_time(ems_events{message="diskShelf.psu.added"}[5m]) == 1
@@ -662,6 +691,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.location }} power supply was added to {{ $labels.channelName }}.shelf{{ $labels.shelfIdent }}"
+          impact: "Configuration"
 
       - alert: Disk Shelves Power Supply Removed
         expr: last_over_time(ems_events{message="diskShelf.psu.removed"}[5m]) == 1
@@ -684,6 +714,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.location }} power supply was removed from {{ $labels.channelName }}.shelf{{ $labels.shelfIdent }}"
+          impact: "Availability"
 
       - alert: FabricPool Space Usage Limit Reached
         expr: last_over_time(ems_events{message="fabricpool.full"}[4w]) == 1
@@ -706,6 +737,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Total, cluster-wide FabricPool space usage of object stores from capacity-licensed providers has reached the licensed limit. Cluster ID: {{ $labels.cluster_uuid }}. Current usage: {{ $labels.used_capacity }}, licensed capacity: {{ $labels.licensed_capacity }}."
+          impact: "Capacity"
 
       - alert: FabricPool Space Usage Limit Nearly Reached
         expr: last_over_time(ems_events{message="fabricpool.nearly.full"}[4w]) == 1
@@ -728,6 +760,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Total, cluster-wide FabricPool space usage of object stores from capacity-licensed providers has nearly reached the licensed limit. Cluster id: {{ $labels.cluster_uuid }}. Current usage: {{ $labels.used_capacity }}, licensed capacity: {{ $labels.licensed_capacity }}."
+          impact: "Capacity"
 
       - alert: Giveback of Storage Pool Failed
         expr: last_over_time(ems_events{message="gb.netra.ca.check.failed"}[4w]) == 1
@@ -750,6 +783,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Giveback of aggregate '{{ $labels.vol }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
+          impact: "Availability"
 
       - alert: MetroCluster Monitoring
         expr: last_over_time(ems_events{message="hm.alert.raised"}[5m]) == 1
@@ -772,8 +806,9 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.detailed_info }} raised by monitor {{ $labels.monitor }}"
+          impact: "Availability"
 
-      - alert:  MetroCluster Automatic Unplanned Switchover Disabled
+      - alert: MetroCluster Automatic Unplanned Switchover Disabled
         expr: last_over_time(ems_events{message="mcc.config.auso.stDisabled"}[5m]) == 1
         labels:
           severity: >
@@ -794,6 +829,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The state of Automatic Unplanned Switchover capability has been disabled."
+          impact: "Availability"
 
       - alert: Node Root Volume Space Low
         expr: last_over_time(ems_events{message="mgmtgwd.rootvolrec.low.space"}[4w]) == 1
@@ -816,6 +852,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The root volume on node \"{{ $labels.node }}\" is dangerously low on space. Less than {{ $labels.threshold_in_mb }} MB of free space remaining."
+          impact: "Capacity"
 
       - alert: System Cannot Operate Due to Main Unit Fan Failure
         expr: last_over_time(ems_events{message="monitor.fan.critical"}[5m]) == 1
@@ -838,6 +875,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.report }}"
+          impact: "Availability"
 
       - alert: Main Unit Fan Failed
         expr: last_over_time(ems_events{message="monitor.fan.failed"}[5m]) == 1
@@ -860,6 +898,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.report }}"
+          impact: "Availability"
 
       - alert: Main Unit Fan in Warning State
         expr: last_over_time(ems_events{message="monitor.fan.warning"}[5m]) == 1
@@ -882,6 +921,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.report }}"
+          impact: "Availability"
 
       - alert: NVMe-oF License Grace Period Active
         expr: last_over_time(ems_events{message="nvmf.graceperiod.active"}[4w]) == 1
@@ -904,6 +944,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The NVMe-oF feature requires a license in this version of ONTAP. NVMe-oF functionality will be disabled in {{ $labels.days_remaining }} days ({{ $labels.expiration_date }}) unless a license is added to the cluster."
+          impact: "Availability"
 
       - alert: NVMe-oF License Grace Period Expired
         expr: last_over_time(ems_events{message="nvmf.graceperiod.expired"}[4w]) == 1
@@ -926,6 +967,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The NVMe-oF feature requires a license in this version of ONTAP and the grace period has expired. NVMe-oF functionality will be disabled until a license is added to the cluster."
+          impact: "Availability"
 
       - alert: NVMe-oF License Grace Period Start
         expr: last_over_time(ems_events{message="nvmf.graceperiod.start"}[4w]) == 1
@@ -948,6 +990,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The NVMe-oF feature requires a license in this version of ONTAP. NVMe-oF functionality will be disabled in {{ $labels.days_remaining }} days ({{ $labels.expiration_date }}) unless a license is added to the cluster."
+          impact: "Availability"
 
       - alert: Cloud Tier Unreachable
         expr: last_over_time(ems_events{message="object.store.unavailable"}[5m]) == 1
@@ -970,6 +1013,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Unable to connect to the object store \"{{ $labels.configname }}\" from node {{ $labels.node_uuid }}. Reason: {{ $labels.reason }}."
+          impact: "Availability"
 
       - alert: Object Store Host Unresolvable
         expr: last_over_time(ems_events{message="objstore.host.unresolvable"}[1d]) == 1
@@ -992,6 +1036,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Object-store server host name \"{{ $labels.hostname }}\" cannot be resolved to an IP address on node {{ $labels.nodeUuid }}."
+          impact: "Availability"
 
       - alert: Object Store Intercluster LIF Down
         expr: last_over_time(ems_events{message="objstore.interclusterlifDown"}[1d]) == 1
@@ -1014,6 +1059,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Object-store client could not find an operational intercluster LIF (IPspace ID: {{ $labels.ipspaceID }}) on node {{ $labels.nodeUuid }}."
+          impact: "Availability"
 
       - alert: Object Store Signature Mismatch
         expr: last_over_time(ems_events{message="osc.signatureMismatch"}[1d]) == 1
@@ -1036,6 +1082,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Object-store {{ $labels.operation }} operation server-calculated request signature does not match the signature sent to object-store server {{ $labels.serverHostname }} for bucket or container \"{{ $labels.bucket }}\" on node {{ $labels.nodeUuid }}. Check the keys and signing method."
+          impact: "Availability"
 
       - alert: QoS Monitor Memory Maxed Out
         expr: last_over_time(ems_events{message="qos.monitor.memory.maxed"}[5m]) == 1
@@ -1058,6 +1105,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "QoS dynamic memory has reached its limit. Some QoS features might operate in a limited capacity."
+          impact: "Capacity"
 
       - alert: SAN "active-active" State Changed
         expr: last_over_time(ems_events{message="scsiblade.san.config.active"}[5m]) == 1
@@ -1080,6 +1128,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The symmetric active-active state is {{ $labels.state }} on {{ $labels.num_luns }} LUNs."
+          impact: "Availability"
 
       - alert: FC Target Port Commands Exceeded
         expr: last_over_time(ems_events{message="scsitarget.fct.port.full"}[5m]) == 1
@@ -1102,6 +1151,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "FC target port {{ $labels.portname }} has {{ $labels.active_commands }} outstanding commands, which exceeds the maximum number of commands {{ $labels.max_commands }} that can be supported by this port."
+          impact: "Availability"
 
       - alert: SFP in FC target adapter receiving low power
         expr: last_over_time(ems_events{message="scsitarget.fct.sfpRxPowerLow"}[8h]) == 1
@@ -1124,6 +1174,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The SFP in FC target adapter {{ $labels.adapter }} reports that it is receiving (RX) at a low level of power. Operating value {{ $labels.operating_value }} (uWatts), Threshold value {{ $labels.threshold_value }} (uWatts)."
+          impact: "Availability"
 
       - alert: SFP in FC target adapter transmitting low power
         expr: last_over_time(ems_events{message="scsitarget.fct.sfpTxPowerLow"}[8h]) == 1
@@ -1146,6 +1197,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The SFP in FC target adapter {{ $labels.adapter }} reports that it is transmitting (TX) at a low level of power. Operating value {{ $labels.operating_value }} (uWatts), Threshold value {{ $labels.threshold_value }} (uWatts)."
+          impact: "Availability"
 
       - alert: Shelf Fan Failed
         expr: last_over_time(ems_events{message="ses.status.fanError"}[5m]) == 1
@@ -1168,6 +1220,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.prodChannel }} cooling fan error for {{ $labels.typeText }} {{ $labels.fanNumber }}: {{ $labels.errorMsg }}{{ $labels.errorText }}. {{ $labels.locationText }}."
+          impact: "Availability"
 
       - alert: Node Panic
         expr: last_over_time(ems_events{message="sk.panic"}[1d]) == 1
@@ -1190,6 +1243,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Panic String: {{ $labels.reason }}"
+          impact: "Performance"
 
       - alert: ONTAP Mediator Added
         expr: last_over_time(ems_events{message="sm.mediator.added"}[5m]) == 1
@@ -1212,6 +1266,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "ONTAP Mediator (version {{ $labels.version }}) is added on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
+          impact: "Protection"
 
       - alert: ONTAP Mediator CA Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.cacert.expired"}[5m]) == 1
@@ -1234,6 +1289,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "CA certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+          impact: "Protection"
 
       - alert: ONTAP Mediator CA Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.cacert.expiring"}[5m]) == 1
@@ -1256,6 +1312,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "CA certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+          impact: "Protection"
 
       - alert: ONTAP Mediator Client Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.clientc.expired"}[5m]) == 1
@@ -1278,6 +1335,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Client certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+          impact: "Protection"
 
       - alert: ONTAP Mediator Client Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.clientc.expiring"}[5m]) == 1
@@ -1300,6 +1358,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Client certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+          impact: "Protection"
 
       - alert: ONTAP Mediator Not Accessible
         expr: last_over_time(ems_events{message="sm.mediator.misconfigured"}[5m]) == 1
@@ -1322,6 +1381,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "ONTAP Mediator is not accessible on cluster '{{ $labels.cluster }}' with Mediator IP address '{{ $labels.ipAddress }}'."
+          impact: "Protection"
 
       - alert: ONTAP Mediator Removed
         expr: last_over_time(ems_events{message="sm.mediator.removed"}[5m]) == 1
@@ -1344,6 +1404,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "ONTAP Mediator (version {{ $labels.version }}) was removed on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
+          impact: "Protection"
 
       - alert: ONTAP Mediator Server Certificate Expired
         expr: last_over_time(ems_events{message="sm.mediator.serverc.expired"}[5m]) == 1
@@ -1366,6 +1427,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Server certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+          impact: "Protection"
 
       - alert: ONTAP Mediator Server Certificate Expiring
         expr: last_over_time(ems_events{message="sm.mediator.serverc.expiring"}[5m]) == 1
@@ -1388,6 +1450,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Server certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+          impact: "Protection"
 
       - alert: ONTAP Mediator Unreachable
         expr: last_over_time(ems_events{message="sm.mediator.unreachable"}[5m]) == 1
@@ -1410,6 +1473,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "ONTAP Mediator (IP: {{ $labels.ipAddress }}) is unreachable from cluster {{ $labels.cluster }}."
+          impact: "Protection"
 
       - alert: SnapMirror Relationship Out of Sync
         expr: last_over_time(ems_events{message="sms.status.out.of.sync"}[5m]) == 1
@@ -1432,6 +1496,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" is in \"out-of-sync\" status due to the following reason: \"{{ $labels.error_msg }}\"."
+          impact: "Protection"
 
       - alert: SnapMirror active sync Relationship Out of Sync
         expr: last_over_time(ems_events{message="sms.status.out.of.sync.cg"}[4w]) == 1
@@ -1454,6 +1519,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Source CG \"{{ $labels.srccgpath }}\" and destination CG \"{{ $labels.dstcgpath }}\" with relationship UUID \"{{ $labels.cg_relationship_id }}\" is in \"out-of-sync\" status. Reason: \"{{ $labels.error_msg }}\"."
+          impact: "Protection"
 
       - alert: Service Processor Offline
         expr: last_over_time(ems_events{message="sp.ipmi.lost.shutdown"}[5m]) == 1
@@ -1476,6 +1542,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "SP heartbeat stopped and cannot be recovered. To prevent hardware damage and data loss, the system will shut down in {{ $labels.num_minutes }} minutes."
+          impact: "Availability"
 
       - alert: Service Processor Not Configured
         expr: last_over_time(ems_events{message="sp.notConfigured"}[5m]) == 1
@@ -1498,6 +1565,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "The system's Service Processor (SP) is not configured. Use the 'system service-processor network modify' command to configure it."
+          impact: "Availability"
 
       - alert: Unassigned Disks
         expr: last_over_time(ems_events{message="unowned.disk.reminder"}[5m]) == 1
@@ -1520,6 +1588,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "{{ $labels.count }} disks are currently unowned. Use the \"disk assign\" command to assign the disks to a system."
+          impact: "Availability"
 
       - alert: Storage VM Stop Succeeded
         expr: last_over_time(ems_events{message="vserver.stop.succeeded"}[5m]) == 1
@@ -1542,6 +1611,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Vserver {{ $labels.vserver_name }} (UUID: {{ $labels.vserver_uuid }}) stopped successfully."
+          impact: "Availability"
 
       - alert: FabricPool Mirror Replication Resync Completed
         expr: last_over_time(ems_events{message="wafl.ca.resync.complete"}[5m]) == 1
@@ -1564,6 +1634,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "FabricPool mirror resync process is completed for FabricPool {{ $labels.aggr }} (uuid {{ $labels.aggr_uuid }}) from primary object store (config id {{ $labels.primary_config_id }}) to mirror object store (config id {{ $labels.mirror_config_id }})."
+          impact: "Capacity"
 
       - alert: READDIR Timeout
         expr: last_over_time(ems_events{message="wafl.readdir.expired"}[4w]) == 1
@@ -1586,6 +1657,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "A READDIR file operation has expired for the directory associated with volume \"{{ $labels.volume }}{{ $labels.app }}/{{ $labels.volident }}\" Snapshot copy ID {{ $labels.snapid }} and inode {{ $labels.directory_inum }}."
+          impact: "Availability"
 
       - alert: Volume Automatic Resizing Succeeded
         expr: last_over_time(ems_events{message="wafl.vol.autoSize.done"}[5m]) == 1
@@ -1608,6 +1680,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Volume autosize: Automatic {{ $labels.event_type }} of volume '{{ $labels.vol }}{{ $labels.app }}{{ $labels.volident }}' by {{ $labels.size }} is complete."
+          impact: "Capacity"
 
       - alert: Volume Offline
         expr: last_over_time(ems_events{message="wafl.vvol.offline"}[5m]) == 1
@@ -1630,6 +1703,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Volume '{{ $labels.name }}{{ $labels.app }}{{ $labels.volident }}' has been set temporarily offline"
+          impact: "Availability"
 
       - alert: Volume Restricted
         expr: last_over_time(ems_events{message="wafl.vvol.restrict"}[5m]) == 1
@@ -1652,6 +1726,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "vol=\"{{ $labels.vol }}\", app=\"{{ $labels.app }}\", volident=\"{{ $labels.volident }}\", instuuid=\"{{ $labels.instuuid }}\""
+          impact: "Availability"
 
       - alert: SnapMirror Relationship Resync Attempt Failed
         expr: last_over_time(ems_events{message="sms.resync.attempt.failed"}[4w]) == 1
@@ -1674,6 +1749,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Resynchronize operation between source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed. The next auto-resync will be attempted after \"{{ $labels.next_resync_interval }}\" mins."
+          impact: "Protection"
 
       - alert: SnapMirror Relationship Common Snapshot Failed
         expr: last_over_time(ems_events{message="sms.common.snapshot.failed"}[4w]) == 1
@@ -1696,6 +1772,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Creating a common Snapshot copy for source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed due to the following reason:\"{{ $labels.error_msg }}\". Elapsed time since the latest successful common Snapshot copy is \"{{ $labels.css_fail_interval }}\"."
+          impact: "Protection"
 
       - alert: SnapMirror Relationship Snapshot is not Replicated
         expr: last_over_time(ems_events{message="sms.snap.not.replicated"}[4w]) == 1
@@ -1718,6 +1795,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Snapshot copy \"{{ $labels.snapshot }}\" is not sucessfully replicated for the relationship \"{{ $labels.transferId }}\" with source volume DSID \"{{ $labels.volumeDSID }}\" and path \"{{ $labels.volumePath }}\". Reason: \"{{ $labels.failureReason }}\"."
+          impact: "Protection"
 
       - alert: Fanout SnapMirror Relationship Common Snapshot Deleted
         expr: last_over_time(ems_events{message="sms.fanout.comm.snap.deleted"}[4w]) == 1
@@ -1740,6 +1818,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "SnapMirror Synchronous operation \"{{ $labels.sm_operation }}\" for relationship \"{{ $labels.relationship_id }}\" has cleaned up some of the old base Snapshot copies between the synchronous source and synchronous destination, which could result in no common Snapshot copy existing between the synchronous and asynchronous destinations."
+          impact: "Protection"
 
       - alert: SnapMirror Relationship Initialization Failed
         expr: last_over_time(ems_events{message="smc.snapmir.init.fail"}[4w]) == 1
@@ -1762,6 +1841,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "Initialize from source volume \"{{ $labels.srcpath }}\" to destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" failed with error \"{{ $labels.error }}\"."
+          impact: "Protection"
 
       - alert: SnapMirror active sync Automatic Unplanned Failover Failed
         expr: last_over_time(ems_events{message="smbc.aufo.failed"}[4w]) == 1
@@ -1784,6 +1864,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "SnapMirror automatic failover failed for Destination path: \"{{ $labels.dstpath }}\"."
+          impact: "Protection"
 
       - alert: SnapMirror active sync Automatic Unplanned Failover Completed
         expr: last_over_time(ems_events{message="smbc.aufo.completed"}[4w]) == 1
@@ -1806,6 +1887,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "SnapMirror automatic failover completed for Destination path: \"{{ $labels.dstpath }}\"."
+          impact: "Protection"
 
       - alert: SnapMirror active sync Planned Failover Failed
         expr: last_over_time(ems_events{message="smbc.pfo.failed"}[4w]) == 1
@@ -1828,6 +1910,7 @@ groups:
             {{- end -}}
         annotations:
           summary: "SnapMirror active sync planned failover operation failed for Destination path: \"{{ $labels.dstpath }}\"."
+          impact: "Protection"
 
       - alert: SnapMirror active sync Planned Failover Completed
         expr: last_over_time(ems_events{message="smbc.pfo.completed"}[4w]) == 1
@@ -1850,3 +1933,4 @@ groups:
             {{- end -}}
         annotations:
           summary: "SnapMirror active sync planned failover operation completed for Destination path: \"{{ $labels.dstpath }}\"."
+          impact: "Protection"
