@@ -5,7 +5,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
-	"strings"
 )
 
 type MetroclusterCheck struct {
@@ -54,41 +53,33 @@ func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 
 	for _, instance := range data.GetInstances() {
 		instance.SetExportable(false)
-		m.update(instance.GetLabel("cluster_detail"), "cluster")
-		m.update(instance.GetLabel("node_detail"), "node")
-		m.update(instance.GetLabel("aggregate_detail"), "aggregate")
-		m.update(instance.GetLabel("volume_detail"), "volume")
+		m.update(instance.GetLabel("cluster"), "cluster")
+		m.update(instance.GetLabel("node"), "node")
+		m.update(instance.GetLabel("aggregate"), "aggregate")
+		m.update(instance.GetLabel("volume"), "volume")
 	}
 
 	return []*matrix.Matrix{m.data}, nil
 }
 
-func (m *MetroclusterCheck) update(objectDetail string, object string) {
+func (m *MetroclusterCheck) update(objectInfo string, object string) {
 	var (
 		newDetailInstance *matrix.Instance
 		key               string
 		err               error
 	)
 
-	if objectDetail == "" {
+	if objectInfo == "" {
 		return
 	}
 
-	detailSlice := strings.Split(objectDetail, "},{")
-
-	for _, detail := range detailSlice {
-		if !strings.HasSuffix(detail, "}") {
-			detail = detail + "}"
-		}
-		if !strings.HasPrefix(detail, "{") {
-			detail = "{" + detail
-		}
-		detailJSON := gjson.Result{Type: gjson.JSON, Raw: detail}
-		clusterName := detailJSON.Get("cluster.name").String()
-		nodeName := detailJSON.Get("node.name")
-		aggregateName := detailJSON.Get("aggregate.name")
-		volumeName := detailJSON.Get("volume.name")
-		for _, check := range detailJSON.Get("checks").Array() {
+	objectInfoJSON := gjson.Result{Type: gjson.JSON, Raw: objectInfo}
+	for _, detail := range objectInfoJSON.Get("details").Array() {
+		clusterName := detail.Get("cluster.name").String()
+		nodeName := detail.Get("node.name")
+		aggregateName := detail.Get("aggregate.name")
+		volumeName := detail.Get("volume.name")
+		for _, check := range detail.Get("checks").Array() {
 			name := check.Get("name").String()
 			result := check.Get("result").String()
 			switch object {

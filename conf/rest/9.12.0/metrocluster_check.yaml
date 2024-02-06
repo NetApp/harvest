@@ -3,15 +3,15 @@ query:            api/cluster/metrocluster/diagnostics
 object:           metrocluster_check
 
 counters:
-  - ^aggregate.details   => aggregate_detail
-  - ^cluster.details     => cluster_detail
-  - ^node.details        => node_detail
-  - ^volume.details      => volume_detail
+  - ^aggregate   => aggregate
+  - ^cluster     => cluster
+  - ^node        => node
+  - ^volume      => volume
   - hidden_fields:
-      - cluster.details
-      - aggregate.details
-      - node.details
-      - volume.details
+      - cluster
+      - aggregate
+      - node
+      - volume
 
 plugins:
   - MetroclusterCheck     # Creates metrics from details collected above
