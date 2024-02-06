@@ -406,7 +406,10 @@ func (p *Poller) Start() {
 
 	// start collectors
 	for _, col = range p.collectors {
-		logger.Debug().Msgf("launching collector (%s:%s)", col.GetName(), col.GetObject())
+		logger.Trace().
+			Str("collectorName", col.GetName()).
+			Str("object", col.GetObject()).
+			Msg("launching collector")
 		wg.Add(1)
 		go col.Start(&wg)
 	}
@@ -459,7 +462,13 @@ func (p *Poller) Run() {
 			// update status of collectors
 			for _, c := range p.collectors {
 				code, status, msg := c.GetStatus()
-				logger.Debug().Msgf("collector (%s:%s) status: (%d - %s) %s", c.GetName(), c.GetObject(), code, status, msg)
+				logger.Trace().
+					Str("collectorName", c.GetName()).
+					Str("object", c.GetObject()).
+					Uint8("code", code).
+					Str("status", status).
+					Str("message", msg).
+					Msg("collector status")
 
 				if code == 0 {
 					upc++
@@ -700,9 +709,17 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 			logger.Trace().Msgf("expName %s", expName)
 			if exp := p.loadExporter(expName); exp != nil {
 				col.LinkExporter(exp)
-				logger.Debug().Msgf("linked (%s:%s) to exporter (%s)", name, obj, expName)
+				logger.Trace().
+					Str("name", name).
+					Str("object", obj).
+					Str("exporterName", expName).
+					Msg("linked to exporter")
 			} else {
-				logger.Warn().Msgf("exporter (%s) requested by (%s:%s) not available", expName, name, obj)
+				logger.Warn().
+					Str("exporterName", expName).
+					Str("name", name).
+					Str("object", obj).
+					Msg("exporter requested by not available")
 			}
 		}
 

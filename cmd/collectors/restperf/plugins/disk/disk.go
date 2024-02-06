@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -165,22 +166,34 @@ func (d *Disk) Init() error {
 				d.instanceLabels[attribute][metricName] = display
 				instanceLabels.NewChildS("", display)
 				instanceKeys.NewChildS("", display)
-				d.Logger.Debug().Msgf("added instance key: (%s) [%s]", attribute, display)
+				d.Logger.Trace().
+					Str("attribute", attribute).
+					Str("display", display).
+					Msg("added instance key")
 			case "label":
 				d.instanceLabels[attribute][metricName] = display
 				instanceLabels.NewChildS("", display)
-				d.Logger.Debug().Msgf("added instance label: (%s) [%s]", attribute, display)
+				d.Logger.Trace().
+					Str("attribute", attribute).
+					Str("display", display).
+					Msg("added instance label")
 			case "float":
 				_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
 				if err != nil {
 					d.Logger.Error().Stack().Err(err).Msg("add metric")
 					return err
 				}
-				d.Logger.Debug().Msgf("added metric: (%s) [%s]", attribute, display)
+				d.Logger.Trace().
+					Str("attribute", attribute).
+					Str("display", display).
+					Msg("added metric")
 			}
 		}
 
-		d.Logger.Debug().Msgf("added shelfData for [%s] with %d metrics", attribute, len(d.shelfData[attribute].GetMetrics()))
+		d.Logger.Trace().
+			Str("attribute", attribute).
+			Str("metricsCount", strconv.Itoa(len(d.shelfData[attribute].GetMetrics()))).
+			Msg("added shelfData with metrics")
 
 		d.shelfData[attribute].SetExportOptions(exportOptions)
 	}
@@ -274,7 +287,11 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 									d.Logger.Error().Err(err).Str("attribute", attribute).Str("instanceKey", instanceKey).Msg("Failed to add instance")
 									break
 								}
-								d.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, shelfSerialNumber, attribute, combinedKey)
+								d.Logger.Trace().
+									Str("attribute", attribute).
+									Str("shelfSerialNumber", shelfSerialNumber).
+									Str("combinedKey", combinedKey).
+									Msg("add instance")
 
 								for label, labelDisplay := range d.instanceLabels[attribute] {
 									if value := obj.Get(label); value.Exists() {
@@ -316,7 +333,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 											d.Logger.Error().Err(err).Str("key", metricKey).Str("metric", m.GetName()).Str("value", value.String()).
 												Msg("Unable to set float key on metric")
 										} else {
-											d.Logger.Debug().Str("metricKey", metricKey).Str("value", value.String()).Msg("added")
+											d.Logger.Trace().Str("metricKey", metricKey).Str("value", value.String()).Msg("added")
 										}
 									}
 								}

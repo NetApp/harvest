@@ -483,7 +483,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			break
 		}
 
-		z.Logger.Debug().
+		z.Logger.Trace().
 			Int("instances", len(instances.GetChildren())).
 			Msg("Fetched batch with instances")
 
@@ -565,7 +565,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 				// sanity check
 				if name == "" || value == "" {
-					z.Logger.Debug().
+					// skip counters with empty value or name
+					z.Logger.Trace().
 						Str("counter", name).
 						Str("value", value).
 						Msg("Skipping incomplete counter")
@@ -762,7 +763,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	calcStart := time.Now()
 
-	z.Logger.Debug().Msg("starting delta calculations from previous cache")
+	z.Logger.Trace().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
 	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true}) // @TODO implement copy data
@@ -1083,7 +1084,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrMissingParam, "counters")
 	}
 
-	z.Logger.Debug().
+	z.Logger.Trace().
 		Int("oldMetrics", oldMetricsSize).
 		Int("oldLabels", oldLabelsSize).
 		Msg("Updating metric cache")
@@ -1243,7 +1244,10 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 					return nil, err
 				}
 				ops.SetProperty(visits.GetProperty())
-				z.Logger.Debug().Msgf("+ [resource_ops] [%s] added workload ops metric with property (%s)", ops.GetName(), ops.GetProperty())
+				z.Logger.Trace().
+					Str("opsName", ops.GetName()).
+					Str("opsProperty", ops.GetProperty()).
+					Msg("[resource_ops] added workload ops metric with property")
 			}
 
 			service.SetExportable(false)
@@ -1274,7 +1278,10 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 					m.SetComment("ops")
 
 					oldMetrics.Remove(name)
-					z.Logger.Debug().Msgf("+ [%s] (=> %s) added workload latency metric", name, resource)
+					z.Logger.Trace().
+						Str("name", name).
+						Str("resource", resource).
+						Msg("added workload latency metric")
 				}
 			}
 		}
@@ -1313,8 +1320,8 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	metricsAdded := numMetrics - (oldMetricsSize - oldMetrics.Size())
 	labelsAdded := len(z.instanceLabels) - (oldLabelsSize - oldLabels.Size())
 
-	z.Logger.Debug().Int("new", metricsAdded).Int("removed", oldMetrics.Size()).Int("total", numMetrics).Msg("metrics")
-	z.Logger.Debug().Int("new", labelsAdded).Int("removed", oldLabels.Size()).Int("total", len(z.instanceLabels)).Msg("labels")
+	z.Logger.Trace().Int("new", metricsAdded).Int("removed", oldMetrics.Size()).Int("total", numMetrics).Msg("metrics")
+	z.Logger.Trace().Int("new", labelsAdded).Int("removed", oldLabels.Size()).Int("total", len(z.instanceLabels)).Msg("labels")
 
 	// update metadata for collector logs
 	_ = z.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
@@ -1541,7 +1548,9 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 	oldSize = oldInstances.Size()
 
-	z.Logger.Debug().Msgf("updating instance cache (old cache has: %d)", oldInstances.Size())
+	z.Logger.Trace().
+		Int("oldInstancesSize", oldInstances.Size()).
+		Msg("updating instance cache")
 
 	nameAttr = "name"
 	uuidAttr = "uuid"
