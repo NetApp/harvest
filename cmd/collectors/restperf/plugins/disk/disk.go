@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -192,7 +191,7 @@ func (d *Disk) Init() error {
 
 		d.Logger.Trace().
 			Str("attribute", attribute).
-			Str("metricsCount", strconv.Itoa(len(d.shelfData[attribute].GetMetrics()))).
+			Int("numMetrics", len(d.shelfData[attribute].GetMetrics())).
 			Msg("added shelfData with metrics")
 
 		d.shelfData[attribute].SetExportOptions(exportOptions)

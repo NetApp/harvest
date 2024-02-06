@@ -150,7 +150,7 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 			e.resolveAfter[issueEmsProp.Name] = durationVal
 		}
 	}
-	e.Logger.Trace().Str("bookend ems resolve After", e.resolveAfter[issueEmsProp.Name].String()).Msg("")
+	e.Logger.Trace().Str("bookend ems resolve After", e.resolveAfter[issueEmsProp.Name].String()).Send()
 
 	// Using Set to ensure it has slice of unique issuing ems
 	if _, ok := e.bookendEmsMap[resolveEmsName]; !ok {

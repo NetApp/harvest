@@ -440,7 +440,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 						*numMetrics++
 						q.Logger.Trace().
 							Str("attribute", attribute).
-							Interface("value", value).
+							Str("value", value).
 							Msg("added value")
 					}
 				}

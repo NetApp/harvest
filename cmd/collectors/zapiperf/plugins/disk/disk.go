@@ -902,7 +902,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 								} else {
 									d.Logger.Trace().
 										Str("metricKey", metricKey).
-										Interface("value", value).
+										Str("value", value).
 										Msg("added value")
 								}
 							}
