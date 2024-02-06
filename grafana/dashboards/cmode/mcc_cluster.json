@@ -3504,8 +3504,7 @@
                   "datacenter": true,
                   "instance": true,
                   "job": true,
-                  "result": false,
-                  "{__name__=\"metrocluster_check_aggr_status\", aggregate=\"aggr0_sti8300mcc_281\", cluster=\"sti8300mcc-281_siteA\", datacenter=\"DC\", instance=\"localhost:13010\", job=\"c10\", name=\"disk_pool_allocation\", node=\"sti8300mcc-281\", result=\"ok\"}": true
+                  "result": false
                 },
                 "indexByName": {
                   "Time": 0,
@@ -3521,7 +3520,7 @@
                 "renameByName": {
                   "cluster": "Cluster",
                   "job": "",
-                  "name": "Name",
+                  "name": "Checks",
                   "result": "Result"
                 }
               }
@@ -3588,7 +3587,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "metrocluster_check_node_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "metrocluster_check_node_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3608,8 +3607,7 @@
                   "datacenter": true,
                   "instance": true,
                   "job": true,
-                  "result": false,
-                  "{__name__=\"metrocluster_check_aggr_status\", aggregate=\"aggr0_sti8300mcc_281\", cluster=\"sti8300mcc-281_siteA\", datacenter=\"DC\", instance=\"localhost:13010\", job=\"c10\", name=\"disk_pool_allocation\", node=\"sti8300mcc-281\", result=\"ok\"}": true
+                  "result": false
                 },
                 "indexByName": {
                   "Time": 0,
@@ -3626,7 +3624,7 @@
                 "renameByName": {
                   "cluster": "Cluster",
                   "job": "",
-                  "name": "Name",
+                  "name": "Checks",
                   "node": "Node",
                   "result": "Result"
                 }
@@ -3694,7 +3692,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "metrocluster_check_aggr_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "metrocluster_check_aggr_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggregate=~\"$Aggr\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3714,8 +3712,7 @@
                   "datacenter": true,
                   "instance": true,
                   "job": true,
-                  "result": false,
-                  "{__name__=\"metrocluster_check_aggr_status\", aggregate=\"aggr0_sti8300mcc_281\", cluster=\"sti8300mcc-281_siteA\", datacenter=\"DC\", instance=\"localhost:13010\", job=\"c10\", name=\"disk_pool_allocation\", node=\"sti8300mcc-281\", result=\"ok\"}": true
+                  "result": false
                 },
                 "indexByName": {
                   "Time": 0,
@@ -3734,7 +3731,7 @@
                   "aggregate": "Aggregate",
                   "cluster": "Cluster",
                   "job": "",
-                  "name": "Name",
+                  "name": "Checks",
                   "node": "Node",
                   "result": "Result"
                 }
@@ -3802,7 +3799,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "metrocluster_check_volume_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "metrocluster_check_volume_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggregate=~\"$Aggr\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3822,8 +3819,7 @@
                   "datacenter": true,
                   "instance": true,
                   "job": true,
-                  "result": false,
-                  "{__name__=\"metrocluster_check_aggr_status\", aggregate=\"aggr0_sti8300mcc_281\", cluster=\"sti8300mcc-281_siteA\", datacenter=\"DC\", instance=\"localhost:13010\", job=\"c10\", name=\"disk_pool_allocation\", node=\"sti8300mcc-281\", result=\"ok\"}": true
+                  "result": false
                 },
                 "indexByName": {
                   "Time": 0,
@@ -3843,7 +3839,7 @@
                   "aggregate": "Aggregate",
                   "cluster": "Cluster",
                   "job": "",
-                  "name": "Name",
+                  "name": "Checks",
                   "node": "Node",
                   "result": "Result",
                   "volume": "Volume"

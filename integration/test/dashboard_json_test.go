@@ -94,6 +94,7 @@ var excludeCounters = []string{
 	"change_log",
 	"nfs_clients_",
 	"ndmp_session_",
+	"metrocluster_check_",
 }
 
 var flakyCounters = []string{
