@@ -432,15 +432,25 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 	return skips, nil
 }
 
-func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold int, logger *logging.Logger) (int, error) {
+// DivideWithThreshold applicable for latency counters
+func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold int, curRawMat *Matrix, prevRawMat *Matrix, logger *logging.Logger) (int, error) {
 	var skips int
 	x := float64(threshold)
+	curRawMetric := curRawMat.GetMetric(metricKey)
+	curBaseRawMetric := curRawMat.GetMetric(baseKey)
+	prevRawMetric := prevRawMat.GetMetric(metricKey)
+	prevBaseRawMetric := prevRawMat.GetMetric(baseKey)
 	metric := m.GetMetric(metricKey)
 	base := m.GetMetric(baseKey)
+	time := m.GetMetric("timestamp")
+	var tValues []float64
+	if time != nil {
+		tValues = time.values
+	}
 	sValues := base.values
 	sRecord := base.GetRecords()
-	if len(metric.values) != len(sValues) {
-		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(metric.values), len(sValues)))
+	if len(metric.values) != len(sValues) || len(sValues) != len(tValues) {
+		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d, time=%d", len(metric.values), len(sValues), len(tValues)))
 	}
 	for i := 0; i < len(metric.values); i++ {
 		v := metric.values[i]
@@ -456,8 +466,30 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 				Float64("denominator", sValues[i]).
 				Msg("Negative values")
 		} else if metric.record[i] && sRecord[i] {
-			if sValues[i] >= x {
+			// For a latency counter, ensure that the base counter has sufficient operations for accurate calculation.
+			minimumBase := tValues[i] * x
+			if metric.GetName() == "optimal_point_latency" {
+				// An exception is made for headroom latency because the base counter always has a few IOPS
+				minimumBase = 0
+			}
+			if sValues[i] > minimumBase {
 				metric.values[i] /= sValues[i]
+				// if cooked latency is greater than 5 secs log delta values
+				if metric.values[i] > 5_000_000 {
+					if len(metric.values) == len(curRawMetric.values) && len(curRawMetric.values) == len(prevRawMetric.values) &&
+						len(prevRawMetric.values) == len(curBaseRawMetric.values) && len(curBaseRawMetric.values) == len(prevBaseRawMetric.values) {
+						logger.Debug().
+							Str("metric", metric.GetName()).
+							Str("key", metricKey).
+							Float64("numerator", v).
+							Float64("denominator", sValues[i]).
+							Float64("prev_raw_latency", prevRawMetric.values[i]).
+							Float64("current_raw_latency", curRawMetric.values[i]).
+							Float64("prev_raw_base", prevBaseRawMetric.values[i]).
+							Float64("current_raw_base", curBaseRawMetric.values[i]).
+							Msg("Detected high latency value in the metric")
+					}
+				}
 			} else {
 				metric.values[i] = 0
 			}

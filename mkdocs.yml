@@ -6,6 +6,7 @@ edit_uri: ""
 
 nav:
   - What is Harvest?: 'index.md'
+  - Concepts: 'concepts.md'
   - Quickstart: 'quickstart.md'
   - Installation:
       - 'Overview': 'install/overview.md'
@@ -90,12 +91,14 @@ extra:
 
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
   - toc:
       permalink: true
   - pymdownx.details
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

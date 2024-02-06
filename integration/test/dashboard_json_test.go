@@ -93,7 +93,7 @@ var excludeCounters = []string{
 	"svm_write_total",
 	"change_log",
 	"nfs_clients_",
-	"metrocluster_check_",
+	"ndmp_session_",
 }
 
 var flakyCounters = []string{

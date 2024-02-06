@@ -23,7 +23,7 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -61,6 +61,7 @@ type options struct {
 	dirGrafanaFolderMap map[string]*Folder
 	addMultiSelect      bool
 	svmRegex            string
+	customizeDir        string
 }
 
 type Folder struct {
@@ -95,6 +96,14 @@ func askForToken() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func doCustomize(_ *cobra.Command, _ []string) {
+	adjustOptions()
+	exitIfExist(opts.customizeDir, "output-dir")
+
+	initImportVars()
+	importDashboards(opts)
 }
 
 func doExport(_ *cobra.Command, _ []string) {
@@ -166,7 +175,7 @@ func exportFiles(dir string, folder *Folder) error {
 			return err
 		}
 		if dashboard, ok := result["dashboard"]; ok {
-			fp := path.Join(dir, uri+".json")
+			fp := filepath.Join(dir, uri+".json")
 			data, err := json.Marshal(dashboard)
 			if err != nil {
 				fmt.Printf("error marshall dashboard [%s]: %v\n\n", uid, err)
@@ -370,7 +379,7 @@ func validateImport() {
 	// default case
 	if opts.dir == "" && opts.serverfolder.name == "" {
 		opts.dir = "grafana/dashboards"
-		opts.dir = path.Join(homePath, opts.dir)
+		opts.dir = filepath.Join(homePath, opts.dir)
 	}
 
 	exitIfMissing(opts.dir, "directory")
@@ -390,18 +399,20 @@ func initImportVars() {
 
 	// default behaviour
 	if opts.dir == "grafana/dashboards" && opts.serverfolder.name == "" {
-		m[path.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
-		m[path.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
-		m[path.Join(opts.dir, "/storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
+		m[filepath.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
+		m[filepath.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
+		m[filepath.Join(opts.dir, "/storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
 	} else if opts.dir != "" && opts.serverfolder.name != "" {
 		m[opts.dir] = &Folder{name: opts.serverfolder.name}
 	}
 
 	for k, v := range m {
-		err := checkAndCreateServerFolder(v)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(1)
+		if opts.customizeDir == "" {
+			err := checkAndCreateServerFolder(v)
+			if err != nil {
+				fmt.Print(err)
+				os.Exit(1)
+			}
 		}
 		opts.dirGrafanaFolderMap[k] = v
 	}
@@ -433,7 +444,7 @@ func exitIfMissing(fp string, s string) {
 
 func exitIfExist(fp string, s string) {
 	if _, err := os.Stat(fp); err == nil {
-		fmt.Printf("error: %s folder [%s] exists. Please specify an empty or non-existent directory\n", s, fp)
+		fmt.Printf("error: %s folder [%s] exists. Please specify an empty or non-existent directory.\n", s, fp)
 		os.Exit(1)
 	}
 }
@@ -465,7 +476,7 @@ func importFiles(dir string, folder *Folder) {
 			continue
 		}
 
-		if data, err = os.ReadFile(path.Join(dir, file.Name())); err != nil {
+		if data, err = os.ReadFile(filepath.Join(dir, file.Name())); err != nil {
 			fmt.Printf("error reading file [%s]\n", file.Name())
 			return
 		}
@@ -525,6 +536,14 @@ func importFiles(dir string, folder *Folder) {
 			addGlobalPrefix(dashboard, opts.prefix)
 		}
 
+		if opts.customizeDir != "" {
+			err := writeCustomDashboard(dashboard, dir, file)
+			if err != nil {
+				fmt.Printf("error customizing dashboard [%s] %+v\n", file.Name(), err)
+			}
+			continue
+		}
+
 		request = make(map[string]interface{})
 		request["overwrite"] = opts.overwrite
 		request["folderId"] = folder.id
@@ -554,11 +573,31 @@ func importFiles(dir string, folder *Folder) {
 		fmt.Printf("OK - imported %s / [%s]\n", folder.name, file.Name())
 		importedFiles++
 	}
-	if importedFiles > 0 {
-		fmt.Printf("Imported %d dashboards to [%s] from [%s]\n", importedFiles, folder.name, dir)
-	} else {
-		fmt.Printf("No dashboards found in [%s] is the directory correct?\n", dir)
+
+	if opts.customizeDir == "" {
+		if importedFiles > 0 {
+			fmt.Printf("Imported %d dashboards to [%s] from [%s]\n", importedFiles, folder.name, dir)
+		} else {
+			fmt.Printf("No dashboards found in [%s] is the directory correct?\n", dir)
+		}
 	}
+}
+
+func writeCustomDashboard(dashboard map[string]interface{}, dir string, file os.DirEntry) error {
+	data, err := json.Marshal(dashboard)
+	if err != nil {
+		return err
+	}
+	sub := filepath.Base(dir)
+	fp := filepath.Join(opts.customizeDir, sub, file.Name())
+	if err := os.MkdirAll(filepath.Dir(fp), 0750); err != nil {
+		return fmt.Errorf("error makedir [%s]: %w", filepath.Dir(fp), err)
+	}
+	if err = os.WriteFile(fp, data, GPerm); err != nil {
+		return fmt.Errorf("error writing customized dashboard to file %s: %w", fp, err)
+	}
+	fmt.Printf("OK - customized [%s]\n", fp)
+	return nil
 }
 
 // addGlobalPrefix adds the given prefix to all metric names in the
@@ -1026,9 +1065,20 @@ var exportCmd = &cobra.Command{
 grafana export --addr my.grafana.server:3000 --serverfolder server_folder --directory local`,
 }
 
+var customizeCmd = &cobra.Command{
+	Use:   "customize",
+	Short: "customize Grafana dashboards and write to filesystem",
+	Run:   doCustomize,
+	Example: `
+# Customize all the dashboards recursively contained in grafana/dashboards and write them to ~/harvest-dashboards.
+grafana customize --directory grafana/dashboards --output-dir ~/harvest-dashboards --prefix netapp_ --datasource my_datasource`,
+}
+
 func init() {
-	Cmd.AddCommand(importCmd, exportCmd, metricsCmd)
-	addFlags(importCmd, exportCmd)
+	Cmd.AddCommand(importCmd, exportCmd, customizeCmd, metricsCmd)
+	addCommonFlags(importCmd, exportCmd, customizeCmd)
+	addImportExportFlags(importCmd, exportCmd)
+	addCustomizeFlags(customizeCmd)
 
 	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
 		"For each label, create a variable and add as chained query to other variables")
@@ -1040,23 +1090,35 @@ func init() {
 		"", "local directory that contains dashboards (searched recursively).")
 }
 
-func addFlags(commands ...*cobra.Command) {
+func addCustomizeFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVarP(&opts.customizeDir, "output-dir", "o", "", "Write customized dashboards to the local directory. The directory must not exist")
+}
+
+func addCommonFlags(commands ...*cobra.Command) {
 	for _, command := range commands {
 		cmd := command
 		cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
-		cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "Address of Grafana server (IP, FQDN or hostname)")
-		cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 		cmd.PersistentFlags().StringVar(&opts.svmRegex, "svm-variable-regex", "", "SVM variable regex to filter SVM query results")
 		cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
-		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Grafana datasource for the dashboards")
+		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Name of your Prometheus datasource used by the imported dashboards")
 		cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
+		cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
+
+		_ = cmd.PersistentFlags().MarkHidden("svm-variable-regex")
+		_ = cmd.MarkPersistentFlagRequired("directory")
+	}
+}
+
+func addImportExportFlags(commands ...*cobra.Command) {
+	for _, command := range commands {
+		cmd := command
+		cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "Address of Grafana server (IP, FQDN or hostname)")
+		cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 		cmd.PersistentFlags().BoolVarP(&opts.useHTTPS, "https", "S", false, "Use HTTPS")
 		cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", false, "Overwrite existing dashboard with same title")
 		cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 		cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
-		cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
-		_ = cmd.PersistentFlags().MarkHidden("svm-variable-regex")
+
 		_ = cmd.MarkPersistentFlagRequired("serverfolder")
-		_ = cmd.MarkPersistentFlagRequired("directory")
 	}
 }

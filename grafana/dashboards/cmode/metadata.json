@@ -157,7 +157,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count (count by (datacenter) (poller_status{hostname=~\"$Hostname\"}))",
+          "expr": "count (count by (datacenter) (metadata_target_status{hostname=~\"$Hostname\",datacenter!=\"\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,

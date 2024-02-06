@@ -274,14 +274,41 @@ Pollers:
 
 ### Static Scrape Targets
 
-If we define four prometheus exporters at ports: 12990, 12991, 14567, and 14568 you need to add four sections to
-your `prometheus.yml`.
+If we define two Prometheus exporters at ports: 12990 and 14567 in the `harvest.yml` file like so, you need to add two targets to your `prometheus.yml` too.
+
+```bash
+$ vim harvest.yml
+```
+
+```yaml
+Exporters:
+  prometheus1:
+    exporter: Prometheus
+    port: 12990
+  prometheus2:
+    exporter: Prometheus
+    port: 14567
+    
+Pollers:
+  cluster1:
+    addr: 10.0.1.1
+    username: user
+    password: pass
+    exporters:
+      - prometheus1
+  cluster2:
+      addr: 10.0.1.1
+      username: user
+      password: pass
+      exporters:
+        - prometheus2
+```
 
 ```bash
 $ vim /etc/prometheus/prometheus.yml
 ```
 
-Scroll down to near the end of file and add the following lines:
+Scroll down to near the end of the file and add the following lines:
 
 ```yaml
   - job_name: 'harvest'
@@ -289,9 +316,7 @@ Scroll down to near the end of file and add the following lines:
     static_configs:
       - targets:
           - 'localhost:12990'
-          - 'localhost:12991'
           - 'localhost:14567'
-          - 'localhost:14568'
 ```
 
 **NOTE** If Prometheus is not on the same machine as Harvest, then replace `localhost` with the IP address of your
@@ -400,7 +425,7 @@ guide on [alerting](https://prometheus.io/docs/practices/alerting/).
 
 Harvest also includes [ems alerts](https://github.com/NetApp/harvest/blob/main/container/prometheus/ems_alert_rules.yml)
 and [sample alerts](https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml) for reference.
-Refer [EMS Collector](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) for more details about
+Refer [EMS Collector](configure-ems.md) for more details about
 EMS events.
 
 ### Alertmanager

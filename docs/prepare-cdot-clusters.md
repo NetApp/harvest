@@ -91,9 +91,14 @@ Warnings are fine.
 
 ```bash
 security login role create -role harvest2-role -access readonly -cmddirname "cluster"
+security login role create -role harvest2-role -access readonly -cmddirname "event notification destination show"
+security login role create -role harvest2-role -access readonly -cmddirname "event notification destination"
 security login role create -role harvest2-role -access readonly -cmddirname "lun"
 security login role create -role harvest2-role -access readonly -cmddirname "metrocluster configuration-settings mediator add"
+security login role create -role harvest2-role -access readonly -cmddirname "network fcp adapter show"
 security login role create -role harvest2-role -access readonly -cmddirname "network interface"
+security login role create -role harvest2-role -access readonly -cmddirname "network port show"
+security login role create -role harvest2-role -access readonly -cmddirname "network route show"
 security login role create -role harvest2-role -access readonly -cmddirname "qos adaptive-policy-group"
 security login role create -role harvest2-role -access readonly -cmddirname "qos policy-group"
 security login role create -role harvest2-role -access readonly -cmddirname "qos workload show"
@@ -103,10 +108,14 @@ security login role create -role harvest2-role -access readonly -cmddirname "sta
 security login role create -role harvest2-role -access readonly -cmddirname "storage aggregate"
 security login role create -role harvest2-role -access readonly -cmddirname "storage disk"
 security login role create -role harvest2-role -access readonly -cmddirname "storage encryption disk"
+security login role create -role harvest2-role -access readonly -cmddirname "storage failover show"
 security login role create -role harvest2-role -access readonly -cmddirname "storage iscsi-initiator show"
 security login role create -role harvest2-role -access readonly -cmddirname "storage shelf"
+security login role create -role harvest2-role -access readonly -cmddirname "system chassis fru show"
+security login role create -role harvest2-role -access readonly -cmddirname "system health alert show"
 security login role create -role harvest2-role -access readonly -cmddirname "system health status show"
 security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"
+security login role create -role harvest2-role -access readonly -cmddirname "system license show"
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
@@ -118,29 +127,66 @@ security login role create -role harvest2-role -access readonly -cmddirname "vse
 Use this for password authentication
 
 ```bash
+# If the harvest2 user does not exist, you will be prompted to enter a password
 security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method password
-security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method password   
 ```
 
 Or this for certificate authentication
 
 ```bash
 security login create -user-or-group-name harvest2 -application ontapi -role harvest2-role -authentication-method cert
-security login create -user-or-group-name harvest2 -application http -role harvest2-role -authentication-method cert 
 ```
 
-Check that the harvest role has web access for ONTAPI and REST.
+#### Create REST role
+
+Replace `$ADMIN_VSERVER` with your SVM admin name.
+
+```bash
+security login rest-role create -role harvest2-rest-role -access readonly -api /api -vserver $ADMIN_VSERVER
+```
+
+#### Associate REST role with harvest user
+
+Using password authentication
+
+```bash
+security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method password
+```
+
+??? failure "If you get an error `command failed: duplicate entry` when running the previous command"
+    Remove the previous entry and recreate like so:
+
+    ```bash
+    security login delete -user-or-group-name harvest2 -application http -authentication-method *
+    security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method password
+    ```
+
+Using certificate authentication
+
+```bash
+security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method cert
+```
+
+??? failure "If you get an error `command failed: duplicate entry` when running the previous command"
+    Remove the previous entry and recreate like so:
+
+    ```bash
+    security login delete -user-or-group-name harvest2 -application http -authentication-method *
+    security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method cert
+    ```
+
+#### Verify that the harvest role has web access
 ```bash
 vserver services web access show -role harvest2-role -name ontapi
-vserver services web access show -role harvest2-role -name rest
-vserver services web access show -role harvest2-role -name docs-api
+vserver services web access show -role harvest2-rest-role -name rest
+vserver services web access show -role harvest2-rest-role -name docs-api
 ```
 
-If either entry is missing, enable access by running the following. Replace `$ADMIN_VSERVER` with your SVM admin name.
+If any entries are missing, enable access by running the following. Replace `$ADMIN_VSERVER` with your SVM admin name.
 ```bash
 vserver services web access create -vserver $ADMIN_VSERVER -name ontapi -role harvest2-role
-vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-role
-vserver services web access create -vserver $ADMIN_VSERVER -name docs-api -role harvest2-role
+vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harvest2-rest-role
+vserver services web access create -vserver $ADMIN_VSERVER -name docs-api -role harvest2-rest-role
 ```
 
 #### 7-Mode CLI
