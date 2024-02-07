@@ -1,0 +1,8 @@
+Pollers:
+  u2:
+    datacenter: u2
+    addr: 2.2.2.2
+    username: user
+    password: pass
+    exporters:
+      - prometheus1

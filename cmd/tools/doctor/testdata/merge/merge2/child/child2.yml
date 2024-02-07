@@ -1,0 +1,8 @@
+Pollers:
+  u3:
+    datacenter: u3
+    addr: 3.3.3.3
+    username: user
+    password: pass
+    exporters:
+      - prometheus1

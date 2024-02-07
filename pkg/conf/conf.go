@@ -126,6 +126,11 @@ func LoadHarvestConfig(configPath string) (string, error) {
 		return "", errors.Join(duplicates...)
 	}
 
+	// After processing all the configuration files, check if Config.Pollers is still empty.
+	if len(Config.Pollers) == 0 {
+		return "", errs.New(errs.ErrConfig, "[Pollers] section not found")
+	}
+
 	// Fix promIndex for combined pollers
 	for i, name := range Config.PollersOrdered {
 		Config.Pollers[name].promIndex = i
@@ -166,13 +171,14 @@ func DecodeConfig(contents []byte) error {
 	}
 	Config = *cfg
 
+	// Initialize Config.Pollers if it's nil
+	if Config.Pollers == nil {
+		Config.Pollers = make(map[string]*Poller)
+	}
 	// Merge pollers and defaults
 	pollers := Config.Pollers
 	defaults := Config.Defaults
 
-	if pollers == nil {
-		return errs.New(errs.ErrConfig, "[Pollers] section not found")
-	}
 	if defaults != nil {
 		for _, p := range pollers {
 			p.Union(defaults)

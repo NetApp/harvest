@@ -2,6 +2,8 @@ package doctor
 
 import (
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"gopkg.in/yaml.v3"
+	"os"
 	"strings"
 	"testing"
 )
@@ -21,11 +23,63 @@ func TestRedaction(t *testing.T) {
 func assertRedacted(t *testing.T, input, redacted string) {
 	t.Helper()
 	redacted = strings.TrimSpace(redacted)
-	input = printRedactedConfig("test", []byte(input))
-	input = strings.TrimSpace(input)
+
+	inputNode, err := printRedactedConfig("test", []byte(input))
+	if err != nil {
+		t.Fatalf("error redacting input node: %v", err)
+	}
+	inputBytes, err := yaml.Marshal(inputNode)
+	if err != nil {
+		t.Fatalf("error marshalling input node: %v", err)
+	}
+	input = strings.TrimSpace(string(inputBytes))
+
 	if input != redacted {
 		t.Fatalf(`input=[%s] != redacted=[%s]`, input, redacted)
 	}
+}
+
+func TestDoDoctor(t *testing.T) {
+	type test struct {
+		parentPath string
+		outPath    string
+	}
+
+	tests := []test{
+		{"testdata/merge/merge1/parent.yml", "testdata/merge/merge1/out.yml"},
+		{"testdata/merge/merge2/parent.yml", "testdata/merge/merge2/out.yml"},
+		{"testdata/merge/merge3/parent.yml", "testdata/merge/merge3/out.yml"},
+	}
+	for _, tt := range tests {
+
+		output := doDoctor(tt.parentPath)
+
+		outBytes, err := os.ReadFile(tt.outPath)
+		if err != nil {
+			t.Fatalf("failed to read expected output file: %v", err)
+		}
+
+		expectedOutput := string(outBytes)
+
+		// yaml v3 adds 4 indentation, change it to indent 2
+		output = changeIndentation(output, 4, 2)
+
+		if output != expectedOutput {
+			t.Fatalf("unexpected output:\ngot:\n%v\n\nwant:\n%v", output, expectedOutput)
+		}
+	}
+}
+
+func changeIndentation(s string, oldInd int, newInd int) string {
+	lines := strings.Split(s, "\n")
+	for i, line := range lines {
+		indent := len(line) - len(strings.TrimLeft(line, " "))
+		if indent%oldInd == 0 {
+			newIndentCount := indent / oldInd * newInd
+			lines[i] = strings.Repeat(" ", newIndentCount) + strings.TrimSpace(line)
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 func TestConfigToStruct(t *testing.T) {
