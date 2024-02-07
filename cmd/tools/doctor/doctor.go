@@ -166,7 +166,10 @@ func mergeYamlNodes(parent, child *yaml.Node) {
 
 	// If the parent node doesn't have a Pollers section, create one
 	if parentPollers == nil {
-		parent.Content[0].Content = append(parent.Content[0].Content, &yaml.Node{Kind: yaml.ScalarNode, Value: "Pollers"}, &yaml.Node{Kind: yaml.MappingNode})
+		parent.Content[0].Content = append(parent.Content[0].Content, &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Value: "Pollers",
+		}, &yaml.Node{Kind: yaml.MappingNode})
 		parentPollers = parent.Content[0].Content[len(parent.Content[0].Content)-1]
 	}
 
@@ -181,6 +184,7 @@ func mergeYamlNodes(parent, child *yaml.Node) {
 	// Find the Pollers section in the child node
 	for i, node := range child.Content[0].Content {
 		if node.Value == "Pollers" {
+			// Append any child pollers that aren't already in the parent node
 			for _, childPoller := range child.Content[0].Content[i+1].Content {
 				if _, exists := parentPollerNames[childPoller.Value]; !exists {
 					parentPollers.Content = append(parentPollers.Content, childPoller)
@@ -207,8 +211,8 @@ func checkAll(path string, confPath string) {
 
 	cfg := conf.Config
 	confPaths := filepath.SplitList(confPath)
-	anyFailed := false
-	anyFailed = !checkUniquePromPorts(cfg).isValid || anyFailed
+	var anyFailed bool
+	anyFailed = !checkUniquePromPorts(cfg).isValid
 	anyFailed = !checkPollersExportToUniquePromPorts(cfg).isValid || anyFailed
 	anyFailed = !checkExporterTypes(cfg).isValid || anyFailed
 	anyFailed = !checkConfTemplates(confPaths).isValid || anyFailed
