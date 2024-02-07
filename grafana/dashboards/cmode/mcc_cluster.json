@@ -3427,6 +3427,22 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 85,
+          "options": {
+            "content": "This panel requires ONTAP 9.12+ and `MetroclusterCheck` counter template, This template is disabled by default. <br>The APIs are only available via REST. You must enable the REST collector in your `harvest.yml` config and enable the `MetroclusterCheck` counter in `$HARVEST/conf/rest/default.yaml`.<br>\nSee https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#why-do-i-have-metrocluster-diagnostics-panel-empty-in-metrocluster-dashboard for more details.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel shows cluster level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
@@ -3462,7 +3478,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 13
           },
           "id": 87,
           "options": {
@@ -3565,7 +3581,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 25
           },
           "id": 88,
           "options": {
@@ -3670,7 +3686,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 37
           },
           "id": 101,
           "options": {
@@ -3777,7 +3793,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 46
+            "y": 49
           },
           "id": 102,
           "options": {
