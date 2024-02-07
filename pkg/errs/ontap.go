@@ -28,16 +28,16 @@ func (r *RestError) Error() string {
 		parts = append(parts, fmt.Sprintf("Error: %s", r.Err))
 	}
 	if r.Message != "" {
-		parts = append(parts, fmt.Sprintf("Message: %s", r.Message))
+		parts = append(parts, "Message: "+r.Message)
 	}
 	if r.Code != 0 {
 		parts = append(parts, fmt.Sprintf("Code: %d", r.Code))
 	}
 	if r.Target != "" {
-		parts = append(parts, fmt.Sprintf("Target: %s", r.Target))
+		parts = append(parts, "Target: "+r.Target)
 	}
 	if r.API != "" {
-		parts = append(parts, fmt.Sprintf("API: %s", r.API))
+		parts = append(parts, "API: "+r.API)
 	}
 	return strings.Join(parts, ", ")
 }

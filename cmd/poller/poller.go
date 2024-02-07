@@ -599,10 +599,10 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 	if c.Templates != nil {
 		for _, t := range *c.Templates {
 			if subTemplate, err = collector.ImportTemplate(p.options.ConfPaths, t, class); err != nil {
-				logEvent := logger.Warn()
+				logEvent := logger.Warn() //nolint:zerologlint
 				if t == "custom.yaml" {
 					// make this less noisy since it won't exist for most people
-					logEvent = logger.Debug()
+					logEvent = logger.Debug() //nolint:zerologlint
 				}
 				logEvent.
 					Str("err", err.Error()).
@@ -1053,9 +1053,9 @@ func (p *Poller) publishDetails() {
 		}
 		// check if this is a connection error, if so, the admin node is down
 		// log as warning instead of error
-		event := logger.Error()
+		event := logger.Error() //nolint:zerologlint
 		if strings.Contains(rErr.Error(), "connection refused") {
-			event = logger.Warn()
+			event = logger.Warn() //nolint:zerologlint
 		}
 		event.Err(rErr).Str("admin", conf.Config.Admin.Httpsd.Listen).Msg("Failed connecting to admin node")
 		return

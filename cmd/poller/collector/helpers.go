@@ -40,7 +40,7 @@ func ImportTemplate(confPaths []string, templateName, collectorName string) (*no
 		}
 		return tree.ImportYaml(fp)
 	}
-	return nil, fmt.Errorf("template not found on confPath")
+	return nil, errors.New("template not found on confPath")
 }
 
 var versionRegex = regexp.MustCompile(`\d+\.\d+\.\d+`)

@@ -7,6 +7,7 @@ import (
 	"crypto/x509"
 	"dario.cat/mergo"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -334,10 +335,10 @@ func extractCertAndKey(blob string) ([]byte, []byte, error) {
 	block2, _ := pem.Decode(rest)
 
 	if block1 == nil {
-		return nil, nil, fmt.Errorf("PEM block1 is nil")
+		return nil, nil, errors.New("PEM block1 is nil")
 	}
 	if block2 == nil {
-		return nil, nil, fmt.Errorf("PEM block2 is nil")
+		return nil, nil, errors.New("PEM block2 is nil")
 	}
 
 	if block1.Type == certType && block2.Type == keyType {

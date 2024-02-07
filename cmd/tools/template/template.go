@@ -86,7 +86,7 @@ func unmarshalModel(data []byte) (Model, error) {
 	}
 	countersNode := searchNode(contentNode, "counters")
 	if countersNode == nil {
-		return tm, fmt.Errorf("template has no counters")
+		return tm, errors.New("template has no counters")
 	}
 	metrics := make([]Metric, 0)
 	flattenCounters(countersNode, &metrics, make([]string, 0))
@@ -149,13 +149,13 @@ func readNameQueryObject(tm *Model, root *y3.Node) error {
 		tm.Object = objectNode.Value
 	}
 	if tm.Name == "" {
-		return fmt.Errorf("template has no name")
+		return errors.New("template has no name")
 	}
 	if tm.Query == "" {
-		return fmt.Errorf("template has no query")
+		return errors.New("template has no query")
 	}
 	if tm.Object == "" {
-		return fmt.Errorf("template has no object")
+		return errors.New("template has no object")
 	}
 	return nil
 }
@@ -388,7 +388,7 @@ func toPluginPath(path string, pluginName string) string {
 
 	// Both Zapi and REST sensor.yaml templates uses a single plugin defined in power.go
 	if strings.Contains(path, "sensor.yaml") {
-		return fmt.Sprintf("%scmd/collectors/power.go", before)
+		return before + "cmd/collectors/power.go"
 	}
 
 	base := strings.Split(after, "/")
@@ -396,7 +396,7 @@ func toPluginPath(path string, pluginName string) string {
 
 	// special case for labels added outside normal per-object plugin
 	if pluginName == "commonutils" {
-		return fmt.Sprintf("%scmd/collectors/commonutils.go", before)
+		return before + "cmd/collectors/commonutils.go"
 	}
 
 	return p

@@ -535,7 +535,7 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 	// Special case: If there is a single expression, Grafana will name it "Value" instead of "Value #refId"
 	byNameQuery := "Value"
 	if numExpressions > 1 {
-		byNameQuery = fmt.Sprintf("Value #%s", e.refID)
+		byNameQuery = "Value #" + e.refID
 	}
 	byNameQuery2 := ""
 	for _, o := range overrides {
@@ -1347,7 +1347,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 				expr := targetsSlice[0].Get("expr").String()
 				if strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
-					//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+					// t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
 					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 				} else {
 					*count = *count + 1
@@ -1355,7 +1355,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 				}
 			} else {
 				// This indicates table/timeseries with more than 1 expression, After deciding next steps, this will be uncommented.
-				//t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
+				// t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
 				fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 			}
 		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {

@@ -209,19 +209,19 @@ func checkConfTemplates(confPaths []string) validation {
 			s := template.GetChildS("objects")
 			if s == nil {
 				valid.isValid = false
-				msg := fmt.Sprintf(`%s should have a top-level "objects" key`, custom)
+				msg := custom + ` should have a top-level "objects" key`
 				valid.invalid = append(valid.invalid, msg)
 				continue
 			}
 			if s.Children == nil {
 				valid.isValid = false
-				msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
+				msg := custom + " objects section should be a map of object: path"
 				valid.invalid = append(valid.invalid, msg)
 			} else {
 				for _, t := range s.Children {
 					if len(t.Content) == 0 {
 						valid.isValid = false
-						msg := fmt.Sprintf("%s objects section should be a map of object: path", custom)
+						msg := custom + " objects section should be a map of object: path"
 						valid.invalid = append(valid.invalid, msg)
 						continue
 					}
