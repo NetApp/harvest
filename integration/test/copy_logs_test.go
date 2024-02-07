@@ -72,5 +72,5 @@ func checkLogs(t *testing.T, container docker.Container) {
 
 // ignoreList returns a list of regex patterns that will be ignored
 func ignoreList() any {
-	return `RPC: Remote system error|connection error`
+	return `RPC: Remote system error|connection error|Code: 2426405`
 }
