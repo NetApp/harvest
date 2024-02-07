@@ -307,7 +307,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 		for _, child := range node.GetChildren() {
 			if util.HasDuplicates(child.GetAllChildNamesS()) {
-				z.Logger.Debug().Msgf("Array detected for %s", child.GetNameS())
+				z.Logger.Trace().Str("name", child.GetNameS()).Msg("Array detected")
 				fetch(instance, child, newPath, true)
 			} else {
 				fetch(instance, child, newPath, isAppend)
@@ -356,7 +356,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 			break
 		}
 
-		z.Logger.Debug().Msgf("fetched %d instance elements", len(instances))
+		z.Logger.Trace().
+			Int("size", len(instances)).
+			Msg("fetched instance elements")
 
 		if z.Params.GetChildContentS("only_cluster_instance") == "true" {
 			instance := mat.GetInstance("cluster")

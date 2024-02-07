@@ -642,7 +642,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 				}
 				m.SetLabel("resource", resource)
 
-				r.Logger.Debug().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
+				r.Logger.Trace().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
 			}
 		}
 	}
@@ -800,7 +800,8 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			instance = curMat.GetInstance(instanceKey)
 			if instance == nil {
 				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-					r.Logger.Debug().
+					// Filtering is involved with these objects, such as the workload class and the constituent disable. Therefore, logs are being moved to trace.
+					r.Logger.Trace().
 						Str("instanceKey", instanceKey).
 						Msg("Skip instanceKey, not found in cache")
 				} else {
@@ -1057,7 +1058,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 	calcStart := time.Now()
 
-	r.Logger.Debug().Msg("starting delta calculations from previous cache")
+	r.Logger.Trace().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
 	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
@@ -1469,7 +1470,9 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 			oldInstances.Remove(instanceKey)
 			instance := mat.GetInstance(instanceKey)
 			r.updateQosLabels(instanceData, instance, instanceKey)
-			r.Logger.Debug().Msgf("updated instance [%s%s%s%s]", color.Bold, color.Yellow, instanceKey, color.End)
+			r.Logger.Trace().
+				Str("instanceKey", instanceKey).
+				Msg("updated instance")
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("instanceKey", instanceKey).Msg("add instance")
 		} else {

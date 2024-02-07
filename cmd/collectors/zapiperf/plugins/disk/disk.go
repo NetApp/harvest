@@ -123,7 +123,7 @@ func (d *Disk) Init() error {
 
 	d.query = "storage-shelf-info-get-iter"
 
-	d.Logger.Debug().Msg("plugin connected!")
+	d.Logger.Trace().Msg("plugin connected!")
 
 	d.shelfData = make(map[string]*matrix.Matrix)
 	d.powerData = make(map[string]*matrix.Matrix)
@@ -172,23 +172,38 @@ func (d *Disk) Init() error {
 					d.instanceLabels[attribute][metricName] = display
 					instanceLabels.NewChildS("", display)
 					instanceKeys.NewChildS("", display)
-					d.Logger.Debug().Msgf("added instance key: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+					d.Logger.Trace().
+						Str("attribute", attribute).
+						Str("name", x.GetNameS()).
+						Str("display", display).
+						Msg("added instance key")
 				case "label":
 					d.instanceLabels[attribute][metricName] = display
 					instanceLabels.NewChildS("", display)
-					d.Logger.Debug().Msgf("added instance label: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+					d.Logger.Trace().
+						Str("attribute", attribute).
+						Str("name", x.GetNameS()).
+						Str("display", display).
+						Msg("added instance label")
 				case "float":
 					_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
 					if err != nil {
 						d.Logger.Error().Stack().Err(err).Msg("add metric")
 						return err
 					}
-					d.Logger.Debug().Msgf("added metric: (%s) (%s) [%s]", attribute, x.GetNameS(), display)
+					d.Logger.Trace().
+						Str("attribute", attribute).
+						Str("name", x.GetNameS()).
+						Str("display", display).
+						Msg("added metric")
 				}
 			}
 		}
 
-		d.Logger.Debug().Msgf("added shelfData for [%s] with %d metrics", attribute, len(d.shelfData[attribute].GetMetrics()))
+		d.Logger.Trace().
+			Str("attribute", attribute).
+			Int("metrics", len(d.shelfData[attribute].GetMetrics())).
+			Msg("added shelfData for attribute with metrics")
 
 		d.shelfData[attribute].SetExportOptions(exportOptions)
 	}
@@ -801,7 +816,9 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 		output []*matrix.Matrix
 	)
 
-	d.Logger.Debug().Msgf("fetching %d shelf counters", len(shelves))
+	d.Logger.Trace().
+		Int("shelfCounters", len(shelves)).
+		Msg("fetching shelf counters")
 
 	// Purge and reset data
 	for _, data1 := range d.shelfData {
@@ -829,7 +846,10 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				d.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
+				d.Logger.Trace().
+					Int("instances", len(objectElem.GetChildren())).
+					Str("attribute", attribute).
+					Msg("fetching instances")
 
 				for _, obj := range objectElem.GetChildren() {
 
@@ -847,7 +867,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 							d.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
 							return nil, err
 						}
-						d.Logger.Debug().
+						d.Logger.Trace().
 							Str("attribute", attribute).
 							Str("shelfID", shelfID).
 							Str("key", combinedKey).
@@ -874,9 +894,16 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
 								if err := m.SetValueString(instance, value); err != nil {
-									d.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+									d.Logger.Debug().
+										Str("metricKey", metricKey).
+										Str("value", value).
+										Err(err).
+										Msg("failed to parse value")
 								} else {
-									d.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+									d.Logger.Trace().
+										Str("metricKey", metricKey).
+										Str("value", value).
+										Msg("added value")
 								}
 							}
 						}
