@@ -41,6 +41,7 @@ plugins:
 export_options:
   instance_keys:
     - node
+    - serial
   instance_labels:
     - cpu_firmware_release
     - healthy
@@ -49,7 +50,6 @@ export_options:
     - max_vol_num
     - max_vol_size
     - model
-    - serial
     - state
     - uptime
     - vendor
