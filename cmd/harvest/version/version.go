@@ -5,6 +5,7 @@
 package version
 
 import (
+	"errors"
 	"fmt"
 	"github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
@@ -100,7 +101,7 @@ func latestRelease() (string, error) {
 		Timeout:   5 * time.Second,
 	}
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-		return fmt.Errorf("redirect")
+		return errors.New("redirect")
 	}
 	resp, err := client.Get(githubReleases)
 	// check if we got a redirect to the latest release
@@ -122,5 +123,5 @@ func latestRelease() (string, error) {
 	}
 	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
-	return "", fmt.Errorf(" error checking GitHub")
+	return "", errors.New(" error checking GitHub")
 }

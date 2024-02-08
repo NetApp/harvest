@@ -322,7 +322,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	// Filter out names which exist on the cluster.
 	// ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
 	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
-	e.Logger.Debug().Strs("querying for events", filteredNames).Msg("")
+	e.Logger.Trace().Strs("querying for events", filteredNames).Send()
 	_, missingNames := util.Intersection(filteredNames, names)
 	e.Logger.Debug().Strs("skipped events", missingNames).Msg("")
 	e.eventNames = filteredNames

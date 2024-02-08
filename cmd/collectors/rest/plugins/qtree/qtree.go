@@ -230,7 +230,13 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 				q.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
 				return err
 			}
-			q.Logger.Debug().Msgf("add (%s) quota instance: %s.%s.%s.%s", quotaInstanceKey, vserver, volume, tree, qIndex)
+			q.Logger.Trace().
+				Str("quotaInstanceKey", quotaInstanceKey).
+				Str("svm", vserver).
+				Str("volume", volume).
+				Str("tree", tree).
+				Str("qIndex", qIndex).
+				Msg("add quota instance")
 		}
 
 		// qtree instancekey would be qtree, svm and volume(sorted keys)
@@ -285,7 +291,7 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 				q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
 				*numMetrics++
-				q.Logger.Debug().Str("attribute", attribute).Float64("value", value).Msg("added value")
+				q.Logger.Trace().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 		}
 	}

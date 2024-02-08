@@ -127,7 +127,7 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 			isVoltageMatch := voltageRegex.MatchString(sensorName)
 			isCurrentMatch := CurrentRegex.MatchString(sensorName)
 
-			logger.Debug().
+			logger.Trace().
 				Bool("isAmbientMatch", isAmbientMatch).
 				Bool("isPowerMatch", isPowerMatch).
 				Bool("isVoltageMatch", isVoltageMatch).

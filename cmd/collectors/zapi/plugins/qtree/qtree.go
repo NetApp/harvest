@@ -108,13 +108,16 @@ func (q *Qtree) Init() error {
 
 		metricName, display, _, _ := util.ParseMetric(obj)
 
-		metric, err := q.data.NewMetricFloat64(metricName, display)
+		_, err := q.data.NewMetricFloat64(metricName, display)
 		if err != nil {
 			q.Logger.Error().Stack().Err(err).Msg("add metric")
 			return err
 		}
 
-		q.Logger.Debug().Msgf("added metric: (%s) [%s] %v", metricName, display, metric)
+		q.Logger.Trace().
+			Str("metricName", metricName).
+			Str("display", display).
+			Msg("added metric")
 	}
 
 	q.Logger.Debug().Msgf("added data with %d metrics", len(q.data.GetMetrics()))
@@ -282,7 +285,12 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 					return err
 				}
 
-				q.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
+				q.Logger.Trace().
+					Str("attribute", attribute).
+					Str("svm", vserver).
+					Str("volume", volume).
+					Str("tree", tree).
+					Msg("add instance")
 
 				for _, label := range q.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
 					if value := qtreeInstance.GetLabel(label); value != "" {
@@ -315,12 +323,17 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 						q.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
 					} else {
 						*numMetrics++
-						q.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
+						q.Logger.Trace().
+							Str("attribute", attribute).
+							Str("value", value).
+							Msg("added value")
 					}
 				}
 
 			} else {
-				q.Logger.Debug().Msgf("instance without [%s], skipping", attribute)
+				q.Logger.Trace().
+					Str("attribute", attribute).
+					Msg("instance without attribute skipping")
 			}
 		}
 	}
@@ -405,8 +418,12 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 					}
 				}
 
-				q.Logger.Debug().Msgf("add (%s) instance: %s.%s.%s", attribute, vserver, volume, tree)
-
+				q.Logger.Trace().
+					Str("attribute", attribute).
+					Str("vserver", vserver).
+					Str("volume", volume).
+					Str("tree", tree).
+					Msg("add instance")
 				// populate numeric data
 				if value := strings.Split(attrValue, " ")[0]; value != "" {
 					// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
@@ -421,11 +438,16 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 						q.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
 					} else {
 						*numMetrics++
-						q.Logger.Debug().Msgf("(%s) added value (%s)", attribute, value)
+						q.Logger.Trace().
+							Str("attribute", attribute).
+							Str("value", value).
+							Msg("added value")
 					}
 				}
 			} else {
-				q.Logger.Debug().Msgf("instance without [%s], skipping", attribute)
+				q.Logger.Trace().
+					Str("attribute", attribute).
+					Msg("instance without attribute skipping")
 			}
 		}
 	}

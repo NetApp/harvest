@@ -6,7 +6,6 @@ package unix
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"os"
 	"path"
@@ -72,7 +71,7 @@ func (p *Process) Reload() error {
 
 	if s, err := os.Stat(p.dirpath); err != nil || !s.IsDir() {
 		if err == nil {
-			return errs.New(ErrProcessNotFound, fmt.Sprintf("%s is not dir", p.dirpath))
+			return errs.New(ErrProcessNotFound, p.dirpath+" is not dir")
 		}
 		return errs.New(ErrProcessNotFound, err.Error())
 	}

@@ -764,7 +764,7 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 	)
 
 	if tries == 0 {
-		return fmt.Errorf("no more attempts")
+		return errors.New("no more attempts")
 	}
 
 	configPath = opts.config

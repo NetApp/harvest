@@ -291,7 +291,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		records   []gjson.Result
 	)
 
-	r.Logger.Debug().Msg("starting data poll")
+	r.Logger.Trace().Msg("starting data poll")
 
 	r.Matrix[r.Object].Reset()
 
@@ -565,7 +565,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 		// remove deleted instances
 		for key := range oldInstances.Iter() {
 			mat.RemoveInstance(key)
-			r.Logger.Debug().Str("key", key).Msg("removed instance")
+			r.Logger.Trace().Str("key", key).Msg("removed instance")
 		}
 	}
 

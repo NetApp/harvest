@@ -166,7 +166,7 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
 			name, display, kind, metricType = util.ParseMetric(c)
-			r.Logger.Debug().
+			r.Logger.Trace().
 				Str("kind", kind).
 				Str("name", name).
 				Str("display", display).

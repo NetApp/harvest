@@ -55,7 +55,7 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 	for _, c := range e.DefaultLabels {
 		if c != "" {
 			name, display, _, _ = util.ParseMetric(c)
-			e.Logger.Debug().
+			e.Logger.Trace().
 				Str("name", name).
 				Str("display", display).
 				Msg("Collected default labels")
@@ -82,7 +82,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
 			name, display, key, _ = util.ParseMetric(c)
-			e.Logger.Debug().
+			e.Logger.Trace().
 				Str("name", name).
 				Str("display", display).
 				Msg("Collected exports")
@@ -93,7 +93,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 			if key == "key" {
 				// only for bookend EMS
 				bookendKeys[display] = name
-				e.Logger.Debug().
+				e.Logger.Trace().
 					Str("name", name).
 					Str("display", display).
 					Msg("Collected bookend keys")
@@ -150,7 +150,7 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 			e.resolveAfter[issueEmsProp.Name] = durationVal
 		}
 	}
-	e.Logger.Debug().Str("bookend ems resolve After", e.resolveAfter[issueEmsProp.Name].String()).Msg("")
+	e.Logger.Trace().Str("bookend ems resolve After", e.resolveAfter[issueEmsProp.Name].String()).Send()
 
 	// Using Set to ensure it has slice of unique issuing ems
 	if _, ok := e.bookendEmsMap[resolveEmsName]; !ok {

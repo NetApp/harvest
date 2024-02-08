@@ -635,7 +635,7 @@ Feedback
 // to save space
 func manageCmd(use string, shouldHide bool) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:    fmt.Sprintf("%s [POLLER...]", use),
+		Use:    use + " [POLLER...]",
 		Short:  "Stop/restart/status/kill - all or individual pollers",
 		Long:   "Harvest Manager - manage your pollers",
 		Args:   cobra.ArbitraryArgs,

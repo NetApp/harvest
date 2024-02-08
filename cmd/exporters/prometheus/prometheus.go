@@ -553,7 +553,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			}
 		}
 	}
-	p.Logger.Debug().
+	p.Logger.Trace().
 		Str("object", data.Object).
 		Int("rendered", len(rendered)).
 		Int("instances", len(data.GetInstances())).

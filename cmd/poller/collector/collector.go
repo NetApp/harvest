@@ -439,9 +439,14 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 								c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
 							} else if pluginData != nil {
 								results = append(results, pluginData...)
-								c.Logger.Debug().Msgf("plugin [%s] added (%d) data", plg.GetName(), len(pluginData))
+								c.Logger.Debug().
+									Str("pluginName", plg.GetName()).
+									Int("dataLength", len(pluginData)).
+									Msg("plugin added data")
 							} else {
-								c.Logger.Debug().Msgf("plugin [%s]: completed", plg.GetName())
+								c.Logger.Trace().
+									Str("pluginName", plg.GetName()).
+									Msg("plugin completed")
 							}
 						}
 					}
@@ -464,7 +469,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		// pass results to exporters
 
-		c.Logger.Debug().Int("results", len(results)).Msg("exporting data")
+		c.Logger.Trace().Int("results", len(results)).Msg("exporting data")
 
 		exportStart = time.Now()
 		exporterStats := exporter.Stats{}
@@ -508,7 +513,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 		}
 
 		if nd := c.Schedule.NextDue(); nd > 0 {
-			c.Logger.Debug().Str("dur", nd.String()).Msg("sleep until next poll")
+			c.Logger.Trace().Str("dur", nd.String()).Msg("sleep until next poll")
 			c.Schedule.Sleep()
 			// log if lagging by more than 500 ms
 			// < is used since larger durations are more negative

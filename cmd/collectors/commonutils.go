@@ -229,7 +229,14 @@ func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, l
 			if err := lagTime.SetValueFloat64(instance, 0); err != nil {
 				logger.Error().Err(err).Str("metric", lagTime.GetName()).Msg("Unable to set value on metric")
 			}
-			logger.Debug().Msgf("lagTime value set from %f to 0 for %s. Healthy: %s, Schedule: %s, LastBytes: %f, LastError:%s", lag, relationshipID, healthy, schedule, lastBytes, lastError)
+			logger.Trace().
+				Float64("lag", lag).
+				Str("relationshipID", relationshipID).
+				Str("healthy", healthy).
+				Str("schedule", schedule).
+				Float64("lastBytes", lastBytes).
+				Str("lastError", lastError).
+				Msg("lagTime value set from lag to 0")
 		}
 	}
 }
