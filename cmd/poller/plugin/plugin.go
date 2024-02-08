@@ -82,7 +82,7 @@ func RegisterModule(instance Module) {
 	defer modulesMu.Unlock()
 
 	if _, ok := modules[mod.ID]; ok {
-		panic(fmt.Sprintf("module already registered: %s", mod.ID))
+		panic("module already registered: " + mod.ID)
 	}
 	modules[mod.ID] = mod
 }

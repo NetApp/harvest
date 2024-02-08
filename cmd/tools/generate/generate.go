@@ -1,6 +1,7 @@
 package generate
 
 import (
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -227,10 +228,10 @@ func generateDocker(kind int) {
 			if s := strings.Split(httpsd, ":"); len(s) == 2 {
 				adminPort, err = strconv.Atoi(s[1])
 				if err != nil {
-					logErrAndExit(fmt.Errorf("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
+					logErrAndExit(errors.New("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 				}
 			} else {
-				logErrAndExit(fmt.Errorf("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
+				logErrAndExit(errors.New("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 			}
 
 			pollerTemplate.Admin = AdminInfo{

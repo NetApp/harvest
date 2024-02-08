@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
@@ -139,7 +139,7 @@ func TestCollectorUpgrade(t *testing.T) {
 	}
 
 	zapisExist := func() error { return nil }
-	zapisDoNotExist := func() error { return fmt.Errorf("boom") }
+	zapisDoNotExist := func() error { return errors.New("boom") }
 
 	tests := []test{
 		{name: "9.11 use ZAPI", clusterVersion: "9.11.1", askFor: "Zapi", wantCollector: "Zapi"},
