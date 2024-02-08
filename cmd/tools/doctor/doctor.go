@@ -92,19 +92,107 @@ func doDoctorCmd(cmd *cobra.Command, _ []string) {
 	var config = cmd.Root().PersistentFlags().Lookup("config")
 	var confPaths = cmd.Root().PersistentFlags().Lookup("confpath")
 
-	doDoctor(conf.ConfigPath(config.Value.String()), confPaths.Value.String())
+	pathI := conf.ConfigPath(config.Value.String())
+	confPath := confPaths.Value.String()
+	out := doDoctor(pathI)
+	fmt.Println(out)
+	checkAll(pathI, confPath)
 }
 
-func doDoctor(path string, confPath string) {
-	if opts.ShouldPrintConfig {
-		contents, err := os.ReadFile(path)
-		if err != nil {
-			fmt.Printf("error reading config file. err=%+v\n", err)
-			return
-		}
-		printRedactedConfig(path, contents)
+func doDoctor(path string) string {
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		fmt.Printf("error reading config file. err=%+v\n", err)
+		return ""
 	}
-	checkAll(path, confPath)
+	parentRoot, err := printRedactedConfig(path, contents)
+	if err != nil {
+		fmt.Printf("error processing parent config file=[%s] %+v\n", path, err)
+		return ""
+	}
+
+	// Extract Poller_files field from parentRoot
+	var pollerFiles []string
+	for i, node := range parentRoot.Content[0].Content {
+		if node.Value == "Poller_files" {
+			for _, childNode := range parentRoot.Content[0].Content[i+1].Content {
+				pollerFiles = append(pollerFiles, childNode.Value)
+			}
+			break
+		}
+	}
+
+	for _, childPathPattern := range pollerFiles {
+		matches, err := filepath.Glob(childPathPattern)
+		if err != nil {
+			fmt.Printf("error matching glob pattern: %v\n", err)
+			continue
+		}
+		for _, childPath := range matches {
+			childContents, err := os.ReadFile(childPath)
+			if err != nil {
+				fmt.Printf("error reading child file. err=%+v\n", err)
+				continue
+			}
+			childRoot, err := printRedactedConfig(childPath, childContents)
+			if err != nil {
+				fmt.Printf("error processing child config file=[%s] %+v\n", childPath, err)
+				continue
+			}
+
+			// Merge childRoot into parentRoot
+			mergeYamlNodes(parentRoot, childRoot)
+		}
+	}
+
+	marshaled, err := yaml.Marshal(parentRoot)
+	if err != nil {
+		fmt.Printf("error marshalling yaml sanitized from config file=[%s] %+v\n", path, err)
+		return ""
+	}
+	out := string(marshaled)
+	return out
+}
+
+func mergeYamlNodes(parent, child *yaml.Node) {
+	// Find the Pollers section in the parent node
+	var parentPollers *yaml.Node
+	for i, node := range parent.Content[0].Content {
+		if node.Value == "Pollers" {
+			parentPollers = parent.Content[0].Content[i+1]
+			break
+		}
+	}
+
+	// If the parent node doesn't have a Pollers section, create one
+	if parentPollers == nil {
+		parent.Content[0].Content = append(parent.Content[0].Content, &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Value: "Pollers",
+		}, &yaml.Node{Kind: yaml.MappingNode})
+		parentPollers = parent.Content[0].Content[len(parent.Content[0].Content)-1]
+	}
+
+	// Create a map of the parent node's pollers
+	parentPollerNames := make(map[string]bool)
+	for _, node := range parentPollers.Content {
+		if node.Kind == yaml.ScalarNode {
+			parentPollerNames[node.Value] = true
+		}
+	}
+
+	// Find the Pollers section in the child node
+	for i, node := range child.Content[0].Content {
+		if node.Value == "Pollers" {
+			// Append any child pollers that aren't already in the parent node
+			for _, childPoller := range child.Content[0].Content[i+1].Content {
+				if _, exists := parentPollerNames[childPoller.Value]; !exists {
+					parentPollers.Content = append(parentPollers.Content, childPoller)
+				}
+			}
+			break
+		}
+	}
 }
 
 // checkAll runs all doctor checks
@@ -123,8 +211,8 @@ func checkAll(path string, confPath string) {
 
 	cfg := conf.Config
 	confPaths := filepath.SplitList(confPath)
-	anyFailed := false
-	anyFailed = !checkUniquePromPorts(cfg).isValid || anyFailed
+	var anyFailed bool
+	anyFailed = !checkUniquePromPorts(cfg).isValid
 	anyFailed = !checkPollersExportToUniquePromPorts(cfg).isValid || anyFailed
 	anyFailed = !checkExporterTypes(cfg).isValid || anyFailed
 	anyFailed = !checkConfTemplates(confPaths).isValid || anyFailed
@@ -424,26 +512,18 @@ func checkPollersExportToUniquePromPorts(config conf.HarvestConfig) validation {
 	return valid
 }
 
-func printRedactedConfig(path string, contents []byte) string {
+func printRedactedConfig(path string, contents []byte) (*yaml.Node, error) {
 	root := &yaml.Node{}
 	err := yaml.Unmarshal(contents, root)
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", path, err)
-		return ""
+		return nil, err
 	}
 	var nodes []*yaml.Node
 	collectNodes(root, &nodes)
 	sanitize(nodes)
 	removeComments(root)
-
-	marshaled, err := yaml.Marshal(root)
-	if err != nil {
-		fmt.Printf("error marshalling yaml sanitized from config file=[%s] %+v\n", path, err)
-		return ""
-	}
-	result := string(marshaled)
-	fmt.Println(result)
-	return result
+	return root, nil
 }
 
 func sanitize(nodes []*yaml.Node) {

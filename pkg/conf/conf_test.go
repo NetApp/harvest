@@ -374,3 +374,25 @@ func TestMultiplePollerFiles(t *testing.T) {
 		t.Fatalf("got collector name=%s, want collector name=%s", named.Collectors[0].Name, "Simple")
 	}
 }
+
+func TestChildPollers(t *testing.T) {
+	t.Helper()
+	resetConfig()
+	configYaml := "testdata/pollerFiles/harvest_parent_nopoller.yml"
+	_, err := LoadHarvestConfig(configYaml)
+	if err != nil {
+		t.Fatalf("got error loading config: %s, want no errors", err)
+	}
+
+	// Replace with the expected number of pollers from your child configuration file
+	wantNumPollers := 8
+	if len(Config.Pollers) != wantNumPollers {
+		t.Errorf("got %d pollers, want %d", len(Config.Pollers), wantNumPollers)
+	}
+
+	// Replace "childPollerName" with the name of a poller from your child configuration file
+	_, err = PollerNamed("netapp1")
+	if err != nil {
+		t.Errorf("got no poller, want poller named=%s", "childPollerName")
+	}
+}

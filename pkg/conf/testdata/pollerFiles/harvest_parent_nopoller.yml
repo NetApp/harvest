@@ -1,0 +1,9 @@
+Tools:
+  grafana_api_token: token
+
+Defaults:
+  collectors:
+    - Simple
+
+Poller_files:
+  - testdata/pollerFiles/many/*.yml
