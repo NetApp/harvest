@@ -61,25 +61,10 @@ func TestDoDoctor(t *testing.T) {
 
 		expectedOutput := string(outBytes)
 
-		// yaml v3 adds 4 indentation, change it to indent 2
-		output = changeIndentation(output, 4, 2)
-
 		if output != expectedOutput {
-			t.Fatalf("unexpected output:\ngot:\n%v\n\nwant:\n%v", output, expectedOutput)
+			t.Errorf("%s unexpected output:\ngot:\n%v\n\nwant:\n%v", tt.outPath, output, expectedOutput)
 		}
 	}
-}
-
-func changeIndentation(s string, oldInd int, newInd int) string {
-	lines := strings.Split(s, "\n")
-	for i, line := range lines {
-		indent := len(line) - len(strings.TrimLeft(line, " "))
-		if indent%oldInd == 0 {
-			newIndentCount := indent / oldInd * newInd
-			lines[i] = strings.Repeat(" ", newIndentCount) + strings.TrimSpace(line)
-		}
-	}
-	return strings.Join(lines, "\n")
 }
 
 func TestConfigToStruct(t *testing.T) {
