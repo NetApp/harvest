@@ -40,12 +40,12 @@ func visitExpressionsAndQueries(path string, data []byte) {
 	// collect all expressions
 	expressions := make([]exprP, 0)
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doTarget("", key, value, func(path string, expr string, format string) {
+		doTarget("", key, value, func(path string, expr string, _ string) {
 			expressions = append(expressions, newExpr(path, expr))
 		})
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doTarget(pathPrefix, key2, value2, func(path string, expr string, format string) {
+			doTarget(pathPrefix, key2, value2, func(path string, expr string, _ string) {
 				expressions = append(expressions, newExpr(path, expr))
 			})
 			return true
@@ -155,7 +155,7 @@ func doTarget(pathPrefix string, key gjson.Result, value gjson.Result,
 
 func VisitDashboards(dirs []string, eachDash func(path string, data []byte)) {
 	for _, dir := range dirs {
-		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 			if strings.Contains(path, "influxdb") {
 				return nil
 			}

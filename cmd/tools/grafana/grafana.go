@@ -1039,7 +1039,7 @@ var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "import Grafana dashboards",
 	// Added so directory and serverfolder are required arguments except when both are empty. When both are empty use long accepted Harvest defaults
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
 		dir := cmd.Flags().Lookup("directory")
 		folder := cmd.Flags().Lookup("serverfolder")
 		if dir.Value.String() == "" && folder.Value.String() == "" {

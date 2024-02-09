@@ -315,7 +315,7 @@ func (c *cli) Root() *cobra.Command {
 	r := &cobra.Command{
 		Use:   "changelog",
 		Short: "create changelog",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			c.makeChangelog()
 		},
 	}
@@ -333,7 +333,7 @@ func (c *cli) Root() *cobra.Command {
 	r.AddCommand(&cobra.Command{
 		Use:   "new",
 		Short: "create draft release highlights",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			c.makeDraft()
 		},
 	})

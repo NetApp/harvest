@@ -174,7 +174,7 @@ func processRestCounters(client *rest.Client) map[string]Counter {
 		return processRestPerfCounters(path, client)
 	})
 
-	restCounters := visitRestTemplates("conf/rest", client, func(path string, client *rest.Client) map[string]Counter {
+	restCounters := visitRestTemplates("conf/rest", client, func(path string, client *rest.Client) map[string]Counter { // revive:disable-line:unused-parameter
 		return processRestConfigCounters(path)
 	})
 
@@ -186,7 +186,7 @@ func processRestCounters(client *rest.Client) map[string]Counter {
 
 // processZapiCounters parse zapi and zapiperf templates
 func processZapiCounters(client *zapi.Client) map[string]Counter {
-	zapiCounters := visitZapiTemplates("conf/zapi/cdot", client, func(path string, client *zapi.Client) map[string]Counter {
+	zapiCounters := visitZapiTemplates("conf/zapi/cdot", client, func(path string, client *zapi.Client) map[string]Counter { // revive:disable-line:unused-parameter
 		return processZapiConfigCounters(path)
 	})
 	zapiPerfCounters := visitZapiTemplates("conf/zapiperf/cdot", client, func(path string, client *zapi.Client) map[string]Counter {
@@ -539,7 +539,7 @@ func processZapiConfigCounters(path string) map[string]Counter {
 
 func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path string, client *rest.Client) map[string]Counter) map[string]Counter {
 	result := make(map[string]Counter)
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatal("failed to read directory:", err)
 		}
@@ -566,7 +566,7 @@ func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path stri
 
 func visitZapiTemplates(dir string, client *zapi.Client, eachTemp func(path string, client *zapi.Client) map[string]Counter) map[string]Counter {
 	result := make(map[string]Counter)
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatal("failed to read directory:", err)
 		}
@@ -784,7 +784,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	} else {
 		return nil
 	}
-	counterSchema.ForEach(func(key, r gjson.Result) bool {
+	counterSchema.ForEach(func(_, r gjson.Result) bool {
 		if !r.IsObject() {
 			return true
 		}

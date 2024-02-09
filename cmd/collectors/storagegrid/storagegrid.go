@@ -547,15 +547,15 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 	p.Target.ClusterUUID = s.client.Cluster.UUID
 
 	if p.Nodes == nil {
-		nodeIds, err := s.getNodeUuids()
+		nodeIDs, err := s.getNodeUuids()
 		if err != nil {
 			// log the error, but don't exit method so subsequent info is collected
 			s.Logger.Error().Err(err).Msg("Unable to get nodes.")
-			nodeIds = make([]collector.ID, 0)
+			nodeIDs = make([]collector.ID, 0)
 		}
 		p.Nodes = &collector.InstanceInfo{
-			Ids:   nodeIds,
-			Count: int64(len(nodeIds)),
+			Ids:   nodeIDs,
+			Count: int64(len(nodeIDs)),
 		}
 	}
 

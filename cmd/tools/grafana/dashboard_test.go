@@ -38,7 +38,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 		},
 	}
 	// visit all panels for datasource test
-	VisitAllPanels(data, func(p string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		panelTitle := value.Get("title").String()
 		kind := value.Get("type").String()
 		if kind == "table" || kind == "stat" {
@@ -121,7 +121,7 @@ func TestDatasource(t *testing.T) {
 func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
 	// visit all panels for datasource test
-	VisitAllPanels(data, func(p string, key, value gjson.Result) {
+	VisitAllPanels(data, func(p string, _, value gjson.Result) {
 		dsResult := value.Get("datasource")
 		panelTitle := value.Get("title").String()
 		if !dsResult.Exists() {
@@ -177,7 +177,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		"datasource": true,
 	}
 
-	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+	gjson.GetBytes(data, "templating.list").ForEach(func(_, value gjson.Result) bool {
 		name := value.Get("name").String()
 		if value.Get("name").String() == "DS_PROMETHEUS" {
 			doesDsPromExist = true
@@ -390,7 +390,7 @@ func newMetricsTable() *metricsTable {
 }
 
 func checkUnits(t *testing.T, dashboardPath string, mt *metricsTable, data []byte) {
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
 		doPanel(t, "", key, value, mt, dashboardPath)
 	})
 }
@@ -603,7 +603,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 	vars := make([]string, 0)
 	description := make([]string, 0)
 	varExpression := make([]string, 0)
-	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+	gjson.GetBytes(data, "templating.list").ForEach(func(_, value gjson.Result) bool {
 		if value.Get("type").String() == "datasource" {
 			return true
 		}
@@ -614,7 +614,7 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		return true
 	})
 
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		d := value.Get("description").String()
 		if d != "" {
 			description = append(description, d)
@@ -734,7 +734,7 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 
 	sPath := ShortPath(path)
 	// visit all panel ids
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
 		id := value.Get("id").Int()
 		_, ok := ids[id]
 		if ok {
@@ -765,7 +765,7 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	// collect all expressions
 	expressions := make([]exprP, 0)
 
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
 		doTarget("", key, value, func(path string, expr string, format string) {
 			if format == "table" || format == "stat" {
 				return
@@ -860,7 +860,7 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 	pathCollapsed := make(map[string]bool)
 	titles := make([]string, 0)
 	// visit all panel
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
 		collapsed := value.Get("collapsed")
 		if !collapsed.Exists() {
 			return
@@ -898,7 +898,7 @@ func checkLegends(t *testing.T, path string, data []byte) {
 	// collect all legends
 	dashPath := ShortPath(path)
 
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		doLegends(t, value, dashPath)
 	})
 }
@@ -966,7 +966,7 @@ func TestConnectNullValues(t *testing.T) {
 func checkConnectNullValues(t *testing.T, path string, data []byte) {
 	dashPath := ShortPath(path)
 
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		spanNulls := value.Get("fieldConfig.defaults.custom.spanNulls")
 		if !spanNulls.Exists() {
 			return
@@ -986,7 +986,7 @@ func TestPanelChildPanels(t *testing.T) {
 }
 
 func checkPanelChildPanels(t *testing.T, path string, data []byte) {
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+	gjson.GetBytes(data, "panels").ForEach(func(_, value gjson.Result) bool {
 		// Check all collapsed panels should have child panels
 		if value.Get("collapsed").Bool() && len(value.Get("panels").Array()) == 0 {
 			t.Errorf("dashboard=%s, panel=%s, has child panels outside of row", path, value.Get("title").String())
@@ -1023,7 +1023,7 @@ func TestTableFilter(t *testing.T) {
 
 func checkTableFilter(t *testing.T, path string, data []byte) {
 	dashPath := ShortPath(path)
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType == "table" {
 			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").String()
@@ -1085,7 +1085,7 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 	exceptions := []string{"CPU Busy Domains"}
 	dashPath := ShortPath(path)
 
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType != "timeseries" {
 			return
@@ -1121,7 +1121,7 @@ func TestRefreshIsOff(t *testing.T) {
 }
 
 func checkDashboardRefresh(t *testing.T, path string, data []byte) {
-	gjson.GetBytes(data, "refresh").ForEach(func(key, value gjson.Result) bool {
+	gjson.GetBytes(data, "refresh").ForEach(func(_, value gjson.Result) bool {
 		if value.String() != "" {
 			t.Errorf(`dashboard=%s, got refresh=%s, want refresh="" (off)`, path, value.String())
 		}
@@ -1144,7 +1144,7 @@ func checkHeatmapSettings(t *testing.T, path string, data []byte) {
 		wantColorScheme = "interpolateRdYlGn"
 		wantColorMode   = "spectrum"
 	)
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType != "heatmap" {
 			return
@@ -1189,7 +1189,7 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 		"decpbytes": true,
 	}
 
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
 		panelType := value.Get("type").String()
 		if panelType != "timeseries" {
 			return
@@ -1282,7 +1282,7 @@ func TestNoDrillDownRows(t *testing.T) {
 
 func checkRowNames(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
-	VisitAllPanels(data, func(p string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
 		kind := value.Get("type").String()
 		if kind == "row" {
 			title := value.Get("title").String()
@@ -1329,7 +1329,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		"Volume Latency by Op Type", "Volume IOPs per Type",
 	}
 
-	VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		kind := value.Get("type").String()
 		if kind == "row" || kind == "text" {
 			return
