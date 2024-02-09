@@ -643,23 +643,23 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 
 		if r.Object == "Node" || r.Name == "ems" {
 			var (
-				nodeIds []collector.ID
+				nodeIDs []collector.ID
 				err     error
 			)
-			nodeIds, err = r.getNodeUuids()
+			nodeIDs, err = r.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
 				r.Logger.Error().
 					Err(err).
 					Msg("Unable to get nodes.")
 			}
-			info.Ids = nodeIds
+			info.Ids = nodeIDs
 			p.Nodes = &info
 
 			// Since the serial number is bogus in c-mode
 			// use the first node's serial number instead (the nodes were ordered in getNodeUuids())
-			if len(nodeIds) > 0 {
-				p.Target.Serial = nodeIds[0].SerialNumber
+			if len(nodeIDs) > 0 {
+				p.Target.Serial = nodeIDs[0].SerialNumber
 			}
 		}
 		if r.Object == "Volume" {

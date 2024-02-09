@@ -93,7 +93,7 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 			kindDir := filepath.Join(toConf, kind)
 			// find all templates named fileRef
 			var matchingTemplates []string
-			err := filepath.WalkDir(kindDir, func(path string, d fs.DirEntry, err error) error {
+			err := filepath.WalkDir(kindDir, func(path string, _ fs.DirEntry, _ error) error {
 				if strings.Contains(path, fileRef) {
 					matchingTemplates = append(matchingTemplates, path)
 				}
@@ -150,7 +150,7 @@ func readDefaults(dirs []string) (map[string]objectMap, error) {
 
 	for _, dir := range dirs {
 		dirPath := toConf + "/" + dir
-		err := filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
+		err := filepath.WalkDir(dirPath, func(path string, _ fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
@@ -223,7 +223,7 @@ func TestMetricColumnAlignmentAndCase(t *testing.T) {
 }
 
 func TestNoTabs(t *testing.T) {
-	visitTemplates(t, func(path string, model Model) {
+	visitTemplates(t, func(path string, _ Model) {
 		data, err := os.ReadFile(path)
 		if err != nil {
 			t.Errorf("failed to read path=%s err=%v", shortPath(path), err)
@@ -521,7 +521,7 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model Model), d
 	}
 	for _, dir := range dirs {
 		dirPath := toConf + "/" + dir
-		err := filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
+		err := filepath.WalkDir(dirPath, func(path string, _ fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}

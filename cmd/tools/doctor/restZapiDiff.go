@@ -50,6 +50,9 @@ func DoDiffRestZapi(zapiDataCenterName string, restDataCenterName string) {
 
 func getWalkFunc(searchKey string, dashboardDiffMap map[string][]string, key string) filepath.WalkFunc {
 	return func(path string, fi os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if !fi.IsDir() {
 			b, err := os.ReadFile(path)
 			if err != nil {
@@ -699,11 +702,11 @@ func getLabelNames(query string) map[string][]string {
 	data, _ := getResponse(queryURL)
 
 	result := gjson.Get(data, "data")
-	result.ForEach(func(key, value gjson.Result) bool {
+	result.ForEach(func(_, value gjson.Result) bool {
 		labelName := value.Get("__name__")
 		if strings.Contains(labelName.String(), "_labels") {
 			v := value.Get("@keys")
-			v.ForEach(func(key, value gjson.Result) bool {
+			v.ForEach(func(_, value gjson.Result) bool {
 				dataMap[labelName.String()] = appendIfMissing(dataMap[labelName.String()], value.String())
 				return true // keep iterating
 			})

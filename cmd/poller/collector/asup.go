@@ -55,7 +55,7 @@ type InstanceInfo struct {
 	APITime    int64
 	ParseTime  int64
 	PluginTime int64
-	Ids        []ID `json:"Ids,omitempty"`
+	Ids        []ID `json:"Ids,omitempty"` // revive:disable-line var-naming
 }
 
 type Process struct {
