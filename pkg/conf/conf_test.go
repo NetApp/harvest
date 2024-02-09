@@ -208,7 +208,7 @@ func TestIssue271_PollerPanicsWhenExportDoesNotExist(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	t.Run("Poller panics when exporter does not exist", func(t *testing.T) {
+	t.Run("Poller panics when exporter does not exist", func(_ *testing.T) {
 		exporters := GetUniqueExporters(poller.Exporters)
 		if err != nil {
 			panic(err)

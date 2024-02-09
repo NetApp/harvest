@@ -483,23 +483,23 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 
 		if z.Object == "Node" {
 			var (
-				nodeIds []collector.ID
+				nodeIDs []collector.ID
 				err     error
 			)
-			nodeIds, err = z.getNodeUuids()
+			nodeIDs, err = z.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
 				z.Logger.Error().
 					Err(err).
 					Msg("Unable to get nodes.")
 			}
-			info.Ids = nodeIds
+			info.Ids = nodeIDs
 			p.Nodes = &info
 			if z.Client.IsClustered() {
 				// Since the serial number is bogus in c-mode
 				// use the first node's serial number instead (the nodes were ordered in getNodeUuids())
-				if len(nodeIds) > 0 {
-					p.Target.Serial = nodeIds[0].SerialNumber
+				if len(nodeIDs) > 0 {
+					p.Target.Serial = nodeIDs[0].SerialNumber
 				}
 			}
 		} else if z.Object == "Volume" {

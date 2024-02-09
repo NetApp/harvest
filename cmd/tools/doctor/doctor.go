@@ -339,6 +339,9 @@ func templateExists(searchDir string, templateName string) bool {
 	// recursively search searchDir for a file named templateName
 	found := false
 	err := filepath.WalkDir(searchDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
 		if d.IsDir() {
 			return nil
 		}

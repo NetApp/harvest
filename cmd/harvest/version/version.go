@@ -100,7 +100,7 @@ func latestRelease() (string, error) {
 		Transport: &http.Transport{},
 		Timeout:   5 * time.Second,
 	}
-	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+	client.CheckRedirect = func(_ *http.Request, _ []*http.Request) error {
 		return errors.New("redirect")
 	}
 	resp, err := client.Get(githubReleases)

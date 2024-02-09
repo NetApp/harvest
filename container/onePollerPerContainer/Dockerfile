@@ -1,4 +1,4 @@
-FROM golang:latest as builder
+FROM golang:1.21.7 as builder
 
 SHELL ["/bin/bash", "-c"]
 

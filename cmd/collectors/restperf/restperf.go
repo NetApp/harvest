@@ -285,7 +285,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 		return nil, errs.New(errs.ErrConfig, "no data found")
 	}
 	// populate denominator metric to prop metrics
-	counterSchema.ForEach(func(key, c gjson.Result) bool {
+	counterSchema.ForEach(func(_, c gjson.Result) bool {
 		if !c.IsObject() {
 			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
 			return true
@@ -431,7 +431,7 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 	instanceData.ForEach(func(key, v gjson.Result) bool {
 		keyS := key.String()
 		if keyS == "counters" {
-			v.ForEach(func(key, each gjson.Result) bool {
+			v.ForEach(func(_, each gjson.Result) bool {
 				if numSeen == numWant {
 					return false
 				}
@@ -469,7 +469,7 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 				var finalLabels []string
 				var finalValues []string
 				var vLen int
-				subCounters.ForEach(func(key, subCounter gjson.Result) bool {
+				subCounters.ForEach(func(_, subCounter gjson.Result) bool {
 					label := strings.Clone(subCounter.Get("label").String())
 					subValues := subCounter.Get("values").String()
 					m := util.ArrayMetricToString(strings.Clone(subValues))

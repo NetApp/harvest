@@ -606,7 +606,7 @@ func generateDescription(dPath string, data []byte, counters map[string]Counter)
 		return
 	}
 
-	grafana.VisitAllPanels(data, func(path string, key, value gjson.Result) {
+	grafana.VisitAllPanels(data, func(path string, _, value gjson.Result) {
 		kind := value.Get("type").String()
 		if kind == "row" || kind == "text" {
 			return
