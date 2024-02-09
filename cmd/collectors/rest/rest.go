@@ -583,10 +583,18 @@ func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 
 	result, err := rest.Fetch(r.Client, href)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch data: %w", err)
+		return r.handleError(err, href)
 	}
 
 	return result, nil
+}
+
+func (r *Rest) handleError(err error, href string) ([]gjson.Result, error) {
+	if errs.IsRestErr(err, errs.MetroClusterNotConfigured) {
+		// MetroCluster is not configured in cluster, return ErrMetroClusterNotConfigured
+		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrMetroClusterNotConfigured, err.Error()))
+	}
+	return nil, fmt.Errorf("failed to fetch data: %w", err)
 }
 
 func (r *Rest) CollectAutoSupport(p *collector.Payload) {
