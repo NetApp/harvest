@@ -85,11 +85,11 @@ func invokeRestCall(client *rest2.Client, counters map[string][]counterData) err
 }
 
 func processRestCounters(client *rest2.Client) map[string][]counterData {
-	restPerfCounters := visitRestTemplates("../../conf/restperf", client, func(path string, currentVersion string, client *rest2.Client) map[string][]counterData {
+	restPerfCounters := visitRestTemplates("../../conf/restperf", client, func(path string, currentVersion string, _ *rest2.Client) map[string][]counterData {
 		return processRestConfigCounters(path, currentVersion, "perf")
 	})
 
-	restCounters := visitRestTemplates("../../conf/rest", client, func(path string, currentVersion string, client *rest2.Client) map[string][]counterData {
+	restCounters := visitRestTemplates("../../conf/rest", client, func(path string, currentVersion string, _ *rest2.Client) map[string][]counterData {
 		return processRestConfigCounters(path, currentVersion, "rest")
 	})
 
@@ -101,7 +101,7 @@ func processRestCounters(client *rest2.Client) map[string][]counterData {
 
 func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path string, currentVersion string, client *rest2.Client) map[string][]counterData) map[string][]counterData {
 	result := make(map[string][]counterData)
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to read directory:")
 		}

@@ -1,6 +1,8 @@
 package installer
 
-import "fmt"
+import (
+	"errors"
+)
 
 const (
 	RHEL              = "rpm"
@@ -28,5 +30,5 @@ func GetInstaller(installType string, path string) (Installer, error) {
 		d.Init(path)
 		return d, nil
 	}
-	return nil, fmt.Errorf("Wrong installer type passed " + installType)
+	return nil, errors.New("Wrong installer type passed " + installType)
 }

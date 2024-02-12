@@ -220,7 +220,7 @@ func signCSR(csr string) error {
 
 	ca := findRootCA(certificates)
 	if ca == nil {
-		return fmt.Errorf("unable to find CA")
+		return errors.New("unable to find CA")
 	}
 	// This is needed because you can't create a signing request with an expiry longer than the CA's expiry.
 	// Use one day less than the number of days until the CA expires
@@ -329,7 +329,7 @@ func fetchAdminSVM() {
 
 func newRequest() *requests.Builder {
 	return requests.
-		URL(fmt.Sprintf("https://%s", ip)).
+		URL("https://"+ip).
 		BasicAuth(username, password).
 		AddValidator(func(response *http.Response) error {
 			if response.StatusCode >= 400 {

@@ -11,19 +11,19 @@ import (
 
 func TestDockerInstall(t *testing.T) {
 	utils.SkipIfMissing(t, utils.InstallDocker)
-	//it will create a grafana token and configure it for dashboard export
+	// it will create a grafana token and configure it for dashboard export
 	isReachable := utils.WaitForGrafana()
 	if !isReachable {
 		t.Fatalf("Grafana is not reachable.")
 	}
 	utils.WriteToken(utils.CreateGrafanaToken())
-	containerIds, err := docker.Containers("poller")
+	containerIDs, err := docker.Containers("poller")
 	if err != nil {
 		panic(err)
 	}
 	fileZapiName := installer.GetPerfFileWithQosCounters(installer.ZapiPerfDefaultFile, "defaultZapi.yaml")
 	fileRestName := installer.GetPerfFileWithQosCounters(installer.RestPerfDefaultFile, "defaultRest.yaml")
-	for _, container := range containerIds {
+	for _, container := range containerIDs {
 		docker.CopyFile(container.ID, installer.HarvestConfigFile, installer.HarvestHome+"/"+installer.HarvestConfigFile)
 		docker.CopyFile(container.ID, fileZapiName, installer.HarvestHome+"/"+installer.ZapiPerfDefaultFile)
 		docker.CopyFile(container.ID, fileRestName, installer.HarvestHome+"/"+installer.RestPerfDefaultFile)

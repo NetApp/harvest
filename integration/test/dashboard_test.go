@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/grafana"
 	"github.com/Netapp/harvest-automation/test/utils"
@@ -31,15 +32,15 @@ func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
 	log.Info().Msg("Verify Grafana and Prometheus are configured")
 	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
-		panic(fmt.Errorf("grafana is not reachable"))
+		panic(errors.New("grafana is not reachable"))
 	}
 	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
-		panic(fmt.Errorf("prometheus is not reachable"))
+		panic(errors.New("prometheus is not reachable"))
 	}
 	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
 	sevenModeFolder = "Harvest-" + version.VERSION + "-7mode"
 	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
-	status, out := new(grafana.Mgr).Import("") //send empty so that it will import all dashboards
+	status, out := new(grafana.Mgr).Import("") // send empty so that it will import all dashboards
 	if !status {
 		t.Errorf("Grafana import operation failed out=%s", out)
 	}

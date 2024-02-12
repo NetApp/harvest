@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"fmt"
+	"errors"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 	"strings"
@@ -38,7 +38,7 @@ func (r *RPM) Install() bool {
 	_, err = utils.Run("cp", harvestFile, HarvestHome+"/"+harvestFile)
 	if err != nil {
 		return false
-	} //use file directly from the repo
+	} // use file directly from the repo
 	harvestObj.Start()
 	status := harvestObj.AllRunning()
 	asupExecPath := HarvestHome + "/autosupport/asup"
@@ -51,7 +51,7 @@ func (r *RPM) Upgrade() bool {
 	utils.RemoveSafely(rpmFileName)
 	harvestObj := new(Harvest)
 	if !harvestObj.AllRunning() {
-		utils.PanicIfNotNil(fmt.Errorf("pollers are not in a running state before upgrade"))
+		utils.PanicIfNotNil(errors.New("pollers are not in a running state before upgrade"))
 	}
 	versionCmd := []string{"-qa", "harvest"}
 	out, err := utils.Run("rpm", versionCmd...)
@@ -69,7 +69,7 @@ func (r *RPM) Upgrade() bool {
 	out, _ = utils.Run("rpm", versionCmd...)
 	installedVersion := strings.TrimSpace(out)
 	if previousVersion == installedVersion {
-		utils.PanicIfNotNil(fmt.Errorf("upgrade is failed"))
+		utils.PanicIfNotNil(errors.New("upgrade is failed"))
 	}
 	_, _ = utils.Run("cp", GetPerfFileWithQosCounters(ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+ZapiPerfDefaultFile)
 	_, _ = utils.Run("cp", GetPerfFileWithQosCounters(RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+RestPerfDefaultFile)
