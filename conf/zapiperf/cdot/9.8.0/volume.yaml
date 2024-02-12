@@ -46,6 +46,9 @@ plugins:
     - node
   - Volume:
       include_constituents: false
+  - MetricAgent:
+      compute_metric:
+        - total_data ADD read_data write_data
 #  - LabelAgent:
 #      # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex:
