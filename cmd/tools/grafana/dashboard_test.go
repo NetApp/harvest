@@ -590,6 +590,50 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 	})
 }
 
+func TestVariablesIncludeAllOption(t *testing.T) {
+	VisitDashboards(dashboards,
+		func(path string, data []byte) {
+			checkVariablesHaveAll(t, path, data)
+		})
+}
+
+func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
+	shouldHaveAll := map[string]bool{
+		"Cluster":   true,
+		"Node":      true,
+		"Volume":    true,
+		"SVM":       true,
+		"Aggregate": true,
+	}
+
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		// The datasource variable does not need to be sorted, ignore
+		if value.Get("type").String() == "datasource" {
+			return true
+		}
+		// If the variable is not visible, ignore
+		if value.Get("hide").Int() != 0 {
+			return true
+		}
+		// If the variable is custom, ignore
+		if value.Get("type").String() == "custom" {
+			return true
+		}
+
+		varName := value.Get("name").String()
+		if !shouldHaveAll[varName] {
+			return true
+		}
+
+		includeAll := value.Get("includeAll").Bool()
+		if !includeAll {
+			t.Errorf("variable=%s should have includeAll=true dashboard=%s path=templating.list[%s].includeAll",
+				varName, ShortPath(path), key.String())
+		}
+		return true
+	})
+}
+
 func TestNoUnusedVariables(t *testing.T) {
 	VisitDashboards(
 		dashboards,
