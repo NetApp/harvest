@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1707488974299,
+  "iteration": 1707718619019,
   "links": [
     {
       "asDropdown": true,
@@ -103,206 +103,6 @@
         "w": 24,
         "x": 0,
         "y": 0
-      },
-      "id": 327,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 24,
-            "x": 0,
-            "y": 1
-          },
-          "id": 660,
-          "options": {
-            "showHeader": true
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(count(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Nodes",
-              "refId": "A"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "SVMs",
-              "refId": "B"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Aggregates",
-              "refId": "C"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Luns",
-              "refId": "D"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Volumes",
-              "refId": "E"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(namespace_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Namespaces",
-              "refId": "F"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "S3 Buckets",
-              "refId": "G"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Disks",
-              "refId": "H"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Snapmirrrors",
-              "refId": "I"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "LIFs",
-              "refId": "J"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "FC Ports",
-              "refId": "K"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Shelves",
-              "refId": "L"
-            }
-          ],
-          "title": "Object Counts",
-          "transformations": [
-            {
-              "id": "reduce",
-              "options": {
-                "reducers": [
-                  "lastNotNull"
-                ]
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {},
-                "renameByName": {
-                  "Field": "Object",
-                  "Last *": "Count"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        }
-      ],
-      "title": "Object Count",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 1
       },
       "id": 482,
       "panels": [
@@ -649,7 +449,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 1
       },
       "id": 552,
       "panels": [
@@ -680,7 +480,7 @@
             "h": 7,
             "w": 6,
             "x": 0,
-            "y": 3
+            "y": 2
           },
           "id": 576,
           "options": {
@@ -738,7 +538,7 @@
             "h": 7,
             "w": 6,
             "x": 6,
-            "y": 3
+            "y": 2
           },
           "id": 611,
           "options": {
@@ -796,7 +596,7 @@
             "h": 7,
             "w": 6,
             "x": 12,
-            "y": 3
+            "y": 2
           },
           "id": 613,
           "options": {
@@ -856,7 +656,7 @@
             "h": 7,
             "w": 6,
             "x": 18,
-            "y": 3
+            "y": 2
           },
           "id": 615,
           "options": {
@@ -944,9 +744,9 @@
           },
           "gridPos": {
             "h": 10,
-            "w": 12,
+            "w": 9,
             "x": 0,
-            "y": 10
+            "y": 9
           },
           "id": 655,
           "options": {
@@ -1032,9 +832,9 @@
           },
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 10
+            "w": 10,
+            "x": 9,
+            "y": 9
           },
           "id": 656,
           "options": {
@@ -1062,6 +862,192 @@
           ],
           "title": "Top $TopResources Used and Reserved Space by Cluster",
           "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Object Count.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 20,
+            "w": 5,
+            "x": 19,
+            "y": 9
+          },
+          "id": 660,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(count(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Nodes",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "SVMs",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Aggregates",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Luns",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Volumes",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(namespace_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Namespaces",
+              "refId": "F"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "S3 Buckets",
+              "refId": "G"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Disks",
+              "refId": "H"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Snapmirrrors",
+              "refId": "I"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "LIFs",
+              "refId": "J"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "FC Ports",
+              "refId": "K"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Shelves",
+              "refId": "L"
+            }
+          ],
+          "title": "Object Count",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "reducers": [
+                  "lastNotNull"
+                ]
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Field": "Object",
+                  "Last *": "Count"
+                }
+              }
+            }
+          ],
+          "type": "table"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -1120,9 +1106,9 @@
           },
           "gridPos": {
             "h": 10,
-            "w": 12,
+            "w": 9,
             "x": 0,
-            "y": 20
+            "y": 19
           },
           "id": 657,
           "options": {
@@ -1210,9 +1196,9 @@
           },
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 20
+            "w": 10,
+            "x": 9,
+            "y": 19
           },
           "id": 658,
           "options": {
@@ -1252,7 +1238,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 2
       },
       "id": 97,
       "panels": [
@@ -1316,7 +1302,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 14
+            "y": 3
           },
           "id": 106,
           "options": {
@@ -1408,7 +1394,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 14
+            "y": 3
           },
           "id": 107,
           "options": {
@@ -1500,7 +1486,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 14
+            "y": 3
           },
           "id": 108,
           "options": {
@@ -1593,7 +1579,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 22
+            "y": 11
           },
           "id": 241,
           "options": {
@@ -1686,7 +1672,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 22
+            "y": 11
           },
           "id": 2,
           "options": {
@@ -1729,7 +1715,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 3
       },
       "id": 617,
       "panels": [
@@ -2125,7 +2111,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 4
       },
       "id": 634,
       "panels": [
@@ -2752,7 +2738,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 184,
       "panels": [
@@ -3439,7 +3425,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 6
       },
       "id": 627,
       "panels": [
@@ -4031,5 +4017,5 @@
   "timezone": "",
   "title": "ONTAP: Datacenter",
   "uid": "",
-  "version": 2
+  "version": 1
 }
