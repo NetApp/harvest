@@ -3413,6 +3413,462 @@
       "repeat": null,
       "title": "MetroCluster FibreBridge/Array",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 94,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 85,
+          "options": {
+            "content": "This panel requires ONTAP 9.12+. The APIs are only available via REST. You must enable the REST collector in your `harvest.yml` config.<br>\nSee https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#why-do-i-have-metrocluster-diagnostics-panel-empty-in-metrocluster-dashboard for more details.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows cluster level diagnostics status detail of Metrocluster.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 12
+          },
+          "id": 87,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "metrocluster_check_cluster_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Metrocluster Cluster Diagnostics Check Details",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "result": false
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 12,
+                  "__name__": 1,
+                  "cluster": 3,
+                  "datacenter": 7,
+                  "instance": 8,
+                  "job": 9,
+                  "name": 10,
+                  "result": 11
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "job": "",
+                  "name": "Checks",
+                  "result": "Result"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows node level diagnostics status detail of Metrocluster.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 24
+          },
+          "id": 88,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "metrocluster_check_node_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Metrocluster Node Diagnostics Check Details",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "result": false
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 12,
+                  "__name__": 1,
+                  "cluster": 3,
+                  "datacenter": 7,
+                  "instance": 8,
+                  "job": 9,
+                  "name": 10,
+                  "node": 4,
+                  "result": 11
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "job": "",
+                  "name": "Checks",
+                  "node": "Node",
+                  "result": "Result"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows aggregate level diagnostics status detail of Metrocluster.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 36
+          },
+          "id": 101,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "metrocluster_check_aggr_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggregate=~\"$Aggr\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Metrocluster Aggregate Diagnostics Check Details",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "result": false
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 12,
+                  "__name__": 1,
+                  "aggregate": 5,
+                  "cluster": 3,
+                  "datacenter": 7,
+                  "instance": 8,
+                  "job": 9,
+                  "name": 10,
+                  "node": 4,
+                  "result": 11
+                },
+                "renameByName": {
+                  "aggregate": "Aggregate",
+                  "cluster": "Cluster",
+                  "job": "",
+                  "name": "Checks",
+                  "node": "Node",
+                  "result": "Result"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows volume level diagnostics status detail of Metrocluster.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 48
+          },
+          "id": 102,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "metrocluster_check_volume_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggregate=~\"$Aggr\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Metrocluster Volume Diagnostics Check Details",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "result": false
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 12,
+                  "__name__": 1,
+                  "aggregate": 5,
+                  "cluster": 3,
+                  "datacenter": 7,
+                  "instance": 8,
+                  "job": 9,
+                  "name": 10,
+                  "node": 4,
+                  "result": 11,
+                  "volume": 6
+                },
+                "renameByName": {
+                  "aggregate": "Aggregate",
+                  "cluster": "Cluster",
+                  "job": "",
+                  "name": "Checks",
+                  "node": "Node",
+                  "result": "Result",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "repeat": null,
+      "title": "MetroCluster Diagnostics",
+      "type": "row"
     }
   ],
   "refresh": "",

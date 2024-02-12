@@ -1,0 +1,20 @@
+name:             MetroclusterCheck
+query:            api/cluster/metrocluster/diagnostics
+object:           metrocluster_check
+
+counters:
+  - ^aggregate   => aggregate
+  - ^cluster     => cluster
+  - ^node        => node
+  - ^volume      => volume
+  - hidden_fields:
+      - cluster
+      - aggregate
+      - node
+      - volume
+
+plugins:
+  - MetroclusterCheck     # Creates metrics from details collected above
+
+export_options:
+  include_all_labels: true

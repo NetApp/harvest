@@ -1,11 +1,13 @@
 package rest
 
 import (
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/metroclustercheck"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/netroute"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/ontaps3service"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyadaptive"
@@ -424,6 +426,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return qospolicyadaptive.New(abc)
 	case "OntapS3Service":
 		return ontaps3service.New(abc)
+	case "MetroclusterCheck":
+		return metroclustercheck.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
@@ -580,10 +584,18 @@ func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 
 	result, err := rest.Fetch(r.Client, href)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch data: %w", err)
+		return r.handleError(err)
 	}
 
 	return result, nil
+}
+
+func (r *Rest) handleError(err error) ([]gjson.Result, error) {
+	if errs.IsRestErr(err, errs.MetroClusterNotConfigured) {
+		// MetroCluster is not configured, return ErrMetroClusterNotConfigured
+		return nil, errors.Join(errs.ErrAPIRequestRejected, errs.New(errs.ErrMetroClusterNotConfigured, err.Error()))
+	}
+	return nil, fmt.Errorf("failed to fetch data: %w", err)
 }
 
 func (r *Rest) CollectAutoSupport(p *collector.Payload) {
