@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
@@ -583,16 +584,16 @@ func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 
 	result, err := rest.Fetch(r.Client, href)
 	if err != nil {
-		return r.handleError(err, href)
+		return r.handleError(err)
 	}
 
 	return result, nil
 }
 
-func (r *Rest) handleError(err error, href string) ([]gjson.Result, error) {
+func (r *Rest) handleError(err error) ([]gjson.Result, error) {
 	if errs.IsRestErr(err, errs.MetroClusterNotConfigured) {
-		// MetroCluster is not configured in cluster, return ErrMetroClusterNotConfigured
-		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrMetroClusterNotConfigured, err.Error()))
+		// MetroCluster is not configured, return ErrMetroClusterNotConfigured
+		return nil, errors.Join(errs.ErrAPIRequestRejected, errs.New(errs.ErrMetroClusterNotConfigured, err.Error()))
 	}
 	return nil, fmt.Errorf("failed to fetch data: %w", err)
 }

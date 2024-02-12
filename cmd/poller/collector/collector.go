@@ -396,10 +396,13 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					} else if errors.Is(err, errs.ErrAPIRequestRejected) {
 						// API was rejected, this happens when a resource is not available or does not exist
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-						// Log as info since some of these aren't errors
-						c.Logger.Info().Err(err).Str("task", task.Name).Msg("Entering standby mode")
-					} else if errors.Is(err, errs.ErrMetroClusterNotConfigured) {
-						c.Logger.Trace().Err(err).Str("task", task.Name).Msg("MetroCluster is not configured in cluster")
+						// Log metro cluster at trace level
+						if errors.Is(err, errs.ErrMetroClusterNotConfigured) {
+							c.Logger.Trace().Err(err).Str("task", task.Name).Msg("Entering standby mode")
+						} else {
+							// Log as info since these are not errors.
+							c.Logger.Info().Err(err).Str("task", task.Name).Msg("Entering standby mode")
+						}
 					} else {
 						c.Logger.Error().Err(err).Str("task", task.Name).Send()
 					}
