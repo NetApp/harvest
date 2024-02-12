@@ -3,7 +3,8 @@
   "extends": [
     "config:base",
     ":semanticCommitTypeAll(chore)",
-    ":semanticCommitScopeDisabled"
+    ":semanticCommitScopeDisabled",
+    "docker:disable"
   ],
   "ignorePaths": ["**/integration/**"],
   "schedule": ["before 4am on monday"],
