@@ -17,11 +17,11 @@ func TestCopyLogs(t *testing.T) {
 	installer.CreateLogDir()
 	pollerProcessName := "bin/poller"
 	harvestLogDir := installer.LogDir
-	containerIds, err := docker.Containers(pollerProcessName)
+	containerIDs, err := docker.Containers(pollerProcessName)
 	if err != nil {
 		panic(err)
 	}
-	for _, container := range containerIds {
+	for _, container := range containerIDs {
 		containerShortID := container.ID[:10]
 		dest := harvestLogDir + "/" + containerShortID + ".log"
 		err = docker.StoreContainerLog(containerShortID, dest)
@@ -33,11 +33,11 @@ func TestCopyLogs(t *testing.T) {
 
 func TestNoErrors(t *testing.T) {
 	utils.SkipIfMissing(t, utils.AnalyzeDockerLogs)
-	containerIds, err := docker.Containers("bin/poller")
+	containerIDs, err := docker.Containers("bin/poller")
 	if err != nil {
 		panic(err)
 	}
-	for _, container := range containerIds {
+	for _, container := range containerIDs {
 		checkLogs(t, container)
 	}
 }

@@ -347,7 +347,7 @@ func validateExpr(expression string) (bool, string) {
 func GetAllJsons(dir string) []string {
 	var fileSet []string
 	err := filepath.Walk(dir,
-		func(path string, info os.FileInfo, err error) error {
+		func(path string, _ os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -368,11 +368,11 @@ func FindStringBetweenTwoChar(stringValue string, startChar string, endChar stri
 	firstSet := strings.Split(stringValue, startChar)
 	for _, actualString := range firstSet {
 		counterArray := strings.Split(actualString, endChar)
-		if strings.Contains(actualString, "+") { //check for inner expression such as top
+		if strings.Contains(actualString, "+") { // check for inner expression such as top
 			counterArray = strings.Split(actualString, "+")
-		} else if strings.Contains(actualString, "/") { //check for inner expression such as top
+		} else if strings.Contains(actualString, "/") { // check for inner expression such as top
 			counterArray = strings.Split(actualString, "/")
-		} else if strings.Contains(actualString, ",") { //check for inner expression such as top
+		} else if strings.Contains(actualString, ",") { // check for inner expression such as top
 			counterArray = strings.Split(actualString, ",")
 		}
 		counter := strings.TrimSpace(counterArray[len(counterArray)-1])
@@ -414,12 +414,12 @@ func generateQueryWithValue(query string, expression string) string {
 	*/
 	newExpression = strings.ReplaceAll(newExpression, "$TopResources", "1")
 	newExpression = strings.ReplaceAll(newExpression, "$Topresources", "1")
-	newExpression = strings.ReplaceAll(newExpression, "$Aggregate", "$aggr") //dashboard has $Aggregate
+	newExpression = strings.ReplaceAll(newExpression, "$Aggregate", "$aggr") // dashboard has $Aggregate
 	newExpression = strings.ReplaceAll(newExpression, "$Eth", "$Nic")
 	newExpression = strings.ReplaceAll(newExpression, "$NFSv", "$Nfsv")
 	newExpression = strings.ReplaceAll(newExpression, "$DestinationNode", "$Destination_node")
-	//newExpression = strings.ReplaceAll(newExpression, "$SourceNode", "$Source_node")
-	//newExpression = strings.ReplaceAll(newExpression, "$Source_node", "$Source_node")
+	// newExpression = strings.ReplaceAll(newExpression, "$SourceNode", "$Source_node")
+	// newExpression = strings.ReplaceAll(newExpression, "$Source_node", "$Source_node")
 	newExpression = strings.ReplaceAll(newExpression, "$SourceSVM", "$Source_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$DestinationSVM", "$Destination_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$System", "$Cluster")
@@ -428,10 +428,10 @@ func generateQueryWithValue(query string, expression string) string {
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
 		metricMap := gjson.Get(value.Array()[0].String(), "metric").Map()
 		for k, v := range metricMap {
-			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", caser.String(k)), v.String())
-			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", k), v.String())
-			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.ToLower(k)), v.String())
-			newExpression = strings.ReplaceAll(newExpression, fmt.Sprintf("$%s", strings.ToUpper(k)), v.String())
+			newExpression = strings.ReplaceAll(newExpression, "$"+caser.String(k), v.String())
+			newExpression = strings.ReplaceAll(newExpression, "$"+k, v.String())
+			newExpression = strings.ReplaceAll(newExpression, "$"+strings.ToLower(k), v.String())
+			newExpression = strings.ReplaceAll(newExpression, "$"+strings.ToUpper(k), v.String())
 		}
 		return newExpression
 	}

@@ -2,7 +2,6 @@ package installer
 
 import (
 	"errors"
-	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 )
@@ -50,6 +49,6 @@ func (n *Native) Install() bool {
 }
 
 func (n *Native) Upgrade() bool {
-	utils.PanicIfNotNil(fmt.Errorf("not supported"))
+	utils.PanicIfNotNil(errors.New("not supported"))
 	return false
 }

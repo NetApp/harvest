@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/rs/zerolog"
@@ -197,7 +198,7 @@ func AddPrometheusToGrafana() {
 		log.Info().Msg("Prometheus has been added successfully into Grafana .")
 		return
 	}
-	panic(fmt.Errorf("ERROR: unable to add Prometheus into grafana"))
+	panic(errors.New("ERROR: unable to add Prometheus into grafana"))
 }
 
 func CreateGrafanaToken() string {
@@ -216,7 +217,7 @@ func CreateGrafanaToken() string {
 		log.Info().Msg("Grafana: Token has been created successfully.")
 		return key
 	}
-	panic(fmt.Errorf("ERROR: unable to create grafana token"))
+	panic(errors.New("ERROR: unable to create grafana token"))
 }
 
 func PanicIfNotNil(err error) {
@@ -245,7 +246,7 @@ func GetOutboundIP() string {
 			}
 		}
 	}
-	panic(fmt.Errorf("ERROR : Failed to get ip address of this system"))
+	panic(errors.New("ERROR : Failed to get ip address of this system"))
 }
 
 func WriteToken(token string) {

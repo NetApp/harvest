@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"fmt"
+	"errors"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
@@ -23,7 +23,7 @@ func (g *Grafana) Install() bool {
 	log.Println("Grafana image : " + g.image)
 	imageName := "grafana"
 	_ = docker.StopContainers(imageName)
-	//docker.PullImage(g.image)
+	// docker.PullImage(g.image)
 	cmd := exec.Command("docker", "run", "-d", "-e", "GF_LOG_LEVEL=debug", "-p", utils.GrafanaPort+":"+utils.GrafanaPort, g.image) //nolint:gosec
 	cmd.Stdout = os.Stdout
 	err := cmd.Start()
@@ -42,6 +42,6 @@ func (g *Grafana) Install() bool {
 }
 
 func (g *Grafana) Upgrade() bool {
-	utils.PanicIfNotNil(fmt.Errorf("not supported"))
+	utils.PanicIfNotNil(errors.New("not supported"))
 	return false
 }

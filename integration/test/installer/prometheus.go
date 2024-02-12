@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"fmt"
+	"errors"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
@@ -47,6 +47,6 @@ func (p *Prometheus) Install() bool {
 }
 
 func (p *Prometheus) Upgrade() bool {
-	utils.PanicIfNotNil(fmt.Errorf("not supported"))
+	utils.PanicIfNotNil(errors.New("not supported"))
 	return false
 }

@@ -1,7 +1,7 @@
 package grafana
 
 import (
-	"fmt"
+	"errors"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
@@ -21,10 +21,10 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 	log.Println("Verify Grafana and Prometheus are configured")
 	var re = regexp.MustCompile(`404|not-found|error`)
 	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
-		panic(fmt.Errorf("grafana is not reachable"))
+		panic(errors.New("grafana is not reachable"))
 	}
 	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
-		panic(fmt.Errorf("prometheus is not reachable"))
+		panic(errors.New("prometheus is not reachable"))
 	}
 	log.Println("Import dashboard from grafana/dashboards")
 	containerIDs, err := docker.Containers("poller")
