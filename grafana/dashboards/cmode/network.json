@@ -3453,7 +3453,7 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "",
         "multi": true,
         "name": "Cluster",

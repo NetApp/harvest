@@ -1662,7 +1662,7 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "ONTAP Cluster",
         "multi": true,
         "name": "Cluster",
