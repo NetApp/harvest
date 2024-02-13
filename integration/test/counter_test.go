@@ -32,7 +32,7 @@ var replacer = strings.NewReplacer("{", "", "}", "", "^^", "", "^", "")
 // Skipping templates only for testing of counter validation
 // metrocluster_check - as it's error out for non-mcc clusters
 var skipTemplates = map[string]bool{
-	"../../conf/restperf/9.12.0/metrocluster_check.yaml": true,
+	"9.12.0/metrocluster_check.yaml": true,
 }
 
 // TestCounters extracts non-hidden counters from all of the rest and restperf templates and then invokes an HTTP GET for each api path + counters.
@@ -119,7 +119,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 			return nil
 		}
 
-		if skipTemplates[path] {
+		if skipTemplates[shortPath(path)] {
 			return nil
 		}
 
