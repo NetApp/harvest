@@ -1214,7 +1214,7 @@
               }
             ]
           },
-          "unit": "kbytes"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -1252,7 +1252,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Aggregates by User Read IOP Size",
+      "title": "Top $TopResources Aggregates by User Read Chain Length",
       "type": "timeseries"
     },
     {
@@ -1310,7 +1310,7 @@
               }
             ]
           },
-          "unit": "kbytes"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -1348,7 +1348,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Aggregates by User Write IOP Size",
+      "title": "Top $TopResources Aggregates by User Write Chain Length",
       "type": "timeseries"
     },
     {
