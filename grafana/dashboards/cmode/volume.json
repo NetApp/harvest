@@ -5616,7 +5616,6 @@
               },
               "decimals": 2,
               "mappings": [],
-              "max": 100,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",
