@@ -1126,7 +1126,7 @@ func TestPercentHasMinMax(t *testing.T) {
 
 func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 	// These panels can show percent value more than 100.
-	exceptions := []string{"CPU Busy Domains"}
+	exceptions := []string{"CPU Busy Domains", "Top $TopResources Volumes Per Snapshot Reserve Used"}
 	dashPath := ShortPath(path)
 
 	VisitAllPanels(data, func(path string, _, value gjson.Result) {
