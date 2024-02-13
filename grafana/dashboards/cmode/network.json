@@ -1136,6 +1136,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "links": [],
               "mappings": [],
               "max": 1,

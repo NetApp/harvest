@@ -1957,6 +1957,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "links": [],
               "mappings": [],
               "max": 100,
@@ -2011,7 +2012,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources  CPU Busy by Cluster",
+          "title": "Top $TopResources CPU Busy by Cluster",
           "type": "timeseries"
         },
         {
@@ -2050,6 +2051,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "links": [],
               "mappings": [],
               "max": 100,
@@ -2104,7 +2106,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources  Average CPU Utilization by Cluster",
+          "title": "Top $TopResources Average CPU Utilization by Cluster",
           "type": "timeseries"
         }
       ],

@@ -766,6 +766,7 @@
       "description": "Average processor utilization across all processors in the system.",
       "fieldConfig": {
         "defaults": {
+          "decimals": 2,
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -1431,6 +1432,7 @@
                   "mode": "area"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "max": 100,
               "min": 0,
@@ -1529,6 +1531,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -1662,6 +1665,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "max": 1,
               "min": 0,
@@ -1754,6 +1758,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "max": 1,
               "min": 0,
@@ -2347,6 +2352,7 @@
                   "mode": "area"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "max": 100,
               "min": 0,
@@ -2469,6 +2475,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "max": 100,
               "min": 0,

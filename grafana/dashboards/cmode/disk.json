@@ -1016,6 +1016,7 @@
               "mode": "off"
             }
           },
+          "decimals": 2,
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -1673,7 +1674,7 @@
                   "mode": "off"
                 }
               },
-              "decimals": 0,
+              "decimals": 2,
               "mappings": [],
               "max": 100,
               "min": 0,
@@ -2597,6 +2598,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "max": 100,
               "min": 0,
@@ -2726,6 +2728,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "max": 100,
               "min": 0,
