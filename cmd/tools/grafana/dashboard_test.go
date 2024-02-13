@@ -1143,9 +1143,14 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 		}
 		theMin := value.Get("fieldConfig.defaults.min").String()
 		theMax := value.Get("fieldConfig.defaults.max").String()
+		decimals := value.Get("fieldConfig.defaults.decimals").String()
 		if theMin != "0" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, min should be 0 got=%s`,
 				dashPath, path, value.Get("title").String(), defaultUnit, theMin)
+		}
+		if decimals != "2" {
+			t.Errorf(`dashboard=%s path=%s panel="%s", decimals should be 2 got=%s`,
+				dashPath, path, value.Get("title").String(), decimals)
 		}
 		if defaultUnit == "percent" && !exceptionMap[value.Get("title").String()] && theMax != "100" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 100 got=%s`,
