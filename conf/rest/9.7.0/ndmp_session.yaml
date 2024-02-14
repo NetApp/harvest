@@ -1,6 +1,6 @@
-name:             NDMPSessions
+name:             NDMPSession
 query:            api/protocols/ndmp/sessions
-object:           ndmp_sessions
+object:           ndmp_session
 
 counters:
   - ^^uuid                         => uuid
