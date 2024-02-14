@@ -25,7 +25,7 @@ objects:
   MetroclusterCheck:           metrocluster_check.yaml
 #  Mediator:                    mediator.yaml
   Namespace:                   namespace.yaml
-#  NDMPSession:                 ndmp_sessions.yaml
+#  NDMPSessions:                ndmp_sessions.yaml
 #  NetConnections:              netconnections.yaml
 #  NetPort:                     netport.yaml
   NetRoute:                    netroute.yaml
