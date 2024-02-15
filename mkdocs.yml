@@ -43,6 +43,7 @@ nav:
       - 'Troubleshooting': 'help/troubleshooting.md'
       - 'FAQ': 'help/faq.md'
       - 'Log Collection': 'help/log-collection.md'
+      - 'Config Collection': 'help/config-collection.md'
   - Reference:
       - 'Matrix': 'resources/matrix.md'
       - 'ONTAP Metrics': 'ontap-metrics.md'
