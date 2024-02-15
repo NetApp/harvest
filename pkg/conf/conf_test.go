@@ -2,6 +2,7 @@ package conf
 
 import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"os"
 	"reflect"
 	"sort"
 	"strconv"
@@ -281,6 +282,38 @@ func TestNodeToPoller(t *testing.T) {
 	testArg(t, "pass", poller.Password)
 	testArg(t, "30s", poller.ClientTimeout)
 	testArg(t, "true", strconv.FormatBool(*poller.UseInsecureTLS))
+}
+
+func TestPathFromEnvs(t *testing.T) {
+	t.Helper()
+	resetConfig()
+
+	// Set the environment variable to a relative path
+	t.Setenv(HomeEnvVar, "testdata")
+	path := ConfigPath(HarvestYML)
+	if path != "testdata/harvest.yml" {
+		t.Errorf("got=%s want=%s", path, "testdata/harvest.yml")
+	}
+	path = ConfigPath(path)
+	if path != "testdata/harvest.yml" {
+		t.Errorf("got=%s want=%s", path, "testdata/harvest.yml")
+	}
+
+	// Set the environment variable to an absolute path
+	getwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("failed to get working directory: %v", err)
+	}
+	absPath := getwd + "/testdata"
+	t.Setenv(HomeEnvVar, absPath)
+	path = ConfigPath(HarvestYML)
+	if path != absPath+"/harvest.yml" {
+		t.Errorf("got=%s want=%s", path, "testdata/harvest.yml")
+	}
+	path = ConfigPath(path)
+	if path != absPath+"/harvest.yml" {
+		t.Errorf("got=%s want=%s", path, "testdata/harvest.yml")
+	}
 }
 
 func TestReadHarvestConfigFromEnv(t *testing.T) {
