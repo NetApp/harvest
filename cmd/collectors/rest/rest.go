@@ -314,12 +314,16 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
-	return r.pollData(startTime, records, func(e *endPoint) ([]gjson.Result, error) {
+	return r.pollData(startTime, records, func(e *endPoint) ([]gjson.Result, time.Duration, error) {
 		return r.processEndPoint(e)
 	})
 }
 
-func (r *Rest) pollData(startTime time.Time, records []gjson.Result, endpointFunc func(e *endPoint) ([]gjson.Result, error)) (map[string]*matrix.Matrix, error) {
+func (r *Rest) pollData(
+	startTime time.Time,
+	records []gjson.Result,
+	endpointFunc func(e *endPoint) ([]gjson.Result, time.Duration, error),
+) (map[string]*matrix.Matrix, error) {
 
 	var (
 		count        uint64
@@ -332,13 +336,13 @@ func (r *Rest) pollData(startTime time.Time, records []gjson.Result, endpointFun
 	count = r.HandleResults(records, r.Prop, false)
 
 	// process endpoints
-	eCount := r.processEndPoints(endpointFunc)
+	eCount, endpointAPID := r.processEndPoints(endpointFunc)
 	count += eCount
 	parseD = time.Since(startTime)
 
 	numRecords := len(r.Matrix[r.Object].GetInstances())
 
-	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
+	_ = r.Metadata.LazySetValueInt64("api_time", "data", (apiD + endpointAPID).Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(numRecords))
@@ -347,7 +351,7 @@ func (r *Rest) pollData(startTime time.Time, records []gjson.Result, endpointFun
 	return r.Matrix, nil
 }
 
-func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, error) {
+func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, time.Duration, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(r.query(e)).
 		Fields(r.fields(e)).
@@ -355,21 +359,29 @@ func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	return r.GetRestData(href)
+	now := time.Now()
+	data, err := r.GetRestData(href)
+	if err != nil {
+		return nil, 0, err
+	}
+	return data, time.Since(now), nil
 }
 
-func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, error)) uint64 {
+func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, time.Duration, error)) (uint64, time.Duration) {
 	var (
-		err   error
-		count uint64
+		err       error
+		count     uint64
+		totalAPID time.Duration
 	)
 
 	for _, endpoint := range r.endpoints {
 		var (
 			records []gjson.Result
+			apiD    time.Duration
 		)
 
-		records, err = endpointFunc(endpoint)
+		records, apiD, err = endpointFunc(endpoint)
+		totalAPID += apiD
 
 		if err != nil {
 			r.Logger.Error().Err(err).Str("api", endpoint.prop.Query).Send()
@@ -383,7 +395,7 @@ func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, 
 		count = r.HandleResults(records, endpoint.prop, true)
 	}
 
-	return count
+	return count, totalAPID
 }
 
 // returns private if api endpoint has private keyword in it else public
