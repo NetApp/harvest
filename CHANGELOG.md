@@ -3,59 +3,53 @@
 
 ## 24.02.0 / 2024-02-16 Release
 :pushpin: Highlights of this major release include:
-- Harvest includes SnapMirror Active Sync EMS events with alert rules. Thanks @Nikhita-13 for reporting.
-- Harvest monitors Flexcache perf object and includes new FlexCache dashboard to visualize Flexcache statistics details. Thanks to @ewilts for raising.
-- Harvest detects HA pair down and Sensor failure issues and show them in Health dashboard. Thanks to @johnwarlick for raising.
-- Harvest monitors MetroCluster Diagnostics and shows in MetroCluster dashboard. Thanks to @wagneradrian92 for reporting.
-- We improved performance all dashboards for simplifying complex topk queries by using modifier. Thanks to @mamoep for reporting!
-- We added filter support for ZapiPerf collector. See [filter](https://github.com/NetApp/harvest/blob/main/docs/configure-zapi.md#filter) for more detail. Thanks to @debbrata-netapp for reporting.
-- Added `grafana customize` command that writes the dashboards to the filesystem so that another program can manage the dashboards. Thanks to @nicolai-hornung-bl for reporting!
-- Harvest introduced Datacenter dashboard which contains Node Health, Capacity, Performance, Storage Efficiency, Issues, Snapshot and Power and Temperature details.
-
+- New Datacenter dashboard which contains node health, capacity, performance, storage efficiency, issues, snapshot, power, and temperature details.
+- Harvest includes SnapMirror active sync EMS events with alert rules. Thanks @Nikhita-13 for reporting.
+- Harvest monitors FlexCache performance metrics and includes a new FlexCache dashboard to visualize them. Thanks to @ewilts for raising.
+- Harvest detects HA pair down and sensor failures. These are shown in the Health dashboard. Thanks to @johnwarlick for raising.
+- Harvest monitors MetroCluster diagnostics and shows them in the MetroCluster dashboard. Thanks to @wagneradrian92 for reporting.
+- We improved the performance of all dashboards that include topk queries. Thanks to @mamoep for reporting!
+- We added filter support for the ZapiPerf collector. See [filter](https://github.com/NetApp/harvest/blob/main/docs/configure-zapi.md#filter) for more detail. Thanks to @debbrata-netapp for reporting.
+- A `bin/harvest grafana customize` command that writes the dashboards to the filesystem so other programs can manage them. Thanks to @nicolai-hornung-bl for reporting!
 
 - :star: Several of the existing dashboards include new panels in this release:
-  - Node and Aggregate dashboard includes Volume stats panels. Thanks to @BrendonA667 for raising.
-  - SVM dashboard includes Volume capacity panels. Thanks to @BrendonA667 for raising.
-  - SnapMirror dashboard supports automated_failover and automated_failover_duplex policy.
+  - Node and Aggregate dashboard include volume stats panels. Thanks to @BrendonA667 for raising.
+  - SVM dashboard includes volume capacity panels. Thanks to @BrendonA667 for raising.
+  - SnapMirror dashboard includes automated_failover and automated_failover_duplex policies.
 
-- All Harvest dashboard include All option for object variables.
-- Harvest dashboards percent unit panels use decimal points.
-- All ems alerts includes an impact annotation. Thanks to @Divya for requesting.
-
+- More Harvest dashboard dropdown variables include the `All` option. Making it easier to get an overview of your environment.
+- All EMS alerts include an impact annotation. Thanks to @Divya for raising.
 
 - :ear_of_rice: Harvest includes new templates to collect:
-  - rw_ctx perf metrics. Thanks to @shawnahall71 for raising
-  - NDMP sessions metrics. Thanks to @schumijo for raising.
-
+  - Network filesystem (NFS) rewinds performance metrics (rw_ctx). Thanks to @shawnahall71 for raising
+  - Network data management protocol (NDMP) session metrics. Thanks to @schumijo for raising.
 
 - :closed_book: Documentation additions
-  - Docker logging configuration guide
-  - Harvest with REST private CLI [details](https://github.com/NetApp/harvest/blob/main/docs/configure-rest.md#ontap-private-cli)
-  - Changed minimum Prometheus version to 2.33
-  - Guide to create custom grafana dashboard [Steps](https://github.com/NetApp/harvest/blob/main/docs/dashboards.md#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus)
-  - Consolidated upgrade steps with install guide
-  - Doctor print commands for each platform [details](https://github.com/NetApp/harvest/blob/release/24.02.0/docs/help/config-collection.md)
-  - Harvest describes high-level concepts [here](https://github.com/NetApp/harvest/blob/main/docs/concepts.md)
+  - Updated how to [collect Harvest logs](https://netapp.github.io/harvest/latest/help/log-collection/)  
+  - How to create templates that use ONTAP's private CLI [details](https://github.com/NetApp/harvest/blob/main/docs/configure-rest.md#ontap-private-cli)
+  - How to create custom Grafana dashboards [Steps](https://github.com/NetApp/harvest/blob/main/docs/dashboards.md#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus)
+  - How to validate your `harvest.yml` file and share a redacted copy with the Harvest team. [Details](https://netapp.github.io/harvest/nightly/help/config-collection/)
+  - Harvest describes high-level concepts [here](https://github.com/NetApp/harvest/blob/main/docs/concepts.md) Thanks to @norespers for raising.
 
-
-
-- All constituents are disabled by default for workload detail performance templates
-- Supporting `timeout` for zapi cli
-- Schedule of pollCounter for perf collector has been changed from `20m` to `24h`
+- All constituents are disabled by default for workload detail performance templates.
+- The `bin/harvest zapi` CLI now supports a `timeout` argument.
+- Harvest performance collectors (ZapiPerf and RestPerf) ask ONTAP for performance counter metadata every 24 hours instead of every 20 minutes. Thanks to BrianMa for raising.
+- The Harvest REST collector's `api_time` metric now includes the API time for all template endpoints. Thanks to ChristopherWilcox for raising. 
 
 ## Announcements
 
-:bangbang: **IMPORTANT** Release `24.02` disables the templates whose all metrics are not consumed in dashboards. These 4 templates are disabled by default: `ObjectStoreClient`, `TokenManager`, `OntapS3SVM` and `Vscan`. This change was made to prevent the generation of a large number of metrics. If you require these templates, you can enable them.
+:bangbang: **IMPORTANT** Release `24.02` disables four templates that collected metrics not used in dashboards.
+These four templates are disabled by default: `ObjectStoreClient`, `TokenManager`, `OntapS3SVM`, and `Vscan`.
+This change was made to reduce the number of collected metrics.
+If you require these templates, you can enable them by uncommenting them in their corresponding `default.yaml` or by extending the [existing object template](https://netapp.github.io/harvest/latest/configure-templates/#extend-an-existing-object-template).
 
-:bangbang: **IMPORTANT** NetApp moved their communities from Slack to [Discord](https://discord.gg/ZmmWPHTBHw), please join us [there](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
-
-:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please
-read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+:small_red_triangle: **IMPORTANT** The minimum version of Prometheus required to run Harvest is now 2.33.
+Version 2.33 is required to take advantage of [Prometheus's `@` modifier](https://prometheus.io/docs/prometheus/latest/querying/basics/#modifier).
+Please upgrade your Prometheus server to at least 2.33 before upgrading Harvest. 
 
 :bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox.
 
 ## Known Issues
-
 
 - Harvest does not calculate power metrics for AFF A250 systems. This data is not available from ONTAP via ZAPI or REST.
   See ONTAP bug [1511476](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1511476) for more details.
@@ -70,7 +64,6 @@ Please upgrade your 7-mode filers (recommended) or set `tls_min_version: tls10` 
 your `harvest.yml` [poller section](https://github.com/NetApp/harvest/tree/release/22.05.0#pollers).
 See [#1007](https://github.com/NetApp/harvest/issues/1007) for more details.
 
-
 ## Thanks to all the awesome contributors
 
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
@@ -78,7 +71,6 @@ this release:
 
 @shawnahall71, @pilot7777, @ben, @Madaan, @johnwarlick, @jfong5040, @santosh725, @summertony15, @jmg011, @cheese1, @mamoep, @Falcon667, @Dess, @debbrata-netapp, @ewilts,
 @Nikhita-13, @norespers, @nicolai-hornung-bl, @BrendonA667, @schumijo, @Divya, @joshuacook-tamu, @wagneradrian92, @george-strother
-
 
 :seedling: This release includes 26 features, 24 bug fixes, 20 documentation, 3 styling, 5 refactoring, 11 miscellaneous, and 12 ci pull requests.
 
@@ -92,7 +84,7 @@ this release:
 - Add Timeout For Zapi Cli ([#2566](https://github.com/NetApp/harvest/pull/2566))
 - Restperf Disk Plugin Should Support Metric Customization ([#2573](https://github.com/NetApp/harvest/pull/2573))
 - Add Filter Support For Zapiperf Collector ([#2575](https://github.com/NetApp/harvest/pull/2575))
-- Flexcache Monitoring ([#2583](https://github.com/NetApp/harvest/pull/2583))
+- FlexCache Monitoring ([#2583](https://github.com/NetApp/harvest/pull/2583))
 - Supporting Automated_failover, Automated_failover_duplex Policy In Sm ([#2584](https://github.com/NetApp/harvest/pull/2584))
 - Disabled The Templates Whose All Metrics Are Not Consumed In Dashboards ([#2587](https://github.com/NetApp/harvest/pull/2587))
 - Harvest Should Include Snapmirror Active Sync Ems Events ([#2588](https://github.com/NetApp/harvest/pull/2588))
