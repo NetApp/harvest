@@ -1,15 +1,17 @@
 module github.com/Netapp/harvest-automation
 
-go 1.21
+go 1.22
+
+toolchain go1.22.0
 
 replace github.com/netapp/harvest/v2 => ../
 
 require (
 	github.com/carlmjohnson/requests v0.23.5
 	github.com/hashicorp/go-version v1.6.0
-	github.com/netapp/harvest/v2 v2.0.0-20240208073132-cf13d5bd569d
+	github.com/netapp/harvest/v2 v2.0.0-20240215072426-503b4600075d
 	github.com/rs/zerolog v1.32.0
-	github.com/tidwall/gjson v1.17.0
+	github.com/tidwall/gjson v1.17.1
 	golang.org/x/text v0.14.0
 )
 

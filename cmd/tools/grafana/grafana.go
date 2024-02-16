@@ -72,7 +72,7 @@ type Folder struct {
 
 func adjustOptions() {
 	opts.config = conf.ConfigPath(opts.config)
-	homePath = conf.Path()
+	homePath = conf.Path("")
 	opts.dirGrafanaFolderMap = make(map[string]*Folder)
 
 	// When opt.addr starts with https don't change it

@@ -82,7 +82,7 @@ func (o *Options) SetDefaults() *Options {
 		o.Hostname = hostname
 	}
 
-	o.HomePath = conf.Path()
+	o.HomePath = conf.Path("")
 	o.LogPath = conf.GetHarvestLogPath()
 	o.SetConfPath(o.ConfPath)
 

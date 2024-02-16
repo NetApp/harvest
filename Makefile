@@ -4,7 +4,7 @@
 .PHONY: help deps clean build test fmt vet package asup dev fetch-asup
 
 SHELL := /bin/bash
-REQUIRED_GO_VERSION := 1.21
+REQUIRED_GO_VERSION := 1.22
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
