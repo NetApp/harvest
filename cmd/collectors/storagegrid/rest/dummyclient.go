@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// NewDummyClient creates a new DummyClient
+// NewDummyClient creates a new dummy client
 func NewDummyClient() *Client {
 	httpClient := &http.Client{
 		Timeout: time.Second * 10,
