@@ -5,6 +5,8 @@
 
 SHELL := /bin/bash
 REQUIRED_GO_VERSION := 1.22
+GOLANGCI_LINT_VERSION := latest
+GOVULNCHECK_VERSION := latest
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
@@ -29,8 +31,6 @@ ASUP_BIN = asup
 ASUP_BIN_VERSION ?= main #change it to match tag of release branch
 BIN_PLATFORM ?= linux
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
-LINT_EXISTS := $(shell which golangci-lint)
-GOVULNCHECK_EXISTS := $(shell which govulncheck)
 MKDOCS_EXISTS := $(shell which mkdocs)
 FETCH_ASUP_EXISTS := $(shell which ./.github/fetch-asup)
 
@@ -71,32 +71,21 @@ test: ## run tests
 	go test -race -shuffle=on ./...
 
 fmt: ## format the go source files
-	@echo "Running gofmt"
-	go fmt ./...
+	@echo "Formatting"
+	@go fmt ./...
 
 vet: ## run go vet on the source files
-	@echo "Running go vet"
+	@echo "Vetting"
 	go vet ./...
 
 lint: ## run golangci-lint on the source files
-ifeq (${LINT_EXISTS}, )
-	@echo
-	@echo "Lint task requires that you have https://golangci-lint.run/ installed."
-	@echo
-	@exit 1
-endif
-	golangci-lint run
-	@cd integration && golangci-lint run
+	@echo "Linting"
+	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
+	@cd integration && go run github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
 
 govulncheck: ## run govulncheck on the source files
-ifeq (${GOVULNCHECK_EXISTS}, )
-	@echo
-	@echo "govulncheck task requires that you have https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck installed. Run"
-	@echo "go install golang.org/x/vuln/cmd/govulncheck@latest"
-	@echo
-	@exit 1
-endif
-	govulncheck ./...
+	@echo "Govulnchecking"
+	@go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
 
 mkdocs:
 ifeq (${MKDOCS_EXISTS}, )
@@ -116,7 +105,7 @@ all: package ## Build, Test, Package
 harvest: deps
 	@mkdir -p bin
 	@# Build the harvest and poller cli
-	@echo "Building harvest"
+	@echo "Building"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
 
 	@cp service/contrib/grafana bin; chmod +x bin/grafana
