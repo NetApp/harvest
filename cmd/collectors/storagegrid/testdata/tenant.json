@@ -1,0 +1,178 @@
+{
+  "responseTime": "2024-02-16T06:52:30.577Z",
+  "status": "success",
+  "apiVersion": "3.5",
+  "data": [
+    {
+      "id": "93344766954338342034",
+      "name": "aron",
+      "description": null,
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": true,
+        "allowPlatformServices": false,
+        "allowSelectObjectContent": false,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 41,
+      "dataBytes": 4071
+    },
+    {
+      "id": "98890514448483475847",
+      "name": "abc",
+      "description": null,
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": true,
+        "allowPlatformServices": true,
+        "allowSelectObjectContent": true,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 0,
+      "dataBytes": 0
+    },
+    {
+      "id": "40578667806366551017",
+      "name": "CBS_QA",
+      "description": null,
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": true,
+        "allowPlatformServices": true,
+        "allowSelectObjectContent": true,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 0,
+      "dataBytes": 0
+    },
+    {
+      "id": "10691391421272079234",
+      "name": "DataSyncTarget",
+      "description": null,
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": false,
+        "allowPlatformServices": false,
+        "allowSelectObjectContent": false,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 624,
+      "dataBytes": 177282918666
+    },
+    {
+      "id": "16429420949817240610",
+      "name": "harvest_test",
+      "description": null,
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": true,
+        "allowPlatformServices": true,
+        "allowSelectObjectContent": true,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 0,
+      "dataBytes": 0
+    },
+    {
+      "id": "86668583907971980516",
+      "name": "ONTAP",
+      "description": "ONTAP integration (FP, S3 SM, SM-C)",
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": false,
+        "allowPlatformServices": true,
+        "allowSelectObjectContent": false,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 650,
+      "dataBytes": 1262432101
+    },
+    {
+      "id": "05650621260716048258",
+      "name": "S3direct",
+      "description": null,
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": false,
+        "allowPlatformServices": true,
+        "allowSelectObjectContent": true,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 2000000,
+      "dataBytes": 61440000000
+    },
+    {
+      "id": "77989775702687844882",
+      "name": "s3tester",
+      "description": "s3tester",
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": false,
+        "allowPlatformServices": false,
+        "allowSelectObjectContent": false,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 31507,
+      "dataBytes": 73202139136
+    },
+    {
+      "id": "28066107260763713256",
+      "name": "Veeam",
+      "description": null,
+      "capabilities": [
+        "management",
+        "s3"
+      ],
+      "synchronizeRules": {},
+      "policy": {
+        "useAccountIdentitySource": false,
+        "allowPlatformServices": false,
+        "allowSelectObjectContent": false,
+        "allowedGridFederationConnections": [],
+        "quotaObjectBytes": null
+      },
+      "objectCount": 108639,
+      "dataBytes": 111140922622
+    }
+  ]
+}

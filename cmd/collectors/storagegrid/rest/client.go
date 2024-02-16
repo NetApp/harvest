@@ -26,6 +26,8 @@ const (
 	DefaultAPIVersion = "3"
 )
 
+var NewClientFunc = NewClient
+
 type Client struct {
 	client  *http.Client
 	request *http.Request
