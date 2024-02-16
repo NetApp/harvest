@@ -152,7 +152,7 @@ func MarshalStack(err error) interface{} {
 	// We don't know how big the stack trace will be, so start with 10K and double a few times if needed
 	n := 10_000
 	var trace []byte
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		trace = make([]byte, n)
 		bytesWritten := runtime.Stack(trace, false)
 		if bytesWritten < len(trace) {

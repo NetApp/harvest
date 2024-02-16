@@ -111,32 +111,30 @@ func metricAndLabelKey(metric string, rest string) string {
 		if equalIndex == 0 {
 			break
 		}
-		if equalIndex != 0 {
-			equalIndex++
-			if string(rest[equalIndex]) == `"` {
-				// Scan until you hit another unescaped quote.
-				// Can be any sequence of UTF-8 characters, but the backslash (\),
-				// and double-quote (") characters have to be
-				// escaped as \, and \"
-				labelEnd := 0
-				for i := equalIndex + 1; i < len(rest); i++ {
-					s := string(rest[i])
-					if s == `\` {
-						i++
-						continue
-					}
-					if s == `"` {
-						// done reading quoted
-						labelEnd = i
-						break
-					}
+		equalIndex++
+		if string(rest[equalIndex]) == `"` {
+			// Scan until you hit another unescaped quote.
+			// Can be any sequence of UTF-8 characters, but the backslash (\),
+			// and double-quote (") characters have to be
+			// escaped as \, and \"
+			labelEnd := 0
+			for i := equalIndex + 1; i < len(rest); i++ {
+				s := string(rest[i])
+				if s == `\` {
+					i++
+					continue
 				}
-				labelValue := rest[equalIndex+1 : labelEnd]
-				labels = append(labels, fmt.Sprintf(`%s="%s"`, label, labelValue))
-				scanner = labelEnd + 1
-				if string(rest[scanner]) == "," {
-					scanner++
+				if s == `"` {
+					// done reading quoted
+					labelEnd = i
+					break
 				}
+			}
+			labelValue := rest[equalIndex+1 : labelEnd]
+			labels = append(labels, fmt.Sprintf(`%s="%s"`, label, labelValue))
+			scanner = labelEnd + 1
+			if string(rest[scanner]) == "," {
+				scanner++
 			}
 		}
 	}

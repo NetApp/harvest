@@ -661,7 +661,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						}
 					}
 					instanceLabelCount += instanceLabelCountPs
-					isMatch = isMatch || isMatchPs
+					isMatch = true
 				}
 			}
 			if !isMatch {

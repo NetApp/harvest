@@ -26,7 +26,7 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 
 	minLen := util.MinLen(keys)
 
-	for i := 0; i < minLen; i++ {
+	for i := range minLen {
 		if util.AllSame(keys, i) {
 			prefix = append(prefix, keys[0][i])
 		} else {
@@ -43,13 +43,13 @@ func (z *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
 		z.ParseCounters(c, desired, []string{})
 	}
 
-	//counters.SetXMLNameS("desired-attributes")
-	//counters.SetContentS("")
+	// counters.SetXMLNameS("desired-attributes")
+	// counters.SetContentS("")
 	return len(z.Matrix[z.Object].GetMetrics()) > 0, desired
 }
 
 func (z *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
-	//logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
+	// logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
 
 	var d *node.Node
 
@@ -103,7 +103,7 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 
 	if content[0] == '^' {
 		z.instanceLabelPaths[key] = display
-		//data.AddLabel(key, display)
+		// data.AddLabel(key, display)
 		z.Logger.Trace().Msgf("%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
 		if content[1] == '^' {
 			copied := make([]string, len(fullPath))

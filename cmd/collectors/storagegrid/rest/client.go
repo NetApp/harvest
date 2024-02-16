@@ -229,7 +229,8 @@ func (c *Client) fetch() ([]byte, error) {
 	)
 
 	if c.request.Body != nil {
-		defer func(Body io.ReadCloser) { _ = Body.Close() }(response.Body)
+		//goland:noinspection GoUnhandledErrorResult
+		c.request.Body.Close()
 	}
 	if c.buffer != nil {
 		defer c.buffer.Reset()
@@ -260,9 +261,6 @@ func (c *Client) fetch() ([]byte, error) {
 	}
 	defer c.printRequestAndResponse(body)
 
-	if err != nil {
-		return nil, err
-	}
 	return body, nil
 }
 

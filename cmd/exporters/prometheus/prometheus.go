@@ -395,7 +395,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				}
 				labelData := fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
 
-				if p.addMetaTags && !tagged.Has(prefix+"_labels") {
+				if tagged != nil && !tagged.Has(prefix+"_labels") {
 					tagged.Add(prefix + "_labels")
 					rendered = append(rendered, []byte("# HELP "+prefix+"_labels Pseudo-metric for "+data.Object+" labels"))
 					rendered = append(rendered, []byte("# TYPE "+prefix+"_labels gauge"))
@@ -458,7 +458,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						value,
 					)
 
-					if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
+					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
 						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
 						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
@@ -469,7 +469,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				} else {
 					x := fmt.Sprintf("%s_%s{%s} %s", prefix, metric.GetName(), strings.Join(instanceKeys, ","), value)
 
-					if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
+					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
 						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
 						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" gauge"))
@@ -505,7 +505,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				}
 			}
 
-			if p.addMetaTags && !tagged.Has(prefix+"_"+metric.GetName()) {
+			if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 				tagged.Add(prefix + "_" + metric.GetName())
 				rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
 				rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))

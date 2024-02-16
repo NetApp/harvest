@@ -98,7 +98,7 @@ func searchEntries(root, entries *node.Node) {
 	cache := make(map[string]*node.Node)
 	cache[root.GetNameS()] = root
 
-	for i := 0; i < maxSearchDepth; i++ {
+	for range maxSearchDepth {
 		for _, entry := range entries.GetChildren() {
 			name := entry.GetChildContentS("name")
 			if parent, ok := cache[name]; ok {

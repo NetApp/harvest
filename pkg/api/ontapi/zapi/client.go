@@ -144,7 +144,7 @@ func parseClientTimeout(clientTimeout string) (time.Duration, error) {
 // it will give up after retries
 func (c *Client) Init(retries int) error {
 	var err error
-	for i := 0; i < retries; i++ {
+	for range retries {
 		if err = c.getSystem(); err == nil {
 			break
 		}

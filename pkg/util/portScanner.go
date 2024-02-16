@@ -14,7 +14,7 @@ func worker(address string, ports, results chan int) {
 			results <- p
 			continue
 		}
-		conn.Close()
+		_ = conn.Close()
 		results <- 0
 	}
 }
@@ -30,7 +30,7 @@ func CheckFreePorts(address string, ports []int) map[int]struct{} {
 		// create a slice to store the results so that they can be sorted later.
 
 		// create a pool of workers
-		for i := 0; i < cap(portsWorkers); i++ {
+		for range cap(portsWorkers) {
 			go worker(address, portsWorkers, results)
 		}
 
@@ -41,7 +41,7 @@ func CheckFreePorts(address string, ports []int) map[int]struct{} {
 			}
 		}()
 
-		for i := 0; i < len(ports); i++ {
+		for range len(ports) {
 			port := <-results
 			if port != 0 {
 				freeports[port] = struct{}{}

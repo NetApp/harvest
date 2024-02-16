@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"golang.org/x/exp/maps"
 	"strings"
 )
 
@@ -234,11 +235,7 @@ func (m *Matrix) PurgeInstances() {
 }
 
 func (m *Matrix) GetInstanceKeys() []string {
-	keys := make([]string, 0, len(m.instances))
-	for k := range m.instances {
-		keys = append(keys, k)
-	}
-	return keys
+	return maps.Keys(m.instances)
 }
 
 func (m *Matrix) NewInstance(key string) (*Instance, error) {
@@ -399,7 +396,7 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 	if len(metric.values) != len(sValues) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(metric.values), len(sValues)))
 	}
-	for i := 0; i < len(metric.values); i++ {
+	for i := range len(metric.values) {
 		if metric.record[i] && sRecord[i] {
 			if sValues[i] != 0 {
 				// Don't pass along the value if the numerator or denominator is < 0
@@ -452,7 +449,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 	if len(metric.values) != len(sValues) || len(sValues) != len(tValues) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d, time=%d", len(metric.values), len(sValues), len(tValues)))
 	}
-	for i := 0; i < len(metric.values); i++ {
+	for i := range len(metric.values) {
 		v := metric.values[i]
 		// Don't pass along the value if the numerator or denominator is < 0
 		// It is important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
@@ -511,7 +508,7 @@ func (m *Matrix) MultiplyByScalar(metricKey string, s uint, logger *logging.Logg
 	var skips int
 	x := float64(s)
 	metric := m.GetMetric(metricKey)
-	for i := 0; i < len(metric.values); i++ {
+	for i := range len(metric.values) {
 		if metric.record[i] {
 			// if current is <= 0
 			if metric.values[i] < 0 {
