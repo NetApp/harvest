@@ -284,6 +284,22 @@ func TestNodeToPoller(t *testing.T) {
 	testArg(t, "true", strconv.FormatBool(*poller.UseInsecureTLS))
 }
 
+func TestEmptyPath(t *testing.T) {
+	t.Helper()
+	resetConfig()
+	path := Path("")
+	if path != "" {
+		t.Errorf("got=%s want=%s", path, "")
+	}
+
+	const HomeVar = "HOME"
+	t.Setenv(HomeEnvVar, HomeVar)
+	path = Path("")
+	if path != HomeVar {
+		t.Errorf("got=%s want=%s", path, "")
+	}
+}
+
 func TestPathFromEnvs(t *testing.T) {
 	t.Helper()
 	resetConfig()
