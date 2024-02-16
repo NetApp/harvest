@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../prepare-7mode-clusters/">
+        <link rel="prev" href="../log-collection/">
       
       
-        <link rel="next" href="../configure-harvest-basic/">
+        <link rel="next" href="../../resources/matrix/">
       
       
-      <link rel="icon" href="../assets/harvest.svg">
+      <link rel="icon" href="../../assets/harvest.svg">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
-        <title>StorageGRID - Harvest</title>
+        <title>Config Collection - Harvest</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,9 +46,9 @@
       
     
     
-      <link rel="stylesheet" href="../assets/extra.css">
+      <link rel="stylesheet" href="../../assets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#prepare-storagegrid-cluster" class="md-skip">
+        <a href="#harvest-config-collection-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -94,9 +94,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../assets/harvest.svg" alt="logo">
+  <img src="../../assets/harvest.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              StorageGRID
+              Config Collection
             
           </span>
         </div>
@@ -236,9 +236,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../assets/harvest.svg" alt="logo">
+  <img src="../../assets/harvest.svg" alt="logo">
 
     </a>
     Harvest
@@ -265,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -285,7 +285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
+      <a href="../../concepts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -305,7 +305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quickstart/" class="md-nav__link">
+      <a href="../../quickstart/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -362,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/overview/" class="md-nav__link">
+      <a href="../../install/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -383,7 +383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/package-managers/" class="md-nav__link">
+      <a href="../../install/package-managers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -441,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/containers/" class="md-nav__link">
+      <a href="../../install/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -462,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/k8/" class="md-nav__link">
+      <a href="../../install/k8/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -483,7 +483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/podman/" class="md-nav__link">
+      <a href="../../install/podman/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -504,7 +504,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/containerd/" class="md-nav__link">
+      <a href="../../install/containerd/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -533,7 +533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/native/" class="md-nav__link">
+      <a href="../../install/native/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -561,7 +561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-requirements/" class="md-nav__link">
+      <a href="../../system-requirements/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -578,21 +578,19 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -606,7 +604,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Prepare Monitored Clusters
@@ -620,7 +618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -641,7 +639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -662,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -680,28 +678,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    StorageGRID
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -710,60 +690,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#prepare-storagegrid-cluster" class="md-nav__link">
-    <span class="md-ellipsis">
-      Prepare StorageGRID cluster
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#create-storagegrid-group-permissions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create StorageGRID group permissions
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#create-a-storagegrid-user" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a StorageGRID user
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -783,7 +709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-harvest-basic/" class="md-nav__link">
+      <a href="../../configure-harvest-basic/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -840,7 +766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prometheus-exporter/" class="md-nav__link">
+      <a href="../../prometheus-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -861,7 +787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../influxdb-exporter/" class="md-nav__link">
+      <a href="../../influxdb-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -889,7 +815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-grafana/" class="md-nav__link">
+      <a href="../../configure-grafana/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -946,7 +872,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-zapi/" class="md-nav__link">
+      <a href="../../configure-zapi/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -967,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-rest/" class="md-nav__link">
+      <a href="../../configure-rest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -988,7 +914,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-ems/" class="md-nav__link">
+      <a href="../../configure-ems/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1009,7 +935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-storagegrid/" class="md-nav__link">
+      <a href="../../configure-storagegrid/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1030,7 +956,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-unix/" class="md-nav__link">
+      <a href="../../configure-unix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1058,7 +984,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-templates/" class="md-nav__link">
+      <a href="../../configure-templates/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1078,7 +1004,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dashboards/" class="md-nav__link">
+      <a href="../../dashboards/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1098,7 +1024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../manage-harvest/" class="md-nav__link">
+      <a href="../../manage-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1118,7 +1044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configure-harvest-advanced/" class="md-nav__link">
+      <a href="../../configure-harvest-advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1138,7 +1064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../monitor-harvest/" class="md-nav__link">
+      <a href="../../monitor-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1155,19 +1081,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" checked>
         
           
           <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
@@ -1181,7 +1109,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_16">
             <span class="md-nav__icon md-icon"></span>
             Help
@@ -1195,7 +1123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../help/troubleshooting/" class="md-nav__link">
+      <a href="../troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1216,7 +1144,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../help/faq/" class="md-nav__link">
+      <a href="../faq/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1237,7 +1165,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../help/log-collection/" class="md-nav__link">
+      <a href="../log-collection/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1255,10 +1183,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../help/config-collection/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1267,6 +1215,53 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rpm-deb-and-native-installations" class="md-nav__link">
+    <span class="md-ellipsis">
+      RPM, DEB, and Native Installations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docker-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      Docker Container
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nabox" class="md-nav__link">
+    <span class="md-ellipsis">
+      NABox
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1323,7 +1318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/matrix/" class="md-nav__link">
+      <a href="../../resources/matrix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1344,7 +1339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ontap-metrics/" class="md-nav__link">
+      <a href="../../ontap-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1365,7 +1360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/power-algorithm/" class="md-nav__link">
+      <a href="../../resources/power-algorithm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1386,7 +1381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../plugins/" class="md-nav__link">
+      <a href="../../plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1407,7 +1402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+      <a href="../../resources/rest-perf-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1428,7 +1423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture/rest-strategy/" class="md-nav__link">
+      <a href="../../architecture/rest-strategy/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1449,7 +1444,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+      <a href="../../resources/templates-and-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1514,7 +1509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../license/" class="md-nav__link">
+      <a href="../../license/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1535,7 +1530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../release-notes/" class="md-nav__link">
+      <a href="../../release-notes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1573,6 +1568,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1581,36 +1578,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prepare-storagegrid-cluster" class="md-nav__link">
+  <a href="#rpm-deb-and-native-installations" class="md-nav__link">
     <span class="md-ellipsis">
-      Prepare StorageGRID cluster
+      RPM, DEB, and Native Installations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-storagegrid-group-permissions" class="md-nav__link">
+  <a href="#docker-container" class="md-nav__link">
     <span class="md-ellipsis">
-      Create StorageGRID group permissions
+      Docker Container
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-a-storagegrid-user" class="md-nav__link">
+  <a href="#nabox" class="md-nav__link">
     <span class="md-ellipsis">
-      Create a StorageGRID user
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
+      NABox
     </span>
   </a>
   
@@ -1631,47 +1619,32 @@
                   
 
 
-  <h1>StorageGRID</h1>
-
-<h2 id="prepare-storagegrid-cluster">Prepare StorageGRID cluster<a class="headerlink" href="#prepare-storagegrid-cluster" title="Permanent link">&para;</a></h2>
-<p>NetApp Harvest requires login credentials to access StorageGRID hosts. Although, a generic admin account can be used, it
-is better to create a dedicated monitoring user with the fewest permissions.</p>
-<p>Here's a summary of what we're going to do</p>
-<ol>
-<li>Create a StorageGRID group with the necessary capabilities that Harvest will use to auth and collect data</li>
-<li>Create a user assigned to the group created in step #1.</li>
-</ol>
-<h2 id="create-storagegrid-group-permissions">Create StorageGRID group permissions<a class="headerlink" href="#create-storagegrid-group-permissions" title="Permanent link">&para;</a></h2>
-<p>These steps are
-documented <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing-admin-groups.html#create-an-admin-group">here</a>.</p>
-<p>You will need a root or admin account to create a new group permission.</p>
-<ol>
-<li>Select CONFIGURATION &gt; Access control &gt; Admin groups</li>
-<li>Select <code>Create group</code></li>
-<li>Select <code>Local group</code></li>
-<li>Enter a display name for the group, which you can update later as required. For example, <code>Harvest</code> or <code>monitoring</code>.</li>
-<li>Enter a unique name for the group, which you cannot update later.</li>
-<li>Select <code>Continue</code></li>
-<li>On the <code>Manage group permissions</code> screen, select the permissions you want. At a minimum, Harvest requires
-   the <code>Tenant accounts</code> and <code>Metrics query</code> permissions.</li>
-<li>Select <code>Save changes</code></li>
-</ol>
-<p><img alt="StorageGRID create group permissions" src="../assets/prepare-storagegrid/create_group.png" /></p>
-<h2 id="create-a-storagegrid-user">Create a StorageGRID user<a class="headerlink" href="#create-a-storagegrid-user" title="Permanent link">&para;</a></h2>
-<p>These steps are documented <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing-users.html">here</a>.</p>
-<p>You will need a root or admin account to create a new user.</p>
-<ol>
-<li>Select CONFIGURATION &gt; Access control &gt; Admin users</li>
-<li>Select <code>Create user</code></li>
-<li>Enter the user’s full name, a unique username, and a password.</li>
-<li>Select <code>Continue</code>.</li>
-<li>Assign the user to the previously created <code>harvest</code> group.</li>
-<li>Select Create user and select Finish.</li>
-</ol>
-<p><img alt="StorageGRID create user" src="../assets/prepare-storagegrid/create_user.png" /></p>
-<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
-<p>See <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing-admin-groups.html#group-permissions">group permissions</a>
-for more information on StorageGRID permissions.</p>
+<h1 id="harvest-config-collection-guide">Harvest Config Collection Guide<a class="headerlink" href="#harvest-config-collection-guide" title="Permanent link">&para;</a></h1>
+<p>This guide is designed to help you validate your Harvest configuration (<code>harvest.yml</code>) on various platforms.
+The commands in this guide will generate redacted output that personally identifiable information (PII) removed.
+This makes it safe for you to share the output.
+Follow the instructions specific to your platform.
+If you wish to share it with the Harvest team,
+please email them at <a href="mailto:ng-harvest-files@netapp.com">ng-harvest-files@netapp.com</a>.</p>
+<h2 id="rpm-deb-and-native-installations">RPM, DEB, and Native Installations<a class="headerlink" href="#rpm-deb-and-native-installations" title="Permanent link">&para;</a></h2>
+<p>To print a redacted version of your Harvest configuration to the console, use the following command:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/opt/harvest
+<span class="nb">export</span><span class="w"> </span><span class="nv">CONFIG_FILE_NAME</span><span class="o">=</span>harvest.yml
+bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print<span class="w"> </span>--config<span class="w"> </span><span class="nv">$CONFIG_FILE_NAME</span>
+</code></pre></div>
+<h2 id="docker-container">Docker Container<a class="headerlink" href="#docker-container" title="Permanent link">&para;</a></h2>
+<p>For Docker containers, use the following command to print a redacted version of your Harvest configuration to the console:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>to/where/your/harvest.yml/is
+<span class="nb">export</span><span class="w"> </span><span class="nv">CONFIG_FILE_NAME</span><span class="o">=</span>harvest.yml
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/</span><span class="nv">$CONFIG_FILE_NAME</span><span class="s2">:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span>ghcr.io/netapp/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
+</code></pre></div>
+<h2 id="nabox">NABox<a class="headerlink" href="#nabox" title="Permanent link">&para;</a></h2>
+<p>If you're using NABox, you'll need to <a href="https://nabox.org/documentation/configuration/">ssh</a> into your NABox instance.
+Then, use the following command to print a redacted version of your Harvest configuration to the console:</p>
+<div class="highlight"><pre><span></span><code>dc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-w<span class="w"> </span>/conf<span class="w"> </span>nabox-harvest2<span class="w"> </span>/netapp-harvest/bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
+</code></pre></div>
+<p>If your configuration file name is different from the default <code>harvest.yml</code>,
+remember to change the <code>CONFIG_FILE_NAME</code> environment variable to match your file name.</p>
 
 
 
@@ -1748,10 +1721,10 @@ for more information on StorageGRID permissions.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
     
   </body>
