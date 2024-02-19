@@ -4027,8 +4027,8 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{system_type!=\"7mode\"},datacenter)",
-        "description": null,
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+        "description": "You need to choose all the datacenters where snapmirror source clusters reside",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -4037,7 +4037,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{system_type!=\"7mode\"},datacenter)",
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
           "refId": "Prometheus-Datacenter-Variable-Query"
         },
         "refresh": 2,
