@@ -9,7 +9,7 @@
 - Harvest detects HA pair down and sensor failures. These are shown in the Health dashboard. Thanks to @johnwarlick for raising.
 - Harvest monitors MetroCluster diagnostics and shows them in the MetroCluster dashboard. Thanks to @wagneradrian92 for reporting.
 - We improved the performance of all dashboards that include topk queries. Thanks to @mamoep for reporting!
-- We added filter support for the ZapiPerf collector. See [filter](https://github.com/NetApp/harvest/blob/main/docs/configure-zapi.md#filter) for more detail. Thanks to @debbrata-netapp for reporting.
+- We added filter support for the ZapiPerf collector. See [filter](https://netapp.github.io/harvest/nightly/configure-zapi/#filter) for more detail. Thanks to @debbrata-netapp for reporting.
 - A `bin/harvest grafana customize` command that writes the dashboards to the filesystem so other programs can manage them. Thanks to @nicolai-hornung-bl for reporting!
 
 - :star: Several of the existing dashboards include new panels in this release:
@@ -26,10 +26,10 @@
 
 - :closed_book: Documentation additions
   - Updated how to [collect Harvest logs](https://netapp.github.io/harvest/latest/help/log-collection/)  
-  - How to create templates that use ONTAP's private CLI [details](https://github.com/NetApp/harvest/blob/main/docs/configure-rest.md#ontap-private-cli)
-  - How to create custom Grafana dashboards [Steps](https://github.com/NetApp/harvest/blob/main/docs/dashboards.md#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus)
+  - How to create templates that use ONTAP's private CLI [details](https://netapp.github.io/harvest/nightly/configure-rest/#ontap-private-cli)
+  - How to create custom Grafana dashboards [Steps](https://netapp.github.io/harvest/nightly/dashboards/#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus)
   - How to validate your `harvest.yml` file and share a redacted copy with the Harvest team. [Details](https://netapp.github.io/harvest/nightly/help/config-collection/)
-  - Harvest describes high-level concepts [here](https://github.com/NetApp/harvest/blob/main/docs/concepts.md) Thanks to @norespers for raising.
+  - Harvest describes high-level concepts [here](https://netapp.github.io/harvest/nightly/concepts/) Thanks to @norespers for raising.
 
 - All constituents are disabled by default for workload detail performance templates.
 - The `bin/harvest zapi` CLI now supports a `timeout` argument.
@@ -75,7 +75,7 @@ this release:
 :seedling: This release includes 26 features, 24 bug fixes, 20 documentation, 3 styling, 5 refactoring, 11 miscellaneous, and 12 ci pull requests.
 
 ### :rocket: Features
-- Include Start Time, Exported Metrics, And Poll Duration In Coll… ([#2493](https://github.com/NetApp/harvest/pull/2493))
+- Include Start Time, Exported Metrics, And Poll Duration In Collector logs ([#2493](https://github.com/NetApp/harvest/pull/2493))
 - Adding Rw_ctx Zapiperf Object Template ([#2494](https://github.com/NetApp/harvest/pull/2494))
 - Change Pollcounter Schedule To 24H ([#2499](https://github.com/NetApp/harvest/pull/2499))
 - Add Ha Down And Sensor Issues In Health Dashboard ([#2519](https://github.com/NetApp/harvest/pull/2519))
@@ -127,6 +127,8 @@ this release:
 - Doctor Print Should Include Child Pollers Into Optional Parent Pollers ([#2641](https://github.com/NetApp/harvest/pull/2641))
 - Remove Max Percent Limit From 'Volumes Per Snapshot Reserve Used' Panel ([#2662](https://github.com/NetApp/harvest/pull/2662))
 - Align Template Name With Object Name For Ndmp ([#2667](https://github.com/NetApp/harvest/pull/2667))
+- Honor absolute paths from the HARVEST_CONF environment variable ([#2674](https://github.com/NetApp/harvest/pull/2674))
+- Rest collector should include endpoint `api_time`s ([#2679](https://github.com/NetApp/harvest/pull/2679))
 
 ### :closed_book: Documentation
 - Fix Service Latency ([#2492](https://github.com/NetApp/harvest/pull/2492))
@@ -149,6 +151,7 @@ this release:
 - Add Vserver For Rest Role Creation ([#2620](https://github.com/NetApp/harvest/pull/2620))
 - Fix Broken Link And Remove Todo ([#2624](https://github.com/NetApp/harvest/pull/2624))
 - Harvest Should Describe High-Level Concepts ([#2625](https://github.com/NetApp/harvest/pull/2625))
+- Add doctor print commands for each platform ([2670](https://github.com/NetApp/harvest/pull/2670))
 
 ### Styling
 - Resolve Spell Check Warnings ([#2461](https://github.com/NetApp/harvest/pull/2461))
@@ -174,6 +177,7 @@ this release:
 - Update Golang.org/X/Exp Digest To 1B97071 ([#2592](https://github.com/NetApp/harvest/pull/2592))
 - Update All Dependencies ([#2629](https://github.com/NetApp/harvest/pull/2629))
 - Update Golangci/Golangci-Lint-Action Action To V4 ([#2653](https://github.com/NetApp/harvest/pull/2653))
+- Update all dependencies ([#2687](https://github.com/NetApp/harvest/pull/2687))
 
 ### :hammer: CI
 - Keep Mkdocs Version Fixed For Build Servers ([#2511](https://github.com/NetApp/harvest/pull/2511))
@@ -188,6 +192,8 @@ this release:
 - Bump Go And Dependencies ([#2649](https://github.com/NetApp/harvest/pull/2649))
 - Disable Dockerfile Updtes By Renovate ([#2655](https://github.com/NetApp/harvest/pull/2655))
 - Ignore Metrocluster Error In Counter Test ([#2664](https://github.com/NetApp/harvest/pull/2664))
+- Bump go ([#2671](https://github.com/NetApp/harvest/pull/2671))
+- Update makefile go version ([#2678](https://github.com/NetApp/harvest/pull/2678))
 
 ---
 
