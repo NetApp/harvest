@@ -126,7 +126,8 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
 	if cloneSplitEstimateMetric == nil {
 		if cloneSplitEstimateMetric, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
-			v.Logger.Error().Stack().Msg("error while creating clone split estimate metric")
+			v.Logger.Error().Err(err).Msg("error while creating clone split estimate metric")
+			return
 		}
 	}
 	for _, volume := range data.GetInstances() {
@@ -168,7 +169,7 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	// Set all global labels
 	v.arw.SetGlobalLabels(data.GetGlobalLabels())
 	arwStatusValue := "Active Mode"
-	// Case where cluster don't have any volumes, arwStatus show as 'Not Monitoring'
+	// Case where cluster doesn't have any volumes, arwStatus show as 'Not Monitoring'
 	if len(data.GetInstances()) == 0 {
 		arwStatusValue = "Not Monitoring"
 	}
