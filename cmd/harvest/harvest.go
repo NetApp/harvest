@@ -344,7 +344,7 @@ func stopPoller(ps *util.PollerStatus) {
 	}
 
 	// give the poller a chance to clean up and exit
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		if proc.Signal(syscall.Signal(0)) != nil {
 			ps.Status = util.StatusStopped
 			return

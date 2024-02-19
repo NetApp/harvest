@@ -96,11 +96,9 @@ nextFile:
 						Msg("Unable to import template file. File is invalid or empty")
 					continue
 				}
-				if customTemplateErr == nil {
-					customTemplate.PreprocessTemplate()
-					finalTemplate.Merge(customTemplate, nil)
-					continue nextFile
-				}
+				customTemplate.PreprocessTemplate()
+				finalTemplate.Merge(customTemplate, nil)
+				continue nextFile
 			}
 		}
 

@@ -398,10 +398,6 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		}
 	}
 
-	if templateCounters == nil {
-		return nil
-	}
-
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)

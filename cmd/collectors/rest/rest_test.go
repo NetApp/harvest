@@ -85,7 +85,7 @@ func BenchmarkRestPerf_PollData(b *testing.B) {
 	ms = make([]*matrix.Matrix, 0)
 	now := time.Now().Truncate(time.Second)
 
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		now = now.Add(time.Minute * 15)
 		mi, _ := benchRest.pollData(now, fullPollData, volumeEndpoints)
 

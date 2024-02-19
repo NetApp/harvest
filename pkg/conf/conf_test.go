@@ -135,7 +135,7 @@ func TestPollerUnion(t *testing.T) {
 	if len(p.Collectors) != 4 {
 		t.Fatalf(`expected collectors to have four elements but was [%v]`, p.Collectors)
 	}
-	for i := 0; i < len(p.Collectors); i++ {
+	for i := range len(p.Collectors) {
 		actual := p.Collectors[i].Name
 		if actual != strconv.Itoa(i) {
 			t.Fatalf(`expected element at index=%d to be %d but was [%v]`, i, i, actual)
@@ -159,7 +159,7 @@ func TestPollerUnion(t *testing.T) {
 	if p2.LogMaxFiles != maxFiles {
 		t.Fatalf(`expected LogMaxFiles to be [314] but was [%v]`, p2.LogMaxFiles)
 	}
-	for i := 0; i < len(p2.Collectors); i++ {
+	for i := range len(p2.Collectors) {
 		actual := p2.Collectors[i].Name
 		if actual != strconv.Itoa(10+i) {
 			t.Fatalf(`expected element at index=%d to be %d but was [%v]`, i, i+10, actual)

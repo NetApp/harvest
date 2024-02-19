@@ -140,7 +140,8 @@ func curlServer() {
 	if _, err := os.Stat(local(".crt")); errors.Is(err, os.ErrNotExist) {
 		log.Panic().Str("crt", local(".crt")).Msg("does not exist")
 	}
-	for i := 0; i < 60; i++ {
+
+	for range 60 {
 		//nolint:gosec
 		command := exec.Command("curl", "--insecure", "--cert", local(".crt"), "--key", local(".key"),
 			fmt.Sprintf("https://%s/api/cluster?fields=version", ip))

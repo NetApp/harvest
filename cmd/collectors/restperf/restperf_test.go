@@ -94,7 +94,7 @@ func BenchmarkRestPerf_PollData(b *testing.B) {
 	now := time.Now().Truncate(time.Second)
 	fullPollData[0].Timestamp = now.UnixNano()
 
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		now = now.Add(time.Minute * 15)
 		fullPollData[0].Timestamp = now.UnixNano()
 		mi, _ := benchPerf.pollInstance(propertiesData[0].Records.Array(), 0)
