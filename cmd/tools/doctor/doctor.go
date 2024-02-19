@@ -314,12 +314,16 @@ func checkConfTemplates(confPaths []string) validation {
 						continue
 					}
 					searchDir := path.Join(confDir, flavor)
-					if !templateExists(searchDir, t.GetContentS()) {
-						valid.isValid = false
-						msg := fmt.Sprintf(`%s references template file "%s" which does not exist in %s`,
-							custom, t.GetContentS(), path.Join(searchDir, "**"))
-						valid.invalid = append(valid.invalid, msg)
-						continue
+					fileNames := strings.Split(t.GetContentS(), ",")
+					for _, fileName := range fileNames {
+						fileName = strings.TrimSpace(fileName) // Remove any leading or trailing spaces
+						if !templateExists(searchDir, fileName) {
+							valid.isValid = false
+							msg := fmt.Sprintf(`%s references template file "%s" which does not exist in %s`,
+								custom, fileName, path.Join(searchDir, "**"))
+							valid.invalid = append(valid.invalid, msg)
+							continue
+						}
 					}
 				}
 			}
