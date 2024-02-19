@@ -1,0 +1,3 @@
+objects:
+  Volume:
+    - custom_volume_blacklist.yaml
