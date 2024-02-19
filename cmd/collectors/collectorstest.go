@@ -3,6 +3,9 @@ package collectors
 import (
 	"bytes"
 	"compress/gzip"
+	"fmt"
+	"github.com/netapp/harvest/v2/pkg/tree"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"io"
@@ -72,4 +75,19 @@ func JSONToGson(path string, flatten bool) []gjson.Result {
 
 	gsonCache[path] = result
 	return result
+}
+
+func Params(object string, path string) *node.Node {
+	yml := `
+schedule:
+  - data: 9999h
+objects:
+  %s: %s
+`
+	yml = fmt.Sprintf(yml, object, path)
+	root, err := tree.LoadYaml([]byte(yml))
+	if err != nil {
+		panic(err)
+	}
+	return root
 }
