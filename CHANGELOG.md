@@ -11,6 +11,7 @@
 - We improved the performance of all dashboards that include topk queries. Thanks to @mamoep for reporting!
 - We added filter support for the ZapiPerf collector. See [filter](https://netapp.github.io/harvest/nightly/configure-zapi/#filter) for more detail. Thanks to @debbrata-netapp for reporting.
 - A `bin/harvest grafana customize` command that writes the dashboards to the filesystem so other programs can manage them. Thanks to @nicolai-hornung-bl for reporting!
+- We fixed the intermittent latency spikes issue, which impacts all perf objects. Thanks to @summertony15 for reporting this critical issue.
 
 - :star: Several of the existing dashboards include new panels in this release:
   - Node and Aggregate dashboard include volume stats panels. Thanks to @BrendonA667 for raising.
@@ -25,7 +26,7 @@
   - Network data management protocol (NDMP) session metrics. Thanks to @schumijo for raising.
 
 - :closed_book: Documentation additions
-  - Updated how to [collect Harvest logs](https://netapp.github.io/harvest/latest/help/log-collection/)  
+  - Harvest describe why and how to configure Docker's logging drivers [Docker logging configuration](https://netapp.github.io/harvest/nightly/install/containers/#note-on-docker-logging-configuration) Thanks to @Madaan for raising.
   - How to create templates that use ONTAP's private CLI [details](https://netapp.github.io/harvest/nightly/configure-rest/#ontap-private-cli)
   - How to create custom Grafana dashboards [Steps](https://netapp.github.io/harvest/nightly/dashboards/#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus)
   - How to validate your `harvest.yml` file and share a redacted copy with the Harvest team. [Details](https://netapp.github.io/harvest/nightly/help/config-collection/)
@@ -129,6 +130,7 @@ this release:
 - Align Template Name With Object Name For Ndmp ([#2667](https://github.com/NetApp/harvest/pull/2667))
 - Honor absolute paths from the HARVEST_CONF environment variable ([#2674](https://github.com/NetApp/harvest/pull/2674))
 - Rest collector should include endpoint `api_time`s ([#2679](https://github.com/NetApp/harvest/pull/2679))
+- StorageGrid Rest collector doesn't remove deleted Objects ([#2677](https://github.com/NetApp/harvest/pull/2677))
 
 ### :closed_book: Documentation
 - Fix Service Latency ([#2492](https://github.com/NetApp/harvest/pull/2492))
