@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Jan-12
+Creation Date : 2024-Feb-20
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -3762,6 +3762,24 @@ Number of write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
+
+
+### ndmp_session_data_bytes_processed
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/protocols/ndmp/sessions` | `data.bytes_processed` | conf/rest/9.7.0/ndmp_session.yaml |
+
+
+### ndmp_session_mover_bytes_moved
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/protocols/ndmp/sessions` | `mover.bytes_moved` | conf/rest/9.7.0/ndmp_session.yaml |
 
 
 ### net_port_mtu
@@ -13056,6 +13074,16 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `physical_used_percent` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_total_data
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/volume` | `bytes_read, bytes_written`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
+| ZAPI | `volume` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 
 ### volume_total_ops
