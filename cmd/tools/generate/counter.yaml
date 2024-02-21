@@ -903,3 +903,15 @@ counters:
     Description: amount of storage space currently used by a volume's snapshot reserve,
       which is calculated by subtracting the snapshot reserve available space from the
       snapshot reserve size.
+
+  - Name: metrocluster_check_cluster_status
+    Description: Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.
+
+  - Name: metrocluster_check_node_status
+    Description: Detail of the type of diagnostic operation run for the Node with diagnostic operation result.
+
+  - Name: metrocluster_check_aggr_status
+    Description: Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.
+
+  - Name: metrocluster_check_volume_status
+    Description: Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.
