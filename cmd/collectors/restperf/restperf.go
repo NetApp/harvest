@@ -468,23 +468,21 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 				subLabelSlice := strings.Split(subLabelsS, ",")
 				var finalLabels []string
 				var finalValues []string
-				var vLen int
 				subCounters.ForEach(func(_, subCounter gjson.Result) bool {
 					label := strings.Clone(subCounter.Get("label").String())
 					subValues := subCounter.Get("values").String()
 					m := util.ArrayMetricToString(strings.Clone(subValues))
 					ms := strings.Split(m, ",")
-					for range ms {
-						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
-						vLen++
-					}
-					if vLen > len(subLabelSlice) {
+					if len(ms) > len(subLabelSlice) {
 						return false
+					}
+					for i := range ms {
+						finalLabels = append(finalLabels, subLabelSlice[i]+arrayKeyToken+label)
 					}
 					finalValues = append(finalValues, ms...)
 					return true
 				})
-				if vLen == len(subLabelSlice) {
+				if len(finalLabels) == len(finalValues) {
 					mr := metricResponse{
 						value:   strings.Join(finalValues, ","),
 						label:   strings.Join(finalLabels, ","),
