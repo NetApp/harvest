@@ -3618,17 +3618,37 @@ status of the system being monitored. 0 means reachable, 1 means unreachable
 
 Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.
 
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
+
+
 ### metrocluster_check_cluster_status
 
 Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
+
 
 ### metrocluster_check_node_status
 
 Detail of the type of diagnostic operation run for the Node with diagnostic operation result.
 
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
+
+
 ### metrocluster_check_volume_status
 
 Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
+
 
 ### namespace_avg_other_latency
 

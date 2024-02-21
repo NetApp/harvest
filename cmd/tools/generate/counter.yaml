@@ -906,12 +906,32 @@ counters:
 
   - Name: metrocluster_check_cluster_status
     Description: Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/metrocluster_check.yaml
 
   - Name: metrocluster_check_node_status
     Description: Detail of the type of diagnostic operation run for the Node with diagnostic operation result.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/metrocluster_check.yaml
 
   - Name: metrocluster_check_aggr_status
     Description: Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/metrocluster_check.yaml
 
   - Name: metrocluster_check_volume_status
     Description: Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/metrocluster_check.yaml
