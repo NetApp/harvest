@@ -131,6 +131,10 @@ this release:
 - Honor absolute paths from the HARVEST_CONF environment variable ([#2674](https://github.com/NetApp/harvest/pull/2674))
 - Rest collector should include endpoint `api_time`s ([#2679](https://github.com/NetApp/harvest/pull/2679))
 - StorageGrid Rest collector doesn't remove deleted Objects ([#2677](https://github.com/NetApp/harvest/pull/2677))
+- NABox doctor command errors for custom.yaml ([#2691](https://github.com/NetApp/harvest/pull/2691))
+- WaflSizer RestPerf template panics ([#2695](https://github.com/NetApp/harvest/pull/2695))
+- Purging unused metrics from shelf template for 7mode ([#2696](https://github.com/NetApp/harvest/pull/2696))
+- Handle inter-cluster snapmirrors when different datacenter ([#2697](https://github.com/NetApp/harvest/pull/2697))
 
 ### :closed_book: Documentation
 - Fix Service Latency ([#2492](https://github.com/NetApp/harvest/pull/2492))
@@ -340,7 +344,7 @@ this release:
 - Handled Cloud_target For Fabricpool ([#2467](https://github.com/NetApp/harvest/pull/2467))
 - Harvest.yml Defaults Should Be Applied To Child Harvest.yml ([#2471](https://github.com/NetApp/harvest/pull/2471))
 - Update Flexgroup Text In Dashboard ([#2474](https://github.com/NetApp/harvest/pull/2474))
-- Handled Missing Uuid In Volume For Change_log (#2478) ([#2479](https://github.com/NetApp/harvest/pull/2479))
+- Handled Missing Uuid In Volume For Change_log ([#2479](https://github.com/NetApp/harvest/pull/2479))
 
 ### :closed_book: Documentation
 - Add Workload Information To Release Notes ([#2316](https://github.com/NetApp/harvest/pull/2316))
