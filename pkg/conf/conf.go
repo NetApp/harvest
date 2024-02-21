@@ -18,6 +18,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 var Config = HarvestConfig{}
@@ -247,13 +248,22 @@ func PollerNamed(name string) (*Poller, error) {
 	return poller, nil
 }
 
-// Path joins a set of path elems into a single path.
-// The final path will be relative to the HARVEST_CONF environment variable
-// or ./ when the environment variable is not set
-func Path(elem ...string) string {
-	home := os.Getenv(HomeEnvVar)
-	paths := append([]string{home}, elem...)
-	return filepath.Join(paths...)
+// Path returns a path based on aPath and the HARVEST_CONF environment variable.
+// If aPath is absolute, it is returned unchanged.
+// When the HARVEST_CONF environment variable is set, a new path is returned relative to HARVEST_CONF.
+// Otherwise, a new path is returned relative to the current working directory.
+func Path(aPath string) string {
+	confDir := os.Getenv(HomeEnvVar)
+	if aPath == "" {
+		return confDir
+	}
+	if filepath.IsAbs(aPath) {
+		return aPath
+	}
+	if strings.HasPrefix(aPath, confDir) {
+		return aPath
+	}
+	return filepath.Join(confDir, aPath)
 }
 
 func GetHarvestLogPath() string {

@@ -1,14 +1,11 @@
 package rest
 
 import (
-	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"os"
 	"strings"
@@ -144,10 +141,10 @@ func Test_pollDataVolume(t *testing.T) {
 	}
 }
 
-func volumeEndpoints(e *endPoint) ([]gjson.Result, error) {
+func volumeEndpoints(e *endPoint) ([]gjson.Result, time.Duration, error) {
 	path := "testdata/" + strings.ReplaceAll(e.prop.Query, "/", "-") + ".json.gz"
 	gson := collectors.JSONToGson(path, true)
-	return gson, nil
+	return gson, 0, nil
 }
 
 func newRest(object string, path string) *Rest {
@@ -156,26 +153,11 @@ func newRest(object string, path string) *Rest {
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true
-	ac := collector.New("Rest", object, opts, params(object, path), nil)
+	ac := collector.New("Rest", object, opts, collectors.Params(object, path), nil)
 	r := Rest{}
 	err = r.Init(ac)
 	if err != nil {
 		panic(err)
 	}
 	return &r
-}
-
-func params(object string, path string) *node.Node {
-	yml := `
-schedule:
-  - data: 9999h
-objects:
-  %s: %s
-`
-	yml = fmt.Sprintf(yml, object, path)
-	root, err := tree.LoadYaml([]byte(yml))
-	if err != nil {
-		panic(err)
-	}
-	return root
 }

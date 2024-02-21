@@ -31,7 +31,7 @@ import (
 // ImportTemplate looks for a collector's template by searching confPaths for the first template that exists in
 // confPath/collectorName/templateName
 func ImportTemplate(confPaths []string, templateName, collectorName string) (*node.Node, error) {
-	homePath := conf.Path()
+	homePath := conf.Path("")
 	for _, confPath := range confPaths {
 		fp := filepath.Join(homePath, confPath, strings.ToLower(collectorName), templateName)
 		_, err := os.Stat(fp)
@@ -70,7 +70,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int
 	if err != nil {
 		return nil, "", fmt.Errorf("no best-fit template found due to err=%w", err)
 	}
-	homePath := conf.Path()
+	homePath := conf.Path("")
 
 nextFile:
 	for _, f := range filenames {

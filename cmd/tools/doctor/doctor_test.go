@@ -137,6 +137,7 @@ func TestExporterTypesAreValid(t *testing.T) {
 func TestCustomYamlIsValid(t *testing.T) {
 	type test struct {
 		path        string
+		isValid     bool
 		numInvalid  int
 		msgContains string
 	}
@@ -157,12 +158,17 @@ func TestCustomYamlIsValid(t *testing.T) {
 			numInvalid:  1,
 			msgContains: "does not exist",
 		},
+		{
+			path:        "testdata/nabox/conf",
+			numInvalid:  1,
+			msgContains: "does not exist",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {
 			valid := checkConfTemplates([]string{tt.path})
-			if valid.isValid {
-				t.Errorf("want isValid=%t, got %t", false, valid.isValid)
+			if valid.isValid != tt.isValid {
+				t.Errorf("want isValid=%t, got %t", tt.isValid, valid.isValid)
 			}
 			if len(valid.invalid) != tt.numInvalid {
 				t.Errorf("want %d invalid, got %d", tt.numInvalid, len(valid.invalid))
