@@ -48,8 +48,7 @@ Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/
 tab and install with apt.
 
 ```bash
-sudo apt update
-sudo apt install ./harvest-<RELEASE>.amd64.deb  
+sudo apt install ./harvest-<RELEASE>.amd64.deb
 ```
 
 ### Upgrade
@@ -58,8 +57,7 @@ Download the latest deb of [Harvest](https://github.com/NetApp/harvest/releases/
 tab and upgrade with apt.
 
 ```bash
-sudo apt update
-sudo apt upgrade ./harvest-<RELEASE>.amd64.deb  
+sudo apt install --only-upgrade ./harvest-<RELEASE>.amd64.deb
 ```
 
 Once the installation or upgrade has finished, edit the [harvest.yml configuration](../configure-harvest-basic.md) file
