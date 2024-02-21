@@ -135,6 +135,7 @@ this release:
 - WaflSizer RestPerf template panics ([#2695](https://github.com/NetApp/harvest/pull/2695))
 - Purging unused metrics from shelf template for 7mode ([#2696](https://github.com/NetApp/harvest/pull/2696))
 - Handle inter-cluster snapmirrors when different datacenter ([#2697](https://github.com/NetApp/harvest/pull/2697))
+- Multi poller in a container should route logs to console ([#2698](https://github.com/NetApp/harvest/pull/2698))
 
 ### :closed_book: Documentation
 - Fix Service Latency ([#2492](https://github.com/NetApp/harvest/pull/2492))
@@ -158,6 +159,7 @@ this release:
 - Fix Broken Link And Remove Todo ([#2624](https://github.com/NetApp/harvest/pull/2624))
 - Harvest Should Describe High-Level Concepts ([#2625](https://github.com/NetApp/harvest/pull/2625))
 - Add doctor print commands for each platform ([2670](https://github.com/NetApp/harvest/pull/2670))
+- Release 24.02 metric docs ([#2694](https://github.com/NetApp/harvest/pull/2694))
 
 ### Styling
 - Resolve Spell Check Warnings ([#2461](https://github.com/NetApp/harvest/pull/2461))
