@@ -255,7 +255,7 @@ func getPollersStatus() map[string][]*util.PollerStatus {
 	var statuses []util.PollerStatus
 	statusesByName := map[string][]*util.PollerStatus{}
 	// if docker ignore
-	if os.Getenv("HARVEST_DOCKER") == "yes" {
+	if os.Getenv("HARVEST_DOCKER") != "" {
 		return statusesByName
 	}
 	statuses, err := util.GetPollerStatuses()
@@ -358,7 +358,7 @@ func stopPoller(ps *util.PollerStatus) {
 }
 
 func startPoller(pollerName string, promPort int, opts *options) {
-
+	isDocker := os.Getenv("HARVEST_DOCKER") != ""
 	argv := []string{
 		filepath.Join(HarvestHomePath, "bin", "poller"),
 		"--poller",
@@ -423,20 +423,9 @@ func startPoller(pollerName string, promPort int, opts *options) {
 		os.Exit(0)
 	}
 
-	argv = append(argv, "--daemon")
-
-	// special case if we are in container, don't actually daemonize
-	if os.Getenv("HARVEST_DOCKER") == "yes" {
-		cmd := exec.Command(argv[0], argv[1:]...) //nolint:gosec
-		if err := cmd.Start(); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		if err := cmd.Wait(); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		os.Exit(0)
+	// special case if we are in container, don't daemonize
+	if !isDocker {
+		argv = append(argv, "--daemon")
 	}
 
 	// Set the Setsid attribute to true, which creates a new session for the child process
@@ -455,9 +444,15 @@ func startPoller(pollerName string, promPort int, opts *options) {
 
 	defer closeDevNull(devNull)
 
-	cmd.Stdin = devNull
-	cmd.Stdout = devNull
-	cmd.Stderr = devNull
+	if isDocker {
+		cmd.Stdin = nil
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	} else {
+		cmd.Stdin = devNull
+		cmd.Stdout = devNull
+		cmd.Stderr = devNull
+	}
 
 	// Start the poller process in the background
 	if err := cmd.Start(); err != nil {
