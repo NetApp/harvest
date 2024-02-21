@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Feb-20
+Creation Date : 2024-Feb-21
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -3613,6 +3613,22 @@ status of the system being monitored. 0 means reachable, 1 means unreachable
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
 
+
+### metrocluster_check_aggr_status
+
+Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.
+
+### metrocluster_check_cluster_status
+
+Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.
+
+### metrocluster_check_node_status
+
+Detail of the type of diagnostic operation run for the Node with diagnostic operation result.
+
+### metrocluster_check_volume_status
+
+Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.
 
 ### namespace_avg_other_latency
 
