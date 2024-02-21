@@ -1,0 +1,19 @@
+
+name:                       Tenant
+query:                      grid/accounts-cache
+object:                     tenant
+api:                        v3
+
+counters:
+  - ^^id                    => id
+  - ^name                   => tenant
+  - dataBytes               => logical_used
+  - objectCount             => objects
+  - policy.quotaObjectBytes => logical_quota
+
+export_options:
+  instance_keys:
+    - id
+    - tenant
+  instance_labels:
+    - tenant

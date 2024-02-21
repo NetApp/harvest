@@ -1,0 +1,14 @@
+Exporters:
+  prometheus:
+    exporter: Prometheus
+    port: 12990
+
+Defaults:
+  collectors:
+    - StorageGrid
+  exporters:
+    - prometheus
+
+Pollers:
+  test:
+    addr: localhost

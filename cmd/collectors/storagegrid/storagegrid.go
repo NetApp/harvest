@@ -300,6 +300,12 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 
 	mat := s.Matrix[s.Object]
 
+	// Keep track of old instances
+	oldInstances := make(map[string]bool)
+	for key := range mat.GetInstances() {
+		oldInstances[key] = true
+	}
+
 	for _, instanceData := range result {
 		var (
 			instanceKey string
@@ -339,6 +345,8 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 				continue
 			}
 		}
+
+		delete(oldInstances, instanceKey)
 
 		for label, display := range s.Props.InstanceLabels {
 			value := instanceData.Get(label)
@@ -393,7 +401,11 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 				count++
 			}
 		}
-
+	}
+	// Remove instances not present in the new set
+	for key := range oldInstances {
+		mat.RemoveInstance(key)
+		s.Logger.Debug().Str("key", key).Msg("removed instance")
 	}
 	return count
 }
@@ -401,8 +413,12 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 func (s *StorageGrid) initClient() error {
 	var err error
 
-	if s.client, err = srest.NewClient(s.Options.Poller, s.Params.GetChildContentS("client_timeout"), s.Auth); err != nil {
+	if s.client, err = srest.NewClientFunc(s.Options.Poller, s.Params.GetChildContentS("client_timeout"), s.Auth); err != nil {
 		return err
+	}
+
+	if s.Options.IsTest {
+		return nil
 	}
 
 	if err = s.client.Init(5); err != nil {

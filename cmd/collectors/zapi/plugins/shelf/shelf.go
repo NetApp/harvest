@@ -227,8 +227,9 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 	my.shelfMetrics.PurgeInstances()
 	my.shelfMetrics.Reset()
 
-	// Purge instances generated from template and updated data metrics from shelfMetrics
+	// Purge instances and metrics generated from template and updated data metrics and instances from shelfMetrics
 	data.PurgeInstances()
+	data.PurgeMetrics()
 	for metricName, m := range my.shelfMetrics.GetMetrics() {
 		_, err := data.NewMetricFloat64(metricName, m.GetName())
 		if err != nil {
