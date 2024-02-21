@@ -11,7 +11,7 @@
 - We improved the performance of all dashboards that include topk queries. Thanks to @mamoep for reporting!
 - We added filter support for the ZapiPerf collector. See [filter](https://netapp.github.io/harvest/nightly/configure-zapi/#filter) for more detail. Thanks to @debbrata-netapp for reporting.
 - A `bin/harvest grafana customize` command that writes the dashboards to the filesystem so other programs can manage them. Thanks to @nicolai-hornung-bl for reporting!
-- We fixed an intermittent latency spike problem that impacted all perf objects. Thanks to @summertony15 for reporting this critical issue.
+- We fixed an intermittent latency spike problem that impacted all perf objects. Thanks to @summertony15 and @rodenj1 for reporting this critical issue.
 
 - :star: Several of the existing dashboards include new panels in this release:
   - Node and Aggregate dashboard include volume stats panels. Thanks to @BrendonA667 for raising.
