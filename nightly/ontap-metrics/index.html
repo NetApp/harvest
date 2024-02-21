@@ -4600,6 +4600,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#metrocluster_check_aggr_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_aggr_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrocluster_check_cluster_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_cluster_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrocluster_check_node_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_node_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrocluster_check_volume_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_volume_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#namespace_avg_other_latency" class="md-nav__link">
     <span class="md-ellipsis">
       namespace_avg_other_latency
@@ -4729,6 +4765,24 @@
   <a href="#namespace_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       namespace_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ndmp_session_data_bytes_processed" class="md-nav__link">
+    <span class="md-ellipsis">
+      ndmp_session_data_bytes_processed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ndmp_session_mover_bytes_moved" class="md-nav__link">
+    <span class="md-ellipsis">
+      ndmp_session_mover_bytes_moved
     </span>
   </a>
   
@@ -12523,6 +12577,15 @@
   <a href="#volume_space_physical_used_percent" class="md-nav__link">
     <span class="md-ellipsis">
       volume_space_physical_used_percent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_total_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_total_data
     </span>
   </a>
   
@@ -16321,6 +16384,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#metrocluster_check_aggr_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_aggr_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrocluster_check_cluster_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_cluster_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrocluster_check_node_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_node_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrocluster_check_volume_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      metrocluster_check_volume_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#namespace_avg_other_latency" class="md-nav__link">
     <span class="md-ellipsis">
       namespace_avg_other_latency
@@ -16450,6 +16549,24 @@
   <a href="#namespace_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       namespace_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ndmp_session_data_bytes_processed" class="md-nav__link">
+    <span class="md-ellipsis">
+      ndmp_session_data_bytes_processed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ndmp_session_mover_bytes_moved" class="md-nav__link">
+    <span class="md-ellipsis">
+      ndmp_session_mover_bytes_moved
     </span>
   </a>
   
@@ -24250,6 +24367,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#volume_total_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_total_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#volume_total_ops" class="md-nav__link">
     <span class="md-ellipsis">
       volume_total_ops
@@ -24552,7 +24678,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-Jan-12
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Feb-21
 ONTAP Version: 9.13.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -33713,6 +33839,86 @@ ONTAP Version: 9.13.1
 </tr>
 </tbody>
 </table>
+<h3 id="metrocluster_check_aggr_status">metrocluster_check_aggr_status<a class="headerlink" href="#metrocluster_check_aggr_status" title="Permanent link">&para;</a></h3>
+<p>Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/metrocluster_check.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metrocluster_check_cluster_status">metrocluster_check_cluster_status<a class="headerlink" href="#metrocluster_check_cluster_status" title="Permanent link">&para;</a></h3>
+<p>Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/metrocluster_check.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metrocluster_check_node_status">metrocluster_check_node_status<a class="headerlink" href="#metrocluster_check_node_status" title="Permanent link">&para;</a></h3>
+<p>Detail of the type of diagnostic operation run for the Node with diagnostic operation result.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/metrocluster_check.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metrocluster_check_volume_status">metrocluster_check_volume_status<a class="headerlink" href="#metrocluster_check_volume_status" title="Permanent link">&para;</a></h3>
+<p>Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/metrocluster_check.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="namespace_avg_other_latency">namespace_avg_other_latency<a class="headerlink" href="#namespace_avg_other_latency" title="Permanent link">&para;</a></h3>
 <p>Average other ops latency in microseconds for all operations on the Namespace</p>
 <table>
@@ -34098,6 +34304,44 @@ ONTAP Version: 9.13.1
 <td><code>perf-object-get-instances namespace</code></td>
 <td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.10.1/namespace.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ndmp_session_data_bytes_processed">ndmp_session_data_bytes_processed<a class="headerlink" href="#ndmp_session_data_bytes_processed" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/protocols/ndmp/sessions</code></td>
+<td><code>data.bytes_processed</code></td>
+<td>conf/rest/9.7.0/ndmp_session.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ndmp_session_mover_bytes_moved">ndmp_session_mover_bytes_moved<a class="headerlink" href="#ndmp_session_mover_bytes_moved" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/protocols/ndmp/sessions</code></td>
+<td><code>mover.bytes_moved</code></td>
+<td>conf/rest/9.7.0/ndmp_session.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -60395,6 +60639,31 @@ ONTAP Version: 9.13.1
 <td><code>volume-get-iter</code></td>
 <td><code>volume-attributes.volume-space-attributes.physical-used-percent</code></td>
 <td>conf/zapi/cdot/9.8.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_total_data">volume_total_data<a class="headerlink" href="#volume_total_data" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/volume</code></td>
+<td><code>bytes_read, bytes_written</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>volume</code></td>
+<td><code>read_data, write_data</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>

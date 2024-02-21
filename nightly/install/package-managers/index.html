@@ -1732,14 +1732,12 @@ Harvest using <code>systemctl</code> instead of running the harvest binary direc
 <h3 id="installation_1">Installation<a class="headerlink" href="#installation_1" title="Permanent link">&para;</a></h3>
 <p>Download the latest deb of <a href="https://github.com/NetApp/harvest/releases/latest">Harvest</a> from the releases
 tab and install with apt.</p>
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
-sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./harvest-&lt;RELEASE&gt;.amd64.deb<span class="w">  </span>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./harvest-&lt;RELEASE&gt;.amd64.deb
 </code></pre></div>
 <h3 id="upgrade_1">Upgrade<a class="headerlink" href="#upgrade_1" title="Permanent link">&para;</a></h3>
 <p>Download the latest deb of <a href="https://github.com/NetApp/harvest/releases/latest">Harvest</a> from the releases
 tab and upgrade with apt.</p>
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
-sudo<span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>./harvest-&lt;RELEASE&gt;.amd64.deb<span class="w">  </span>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>--only-upgrade<span class="w"> </span>./harvest-&lt;RELEASE&gt;.amd64.deb
 </code></pre></div>
 <p>Once the installation or upgrade has finished, edit the <a href="../../configure-harvest-basic/">harvest.yml configuration</a> file
 located in <code>/opt/harvest/harvest.yml</code></p>
