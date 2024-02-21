@@ -255,7 +255,7 @@ func getPollersStatus() map[string][]*util.PollerStatus {
 	var statuses []util.PollerStatus
 	statusesByName := map[string][]*util.PollerStatus{}
 	// if docker ignore
-	if os.Getenv("HARVEST_DOCKER") != "" {
+	if os.Getenv("HARVEST_DOCKER") == "yes" {
 		return statusesByName
 	}
 	statuses, err := util.GetPollerStatuses()
@@ -358,7 +358,7 @@ func stopPoller(ps *util.PollerStatus) {
 }
 
 func startPoller(pollerName string, promPort int, opts *options) {
-	isDocker := os.Getenv("HARVEST_DOCKER") != ""
+	isDocker := os.Getenv("HARVEST_DOCKER") == "yes"
 	argv := []string{
 		filepath.Join(HarvestHomePath, "bin", "poller"),
 		"--poller",
