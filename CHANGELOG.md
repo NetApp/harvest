@@ -160,6 +160,7 @@ this release:
 - Harvest Should Describe High-Level Concepts ([#2625](https://github.com/NetApp/harvest/pull/2625))
 - Add doctor print commands for each platform ([2670](https://github.com/NetApp/harvest/pull/2670))
 - Release 24.02 metric docs ([#2694](https://github.com/NetApp/harvest/pull/2694))
+- Debian upgrade documentation ([#2699](https://github.com/NetApp/harvest/pull/2699))
 
 ### Styling
 - Resolve Spell Check Warnings ([#2461](https://github.com/NetApp/harvest/pull/2461))
