@@ -1,7 +1,7 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
-## 24.02.0 / 2024-02-16 Release
+## 24.02.0 / 2024-02-21 Release
 :pushpin: Highlights of this major release include:
 - New Datacenter dashboard which contains node health, capacity, performance, storage efficiency, issues, snapshot, power, and temperature details.
 - Harvest includes SnapMirror active sync EMS events with alert rules. Thanks @Nikhita-13 for reporting.
