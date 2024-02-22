@@ -30,7 +30,7 @@ RUN cp -a $BUILD_DIR/container/onePollerPerContainer/docker-compose.tmpl $INSTAL
 
 RUN cp -aR $BUILD_DIR/container/prometheus $INSTALL_DIR/container/
 
-FROM gcr.io/distroless/static-debian11:debug
+FROM gcr.io/distroless/static-debian12:debug
 
 ARG INSTALL_DIR=/opt/harvest
 ENV HARVEST_DOCKER=yes
