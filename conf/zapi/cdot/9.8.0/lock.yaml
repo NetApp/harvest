@@ -1,0 +1,27 @@
+name:       Lock
+query:      lock-get-iter
+object:     lock
+
+counters:
+  lock-info:
+    - ^^lockid              => lockid
+    - ^lif                  => lif
+    - ^node                 => node
+    - ^path                 => path
+    - ^volume               => volume
+    - ^vserver              => vserver
+
+
+collect_only_labels: true
+
+export_options:
+  instance_keys:
+    - lockid
+  instance_labels:
+    - lif
+    - node
+    - path
+    - volume
+    - vserver
+
+
