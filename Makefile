@@ -1,7 +1,7 @@
 # Copyright 2021 NetApp, Inc.  All Rights Reserved
 .DEFAULT_GOAL:=help
 
-.PHONY: help deps clean build test fmt vet package asup dev fetch-asup
+.PHONY: help deps clean build test fmt lint package asup dev fetch-asup
 
 SHELL := /bin/bash
 REQUIRED_GO_VERSION := 1.22
@@ -74,18 +74,15 @@ fmt: ## format the go source files
 	@echo "Formatting"
 	@go fmt ./...
 
-vet: ## run go vet on the source files
-	@echo "Vetting"
-	go vet ./...
-
 lint: ## run golangci-lint on the source files
 	@echo "Linting"
 	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
-	@cd integration && go run github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
+	@cd integration && go mod tidy && go run github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
 
 govulncheck: ## run govulncheck on the source files
 	@echo "Govulnchecking"
 	@go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
+	@cd integration && go mod tidy && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
 
 mkdocs:
 ifeq (${MKDOCS_EXISTS}, )
