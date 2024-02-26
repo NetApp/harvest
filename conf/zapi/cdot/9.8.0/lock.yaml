@@ -6,13 +6,31 @@ counters:
   lock-info:
     - ^^lockid              => lockid
     - ^lif                  => lif
+    - ^lock-state           => lock_state
     - ^node                 => node
     - ^path                 => path
     - ^volume               => volume
     - ^vserver              => vserver
 
-
 collect_only_labels: true
+
+plugins:
+  - LabelAgent:
+      # metric label zapi_value rest_value `default_value`
+      value_to_num_regex:
+        - new_status lock_state .* .* `0`
+  - Aggregator:
+    # plugin will create summary/average for each object
+    # any names after the object names will be treated as
+    # label names that will be added to instances
+    - node
+    - vserver
+    - lif
+    - volume
+
+# only export node/aggr aggregations from plugin
+# set this true or comment, to get data for each lock
+export_data: false
 
 export_options:
   instance_keys:
@@ -23,5 +41,3 @@ export_options:
     - path
     - volume
     - vserver
-
-
