@@ -190,7 +190,7 @@ func AddPrometheusToGrafana() {
 	log.Info().Msg("Add Prometheus into Grafana")
 	url := GetGrafanaHTTPURL() + "/api/datasources"
 	method := "POST"
-	jsonValue := []byte(fmt.Sprintf(`{"name": "Prometheus", "type": "prometheus", "access": "direct",
+	jsonValue := []byte(fmt.Sprintf(`{"name": "prometheus", "type": "prometheus", "access": "direct",
 		"url": "%s", "isDefault": true, "basicAuth": false}`, "http://"+GetOutboundIP()+":"+PrometheusPort))
 	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["message"])
