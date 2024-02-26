@@ -27,7 +27,10 @@ Similarly, to export:
 $ bin/harvest grafana export --addr my.grafana.server:3000 --directory /path/to/export/directory --serverfolder grafanaFolderName
 ```
 
-By default, the dashboards are connected to a datasource named `Prometheus`. This is a datasource of the Prometheus type, defined in Grafana. However, despite the type, the datasource can have any name. If you have a Prometheus type datasource with a name different from `Prometheus`, you can specify this name using the `--datasource` flag during import/export.
+By default, the dashboards are connected to a datasource named `prometheus`. This is a datasource of the Prometheus type, defined in Grafana. However, despite the type, the datasource can have any name. If you have a Prometheus type datasource with a name different from `prometheus`, you can specify this name using the `--datasource` flag during import/export.
+```
+$ bin/harvest grafana import --datasource custom_datasource_name --addr my.grafana.server:3000
+```
 ### CLI
 
 The `bin/harvest grafana` tool includes CLI help when passing the `--help` command line argument flag like so:

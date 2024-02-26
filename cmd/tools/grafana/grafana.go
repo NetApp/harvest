@@ -25,6 +25,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -32,7 +33,7 @@ import (
 
 const (
 	clientTimeout                 = 5
-	grafanaDataSource             = "Prometheus"
+	grafanaDataSource             = "prometheus"
 	GPerm             os.FileMode = 0644
 )
 
@@ -50,6 +51,7 @@ type options struct {
 	serverfolder        Folder
 	datasource          string
 	variable            bool
+	forceImport         bool
 	client              *http.Client
 	headers             http.Header
 	config              string
@@ -833,6 +835,19 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 		return err
 	}
 
+	isValidDS := isValidDatasource(result)
+	if opts.forceImport {
+		fmt.Printf("warning: Prometheus type datasource hasn't been validated against grafana \n")
+		fmt.Printf("continue anyway? [y/N]: ")
+		_, _ = fmt.Scanf("%s\n", &answer)
+		if answer != "y" && answer != "yes" {
+			os.Exit(0)
+		}
+	} else if !isValidDS {
+		fmt.Printf("Prometheus type datasource is either not exist in Grafana or not matching with given datasource name.")
+		os.Exit(0)
+	}
+
 	buildInfo := result["buildInfo"].(map[string]interface{})
 	if buildInfo == nil {
 		fmt.Printf("warning: unable to get grafana version. Ignoring grafana version check")
@@ -855,6 +870,43 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 	}
 
 	return nil
+}
+
+func isValidDatasource(result map[string]interface{}) bool {
+	isValidDs := false
+	promDSSlice := make([]string, 0)
+
+	if result == nil {
+		fmt.Printf("warning: unable to get datasources detail")
+		return isValidDs
+	}
+	datasourcesInfo := result["datasources"]
+	if datasourcesInfo == nil {
+		fmt.Printf("warning: unable to get datasources detail")
+		return isValidDs
+	}
+	for dsName, dsInfo := range datasourcesInfo.(map[string]interface{}) {
+		if dsInfo == nil {
+			fmt.Printf("warning: unable to get datasources detail")
+			return isValidDs
+		}
+		dsDetail := dsInfo.(map[string]interface{})
+		dsType := dsDetail["type"]
+		if dsType == nil {
+			fmt.Printf("warning: unable to get datasource type")
+			continue
+		}
+		if dsType.(string) == "prometheus" {
+			promDSSlice = append(promDSSlice, dsName)
+			isValidDs = true
+		}
+	}
+
+	if isValidDs && !slices.Contains(promDSSlice, opts.datasource) {
+		return false
+	}
+
+	return isValidDs
 }
 
 func checkVersion(inputVersion string) bool {
@@ -1084,7 +1136,10 @@ func init() {
 		"For each label, create a variable and add as chained query to other variables")
 	importCmd.PersistentFlags().BoolVar(&opts.addMultiSelect, "multi", true,
 		"Modify the dashboards to add multi-select dropdowns for each variable")
+	importCmd.PersistentFlags().BoolVar(&opts.forceImport, "forceImport", false,
+		"Use force dashboard import without datasource being added to grafana")
 	_ = importCmd.PersistentFlags().MarkHidden("multi")
+	_ = importCmd.PersistentFlags().MarkHidden("forceImport")
 
 	metricsCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d",
 		"", "local directory that contains dashboards (searched recursively).")

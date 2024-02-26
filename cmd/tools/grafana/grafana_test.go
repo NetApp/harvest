@@ -191,3 +191,81 @@ func TestChainedParsing(t *testing.T) {
 		})
 	}
 }
+
+func TestIsValidDatasource(t *testing.T) {
+	type test struct {
+		name   string
+		result map[string]interface{}
+		dsArg  string
+		want   bool
+	}
+
+	noDS := map[string]interface{}{
+		"datasources": nil,
+	}
+	nonPrometheusDS := map[string]interface{}{
+		"datasources": map[string]interface{}{
+			"Grafana": map[string]interface{}{
+				"type": "dashboard",
+			},
+			"Influx": map[string]interface{}{
+				"type": "influxdb",
+			},
+		},
+	}
+	defaultPrometheusDS := map[string]interface{}{
+		"datasources": map[string]interface{}{
+			"Influx": map[string]interface{}{
+				"type": "influxdb",
+			},
+			"prometheus": map[string]interface{}{
+				"type": "prometheus",
+			},
+		},
+	}
+	multiPrometheusDSWithSameDS := map[string]interface{}{
+		"datasources": map[string]interface{}{
+			"Influx": map[string]interface{}{
+				"type": "influxdb",
+			},
+			"prometheus": map[string]interface{}{
+				"type": "prometheus",
+			},
+			"NetProm": map[string]interface{}{
+				"type": "prometheus",
+			},
+		},
+	}
+	multiPrometheusDSWithOtherDS := map[string]interface{}{
+		"datasources": map[string]interface{}{
+			"Influx": map[string]interface{}{
+				"type": "influxdb",
+			},
+			"prometheus": map[string]interface{}{
+				"type": "prometheus",
+			},
+			"NetProm": map[string]interface{}{
+				"type": "prometheus",
+			},
+		},
+	}
+
+	tests := []test{
+		{name: "empty", result: nil, dsArg: "prometheus", want: false},
+		{name: "nil datasource", result: noDS, dsArg: "prometheus", want: false},
+		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: "prometheus", want: false},
+		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: "prometheus", want: true},
+		{name: "multiple prometheus datasource with same datasource given", result: multiPrometheusDSWithSameDS, dsArg: "NetProm", want: true},
+		{name: "multiple prometheus datasource with different datasource given", result: multiPrometheusDSWithOtherDS, dsArg: "UpdateProm", want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts.datasource = tt.dsArg
+			got := isValidDatasource(tt.result)
+			if got != tt.want {
+				t.Errorf("TestIsValidDatasource\n got=[%v]\nwant=[%v]", got, tt.want)
+			}
+		})
+	}
+}
