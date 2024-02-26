@@ -12295,7 +12295,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Qos toal throughput.",
+          "description": "Qos total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
