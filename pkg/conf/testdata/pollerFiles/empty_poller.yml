@@ -1,0 +1,6 @@
+Pollers:
+  abc:
+    datacenter: rtp
+  empty:
+  def:
+    datacenter: nb

@@ -445,3 +445,22 @@ func TestChildPollers(t *testing.T) {
 		t.Errorf("got no poller, want poller named=%s", "childPollerName")
 	}
 }
+
+func TestEmptyPoller(t *testing.T) {
+	t.Helper()
+	resetConfig()
+
+	configYaml := "testdata/pollerFiles/empty_poller.yml"
+	_, err := LoadHarvestConfig(configYaml)
+	if err != nil {
+		t.Fatalf("got error loading config: %s, want no errors", err)
+	}
+
+	wantPollers := []string{"abc", "empty", "def"}
+	for _, pName := range wantPollers {
+		_, err = PollerNamed(pName)
+		if err != nil {
+			t.Errorf("got no poller, want poller named=%s", pName)
+		}
+	}
+}

@@ -180,6 +180,15 @@ func DecodeConfig(contents []byte) error {
 	pollers := Config.Pollers
 	defaults := Config.Defaults
 
+	// Iterate through the pollers check if any are nil and if so create an empty poller
+	// This happens when the poller is listed in your config file, but has no configuration
+	for name, p := range pollers {
+		if p == nil {
+			p = &Poller{Name: name}
+			pollers[name] = p
+		}
+	}
+
 	if defaults != nil {
 		for _, p := range pollers {
 			p.Union(defaults)
