@@ -21,7 +21,7 @@ func ExpandVars(in []byte) ([]byte, error) {
 		if bytes.Equal(match[1], []byte("__env")) || bytes.Equal(match[1], empty) {
 			updated, err := expandEnv(match[2])
 			if err != nil {
-				return []byte(""), err
+				return empty, err
 			}
 
 			in = bytes.Replace(in, match[0], updated, 1)
