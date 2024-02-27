@@ -66,7 +66,7 @@ func TestHttpsAddr(t *testing.T) {
 func TestAddPrefixToMetricNames(t *testing.T) {
 
 	var (
-		dashboard                      map[string]interface{}
+		dashboard                      map[string]any
 		oldExpressions, newExpressions []string
 		updatedData                    []byte
 		err                            error
@@ -195,66 +195,77 @@ func TestChainedParsing(t *testing.T) {
 func TestIsValidDatasource(t *testing.T) {
 	type test struct {
 		name   string
-		result map[string]interface{}
+		result map[string]any
 		dsArg  string
 		want   bool
 	}
 
-	noDS := map[string]interface{}{
+	noDS := map[string]any{
 		"datasources": nil,
 	}
-	nonPrometheusDS := map[string]interface{}{
-		"datasources": map[string]interface{}{
-			"Grafana": map[string]interface{}{
+	nonPrometheusDS := map[string]any{
+		"datasources": map[string]any{
+			"Grafana": map[string]any{
 				"type": "dashboard",
 			},
-			"Influx": map[string]interface{}{
+			"Influx": map[string]any{
 				"type": "influxdb",
 			},
 		},
 	}
-	defaultPrometheusDS := map[string]interface{}{
-		"datasources": map[string]interface{}{
-			"Influx": map[string]interface{}{
+	defaultPrometheusDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			"prometheus": map[string]interface{}{
-				"type": "prometheus",
+			DefaultDataSource: map[string]any{
+				"type": DefaultDataSource,
 			},
 		},
 	}
-	multiPrometheusDSWithSameDS := map[string]interface{}{
-		"datasources": map[string]interface{}{
-			"Influx": map[string]interface{}{
+	legacyPrometheusDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			"prometheus": map[string]interface{}{
-				"type": "prometheus",
-			},
-			"NetProm": map[string]interface{}{
-				"type": "prometheus",
+			"Prometheus": map[string]any{
+				"type": DefaultDataSource,
 			},
 		},
 	}
-	multiPrometheusDSWithOtherDS := map[string]interface{}{
-		"datasources": map[string]interface{}{
-			"Influx": map[string]interface{}{
+	multiPrometheusDSWithSameDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			"prometheus": map[string]interface{}{
-				"type": "prometheus",
+			DefaultDataSource: map[string]any{
+				"type": DefaultDataSource,
 			},
-			"NetProm": map[string]interface{}{
-				"type": "prometheus",
+			"NetProm": map[string]any{
+				"type": DefaultDataSource,
+			},
+		},
+	}
+	multiPrometheusDSWithOtherDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
+				"type": "influxdb",
+			},
+			DefaultDataSource: map[string]any{
+				"type": DefaultDataSource,
+			},
+			"NetProm": map[string]any{
+				"type": DefaultDataSource,
 			},
 		},
 	}
 
 	tests := []test{
-		{name: "empty", result: nil, dsArg: "prometheus", want: false},
-		{name: "nil datasource", result: noDS, dsArg: "prometheus", want: false},
-		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: "prometheus", want: false},
-		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: "prometheus", want: true},
+		{name: "empty", result: nil, dsArg: DefaultDataSource, want: false},
+		{name: "nil datasource", result: noDS, dsArg: DefaultDataSource, want: false},
+		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: DefaultDataSource, want: false},
+		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: DefaultDataSource, want: true},
+		{name: "legacy valid prometheus datasource", result: legacyPrometheusDS, dsArg: DefaultDataSource, want: true},
 		{name: "multiple prometheus datasource with same datasource given", result: multiPrometheusDSWithSameDS, dsArg: "NetProm", want: true},
 		{name: "multiple prometheus datasource with different datasource given", result: multiPrometheusDSWithOtherDS, dsArg: "UpdateProm", want: false},
 	}
