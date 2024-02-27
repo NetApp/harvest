@@ -18,7 +18,7 @@ plugins:
   - LabelAgent:
       # metric label zapi_value rest_value `default_value`
       value_to_num_regex:
-        - new_status lock_state .* .* `0`
+        - count lock_state .* .* `0`
   - Aggregator:
     # plugin will create summary/average for each object
     # any names after the object names will be treated as
@@ -32,12 +32,3 @@ plugins:
 # set this true or comment, to get data for each lock
 export_data: false
 
-export_options:
-  instance_keys:
-    - lockid
-  instance_labels:
-    - lif
-    - node
-    - path
-    - volume
-    - vserver
