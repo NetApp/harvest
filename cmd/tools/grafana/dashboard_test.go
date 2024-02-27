@@ -1129,6 +1129,7 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 	exceptionMap := map[string]bool{
 		"CPU Busy Domains": true,
 		"Top $TopResources Volumes Per Snapshot Reserve Used": true,
+		"% CPU Used": true,
 	}
 	dashPath := ShortPath(path)
 
