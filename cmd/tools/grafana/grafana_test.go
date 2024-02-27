@@ -218,7 +218,17 @@ func TestIsValidDatasource(t *testing.T) {
 			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			"prometheus": map[string]any{
+			DefaultDataSource: map[string]any{
+				"type": DefaultDataSource,
+			},
+		},
+	}
+	legacyPrometheusDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
+				"type": "influxdb",
+			},
+			"Prometheus": map[string]any{
 				"type": DefaultDataSource,
 			},
 		},
@@ -228,7 +238,7 @@ func TestIsValidDatasource(t *testing.T) {
 			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			"prometheus": map[string]any{
+			DefaultDataSource: map[string]any{
 				"type": DefaultDataSource,
 			},
 			"NetProm": map[string]any{
@@ -241,7 +251,7 @@ func TestIsValidDatasource(t *testing.T) {
 			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			"prometheus": map[string]any{
+			DefaultDataSource: map[string]any{
 				"type": DefaultDataSource,
 			},
 			"NetProm": map[string]any{
@@ -255,6 +265,7 @@ func TestIsValidDatasource(t *testing.T) {
 		{name: "nil datasource", result: noDS, dsArg: DefaultDataSource, want: false},
 		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: DefaultDataSource, want: false},
 		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: DefaultDataSource, want: true},
+		{name: "legacy valid prometheus datasource", result: legacyPrometheusDS, dsArg: DefaultDataSource, want: true},
 		{name: "multiple prometheus datasource with same datasource given", result: multiPrometheusDSWithSameDS, dsArg: "NetProm", want: true},
 		{name: "multiple prometheus datasource with different datasource given", result: multiPrometheusDSWithOtherDS, dsArg: "UpdateProm", want: false},
 	}
