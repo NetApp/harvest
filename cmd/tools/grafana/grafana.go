@@ -32,7 +32,7 @@ import (
 
 const (
 	clientTimeout                 = 5
-	grafanaDataSource             = "Prometheus"
+	DefaultDataSource             = "prometheus"
 	GPerm             os.FileMode = 0644
 )
 
@@ -50,6 +50,7 @@ type options struct {
 	serverfolder        Folder
 	datasource          string
 	variable            bool
+	forceImport         bool
 	client              *http.Client
 	headers             http.Header
 	config              string
@@ -457,7 +458,7 @@ func importDashboards(opts *options) {
 
 func importFiles(dir string, folder *Folder) {
 	var (
-		request, dashboard map[string]interface{}
+		request, dashboard map[string]any
 		files              []os.DirEntry
 		importedFiles      int
 		data               []byte
@@ -544,7 +545,7 @@ func importFiles(dir string, folder *Folder) {
 			continue
 		}
 
-		request = make(map[string]interface{})
+		request = make(map[string]any)
 		request["overwrite"] = opts.overwrite
 		request["folderId"] = folder.id
 		request["dashboard"] = dashboard
@@ -583,7 +584,7 @@ func importFiles(dir string, folder *Folder) {
 	}
 }
 
-func writeCustomDashboard(dashboard map[string]interface{}, dir string, file os.DirEntry) error {
+func writeCustomDashboard(dashboard map[string]any, dir string, file os.DirEntry) error {
 	data, err := json.Marshal(dashboard)
 	if err != nil {
 		return err
@@ -607,11 +608,11 @@ func writeCustomDashboard(dashboard map[string]interface{}, dir string, file os.
 // add a constant prefix to all metrics, before they are pushed
 // to GitHub, then replace them with a user-defined prefix
 // (or empty string) when the import tool is used.
-func addGlobalPrefix(db map[string]interface{}, prefix string) {
+func addGlobalPrefix(db map[string]any, prefix string) {
 
 	var (
 		panels, templates, subPanels       []interface{}
-		panel, templating, template, query map[string]interface{}
+		panel, templating, template, query map[string]any
 		queryString, definition            string
 		ok, has                            bool
 	)
@@ -630,7 +631,7 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 		handlingPanels(p, prefix)
 
 		// handling for sub-panels
-		if panel, ok = p.(map[string]interface{}); !ok {
+		if panel, ok = p.(map[string]any); !ok {
 			continue
 		}
 
@@ -645,7 +646,7 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 	}
 
 	// apply to variables
-	if templating, ok = db["templating"].(map[string]interface{}); !ok {
+	if templating, ok = db["templating"].(map[string]any); !ok {
 		return
 	}
 
@@ -654,11 +655,11 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 	}
 
 	for _, t := range templates {
-		if template, ok = t.(map[string]interface{}); ok {
+		if template, ok = t.(map[string]any); ok {
 			if definition, ok = template["definition"].(string); ok {
 				template["definition"] = addPrefixToMetricNames(definition, prefix)
 			}
-			if query, ok = template["query"].(map[string]interface{}); ok {
+			if query, ok = template["query"].(map[string]any); ok {
 				if queryString, ok = query["query"].(string); ok {
 					query["query"] = addPrefixToMetricNames(queryString, prefix)
 				}
@@ -670,11 +671,11 @@ func addGlobalPrefix(db map[string]interface{}, prefix string) {
 func handlingPanels(p interface{}, prefix string) {
 	var (
 		targets       []interface{}
-		panel, target map[string]interface{}
+		panel, target map[string]any
 		ok, has       bool
 		expr          string
 	)
-	if panel, ok = p.(map[string]interface{}); !ok {
+	if panel, ok = p.(map[string]any); !ok {
 		return
 	}
 
@@ -687,7 +688,7 @@ func handlingPanels(p interface{}, prefix string) {
 	}
 
 	for _, t := range targets {
-		if target, ok = t.(map[string]interface{}); !ok {
+		if target, ok = t.(map[string]any); !ok {
 			continue
 		}
 		if _, has = target["expr"]; has {
@@ -761,6 +762,7 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 	var (
 		token, configPath, answer string
 		err                       error
+		isValidDS                 bool
 	)
 
 	if tries == 0 {
@@ -828,12 +830,22 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 		}
 	}
 
-	// get grafana version, we are more or less guaranteed this succeeds
+	// get grafana version
 	if result, _, _, err = sendRequest(opts, "GET", "/api/frontend/settings", nil); err != nil {
 		return err
 	}
 
-	buildInfo := result["buildInfo"].(map[string]interface{})
+	if opts.forceImport {
+		isValidDS = true
+	} else {
+		isValidDS = isValidDatasource(result)
+	}
+	if !isValidDS {
+		fmt.Printf("A Prometheus-typed datasource named \"%s\" does not exist in Grafana.\n", opts.datasource)
+		os.Exit(0)
+	}
+
+	buildInfo := result["buildInfo"].(map[string]any)
 	if buildInfo == nil {
 		fmt.Printf("warning: unable to get grafana version. Ignoring grafana version check")
 		return nil
@@ -855,6 +867,38 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 	}
 
 	return nil
+}
+
+func isValidDatasource(result map[string]any) bool {
+	if result == nil {
+		fmt.Printf("warning: result is null.")
+		return false
+	}
+	datasourcesInfo := result["datasources"]
+	if datasourcesInfo == nil {
+		fmt.Printf("warning: datasources are missing")
+		return false
+	}
+
+	for dsName, dsInfo := range datasourcesInfo.(map[string]any) {
+		if dsInfo == nil {
+			fmt.Printf("warning: dsInfo is missing for %s\n", dsName)
+			continue
+		}
+		dsDetail := dsInfo.(map[string]any)
+		dsType := dsDetail["type"]
+		if dsType == nil {
+			fmt.Printf("warning: dsType is missing for %s\n", dsName)
+			continue
+		}
+		if dsType.(string) == DefaultDataSource && strings.EqualFold(dsName, opts.datasource) {
+			// overwrite datasource name with the one from Grafana when the names differ by case
+			opts.datasource = dsName
+			return true
+		}
+	}
+
+	return false
 }
 
 func checkVersion(inputVersion string) bool {
@@ -930,9 +974,9 @@ func createServerFolder(folder *Folder) error {
 	return nil
 }
 
-func sendRequest(opts *options, method, url string, query map[string]interface{}) (map[string]interface{}, string, int, error) {
+func sendRequest(opts *options, method, url string, query map[string]any) (map[string]any, string, int, error) {
 
-	var result map[string]interface{}
+	var result map[string]any
 
 	data, status, code, err := doRequestWithRetry(opts, method, url, query, 3)
 	if err != nil {
@@ -946,9 +990,9 @@ func sendRequest(opts *options, method, url string, query map[string]interface{}
 	return result, status, code, err
 }
 
-func sendRequestArray(opts *options, method, url string, query map[string]interface{}) ([]map[string]interface{}, string, int, error) {
+func sendRequestArray(opts *options, method, url string, query map[string]any) ([]map[string]any, string, int, error) {
 
-	var result []map[string]interface{}
+	var result []map[string]any
 
 	data, status, code, err := doRequestWithRetry(opts, method, url, query, 3)
 	if err != nil {
@@ -984,7 +1028,7 @@ func doRequestWithRetry(opts *options, method, url string, query map[string]any,
 	return data, status, code, err
 }
 
-func doRequest(opts *options, method, url string, query map[string]interface{}) ([]byte, string, int, error) {
+func doRequest(opts *options, method, url string, query map[string]any) ([]byte, string, int, error) {
 
 	var (
 		request  *http.Request
@@ -1084,7 +1128,10 @@ func init() {
 		"For each label, create a variable and add as chained query to other variables")
 	importCmd.PersistentFlags().BoolVar(&opts.addMultiSelect, "multi", true,
 		"Modify the dashboards to add multi-select dropdowns for each variable")
+	importCmd.PersistentFlags().BoolVar(&opts.forceImport, "force", false,
+		"Import even if the datasource name is not defined in Grafana")
 	_ = importCmd.PersistentFlags().MarkHidden("multi")
+	_ = importCmd.PersistentFlags().MarkHidden("force")
 
 	metricsCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d",
 		"", "local directory that contains dashboards (searched recursively).")
@@ -1100,7 +1147,7 @@ func addCommonFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 		cmd.PersistentFlags().StringVar(&opts.svmRegex, "svm-variable-regex", "", "SVM variable regex to filter SVM query results")
 		cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
-		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", grafanaDataSource, "Name of your Prometheus datasource used by the imported dashboards")
+		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", DefaultDataSource, "Name of your Prometheus datasource used by the imported dashboards")
 		cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
 		cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
 

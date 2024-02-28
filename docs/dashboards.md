@@ -17,17 +17,26 @@ or add the token to the `Tools` section of your configuration file. (see below)
 For example, let's say your Grafana server is on `http://my.grafana.server:3000` and you want to import the
 Prometheus-based dashboards from the `grafana` directory. You would run this:
 
-```
-$ bin/harvest grafana import --addr my.grafana.server:3000
+```bash
+bin/harvest grafana import --addr my.grafana.server:3000
 ```
 
 Similarly, to export:
 
-```
-$ bin/harvest grafana export --addr my.grafana.server:3000 --directory /path/to/export/directory --serverfolder grafanaFolderName
+```bash
+bin/harvest grafana export --addr my.grafana.server:3000 --directory /path/to/export/directory --serverfolder grafanaFolderName
 ```
 
-By default, the dashboards are connected to a datasource named `Prometheus`. This is a datasource of the Prometheus type, defined in Grafana. However, despite the type, the datasource can have any name. If you have a Prometheus type datasource with a name different from `Prometheus`, you can specify this name using the `--datasource` flag during import/export.
+By default, the dashboards are connected to a datasource named `prometheus` (case-sensitive).
+This is a datasource of the Prometheus type, defined in Grafana.
+However, despite the type, the datasource can have any name.
+If you have a Prometheus type datasource with a name different from `prometheus`,
+you can specify this name using the `--datasource` flag during import/export like this:
+
+```bash
+bin/harvest grafana import --addr my.grafana.server:3000 --datasource custom_datasource_name
+```
+
 ### CLI
 
 The `bin/harvest grafana` tool includes CLI help when passing the `--help` command line argument flag like so:
@@ -53,7 +62,7 @@ This will cause Harvest to do the following for each dashboard:
 
 Here's an example:
 
-```
+```bash
 bin/harvest grafana import --labels "org,dept"
 ```
 

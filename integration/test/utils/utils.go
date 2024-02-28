@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -190,8 +191,11 @@ func AddPrometheusToGrafana() {
 	log.Info().Msg("Add Prometheus into Grafana")
 	url := GetGrafanaHTTPURL() + "/api/datasources"
 	method := "POST"
-	jsonValue := []byte(fmt.Sprintf(`{"name": "Prometheus", "type": "prometheus", "access": "direct",
-		"url": "%s", "isDefault": true, "basicAuth": false}`, "http://"+GetOutboundIP()+":"+PrometheusPort))
+	//goland:noinspection HttpUrlsUsage
+	jsonValue := []byte(fmt.Sprintf(`{"name": "%s", "type": "prometheus", "access": "direct",
+		"url": "%s", "isDefault": true, "basicAuth": false}`,
+		grafana.DefaultDataSource,
+		"http://"+GetOutboundIP()+":"+PrometheusPort))
 	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["message"])
 	if key == "Datasource added" {
@@ -273,6 +277,7 @@ func WriteToken(token string) {
 }
 
 func GetGrafanaHTTPURL() string {
+	//goland:noinspection HttpUrlsUsage
 	return "http://admin:admin@" + GetGrafanaURL()
 }
 

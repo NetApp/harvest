@@ -66,7 +66,7 @@ func TestHttpsAddr(t *testing.T) {
 func TestAddPrefixToMetricNames(t *testing.T) {
 
 	var (
-		dashboard                      map[string]interface{}
+		dashboard                      map[string]any
 		oldExpressions, newExpressions []string
 		updatedData                    []byte
 		err                            error
@@ -187,6 +187,95 @@ func TestChainedParsing(t *testing.T) {
 			got := toChainedVar(wrappedInDef, "foo")
 			if got != tt.want {
 				t.Errorf("TestChainedParsing\n got=[%v]\nwant=[%v]", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsValidDatasource(t *testing.T) {
+	type test struct {
+		name   string
+		result map[string]any
+		dsArg  string
+		want   bool
+	}
+
+	noDS := map[string]any{
+		"datasources": nil,
+	}
+	nonPrometheusDS := map[string]any{
+		"datasources": map[string]any{
+			"Grafana": map[string]any{
+				"type": "dashboard",
+			},
+			"Influx": map[string]any{
+				"type": "influxdb",
+			},
+		},
+	}
+	defaultPrometheusDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
+				"type": "influxdb",
+			},
+			DefaultDataSource: map[string]any{
+				"type": DefaultDataSource,
+			},
+		},
+	}
+	legacyPrometheusDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
+				"type": "influxdb",
+			},
+			"Prometheus": map[string]any{
+				"type": DefaultDataSource,
+			},
+		},
+	}
+	multiPrometheusDSWithSameDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
+				"type": "influxdb",
+			},
+			DefaultDataSource: map[string]any{
+				"type": DefaultDataSource,
+			},
+			"NetProm": map[string]any{
+				"type": DefaultDataSource,
+			},
+		},
+	}
+	multiPrometheusDSWithOtherDS := map[string]any{
+		"datasources": map[string]any{
+			"Influx": map[string]any{
+				"type": "influxdb",
+			},
+			DefaultDataSource: map[string]any{
+				"type": DefaultDataSource,
+			},
+			"NetProm": map[string]any{
+				"type": DefaultDataSource,
+			},
+		},
+	}
+
+	tests := []test{
+		{name: "empty", result: nil, dsArg: DefaultDataSource, want: false},
+		{name: "nil datasource", result: noDS, dsArg: DefaultDataSource, want: false},
+		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: DefaultDataSource, want: false},
+		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: DefaultDataSource, want: true},
+		{name: "legacy valid prometheus datasource", result: legacyPrometheusDS, dsArg: DefaultDataSource, want: true},
+		{name: "multiple prometheus datasource with same datasource given", result: multiPrometheusDSWithSameDS, dsArg: "NetProm", want: true},
+		{name: "multiple prometheus datasource with different datasource given", result: multiPrometheusDSWithOtherDS, dsArg: "UpdateProm", want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts.datasource = tt.dsArg
+			got := isValidDatasource(tt.result)
+			if got != tt.want {
+				t.Errorf("TestIsValidDatasource\n got=[%v]\nwant=[%v]", got, tt.want)
 			}
 		})
 	}
