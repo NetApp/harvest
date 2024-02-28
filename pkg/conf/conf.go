@@ -146,6 +146,11 @@ func unmarshalConfig(contents []byte) (*HarvestConfig, error) {
 		err           error
 	)
 
+	contents, err = ExpandVars(contents)
+	if err != nil {
+		return nil, fmt.Errorf("error expanding vars: %w", err)
+	}
+
 	err = yaml.Unmarshal(contents, &cfg)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling config: %w", err)

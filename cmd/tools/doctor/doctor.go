@@ -25,6 +25,7 @@ type options struct {
 	MergeTemplate      string
 	zapiDataCenterName string
 	restDataCenterName string
+	expandVar          bool
 }
 
 var opts = &options{
@@ -105,6 +106,15 @@ func doDoctor(path string) string {
 		fmt.Printf("error reading config file. err=%+v\n", err)
 		return ""
 	}
+
+	if opts.expandVar {
+		contents, err = conf.ExpandVars(contents)
+		if err != nil {
+			fmt.Printf("error reading config file. err=%+v\n", err)
+			return ""
+		}
+	}
+
 	parentRoot, err := printRedactedConfig(path, contents)
 	if err != nil {
 		fmt.Printf("error processing parent config file=[%s] %+v\n", path, err)
@@ -592,8 +602,9 @@ func init() {
 		"print",
 		"p",
 		false,
-		"print config to console with sensitive info redacted",
+		"Print config to console with sensitive info redacted",
 	)
 
 	Cmd.Flags().StringVar(&opts.Color, "color", "auto", "When to use colors. One of: auto | always | never. Auto will guess based on tty.")
+	Cmd.Flags().BoolVar(&opts.expandVar, "expand-var", false, "Expand environment variables in config (default: false)")
 }
