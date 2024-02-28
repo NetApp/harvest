@@ -10,7 +10,7 @@ counters:
     - ^node                 => node
     - ^path                 => path
     - ^volume               => volume
-    - ^vserver              => vserver
+    - ^vserver              => svm
 
 collect_only_labels: true
 
@@ -24,7 +24,7 @@ plugins:
     # any names after the object names will be treated as
     # label names that will be added to instances
     - node
-    - vserver
+    - svm
     - lif
     - volume
 

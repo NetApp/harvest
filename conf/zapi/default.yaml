@@ -17,7 +17,7 @@ objects:
   EmsDestination:              ems_destination.yaml
   FlexCache:                   flexcache.yaml
   LIF:                         lif.yaml
-  Lock:                        lock.yaml
+#  Lock:                        lock.yaml
   Lun:                         lun.yaml
 #  NetPort:                     netport.yaml
   Namespace:                   namespace.yaml
