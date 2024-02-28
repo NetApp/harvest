@@ -396,20 +396,26 @@ func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
 }
 
 // GetUniqueExporters returns the unique set of exporter types from the list of export names.
-// For example, if two prometheus exporters are configured for a poller, the last one is returned
+// For example, if two Prometheus exporters are configured for a poller, the last one is returned.
+// Multiple InfluxDB exporters are allowed.
 func GetUniqueExporters(exporterNames []string) []string {
 	var resultExporters []string
-	definedExporters := Config.Exporters
-	exporterMap := make(map[string]string)
+	exporterMap := make(map[string][]string)
+
 	for _, ec := range exporterNames {
-		e, ok := definedExporters[ec]
+		e, ok := Config.Exporters[ec]
 		if ok {
-			exporterMap[e.Type] = ec
+			exporterMap[e.Type] = append(exporterMap[e.Type], ec)
 		}
 	}
 
-	for _, value := range exporterMap {
-		resultExporters = append(resultExporters, value)
+	for eType, value := range exporterMap {
+		if eType == "Prometheus" {
+			// if there are multiple prometheus exporters, only the last one is used
+			resultExporters = append(resultExporters, value[len(value)-1])
+			continue
+		}
+		resultExporters = append(resultExporters, value...)
 	}
 	return resultExporters
 }

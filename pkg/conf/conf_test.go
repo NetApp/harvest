@@ -196,7 +196,7 @@ func TestUniqueExportersByType(t *testing.T) {
 	t.Run("Exporters are unique by type", func(t *testing.T) {
 		exporters := GetUniqueExporters(poller2.Exporters)
 		sort.Strings(exporters)
-		want := []string{"foo1", "foo2", "prometheus"}
+		want := []string{"foo1", "foo2", "influxy", "influxz", "prometheus"}
 		if !reflect.DeepEqual(want, exporters) {
 			t.Fatalf(`expected %v but got %v`, want, exporters)
 		}
