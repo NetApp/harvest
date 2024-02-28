@@ -79,6 +79,7 @@ func (p *QosPolicyFixed) setLabel(labelName string, data *matrix.Matrix, instanc
 	}
 }
 
+var iopsPerUnitRe = regexp.MustCompile(`(\d+)iops/(tb|gb)`)
 var iopsRe = regexp.MustCompile(`(\d+)iops`)
 var bpsRe = regexp.MustCompile(`(\d+(\.\d+)?)(\w+)/s`)
 
@@ -116,8 +117,23 @@ func ZapiXputToRest(zapi string) (MaxXput, error) {
 		}, nil
 	}
 
+	// check for iops per unit (TB or GB)
+	matches := iopsPerUnitRe.FindStringSubmatch(lower)
+	if len(matches) == 3 {
+		iops, err := strconv.Atoi(matches[1])
+		if err != nil {
+			return empty, fmt.Errorf("failed to convert iops value [%s] of [%s]", matches[1], zapi)
+		}
+		unit := matches[2]
+		if unit == "gb" {
+			// Convert from IOPS/GB to IOPS/TB. ONTAP default is IOPS/TB
+			iops *= 1000
+		}
+		return MaxXput{IOPS: strconv.Itoa(iops), Mbps: "0"}, nil
+	}
+
 	// check for iops
-	matches := iopsRe.FindStringSubmatch(lower)
+	matches = iopsRe.FindStringSubmatch(lower)
 	if len(matches) == 2 {
 		return MaxXput{IOPS: matches[1], Mbps: "0"}, nil
 	}
