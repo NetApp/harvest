@@ -52,11 +52,11 @@ plugins:
 
 export_options:
   instance_keys:
-    - ha_partner
     - node
     - serial
   instance_labels:
     - cpu_firmware_release
+    - ha_partner
     - healthy
     - location
     - max_aggr_size
