@@ -172,7 +172,7 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return qospolicyadaptive.New(abc)
 	case "Aggregate":
 		return aggregate.New(abc)
-	case "Node":
+	case "SystemNode":
 		return systemnode.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapi plugin found for %s", kind)

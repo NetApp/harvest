@@ -52,9 +52,14 @@ func (a *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 		}
 	}
 
-	// update node instance label with partner info
+	// update node instance with partner info
 	for nodeName, node := range data.GetInstances() {
 		node.SetLabel("ha_partner", a.partnerNameMap[nodeName])
+	}
+
+	// update node metrics with partner info
+	for _, metric := range data.GetMetrics() {
+		metric.SetLabel("ha_partner", a.partnerNameMap[metric.GetLabel("node")])
 	}
 	return nil, nil
 }
