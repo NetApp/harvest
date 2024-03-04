@@ -6,7 +6,7 @@ counters:
   lock-info:
     - ^^lockid              => lockid
     - ^lif                  => lif
-    - ^lock-state           => lock_state
+    - ^lock-state           => state
     - ^node                 => node
     - ^path                 => path
     - ^volume               => volume
@@ -18,7 +18,7 @@ plugins:
   - LabelAgent:
       # metric label zapi_value rest_value `default_value`
       value_to_num_regex:
-        - count lock_state .* .* `0`
+        - count state .* .* `0`
   - Aggregator:
     # plugin will create summary/average for each object
     # any names after the object names will be treated as
