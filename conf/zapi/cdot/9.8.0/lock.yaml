@@ -4,7 +4,7 @@ object:     lock
 
 counters:
   lock-info:
-    - ^^lockid              => lockid
+    - ^^lockid              => uuid
     - ^lif                  => lif
     - ^lock-state           => state
     - ^node                 => node
