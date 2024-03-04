@@ -163,7 +163,7 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	if metrics, stats, err = e.Render(data); err == nil && len(metrics) != 0 {
 		// fix render time
 		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
-			e.Logger.Error().Stack().Err(err).Msg("metadata render time")
+			e.Logger.Error().Err(err).Msg("metadata render time")
 		}
 		// in debug mode, don't actually export but write to log
 		if e.Options.Debug {
@@ -174,15 +174,11 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 			return stats, nil
 			// otherwise, to the actual export: send to the DB
 		} else if err = e.Emit(metrics); err != nil {
-			e.Logger.Error().Stack().Err(err).
-				Str("object", data.Object).
-				Str("uuid", data.UUID).
-				Msg("Failed to emit metrics")
-			return stats, err
+			return stats, fmt.Errorf("unable to emit object: %s, uuid: %s, err=%w", data.Object, data.UUID, err)
 		}
 	}
 
-	e.Logger.Debug().Msgf("(%s.%s) --> exported %d data points", data.Object, data.UUID, len(metrics))
+	e.Logger.Debug().Str("object", data.Object).Str("uuid", data.UUID).Int("numMetric", len(metrics)).Msg("exported")
 
 	// update metadata
 	if err = e.Metadata.LazySetValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
