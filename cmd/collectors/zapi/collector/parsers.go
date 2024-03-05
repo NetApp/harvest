@@ -15,7 +15,7 @@ import (
 func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 
 	var prefix []string
-	var keys [][]string
+	keys := make([][]string, 0, len(m.GetMetrics())+len(l))
 
 	for key := range m.GetMetrics() {
 		keys = append(keys, strings.Split(key, "."))

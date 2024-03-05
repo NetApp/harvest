@@ -269,9 +269,8 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 
 func (v *Volume) getEncryptedDisks() ([]string, error) {
 	var (
-		result    []*node.Node
-		diskNames []string
-		err       error
+		result []*node.Node
+		err    error
 	)
 
 	request := node.NewXMLS("disk-encrypt-get-iter")
@@ -291,6 +290,7 @@ func (v *Volume) getEncryptedDisks() ([]string, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 
+	diskNames := make([]string, 0, len(result))
 	for _, disk := range result {
 		diskName := disk.GetChildContentS("disk-name")
 		diskNames = append(diskNames, diskName)

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
+	"golang.org/x/exp/maps"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 	"net"
@@ -397,12 +398,9 @@ func HasDuplicates(slice []string) bool {
 }
 
 func GetSortedKeys(m map[string]string) []string {
-	var sortedKeys []string
-	for k := range m {
-		sortedKeys = append(sortedKeys, k)
-	}
-	sort.Strings(sortedKeys)
-	return sortedKeys
+	keys := maps.Keys(m)
+	sort.Strings(keys)
+	return keys
 }
 
 func GetURLWithoutHost(r *http.Request) string {

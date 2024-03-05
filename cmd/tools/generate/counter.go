@@ -608,7 +608,7 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	var values []Counter
+	values := make([]Counter, 0, len(keys))
 	for _, k := range keys {
 		if k == "" {
 			continue

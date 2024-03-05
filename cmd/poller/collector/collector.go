@@ -679,7 +679,7 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, 
 
 	var p plugin.Plugin
 	var abc *plugin.AbstractPlugin
-	var plugins []plugin.Plugin
+	plugins := make([]plugin.Plugin, 0, len(params.GetChildren()))
 	c.Plugins = make(map[string][]plugin.Plugin)
 
 	for _, x := range params.GetChildren() {
