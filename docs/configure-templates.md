@@ -23,12 +23,67 @@ $ harvest zapi --poller <poller> show data --api volume-get-iter
 
 (Replace `<poller>` with the name of a poller that can connect to an ONTAP system.)
 
+## Conf Path
+
+The conf path is the colon-separated list of directories that Harvest searches to load templates. 
+Harvest walks each directory in order, stopping at the first one that contains the desired template.
+The default value of `confpath` is `conf`, meaning that only the `conf` directory is searched for templates.
+
+There are two ways to change the conf path. 
+
+- You can specify the `-confpath` command line argument to `bin/harvest` or `bin/poller`, e.g. `-confpath customconf:conf`. Harvest will search the `customconf` directory followed by the `conf` directory.
+
+- You can specify the `conf_path` [parameter](configure-harvest-basic.md#pollers) in the `Pollers` section of your `harvest.yml` file, e.g.
+
+```yaml
+Pollers:
+  netapp-cluster1: 
+    datacenter: dc-1
+    addr: 10.193.48.163
+    conf_path: customconf:/etc/harvest/conf:conf
+```
+
+This `conf_path` example will search for templates in this order, stopping at the first one that contains the template.
+
+1. local directory `customconf`
+2. absolute directory `/etc/harvest/conf`
+3. local directory `conf`
+
+Use the conf path to isolate your edits and extensions to Harvest's builtin templates.
+This ensures that your customizations won't be affected when you upgrade Harvest.
+
+When using a custom confpath, make sure your custom directories have the same structure as the default `conf` directory. 
+In the example below, four template modifications have been setup in the `/etc/harvest/customconf` directory.
+
+The poller's `conf_path` parameter is set to `/etc/harvest/customconf:conf` to use these modified templates. 
+Harvest will use the custom templates when they match and the default templates otherwise.
+
+See [issue #2330](https://github.com/NetApp/harvest/issues/2330) for more examples.
+
+```
+# tree /etc/harvest/customconf
+
+/etc/harvest/customconf
+├── rest
+│   ├── 9.12.0
+│   │ ├── aggr.yaml
+│   │ └── volume.yaml
+├── restperf
+│   ├── 9.13.0
+│   │ └── qtree.yaml
+├── zapi
+└── zapiperf
+    ├── cdot
+    │ └── 9.8.0
+    │     └── qtree.yaml
+```
+
 ## Collector templates
 
 Collector templates define which set of objects Harvest should collect from the system being monitored.
 In your `harvest.yml` configuration file, when you say that you want to use a `Zapi` collector, that
 collector will read the matching `conf/zapi/default.yaml` - same with `ZapiPerf`, it will read
-the `conf/zapiperf/default.yaml` file. Belows's a snippet from `conf/zapi/default.yaml`. Each object is mapped to a
+the `conf/zapiperf/default.yaml` file. Below is a snippet from `conf/zapi/default.yaml`. Each object is mapped to a
 corresponding [object template](configure-templates.md#object-templates) file. For example, the `Node` object searches
 for the [most appropriate version](configure-templates.md#harvest-versioned-templates) of the `node.yaml` file in
 the `conf/zapi/cdot/**` directory.
