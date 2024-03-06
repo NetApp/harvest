@@ -19,7 +19,7 @@ BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-X 'github.com/netapp/harvest/v2/cmd/harvest/version.VERSION=$(VERSION)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Release=$(RELEASE)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Commit=$(COMMIT)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"
 GOARCH ?= amd64
 GOOS ?= linux
-FLAGS ?= CGO_ENABLED=0
+CGO_ENABLED ?= 0
 HARVEST_PACKAGE := harvest-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}
 DIST := dist
 TMP := /tmp/${HARVEST_PACKAGE}
@@ -61,7 +61,7 @@ ifeq ("${CORRECT_GO_VERSION}", "0")
 endif
 
 clean: ## Cleanup the project binary (bin) folders
-	@echo "Cleaning harvest files"
+	@echo "Cleaning Harvest files"
 	@if [ -d bin ]; then \
 		find ./bin -type f -not -name "*asup*" -exec rm -f {} +; \
 	fi
@@ -103,7 +103,7 @@ harvest: deps
 	@mkdir -p bin
 	@# Build the harvest and poller cli
 	@echo "Building"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) $(FLAGS) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
 
 	@cp service/contrib/grafana bin; chmod +x bin/grafana
 
