@@ -10,6 +10,7 @@ import (
 	"github.com/go-openapi/spec"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	tw "github.com/olekukonko/tablewriter"
+	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 	"html"
 	"io"
@@ -205,10 +206,7 @@ func printProperty(args propArgs) {
 }
 
 func sortApis(schema map[string]spec.PathItem) []string {
-	var keys []string
-	for name := range schema {
-		keys = append(keys, name)
-	}
+	keys := maps.Keys(schema)
 	sort.Strings(keys)
 	return keys
 }

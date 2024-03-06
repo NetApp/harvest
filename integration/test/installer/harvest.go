@@ -54,7 +54,7 @@ func (h *Harvest) GetPollerInfo() []core.Poller {
 	}
 	fmt.Println(harvestStatus)
 	rows := strings.Split(harvestStatus, "\n")
-	var pollerArray []core.Poller
+	pollerArray := make([]core.Poller, 0, len(rows))
 	for i := range rows {
 		columns := strings.Split(rows[i], `|`)
 		count := len(columns)

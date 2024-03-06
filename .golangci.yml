@@ -28,6 +28,7 @@ linters:
     - nonamedreturns
     - nosprintfhostport
     - perfsprint
+    - prealloc
     - reassign
     - revive
     - staticcheck

@@ -163,6 +163,8 @@ Pollers:
       - prometheus
       - foo1
       - foo2
+      - influxy
+      - influxz
 
   pass-with-escape:
     username: admin

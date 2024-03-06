@@ -309,7 +309,7 @@ func (a *Aggregator) NewLabels() []string {
 
 // NewMetrics returns the new metrics the receiver creates
 func (a *Aggregator) NewMetrics() []plugin.DerivedMetric {
-	var derivedMetrics []plugin.DerivedMetric
+	derivedMetrics := make([]plugin.DerivedMetric, 0, len(a.rules))
 	for _, r := range a.rules {
 		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{Name: r.label, Source: r.object})
 	}

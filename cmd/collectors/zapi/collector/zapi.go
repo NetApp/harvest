@@ -423,7 +423,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 }
 
 func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
-	var exporterTypes []string
+	exporterTypes := make([]string, 0, len(z.Exporters))
 	for _, exporter := range z.Exporters {
 		exporterTypes = append(exporterTypes, exporter.GetClass())
 	}
@@ -516,7 +516,6 @@ func (z *Zapi) getNodeUuids() ([]collector.ID, error) {
 		response *node.Node
 		nodes    []*node.Node
 		err      error
-		infos    []collector.ID
 	)
 
 	// Since 7-mode is like single node, return the ids for it
@@ -536,6 +535,7 @@ func (z *Zapi) getNodeUuids() ([]collector.ID, error) {
 		nodes = attrs.GetChildren()
 	}
 
+	infos := make([]collector.ID, 0, len(nodes))
 	for _, n := range nodes {
 		sn := n.GetChildContentS("node-serial-number")
 		systemID := n.GetChildContentS("node-system-id")

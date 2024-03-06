@@ -20,6 +20,7 @@ objects:
   FlexCache:                   flexcache.yaml
   FCP:                         fcp.yaml
   LIF:                         lif.yaml
+#  Lock:                        lock.yaml
   Health:                      health.yaml
   Lun:                         lun.yaml
   MetroclusterCheck:           metrocluster_check.yaml

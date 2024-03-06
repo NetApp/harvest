@@ -314,7 +314,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	// collect all event names
-	var names []string
+	names := make([]string, 0, len(e.emsProp))
 	for key := range e.emsProp {
 		names = append(names, key)
 	}
