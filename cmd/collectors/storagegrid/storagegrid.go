@@ -512,7 +512,7 @@ func (s *StorageGrid) InitAPIPath() {
 }
 
 func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
-	var exporterTypes []string
+	exporterTypes := make([]string, 0, len(s.Exporters))
 	for _, exporter := range s.Exporters {
 		exporterTypes = append(exporterTypes, exporter.GetClass())
 	}
@@ -583,7 +583,6 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 func (s *StorageGrid) getNodeUuids() ([]collector.ID, error) {
 	var (
 		err    error
-		infos  []collector.ID
 		health []byte
 	)
 
@@ -593,6 +592,7 @@ func (s *StorageGrid) getNodeUuids() ([]collector.ID, error) {
 	}
 	data := gjson.GetBytes(health, "data").Array()
 
+	infos := make([]collector.ID, 0, len(data))
 	for _, each := range data {
 		infos = append(infos, collector.ID{
 			SerialNumber: each.Get("id").String(),

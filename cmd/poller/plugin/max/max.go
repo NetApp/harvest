@@ -231,7 +231,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 		}
 	}
 
-	var matricesArray []*matrix.Matrix
+	matricesArray := make([]*matrix.Matrix, 0, len(matrices))
 
 	for _, v := range matrices {
 		matricesArray = append(matricesArray, v)
@@ -242,7 +242,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 // NewMetrics returns the new metrics the receiver creates
 func (m *Max) NewMetrics() []plugin.DerivedMetric {
-	var derivedMetrics []plugin.DerivedMetric
+	derivedMetrics := make([]plugin.DerivedMetric, 0, len(m.rules))
 	for _, r := range m.rules {
 		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{Name: r.object, Source: r.label, IsMax: true})
 	}

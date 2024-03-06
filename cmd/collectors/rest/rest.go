@@ -611,7 +611,7 @@ func (r *Rest) handleError(err error) ([]gjson.Result, error) {
 }
 
 func (r *Rest) CollectAutoSupport(p *collector.Payload) {
-	var exporterTypes []string
+	exporterTypes := make([]string, 0, len(r.Exporters))
 	for _, exporter := range r.Exporters {
 		exporterTypes = append(exporterTypes, exporter.GetClass())
 	}
@@ -696,7 +696,6 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 	var (
 		records []gjson.Result
 		err     error
-		infos   []collector.ID
 	)
 	query := "api/cluster/nodes"
 
@@ -710,6 +709,7 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 		return nil, err
 	}
 
+	infos := make([]collector.ID, 0, len(records))
 	for _, instanceData := range records {
 		infos = append(infos, collector.ID{SerialNumber: instanceData.Get("serial_number").String(), SystemID: instanceData.Get("system_id").String()})
 	}

@@ -272,7 +272,6 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		tagged            *set.Set
 		labelsToInclude   []string
 		keysToInclude     []string
-		globalLabels      []string
 		prefix            string
 		err               error
 		replacer          *strings.Replacer
@@ -282,7 +281,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	)
 
 	rendered = make([][]byte, 0)
-	globalLabels = make([]string, 0)
+	globalLabels := make([]string, 0, len(data.GetGlobalLabels()))
 	normalizedLabels = make(map[string][]string)
 	replacer = strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", "\\n")
 

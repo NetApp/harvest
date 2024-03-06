@@ -172,7 +172,6 @@ func generateDocker(kind int) {
 		pollerTemplate PollerTemplate
 		configFilePath string
 		certDirPath    string
-		filesd         []string
 		out            *os.File
 	)
 
@@ -187,6 +186,7 @@ func generateDocker(kind int) {
 	}
 	configFilePath = asComposePath(opts.configPath)
 	certDirPath = asComposePath(opts.certDir)
+	filesd := make([]string, 0, len(conf.Config.PollersOrdered))
 
 	for _, v := range conf.Config.PollersOrdered {
 		port, _ := conf.GetPrometheusExporterPorts(v, true)

@@ -137,7 +137,7 @@ func verifyDashboards(t *testing.T, folderID int64, expectedName []string) {
 	var dataDashboard []Dashboard
 	err = json.Unmarshal(data, &dataDashboard)
 	utils.PanicIfNotNil(err)
-	var actualNames []string
+	actualNames := make([]string, 0, len(dataDashboard))
 	var notFoundList []string
 	log.Info().Int64("folderID", folderID).Msg("Folder details")
 	for _, values := range dataDashboard {

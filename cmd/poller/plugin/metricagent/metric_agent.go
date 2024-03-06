@@ -148,7 +148,7 @@ func (a *MetricAgent) getMetric(m *matrix.Matrix, name string) *matrix.Metric {
 
 // NewMetrics returns the new metrics the receiver creates
 func (a *MetricAgent) NewMetrics() []plugin.DerivedMetric {
-	var derivedMetrics []plugin.DerivedMetric
+	derivedMetrics := make([]plugin.DerivedMetric, 0, len(a.computeMetricRules))
 	for _, rule := range a.computeMetricRules {
 		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{
 			Name:   rule.metric,
