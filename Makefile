@@ -103,7 +103,7 @@ harvest: deps
 	@mkdir -p bin
 	@# Build the harvest and poller cli
 	@echo "Building"
-	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
 
 	@cp service/contrib/grafana bin; chmod +x bin/grafana
 
