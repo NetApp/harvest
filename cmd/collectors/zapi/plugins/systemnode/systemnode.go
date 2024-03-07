@@ -1,12 +1,10 @@
 package systemnode
 
 import (
-	"errors"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
@@ -46,11 +44,7 @@ func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 	// invoke system-get-node-info-iter zapi and populate node info
 	partnerNameMap, err := s.getPartnerNodeInfo()
 	if err != nil {
-		if errors.Is(err, errs.ErrNoInstance) {
-			s.Logger.Debug().Err(err).Msg("Failed to collect partner node detail")
-		} else {
-			s.Logger.Error().Err(err).Msg("Failed to collect partner node detail")
-		}
+		s.Logger.Error().Err(err).Msg("Failed to collect partner node detail")
 	}
 
 	// update node instance with partner info
@@ -89,7 +83,8 @@ func (s *SystemNode) getPartnerNodeInfo() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errs.New(errs.ErrNoInstance, "no records found")
+		s.Logger.Debug().Err(err).Msg("no records found")
+		return partnerNameMap, nil
 	}
 
 	for _, objectStore := range result {
