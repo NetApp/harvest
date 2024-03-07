@@ -300,8 +300,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 	return n, nil
 }
 
-func (c *Client) Init(retries int) error {
-
+func (c *Client) UpdateClusterInfo(retries int) error {
 	var (
 		err     error
 		content []byte
@@ -331,6 +330,10 @@ func (c *Client) Init(retries int) error {
 		return nil
 	}
 	return err
+}
+
+func (c *Client) Init(retries int) error {
+	return c.UpdateClusterInfo(retries)
 }
 
 func (c *Client) Cluster() Cluster {

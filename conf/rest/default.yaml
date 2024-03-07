@@ -2,6 +2,7 @@
 collector:          Rest
 
 schedule:
+  - routine: 24h  # This handles cases such as cluster upgrades or collector cache updates.
   - data: 3m
 
 # See https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md

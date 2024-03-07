@@ -5,7 +5,6 @@
 package volume
 
 import (
-	"github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -13,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"time"
@@ -84,7 +84,11 @@ func (v *Volume) Init() error {
 	// Read template to decide inclusion of flexgroup constituents
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
-	v.isArwSupportedVersion = v.versionHigherThan(ARWSupportedVersion)
+	v.isArwSupportedVersion, err = util.VersionAtLeast(v.client.Cluster().GetVersion(), ARWSupportedVersion)
+	if err != nil {
+		v.Logger.Error().Stack().Err(err).Send()
+		return err
+	}
 	return nil
 }
 
@@ -298,16 +302,4 @@ func (v *Volume) updateAggrMap(disks []gjson.Result) {
 			}
 		}
 	}
-}
-
-func (v *Volume) versionHigherThan(minVersion string) bool {
-	currentVersion, err := version.NewVersion(v.client.Cluster().GetVersion())
-	if err != nil {
-		return false
-	}
-	minSupportedVersion, err := version.NewVersion(minVersion)
-	if err != nil {
-		return false
-	}
-	return currentVersion.GreaterThanOrEqual(minSupportedVersion)
 }

@@ -7,6 +7,7 @@ package util
 import (
 	"errors"
 	"fmt"
+	"github.com/hashicorp/go-version"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
 	"golang.org/x/exp/maps"
@@ -409,4 +410,27 @@ func GetURLWithoutHost(r *http.Request) string {
 		urlWithoutHost += "?" + r.URL.RawQuery
 	}
 	return urlWithoutHost
+}
+
+// VersionAtLeast checks if the provided currentVersion of the cluster
+// is greater than or equal to the provided minimum version (minVersion).
+func VersionAtLeast(currentVersion string, minVersion string) (bool, error) {
+	parsedClusterVersion, err := version.NewVersion(currentVersion)
+	if err != nil {
+		return false, fmt.Errorf("invalid current version: %w", err)
+	}
+
+	minSupportedVersion, err := version.NewVersion(minVersion)
+	if err != nil {
+		return false, fmt.Errorf("invalid minimum version: %w", err)
+	}
+
+	// Check if the current version is greater than or equal to the minimum version
+	// and return the result
+	return parsedClusterVersion.GreaterThanOrEqual(minSupportedVersion), nil
+}
+
+// IsPublicAPI returns false if api endpoint has private keyword in it else true
+func IsPublicAPI(query string) bool {
+	return !strings.Contains(query, "private")
 }

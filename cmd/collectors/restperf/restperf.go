@@ -647,6 +647,10 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
+func (r *RestPerf) Fields() []string {
+	return []string{"*"}
+}
+
 func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var (
 		err         error
@@ -667,7 +671,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
-		Fields(r.Prop.Fields).
+		Fields(r.Fields()).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 

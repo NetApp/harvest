@@ -28,19 +28,29 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
 
+// Regular expression to match dot notation or single word without dot
+// It allows one or more alphanumeric characters or underscores, optionally followed by a dot and more characters
+// This pattern can repeat any number of times
+// This version does not allow numeric-only segments
+var regex = regexp.MustCompile(`^([a-zA-Z_]\w*\.)*[a-zA-Z_]\w*$`)
+
 type Rest struct {
 	*collector.AbstractCollector
-	Client    *rest.Client
-	Prop      *prop
-	endpoints []*endPoint
+	Client                       *rest.Client
+	Prop                         *prop
+	endpoints                    []*endPoint
+	lastDailyTasks               time.Time
+	isIgnoreUnknownFieldsEnabled bool
 }
 
 type endPoint struct {
@@ -58,8 +68,10 @@ type prop struct {
 	Counters       map[string]string
 	ReturnTimeOut  *int
 	Fields         []string
-	APIType        string // public, private
+	HiddenFields   []string
+	IsPublic       bool
 	Filter         []string
+	Href           string
 }
 
 type Metric struct {
@@ -84,8 +96,38 @@ func (r *Rest) query(p *endPoint) string {
 	return p.prop.Query
 }
 
-func (r *Rest) fields(p *endPoint) []string {
-	return p.prop.Fields
+func (r *Rest) isValidFormat(prop *prop) bool {
+	for _, str := range prop.Fields {
+		if !regex.MatchString(str) {
+			return false
+		}
+	}
+	return true
+}
+
+func (r *Rest) Fields(prop *prop) []string {
+	fields := prop.Fields
+	if prop.IsPublic {
+		// applicable for public API only
+		if !r.isIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
+			fields = []string{"*"}
+		}
+	}
+	if len(prop.HiddenFields) > 0 {
+		fieldsMap := make(map[string]bool)
+		for _, field := range fields {
+			fieldsMap[field] = true
+		}
+
+		// append hidden fields
+		for _, hiddenField := range prop.HiddenFields {
+			if _, exists := fieldsMap[hiddenField]; !exists {
+				fields = append(fields, hiddenField)
+				fieldsMap[hiddenField] = true
+			}
+		}
+	}
+	return fields
 }
 
 func (r *Rest) filter(p *endPoint) []string {
@@ -125,6 +167,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	if err = r.InitMatrix(); err != nil {
 		return err
 	}
+
 	r.Logger.Debug().
 		Int("numMetrics", len(r.Prop.Metrics)).
 		Str("timeout", r.Client.Timeout.String()).
@@ -222,26 +265,26 @@ func (r *Rest) initEndPoints() error {
 			n := line.GetNameS()
 			e := endPoint{name: n}
 
-			prop := prop{}
+			p := prop{}
 
-			prop.InstanceKeys = make([]string, 0)
-			prop.InstanceLabels = make(map[string]string)
-			prop.Counters = make(map[string]string)
-			prop.Metrics = make(map[string]*Metric)
-			prop.APIType = "public"
-			prop.ReturnTimeOut = r.Prop.ReturnTimeOut
-			prop.TemplatePath = r.Prop.TemplatePath
+			p.InstanceKeys = make([]string, 0)
+			p.InstanceLabels = make(map[string]string)
+			p.Counters = make(map[string]string)
+			p.Metrics = make(map[string]*Metric)
+			p.IsPublic = true
+			p.ReturnTimeOut = r.Prop.ReturnTimeOut
+			p.TemplatePath = r.Prop.TemplatePath
 
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
-					prop.Query = line1.GetContentS()
-					prop.APIType = checkQueryType(prop.Query)
+					p.Query = line1.GetContentS()
+					p.IsPublic = util.IsPublicAPI(p.Query)
 				}
 				if line1.GetNameS() == "counters" {
-					r.ParseRestCounters(line1, &prop)
+					r.ParseRestCounters(line1, &p)
 				}
 			}
-			e.prop = &prop
+			e.prop = &p
 			r.endpoints = append(r.endpoints, &e)
 		}
 	}
@@ -285,6 +328,58 @@ func getFieldName(source string, parent string) []string {
 	return res
 }
 
+// PollRoutine performs daily tasks such as updating the cluster info and caching href.
+func (r *Rest) PollRoutine() (map[string]*matrix.Matrix, error) {
+
+	startTime := time.Now()
+	// Update the cluster info to track if customer version is updated
+	err := r.Client.UpdateClusterInfo(5)
+	if err != nil {
+		return nil, err
+	}
+	apiD := time.Since(startTime)
+
+	startTime = time.Now()
+	v, err := util.VersionAtLeast(r.Client.Cluster().GetVersion(), "9.11.1")
+	if err != nil {
+		return nil, err
+	}
+	// Check the version if it is 9.11.1 then pass relevant fields and not *
+	if v {
+		r.isIgnoreUnknownFieldsEnabled = true
+	} else {
+		r.isIgnoreUnknownFieldsEnabled = false
+	}
+	r.updateHref()
+	r.lastDailyTasks = time.Now()
+	parseD := time.Since(startTime)
+
+	// update metadata for collector logs
+	_ = r.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
+	_ = r.Metadata.LazySetValueInt64("parse_time", "counter", parseD.Microseconds())
+	return nil, nil
+}
+
+func (r *Rest) updateHref() {
+	r.Prop.Href = rest.NewHrefBuilder().
+		APIPath(r.Prop.Query).
+		Fields(r.Fields(r.Prop)).
+		Filter(r.Prop.Filter).
+		ReturnTimeout(r.Prop.ReturnTimeOut).
+		IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
+		Build()
+
+	for _, e := range r.endpoints {
+		e.prop.Href = rest.NewHrefBuilder().
+			APIPath(r.query(e)).
+			Fields(r.Fields(e.prop)).
+			Filter(r.filter(e)).
+			ReturnTimeout(r.Prop.ReturnTimeOut).
+			IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
+			Build()
+	}
+}
+
 func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
@@ -295,18 +390,15 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Trace().Msg("starting data poll")
 
+	if err != nil {
+		return nil, err
+	}
+
 	r.Matrix[r.Object].Reset()
 
 	startTime = time.Now()
 
-	href := rest.NewHrefBuilder().
-		APIPath(r.Prop.Query).
-		Fields(r.Prop.Fields).
-		Filter(r.Prop.Filter).
-		ReturnTimeout(r.Prop.ReturnTimeOut).
-		Build()
-
-	if records, err = r.GetRestData(href); err != nil {
+	if records, err = r.GetRestData(r.Prop.Href); err != nil {
 		return nil, err
 	}
 
@@ -352,15 +444,8 @@ func (r *Rest) pollData(
 }
 
 func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, time.Duration, error) {
-	href := rest.NewHrefBuilder().
-		APIPath(r.query(e)).
-		Fields(r.fields(e)).
-		Filter(r.filter(e)).
-		ReturnTimeout(r.Prop.ReturnTimeOut).
-		Build()
-
 	now := time.Now()
-	data, err := r.GetRestData(href)
+	data, err := r.GetRestData(e.prop.Href)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -396,14 +481,6 @@ func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, 
 	}
 
 	return count, totalAPID
-}
-
-// returns private if api endpoint has private keyword in it else public
-func checkQueryType(query string) string {
-	if strings.Contains(query, "private") {
-		return "private"
-	}
-	return "public"
 }
 
 func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {

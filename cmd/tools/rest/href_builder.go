@@ -1,19 +1,21 @@
 package rest
 
 import (
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )
 
 type HrefBuilder struct {
-	apiPath       string
-	fields        string
-	counterSchema string
-	filter        []string
-	queryFields   string
-	queryValue    string
-	maxRecords    *int
-	returnTimeout *int
+	apiPath                      string
+	fields                       []string
+	counterSchema                string
+	filter                       []string
+	queryFields                  string
+	queryValue                   string
+	maxRecords                   *int
+	returnTimeout                *int
+	isIgnoreUnknownFieldsEnabled bool
 }
 
 func NewHrefBuilder() *HrefBuilder {
@@ -26,7 +28,7 @@ func (b *HrefBuilder) APIPath(apiPath string) *HrefBuilder {
 }
 
 func (b *HrefBuilder) Fields(fields []string) *HrefBuilder {
-	b.fields = strings.Join(fields, ",")
+	b.fields = fields
 	return b
 }
 
@@ -60,6 +62,11 @@ func (b *HrefBuilder) ReturnTimeout(returnTimeout *int) *HrefBuilder {
 	return b
 }
 
+func (b *HrefBuilder) IsIgnoreUnknownFieldsEnabled(isIgnoreUnknownFieldsEnabled bool) *HrefBuilder {
+	b.isIgnoreUnknownFieldsEnabled = isIgnoreUnknownFieldsEnabled
+	return b
+}
+
 func (b *HrefBuilder) Build() string {
 	href := strings.Builder{}
 	if !strings.HasPrefix(b.apiPath, "api/") {
@@ -68,7 +75,7 @@ func (b *HrefBuilder) Build() string {
 	href.WriteString(b.apiPath)
 
 	href.WriteString("?return_records=true")
-	addArg(&href, "&fields=", b.fields)
+	addArg(&href, "&fields=", strings.Join(b.fields, ","))
 	addArg(&href, "&counter_schemas=", b.counterSchema)
 	for _, f := range b.filter {
 		addArg(&href, "&", f)
@@ -80,6 +87,9 @@ func (b *HrefBuilder) Build() string {
 	}
 	if b.returnTimeout != nil {
 		addArg(&href, "&return_timeout=", strconv.Itoa(*b.returnTimeout))
+	}
+	if b.isIgnoreUnknownFieldsEnabled && util.IsPublicAPI(b.apiPath) {
+		addArg(&href, "&ignore_unknown_fields=", "true")
 	}
 	return href.String()
 }
