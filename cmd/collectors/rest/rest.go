@@ -589,7 +589,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 }
 
 func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}

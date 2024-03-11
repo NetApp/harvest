@@ -254,7 +254,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		APIPath(r.Prop.Query).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -671,7 +671,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -1266,7 +1266,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
@@ -1385,7 +1385,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}

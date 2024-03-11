@@ -324,7 +324,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
 	e.Logger.Trace().Strs("querying for events", filteredNames).Send()
 	_, missingNames := util.Intersection(filteredNames, names)
-	e.Logger.Debug().Strs("skipped events", missingNames).Msg("")
+	e.Logger.Debug().Strs("skipped events", missingNames).Send()
 	e.eventNames = filteredNames
 
 	// warning when total instance in cache > 1000 instance
@@ -336,7 +336,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	e.Logger.Info().Int("total instances", bookendCacheSize).Msg("")
+	e.Logger.Info().Int("total instances", bookendCacheSize).Send()
 	// warning when total instance in cache > 1000 instance
 	if bookendCacheSize > MaxBookendInstances {
 		e.Logger.Warn().Int("total instances", bookendCacheSize).Msg("cache has more than 1000 instances")
@@ -573,7 +573,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 
 					if instance == nil {
 						if instance, err = mx.NewInstance(instanceKey); err != nil {
-							e.Logger.Error().Err(err).Str("Instance key", instanceKey).Msg("")
+							e.Logger.Error().Err(err).Str("Instance key", instanceKey).Send()
 							continue
 						}
 					}
