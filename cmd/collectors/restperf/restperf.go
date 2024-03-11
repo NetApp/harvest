@@ -1529,8 +1529,7 @@ func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matri
 		// the table or API does not exist. return ErrAPIRequestRejected so the task goes to stand-by
 		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrAPIRequestRejected, err.Error()))
 	}
-	r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-	return nil, err
+	return nil, fmt.Errorf("failed to fetch data. href=[%s] err: %w", href, err)
 }
 
 func isWorkloadObject(query string) bool {
