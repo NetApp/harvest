@@ -130,7 +130,7 @@ func (c *Client) printRequestAndResponse(response []byte) {
 		c.Logger.Info().
 			Str("Request", c.request.URL.String()).
 			Str("Response", res).
-			Msg("")
+			Send()
 	}
 }
 

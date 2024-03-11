@@ -102,7 +102,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 					var securityAccountNewInstance *matrix.Instance
 					securityAccountNewKey := securityAccountKey + application + method
 					if securityAccountNewInstance, err = data.NewInstance(securityAccountNewKey); err != nil {
-						s.Logger.Error().Err(err).Str("add instance failed for instance key", securityAccountNewKey).Msg("")
+						s.Logger.Error().Err(err).Str("add instance failed for instance key", securityAccountNewKey).Send()
 						return nil, err
 					}
 

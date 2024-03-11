@@ -204,7 +204,7 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 				cgVolumeInstanceKey := key + sourceVol + destinationVol
 
 				if cgVolumeInstance, err = my.data.NewInstance(cgVolumeInstanceKey); err != nil {
-					my.Logger.Error().Err(err).Str("Instance key", cgVolumeInstanceKey).Msg("")
+					my.Logger.Error().Err(err).Str("Instance key", cgVolumeInstanceKey).Send()
 					continue
 				}
 

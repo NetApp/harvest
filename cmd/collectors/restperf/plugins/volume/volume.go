@@ -114,7 +114,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		}
 	}
 
-	v.Logger.Debug().Int("flexgroup volume count", len(cache.GetInstances())).Msg("")
+	v.Logger.Debug().Int("flexgroup volume count", len(cache.GetInstances())).Send()
 
 	// cache.Reset()
 
