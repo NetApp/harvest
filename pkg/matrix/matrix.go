@@ -335,6 +335,9 @@ func CreateMetric(key string, data *Matrix) error {
 func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger) (int, error) {
 	var skips int
 	prevMetric := prevMat.GetMetric(metricKey)
+	if prevMetric == nil {
+		return 1, errs.New(errs.ErrNoMetric, metricKey)
+	}
 	curMetric := m.GetMetric(metricKey)
 	prevRaw := prevMetric.values
 	prevRecord := prevMetric.GetRecords()

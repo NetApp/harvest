@@ -1,6 +1,8 @@
 package matrix
 
 import (
+	"errors"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"testing"
 )
@@ -309,5 +311,20 @@ func TestMetricReset(t *testing.T) {
 	_, pass := m.LazyGetValueInt64("poll_time", "task1")
 	if pass {
 		t.Errorf("expected metric to be skipped but passed")
+	}
+}
+
+func TestMissingMetric(t *testing.T) {
+	previous, current := setupMatrix(10, 10, oneInstance)
+	skips, err := current.Delta("missing", previous, logging.Get())
+	if err == nil {
+		t.Error("expected missing metric, got none")
+		return
+	}
+	if !errors.Is(err, errs.ErrNoMetric) {
+		t.Errorf("expected missing metric, got %v", err)
+	}
+	if skips != 1 {
+		t.Errorf("skips got %d, want 1", skips)
 	}
 }
