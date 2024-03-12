@@ -656,6 +656,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Trace().Msg("updating data cache")
 
+	mat := r.Matrix[r.Object]
+	if len(mat.GetInstances()) == 0 {
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances fetched in PollInstance")
+	}
+
 	timestamp := r.Matrix[r.Object].GetMetric("timestamp")
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
