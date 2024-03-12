@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 const (
@@ -42,11 +43,13 @@ func (f *FlexCache) Init() error {
 	return nil
 }
 
-func (f *FlexCache) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *FlexCache) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[f.Object]
+	f.client.Metadata.Reset()
+
 	flexCache, err := f.getFlexCaches()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
@@ -59,7 +62,7 @@ func (f *FlexCache) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 			instance.SetExportable(false)
 		}
 	}
-	return nil, nil
+	return nil, f.client.Metadata, nil
 }
 
 func (f *FlexCache) getFlexCaches() (*set.Set, error) {

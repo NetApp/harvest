@@ -18,6 +18,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"math"
 	"strconv"
 	"strings"
@@ -32,25 +33,25 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
-func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var read, write, rx, tx, util *matrix.Metric
 	var err error
 
 	data := dataMap[n.Object]
 	if read = data.GetMetric("rx_bytes"); read == nil {
-		return nil, errs.New(errs.ErrNoMetric, "rx_bytes")
+		return nil, nil, errs.New(errs.ErrNoMetric, "rx_bytes")
 	}
 
 	if write = data.GetMetric("tx_bytes"); write == nil {
-		return nil, errs.New(errs.ErrNoMetric, "tx_bytes")
+		return nil, nil, errs.New(errs.ErrNoMetric, "tx_bytes")
 	}
 
 	if rx = data.GetMetric("rx_percent"); rx == nil {
 		if rx, err = data.NewMetricFloat64("rx_percent"); err == nil {
 			rx.SetProperty("raw")
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 
 	}
@@ -58,7 +59,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 		if tx, err = data.NewMetricFloat64("tx_percent"); err == nil {
 			tx.SetProperty("raw")
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -66,7 +67,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
 			util.SetProperty("raw")
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -149,5 +150,5 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }

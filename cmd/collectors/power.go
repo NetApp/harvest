@@ -94,7 +94,7 @@ var eMetrics = []string{
 	"power",
 }
 
-func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, valueKey string, myData *matrix.Matrix, nodeToNumNode map[string]int) ([]*matrix.Matrix, error) {
+func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, valueKey string, myData *matrix.Matrix, nodeToNumNode map[string]int) []*matrix.Matrix {
 	sensorEnvironmentMetricMap := make(map[string]*environmentMetric)
 	excludedSensors := make(map[string][]sensorValue)
 
@@ -375,7 +375,7 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 			Msg("sensor with *hr units")
 	}
 
-	return []*matrix.Matrix{myData}, nil
+	return []*matrix.Matrix{myData}
 }
 
 func NewSensor(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -422,11 +422,12 @@ func (my *Sensor) Init() error {
 	return nil
 }
 
-func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[my.Object]
 	// Purge and reset data
 	my.data.PurgeInstances()
 	my.data.Reset()
+	my.client.Metadata.Reset()
 
 	// Set all global labels if they don't already exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
@@ -434,7 +435,7 @@ func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 	// Collect chassis fru show, so we can determine if a controller's PSUs are shared or not
 	nodeToNumNode, err := collectChassisFRU(my.client, my.Logger)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if len(nodeToNumNode) == 0 {
 		my.Logger.Debug().Msg("No chassis field replaceable units found")
@@ -444,5 +445,7 @@ func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, erro
 	if my.Parent == "Rest" {
 		valueKey = restValueKey
 	}
-	return calculateEnvironmentMetrics(data, my.Logger, valueKey, my.data, nodeToNumNode)
+	metrics := calculateEnvironmentMetrics(data, my.Logger, valueKey, my.data, nodeToNumNode)
+
+	return metrics, my.client.Metadata, nil
 }

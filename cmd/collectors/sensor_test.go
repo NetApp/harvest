@@ -135,11 +135,7 @@ func TestSensor_Run(t *testing.T) {
 		"cdot-k3-07": 1,
 		"cdot-k3-08": 1,
 	}
-	omat, err := calculateEnvironmentMetrics(mat, logging.Get(), zapiValueKey, sensor.data, nodeToNumNode)
-	if err != nil {
-		t.Errorf("got err %v", err)
-	}
-
+	omat := calculateEnvironmentMetrics(mat, logging.Get(), zapiValueKey, sensor.data, nodeToNumNode)
 	expected := map[string]map[string]float64{
 		"average_ambient_temperature": {"cdot-k3-05": 22, "cdot-k3-06": 22.5, "cdot-k3-07": 22, "cdot-k3-08": 22.5},
 		"average_fan_speed":           {"cdot-k3-05": 7030, "cdot-k3-06": 7050, "cdot-k3-07": 7040, "cdot-k3-08": 7050},

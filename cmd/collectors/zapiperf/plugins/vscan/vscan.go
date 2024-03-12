@@ -3,6 +3,7 @@ package vscan
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )
@@ -15,7 +16,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Vscan{AbstractPlugin: p}
 }
 
-func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[v.Object]
 	// defaults plugin options
 	isPerScanner := true
@@ -31,7 +32,7 @@ func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 
 	v.addSvmAndScannerLabels(data)
 	if !isPerScanner {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	return v.aggregatePerScanner(data)
@@ -56,7 +57,7 @@ func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
 	}
 }
 
-func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	// When isPerScanner=true, Harvest 1.6 uses this form:
 	// netapp.perf.dev.nltl-fas2520.vscan.scanner.10_64_30_62.scanner_stats_pct_mem_used 18 1501765640
 
@@ -161,5 +162,5 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, erro
 		}
 	}
 
-	return []*matrix.Matrix{cache}, nil
+	return []*matrix.Matrix{cache}, nil, nil
 }

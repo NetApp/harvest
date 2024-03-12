@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 const batchSize = "500"
@@ -32,7 +33,7 @@ func (v *VolumeTag) Init() error {
 	return v.client.Init(5)
 }
 
-func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		result  *node.Node
@@ -41,6 +42,8 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	)
 
 	data := dataMap[v.Object]
+	v.client.Metadata.Reset()
+
 	query := "volume-get-iter"
 	tag := "initial"
 	request := node.NewXMLS(query)
@@ -56,7 +59,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 
 	for {
 		if result, tag, err = v.client.InvokeBatchRequest(request, tag, ""); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		if result == nil {
@@ -67,7 +70,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 			volumes = x.GetChildren()
 		}
 		if len(volumes) == 0 {
-			return nil, nil
+			return nil, nil, nil
 		}
 
 		for _, volume := range volumes {
@@ -88,5 +91,5 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		}
 	}
 
-	return nil, nil
+	return nil, v.client.Metadata, nil
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 const (
@@ -19,7 +20,7 @@ func NewTenant(p *plugin.AbstractPlugin, s *StorageGrid) plugin.Plugin {
 	return &Tenant{AbstractPlugin: p, sg: s}
 }
 
-func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		used, quota, usedPercent *matrix.Metric
@@ -27,19 +28,21 @@ func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		tenantNamesByID          map[string]string
 	)
 	data := dataMap[t.Object]
+	t.sg.client.Metadata.Reset()
+
 	if used = data.GetMetric("dataBytes"); used == nil {
-		return nil, errs.New(errs.ErrNoMetric, "logical_used")
+		return nil, nil, errs.New(errs.ErrNoMetric, "logical_used")
 	}
 
 	if quota = data.GetMetric("policy.quotaObjectBytes"); quota == nil {
-		return nil, errs.New(errs.ErrNoMetric, "logical_quota")
+		return nil, nil, errs.New(errs.ErrNoMetric, "logical_quota")
 	}
 
 	if usedPercent = data.GetMetric("used_percent"); usedPercent == nil {
 		if usedPercent, err = data.NewMetricFloat64("used_percent"); err == nil {
 			usedPercent.SetProperty("raw")
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -72,7 +75,7 @@ func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	}
 
 	promMetrics := t.collectPromMetrics(tenantNamesByID)
-	return promMetrics, nil
+	return promMetrics, t.sg.client.Metadata, nil
 }
 
 func (t *Tenant) collectPromMetrics(tenantNamesByID map[string]string) []*matrix.Matrix {

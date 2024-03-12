@@ -34,15 +34,16 @@ const (
 )
 
 type Client struct {
-	client  *http.Client
-	request *http.Request
-	buffer  *bytes.Buffer
-	Logger  *logging.Logger
-	baseURL string
-	cluster Cluster
-	Timeout time.Duration
-	logRest bool // used to log Rest request/response
-	auth    *auth.Credentials
+	client   *http.Client
+	request  *http.Request
+	buffer   *bytes.Buffer
+	Logger   *logging.Logger
+	baseURL  string
+	cluster  Cluster
+	Timeout  time.Duration
+	logRest  bool // used to log Rest request/response
+	auth     *auth.Credentials
+	Metadata *util.Metadata
 }
 
 type Cluster struct {
@@ -63,7 +64,8 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 	)
 
 	client = Client{
-		auth: auth,
+		auth:     auth,
+		Metadata: &util.Metadata{},
 	}
 	client.Logger = logging.Get().SubLogger("REST", "Client")
 
@@ -140,6 +142,9 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	}
 
 	result, err := c.invokeWithAuthRetry()
+	c.Metadata.BytesRx += uint64(len(result))
+	c.Metadata.NumCalls++
+
 	return result, err
 }
 

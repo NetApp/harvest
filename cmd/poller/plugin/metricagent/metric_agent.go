@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )
@@ -42,7 +43,7 @@ func (a *MetricAgent) Init() error {
 	return err
 }
 
-func (a *MetricAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *MetricAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var err error
 	data := dataMap[a.Object]
@@ -51,7 +52,7 @@ func (a *MetricAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		_ = foo(data)
 	}
 
-	return nil, err
+	return nil, nil, err
 }
 
 func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {

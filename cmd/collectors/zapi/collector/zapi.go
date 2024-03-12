@@ -263,6 +263,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 	oldInstances := set.New()
 	mat := z.Matrix[z.Object]
+	z.Client.Metadata.Reset()
+
 	// copy keys of current instances. This is used to remove deleted instances from matrix later
 	for key := range mat.GetInstances() {
 		oldInstances.Add(key)
@@ -410,6 +412,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(numInstances))
+	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx)
+	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls)
+
 	z.AddCollectCount(count)
 
 	if numInstances == 0 {

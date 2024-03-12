@@ -5,6 +5,7 @@ package disk
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 type Disk struct {
@@ -15,7 +16,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Disk{AbstractPlugin: p}
 }
 
-func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[d.Object]
 	for _, instance := range data.GetInstances() {
 
@@ -35,5 +36,5 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }

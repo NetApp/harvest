@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"strings"
 )
@@ -51,14 +52,16 @@ func (my *SnapMirror) Init() error {
 	my.Logger.Debug().Msg("plugin initialized")
 	return nil
 }
-func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[my.Object]
+	my.client.Metadata.Reset()
+
 	destUpdCount := 0
 	srcUpdCount := 0
 
 	if cluster, ok := data.GetGlobalLabels()["cluster"]; ok {
 		if err := my.getSVMPeerData(cluster); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		my.Logger.Debug().Msg("updated svm peer detail")
 	}
@@ -66,10 +69,10 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	lastTransferSizeMetric := data.GetMetric("snapmirror-info.last-transfer-size")
 	lagTimeMetric := data.GetMetric("snapmirror-info.lag-time")
 	if lastTransferSizeMetric == nil {
-		return nil, errs.New(errs.ErrNoMetric, "last_transfer_size")
+		return nil, nil, errs.New(errs.ErrNoMetric, "last_transfer_size")
 	}
 	if lagTimeMetric == nil {
-		return nil, errs.New(errs.ErrNoMetric, "lag_time")
+		return nil, nil, errs.New(errs.ErrNoMetric, "lag_time")
 	}
 
 	for _, instance := range data.GetInstances() {
@@ -130,8 +133,12 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 			}
 		}
 	}
-	my.Logger.Debug().Msgf("updated %d destination and %d source nodes", destUpdCount, srcUpdCount)
-	return nil, nil
+	my.Logger.Debug().
+		Int("destUpdCount", destUpdCount).
+		Int("srcUpdCount", srcUpdCount).
+		Msg("updated destination and source nodes")
+
+	return nil, my.client.Metadata, nil
 }
 
 func (my *SnapMirror) getSVMPeerData(cluster string) error {

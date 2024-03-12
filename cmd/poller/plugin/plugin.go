@@ -33,6 +33,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"sync"
 	"time"
 )
@@ -44,7 +45,7 @@ const DefaultPollInterval = 3 * time.Minute
 type Plugin interface {
 	GetName() string
 	Init() error
-	Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
+	Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error)
 }
 
 var (
@@ -149,7 +150,7 @@ func (p *AbstractPlugin) InitAbc() error {
 
 // Run should run the plugin and return collected data as an array of matrices
 // (Since most plugins don't collect data, they will always return nil instead)
-func (p *AbstractPlugin) Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (p *AbstractPlugin) Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	panic(p.Name + " has not implemented Run()")
 }
 

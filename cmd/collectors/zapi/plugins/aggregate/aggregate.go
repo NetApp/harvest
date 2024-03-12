@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )
@@ -45,8 +46,9 @@ func (a *Aggregate) Init() error {
 	return nil
 }
 
-func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[a.Object]
+	a.client.Metadata.Reset()
 
 	// invoke aggr-object-store-get-iter zapi and populate cloud stores info
 	if err := a.getCloudStores(); err != nil {
@@ -95,7 +97,7 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 			}
 		}
 	}
-	return nil, nil
+	return nil, a.client.Metadata, nil
 }
 
 func (a *Aggregate) getCloudStores() error {

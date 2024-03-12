@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strings"
 )
 
@@ -22,7 +23,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &QosPolicyFixed{AbstractPlugin: p}
 }
 
-func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[p.Object]
 
 	// create metrics
@@ -30,7 +31,7 @@ func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
 			p.Logger.Error().Err(err).Str("key", k).Msg("error while creating metric")
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -38,7 +39,7 @@ func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		p.setFixed(data, instance)
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }
 
 func (p *QosPolicyFixed) setFixed(data *matrix.Matrix, instance *matrix.Instance) {

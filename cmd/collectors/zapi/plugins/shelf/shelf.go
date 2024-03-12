@@ -139,7 +139,7 @@ func (my *Shelf) Init() error {
 	return nil
 }
 
-func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		err    error
@@ -147,6 +147,8 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	)
 
 	data := dataMap[my.Object]
+	my.client.Metadata.Reset()
+
 	if my.client.IsClustered() {
 		for _, instance := range data.GetInstances() {
 			if !instance.IsExportable() {
@@ -163,7 +165,7 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 				instance.SetLabel("isEmbedded", "No")
 			}
 		}
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	// 7 mode handling
@@ -183,18 +185,18 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 	result, err := my.client.InvokeZapiCall(request)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	output, err = my.handle7Mode(data, result)
 
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	my.Logger.Debug().Int("Shelves instance count", len(data.GetInstances())).Send()
 	output = append(output, data)
-	return output, nil
+	return output, my.client.Metadata, nil
 }
 
 func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix.Matrix, error) {

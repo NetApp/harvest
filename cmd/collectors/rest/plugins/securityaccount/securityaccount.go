@@ -5,12 +5,14 @@
 package securityaccount
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"time"
 )
@@ -41,8 +43,7 @@ func (s *SecurityAccount) Init() error {
 		s.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
 	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
-		s.Logger.Error().Stack().Err(err).Msg("connecting")
-		return err
+		return fmt.Errorf("failed to connect err=%w", err)
 	}
 
 	if err = s.client.Init(5); err != nil {
@@ -53,7 +54,7 @@ func (s *SecurityAccount) Init() error {
 	return nil
 }
 
-func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		result                 []gjson.Result
 		err                    error
@@ -66,8 +67,9 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		Fields([]string{"applications"}).
 		Build()
 
+	s.client.Metadata.Reset()
 	if result, err = collectors.InvokeRestCall(s.client, href, s.Logger); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	for _, securityAccount := range result {
@@ -75,8 +77,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		svm := securityAccount.Get("owner.name").String()
 
 		if !securityAccount.IsObject() {
-			s.Logger.Error().Str("type", securityAccount.Type.String()).Msg("Security Account is not an object, skipping")
-			return nil, errs.New(errs.ErrNoInstance, "security account is not an object")
+			return nil, nil, errs.New(errs.ErrNoInstance, "security account is not an object. type="+securityAccount.Type.String())
 		}
 
 		// reset applicationToMethodMap map
@@ -102,8 +103,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 					var securityAccountNewInstance *matrix.Instance
 					securityAccountNewKey := securityAccountKey + application + method
 					if securityAccountNewInstance, err = data.NewInstance(securityAccountNewKey); err != nil {
-						s.Logger.Error().Err(err).Str("add instance failed for instance key", securityAccountNewKey).Send()
-						return nil, err
+						return nil, nil, fmt.Errorf("add instance failed for instance key %s err: %w", securityAccountNewKey, err)
 					}
 
 					for k, v := range securityAccountInstance.GetLabels() {
@@ -116,5 +116,5 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		}
 	}
 
-	return []*matrix.Matrix{data}, nil
+	return []*matrix.Matrix{data}, s.client.Metadata, nil
 }

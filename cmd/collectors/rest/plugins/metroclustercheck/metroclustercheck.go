@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -42,7 +43,7 @@ func (m *MetroclusterCheck) Init() error {
 	return nil
 }
 
-func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	// Purge and reset data
 	m.data.PurgeInstances()
 	m.data.Reset()
@@ -59,7 +60,7 @@ func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 		m.update(instance.GetLabel("volume"), "volume")
 	}
 
-	return []*matrix.Matrix{m.data}, nil
+	return []*matrix.Matrix{m.data}, nil, nil
 }
 
 func (m *MetroclusterCheck) update(objectInfo string, object string) {

@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 type Security struct {
@@ -49,26 +50,28 @@ func (my *Security) Init() error {
 	return nil
 }
 
-func (my *Security) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Security) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		err error
 	)
 
 	data := dataMap[my.Object]
+	my.client.Metadata.Reset()
+
 	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 
 		// invoke security-config-get zapi with 'ssl' interface and get fips status
 		if my.fipsEnabled, err = my.getSecurityConfig(); err != nil {
 			my.Logger.Warn().Err(err).Msg("Failed to collect fips enable status")
-			//return nil, nil
+			// return nil, nil
 		}
 
 		// invoke security-protocol-get zapi with 'telnet' and 'rsh' and get
 		if my.telnetEnabled, my.rshEnabled, err = my.getSecurityProtocols(); err != nil {
 			my.Logger.Warn().Err(err).Msg("Failed to collect telnet and rsh enable status")
-			//return nil, nil
+			// return nil, nil
 		}
 
 		// update instance based on the above zapi response
@@ -86,7 +89,7 @@ func (my *Security) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	}
 
 	my.currentVal++
-	return nil, nil
+	return nil, my.client.Metadata, nil
 }
 
 func (my *Security) getSecurityConfig() (string, error) {
