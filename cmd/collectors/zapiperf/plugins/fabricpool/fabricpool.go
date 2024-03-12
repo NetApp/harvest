@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 )
 
@@ -29,10 +30,10 @@ func (f *FabricPool) Init() error {
 	return nil
 }
 
-func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, "cloud_bin_operation", f.includeConstituents, f.Logger)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return []*matrix.Matrix{cache}, nil
+	return []*matrix.Matrix{cache}, nil, nil
 }

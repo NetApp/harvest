@@ -134,6 +134,7 @@ func (s *StorageGrid) InitCache() error {
 }
 
 func (s *StorageGrid) PollData() (map[string]*matrix.Matrix, error) {
+	s.client.Metadata.Reset()
 	if s.Props.Query == "prometheus" {
 		return s.pollPrometheusMetrics()
 	}
@@ -175,6 +176,9 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	_ = s.Metadata.LazySetValueInt64("parse_time", "data", 0)
 	_ = s.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = s.Metadata.LazySetValueInt64("instances", "data", int64(numRecords))
+	_ = s.Metadata.LazySetValueUint64("bytesRx", "data", s.client.Metadata.BytesRx)
+	_ = s.Metadata.LazySetValueUint64("numCalls", "data", s.client.Metadata.NumCalls)
+
 	s.AddCollectCount(count)
 
 	return metrics, nil
@@ -279,6 +283,9 @@ func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 	_ = s.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = s.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = s.Metadata.LazySetValueInt64("instances", "data", int64(numRecords))
+	_ = s.Metadata.LazySetValueUint64("bytesRx", "data", s.client.Metadata.BytesRx)
+	_ = s.Metadata.LazySetValueUint64("numCalls", "data", s.client.Metadata.NumCalls)
+
 	s.AddCollectCount(count)
 
 	return s.Matrix, nil

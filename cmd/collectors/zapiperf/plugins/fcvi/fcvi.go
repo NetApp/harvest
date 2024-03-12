@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 const batchSize = "500"
@@ -33,14 +34,17 @@ func (f *FCVI) Init() error {
 	return f.client.Init(5)
 }
 
-func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		result []*node.Node
 		err    error
 	)
 
 	adapterPortMap := make(map[string]string)
+
 	data := dataMap[f.Object]
+	f.client.Metadata.Reset()
+
 	query := "metrocluster-interconnect-adapter-get-iter"
 	request := node.NewXMLS(query)
 	request.NewChildS("max-records", batchSize)
@@ -53,11 +57,11 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	request.AddChild(desired)
 
 	if result, err = f.client.InvokeZapiCall(request); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if len(result) == 0 || result == nil {
-		return nil, errs.New(errs.ErrNoInstance, "no records found")
+		return nil, nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
 	f.Logger.Info().Msgf("%d", len(result))
 
@@ -77,5 +81,5 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 			instance.SetLabel("port", port)
 		}
 	}
-	return nil, nil
+	return nil, f.client.Metadata, nil
 }

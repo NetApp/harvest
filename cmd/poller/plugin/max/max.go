@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog"
 	"regexp"
 	"strconv"
@@ -115,7 +116,7 @@ func (m *Max) parseRules() error {
 	return nil
 }
 
-func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	data := dataMap[m.Object]
 	matrices := make(map[string]*matrix.Matrix)
@@ -194,7 +195,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 				if objInstance = matrices[matrixKey].GetInstance(objKey); objInstance == nil {
 					rule.counts[objKey] = make(map[string]int)
 					if objInstance, err = matrices[matrixKey].NewInstance(objKey); err != nil {
-						return nil, err
+						return nil, nil, err
 					}
 				}
 
@@ -237,7 +238,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 		matricesArray = append(matricesArray, v)
 	}
 
-	return matricesArray, nil
+	return matricesArray, nil, nil
 }
 
 // NewMetrics returns the new metrics the receiver creates

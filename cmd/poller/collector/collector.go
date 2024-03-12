@@ -254,6 +254,8 @@ func Init(c Collector) error {
 	_, _ = md.NewMetricInt64("plugin_time")
 	_, _ = md.NewMetricUint64("metrics")
 	_, _ = md.NewMetricUint64("instances")
+	_, _ = md.NewMetricUint64("bytesRx")
+	_, _ = md.NewMetricUint64("numCalls")
 
 	// Used by collector logging but not exported
 	loggingOnly := []string{begin, "export_time"}
@@ -440,18 +442,23 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 					for _, v := range c.Plugins {
 						for _, plg := range v {
-							if pluginData, err := plg.Run(data); err != nil {
+							pluginData, pluginMetadata, err := plg.Run(data)
+							if err != nil {
 								c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
-							} else if pluginData != nil {
+								continue
+							}
+							if pluginData != nil {
 								results = append(results, pluginData...)
 								c.Logger.Debug().
 									Str("pluginName", plg.GetName()).
 									Int("dataLength", len(pluginData)).
 									Msg("plugin added data")
 							} else {
-								c.Logger.Trace().
-									Str("pluginName", plg.GetName()).
-									Msg("plugin completed")
+								c.Logger.Trace().Str("pluginName", plg.GetName()).Msg("plugin completed")
+							}
+							if pluginMetadata != nil {
+								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
+								_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls)
 							}
 						}
 					}
@@ -581,6 +588,12 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 
 		info.Str("task", taskName)
 	}
+
+	bytesRx, _ := c.Metadata.GetMetric("bytesRx").GetValueUint64(inst)
+	info.Uint64("bytesRx", bytesRx)
+
+	numCalls, _ := c.Metadata.GetMetric("numCalls").GetValueUint64(inst)
+	info.Uint64("numCalls", numCalls)
 
 	info.Msg("Collected")
 }

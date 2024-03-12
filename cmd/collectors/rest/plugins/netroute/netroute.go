@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"strings"
@@ -57,7 +58,7 @@ func (n *NetRoute) Init() error {
 	return nil
 }
 
-func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	data := dataMap[n.Object]
 	// Purge and reset data
@@ -82,7 +83,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 				interfaceInstance, err := n.data.NewInstance(index)
 				if err != nil {
 					n.Logger.Error().Err(err).Str("add instance failed for instance key", key).Send()
-					return nil, err
+					return nil, nil, err
 				}
 
 				for _, l := range instanceLabels {
@@ -97,5 +98,5 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		}
 	}
 
-	return []*matrix.Matrix{n.data}, nil
+	return []*matrix.Matrix{n.data}, nil, nil
 }

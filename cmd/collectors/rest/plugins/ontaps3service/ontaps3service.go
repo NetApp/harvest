@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strings"
 	"time"
@@ -54,7 +55,7 @@ func (o *OntapS3Service) Init() error {
 	return nil
 }
 
-func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		result      []gjson.Result
 		err         error
@@ -65,6 +66,7 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	// reset svmToS3serverMap map
 	svmToURLMap = make(map[string][]string)
 	data := dataMap[o.Object]
+	o.client.Metadata.Reset()
 
 	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port"}
 	href := rest.NewHrefBuilder().
@@ -73,14 +75,14 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		Build()
 
 	if result, err = collectors.InvokeRestCall(o.client, href, o.Logger); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Iterate over services API response
 	for _, ontaps3Service := range result {
 		if !ontaps3Service.IsObject() {
 			o.Logger.Error().Str("type", ontaps3Service.Type.String()).Msg("Ontap S3 Service is not an object, skipping")
-			return nil, errs.New(errs.ErrNoInstance, "Ontap S3 Service is not an object")
+			return nil, nil, errs.New(errs.ErrNoInstance, "Ontap S3 Service is not an object")
 		}
 		s3ServerName := ontaps3Service.Get("name").String()
 		svm := ontaps3Service.Get("svm.name").String()
@@ -122,5 +124,5 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		ontapS3.SetLabel("url", strings.Join(urlValue, ","))
 	}
 
-	return nil, nil
+	return nil, o.client.Metadata, nil
 }

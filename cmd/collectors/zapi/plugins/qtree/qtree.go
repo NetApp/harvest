@@ -135,7 +135,7 @@ func (q *Qtree) Init() error {
 	return nil
 }
 
-func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		request, response *node.Node
 		quotas            []*node.Node
@@ -145,6 +145,8 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 	)
 
 	data := dataMap[q.Object]
+	q.client.Metadata.Reset()
+
 	apiT := 0 * time.Second
 	parseT := 0 * time.Second
 
@@ -181,7 +183,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		response, tag, ad, pd, err = q.client.InvokeBatchWithTimers(request, tag)
 
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		if response == nil {
@@ -201,7 +203,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 
 		if len(quotas) == 0 {
 			q.Logger.Debug().Msg("no quota instances found")
-			return nil, nil
+			return nil, q.client.Metadata, nil
 		}
 
 		q.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
@@ -215,7 +217,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		}
 
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -232,7 +234,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 	qtreePluginData.UUID = q.Parent + ".Qtree"
 	qtreePluginData.Object = "qtree"
 	qtreePluginData.Identifier = "qtree"
-	return []*matrix.Matrix{qtreePluginData, q.data}, nil
+	return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
 }
 
 func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {

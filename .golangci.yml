@@ -61,3 +61,5 @@ linters-settings:
   gocritic:
     disabled-tags:
       - style
+  dogsled:
+    max-blank-identifiers: 3

@@ -259,13 +259,14 @@ func (d *Disk) initMaps() {
 	d.aggrMap = make(map[string]*aggregate)
 }
 
-func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		err    error
 		output []*matrix.Matrix
 	)
 	data := dataMap[d.Object]
+	d.client.Metadata.Reset()
 
 	// Set all global labels from zapi.go if already not exist
 	for a := range d.instanceLabels {
@@ -283,42 +284,42 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 	result, err := d.client.InvokeZapiCall(request)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	d.initMaps()
 
 	output, err = d.handleCMode(result)
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	output, err = d.handleShelfPower(result, output)
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	err = d.getAggregates()
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	err = d.getDisks()
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	err = d.populateShelfIOPS(data)
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	output, err = d.calculateAggrPower(data, output)
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
-	return output, nil
+	return output, d.client.Metadata, nil
 }
 
 func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) ([]*matrix.Matrix, error) {

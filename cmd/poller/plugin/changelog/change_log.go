@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"maps"
 	"strconv"
 	"time"
@@ -108,13 +109,13 @@ func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
 }
 
 // Run processes the data and generates ChangeLog instances
-func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	data := dataMap[c.Object]
 	changeLogMap, err := c.initMatrix()
 	if err != nil {
 		c.Logger.Warn().Err(err).Msg("error while init matrix")
-		return nil, err
+		return nil, nil, err
 	}
 
 	// reset metric count
@@ -123,7 +124,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	// if this is the first poll
 	if c.previousData == nil {
 		c.copyPreviousData(data)
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	changeMat := changeLogMap[c.matrixName]
@@ -132,7 +133,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	object := data.Object
 	if c.changeLogConfig.Object == "" {
 		c.Logger.Warn().Str("object", object).Msg("ChangeLog is not supported. Missing correct configuration")
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	prevMat := c.previousData
@@ -167,7 +168,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		prevInstance := c.previousData.GetInstance(prevKey)
 
 		if prevInstance == nil {
-			//instance created
+			// instance created
 			change := &Change{
 				key:    uuid + "_" + object,
 				object: object,
@@ -239,7 +240,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 			Msg("Collected")
 	}
 
-	return matricesArray, nil
+	return matricesArray, nil, nil
 }
 
 // copyPreviousData creates a copy of the previous data for comparison
