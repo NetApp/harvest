@@ -503,7 +503,7 @@ func (s *StorageGrid) InitAPIPath() {
 	apiVersion := s.Params.GetChildContentS("api")
 	if !strings.HasSuffix(s.client.APIPath, apiVersion) {
 		cur := s.client.APIPath
-		s.client.APIPath = "/apiVersion/" + apiVersion
+		s.client.APIPath = "/api/" + apiVersion
 		s.Logger.Debug().
 			Str("clientAPI", cur).
 			Str("templateAPI", apiVersion).
