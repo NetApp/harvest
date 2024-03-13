@@ -329,7 +329,7 @@ func getFieldName(source string, parent string) []string {
 }
 
 // PollRoutine performs daily tasks such as updating the cluster info and caching href.
-func (r *Rest) PollRoutine() (map[string]*matrix.Matrix, error) {
+func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	startTime := time.Now()
 	// Update the cluster info to track if customer version is updated
