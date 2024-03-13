@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"time"
 )
 
@@ -32,13 +33,15 @@ func (v *VolumeTag) Init() error {
 	return v.client.Init(5)
 }
 
-func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		err error
 	)
 
 	data := dataMap[v.Object]
+	v.client.Metadata.Reset()
+
 	query := "api/storage/volumes"
 
 	href := rest.NewHrefBuilder().
@@ -49,11 +52,11 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 	records, err := rest.Fetch(v.client, href)
 	if err != nil {
 		v.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return nil, err
+		return nil, nil, err
 	}
 
 	if len(records) == 0 {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	for _, volume := range records {
@@ -78,5 +81,5 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, er
 		}
 	}
 
-	return nil, nil
+	return nil, v.client.Metadata, nil
 }

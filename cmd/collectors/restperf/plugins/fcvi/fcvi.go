@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"time"
 )
 
@@ -32,8 +33,10 @@ func (f *FCVI) Init() error {
 	return f.client.Init(5)
 }
 
-func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[f.Object]
+	f.client.Metadata.Reset()
+
 	query := "api/private/cli/metrocluster/interconnect/adapter"
 	fields := []string{"node", "adapter", "port_name"}
 	href := rest.NewHrefBuilder().
@@ -43,11 +46,11 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	records, err := rest.Fetch(f.client, href)
 	if err != nil {
 		f.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return nil, err
+		return nil, nil, err
 	}
 
 	if len(records) == 0 {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	for _, adapterData := range records {
@@ -65,5 +68,5 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 		}
 	}
 
-	return nil, nil
+	return nil, f.client.Metadata, nil
 }

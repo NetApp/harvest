@@ -72,7 +72,7 @@ func begin() {
 	// Query for existing CA
 	certificates, err := fetchCA()
 	if err != nil {
-		log.Error().Err(err).Msg("")
+		log.Error().Err(err).Send()
 		return
 	}
 
@@ -84,7 +84,7 @@ func begin() {
 	// Create private key and certificate signing request (CSR)
 	csr, err := ensureOpenSSLInstalled()
 	if err != nil {
-		log.Error().Err(err).Msg("")
+		log.Error().Err(err).Send()
 		return
 	}
 
@@ -118,7 +118,7 @@ func begin() {
 	// Add certificate auth to this ONTAP user
 	err = addCertificateAuthToHarvestUser()
 	if err != nil {
-		log.Error().Err(err).Msg("")
+		log.Error().Err(err).Send()
 	}
 
 	fmt.Printf("Success! Test with:\n")

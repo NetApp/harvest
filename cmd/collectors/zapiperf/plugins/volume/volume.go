@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"maps"
 	"regexp"
 	"sort"
@@ -47,7 +48,7 @@ func (v *Volume) Init() error {
 // @TODO rewrite using vector arithmetic
 // will simplify the code a whole!!!
 
-func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		err error
@@ -68,7 +69,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
 	if err != nil {
 		v.Logger.Error().Err(err).Msg("add metric")
-		return nil, err
+		return nil, nil, err
 	}
 	v.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
 
@@ -207,7 +208,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 
 							if tempOps == nil {
 								if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
-									return nil, err
+									return nil, nil, err
 								}
 								tempOps.SetExportable(false)
 							} else {
@@ -272,5 +273,5 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	}
 
 	// volume_aggr_labels metric is deprecated now and will be removed later.
-	return []*matrix.Matrix{cache, volumeAggrmetric}, nil
+	return []*matrix.Matrix{cache, volumeAggrmetric}, nil, nil
 }

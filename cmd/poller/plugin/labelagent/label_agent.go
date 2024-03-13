@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strings"
 )
 
@@ -57,7 +58,7 @@ func (a *LabelAgent) Init() error {
 	return err
 }
 
-func (a *LabelAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *LabelAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var err error
 
@@ -66,7 +67,7 @@ func (a *LabelAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 		_ = foo(data)
 	}
 
-	return nil, err
+	return nil, nil, err
 }
 
 // splits one label value into multiple labels using separator symbol

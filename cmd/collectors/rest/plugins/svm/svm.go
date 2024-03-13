@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"regexp"
 	"sort"
@@ -71,12 +72,14 @@ func (my *SVM) Init() error {
 	return nil
 }
 
-func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		err error
 	)
 
 	data := dataMap[my.Object]
+	my.client.Metadata.Reset()
+
 	// update nsswitch info
 	if my.nsswitchInfo, err = my.GetNSSwitchInfo(data); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
@@ -164,7 +167,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 			svmInstance.SetLabel("insecured", strconv.FormatBool(insecured))
 		}
 	}
-	return nil, nil
+	return nil, my.client.Metadata, nil
 }
 
 func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]Nsswitch, error) {

@@ -134,13 +134,15 @@ func (q *Qtree) Init() error {
 	return nil
 }
 
-func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		result     []gjson.Result
 		err        error
 		numMetrics int
 	)
 	data := dataMap[q.Object]
+	q.client.Metadata.Reset()
+
 	// Purge and reset data
 	q.data.PurgeInstances()
 	q.data.Reset()
@@ -166,7 +168,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 		Build()
 
 	if result, err = collectors.InvokeRestCall(q.client, href, q.Logger); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	quotaCount := 0
@@ -181,7 +183,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	q.Logger.Info().
@@ -194,7 +196,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error)
 	qtreePluginData.UUID = q.Parent + ".Qtree"
 	qtreePluginData.Object = "qtree"
 	qtreePluginData.Identifier = "qtree"
-	return []*matrix.Matrix{qtreePluginData, q.data}, nil
+	return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
 }
 
 func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {

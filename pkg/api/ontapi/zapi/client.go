@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"io"
 	"net/http"
 	"strconv"
@@ -38,6 +39,7 @@ type Client struct {
 	Logger     *logging.Logger // logger used for logging
 	logZapi    bool            // used to log ZAPI request/response
 	auth       *auth.Credentials
+	Metadata   *util.Metadata
 }
 
 func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
@@ -52,7 +54,8 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	)
 
 	client = Client{
-		auth: c,
+		auth:     c,
+		Metadata: &util.Metadata{},
 	}
 	client.Logger = logging.Get().SubLogger("Zapi", "Client")
 
@@ -512,6 +515,9 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 		parseT = time.Since(start)
 	}
 
+	c.Metadata.BytesRx += uint64(len(body))
+	c.Metadata.NumCalls++
+
 	// check if the request was successful
 	if result = root.GetChildS("results"); result == nil {
 		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, "missing \"results\"")
@@ -590,5 +596,9 @@ func (c *Client) tlsVersion(version string) uint16 {
 
 // NewTestClient It's used for unit test only
 func NewTestClient() *Client {
-	return &Client{system: &system{name: "testCluster", clustered: true}, request: &http.Request{}}
+	return &Client{
+		system:   &system{name: "testCluster", clustered: true},
+		request:  &http.Request{},
+		Metadata: &util.Metadata{},
+	}
 }

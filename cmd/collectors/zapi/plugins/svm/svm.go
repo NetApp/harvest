@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"sort"
 	"strconv"
@@ -113,12 +114,14 @@ func (my *SVM) Init() error {
 	return nil
 }
 
-func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		err error
 	)
 
 	data := dataMap[my.Object]
+	my.client.Metadata.Reset()
+
 	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
 
@@ -307,7 +310,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	}
 
 	my.currentVal++
-	return nil, nil
+	return nil, my.client.Metadata, nil
 }
 
 func (my *SVM) GetAuditProtocols() (map[string]string, error) {

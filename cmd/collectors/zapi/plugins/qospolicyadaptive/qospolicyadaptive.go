@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 var metrics = []string{
@@ -20,14 +21,14 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &QosPolicyAdaptive{AbstractPlugin: p}
 }
 
-func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[p.Object]
 	// create metrics
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
 			p.Logger.Error().Err(err).Str("key", k).Msg("error while creating metric")
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -40,7 +41,7 @@ func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 		p.setIOPs(data, instance, "peak_iops")
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }
 
 func (p *QosPolicyAdaptive) setIOPs(data *matrix.Matrix, instance *matrix.Instance, labelName string) {

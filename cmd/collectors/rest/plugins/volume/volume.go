@@ -92,8 +92,10 @@ func (v *Volume) Init() error {
 	return nil
 }
 
-func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[v.Object]
+	v.client.Metadata.Reset()
+
 	if v.currentVal >= v.PluginInvocationRate {
 		v.currentVal = 0
 
@@ -122,7 +124,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	v.handleARWProtection(data)
 
 	v.currentVal++
-	return []*matrix.Matrix{v.arw}, nil
+	return []*matrix.Matrix{v.arw}, v.client.Metadata, nil
 }
 
 func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]volumeInfo) {

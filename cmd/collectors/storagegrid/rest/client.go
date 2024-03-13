@@ -29,17 +29,18 @@ const (
 var NewClientFunc = NewClient
 
 type Client struct {
-	client  *http.Client
-	request *http.Request
-	buffer  *bytes.Buffer
-	Logger  *logging.Logger
-	baseURL string
-	Cluster Cluster
-	token   string
-	Timeout time.Duration
-	logRest bool // used to log Rest request/response
-	APIPath string
-	auth    *auth.Credentials
+	client   *http.Client
+	request  *http.Request
+	buffer   *bytes.Buffer
+	Logger   *logging.Logger
+	baseURL  string
+	Cluster  Cluster
+	token    string
+	Timeout  time.Duration
+	logRest  bool // used to log Rest request/response
+	APIPath  string
+	auth     *auth.Credentials
+	Metadata *util.Metadata
 }
 
 type Cluster struct {
@@ -86,7 +87,8 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 	)
 
 	client = Client{
-		auth: c,
+		auth:     c,
+		Metadata: &util.Metadata{},
 	}
 	client.Logger = logging.Get().SubLogger("StorageGrid", "Client")
 
@@ -130,7 +132,7 @@ func (c *Client) printRequestAndResponse(response []byte) {
 		c.Logger.Info().
 			Str("Request", c.request.URL.String()).
 			Str("Response", res).
-			Msg("")
+			Send()
 	}
 }
 
@@ -262,6 +264,9 @@ func (c *Client) fetch() ([]byte, error) {
 		return nil, err
 	}
 	defer c.printRequestAndResponse(body)
+
+	c.Metadata.BytesRx += uint64(len(body))
+	c.Metadata.NumCalls++
 
 	return body, nil
 }

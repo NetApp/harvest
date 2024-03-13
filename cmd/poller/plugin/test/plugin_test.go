@@ -96,7 +96,7 @@ func TestMultipleRule(t *testing.T) {
 		m.Object: m,
 	}
 	for _, plg := range Plugins {
-		if pluginData, err := plg.Run(dataMap); err != nil {
+		if pluginData, _, err := plg.Run(dataMap); err != nil {
 			panic(err)
 		} else if pluginData != nil {
 			results = append(results, pluginData...)

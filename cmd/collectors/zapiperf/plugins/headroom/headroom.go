@@ -5,6 +5,7 @@ package headroom
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strings"
 )
 
@@ -16,7 +17,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Headroom{AbstractPlugin: p}
 }
 
-func (h *Headroom) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (h *Headroom) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	data := dataMap[h.Object]
 	for _, instance := range data.GetInstances() {
@@ -41,5 +42,5 @@ func (h *Headroom) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		}
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }
