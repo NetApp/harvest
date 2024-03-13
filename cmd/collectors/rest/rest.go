@@ -328,7 +328,7 @@ func getFieldName(source string, parent string) []string {
 	return res
 }
 
-// PollRoutine performs daily tasks such as updating the cluster info and caching href.
+// PollCounter performs daily tasks such as updating the cluster info and caching href.
 func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	startTime := time.Now()
