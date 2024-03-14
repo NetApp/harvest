@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705064718442,
+  "iteration": 1710438455635,
   "links": [
     {
       "asDropdown": true,
@@ -799,7 +799,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 2
           },
           "id": 58,
           "interval": "",
@@ -975,7 +975,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 13
           },
           "id": 12,
           "options": {
@@ -1068,7 +1068,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 13
           },
           "id": 28,
           "options": {
@@ -1162,7 +1162,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 23
           },
           "id": 61,
           "options": {
@@ -1254,7 +1254,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 33
+            "y": 23
           },
           "id": 29,
           "options": {
@@ -1351,7 +1351,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 33
+            "y": 23
           },
           "id": 30,
           "options": {
@@ -1399,6 +1399,263 @@
           "timeShift": null,
           "title": "NICs Receive Errors by Cluster",
           "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Ethernet port errors.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 2
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Nic"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Nic"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 122
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx CRC Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 126
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Tx HW Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 126
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Tx Total Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 126
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Up to Downs"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 126
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx Total Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 126
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 31
+          },
+          "id": 119,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Rx CRC Err"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time (nic_rx_crc_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range])",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time (nic_tx_hw_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range])",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time (nic_tx_total_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range])",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time (nic_rx_total_errors{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range])",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time (nic_link_up_to_downs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}[$__range])",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "F"
+            }
+          ],
+          "title": "Ethernet port errors",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "nic",
+                    "node",
+                    "Value #B",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "Value #F"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Value #A": "",
+                  "Value #B": "Rx CRC Err",
+                  "Value #C": "Tx HW Err",
+                  "Value #D": "Rx Total Err",
+                  "Value #E": "Tx Total Err",
+                  "Value #F": "Up to Downs",
+                  "cluster": "Cluster",
+                  "nic": "Nic",
+                  "node": "Node"
+                }
+              }
+            }
+          ],
+          "type": "table"
         }
       ],
       "title": "Ethernet",
@@ -3668,5 +3925,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "",
-  "version": 8
+  "version": 9
 }
