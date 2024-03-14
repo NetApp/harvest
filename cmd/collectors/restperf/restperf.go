@@ -688,8 +688,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	err = rest.FetchRestPerfData(r.Client, href, &perfRecords)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch href=%s %w", href, err)
 	}
 
 	return r.pollData(startTime, perfRecords)
@@ -1545,6 +1544,9 @@ func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matri
 		// the table or API does not exist. return ErrAPIRequestRejected so the task goes to stand-by
 		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrAPIRequestRejected, err.Error()))
 	}
+	// if errs.IsRestErr(err, errs.CMReject) {
+	// 	return nil, fmt.Errorf("CM reject href=[%s] err: %w", href, errs.New(errs.ErrNoInstance, err.Error()))
+	// }
 	return nil, fmt.Errorf("failed to fetch data. href=[%s] err: %w", href, err)
 }
 

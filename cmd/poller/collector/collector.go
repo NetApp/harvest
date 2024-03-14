@@ -375,6 +375,16 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Msg("target unreachable, entering standby mode and retry")
 					c.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					c.SetStatus(1, errs.ErrConnection.Error())
+
+				case errs.IsRestErr(err, errs.CMReject):
+					// Try again in 30 to 60 seconds
+					retryAfter := 30 + rand.Int63n(30) //nolint:gosec
+					c.Schedule.SetStandByMode(task, time.Duration(retryAfter)*time.Second)
+					c.SetStatus(1, err.Error())
+					c.Logger.Warn().
+						Str("task", task.Name).
+						Int64("retryAfterSecs", retryAfter).
+						Msg("CM reject, entering standby mode and retry")
 				// there are no instances to collect
 				case errors.Is(err, errs.ErrNoInstance):
 					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
