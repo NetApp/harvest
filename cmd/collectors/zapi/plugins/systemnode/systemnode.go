@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 type SystemNode struct {
@@ -38,8 +39,10 @@ func (s *SystemNode) Init() error {
 	return nil
 }
 
-func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[s.Object]
+	s.client.Metadata.Reset()
+	nodeStateMap := make(map[string]string)
 
 	// invoke system-get-node-info-iter zapi and populate node info
 	partnerNameMap, err := s.getPartnerNodeInfo()
@@ -47,27 +50,32 @@ func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 		s.Logger.Error().Err(err).Msg("Failed to collect partner node detail")
 	}
 
-	// update node instance with partner info
+	for _, node := range data.GetInstanceKeys() {
+		nodeStateMap[node] = data.GetInstance(node).GetLabel("healthy")
+	}
+
+	// update node instance with partner and partner_healthy info
 	for nodeName, node := range data.GetInstances() {
 		node.SetLabel("ha_partner", partnerNameMap[nodeName])
+		node.SetLabel("partner_healthy", nodeStateMap[node.GetLabel("ha_partner")])
 	}
 
 	// update node metrics with partner info
 	for _, metric := range data.GetMetrics() {
 		metric.SetLabel("ha_partner", partnerNameMap[metric.GetLabel("node")])
 	}
-	return nil, nil
+	return nil, s.client.Metadata, nil
 }
 
 func (s *SystemNode) getPartnerNodeInfo() (map[string]string, error) {
 	var (
-		result         []*node.Node
-		partnerNameMap map[string]string // node-name -> partner name map
-		err            error
+		result             []*node.Node
+		nodePartnerNodeMap map[string]string // node-name -> partner-node-name map
+		err                error
 	)
 
 	// system-get-node-info-iter zapi
-	partnerNameMap = make(map[string]string)
+	nodePartnerNodeMap = make(map[string]string)
 	request := node.NewXMLS("system-get-node-info-iter")
 	request.NewChildS("max-records", collectors.DefaultBatchSize)
 
@@ -84,13 +92,13 @@ func (s *SystemNode) getPartnerNodeInfo() (map[string]string, error) {
 
 	if len(result) == 0 || result == nil {
 		s.Logger.Debug().Err(err).Msg("no records found")
-		return partnerNameMap, nil
+		return nodePartnerNodeMap, nil
 	}
 
 	for _, objectStore := range result {
 		partnerName := objectStore.GetChildContentS("partner-system-name")
 		nodeName := objectStore.GetChildContentS("system-name")
-		partnerNameMap[nodeName] = partnerName
+		nodePartnerNodeMap[nodeName] = partnerName
 	}
-	return partnerNameMap, nil
+	return nodePartnerNodeMap, nil
 }

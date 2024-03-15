@@ -32,6 +32,7 @@ endpoints:
       - cpu_busy_time                                 => cpu_busytime
 
 plugins:
+  - SystemNode
   - LabelAgent:
       value_to_num:
         - new_status healthy true up `0`
@@ -52,6 +53,7 @@ export_options:
     - max_vol_num
     - max_vol_size
     - model
+    - partner_healthy
     - state
     - uptime
     - vendor
