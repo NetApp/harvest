@@ -37,7 +37,7 @@ func (a *MetricAgent) Init() error {
 	if count = a.parseRules(); count == 0 {
 		err = errs.New(errs.ErrMissingParam, "valid rules")
 	} else {
-		a.Logger.Debug().Msgf("parsed %d rules for %d actions", count, len(a.actions))
+		a.Logger.Debug().Int("count", count).Int("actions", len(a.actions)).Msg("parsed rules")
 	}
 
 	return err

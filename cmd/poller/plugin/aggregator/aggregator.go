@@ -1,6 +1,7 @@
 /*
+/*
  * Copyright NetApp Inc, 2021 All rights reserved
- */
+*/
 
 package aggregator
 
@@ -47,11 +48,7 @@ func (a *Aggregator) Init() error {
 		return err
 	}
 
-	if len(a.rules) == 1 {
-		a.Logger.Debug().Msg("parsed 1 aggregation rule")
-	} else {
-		a.Logger.Debug().Msgf("parsed %d aggregation rules", len(a.rules))
-	}
+	a.Logger.Debug().Int("numRules", len(a.rules)).Msg("parsed aggregation rules")
 	return nil
 }
 
@@ -61,14 +58,14 @@ func (a *Aggregator) parseRules() error {
 
 	for _, line := range a.Params.GetAllChildContentS() {
 
-		a.Logger.Trace().Msgf("parsing raw rule: [%s]", line)
+		a.Logger.Trace().Str("line", line).Msg("parsing raw rule")
 
 		r := rule{}
 
 		fields := strings.Fields(line)
 		if len(fields) == 2 || len(fields) == 1 {
 			// parse label, possibly followed by value and object
-			a.Logger.Trace().Msgf("handling first field: [%s]", fields[0])
+			a.Logger.Trace().Str("fields[0]", fields[0]).Msg("handling first field")
 			prefix := strings.SplitN(fields[0], "<", 2)
 			r.label = strings.TrimSpace(prefix[0])
 			if len(prefix) == 2 {
@@ -86,10 +83,10 @@ func (a *Aggregator) parseRules() error {
 				if strings.HasPrefix(value, "`") {
 					value = strings.TrimPrefix(strings.TrimSuffix(value, "`"), "`")
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
-						a.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
+						a.Logger.Error().Err(err).Msg("ignore rule")
 						return err
 					}
-					a.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
+					a.Logger.Trace().Str("pattern", r.checkRegex.String()).Msg("parsed regex")
 				} else if value != "" {
 					r.checkValue = value
 				}
@@ -99,7 +96,7 @@ func (a *Aggregator) parseRules() error {
 				}
 			}
 			if len(fields) == 2 {
-				a.Logger.Trace().Msgf("handling second field: [%s]", fields[1])
+				a.Logger.Trace().Str("fields[1]", fields[1]).Msg("handling second field")
 				if strings.TrimSpace(fields[1]) == "..." {
 					r.allLabels = true
 				} else {
@@ -107,10 +104,9 @@ func (a *Aggregator) parseRules() error {
 				}
 			}
 			a.rules = append(a.rules, &r)
-			a.Logger.Debug().Msgf("parsed rule [%v]", r)
+			a.Logger.Debug().Str("label", r.label).Str("object", r.object).Msg("parsed rule")
 		} else {
-			a.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
-			return errs.New(errs.ErrInvalidParam, "invalid rule")
+			return errs.New(errs.ErrInvalidParam, "invalid rule syntax "+line)
 		}
 	}
 	return nil
@@ -155,19 +151,19 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		}
 
 		if a.Logger.GetLevel() == zerolog.TraceLevel {
-			a.Logger.Trace().Msgf("handling instance with labels [%s]", dict.String(instance.GetLabels()))
+			a.Logger.Trace().Str("labels", dict.String(instance.GetLabels())).Msg("handling instance with labels")
 		}
 
 		for i, rule := range a.rules {
 
-			a.Logger.Trace().Msgf("handling rule [%v]", rule)
+			a.Logger.Trace().Str("label", rule.label).Str("object", rule.object).Msg("handling rule")
 			if objName = instance.GetLabel(rule.label); objName == "" {
-				a.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
+				a.Logger.Warn().Str("label", rule.label).Msg("label missing, skipped")
 				continue
 			}
 
 			if rule.checkLabel != "" {
-				a.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
+				a.Logger.Trace().Str("checkLabel", rule.checkLabel).Str("checkValue", rule.checkValue).Msg("checking label")
 				if rule.checkRegex != nil {
 					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
 						continue
@@ -187,7 +183,11 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			} else {
 				objKey = objName
 			}
-			a.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
+			a.Logger.Trace().
+				Str("label", rule.label).
+				Str("objName", objName).
+				Str("objKey", objKey).
+				Msg("instance formatted key")
 
 			if objInstance = matrices[i].GetInstance(objKey); objInstance == nil {
 				rule.counts[objKey] = make(map[string]float64)
@@ -213,7 +213,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				}
 
 				if objMetric = matrices[i].GetMetric(key); objMetric == nil {
-					a.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
+					a.Logger.Warn().Str("metric", key).Str("label", rule.label).Msg("metric not found in cache")
 					continue
 				}
 
@@ -222,21 +222,21 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 					opsKey := objMetric.GetComment()
 					if opsKey != "" {
 						if opsMetric = data.GetMetric(opsKey); opsMetric == nil {
-							a.Logger.Warn().Msgf("metric [%s] not found in [%s] response", opsKey, rule.label)
+							a.Logger.Warn().Str("metric", opsKey).Str("label", rule.label).Msg("metric not found in response")
 							continue
 						}
 						if opsValue, ok = opsMetric.GetValueFloat64(instance); !ok {
 							continue
 						}
 						if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
-							a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+							a.Logger.Error().Err(err).Str("key", key).Str("objName", objName).Msg("add value")
 							continue
 						}
 						rule.counts[objKey][key] += opsValue
 					}
 				} else {
 					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
-						a.Logger.Error().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						a.Logger.Error().Err(err).Str("key", key).Str("objName", objName).Msg("add value")
 						continue
 					}
 					rule.counts[objKey][key]++
@@ -270,7 +270,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				continue
 			}
 
-			a.Logger.Trace().Msgf("[%s] (%s) normalizing values as average", mk, mn)
+			a.Logger.Trace().Str("mk", mk).Str("mn", mn).Msg("normalizing values as average")
 
 			for key, instance := range m.GetInstances() {
 
