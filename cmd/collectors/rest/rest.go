@@ -42,7 +42,7 @@ import (
 // It allows one or more alphanumeric characters or underscores, optionally followed by a dot and more characters
 // This pattern can repeat any number of times
 // This version does not allow numeric-only segments
-var regex = regexp.MustCompile(`^([a-zA-Z_]\w*\.)*[a-zA-Z_]\w*$`)
+var validPropRegex = regexp.MustCompile(`^([a-zA-Z_]\w*\.)*[a-zA-Z_]\w*$`)
 
 type Rest struct {
 	*collector.AbstractCollector
@@ -98,7 +98,7 @@ func (r *Rest) query(p *endPoint) string {
 
 func (r *Rest) isValidFormat(prop *prop) bool {
 	for _, str := range prop.Fields {
-		if !regex.MatchString(str) {
+		if !validPropRegex.MatchString(str) {
 			return false
 		}
 	}

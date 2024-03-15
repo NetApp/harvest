@@ -5,6 +5,7 @@
 package volume
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -86,8 +87,7 @@ func (v *Volume) Init() error {
 	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
 	v.isArwSupportedVersion, err = util.VersionAtLeast(v.client.Cluster().GetVersion(), ARWSupportedVersion)
 	if err != nil {
-		v.Logger.Error().Stack().Err(err).Send()
-		return err
+		return fmt.Errorf("unable to get version %w", err)
 	}
 	return nil
 }

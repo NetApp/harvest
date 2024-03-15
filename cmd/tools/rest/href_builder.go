@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )
@@ -88,7 +87,7 @@ func (b *HrefBuilder) Build() string {
 	if b.returnTimeout != nil {
 		addArg(&href, "&return_timeout=", strconv.Itoa(*b.returnTimeout))
 	}
-	if b.isIgnoreUnknownFieldsEnabled && util.IsPublicAPI(b.apiPath) {
+	if b.isIgnoreUnknownFieldsEnabled {
 		addArg(&href, "&ignore_unknown_fields=", "true")
 	}
 	return href.String()
