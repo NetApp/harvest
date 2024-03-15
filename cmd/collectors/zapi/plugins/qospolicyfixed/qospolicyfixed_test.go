@@ -19,6 +19,7 @@ func Test_zapiXputToRest(t *testing.T) {
 		{zapi: "100iops", want: MaxXput{IOPS: "100", Mbps: "0"}},
 		{zapi: "111111IOPS", want: MaxXput{IOPS: "111111", Mbps: "0"}},
 		{zapi: "0", want: MaxXput{IOPS: "0", Mbps: "0"}},
+		{zapi: "", want: MaxXput{IOPS: "0", Mbps: "0"}},
 		{zapi: "INF", want: MaxXput{IOPS: "0", Mbps: "0"}},
 
 		{zapi: "1GB/s", want: MaxXput{IOPS: "0", Mbps: "1000"}},
@@ -35,8 +36,8 @@ func Test_zapiXputToRest(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			got, err := ZapiXputToRest(tt.zapi)
-			if tt.isErr && err == nil {
-				t.Errorf("ZapiXputToRest(%s) got=%+v, want err but got err=%s", tt.zapi, got, err)
+			if err != nil && !tt.isErr {
+				t.Errorf("ZapiXputToRest(%s) got=%+v, want no err but got err=%s", tt.zapi, got, err)
 				return
 			}
 			if got.IOPS != tt.want.IOPS || got.Mbps != tt.want.Mbps {
