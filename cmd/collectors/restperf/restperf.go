@@ -1544,9 +1544,6 @@ func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matri
 		// the table or API does not exist. return ErrAPIRequestRejected so the task goes to stand-by
 		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrAPIRequestRejected, err.Error()))
 	}
-	// if errs.IsRestErr(err, errs.CMReject) {
-	// 	return nil, fmt.Errorf("CM reject href=[%s] err: %w", href, errs.New(errs.ErrNoInstance, err.Error()))
-	// }
 	return nil, fmt.Errorf("failed to fetch data. href=[%s] err: %w", href, err)
 }
 
