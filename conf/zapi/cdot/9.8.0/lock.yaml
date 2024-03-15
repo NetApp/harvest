@@ -23,10 +23,10 @@ plugins:
     # plugin will create summary/average for each object
     # any names after the object names will be treated as
     # label names that will be added to instances
-    - node
-    - svm
-    - lif
-    - volume
+    - node<>lock_node
+    - svm<>lock_svm
+    - lif<>lock_lif
+    - volume<>lock_volume
 
 # only export node/aggr aggregations from plugin
 # set this true or comment, to get data for each lock
