@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strings"
 	"time"
 )
@@ -79,11 +80,12 @@ func (my *SnapMirror) Init() error {
 	return nil
 }
 
-func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	// Purge and reset data
 	data := dataMap[my.Object]
 	my.data.PurgeInstances()
 	my.data.Reset()
+	my.client.Metadata.Reset()
 
 	// Set all global labels from Rest.go if already not exist
 	my.data.SetGlobalLabels(data.GetGlobalLabels())
@@ -93,7 +95,7 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 
 		if cluster, ok := data.GetGlobalLabels()["cluster"]; ok {
 			if err := my.getSVMPeerData(cluster); err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			my.Logger.Debug().Msg("updated svm peer detail")
 		}
@@ -103,7 +105,7 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	my.updateSMLabels(data)
 	my.currentVal++
 
-	return []*matrix.Matrix{my.data}, nil
+	return []*matrix.Matrix{my.data}, my.client.Metadata, nil
 }
 
 func (my *SnapMirror) getSVMPeerData(cluster string) error {
@@ -204,7 +206,7 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 				cgVolumeInstanceKey := key + sourceVol + destinationVol
 
 				if cgVolumeInstance, err = my.data.NewInstance(cgVolumeInstanceKey); err != nil {
-					my.Logger.Error().Err(err).Str("Instance key", cgVolumeInstanceKey).Msg("")
+					my.Logger.Error().Err(err).Str("Instance key", cgVolumeInstanceKey).Send()
 					continue
 				}
 

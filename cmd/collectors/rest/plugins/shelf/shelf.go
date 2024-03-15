@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 type Shelf struct {
@@ -19,7 +20,7 @@ func (my *Shelf) Init() error {
 	return my.InitAbc()
 }
 
-func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	data := dataMap[my.Object]
 	for _, instance := range data.GetInstances() {
@@ -37,6 +38,6 @@ func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 			instance.SetLabel("isEmbedded", "No")
 		}
 	}
-	return nil, nil
+	return nil, nil, nil
 
 }

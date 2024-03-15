@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog"
 	"golang.org/x/exp/maps"
 	"regexp"
@@ -115,7 +116,7 @@ func (a *Aggregator) parseRules() error {
 	return nil
 }
 
-func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[a.Object]
 	matrices := make([]*matrix.Matrix, len(a.rules))
 
@@ -191,7 +192,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 			if objInstance = matrices[i].GetInstance(objKey); objInstance == nil {
 				rule.counts[objKey] = make(map[string]float64)
 				if objInstance, err = matrices[i].NewInstance(objKey); err != nil {
-					return nil, err
+					return nil, nil, err
 				}
 				if rule.allLabels {
 					objInstance.SetLabels(instance.GetLabels())
@@ -294,7 +295,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 		}
 	}
 
-	return matrices, nil
+	return matrices, nil, nil
 }
 
 // NewLabels returns the new labels the receiver creates

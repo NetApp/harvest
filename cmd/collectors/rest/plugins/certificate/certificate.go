@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	ontap "github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"time"
 )
@@ -51,7 +52,7 @@ func (my *Certificate) Init() error {
 	return nil
 }
 
-func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		adminVserver       string
@@ -59,6 +60,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 		err                error
 	)
 	data := dataMap[my.Object]
+	my.client.Metadata.Reset()
 
 	if my.currentVal >= my.PluginInvocationRate {
 		my.currentVal = 0
@@ -70,7 +72,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM")
 			}
-			return nil, nil
+			return nil, nil, nil
 		}
 
 		// invoke private ssl cli rest and get the admin SVM's serial number
@@ -80,7 +82,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			} else {
 				my.Logger.Error().Msg("Failed to collect admin SVM's serial number")
 			}
-			return nil, nil
+			return nil, nil, nil
 		}
 
 		// update certificate instance based on admin vaserver serial
@@ -102,7 +104,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 	}
 
 	my.currentVal++
-	return nil, nil
+	return nil, my.client.Metadata, nil
 }
 
 func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {

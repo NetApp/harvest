@@ -205,9 +205,11 @@ func (d *Disk) Init() error {
 	return nil
 }
 
-func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	data := dataMap[d.Object]
+	d.client.Metadata.Reset()
+
 	// Set all global labels from rest.go if already not exist
 	for a := range d.instanceLabels {
 		d.shelfData[a].SetGlobalLabels(data.GetGlobalLabels())
@@ -225,11 +227,11 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 	records, err := rest.Fetch(d.client, href)
 	if err != nil {
 		d.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch shelfData")
-		return nil, err
+		return nil, nil, err
 	}
 
 	if len(records) == 0 {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	d.initMaps()
@@ -362,30 +364,30 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) 
 
 	output, err = d.handleShelfPower(records, output)
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	err = d.getAggregates()
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	err = d.getDisks()
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	err = d.populateShelfIOPS(data)
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
 	output, err = d.calculateAggrPower(data, output)
 	if err != nil {
-		return output, err
+		return output, nil, err
 	}
 
-	return output, nil
+	return output, d.client.Metadata, nil
 }
 
 func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) ([]*matrix.Matrix, error) {

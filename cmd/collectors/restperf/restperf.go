@@ -254,12 +254,14 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		APIPath(r.Prop.Query).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
 	apiT := time.Now()
+	r.Client.Metadata.Reset()
+
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		return r.handleError(err, href)
@@ -368,6 +370,8 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	_ = r.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "counter", uint64(len(r.perfProp.counterInfo)))
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "counter", r.Client.Metadata.BytesRx)
+	_ = r.Metadata.LazySetValueUint64("numCalls", "counter", r.Client.Metadata.NumCalls)
 
 	return nil, nil
 }
@@ -656,12 +660,18 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Trace().Msg("updating data cache")
 
+	mat := r.Matrix[r.Object]
+	if len(mat.GetInstances()) == 0 {
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances fetched in PollInstance")
+	}
+
 	timestamp := r.Matrix[r.Object].GetMetric("timestamp")
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
 
 	startTime = time.Now()
+	r.Client.Metadata.Reset()
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
@@ -671,7 +681,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -1044,6 +1054,9 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
+	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+
 	r.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
@@ -1266,7 +1279,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
@@ -1385,12 +1398,13 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
 	apiT := time.Now()
+	r.Client.Metadata.Reset()
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
 		return r.handleError(err, href)
@@ -1496,6 +1510,8 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 	_ = r.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
 	_ = r.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "instance", r.Client.Metadata.BytesRx)
+	_ = r.Metadata.LazySetValueUint64("numCalls", "instance", r.Client.Metadata.NumCalls)
 
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "")
@@ -1529,8 +1545,7 @@ func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matri
 		// the table or API does not exist. return ErrAPIRequestRejected so the task goes to stand-by
 		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrAPIRequestRejected, err.Error()))
 	}
-	r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-	return nil, err
+	return nil, fmt.Errorf("failed to fetch data. href=[%s] err: %w", href, err)
 }
 
 func isWorkloadObject(query string) bool {

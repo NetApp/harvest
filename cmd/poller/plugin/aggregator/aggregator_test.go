@@ -37,7 +37,7 @@ func TestRuleSimpleAggregation(t *testing.T) {
 	dataMap := map[string]*matrix.Matrix{
 		m.Object: m,
 	}
-	results, err := p.Run(dataMap)
+	results, _, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +107,7 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 	dataMap := map[string]*matrix.Matrix{
 		m.Object: m,
 	}
-	results, err := p.Run(dataMap)
+	results, _, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -224,7 +224,7 @@ func TestComplexRuleRegex(t *testing.T) {
 	dataMap := map[string]*matrix.Matrix{
 		m.Object: m,
 	}
-	results, err := p.Run(dataMap)
+	results, _, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -367,7 +367,7 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 	dataMap := map[string]*matrix.Matrix{
 		m.Object: m,
 	}
-	results, err := p.Run(dataMap)
+	results, _, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -475,7 +475,7 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 	dataMap := map[string]*matrix.Matrix{
 		m.Object: m,
 	}
-	results, err := p.Run(dataMap)
+	results, _, err := p.Run(dataMap)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -28,6 +28,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"os"
 	"sort"
@@ -203,7 +204,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if a.Options.IsTest {
-		return &rest.Client{}, nil
+		return &rest.Client{Metadata: &util.Metadata{}}, nil
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
 		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
@@ -296,6 +297,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	r.Logger.Trace().Msg("starting data poll")
 
 	r.Matrix[r.Object].Reset()
+	r.Client.Metadata.Reset()
 
 	startTime = time.Now()
 
@@ -346,6 +348,9 @@ func (r *Rest) pollData(
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(numRecords))
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
+	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+
 	r.AddCollectCount(count)
 
 	return r.Matrix, nil
@@ -589,7 +594,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 }
 
 func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
-	r.Logger.Debug().Str("href", href).Msg("")
+	r.Logger.Debug().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}

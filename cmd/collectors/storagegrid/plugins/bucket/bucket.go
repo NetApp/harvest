@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -42,7 +43,7 @@ func (b *Bucket) Init() error {
 	return nil
 }
 
-func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		instanceKey string
 	)
@@ -55,6 +56,7 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	// Purge and reset data
 	b.data.PurgeInstances()
 	b.data.Reset()
+	b.client.Metadata.Reset()
 
 	// Set all global labels from Rest.go if already not exist
 	b.data.SetGlobalLabels(data.GetGlobalLabels())
@@ -115,5 +117,5 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		}
 	}
 
-	return []*matrix.Matrix{b.data}, nil
+	return []*matrix.Matrix{b.data}, b.client.Metadata, nil
 }

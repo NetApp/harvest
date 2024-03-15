@@ -11,9 +11,8 @@ ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
 endif
-TAG_COMMIT   ?= $(shell git rev-list --tags --max-count=1)
-RELEASE      ?= $(shell git describe --tags $(TAG_COMMIT))
-VERSION      ?= $(shell expr `date +%Y.%m.%d%H | cut -c 3-`)
+RELEASE      ?= 1
+VERSION      ?= $(shell expr `date +%Y.%m.%d | cut -c 3-`)
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-X 'github.com/netapp/harvest/v2/cmd/harvest/version.VERSION=$(VERSION)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Release=$(RELEASE)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.Commit=$(COMMIT)' -X 'github.com/netapp/harvest/v2/cmd/harvest/version.BuildDate=$(BUILD_DATE)'"

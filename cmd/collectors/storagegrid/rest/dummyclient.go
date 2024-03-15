@@ -2,6 +2,7 @@ package rest
 
 import (
 	"bytes"
+	"github.com/netapp/harvest/v2/pkg/util"
 
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -29,17 +30,18 @@ func NewDummyClient() *Client {
 	}
 
 	client := &Client{
-		client:  httpClient,
-		request: httpRequest,
-		buffer:  buffer,
-		Logger:  logger,
-		baseURL: "http://example.com",
-		Cluster: cluster,
-		token:   "TestToken",
-		Timeout: time.Second * 10,
-		logRest: true,
-		APIPath: "/api/v1",
-		auth:    &auth.Credentials{},
+		client:   httpClient,
+		request:  httpRequest,
+		buffer:   buffer,
+		Logger:   logger,
+		baseURL:  "http://example.com",
+		Cluster:  cluster,
+		token:    "TestToken",
+		Timeout:  time.Second * 10,
+		logRest:  true,
+		APIPath:  "/api/v1",
+		auth:     &auth.Credentials{},
+		Metadata: &util.Metadata{},
 	}
 
 	return client

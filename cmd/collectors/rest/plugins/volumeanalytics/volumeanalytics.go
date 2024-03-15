@@ -92,8 +92,10 @@ func (v *VolumeAnalytics) initMatrix() error {
 	return nil
 }
 
-func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[v.Object]
+	v.client.Metadata.Reset()
+
 	cluster := data.GetGlobalLabels()["cluster"]
 	clusterVersion := v.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
@@ -101,7 +103,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		v.Logger.Error().Err(err).
 			Str("version", clusterVersion).
 			Msg("Failed to parse version")
-		return nil, nil
+		return nil, nil, nil
 	}
 	version98 := "9.8"
 	version98After, err := goversion.NewVersion(version98)
@@ -109,11 +111,11 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		v.Logger.Error().Err(err).
 			Str("version", version98).
 			Msg("Failed to parse version")
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	if ontapVersion.LessThan(version98After) {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	// Purge and reset data
@@ -121,7 +123,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	err = v.initMatrix()
 	if err != nil {
 		v.Logger.Warn().Err(err).Msg("error while init matrix")
-		return nil, err
+		return nil, nil, err
 	}
 	for k := range v.data {
 		// Set all global labels if already not exist
@@ -189,7 +191,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
 							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_modified_time"); err != nil {
-								return nil, err
+								return nil, nil, err
 							}
 						}
 						m.SetLabel("time", mtBytesUsedLabels[i])
@@ -205,7 +207,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
 							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_modified_time"); err != nil {
-								return nil, err
+								return nil, nil, err
 							}
 						}
 						m.SetLabel("time", mtBytesUsedLabels[i])
@@ -225,7 +227,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
 							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_accessed_time"); err != nil {
-								return nil, err
+								return nil, nil, err
 							}
 						}
 						m.SetLabel("time", atBytesUsedLabels[i])
@@ -241,7 +243,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
 							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_accessed_time"); err != nil {
-								return nil, err
+								return nil, nil, err
 							}
 						}
 						m.SetLabel("time", atBytesUsedLabels[i])
@@ -262,7 +264,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	for _, value := range v.data {
 		result = append(result, value)
 	}
-	return result, nil
+	return result, v.client.Metadata, nil
 }
 
 func (v *VolumeAnalytics) getLabelBucket(label string) string {

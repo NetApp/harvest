@@ -78,7 +78,7 @@ func TestChangeLogModified(t *testing.T) {
 	instance.SetLabel("svm", "s1")
 	instance.SetLabel("type", "t1")
 
-	_, _ = p.Run(data)
+	_, _, _ = p.Run(data)
 
 	m1 := matrix.New("TestChangeLog", "svm", "svm")
 	data1 := map[string]*matrix.Matrix{
@@ -89,7 +89,7 @@ func TestChangeLogModified(t *testing.T) {
 	instance1.SetLabel("svm", "s2")
 	instance1.SetLabel("type", "t2")
 
-	o, _ := p.Run(data1)
+	o, _, _ := p.Run(data1)
 
 	checkChangeLogInstances(t, o, 2, 9, update, opLabel)
 }
@@ -105,7 +105,7 @@ func TestChangeLogCreated(t *testing.T) {
 	instance.SetLabel("svm", "s1")
 	instance.SetLabel("type", "t1")
 
-	_, _ = p.Run(data)
+	_, _, _ = p.Run(data)
 
 	m1 := matrix.New("TestChangeLog", "svm", "svm")
 	data1 := map[string]*matrix.Matrix{
@@ -121,7 +121,7 @@ func TestChangeLogCreated(t *testing.T) {
 	instance2.SetLabel("svm", "s1")
 	instance2.SetLabel("type", "t1")
 
-	o, _ := p.Run(data1)
+	o, _, _ := p.Run(data1)
 
 	checkChangeLogInstances(t, o, 1, 4, create, opLabel)
 }
@@ -137,14 +137,14 @@ func TestChangeLogDeleted(t *testing.T) {
 	instance.SetLabel("svm", "s1")
 	instance.SetLabel("type", "t1")
 
-	_, _ = p.Run(data)
+	_, _, _ = p.Run(data)
 
 	m1 := matrix.New("TestChangeLog", "svm", "svm")
 	data1 := map[string]*matrix.Matrix{
 		"svm": m1,
 	}
 
-	o, _ := p.Run(data1)
+	o, _, _ := p.Run(data1)
 
 	checkChangeLogInstances(t, o, 1, 4, del, opLabel)
 }
@@ -159,7 +159,7 @@ func TestChangeLogUnsupported(t *testing.T) {
 	instance.SetLabel("uuid", "u1")
 	instance.SetLabel("lun", "l1")
 
-	_, _ = p.Run(data)
+	_, _, _ = p.Run(data)
 
 	m1 := matrix.New("TestChangeLog", "lun", "lun")
 	data1 := map[string]*matrix.Matrix{
@@ -173,7 +173,7 @@ func TestChangeLogUnsupported(t *testing.T) {
 	instance2.SetLabel("uuid", "u1")
 	instance2.SetLabel("lun", "l3")
 
-	o, _ := p.Run(data1)
+	o, _, _ := p.Run(data1)
 
 	if len(o) != 0 {
 		t.Errorf("ChangeLog mEtric size expected %d, actual %d", 0, len(o))
@@ -191,7 +191,7 @@ func TestChangeLogModifiedUnsupportedTrack(t *testing.T) {
 	instance.SetLabel("uuid", "u1")
 	instance.SetLabel("svm", "s1")
 
-	_, _ = p.Run(data)
+	_, _, _ = p.Run(data)
 
 	m1 := matrix.New("TestChangeLog", "svm", "svm")
 	data1 := map[string]*matrix.Matrix{
@@ -202,7 +202,7 @@ func TestChangeLogModifiedUnsupportedTrack(t *testing.T) {
 	instance1.SetLabel("uuid", "u1")
 	instance1.SetLabel("svm", "s2")
 
-	o, _ := p.Run(data1)
+	o, _, _ := p.Run(data1)
 
 	checkChangeLogInstances(t, o, 0, 0, "", "")
 }

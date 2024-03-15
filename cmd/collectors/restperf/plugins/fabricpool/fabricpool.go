@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )
@@ -31,7 +32,7 @@ func (f *FabricPool) Init() error {
 }
 
 // Run converts Rest lowercase metric names to uppercase to match ZapiPerf
-func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[f.Object]
 	for _, metric := range data.GetMetrics() {
 		if !metric.IsArray() {
@@ -45,7 +46,7 @@ func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, e
 
 	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, "cloud_bin_op", f.includeConstituents, f.Logger)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return []*matrix.Matrix{cache}, nil
+	return []*matrix.Matrix{cache}, nil, nil
 }

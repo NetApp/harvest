@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"strconv"
 	"strings"
@@ -25,7 +26,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &QosPolicyFixed{AbstractPlugin: p}
 }
 
-func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	// Change ZAPI max-throughput/min-throughput to match what REST publishes
 
 	data := dataMap[p.Object]
@@ -35,7 +36,7 @@ func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
 			p.Logger.Error().Err(err).Str("key", k).Msg("error while creating metric")
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -54,7 +55,7 @@ func (p *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		p.setThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps")
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }
 
 func (p *QosPolicyFixed) setThroughput(data *matrix.Matrix, instance *matrix.Instance, labelName string, iopLabel string, mbpsLabel string) {

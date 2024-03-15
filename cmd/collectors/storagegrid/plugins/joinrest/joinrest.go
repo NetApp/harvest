@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"gopkg.in/yaml.v3"
 	"strings"
@@ -75,7 +76,9 @@ func (t *JoinRest) Init() error {
 	return nil
 }
 
-func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+	t.client.Metadata.Reset()
+
 	if t.timesCalled >= t.PluginInvocationRate {
 		// refresh cache
 		t.timesCalled = 0
@@ -127,7 +130,7 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, err
 		}
 	}
 	t.timesCalled++
-	return nil, nil
+	return nil, t.client.Metadata, nil
 }
 
 func (t *JoinRest) updateCache(model join, bytes *[]byte) {

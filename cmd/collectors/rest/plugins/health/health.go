@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"time"
@@ -97,15 +98,16 @@ func (h *Health) initMatrix(name string) error {
 	return nil
 }
 
-func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[h.Object]
+	h.client.Metadata.Reset()
 	clusterVersion := h.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		h.Logger.Error().Err(err).
 			Str("version", clusterVersion).
 			Msg("Failed to parse version")
-		return nil, nil
+		return nil, nil, nil
 	}
 	version96 := "9.6"
 	version96After, err := goversion.NewVersion(version96)
@@ -113,11 +115,11 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 		h.Logger.Error().Err(err).
 			Str("version", version96).
 			Msg("Failed to parse version")
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	if ontapVersion.LessThan(version96After) {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	// Purge and reset data
@@ -125,7 +127,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	err = h.initAllMatrix()
 	if err != nil {
 		h.Logger.Warn().Err(err).Msg("error while init matrix")
-		return nil, err
+		return nil, nil, err
 	}
 	for k := range h.data {
 		// Set all global labels if already not exist
@@ -149,7 +151,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error
 	for _, value := range h.data {
 		result = append(result, value)
 	}
-	return result, nil
+	return result, h.client.Metadata, nil
 }
 
 func (h *Health) collectLicenseAlerts() {

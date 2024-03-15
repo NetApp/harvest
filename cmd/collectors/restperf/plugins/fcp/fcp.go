@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"math"
 	"strconv"
 	"strings"
@@ -17,25 +18,25 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Fcp{AbstractPlugin: p}
 }
 
-func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
+func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var rx, tx, util, read, write *matrix.Metric
 	var err error
 	data := dataMap[f.Object]
 
 	if read = data.GetMetric("read_data"); read == nil {
-		return nil, errs.New(errs.ErrNoMetric, "read_data")
+		return nil, nil, errs.New(errs.ErrNoMetric, "read_data")
 	}
 
 	if write = data.GetMetric("write_data"); write == nil {
-		return nil, errs.New(errs.ErrNoMetric, "write_data")
+		return nil, nil, errs.New(errs.ErrNoMetric, "write_data")
 	}
 
 	if rx = data.GetMetric("read_percent"); rx == nil {
 		if rx, err = data.NewMetricFloat64("read_percent"); err == nil {
 			rx.SetProperty("raw")
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 
 	}
@@ -43,7 +44,7 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 		if tx, err = data.NewMetricFloat64("write_percent"); err == nil {
 			tx.SetProperty("raw")
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -51,7 +52,7 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
 			util.SetProperty("raw")
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -96,5 +97,5 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, error) {
 			}
 		}
 	}
-	return nil, nil
+	return nil, nil, nil
 }

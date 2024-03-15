@@ -137,7 +137,7 @@ func (e *InfluxDB) Init() error {
 		e.Logger.Debug().Msgf("using default client_timeout: %d s", defaultTimeout)
 	}
 
-	e.Logger.Debug().Str("dbEndpoint", dbEndpoint).Str("url", e.url).Msg("")
+	e.Logger.Debug().Str("dbEndpoint", dbEndpoint).Str("url", e.url).Send()
 
 	// construct HTTP client
 	e.client = &http.Client{Timeout: timeout}
