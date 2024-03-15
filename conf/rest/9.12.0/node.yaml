@@ -9,6 +9,7 @@ counters:
   - ^controller.failed_fan.message.message            => failed_fan_message
   - ^controller.failed_power_supply.message.message   => failed_power_message
   - ^controller.over_temperature                      => over_temperature
+  - ^ha.partners.0.name                               => ha_partner
   - ^location
   - ^model
   - ^serial_number                                    => serial
@@ -31,6 +32,7 @@ endpoints:
       - cpu_busy_time                                 => cpu_busytime
 
 plugins:
+  - SystemNode
   - LabelAgent:
       value_to_num:
         - new_status healthy true up `0`
@@ -40,6 +42,7 @@ plugins:
 
 export_options:
   instance_keys:
+    - ha_partner
     - node
     - serial
   instance_labels:
@@ -50,6 +53,7 @@ export_options:
     - max_vol_num
     - max_vol_size
     - model
+    - partner_healthy
     - state
     - uptime
     - vendor
