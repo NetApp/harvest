@@ -688,8 +688,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	err = rest.FetchRestPerfData(r.Client, href, &perfRecords)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch href=%s %w", href, err)
 	}
 
 	return r.pollData(startTime, perfRecords)
