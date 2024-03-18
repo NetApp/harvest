@@ -170,6 +170,7 @@ func processRestConfigCounters(path string, currentVersion string, kind string) 
 
 func readCounters(t *node.Node, path, kind string, countersData map[string][]counterData) {
 	var counters []string
+	var nameArray []string
 	if templateCounters := t.GetChildS("counters"); templateCounters != nil {
 		templateQuery := t.GetChildS("query")
 		counters = make([]string, 0)
@@ -182,7 +183,11 @@ func readCounters(t *node.Node, path, kind string, countersData map[string][]cou
 					continue
 				}
 				name, _, _, _ := util.ParseMetric(c)
-				nameArray := strings.Split(name, ".#")
+				if strings.Contains(name, ".0") {
+					nameArray = strings.Split(name, ".0")
+				} else {
+					nameArray = strings.Split(name, ".#")
+				}
 				counters = append(counters, replacer.Replace(nameArray[0]))
 			}
 		}

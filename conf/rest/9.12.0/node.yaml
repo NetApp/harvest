@@ -9,7 +9,7 @@ counters:
   - ^controller.failed_fan.message.message            => failed_fan_message
   - ^controller.failed_power_supply.message.message   => failed_power_message
   - ^controller.over_temperature                      => over_temperature
-  - ^ha.partners.#.name                               => ha_partner
+  - ^ha.partners.0.name                               => ha_partner
   - ^location
   - ^model
   - ^serial_number                                    => serial
