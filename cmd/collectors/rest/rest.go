@@ -49,7 +49,6 @@ type Rest struct {
 	Client                       *rest.Client
 	Prop                         *prop
 	endpoints                    []*endPoint
-	lastDailyTasks               time.Time
 	isIgnoreUnknownFieldsEnabled bool
 }
 
@@ -351,7 +350,6 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 		r.isIgnoreUnknownFieldsEnabled = false
 	}
 	r.updateHref()
-	r.lastDailyTasks = time.Now()
 	parseD := time.Since(startTime)
 
 	// update metadata for collector logs
@@ -670,7 +668,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 }
 
 func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
-	r.Logger.Debug().Str("href", href).Send()
+	r.Logger.Info().Str("href", href).Send()
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
