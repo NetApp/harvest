@@ -69,8 +69,11 @@ func (a *MetricAgent) parseComputeMetricRule(rule string) {
 		}
 
 		a.computeMetricRules = append(a.computeMetricRules, r)
-		a.Logger.Debug().Msgf("(compute_metric) parsed rule [%v]", r)
+		a.Logger.Debug().
+			Str("metric", r.metric).
+			Str("operation", r.operation).
+			Msg("(compute_metric) parsed rule")
 		return
 	}
-	a.Logger.Warn().Msgf("(compute_metric) rule has invalid format [%s]", rule)
+	a.Logger.Warn().Str("rule", rule).Msg("(compute_metric) rule has invalid format")
 }

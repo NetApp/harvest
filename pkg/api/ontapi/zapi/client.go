@@ -62,11 +62,11 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	// check required & optional parameters
 	if client.apiVersion = poller.APIVersion; client.apiVersion == "" {
 		client.apiVersion = DefaultAPIVersion
-		client.Logger.Debug().Msgf("using default API version [%s]", DefaultAPIVersion)
+		client.Logger.Debug().Str("version", DefaultAPIVersion).Msg("using default API version")
 	}
 
 	if client.vfiler = poller.APIVfiler; client.vfiler != "" {
-		client.Logger.Debug().Msgf("using vfiler tunneling [%s]", client.vfiler)
+		client.Logger.Debug().Str("vfiler", client.vfiler).Msg("using vfiler tunneling")
 	}
 
 	if addr = poller.Addr; addr == "" {

@@ -24,7 +24,6 @@ package prometheus
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
-	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -153,7 +152,7 @@ func (p *Prometheus) Init() error {
 		p.cacheAddrs = make(map[string]bool)
 	}
 
-	// finally the most important and only required parameter: port
+	// Finally, the most important and only required parameter: port
 	// can be passed to us either as an option or as a parameter
 	port := p.Options.PromPort
 	if port == 0 {
@@ -164,7 +163,7 @@ func (p *Prometheus) Init() error {
 		}
 	}
 
-	// sanity check on port
+	// Make sure port is valid
 	if port == 0 {
 		return errs.New(errs.ErrMissingParam, "port")
 	} else if port < 0 {
@@ -209,7 +208,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	p.Lock()
 	defer p.Unlock()
 
-	p.Logger.Trace().Msgf("incoming %s%s(%s) (%s)%s", color.Bold, color.Cyan, data.UUID, data.Object, color.End)
+	p.Logger.Trace().Str("uuid", data.UUID).Str("object", data.Object).Msg("incoming")
 
 	// render metrics into Prometheus format
 	start := time.Now()
@@ -234,7 +233,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	p.cache.Lock()
 	p.cache.Put(key, metrics)
 	p.cache.Unlock()
-	p.Logger.Trace().Msgf("added to cache with key [%s%s%s%s]", color.Bold, color.Red, key, color.End)
+	p.Logger.Trace().Str("key", key).Msg("added to cache")
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
@@ -253,13 +252,13 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 // Render metrics and labels into the exposition format, as described in
 // https://prometheus.io/docs/instrumenting/exposition_formats/
 //
-// All metrics are implicitly "Gauge" counters. If requested we also submit
+// All metrics are implicitly "Gauge" counters. If requested, we also submit
 // HELP and TYPE metadata (see add_meta_tags in config).
 //
 // Metric name is concatenation of the collector object (e.g. "volume",
 // "fcp_lif") + the metric name (e.g. "read_ops" => "volume_read_ops").
-// We do this since same metrics for different object can have
-// different set of labels and Prometheus does not allow this.
+// We do this since the same metrics for different objects can have
+// different sets of labels, and Prometheus does not allow this.
 //
 // Example outputs:
 //
@@ -423,7 +422,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				// metric is array, determine if this is a plain array or histogram
 				if metric.HasLabels() {
 					if metric.IsHistogram() {
-						// metric is histogram. Create a new metric to accumulate
+						// Metric is histogram. Create a new metric to accumulate
 						// the flattened metrics and export them in order
 						bucketMetric := data.GetMetric(metric.GetLabel("bucket"))
 						if bucketMetric == nil {
@@ -480,7 +479,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				p.Logger.Trace().Str("mkey", mkey).Msg("skipped: no data value")
 			}
 		}
-		// all metrics have been processed and flattened metrics accumulated. Determine which histograms can be
+		// All metrics have been processed and flattened metrics accumulated. Determine which histograms can be
 		// normalized and export
 		for _, h := range histograms {
 			metric := h.metric
@@ -569,7 +568,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)
 
 // normalizeHistogram tries to normalize ONTAP values by converting units to multiples of the smallest unit.
-// When the unit can not be determined, return an empty string
+// When the unit cannot be determined, return an empty string
 func (p *Prometheus) normalizeHistogram(metric *matrix.Metric, ontap string, object string) string {
 	numAndUnit := ontap
 	if strings.HasPrefix(ontap, "<") {
