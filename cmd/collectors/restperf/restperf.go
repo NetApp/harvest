@@ -677,7 +677,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
-		Fields(r.Prop.Fields).
+		Fields([]string{"*"}).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 

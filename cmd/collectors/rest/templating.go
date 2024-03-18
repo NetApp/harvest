@@ -59,9 +59,9 @@ func (r *Rest) InitCache() error {
 
 	// private end point do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
-	r.Prop.APIType = "public"
+	r.Prop.IsPublic = true
 	if query != nil {
-		r.Prop.APIType = checkQueryType(query.GetContentS())
+		r.Prop.IsPublic = util.IsPublicAPI(query.GetContentS())
 	}
 
 	r.ParseRestCounters(counters, r.Prop)
@@ -195,29 +195,23 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 		prop.InstanceKeys = append(prop.InstanceKeys, instanceKeys[k])
 	}
 
-	if prop.APIType == "private" {
-		counterKey := make([]string, len(prop.Counters))
-		i := 0
-		for k := range prop.Counters {
-			counterKey[i] = k
-			i++
-		}
-		prop.Fields = counterKey
-		if counter != nil {
-			if x := counter.GetChildS("filter"); x != nil {
-				prop.Filter = append(prop.Filter, x.GetAllChildContentS()...)
-			}
+	counterKey := make([]string, len(prop.Counters))
+	i := 0
+	for k := range prop.Counters {
+		counterKey[i] = k
+		i++
+	}
+	prop.Fields = counterKey
+	if counter != nil {
+		if x := counter.GetChildS("filter"); x != nil {
+			prop.Filter = append(prop.Filter, x.GetAllChildContentS()...)
 		}
 	}
 
-	if prop.APIType == "public" {
-		prop.Fields = []string{"*"}
+	if prop.IsPublic {
 		if counter != nil {
 			if x := counter.GetChildS("hidden_fields"); x != nil {
-				prop.Fields = append(prop.Fields, x.GetAllChildContentS()...)
-			}
-			if x := counter.GetChildS("filter"); x != nil {
-				prop.Filter = append(prop.Filter, x.GetAllChildContentS()...)
+				prop.HiddenFields = append(prop.HiddenFields, x.GetAllChildContentS()...)
 			}
 		}
 	}

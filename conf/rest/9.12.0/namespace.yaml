@@ -16,6 +16,8 @@ counters:
   - space.block_size              => block_size
   - space.size                    => size
   - space.used                    => size_used
+  - hidden_fields:
+      - subsystem_map
 
 plugins:
   - MetricAgent:

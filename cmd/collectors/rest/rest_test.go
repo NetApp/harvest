@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -160,4 +161,279 @@ func newRest(object string, path string) *Rest {
 		panic(err)
 	}
 	return &r
+}
+
+func TestIsValidFormat(t *testing.T) {
+
+	tests := []struct {
+		name           string
+		r              *Rest
+		p              *prop
+		expectedResult bool
+	}{
+		{
+			name: "Test with valid fields 1",
+			r:    &Rest{},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"block_storage.primary.disk_type",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: true,
+			},
+			expectedResult: true,
+		},
+
+		{
+			name: "Test with invalid fields 2",
+			r:    &Rest{},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"cloud_storage.stores.#.cloud_store.name",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: true,
+			},
+			expectedResult: false,
+		},
+		{
+			name: "Test with invalid fields 3",
+			r:    &Rest{},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"cloud_storage.stores.0.cloud_store.name",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: true,
+			},
+			expectedResult: false,
+		},
+		{
+			name: "Test with invalid fields 4",
+			r:    &Rest{},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"{interfaces.#.name,interfaces.#.ip.address}",
+				},
+				IsPublic: true,
+			},
+			expectedResult: false,
+		},
+		{
+			name: "Test with invalid fields 5",
+			r:    &Rest{},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"friends.#(last==\"Murphy\")#.first",
+				},
+				IsPublic: true,
+			},
+			expectedResult: false,
+		},
+		{
+			name: "Test with invalid fields 6",
+			r:    &Rest{},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"children|@case:upper",
+				},
+				IsPublic: true,
+			},
+			expectedResult: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := tt.r.isValidFormat(tt.p)
+			if result != tt.expectedResult {
+				t.Errorf("Expected %v, got %v", tt.expectedResult, result)
+			}
+		})
+	}
+}
+
+func TestFields(t *testing.T) {
+	tests := []struct {
+		name           string
+		r              *Rest
+		p              *prop
+		expectedResult []string
+	}{
+		{
+			name: "Test with valid fields and no hidden fields",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: true,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"block_storage.primary.disk_type",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: true,
+			},
+			expectedResult: []string{
+				"uuid",
+				"block_storage.primary.disk_type",
+				"block_storage.primary.raid_type",
+			},
+		},
+		{
+			name: "Test with invalid fields and no hidden fields",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: true,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"cloud_storage.stores.0.cloud_store.name",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: true,
+			},
+			expectedResult: []string{"*"},
+		},
+		{
+			name: "Test with valid fields and hidden fields",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: true,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"block_storage.primary.disk_type",
+					"block_storage.primary.raid_type",
+				},
+				HiddenFields: []string{
+					"hidden_field1",
+					"hidden_field2",
+				},
+				IsPublic: true,
+			},
+			expectedResult: []string{
+				"uuid",
+				"block_storage.primary.disk_type",
+				"block_storage.primary.raid_type",
+				"hidden_field1",
+				"hidden_field2",
+			},
+		},
+		{
+			name: "Test with valid fields and hidden fields and prior versions to 9.11.1",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: false,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"block_storage.primary.disk_type",
+					"block_storage.primary.raid_type",
+				},
+				HiddenFields: []string{
+					"hidden_field1",
+					"hidden_field2",
+				},
+				IsPublic: true,
+			},
+			expectedResult: []string{
+				"*",
+				"hidden_field1",
+				"hidden_field2",
+			},
+		},
+		{
+			name: "Test with valid fields and no hidden fields for private API",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: false,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"block_storage.primary.disk_type",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: false,
+			},
+			expectedResult: []string{
+				"uuid",
+				"block_storage.primary.disk_type",
+				"block_storage.primary.raid_type",
+			},
+		},
+		{
+			name: "Test with invalid fields and no hidden fields, ignore unknown fields disabled",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: false,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"cloud_storage.stores.0.cloud_store.name",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: true,
+			},
+			expectedResult: []string{"*"},
+		},
+		{
+			name: "Test with invalid fields and no hidden fields for private API",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: true,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"cloud_storage.stores.0.cloud_store.name",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: false,
+			},
+			expectedResult: []string{
+				"uuid",
+				"cloud_storage.stores.0.cloud_store.name",
+				"block_storage.primary.raid_type",
+			},
+		},
+		{
+			name: "Test with valid fields and hidden fields for private API",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: true,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"block_storage.primary.disk_type",
+					"block_storage.primary.raid_type",
+				},
+				HiddenFields: []string{
+					"hidden_field1",
+					"hidden_field2",
+				},
+				IsPublic: true,
+			},
+			expectedResult: []string{
+				"uuid",
+				"block_storage.primary.disk_type",
+				"block_storage.primary.raid_type",
+				"hidden_field1",
+				"hidden_field2",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := tt.r.Fields(tt.p)
+			if !reflect.DeepEqual(result, tt.expectedResult) {
+				t.Errorf("Expected %v, got %v", tt.expectedResult, result)
+			}
+		})
+	}
 }
