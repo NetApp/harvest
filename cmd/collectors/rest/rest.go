@@ -389,10 +389,6 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Trace().Msg("starting data poll")
 
-	if err != nil {
-		return nil, err
-	}
-
 	r.Matrix[r.Object].Reset()
 	r.Client.Metadata.Reset()
 
