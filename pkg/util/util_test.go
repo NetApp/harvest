@@ -148,3 +148,25 @@ func TestVersionAtLeast(t *testing.T) {
 		}
 	}
 }
+
+func TestHandleArrayFormat(t *testing.T) {
+	testCases := []struct {
+		name     string
+		expected string
+	}{
+		{"ha.partners.0.name", "ha.partners"},                               // with .0
+		{"ha.partners.#.name", "ha.partners"},                               // with .#
+		{"aggregates.#.name", "aggregates"},                                 // with .#
+		{"cloud_storage.stores.#.cloud_store.name", "cloud_storage.stores"}, // with .#
+		{"abc.o.1.xyz", "abc.o"},                                            // with .o.1
+		{"abc.xyz", "abc.xyz"},                                              // with .xyz
+		{"interfaces.#.ip.address", "interfaces"},                           // with .ip.address
+	}
+
+	for _, tc := range testCases {
+		got := HandleArrayFormat(tc.name)
+		if got != tc.expected {
+			t.Errorf("HandleArrayFormat expected: %s, got :%s", tc.expected, got)
+		}
+	}
+}
