@@ -1956,6 +1956,33 @@ generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w
 <p>Bring everything up <img alt="🚀" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/1f680.svg" title=":rocket:" /></p>
 <div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
+<details class="question">
+<summary>What if I want to customize the Prometheus configuration, for example, the retention time?</summary>
+<p>By default, <code>prom-stack.yml</code> is configured for a 15-day data retention period. To increase this, for example to 1 year, you can create a specific configuration file and make your changes there. This prevents your custom settings from being overwritten if you regenerate the default <code>prom-stack.yml</code> file. Here's the process:</p>
+<ol>
+<li>
+<p>Copy the original <code>prom-stack.yml</code> to a new file named <code>prom-stack-prod.yml</code>:</p>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>prom-stack.yml<span class="w"> </span>prom-stack-prod.yml
+</code></pre></div>
+</li>
+<li>
+<p>Edit <code>prom-stack-prod.yml</code> to include the extended data retention setting by adding the <code>--storage.tsdb.retention.time=1y</code> line under the <strong>Prometheus</strong> service's <code>command</code> section:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">command</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--config.file=/etc/prometheus/prometheus.yml&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.path=/prometheus&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.retention.time=1y&#39;</span><span class="w">       </span><span class="c1"># Sets data retention to 1 year</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.libraries=/usr/share/prometheus/console_libraries&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.templates=/usr/share/prometheus/consoles&#39;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Save the changes to <code>prom-stack-prod.yml</code>.</p>
+<p>Now, you can start your Docker containers with the updated configuration that includes the 1-year data retention period by executing the command below:</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>-f<span class="w"> </span>prom-stack-prod.yml<span class="w"> </span>-f<span class="w"> </span>harvest-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--remove-orphans
+</code></pre></div>
+</li>
+</ol>
+</details>
 <h3 id="note-on-docker-logging-configuration">Note on Docker Logging Configuration<a class="headerlink" href="#note-on-docker-logging-configuration" title="Permanent link">&para;</a></h3>
 <p>By default, Docker uses the <code>json-file</code> logging driver which does not limit the size of the logs. This can cause your system to run out of disk space. Docker provides several options for logging configuration, including different logging drivers and options for log rotation.</p>
 <p>Docker recommends using the <code>local</code> driver to prevent disk-exhaustion. More details can be found in <a href="https://docs.docker.com/config/containers/logging/configure/">Docker logging documentation</a></p>
@@ -2000,6 +2027,7 @@ Alternatively, you can stop the Harvest, Prometheus, and Grafana containers by u
 Harvest <code>22.11</code>, please read how
 to <a href="https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md">migrate your Prometheus volume</a>
 before continuing with the upgrade steps below.</p>
+<p>If you need to customize your Prometheus configuration, such as changing the data retention period, please refer to the instructions on <a href="#what-if-i-want-to-customize-the-prometheus-configuration-for-example-the-retention-time:~:text=What%20if%20I-,want,-to%20customize%20the">customizing the Prometheus configuration</a>.</p>
 </blockquote>
 <p>To upgrade Harvest:</p>
 <ol>
