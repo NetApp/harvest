@@ -24,6 +24,8 @@ import (
 	"strings"
 )
 
+var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
+
 var IsCollector = map[string]struct{}{
 	"ZapiPerf":    {},
 	"Zapi":        {},
@@ -433,4 +435,12 @@ func VersionAtLeast(currentVersion string, minVersion string) (bool, error) {
 // IsPublicAPI returns false if api endpoint has private keyword in it else true
 func IsPublicAPI(query string) bool {
 	return !strings.Contains(query, "private")
+}
+
+func HandleArrayFormat(name string) string {
+	matches := arrayRegex.FindStringSubmatch(name)
+	if len(matches) > 2 {
+		return matches[1]
+	}
+	return name
 }
