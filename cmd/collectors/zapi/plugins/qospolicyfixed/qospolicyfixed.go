@@ -100,7 +100,7 @@ type MaxXput struct {
 func ZapiXputToRest(zapi string) (MaxXput, error) {
 	lower := strings.ToLower(zapi)
 	empty := MaxXput{IOPS: "0", Mbps: "0"}
-	if lower == "inf" || lower == "0" {
+	if lower == "inf" || lower == "0" || lower == "" {
 		return empty, nil
 	}
 

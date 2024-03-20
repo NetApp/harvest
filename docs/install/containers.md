@@ -108,6 +108,33 @@ Bring everything up :rocket:
 ```
 docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```
+??? question "What if I want to customize the Prometheus configuration, for example, the retention time?"
+    By default, `prom-stack.yml` is configured for a 15-day data retention period. To increase this, for example to 1 year, you can create a specific configuration file and make your changes there. This prevents your custom settings from being overwritten if you regenerate the default `prom-stack.yml` file. Here's the process:
+
+    1. Copy the original `prom-stack.yml` to a new file named `prom-stack-prod.yml`:
+
+        ```sh
+        cp prom-stack.yml prom-stack-prod.yml
+        ```
+
+    2. Edit `prom-stack-prod.yml` to include the extended data retention setting by adding the `--storage.tsdb.retention.time=1y` line under the **Prometheus** service's `command` section:
+
+        ```yaml
+        command:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+          - '--storage.tsdb.path=/prometheus'
+          - '--storage.tsdb.retention.time=1y'       # Sets data retention to 1 year
+          - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+          - '--web.console.templates=/usr/share/prometheus/consoles'
+        ```
+
+    3. Save the changes to `prom-stack-prod.yml`.
+
+        Now, you can start your Docker containers with the updated configuration that includes the 1-year data retention period by executing the command below:
+
+        ```sh
+        docker-compose -f prom-stack-prod.yml -f harvest-compose.yml up -d --remove-orphans
+        ```
 
 ### Note on Docker Logging Configuration
 
@@ -179,6 +206,8 @@ Note: Deleting or stopping Docker containers does not remove the data stored in 
 > Harvest `22.11`, please read how
 > to [migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
 > before continuing with the upgrade steps below.
+> 
+> If you need to customize your Prometheus configuration, such as changing the data retention period, please refer to the instructions on [customizing the Prometheus configuration](#what-if-i-want-to-customize-the-prometheus-configuration-for-example-the-retention-time:~:text=What%20if%20I-,want,-to%20customize%20the).
 
 To upgrade Harvest:
 
