@@ -24,7 +24,7 @@ import (
 	"strings"
 )
 
-var regex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
+var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
 
 var IsCollector = map[string]struct{}{
 	"ZapiPerf":    {},
@@ -438,7 +438,7 @@ func IsPublicAPI(query string) bool {
 }
 
 func HandleArrayFormat(name string) string {
-	matches := regex.FindStringSubmatch(name)
+	matches := arrayRegex.FindStringSubmatch(name)
 	if len(matches) > 2 {
 		return matches[1]
 	}

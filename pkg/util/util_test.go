@@ -166,7 +166,7 @@ func TestHandleArrayFormat(t *testing.T) {
 	for _, tc := range testCases {
 		got := HandleArrayFormat(tc.name)
 		if got != tc.expected {
-			t.Errorf("HandleArrayFormat expected: %s, got :%s", tc.expected, got)
+			t.Errorf("HandleArrayFormat got :%s want: %s", got, tc.expected)
 		}
 	}
 }
