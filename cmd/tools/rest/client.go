@@ -309,10 +309,9 @@ func (c *Client) UpdateClusterInfo(retries int) error {
 	var (
 		err     error
 		content []byte
-		i       int
 	)
 
-	for i = 0; i < retries; i++ {
+	for range retries {
 		href := NewHrefBuilder().
 			APIPath("api/cluster").
 			Fields([]string{"*"}).
