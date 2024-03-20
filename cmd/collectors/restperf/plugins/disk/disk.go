@@ -469,14 +469,13 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	aggrData.Reset()
 
 	// fill aggr power matrix with power calculated above
-	for k, v := range d.aggrMap {
-		instanceKey := k
+	for instanceKey, v := range d.aggrMap {
 		instance, err := aggrData.NewInstance(instanceKey)
 		if err != nil {
 			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
 			continue
 		}
-		instance.SetLabel("aggr", k)
+		instance.SetLabel("aggr", instanceKey)
 		instance.SetLabel("derivedType", string(v.derivedType))
 		instance.SetLabel("node", v.node)
 

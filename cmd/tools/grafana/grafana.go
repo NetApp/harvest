@@ -1142,8 +1142,7 @@ func addCustomizeFlags(cmd *cobra.Command) {
 }
 
 func addCommonFlags(commands ...*cobra.Command) {
-	for _, command := range commands {
-		cmd := command
+	for _, cmd := range commands {
 		cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 		cmd.PersistentFlags().StringVar(&opts.svmRegex, "svm-variable-regex", "", "SVM variable regex to filter SVM query results")
 		cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
@@ -1157,8 +1156,7 @@ func addCommonFlags(commands ...*cobra.Command) {
 }
 
 func addImportExportFlags(commands ...*cobra.Command) {
-	for _, command := range commands {
-		cmd := command
+	for _, cmd := range commands {
 		cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "Address of Grafana server (IP, FQDN or hostname)")
 		cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 		cmd.PersistentFlags().BoolVarP(&opts.useHTTPS, "https", "S", false, "Use HTTPS")

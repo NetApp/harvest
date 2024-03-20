@@ -262,8 +262,7 @@ func getPollersStatus() map[string][]*util.PollerStatus {
 	}
 	// create map of status names
 	for _, status := range statuses {
-		clone := status
-		statusesByName[status.Name] = append(statusesByName[status.Name], &clone)
+		statusesByName[status.Name] = append(statusesByName[status.Name], &status) // #nosec G601
 	}
 	return statusesByName
 }

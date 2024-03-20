@@ -276,10 +276,9 @@ func (c *Client) Init(retries int) error {
 	var (
 		err     error
 		content []byte
-		i       int
 	)
 
-	for i = 0; i < retries; i++ {
+	for range retries {
 		// Determine which API versions are supported and then request
 		// product version and cluster name - both of which are separate endpoints
 
@@ -431,14 +430,13 @@ func (c *Client) sniffAPIVersion(retries int) error {
 		apiVersion = DefaultAPIVersion
 		u          string
 		err        error
-		i          int
 	)
 
 	u, err = url.JoinPath(c.baseURL, "/api/versions")
 	if err != nil {
 		return fmt.Errorf("failed to join getApiVersions %s err: %w", c.baseURL, err)
 	}
-	for i = 0; i < retries; i++ {
+	for range retries {
 		result, err := c.getRest(u)
 		if err != nil {
 			continue
