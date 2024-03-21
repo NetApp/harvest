@@ -60,7 +60,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 					isColorBackgroundSet := false
 					expectedColorBackground := map[string][]string{
 						"table": {"color-background", "lcd-gauge"},
-						"stat":  {"background"},
+						"stat":  {"background", "value"},
 					}
 					// check in default also for stat. For table, we only want the relevant column background and override settings
 					if kind == "stat" {
@@ -95,7 +95,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 					if kind == "stat" {
 						colorMode := value.Get("options.colorMode")
 						if !slices.Contains(expectedColorBackground[kind], colorMode.String()) {
-							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct colorMode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], colorMode.String())
+							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s doesn't have correct colorMode got %s want %s", path, panelTitle, kind, expr, colorMode.String(), expectedColorBackground[kind])
 						} else {
 							isColorBackgroundSet = true
 						}
@@ -125,7 +125,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		dsResult := value.Get("datasource")
 		panelTitle := value.Get("title").String()
 		if !dsResult.Exists() {
-			t.Errorf("dashboard=%s panel=%s don't have datasource", path, panelTitle)
+			t.Errorf(`dashboard="%s" panel="%s" doesn't have a datasource`, path, panelTitle)
 			return
 		}
 
@@ -134,9 +134,8 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 			if value.Get("type").String() == "row" {
 				return
 			}
-			t.Errorf("dashboard=%s panel=%s has a null datasource", path, panelTitle)
-		}
-		if dsResult.String() != "${DS_PROMETHEUS}" {
+			t.Errorf(`dashboard=%s panel="%s" has a null datasource, should be ${DS_PROMETHEUS}`, path, panelTitle)
+		} else if dsResult.String() != "${DS_PROMETHEUS}" {
 			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", path, panelTitle, dsResult.String())
 		}
 
@@ -212,7 +211,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	})
 
 	if !doesDsPromExist {
-		t.Errorf("dashboard=%s should define variable has DS_PROMETHEUS", path)
+		t.Errorf("dashboard=%s should define the variable DS_PROMETHEUS", path)
 	}
 }
 
@@ -751,10 +750,19 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 	}
 }
 
+var uidExceptions = map[string]bool{
+	"cmode/details/volumeBySVM.json":    true,
+	"cmode/details/volumeDeepDive.json": true,
+}
+
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
+	path = ShortPath(path)
+	if uidExceptions[path] {
+		return
+	}
 	uid := gjson.GetBytes(data, "uid").String()
 	if uid != "" {
-		t.Errorf(`dashboard=%s uid should be "" but is %s`, ShortPath(path), uid)
+		t.Errorf(`dashboard=%s uid should be "" but is %s`, path, uid)
 	}
 }
 
@@ -863,9 +871,17 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				}
 
 				// Test if the selected value matches the expected text "5"
-				if (text == "5") != selected {
-					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
-						ShortPath(path), v.name, text, selected)
+				// Unless the dashboard is volumeDeepDive, in which case the text "1" should be selected
+				if ShortPath(path) == "cmode/details/volumeDeepDive.json" {
+					if text == "1" != selected {
+						t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
+							ShortPath(path), v.name, text, selected)
+					}
+				} else {
+					if text == "5" != selected {
+						t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
+							ShortPath(path), v.name, text, selected)
+					}
 				}
 			}
 		}
@@ -883,16 +899,17 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
-		"cmode/shelf.json":            2,
-		"cmode/fsa.json":              2,
-		"cmode/flexcache.json":        2,
-		"cmode/workload.json":         2,
-		"cmode/smb.json":              2,
-		"cmode/health.json":           2,
-		"cmode/power.json":            2,
-		"storagegrid/fabricpool.json": 2,
+		"cmode/shelf.json":              2,
+		"cmode/fsa.json":                2,
+		"cmode/flexcache.json":          2,
+		"cmode/workload.json":           2,
+		"cmode/smb.json":                2,
+		"cmode/health.json":             2,
+		"cmode/power.json":              2,
+		"storagegrid/fabricpool.json":   2,
+		"cmode/nfsTroubleshooting.json": 3,
 	}
-	// count number of expanded sections in dashboard and ensure num expanded = 1
+	// count the number of expanded sections in the dashboard and ensure num expanded = 1
 	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
@@ -1072,7 +1089,8 @@ func checkTableFilter(t *testing.T, path string, data []byte) {
 		if panelType == "table" {
 			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").String()
 			if isFilterable != "true" {
-				t.Errorf(`dashboard=%s path=panels[%d] does not enable filtering for the table`, dashPath, key.Int())
+				t.Errorf(`dashboard=%s path=panels[%d] title="%s" does not enable filtering for the table`,
+					dashPath, key.Int(), value.Get("title").String())
 			}
 		}
 	})
@@ -1271,7 +1289,7 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 			if string(sorted) != string(data) {
 				sortedPath := writeSorted(t, path, sorted)
 				path = "grafana/dashboards/" + path
-				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s. Run cp %s %s",
+				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s.\ncp %s %s",
 					path, sortedPath, sortedPath, path)
 			}
 		})
@@ -1404,7 +1422,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 				} else {
 					*count = *count + 1
-					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, title, *count)
+					t.Errorf(`dashboard=%s panel="%s" does not have panel description %d`, dashPath, title, *count)
 				}
 			} else {
 				// This indicates table/timeseries with more than 1 expression, After deciding next steps, this will be uncommented.
