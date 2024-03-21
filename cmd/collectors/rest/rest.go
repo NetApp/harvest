@@ -97,9 +97,6 @@ func (r *Rest) query(p *endPoint) string {
 }
 
 func (r *Rest) isValidFormat(prop *prop) bool {
-	if len(prop.Fields) == 0 {
-		return false
-	}
 	for _, str := range prop.Fields {
 		if !validPropRegex.MatchString(str) {
 			return false
