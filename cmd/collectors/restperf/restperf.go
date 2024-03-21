@@ -307,7 +307,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 			delete(r.archivedMetrics, name) // Remove from archive after restoring
 			r.Logger.Info().
 				Str("key", name).
-				Msg("Metric found in achieve. Restore it")
+				Msg("Metric found in archive. Restore it")
 		}
 
 		if p := r.GetOverride(name); p != "" {
