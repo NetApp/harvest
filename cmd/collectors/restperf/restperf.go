@@ -64,7 +64,7 @@ var qosDetailQueries = map[string]string{
 type RestPerf struct {
 	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	perfProp        *perfProp
-	archivedMetrics map[string]*rest2.Metric
+	archivedMetrics map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
 }
 
 type counter struct {
@@ -356,13 +356,11 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 
 	for name, metric := range r.Prop.Metrics {
 		if !seenMetrics[name] {
-			// Archive the metric instead of deleting it
 			r.archivedMetrics[name] = metric
 			// Log the metric that is not present in counterSchema.
 			r.Logger.Warn().
 				Str("key", name).
 				Msg("Metric not found in counterSchema")
-
 			delete(r.Prop.Metrics, name)
 		}
 	}
