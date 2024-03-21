@@ -29,6 +29,12 @@
       "version": ""
     },
     {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -54,11 +60,12 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1711024411146,
+  "iteration": 1711048745942,
   "links": [],
   "panels": [
     {
@@ -78,14 +85,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 21,
       "options": {
-        "content": "You must enable the NFSv4Pool section in your $HARVEST/conf/zapiperf/default.yaml file. Please see https://github.com/NetApp/harvest/discussions/1796 for more details.",
+        "content": "This dashboard requires the NFSv4Pool templates. Two actions are required to use this dashboard: <br>\\n1. If you are using the ZapiPerf collector, then you must enable the NFSv4Pool counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>\\n2. If you are using the RestPerf collector, then you must enable the NFSv4Pool counters in `$HARVEST/conf/restperf/default.yaml`. Please see https://github.com/NetApp/harvest/discussions/1796 for more details.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -161,7 +168,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "id": 2,
       "links": [
@@ -332,7 +339,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 15
       },
       "id": 6,
       "panels": [],
@@ -431,7 +438,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "id": 8,
       "options": {
@@ -622,7 +629,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 10,
       "options": {
@@ -707,7 +714,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 23
+        "y": 24
       },
       "id": 11,
       "options": {
@@ -743,7 +750,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 32
       },
       "id": 13,
       "panels": [],
@@ -910,7 +917,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 33
       },
       "id": 15,
       "options": {
@@ -1098,7 +1105,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 41
       },
       "id": 17,
       "panels": [
