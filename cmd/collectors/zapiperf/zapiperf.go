@@ -463,12 +463,20 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath)
 		if err != nil {
+			errMsg := err.Error()
 			// if ONTAP complains about batch size, use a smaller batch size
-			if strings.Contains(err.Error(), "resource limit exceeded") && z.batchSize > 100 {
+			if strings.Contains(errMsg, "resource limit exceeded") && z.batchSize > 100 {
 				z.Logger.Error().Err(err).
 					Int("oldBatchSize", z.batchSize).
 					Int("newBatchSize", z.batchSize-100).
 					Msg("Changed batch_size")
+				z.batchSize -= 100
+				return nil, nil
+			} else if strings.Contains(errMsg, "Timeout: Operation") && z.batchSize > 100 {
+				z.Logger.Error().Err(err).
+					Int("oldBatchSize", z.batchSize).
+					Int("newBatchSize", z.batchSize-100).
+					Msg("ONTAP timeout, reducing batch size")
 				z.batchSize -= 100
 				return nil, nil
 			}
