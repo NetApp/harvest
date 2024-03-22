@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/pretty"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -1433,5 +1434,101 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 			// Few panels have description text from variable, which would be ignored.
 			t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
 		}
+	})
+}
+
+var linkPath = regexp.MustCompile(`/d/(.*?)/`)
+
+func TestLinks(t *testing.T) {
+	hasLinks := map[string][]string{}
+	uids := map[string]string{}
+
+	VisitDashboards(dashboards, func(path string, data []byte) {
+		checkLinks(path, data, hasLinks, uids)
+	})
+
+	// Check that the links are valid URLs and that the link points to an existing dashboard
+
+	for path, list := range hasLinks {
+		hasOrgID := false
+		for _, link := range list {
+			parse, err := url.Parse(link)
+			if err != nil {
+				t.Errorf(`dashboard=%s link="%s" is not a valid URL`, path, link)
+				continue
+			}
+			matches := linkPath.FindStringSubmatch(parse.Path)
+			if len(matches) != 2 {
+				t.Errorf(`dashboard=%s link="%s" does not have a valid path`, path, link)
+				continue
+			}
+
+			// Check if the dashboard exists
+			if _, ok := uids[matches[1]]; !ok {
+				t.Errorf(`dashboard=%s links to not existant dashboard with link="%s"`, path, link)
+			}
+
+			query, err := url.ParseQuery(link)
+			if err != nil {
+				t.Errorf(`dashboard=%s link="%s" is not a valid URL`, path, link)
+				continue
+			}
+			if len(query) < 3 {
+				t.Errorf(`dashboard=%s link="%s" does not have enough query parameters`, path, link)
+			}
+			for k, v := range query {
+				if strings.HasSuffix(k, "?orgId") {
+					if v[0] != "1" {
+						t.Errorf(`dashboard=%s link="%s" does not have orgId=1`, path, link)
+					}
+					hasOrgID = true
+					continue
+				}
+				if strings.HasPrefix(k, "${") {
+					if v[0] != "" {
+						t.Errorf(`dashboard=%s link="%s" has variable in query. got key="%s" value="%s" want value=""`,
+							path, link, k, v[0])
+					}
+				} else if strings.HasPrefix(k, "var-") {
+					if v[0] == "" {
+						t.Errorf(`dashboard=%s link="%s" has empty variable in query. got key="%s" value="%s" want non empty value`,
+							path, link, k, v[0])
+					}
+				}
+			}
+		}
+
+		if !hasOrgID {
+			t.Errorf(`dashboard=%s does not have orgId=1`, path)
+		}
+	}
+}
+
+func checkLinks(path string, data []byte, hasLinks map[string][]string, uids map[string]string) {
+	dashPath := ShortPath(path)
+
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
+		checkPanelLinks(value, dashPath, hasLinks)
+	})
+
+	uid := gjson.GetBytes(data, "uid").String()
+	if uid != "" {
+		uids[uid] = dashPath
+	}
+}
+
+func checkPanelLinks(value gjson.Result, path string, hasLinks map[string][]string) {
+	value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
+		anOverride.Get("properties").ForEach(func(_, propValue gjson.Result) bool {
+			propValue.Get("value").ForEach(func(_, value gjson.Result) bool {
+				link := value.Get("url").String()
+				if link != "" {
+					hasLinks[path] = append(hasLinks[path], link)
+				}
+				return true
+			})
+			return true
+		})
+		return true
 	})
 }

@@ -92,7 +92,7 @@
       },
       "id": 21,
       "options": {
-        "content": "This dashboard requires the NFSv4Pool templates. Two actions are required to use this dashboard: <br>\\n1. If you are using the ZapiPerf collector, then you must enable the NFSv4Pool counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>\\n2. If you are using the RestPerf collector, then you must enable the NFSv4Pool counters in `$HARVEST/conf/restperf/default.yaml`. Please see https://github.com/NetApp/harvest/discussions/1796 for more details.",
+        "content": "This dashboard requires the NFSv4Pool templates. Two actions are required to use this dashboard: <br>1. If you are using the ZapiPerf collector, then you must enable the NFSv4Pool counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>2. If you are using the RestPerf collector, then you must enable the NFSv4Pool counters in `$HARVEST/conf/restperf/default.yaml`. Please see https://github.com/NetApp/harvest/discussions/1796 for more details.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -454,7 +454,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg_over_time (headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} [$__range])",
+          "expr": "avg_over_time (headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} [$__range])",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -463,7 +463,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} [$__range])",
+          "expr": "avg_over_time (headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} [$__range])",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -473,7 +473,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (headroom_cpu_current_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} [$__range])",
+          "expr": "avg_over_time (headroom_cpu_current_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} [$__range])",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -483,7 +483,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (headroom_cpu_optimal_point_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} [$__range])",
+          "expr": "avg_over_time (headroom_cpu_optimal_point_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} [$__range])",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -493,7 +493,7 @@
         },
         {
           "exemplar": false,
-          "expr": "(headroom_cpu_current_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} / headroom_cpu_optimal_point_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) * 100",
+          "expr": "(headroom_cpu_current_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} / headroom_cpu_optimal_point_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) * 100",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -845,7 +845,7 @@
                   {
                     "targetBlank": true,
                     "title": "Click for volume view",
-                    "url": "/d/bb326bd1/ontap-vol-by-svm?orgId=1${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                    "url": "/d/bb326bd1/ontap-vol-by-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
                   }
                 ]
               }
