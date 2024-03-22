@@ -233,6 +233,8 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"_lag_time":                       {"", "s", "short"},
 		"qos_detail_service_time_latency": {"µs", "percent"},
 		"qos_detail_resource_latency":     {"µs", "percent"},
+		"volume_space_physical_used":      {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"volume_space_logical_used":       {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 	}
 
 	// Normalize rates to their base unit
