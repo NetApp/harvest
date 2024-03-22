@@ -77,7 +77,7 @@ func TestMain(m *testing.M) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 
 	benchPerf = newRestPerf("Volume", "volume.yaml")
-	counters := jsonToPerfRecords("testdata/volume-counters.json")
+	counters := jsonToPerfRecords("testdata/volume-counters-1.json")
 	_, _ = benchPerf.pollCounter(counters[0].Records.Array(), 0)
 	now := time.Now().Truncate(time.Second)
 	propertiesData = jsonToPerfRecords("testdata/volume-poll-properties.json.gz")
@@ -123,18 +123,35 @@ func TestRestPerf_pollData(t *testing.T) {
 		numMetrics    int
 		sum           int64
 		pollCounters  string
+		pollCounters2 string
 		counter       string
+		record        bool
 	}{
 		{
 			name:          "bytes_read",
 			counter:       "bytes_read",
-			pollCounters:  "testdata/volume-counters.json",
+			pollCounters:  "testdata/volume-counters-1.json",
+			pollCounters2: "testdata/volume-counters-2.json",
 			pollInstance:  "testdata/volume-poll-instance.json",
 			pollDataPath1: "testdata/volume-poll-1.json",
 			pollDataPath2: "testdata/volume-poll-2.json",
 			numInstances:  2,
 			numMetrics:    40,
 			sum:           26,
+			record:        true,
+		},
+		{
+			name:          "abc",
+			counter:       "abc",
+			pollCounters:  "testdata/volume-counters-1.json",
+			pollCounters2: "testdata/volume-counters-2.json",
+			pollInstance:  "testdata/volume-poll-instance.json",
+			pollDataPath1: "testdata/volume-poll-1.json",
+			pollDataPath2: "testdata/volume-poll-3.json",
+			numInstances:  2,
+			numMetrics:    42,
+			sum:           526336,
+			record:        false,
 		},
 	}
 	for _, tt := range tests {
@@ -156,6 +173,11 @@ func TestRestPerf_pollData(t *testing.T) {
 			now := time.Now().Truncate(time.Second)
 			pollData[0].Timestamp = now.UnixNano()
 			_, err = r.pollData(now, pollData)
+			if err != nil {
+				t.Fatal(err)
+			}
+			counters = jsonToPerfRecords(tt.pollCounters2)
+			_, err = r.pollCounter(counters[0].Records.Array(), 0)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -187,12 +209,12 @@ func TestRestPerf_pollData(t *testing.T) {
 				names = append(names, n)
 			}
 			sort.Strings(names)
-			bytesRead := m.GetMetric(tt.counter)
+			metric := m.GetMetric(tt.counter)
 			for _, name := range names {
 				i := m.GetInstance(name)
-				val, recorded := bytesRead.GetValueInt64(i)
-				if !recorded {
-					t.Errorf("pollData() recorded = false, want true")
+				val, recorded := metric.GetValueInt64(i)
+				if recorded != tt.record {
+					t.Errorf("pollData() recorded got=%v, want=%v", recorded, tt.record)
 				}
 				sum += val
 			}

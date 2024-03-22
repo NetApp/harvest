@@ -9,6 +9,7 @@ counters:
   - ^node.name             => node
   - ^parent_aggregate      => aggr
   - ^svm.name              => svm
+  - abc
   - average_latency        => avg_latency
   - bytes_read             => read_data
   - bytes_written          => write_data
