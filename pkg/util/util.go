@@ -77,7 +77,6 @@ func AllSame(elements [][]string, k int) bool {
 	return true
 }
 
-var pollerRegex = regexp.MustCompile(`poller\s+--poller\s+(.*?)\s`)
 var profRegex = regexp.MustCompile(`--profiling (\d+)`)
 var promRegex = regexp.MustCompile(`--promPort (\d+)`)
 
@@ -98,12 +97,29 @@ func GetPollerStatuses() ([]PollerStatus, error) {
 		if !strings.Contains(line, "poller --poller ") {
 			continue
 		}
-		matches := pollerRegex.FindStringSubmatch(line)
-		if len(matches) != 2 {
+
+		args, err := p.CmdlineSlice()
+
+		if err != nil {
+			if !errors.Is(err, unix.EINVAL) && !errors.Is(err, unix.ENOENT) {
+				fmt.Printf("Unable to read process cmdline pid=%d err=%v\n", p.Pid, err)
+			}
+			continue
+		}
+
+		name := ""
+		for i, arg := range args {
+			if arg == "--poller" {
+				name = args[i+1]
+				break
+			}
+		}
+
+		if name == "" {
 			continue
 		}
 		s := PollerStatus{
-			Name:   matches[1],
+			Name:   name,
 			Pid:    p.Pid,
 			Status: "running",
 		}

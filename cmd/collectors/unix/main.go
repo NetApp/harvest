@@ -384,9 +384,9 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		poller := instance.GetLabel("poller")
-		cmd := proc.Cmdline()
+		cmd := proc.CmdlineSlice()
 
-		if !set.NewFrom(strings.Fields(cmd)).Has(poller) {
+		if !set.NewFrom(cmd).Has(poller) {
 			u.Logger.Debug().Msgf("skip instance [%s]: PID (%d) not matched with [%s]", key, pid, cmd)
 			continue
 		}
