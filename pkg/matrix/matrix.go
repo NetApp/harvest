@@ -20,16 +20,15 @@ import (
 )
 
 type Matrix struct {
-	UUID             string
-	Object           string
-	Identifier       string
-	globalLabels     map[string]string
-	instances        map[string]*Instance
-	metrics          map[string]*Metric // ONTAP metric name => metric (in templates, this is left side)
-	displayMetrics   map[string]string  // display name of metric to => metric name (in templates, this is right side)
-	exportOptions    *node.Node
-	exportable       bool
-	partialInstances map[int]struct{}
+	UUID           string
+	Object         string
+	Identifier     string
+	globalLabels   map[string]string
+	instances      map[string]*Instance
+	metrics        map[string]*Metric // ONTAP metric name => metric (in templates, this is left side)
+	displayMetrics map[string]string  // display name of metric to => metric name (in templates, this is right side)
+	exportOptions  *node.Node
+	exportable     bool
 }
 
 type With struct {
@@ -48,7 +47,6 @@ func New(uuid, object string, identifier string) *Matrix {
 	me.metrics = make(map[string]*Metric)
 	me.displayMetrics = make(map[string]string)
 	me.exportable = true
-	me.partialInstances = make(map[int]struct{})
 	return &me
 }
 
@@ -92,6 +90,9 @@ func (m *Matrix) Clone(with With) *Matrix {
 			} else {
 				clone.instances[key] = instance.Clone(false, with.Labels...)
 			}
+			if with.PartialInstances {
+				clone.instances[key].SetPartial(instance.IsPartial())
+			}
 		}
 	} else {
 		clone.instances = make(map[string]*Instance)
@@ -108,14 +109,6 @@ func (m *Matrix) Clone(with With) *Matrix {
 		clone.metrics = make(map[string]*Metric)
 	}
 
-	if with.PartialInstances {
-		clone.partialInstances = make(map[int]struct{}, len(m.GetPartialInstances()))
-		for key := range m.GetPartialInstances() {
-			clone.partialInstances[key] = struct{}{}
-		}
-	} else {
-		clone.partialInstances = make(map[int]struct{})
-	}
 	return clone
 }
 
@@ -267,34 +260,6 @@ func (m *Matrix) NewInstance(key string) (*Instance, error) {
 	return instance, nil
 }
 
-func (m *Matrix) AddPartialAggregationInstance(index int) {
-	m.partialInstances[index] = struct{}{}
-}
-
-func (m *Matrix) IsPartialInstance(index int) bool {
-	_, exists := m.partialInstances[index]
-	return exists
-}
-
-func (m *Matrix) GetPartialInstances() map[int]struct{} {
-	return m.partialInstances
-}
-
-func (m *Matrix) RemovePartialInstance(deletedIndex int) {
-	updatedIndices := make(map[int]int)
-	for index := range m.partialInstances {
-		if index > deletedIndex {
-			updatedIndices[index] = index - 1
-		}
-	}
-
-	// Update the partialInstances map with the new indices
-	for oldIndex, newIndex := range updatedIndices {
-		delete(m.partialInstances, oldIndex)
-		m.partialInstances[newIndex] = struct{}{}
-	}
-}
-
 func (m *Matrix) ResetInstance(key string) {
 	if instance, has := m.instances[key]; has {
 		for _, metric := range m.GetMetrics() {
@@ -319,7 +284,6 @@ func (m *Matrix) RemoveInstance(key string) {
 				i.index = i.index - 1
 			}
 		}
-		m.RemovePartialInstance(deletedIndex)
 	}
 }
 
@@ -405,8 +369,8 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 						Msg("Negative cooked value")
 				}
 				// Check for partial Aggregation
-				ppaOk := prevMat.IsPartialInstance(prevIndex)
-				cpaOk := m.IsPartialInstance(currIndex)
+				ppaOk := prevInstance.IsPartial()
+				cpaOk := currInstance.IsPartial()
 				if ppaOk || cpaOk {
 					curMetric.record[currIndex] = false
 					skips++

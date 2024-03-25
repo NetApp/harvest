@@ -371,6 +371,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		instanceKeys []string
 		err          error
 		skips        int
+		numPartials  uint64
 		apiT         time.Duration
 		parseT       time.Duration
 	)
@@ -561,7 +562,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			if z.isPartialAggregation(i) {
-				curMat.AddPartialAggregationInstance(instance.GetIndex())
+				instance.SetPartial(true)
+				numPartials++
 			}
 
 			instance.SetExportable(true)
@@ -777,7 +779,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instanceKeys)))
 	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx)
 	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls)
-	_ = z.Metadata.LazySetValueUint64("numPartials", "data", uint64(len(curMat.GetPartialInstances())))
+	_ = z.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 
 	z.AddCollectCount(count)
 

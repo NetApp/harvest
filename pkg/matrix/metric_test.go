@@ -190,7 +190,7 @@ func setupMatrixForPartialAggregation(prevRaw, curRaw float64, prevPartial, curr
 	prevInstance, _ := prevMatrix.NewInstance("A")
 	_ = prevSpeed.SetValueFloat64(prevInstance, prevRaw)
 	if prevPartial {
-		prevMatrix.AddPartialAggregationInstance(prevInstance.GetIndex())
+		prevInstance.SetPartial(true)
 	}
 
 	// Create the current Matrix with one instance
@@ -199,7 +199,7 @@ func setupMatrixForPartialAggregation(prevRaw, curRaw float64, prevPartial, curr
 	currInstance, _ := currMatrix.NewInstance("A")
 	_ = currSpeed.SetValueFloat64(currInstance, curRaw)
 	if currPartial {
-		currMatrix.AddPartialAggregationInstance(currInstance.GetIndex())
+		currInstance.SetPartial(true)
 	}
 
 	return prevMatrix, currMatrix
