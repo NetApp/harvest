@@ -27,6 +27,10 @@ func (i *Instance) GetLabel(key string) string {
 	return i.labels[key]
 }
 
+func (i *Instance) GetIndex() int {
+	return i.index
+}
+
 func (i *Instance) GetLabels() map[string]string {
 	return i.labels
 }

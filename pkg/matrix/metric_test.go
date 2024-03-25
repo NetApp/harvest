@@ -153,6 +153,58 @@ func TestMetricFloat64_Delta(t *testing.T) {
 	}
 }
 
+func TestMetricFloat64_Delta_PartialAggregation(t *testing.T) {
+	tests := []struct {
+		name                   string
+		curRaw                 float64
+		prevRaw                float64
+		expectedSkips          int
+		prevPartialAggregation bool
+		currPartialAggregation bool
+	}{
+		{"No Partial Aggregation", 20, 10, 0, false, false},
+		{"Previous Partial Aggregation", 20, 10, 1, true, false},
+		{"Current Partial Aggregation", 20, 10, 1, false, true},
+		{"Both Partial Aggregation", 20, 10, 1, true, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			previous, current := setupMatrixForPartialAggregation(tt.prevRaw, tt.curRaw, tt.prevPartialAggregation, tt.currPartialAggregation)
+			skips, err := current.Delta("speed", previous, logging.Get())
+			if err != nil {
+				t.Errorf("Delta method returned an error: %v", err)
+			}
+			if skips != tt.expectedSkips {
+				t.Errorf("Expected %d skips, got %d", tt.expectedSkips, skips)
+			}
+		})
+	}
+}
+
+// setupMatrixForPartialAggregation sets up two Matrix objects with one instance each, and marks them as partial aggregation instances based on the input flags.
+func setupMatrixForPartialAggregation(prevRaw, curRaw float64, prevPartial, currPartial bool) (*Matrix, *Matrix) {
+	// Create the previous Matrix with one instance
+	prevMatrix := New("Test", "test", "test")
+	prevSpeed, _ := prevMatrix.NewMetricFloat64("speed")
+	prevInstance, _ := prevMatrix.NewInstance("A")
+	_ = prevSpeed.SetValueFloat64(prevInstance, prevRaw)
+	if prevPartial {
+		prevMatrix.AddPartialAggregationInstance(prevInstance.GetIndex())
+	}
+
+	// Create the current Matrix with one instance
+	currMatrix := New("Test", "test", "test")
+	currSpeed, _ := currMatrix.NewMetricFloat64("speed")
+	currInstance, _ := currMatrix.NewInstance("A")
+	_ = currSpeed.SetValueFloat64(currInstance, curRaw)
+	if currPartial {
+		currMatrix.AddPartialAggregationInstance(currInstance.GetIndex())
+	}
+
+	return prevMatrix, currMatrix
+}
+
 func testDelta(t *testing.T, op matrixOp) {
 	tests := []test{
 		{curRaw: 10, prevRaw: 10, cooked: []float64{0}, skips: 0, record: []bool{true}, name: "no increase"},
