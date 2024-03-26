@@ -1417,3 +1417,38 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		}
 	})
 }
+
+func TestFSxFriendlyVariables(t *testing.T) {
+	VisitDashboards(dashboards,
+		func(path string, data []byte) {
+			checkVariablesAreFSxFriendly(t, path, data)
+		})
+}
+
+func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		// Only consider query variables
+		if value.Get("type").String() != "query" {
+			return true
+		}
+
+		query := value.Get("query").String()
+		definition := value.Get("definition").String()
+		varName := value.Get("name").String()
+
+		if varName != "Cluster" && varName != "Datacenter" {
+			return true
+		}
+
+		if strings.Contains(query, "node_labels") {
+			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" has "node_labels" in query. Use "cluster_new_status" instead.`,
+				ShortPath(path), key.String(), varName)
+		}
+
+		if strings.Contains(definition, "node_labels") {
+			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" has "node_labels" in definition. Use "cluster_new_status" instead.`,
+				ShortPath(path), key.String(), varName)
+		}
+		return true
+	})
+}
