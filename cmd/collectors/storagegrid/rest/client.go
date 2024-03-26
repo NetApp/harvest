@@ -301,7 +301,7 @@ func (c *Client) Init(retries int) error {
 		}
 
 		results = gjson.ParseBytes(content)
-		c.Cluster.Name = strings.ReplaceAll(results.Get("data.name").String(), " ", "_")
+		c.Cluster.Name = results.Get("data.name").String()
 
 		if content, err = c.GetGridRest("grid/license"); err != nil {
 			continue
