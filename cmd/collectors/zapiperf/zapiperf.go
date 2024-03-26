@@ -354,9 +354,7 @@ func (z *ZapiPerf) isPartialAggregation(instance *node.Node) bool {
 			result := aggregationData.GetChildS("result")
 			if result != nil {
 				r := result.GetContentS()
-				if r == "partial_aggregation" {
-					return true
-				}
+				return r == "partial_aggregation"
 			}
 		}
 	}

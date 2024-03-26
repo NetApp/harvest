@@ -142,12 +142,12 @@ func (z *ZapiPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 	}
 
 	if exportableInstance != expectedExportedInst {
-		t.Errorf("Exported instances got= %d, expected: %d", exportableInstance, expectedExportedInst)
+		t.Errorf("Exported instances got=%d, expected=%d", exportableInstance, expectedExportedInst)
 	}
 
 	// Check if the total number of metrics matches the expected value
 	if totalMetrics != expectedMetrics {
-		t.Errorf("Total metrics got= %d, expected: %d", totalMetrics, expectedMetrics)
+		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedMetrics)
 	}
 }
 
