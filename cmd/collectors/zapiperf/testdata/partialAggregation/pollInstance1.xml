@@ -1,0 +1,13 @@
+<results status="passed">
+    <attributes-list>
+        <instance-info>
+            <name>RahulTest-wid8678</name>
+            <uuid>82f651fb-8b7a-11ed-86dd-00a098d390f2</uuid>
+        </instance-info>
+        <instance-info>
+            <name>xyz-wid28278</name>
+            <uuid>837e9edd-af97-11ee-bb71-00a098d390f2</uuid>
+        </instance-info>
+    </attributes-list>
+    <num-records>2</num-records>
+</results>

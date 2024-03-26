@@ -12,28 +12,143 @@ import (
 	"testing"
 )
 
-func Test_ZapiPerf(t *testing.T) {
+func TestZapiPerfSequence(t *testing.T) {
 	// Initialize the ZapiPerf collector for Volume object
 	z := NewZapiPerf("Volume", "volume.yaml")
 
 	// PollCounter to update the counter detail in cache
 	z.testFilePath = "testdata/pollCounter.xml"
-	_, err := z.PollCounter()
-	if err != nil {
+	if _, err := z.PollCounter(); err != nil {
 		t.Fatalf("Failed to fetch poll counter %v", err)
 	}
 
+	// First poll
+	t.Log("Running First poll")
+	z.testPollInstanceAndData(t, "testdata/pollInstance1.xml", "testdata/pollData1.xml", 0)
+	if t.Failed() {
+		t.Fatal("First poll failed")
+	}
+
 	// Case1: pollInstance has 5 records and pollData has 5 records, expected exported instances are 5
-	expectedInstances := 5
-	z.testPollInstanceAndData(t, "testdata/pollInstance1.xml", "testdata/pollData1.xml", expectedInstances)
+	t.Log("Running Case 1")
+	z.testPollInstanceAndData(t, "testdata/pollInstance1.xml", "testdata/pollData1.xml", 5)
+	if t.Failed() {
+		t.Fatal("Case 1 failed")
+	}
 
 	// Case2: pollInstance has 6 records and pollData has 7 records, expected exported instances are 6
-	expectedInstances = 6
-	z.testPollInstanceAndData(t, "testdata/pollInstance2.xml", "testdata/pollData2.xml", expectedInstances)
+	t.Log("Running Case 2")
+	z.testPollInstanceAndData(t, "testdata/pollInstance2.xml", "testdata/pollData2.xml", 6)
+	if t.Failed() {
+		t.Fatal("Case 2 failed")
+	}
 
 	// Case3: pollInstance has 5 records and pollData has 3 records, expected exported instances are 3
-	expectedInstances = 3
-	z.testPollInstanceAndData(t, "testdata/pollInstance3.xml", "testdata/pollData3.xml", expectedInstances)
+	t.Log("Running Case 3")
+	z.testPollInstanceAndData(t, "testdata/pollInstance3.xml", "testdata/pollData3.xml", 3)
+	if t.Failed() {
+		t.Fatal("Case 3 failed")
+	}
+}
+
+func TestPartialAggregationSequence(t *testing.T) {
+	z := NewZapiPerf("Workload", "workload.yaml")
+
+	z.testFilePath = "testdata/partialAggregation/pollCounter.xml"
+	if _, err := z.PollCounter(); err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
+	z.testFilePath = "testdata/partialAggregation/pollInstance1.xml"
+	if _, err := z.PollInstance(); err != nil {
+		t.Fatalf("Failed to fetch poll instance %v", err)
+	}
+
+	// First Poll
+	t.Log("Running First Poll")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 0, 0)
+	if t.Failed() {
+		t.Fatal("First Poll failed")
+	}
+
+	// Complete Poll
+	t.Log("Running Complete Poll")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 24)
+	if t.Failed() {
+		t.Fatal("Complete Poll failed")
+	}
+
+	// Partial Poll
+	t.Log("Running Partial Poll")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 2, 0)
+	if t.Failed() {
+		t.Fatal("Partial Poll failed")
+	}
+
+	// Partial Poll 2
+	t.Log("Running Partial Poll 2")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 2, 0)
+	if t.Failed() {
+		t.Fatal("Partial Poll 2 failed")
+	}
+
+	// First Complete Poll After Partial
+	t.Log("Running First Complete Poll After Partial")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData3.xml", 2, 0)
+	if t.Failed() {
+		t.Fatal("First Complete Poll After Partial failed")
+	}
+
+	// Second Complete Poll After Partial
+	t.Log("Running Second Complete Poll After Partial")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData4.xml", 2, 24)
+	if t.Failed() {
+		t.Fatal("Second Complete Poll After Partial failed")
+	}
+
+	// Partial Poll 3
+	t.Log("Running Partial Poll 3")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 2, 0)
+	if t.Failed() {
+		t.Fatal("Partial Poll 3 failed")
+	}
+}
+
+// New method specifically for TestPartialAggregation
+func (z *ZapiPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile string, expectedExportedInst, expectedMetrics int) {
+	// Additional logic to count metrics
+	z.testFilePath = pollDataFile
+	data, err := z.PollData()
+	if err != nil {
+		t.Fatalf("Failed to fetch poll data %v", err)
+	}
+
+	totalMetrics := 0
+	exportableInstance := 0
+	mat := data[z.Object]
+	if mat != nil {
+		for _, instance := range mat.GetInstances() {
+			if instance.IsExportable() {
+				exportableInstance++
+			}
+		}
+		for _, met := range mat.GetMetrics() {
+			records := met.GetRecords()
+			for _, v := range records {
+				if v {
+					totalMetrics++
+				}
+			}
+		}
+	}
+
+	if exportableInstance != expectedExportedInst {
+		t.Errorf("Exported instances got=%d, expected=%d", exportableInstance, expectedExportedInst)
+	}
+
+	// Check if the total number of metrics matches the expected value
+	if totalMetrics != expectedMetrics {
+		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedMetrics)
+	}
 }
 
 func NewZapiPerf(object, path string) *ZapiPerf {
@@ -53,7 +168,7 @@ func NewZapiPerf(object, path string) *ZapiPerf {
 
 	z.Object = object
 	z.instanceKeys = []string{"name"}
-	z.isCacheEmpty = false
+	z.isCacheEmpty = true
 	mx := matrix.New(z.Object, z.Object, z.Object)
 	z.Matrix = make(map[string]*matrix.Matrix)
 	z.Matrix[z.Object] = mx
@@ -77,7 +192,7 @@ objects:
 	return root
 }
 
-func (z *ZapiPerf) testPollInstanceAndData(t *testing.T, pollInstanceFile, pollDataFile string, exportableExportedInstance int) {
+func (z *ZapiPerf) testPollInstanceAndData(t *testing.T, pollInstanceFile, pollDataFile string, expectedExportedInst int) {
 	// PollInstance test
 	z.testFilePath = pollInstanceFile
 	_, _ = z.PollInstance()
@@ -90,13 +205,16 @@ func (z *ZapiPerf) testPollInstanceAndData(t *testing.T, pollInstanceFile, pollD
 	}
 
 	exportableInstance := 0
-	for _, instance := range data[z.Object].GetInstances() {
-		if instance.IsExportable() {
-			exportableInstance++
+	mat := data[z.Object]
+	if mat != nil {
+		for _, instance := range mat.GetInstances() {
+			if instance.IsExportable() {
+				exportableInstance++
+			}
 		}
 	}
 
-	if exportableInstance != exportableExportedInstance {
-		t.Errorf("Exported instances got= %d, expected: %d", exportableInstance, exportableExportedInstance)
+	if exportableInstance != expectedExportedInst {
+		t.Errorf("Exported instances got= %d, expected: %d", exportableInstance, expectedExportedInst)
 	}
 }
