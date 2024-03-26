@@ -1720,7 +1720,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"network\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"network\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"network\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -1728,7 +1728,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Network",
+          "title": "Volumes by Latency from Network",
           "type": "timeseries"
         },
         {
@@ -1811,7 +1811,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"throttle\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"throttle\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"throttle\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -1819,7 +1819,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Throttle",
+          "title": "Volumes by Latency from Throttle",
           "type": "timeseries"
         },
         {
@@ -1902,7 +1902,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"qos_min\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"qos_min\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"qos_min\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -1910,7 +1910,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Qos Min",
+          "title": "Volumes by Latency from Qos Min",
           "type": "timeseries"
         },
         {
@@ -1992,7 +1992,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cluster\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cluster\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cluster\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -2000,7 +2000,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Cluster",
+          "title": "Volumes by Latency from Cluster",
           "type": "timeseries"
         },
         {
@@ -2082,7 +2082,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"backend\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"backend\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"backend\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -2090,7 +2090,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Backend",
+          "title": "Volumes by Latency from Backend",
           "type": "timeseries"
         },
         {
@@ -2173,7 +2173,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cp\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cp\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cp\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -2181,7 +2181,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from CP (Consistency Point)",
+          "title": "Volumes by Latency from CP (Consistency Point)",
           "type": "timeseries"
         },
         {
@@ -2264,7 +2264,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"suspend\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"suspend\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"suspend\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
@@ -2272,7 +2272,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Suspend",
+          "title": "Volumes by Latency from Suspend",
           "type": "timeseries"
         },
         {
@@ -2355,7 +2355,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cloud\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cloud\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cloud\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
@@ -2363,7 +2363,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Cloud",
+          "title": "Volumes by Latency from Cloud",
           "type": "timeseries"
         },
         {
@@ -2445,7 +2445,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"frontend\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"frontend\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"frontend\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -2453,7 +2453,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Frontend",
+          "title": "Volumes by Latency from Frontend",
           "type": "timeseries"
         },
         {
@@ -2535,7 +2535,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"nvlog\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"nvlog\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"nvlog\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
@@ -2543,7 +2543,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from NVLog Mirroring",
+          "title": "Volumes by Latency from NVLog Mirroring",
           "type": "timeseries"
         },
         {
@@ -2625,7 +2625,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"disk\",volume!=\"\"}\nand\ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"disk\",volume!=\"\"}[$__range] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"disk\",volume!=\"\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -2633,7 +2633,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes by Latency from Disk",
+          "title": "Volumes by Latency from Disk",
           "type": "timeseries"
         }
       ],
@@ -3504,7 +3504,7 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": true,
+        "includeAll": false,
         "label": null,
         "multi": true,
         "name": "SVM",
@@ -3530,7 +3530,7 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": true,
+        "includeAll": false,
         "label": null,
         "multi": true,
         "name": "Volume",
@@ -3570,97 +3570,6 @@
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "1",
-          "value": "1"
-        },
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "TopResources",
-        "options": [
-          {
-            "selected": true,
-            "text": "1",
-            "value": "1"
-          },
-          {
-            "selected": false,
-            "text": "2",
-            "value": "2"
-          },
-          {
-            "selected": false,
-            "text": "3",
-            "value": "3"
-          },
-          {
-            "selected": false,
-            "text": "4",
-            "value": "4"
-          },
-          {
-            "selected": false,
-            "text": "5",
-            "value": "5"
-          },
-          {
-            "selected": false,
-            "text": "6",
-            "value": "6"
-          },
-          {
-            "selected": false,
-            "text": "8",
-            "value": "8"
-          },
-          {
-            "selected": false,
-            "text": "10",
-            "value": "10"
-          },
-          {
-            "selected": false,
-            "text": "15",
-            "value": "15"
-          },
-          {
-            "selected": false,
-            "text": "25",
-            "value": "25"
-          },
-          {
-            "selected": false,
-            "text": "50",
-            "value": "50"
-          },
-          {
-            "selected": false,
-            "text": "100",
-            "value": "100"
-          },
-          {
-            "selected": false,
-            "text": "250",
-            "value": "250"
-          },
-          {
-            "selected": false,
-            "text": "500",
-            "value": "500"
-          }
-        ],
-        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
       }
     ]
   },

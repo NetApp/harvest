@@ -171,13 +171,6 @@
         "y": 5
       },
       "id": 2,
-      "links": [
-        {
-          "targetBlank": true,
-          "title": "Jump to Storepool dashboard",
-          "url": "/d/BE6QUz1Sz/netapp-detail-nfsv4-storepool-monitors-rb?orgId=1"
-        }
-      ],
       "options": {
         "legend": {
           "calcs": [
@@ -514,7 +507,8 @@
                 "Value #A",
                 "Value #B",
                 "Value #C",
-                "Value #D"
+                "Value #D",
+                "datacenter"
               ]
             }
           }
@@ -527,13 +521,22 @@
           "id": "organize",
           "options": {
             "excludeByName": {},
-            "indexByName": {},
+            "indexByName": {
+              "Value #A": 3,
+              "Value #B": 4,
+              "Value #C": 5,
+              "Value #D": 6,
+              "cluster": 1,
+              "datacenter": 0,
+              "node": 2
+            },
             "renameByName": {
               "Value #A": "Current CPU Ops",
               "Value #B": "Optimal Point Ops",
               "Value #C": "Current CPU Util",
               "Value #D": "Optimal Point Util",
               "cluster": "Cluster",
+              "datacenter": "Datacenter",
               "node": "Node"
             }
           }
@@ -649,7 +652,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (headroom_cpu_ewma_daily{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_utilization\"}) - sum by (node) (headroom_cpu_ewma_daily{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"utilization\"})",
+          "expr": "sum by (node) (headroom_cpu_ewma_daily{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=\"optimal_point_utilization\"}) - sum by (node) (headroom_cpu_ewma_daily{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=\"utilization\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -734,7 +737,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (headroom_cpu_ewma_weekly{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_utilization\"}) - sum by (node) (headroom_cpu_ewma_weekly{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"utilization\"})",
+          "expr": "sum by (node) (headroom_cpu_ewma_weekly{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=\"optimal_point_utilization\"}) - sum by (node) (headroom_cpu_ewma_weekly{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=\"utilization\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1479,7 +1482,9 @@
                     "Value #E",
                     "Value #F",
                     "Value #G",
-                    "Value #H"
+                    "Value #H",
+                    "cluster",
+                    "datacenter"
                   ]
                 }
               }
@@ -1492,7 +1497,20 @@
               "id": "organize",
               "options": {
                 "excludeByName": {},
-                "indexByName": {},
+                "indexByName": {
+                  "Value #B": 5,
+                  "Value #C": 6,
+                  "Value #D": 7,
+                  "Value #E": 8,
+                  "Value #F": 9,
+                  "Value #G": 10,
+                  "Value #H": 11,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "nic": 2,
+                  "node": 3,
+                  "speed": 4
+                },
                 "renameByName": {
                   "Value #B": "Status",
                   "Value #C": "Used %",
@@ -1501,6 +1519,8 @@
                   "Value #F": "Rx Errors",
                   "Value #G": "Tx Errors",
                   "Value #H": "Up to Downs",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
                   "nic": "Nic",
                   "node": "Node",
                   "speed": "Speed"

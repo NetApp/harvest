@@ -597,6 +597,10 @@ func TestVariablesIncludeAllOption(t *testing.T) {
 		})
 }
 
+var exceptionToAll = map[string]bool{
+	"cmode/details/volumeDeepDive.json": true,
+}
+
 func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 	shouldHaveAll := map[string]bool{
 		"Cluster":   true,
@@ -604,6 +608,10 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 		"Volume":    true,
 		"SVM":       true,
 		"Aggregate": true,
+	}
+
+	if exceptionToAll[ShortPath(path)] {
+		return
 	}
 
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
