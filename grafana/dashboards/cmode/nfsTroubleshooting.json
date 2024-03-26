@@ -578,6 +578,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Headroom (optimal point utilization – current utilization) calculated by daily exponential weighted moving average (EWMA).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -663,6 +664,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Headroom (optimal point utilization – current utilization) calculated by weekly exponential weighted moving average (EWMA).",
       "fieldConfig": {
         "defaults": {
           "color": {
