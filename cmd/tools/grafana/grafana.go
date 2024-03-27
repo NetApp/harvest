@@ -401,6 +401,7 @@ func initImportVars() {
 	// default behaviour
 	if opts.dir == "grafana/dashboards" && opts.serverfolder.name == "" {
 		m[filepath.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
+		m[filepath.Join(opts.dir, "/cmode/details")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT Details"}
 		m[filepath.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
 		m[filepath.Join(opts.dir, "/storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
 	} else if opts.dir != "" && opts.serverfolder.name != "" {
@@ -484,14 +485,21 @@ func importFiles(dir string, folder *Folder) {
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
-		// If the dashboard has an uid defined, change the uid to empty string unless overwrite was passed
+		// If the dashboard has an uid defined, change the uid to the empty string, unless overwrite is true.
 		// We do comparison for dashboard create/update based on title
 		if !opts.overwrite {
-			if dashboardID := gjson.GetBytes(data, "uid").String(); dashboardID != "" {
-				data, err = sjson.SetBytes(data, "uid", []byte(""))
-				if err != nil {
-					fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-					continue
+
+			// Don't change the uid of linked dashboards since that will break the links
+			isLinkedDashboard := file.Name() == "volumeBySVM.json" || file.Name() == "volumeDeepDive.json"
+
+			if !isLinkedDashboard {
+				dashboardID := gjson.GetBytes(data, "uid").String()
+				if dashboardID != "" {
+					data, err = sjson.SetBytes(data, "uid", []byte(""))
+					if err != nil {
+						fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
+						continue
+					}
 				}
 			}
 		}
