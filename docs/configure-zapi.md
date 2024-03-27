@@ -256,3 +256,10 @@ counters:
       - workload-name: "*NS*|*Test*"
       - vserver: vs1
 ```   
+
+### Partial Aggregation
+
+
+There are instances when ONTAP may report partial aggregate results for certain objects, for example, during a node outage. In such cases, the ZapiPerf Collector will refrain from reporting performance counters for these objects, as they could result in spikes in the relevant performance metrics.
+
+To determine whether an object metric is unreported due to partial aggregation, examine the `numPartials` entry in the logs. If this value is greater than zero, it indicates that partial aggregation is the cause.

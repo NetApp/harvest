@@ -191,8 +191,9 @@ func (r *RestPerf) InitMatrix() error {
 		}
 	}
 
-	// Add metadata metric for skips
+	// Add metadata metric for skips/numPartials
 	_, _ = r.Metadata.NewMetricUint64("skips")
+	_, _ = r.Metadata.NewMetricUint64("numPartials")
 	return nil
 }
 
@@ -292,6 +293,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	}
 	seenMetrics := make(map[string]bool)
 
+	// populate denominator metric to prop metrics
 	counterSchema.ForEach(func(_, c gjson.Result) bool {
 		if !c.IsObject() {
 			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
@@ -300,6 +302,10 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 
 		name := strings.Clone(c.Get("name").String())
 		dataType := strings.Clone(c.Get("type").String())
+
+		if p := r.GetOverride(name); p != "" {
+			dataType = p
+		}
 
 		// Check if the metric was previously archived and restore it
 		if archivedMetric, found := r.archivedMetrics[name]; found {
@@ -310,12 +316,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 				Msg("Metric found in archive. Restore it")
 		}
 
-		if p := r.GetOverride(name); p != "" {
-			dataType = p
-		}
-
 		if _, has := r.Prop.Metrics[name]; has {
-			seenMetrics[name] = true
 			if strings.Contains(dataType, "string") {
 				if _, ok := r.Prop.InstanceLabels[name]; !ok {
 					r.Prop.InstanceLabels[name] = r.Prop.Counters[name]
@@ -330,9 +331,22 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 					// export false
 					m := &rest2.Metric{Label: "", Name: d, MetricType: "", Exportable: false}
 					r.Prop.Metrics[d] = m
-					seenMetrics[d] = true
 				}
 			}
+		}
+		return true
+	})
+
+	counterSchema.ForEach(func(_, c gjson.Result) bool {
+
+		if !c.IsObject() {
+			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
+			return true
+		}
+
+		name := strings.Clone(c.Get("name").String())
+		if _, has := r.Prop.Metrics[name]; has {
+			seenMetrics[name] = true
 			if _, ok := r.perfProp.counterInfo[name]; !ok {
 				r.perfProp.counterInfo[name] = &counter{
 					name:        name,
@@ -350,7 +364,6 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 				Str("key", name).
 				Msg("Skip counter not requested")
 		}
-
 		return true
 	})
 
@@ -755,6 +768,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		err          error
 		instanceKeys []string
 		skips        int
+		numPartials  uint64
 		instIndex    int
 		ts           float64
 		prevMat      *matrix.Matrix
@@ -871,6 +885,12 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 						Msg("Skip instanceKey, not found in cache")
 				}
 				return true
+			}
+
+			// check for partial aggregation
+			if instanceData.Get("aggregation.complete").String() == "false" {
+				instance.SetPartial(true)
+				numPartials++
 			}
 
 			for label, display := range r.Prop.InstanceLabels {
@@ -1104,6 +1124,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
 	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 
 	r.AddCollectCount(count)
 
@@ -1120,7 +1141,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	r.Logger.Trace().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))

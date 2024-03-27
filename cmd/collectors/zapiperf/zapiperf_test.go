@@ -72,7 +72,7 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// Complete Poll
 	t.Log("Running Complete Poll")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 24)
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 48)
 	if t.Failed() {
 		t.Fatal("Complete Poll failed")
 	}
@@ -93,14 +93,14 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// First Complete Poll After Partial
 	t.Log("Running First Complete Poll After Partial")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData3.xml", 2, 0)
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 0)
 	if t.Failed() {
 		t.Fatal("First Complete Poll After Partial failed")
 	}
 
 	// Second Complete Poll After Partial
 	t.Log("Running Second Complete Poll After Partial")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData4.xml", 2, 24)
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 48)
 	if t.Failed() {
 		t.Fatal("Second Complete Poll After Partial failed")
 	}
@@ -114,7 +114,7 @@ func TestPartialAggregationSequence(t *testing.T) {
 }
 
 // New method specifically for TestPartialAggregation
-func (z *ZapiPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile string, expectedExportedInst, expectedMetrics int) {
+func (z *ZapiPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile string, expectedExportedInst, expectedExportedMetrics int) {
 	// Additional logic to count metrics
 	z.testFilePath = pollDataFile
 	data, err := z.PollData()
@@ -132,6 +132,9 @@ func (z *ZapiPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 			}
 		}
 		for _, met := range mat.GetMetrics() {
+			if !met.IsExportable() {
+				continue
+			}
 			records := met.GetRecords()
 			for _, v := range records {
 				if v {
@@ -146,8 +149,8 @@ func (z *ZapiPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 	}
 
 	// Check if the total number of metrics matches the expected value
-	if totalMetrics != expectedMetrics {
-		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedMetrics)
+	if totalMetrics != expectedExportedMetrics {
+		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedExportedMetrics)
 	}
 }
 
