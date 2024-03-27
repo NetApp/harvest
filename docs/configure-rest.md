@@ -350,3 +350,9 @@ fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="DIMM-1",node
 fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="PCIe Devices",node="umeng-aff300-02",serial_number="s1",status="pass"} 1.0
 ...
 ```
+
+### Partial Aggregation
+
+There are instances when ONTAP may report partial aggregate results for certain objects, for example, during a node outage. In such cases, the RestPerf Collector will refrain from reporting performance counters for these objects, as they could result in spikes in the relevant performance metrics.
+
+To determine whether an object metric is unreported due to partial aggregation, examine the `numPartials` entry in the logs. If this value is greater than zero, it indicates that partial aggregation is the cause.
