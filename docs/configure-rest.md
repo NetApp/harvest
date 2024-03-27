@@ -348,10 +348,9 @@ The output of this template would look like:
 ```
 fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="DIMM-1",node="umeng-aff300-02",serial_number="s2",status="pass"} 1.0
 fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="PCIe Devices",node="umeng-aff300-02",serial_number="s1",status="pass"} 1.0
-...
 ```
 
-### Partial Aggregation
+## Partial Aggregation
 
 There are instances when ONTAP may report partial aggregate results for certain objects, for example, during a node outage. In such cases, the RestPerf Collector will refrain from reporting performance counters for these objects, as they could result in spikes in the relevant performance metrics.
 
