@@ -17,22 +17,23 @@ import (
 // Process - identity and stats about resource usage of a process
 // most values are simple counters; elapsedTime & cpuTotal are the exception: they are deltas
 type Process struct {
-	pid         int
-	dirpath     string
-	cmdline     string
-	name        string
-	state       string
-	startTime   float64
-	elapsedTime float64
-	timestamp   float64
-	numThreads  uint64
-	numFds      uint64
-	cpuTotal    float64
-	cpu         map[string]float64
-	mem         map[string]uint64
-	io          map[string]uint64
-	net         map[string]uint64
-	ctx         map[string]uint64
+	pid          int
+	dirpath      string
+	cmdline      string
+	cmdlineslice []string
+	name         string
+	state        string
+	startTime    float64
+	elapsedTime  float64
+	timestamp    float64
+	numThreads   uint64
+	numFds       uint64
+	cpuTotal     float64
+	cpu          map[string]float64
+	mem          map[string]uint64
+	io           map[string]uint64
+	net          map[string]uint64
+	ctx          map[string]uint64
 }
 
 // NewProcess - returns an initialized instance of Process
@@ -55,6 +56,11 @@ func (p *Process) Name() string {
 // Cmdline - command-line vector of the process
 func (p *Process) Cmdline() string {
 	return p.cmdline
+}
+
+// CmdlineSlice - command-line slice of the process
+func (p *Process) CmdlineSlice() []string {
+	return p.cmdlineslice
 }
 
 // State - state of the process
@@ -123,6 +129,9 @@ func (p *Process) loadCmdline() error {
 		return errs.New(ErrFileRead, err.Error())
 	}
 	p.cmdline = string(bytes.ReplaceAll(data, []byte("\x00"), []byte(" ")))
+
+	p.cmdlineslice = strings.Split(string(data), "\x00")
+
 	return nil
 }
 
