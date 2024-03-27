@@ -180,7 +180,7 @@ func Init(c Collector) error {
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
 				logger.Debug().Str("task", task.GetNameS()).
-					Str("delay", jitterR.String()).
+					Str("jitter", jitterR.String()).
 					Str("schedule", task.GetContentS()).
 					Send()
 				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), jitterR, foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
