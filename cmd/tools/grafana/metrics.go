@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -193,7 +194,14 @@ func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(p
 	})
 }
 
+// ShortPath turns ../../../grafana/dashboards/cmode/aggregate.json into cmode/aggregate.json
 func ShortPath(dashPath string) string {
 	splits := strings.Split(dashPath, string(filepath.Separator))
-	return strings.Join(splits[len(splits)-2:], string(filepath.Separator))
+
+	// Join the elements after "dashboards"
+	index := slices.Index(splits, "dashboards")
+	if index == -1 || index+1 >= len(splits) {
+		return dashPath
+	}
+	return strings.Join(splits[index+1:], string(filepath.Separator))
 }
