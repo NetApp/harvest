@@ -308,36 +308,36 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// Complete Poll
 	t.Log("Running Complete Poll")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 48)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 48)
 
 	// Partial Poll
 	t.Log("Running Partial Poll")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-3.json", 2, 0)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
 
 	// Partial Poll 2
 	t.Log("Running Partial Poll 2")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-4.json", 2, 0)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
 	if t.Failed() {
 		t.Fatal("Partial Poll 2 failed")
 	}
 
 	// First Complete Poll After Partial
 	t.Log("Running First Complete Poll After Partial")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 0)
 	if t.Failed() {
 		t.Fatal("First Complete Poll After Partial failed")
 	}
 
 	// Second Complete Poll After Partial
 	t.Log("Running Second Complete Poll After Partial")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 48)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 48)
 	if t.Failed() {
 		t.Fatal("Second Complete Poll After Partial failed")
 	}
 
 	// Partial Poll 3
 	t.Log("Running Partial Poll 3")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-3.json", 2, 0)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
 	if t.Failed() {
 		t.Fatal("Partial Poll 3 failed")
 	}

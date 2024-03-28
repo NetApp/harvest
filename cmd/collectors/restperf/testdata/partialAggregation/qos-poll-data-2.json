@@ -123,8 +123,8 @@
         }
       ],
       "aggregation": {
-        "count": 2,
-        "complete": true
+        "count": 1,
+        "complete": false
       },
       "_links": {
         "self": {
@@ -255,8 +255,8 @@
         }
       ],
       "aggregation": {
-        "count": 2,
-        "complete": true
+        "count": 1,
+        "complete": false
       },
       "_links": {
         "self": {
