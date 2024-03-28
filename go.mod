@@ -15,7 +15,7 @@ require (
 	github.com/tidwall/pretty v1.2.1
 	github.com/tidwall/sjson v1.2.5
 	github.com/zekroTJA/timedmap v1.5.2
-	golang.org/x/exp v0.0.0-20240318143956-a85f2c67cd81
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8
 	golang.org/x/sys v0.18.0
 	golang.org/x/term v0.18.0
 	golang.org/x/text v0.14.0
