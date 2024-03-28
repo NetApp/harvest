@@ -322,7 +322,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Total throughput.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -365,7 +365,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(node_volume_write_data+node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -581,7 +581,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Total throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -658,7 +658,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (node_volume_write_data+node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "sum by (node) (node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1335,7 +1335,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",volume=~\"$TopVolumeAvgThroughput\"})+topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",volume=~\"$TopVolumeAvgThroughput\"})",
+              "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",volume=~\"$Volume\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",volume=~\"$Volume\"}[$__range] @ end())) ",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -5908,29 +5908,6 @@
         },
         "refresh": 2,
         "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, (avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])) * on(cluster,svm,volume) (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeAvgThroughput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, (avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[${__range}])) * on(cluster,svm,volume) (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
