@@ -32,11 +32,12 @@ type Matrix struct {
 }
 
 type With struct {
-	Data            bool
-	Metrics         bool
-	Instances       bool
-	ExportInstances bool
-	Labels          []string
+	Data             bool
+	Metrics          bool
+	Instances        bool
+	ExportInstances  bool
+	PartialInstances bool
+	Labels           []string
 }
 
 func New(uuid, object string, identifier string) *Matrix {
@@ -88,6 +89,9 @@ func (m *Matrix) Clone(with With) *Matrix {
 				clone.instances[key] = instance.Clone(instance.IsExportable(), with.Labels...)
 			} else {
 				clone.instances[key] = instance.Clone(false, with.Labels...)
+			}
+			if with.PartialInstances {
+				clone.instances[key].SetPartial(instance.IsPartial())
 			}
 		}
 	} else {
@@ -363,6 +367,23 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 						Float64("previousRaw", prevRaw[prevIndex]).
 						Str("instKey", key).
 						Msg("Negative cooked value")
+				}
+				// Check for partial Aggregation
+				ppaOk := prevInstance.IsPartial()
+				cpaOk := currInstance.IsPartial()
+				if ppaOk || cpaOk {
+					curMetric.record[currIndex] = false
+					skips++
+					labels := currInstance.GetLabels()
+					logger.Debug().
+						Str("metric", curMetric.GetName()).
+						Float64("currentRaw", curRaw).
+						Float64("previousRaw", prevRaw[prevIndex]).
+						Bool("prevPartial", ppaOk).
+						Bool("curPartial", cpaOk).
+						Interface("instanceLabels", labels).
+						Str("instKey", key).
+						Msg("Partial Aggregation")
 				}
 			} else {
 				curMetric.record[currIndex] = false

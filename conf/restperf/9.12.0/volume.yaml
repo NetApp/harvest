@@ -38,15 +38,15 @@ counters:
   - write_latency
 
 plugins:
+  - MetricAgent:
+      compute_metric:
+        - total_data ADD bytes_read bytes_written
   - Aggregator:
       # plugin will create summary/average for each object
       # any names after the object names will be treated as label names that will be added to instances
       - node
   - Volume:
       include_constituents: false
-  - MetricAgent:
-      compute_metric:
-        - total_data ADD bytes_read bytes_written
 #  - LabelAgent:
 #      # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex:
