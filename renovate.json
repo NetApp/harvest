@@ -6,7 +6,6 @@
     ":semanticCommitScopeDisabled",
     "docker:disable"
   ],
-  "ignorePaths": ["**/integration/**"],
   "schedule": ["before 4am on monday"],
   "groupName": "all dependencies",
   "groupSlug": "all",

@@ -9,7 +9,7 @@ replace github.com/netapp/harvest/v2 => ../
 require (
 	github.com/carlmjohnson/requests v0.23.5
 	github.com/hashicorp/go-version v1.6.0
-	github.com/netapp/harvest/v2 v2.0.0-20240304134514-2b46b6629f24
+	github.com/netapp/harvest/v2 v2.0.0-20240328114003-504806b807c9
 	github.com/rs/zerolog v1.32.0
 	github.com/tidwall/gjson v1.17.1
 	golang.org/x/text v0.14.0
@@ -43,7 +43,7 @@ require (
 	github.com/tklauser/go-sysconf v0.3.13 // indirect
 	github.com/tklauser/numcpus v0.7.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/exp v0.0.0-20240314144324-c7f7c6466f7f // indirect
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
