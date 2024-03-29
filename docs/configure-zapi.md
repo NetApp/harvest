@@ -260,6 +260,6 @@ counters:
 ### Partial Aggregation
 
 
-There are instances when ONTAP may report partial aggregate results for certain objects, for example, during a node outage. In such cases, the ZapiPerf Collector will refrain from reporting performance counters for these objects, as they could result in spikes in the relevant performance metrics.
+There are instances when ONTAP may report partial aggregate results for certain objects (for example, during a node outage). In such cases, the ZapiPerf Collector will skip the reporting of performance counters for the affected objects.
 
-To determine whether an object metric is unreported due to partial aggregation, examine the `numPartials` entry in the logs. If this value is greater than zero, it indicates that partial aggregation is the cause.
+To determine whether partial aggregation affects an object, check the `numPartials` entry in the Harvest logs. If `numPartials` is greater than zero, it indicates that partial aggregations have occurred for that object. e.g. `Collected Poller=aff-251 collector=ZapiPerf:NFSv4 instances=56 numPartials=15`
