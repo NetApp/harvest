@@ -330,7 +330,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	}
 
 	// calculate power for returned disks in zapiperf response
-	for _, instance := range data.GetInstances() {
+	for key, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
 			continue
 		}
@@ -355,7 +355,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
 			}
 		} else {
-			d.Logger.Warn().Msg("Instance not exported")
+			d.Logger.Debug().Str("key", key).Msg("Instance not exported")
 		}
 	}
 
