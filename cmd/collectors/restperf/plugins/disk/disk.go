@@ -398,7 +398,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	}
 
 	// calculate power for returned disks in perf response
-	for _, instance := range data.GetInstances() {
+	for key, instance := range data.GetInstances() {
 		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
 			diskUUID := instance.GetLabel("disk_uuid")
 			diskName := instance.GetLabel("disk")
@@ -428,7 +428,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 					Msg("Missing disk info")
 			}
 		} else {
-			d.Logger.Warn().Msg("Instance not exported")
+			d.Logger.Debug().Str("key", key).Msg("Instance not exported")
 		}
 	}
 
