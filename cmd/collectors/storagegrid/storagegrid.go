@@ -150,7 +150,7 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	)
 
 	metrics := make(map[string]*matrix.Matrix)
-	s.Logger.Debug().Msg("starting data poll")
+	s.Logger.Trace().Msg("starting data poll")
 	s.Matrix[s.Object].Reset()
 	startTime = time.Now()
 
@@ -259,7 +259,7 @@ func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 		records      []gjson.Result
 	)
 
-	s.Logger.Debug().Msg("starting data poll")
+	s.Logger.Trace().Msg("starting data poll")
 	s.Matrix[s.Object].Reset()
 	startTime = time.Now()
 

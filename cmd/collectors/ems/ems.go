@@ -360,7 +360,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		records              []gjson.Result
 	)
 
-	e.Logger.Debug().Msg("starting data poll")
+	e.Logger.Trace().Msg("starting data poll")
 
 	// Update cache for bookend ems
 	e.updateMatrix(time.Now())
