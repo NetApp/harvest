@@ -1,0 +1,161 @@
+{
+  "name": "qos",
+  "description": "A workload represents work being done on behalf of an application or system process. The QoS Counter Manager table reports information such as operations per second, a breakdown of where read operations are going, the inter-arrival time of operation request messages, working set size information, operation latency per workload, and deferred workload information. These statistics illustrate system performance with given workloads. The alias name for qos:policy_group is qos_policy_group.",
+  "counter_schemas": [
+    {
+      "name": "concurrency",
+      "description": "This is the average number of concurrent requests for the workload.",
+      "type": "rate",
+      "unit": "none"
+    },
+    {
+      "name": "latency",
+      "description": "This is the average response time for requests that were initiated by the workload.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "ops"
+      }
+    },
+    {
+      "name": "name",
+      "description": "Name of the constituent workload.",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "node.name",
+      "description": "System node name",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "ops",
+      "description": "Workload operations executed per second.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "other_ops",
+      "description": "This is the rate of this workload's other operations that completed during the measurement interval.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "policy_group_name",
+      "description": "This is the name of the policy group containing this workload.",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "policy_group_uuid",
+      "description": "This is the UUID of the policy group containing this workload.",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "read_data",
+      "description": "This is the amount of data read per second from the filer by the workload.",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "read_io_type_base",
+      "description": "This is the total number of WAFL read requests. It is used as a base counter (or denominator) for the read_io_type_percent counter, to compute the percentage of reads by various WAFL components.",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "read_io_type_percent",
+      "description": "This is the percentage of read requests served from various components (such as buffer cache, ext_cache, disk, etc.).",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "read_io_type_base"
+      }
+    },
+    {
+      "name": "read_latency",
+      "description": "This is the average response time for read requests that were initiated by the workload.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "read_ops"
+      }
+    },
+    {
+      "name": "read_ops",
+      "description": "This is the rate of this workload's read operations that completed during the measurement interval.",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "sequential_reads_base",
+      "description": "This is the total number of reads, performed on behalf of the workload. It is used as a base counter (or denominator) for the sequential_reads_percent counter to compute the percentage of sequential reads.",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "sequential_reads_percent",
+      "description": "This is the percentage of reads, performed on behalf of the workload, that were sequential.",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "sequential_reads_base"
+      }
+    },
+    {
+      "name": "sequential_writes_base",
+      "description": "This is the total number of writes, performed on behalf of the workload. This is used as a base counter (or denominator) for the sequential_writes_percent counter to compute the percentage of sequential writes.",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "sequential_writes_percent",
+      "description": "This is the percentage of writes, performed on behalf of the workload, that were sequential. This counter is only available on platforms with more than 4GB of NVRAM.",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "sequential_writes_base"
+      }
+    },
+    {
+      "name": "total_data",
+      "description": "This is the total amount of data read/written per second from/to the filer by the workload.",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "uuid",
+      "description": "Unique identifier (UUID) for the workload. While the workload name may change, the UUID will be invariant.",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "write_data",
+      "description": "This is the amount of data written per second to the filer by the workload.",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "write_latency",
+      "description": "This is the average response time for write requests that were initiated by the workload.",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "write_ops"
+      }
+    },
+    {
+      "name": "write_ops",
+      "description": "This is the workload's write operations that completed during the measurement interval; measured per second.",
+      "type": "rate",
+      "unit": "per_sec"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/qos"
+    }
+  }
+}
