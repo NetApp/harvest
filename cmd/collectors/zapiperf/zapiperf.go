@@ -1708,7 +1708,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	newSize = len(mat.GetInstances())
 	added = newSize - (oldSize - removed)
 
-	z.Logger.Debug().Int("new", added).Int("removed", removed).Int("total", newSize).Msg("instances")
+	z.Logger.Trace().Int("new", added).Int("removed", removed).Int("total", newSize).Msg("instances")
 
 	// update metadata for collector logs
 	_ = z.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())

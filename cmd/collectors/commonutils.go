@@ -110,7 +110,7 @@ func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *logging.Log
 		}
 	}
 
-	logger.Debug().Str("cluster time", clusterTime.String()).Send()
+	logger.Trace().Str("cluster time", clusterTime.String()).Send()
 	return clusterTime, nil
 }
 
