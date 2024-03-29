@@ -53,7 +53,8 @@ issues:
     - EXC0009
 
 output:
-  formats: github-actions
+  formats:
+  - format: github-actions
 
 linters-settings:
   thelper:
