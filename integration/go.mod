@@ -9,7 +9,7 @@ replace github.com/netapp/harvest/v2 => ../
 require (
 	github.com/carlmjohnson/requests v0.23.5
 	github.com/hashicorp/go-version v1.6.0
-	github.com/netapp/harvest/v2 v2.0.0-20240328114003-504806b807c9
+	github.com/netapp/harvest/v24 v24.02.0
 	github.com/rs/zerolog v1.32.0
 	github.com/tidwall/gjson v1.17.1
 	golang.org/x/text v0.14.0
