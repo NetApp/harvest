@@ -9,7 +9,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"sort"
+	"golang.org/x/exp/maps"
+	"slices"
 	"strings"
 	"time"
 )
@@ -237,7 +238,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	d.initMaps()
 
 	var output []*matrix.Matrix
-	noSet := make(map[string]any)
+	noSet := make(map[string]struct{})
 
 	// Purge and reset data
 	for _, data1 := range d.shelfData {
@@ -354,11 +355,8 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	}
 
 	if len(noSet) > 0 {
-		attributes := make([]string, 0)
-		for k := range noSet {
-			attributes = append(attributes, k)
-		}
-		sort.Strings(attributes)
+		attributes := maps.Keys(noSet)
+		slices.Sort(attributes)
 		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
 

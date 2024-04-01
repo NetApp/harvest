@@ -9,6 +9,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"golang.org/x/exp/maps"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -812,9 +814,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 }
 
 func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
-	var (
-		output []*matrix.Matrix
-	)
+	var output []*matrix.Matrix
+	noSet := make(map[string]struct{})
 
 	d.Logger.Trace().
 		Int("shelfCounters", len(shelves)).
@@ -842,7 +843,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 				objectElem := s.GetChildS(attribute)
 				if objectElem == nil {
-					d.Logger.Warn().Msgf("no [%s] instances on this system", attribute)
+					noSet[attribute] = struct{}{}
 					continue
 				}
 
@@ -923,6 +924,12 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 				output = append(output, data1)
 			}
 		}
+	}
+
+	if len(noSet) > 0 {
+		attributes := maps.Keys(noSet)
+		slices.Sort(attributes)
+		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
 
 	return output, nil
