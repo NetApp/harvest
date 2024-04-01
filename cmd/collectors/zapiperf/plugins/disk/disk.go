@@ -894,11 +894,19 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
 								if err := m.SetValueString(instance, value); err != nil {
-									d.Logger.Debug().
-										Str("metricKey", metricKey).
-										Str("value", value).
-										Err(err).
-										Msg("failed to parse value")
+									if value != "-" {
+										d.Logger.Debug().
+											Str("metricKey", metricKey).
+											Str("value", value).
+											Err(err).
+											Msg("failed to parse value")
+									} else {
+										d.Logger.Trace().
+											Str("metricKey", metricKey).
+											Str("value", value).
+											Err(err).
+											Msg("failed to parse value")
+									}
 								} else {
 									d.Logger.Trace().
 										Str("metricKey", metricKey).
@@ -907,7 +915,6 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 								}
 							}
 						}
-
 					} else {
 						d.Logger.Debug().Msgf("instance without [%s], skipping", d.instanceKeys[attribute])
 					}

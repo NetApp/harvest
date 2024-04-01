@@ -128,7 +128,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke fileservice-audit-config-get-iter zapi and get audit protocols
 		if my.auditProtocols, err = my.GetAuditProtocols(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect audit protocols")
+				my.Logger.Trace().Err(err).Msg("Failed to collect audit protocols")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect audit protocols")
 			}
@@ -137,7 +137,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke cifs-security-get-iter zapi and get cifs protocols
 		if my.cifsProtocols, err = my.GetCifsProtocols(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect cifs protocols")
+				my.Logger.Trace().Err(err).Msg("Failed to collect cifs protocols")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect cifs protocols")
 			}
@@ -146,7 +146,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
 		if my.nsswitchInfo, err = my.GetNSSwitchInfo(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect nsswitch info")
+				my.Logger.Trace().Err(err).Msg("Failed to collect nsswitch info")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect nsswitch info")
 			}
@@ -155,7 +155,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke nis-get-iter zapi and get nisdomain info
 		if my.nisInfo, err = my.GetNisInfo(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect nisdomain info")
+				my.Logger.Trace().Err(err).Msg("Failed to collect nisdomain info")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect nisdomain info")
 			}
@@ -164,7 +164,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke cifs-server-get-iter zapi and get cifsenabled info
 		if my.cifsEnabled, err = my.GetCifsEnabled(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect cifsenabled info")
+				my.Logger.Trace().Err(err).Msg("Failed to collect cifsenabled info")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect cifsenabled info")
 			}
@@ -173,7 +173,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke nfs-service-get-iter zapi and get cifsenabled info
 		if my.nfsEnabled, err = my.GetNfsEnabled(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect nfsenabled info")
+				my.Logger.Trace().Err(err).Msg("Failed to collect nfsenabled info")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect nfsenabled info")
 			}
@@ -182,7 +182,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke security-ssh-get-iter zapi and get ssh data
 		if my.sshData, err = my.GetSSHData(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect ssh data")
+				my.Logger.Trace().Err(err).Msg("Failed to collect ssh data")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect ssh data")
 			}
@@ -191,7 +191,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke iscsi-initiator-auth-get-iter zapi and get iscsi_authentication_type
 		if my.iscsiAuth, err = my.GetIscsiInitiatorAuth(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect iscsi authentication type")
+				my.Logger.Trace().Err(err).Msg("Failed to collect iscsi authentication type")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect iscsi authentication type")
 			}
@@ -200,7 +200,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke iscsi-service-get-iter zapi and get iscsi_service_enabled
 		if my.iscsiService, err = my.GetIscsiService(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect iscsi service")
+				my.Logger.Trace().Err(err).Msg("Failed to collect iscsi service")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect iscsi service")
 			}
@@ -209,7 +209,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke fpolicy-policy-status-get-iter zapi and get fpolicy_enabled, fpolicy_name
 		if my.fpolicyData, err = my.GetFpolicy(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect fpolicy detail")
+				my.Logger.Trace().Err(err).Msg("Failed to collect fpolicy detail")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect fpolicy detail")
 			}
@@ -218,7 +218,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke ldap-client-get-iter zapi and get ldap_session_security
 		if my.ldapData, err = my.GetLdapData(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect ldap session")
+				my.Logger.Trace().Err(err).Msg("Failed to collect ldap session")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect ldap session")
 			}
@@ -227,7 +227,7 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		// invoke kerberos-config-get-iter zapi and get nfs_kerberos_protocol_enabled
 		if my.kerberosConfig, err = my.GetKerberosConfig(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect kerberos config")
+				my.Logger.Trace().Err(err).Msg("Failed to collect kerberos config")
 			} else {
 				my.Logger.Error().Err(err).Msg("Failed to collect kerberos config")
 			}

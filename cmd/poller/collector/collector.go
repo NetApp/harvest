@@ -459,7 +459,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 							}
 							if pluginData != nil {
 								results = append(results, pluginData...)
-								c.Logger.Debug().
+								c.Logger.Trace().
 									Str("pluginName", plg.GetName()).
 									Int("dataLength", len(pluginData)).
 									Msg("plugin added data")
@@ -523,7 +523,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					exporterStats.InstancesExported += stats.InstancesExported
 					exporterStats.MetricsExported += stats.MetricsExported
 				} else {
-					c.Logger.Debug().Str("UUID", data.UUID).Str("object", data.Object).Msg("skipped non-exportable data")
+					c.Logger.Trace().Str("UUID", data.UUID).Str("object", data.Object).Msg("skipped non-exportable data")
 				}
 			}
 		}
