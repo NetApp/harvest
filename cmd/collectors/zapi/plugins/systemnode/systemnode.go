@@ -44,20 +44,27 @@ func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	s.client.Metadata.Reset()
 	nodeStateMap := make(map[string]string)
 
+	// invoke service-processor-get-iter zapi and populate the BMC firmware version
+	serviceProcessorMap, err := s.getServiceProcessor()
+	if err != nil {
+		s.Logger.Error().Err(err).Msg("Failed to collect service processor info")
+	}
+
 	// invoke system-get-node-info-iter zapi and populate node info
 	partnerNameMap, err := s.getPartnerNodeInfo()
 	if err != nil {
 		s.Logger.Error().Err(err).Msg("Failed to collect partner node detail")
 	}
 
-	for _, node := range data.GetInstanceKeys() {
-		nodeStateMap[node] = data.GetInstance(node).GetLabel("healthy")
+	for _, aNode := range data.GetInstanceKeys() {
+		nodeStateMap[aNode] = data.GetInstance(aNode).GetLabel("healthy")
 	}
 
-	// update node instance with partner and partner_healthy info
-	for nodeName, node := range data.GetInstances() {
-		node.SetLabel("ha_partner", partnerNameMap[nodeName])
-		node.SetLabel("partner_healthy", nodeStateMap[node.GetLabel("ha_partner")])
+	// update node instance with partner, partner_healthy, and BMC version info
+	for nodeName, inst := range data.GetInstances() {
+		inst.SetLabel("ha_partner", partnerNameMap[nodeName])
+		inst.SetLabel("partner_healthy", nodeStateMap[inst.GetLabel("ha_partner")])
+		inst.SetLabel("bmc_firmware_version", serviceProcessorMap[nodeName])
 	}
 
 	// update node metrics with partner info
@@ -91,7 +98,7 @@ func (s *SystemNode) getPartnerNodeInfo() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		s.Logger.Debug().Err(err).Msg("no records found")
+		s.Logger.Debug().Msg("no records found")
 		return nodePartnerNodeMap, nil
 	}
 
@@ -101,4 +108,37 @@ func (s *SystemNode) getPartnerNodeInfo() (map[string]string, error) {
 		nodePartnerNodeMap[nodeName] = partnerName
 	}
 	return nodePartnerNodeMap, nil
+}
+
+func (s *SystemNode) getServiceProcessor() (map[string]string, error) {
+	var (
+		result []*node.Node
+		err    error
+	)
+
+	nodeFirmwareMap := make(map[string]string) // node-name -> BMC firmware version map
+	request := node.NewXMLS("service-processor-get-iter")
+	request.NewChildS("max-records", collectors.DefaultBatchSize)
+
+	desired := node.NewXMLS("desired-attributes")
+	spInfo := node.NewXMLS("service-processor-info")
+	spInfo.NewChildS("firmware-version", "")
+	desired.AddChild(spInfo)
+	request.AddChild(desired)
+
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 || result == nil {
+		s.Logger.Debug().Msg("no records found")
+		return nodeFirmwareMap, nil
+	}
+
+	for _, objectStore := range result {
+		firmware := objectStore.GetChildContentS("firmware-version")
+		nodeName := objectStore.GetChildContentS("node")
+		nodeFirmwareMap[nodeName] = firmware
+	}
+	return nodeFirmwareMap, nil
 }

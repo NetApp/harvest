@@ -56,6 +56,7 @@ export_options:
     - node
     - serial
   instance_labels:
+    - bmc_firmware_version
     - cpu_firmware_release
     - healthy
     - location

@@ -117,6 +117,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "sys
 security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"
 security login role create -role harvest2-role -access readonly -cmddirname "system license show"
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
+security login role create -role harvest2-role -access readonly -cmddirname "system service-processor show"
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
 security login role create -role harvest2-role -access readonly -cmddirname "vserver"
