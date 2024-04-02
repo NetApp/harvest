@@ -1,7 +1,7 @@
 # Copyright 2021 NetApp, Inc.  All Rights Reserved
 .DEFAULT_GOAL:=help
 
-.PHONY: help deps clean build test fmt lint package asup dev fetch-asup
+.PHONY: help deps clean build test fmt lint package asup dev fetch-asup ci
 
 SHELL := /bin/bash
 REQUIRED_GO_VERSION := 1.22
@@ -46,17 +46,11 @@ header:
 deps: header ## Check dependencies
 	@# Make sure that go exists
 ifeq (${FOUND_GO_VERSION}, )
-	@echo
-	@echo "Harvest requires that Go is installed and at least version: ${REQUIRED_GO_VERSION}"
-	@echo
-	@exit 1
+	$(error Harvest requires that Go is installed and at least version: ${REQUIRED_GO_VERSION})
 endif
 	@# Check to make sure that GO is the correct version
 ifeq ("${CORRECT_GO_VERSION}", "0")
-	@echo
-	@echo "Required Go version is ${REQUIRED_GO_VERSION}, but found ${FOUND_GO_VERSION}"
-	@echo
-	@exit 1
+	$(error Required Go version is ${REQUIRED_GO_VERSION}, but found ${FOUND_GO_VERSION})
 endif
 
 clean: ## Cleanup the project binary (bin) folders
@@ -85,10 +79,7 @@ govulncheck: ## run govulncheck on the source files
 
 mkdocs:
 ifeq (${MKDOCS_EXISTS}, )
-	@echo
-	@echo "mkdocs task requires that you have https://squidfunk.github.io/mkdocs-material/getting-started/ installed."
-	@echo
-	@exit 1
+	$(error mkdocs task requires that you have https://squidfunk.github.io/mkdocs-material/getting-started/ installed.)
 endif
 	mkdocs serve
 
@@ -146,6 +137,13 @@ ifneq (${FETCH_ASUP_EXISTS}, )
 endif
 
 docs: mkdocs ## Serve docs for local dev
+
+license-check:
+	@echo "Licence checking"
+	@go run github.com/frapposelli/wwhrd@latest check -q -t
+	@cd integration && go mod tidy && go run github.com/frapposelli/wwhrd@latest check -q -t -f ../.wwhrd.yml
+
+ci: clean deps fmt harvest lint test govulncheck license-check
 
 ci-local: ## Run CI locally
 ifeq ($(origin ci),undefined)
