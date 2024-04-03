@@ -16,10 +16,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: read environment file
+      run: cat .harvest.env >> "$GITHUB_ENV"
+
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '${{ vars.HARVEST_GO_VERSION }}'
+        go-version: ${{ env.GO_VERSION }}
 
     - name: Makefile ci
       run: |

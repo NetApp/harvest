@@ -38,15 +38,16 @@ jobs:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
 
     steps:
-    - name: Print Vars
-      run: echo "HARVEST_GO_VERSION is ${{ vars.HARVEST_GO_VERSION }}"
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: read environment file
+      run: cat .harvest.env >> "$GITHUB_ENV"
 
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '${{ vars.HARVEST_GO_VERSION }}'
-    - name: Checkout repository
-      uses: actions/checkout@v4
+        go-version: ${{ env.GO_VERSION }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
