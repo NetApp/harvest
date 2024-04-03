@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1712130474882,
+  "iteration": 1712154653652,
   "links": [
     {
       "asDropdown": true,
@@ -2648,7 +2648,22 @@
             }
           ],
           "type": "timeseries"
-        },
+        }
+      ],
+      "title": "Volume Performance",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 142,
+      "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays the top k volumes with the highest I/O density within the selected time range. I/O density is calculated as the average number of I/O operations (IOPS) per terabyte of logical used space. Volumes with high I/O density are typically more active and may be critical for performance-sensitive applications.",
@@ -2685,6 +2700,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2707,7 +2723,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 51
+            "y": 16
           },
           "id": 139,
           "options": {
@@ -2742,7 +2758,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows the bottom k volumes with the lowest non-zero I/O density over the selected time range, excluding any volumes with zero IOPS. I/O density is measured as the average IOPS per terabyte of logical used space. These volumes are active but have relatively low I/O activity compared to their used capacity.",
+          "description": "This panel displays the bottom k volumes with the lowest I/O density over the selected time range, excluding any volumes with average IOPS below 50. I/O density is calculated as the average IOPS per terabyte of logical used space. These volumes are active but have relatively low I/O activity compared to their used capacity.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2776,6 +2792,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2798,7 +2815,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 51
+            "y": 16
           },
           "id": 140,
           "options": {
@@ -2819,7 +2836,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "bottomk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[$__range] @ end()\n    )\n    /\n    clamp_min(\n      avg_over_time(\n        volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[$__range] @ end()\n      ) / 1099511627776,\n      1\n    )\n  )\n  unless\n  on(datacenter, cluster, svm, volume)\n  (\n    volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", root_volume=\"Yes\"}\n    or\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[$__range] @ end()\n    ) == 0\n  )\n)",
+              "expr": "(\n  volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\n  /\n  clamp_min(\n    volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"} / 1099511627776,\n    1\n  )\n)\nand\nbottomk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[$__range] @ end()\n    )\n    /\n    clamp_min(\n      avg_over_time(\n        volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[$__range] @ end()\n      ) / 1099511627776,\n      1\n    )\n  )\n  and\n  on(datacenter, cluster, svm, volume)\n  (\n    volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", root_volume!=\"Yes\"}\n    * on(datacenter, cluster, svm, volume)\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[$__range] @ end()\n    ) > 50\n  )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -2832,7 +2849,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume Performance",
+      "title": "Volume I/O Density",
       "type": "row"
     },
     {
@@ -2842,7 +2859,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "id": 66,
       "panels": [
@@ -3606,7 +3623,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 17
       },
       "id": 46,
       "panels": [
@@ -4633,7 +4650,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 18
       },
       "id": 70,
       "panels": [
@@ -5376,7 +5393,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 71,
       "panels": [
@@ -5865,7 +5882,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 20
       },
       "id": 92,
       "panels": [
@@ -6337,7 +6354,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 99,
       "panels": [
@@ -6732,7 +6749,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "id": 98,
       "panels": [
@@ -7012,7 +7029,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 105,
       "panels": [
@@ -7321,7 +7338,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 135,
       "panels": [
