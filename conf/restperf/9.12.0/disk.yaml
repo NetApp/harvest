@@ -3,7 +3,7 @@ query:                    api/cluster/counter/tables/disk:constituent
 object:                   disk
 
 counters:
-  - ^^id
+  - ^^id                     => instance_uuid
   - ^name                    => partition
   - ^node.name               => node
   - ^physical_disk_id        => disk_uuid
@@ -33,6 +33,10 @@ plugins:
   - LabelAgent:
       split:
         - raid_group `/` ,aggr,plex,raid
+      split_regex:
+        # Example: umeng-aff300-01:1.1.12.P3:
+        # output: instance_uuid value will be 6002538A:4775FAC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000
+        - instance_uuid `^[^:]*:[^:]*:(.+)` instance_uuid
   - Aggregator:
     # plugin will create summary/average for each object
     # any names after the object names will be treated as
