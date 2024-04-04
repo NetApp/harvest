@@ -34,7 +34,7 @@ plugins:
       split:
         - raid_group `/` ,aggr,plex,raid
       split_regex:
-        # Example: umeng-aff300-01:1.1.12.P3:
+        # Example: umeng-aff300-01:1.1.12.P3:6002538A:4775FAC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000
         # output: instance_uuid value will be 6002538A:4775FAC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000
         - instance_uuid `^[^:]*:[^:]*:(.+)` instance_uuid
   - Aggregator:
