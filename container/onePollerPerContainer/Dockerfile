@@ -1,4 +1,6 @@
-FROM golang:1.22.2 as builder
+# GO_VERSION should be overridden by the build script via --build-arg GO_VERSION=$value
+ARG GO_VERSION
+FROM golang:${GO_VERSION} as builder
 
 SHELL ["/bin/bash", "-c"]
 

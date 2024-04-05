@@ -7,7 +7,7 @@ package util
 import (
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
 	"golang.org/x/exp/maps"

@@ -1,13 +1,13 @@
 package volumeanalytics
 
 import (
-	goversion "github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/tidwall/gjson"
 	"path"
 	"strconv"

@@ -2,7 +2,6 @@ package aggregate
 
 import (
 	"errors"
-	goversion "github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
@@ -11,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"strconv"
 	"strings"
 )
