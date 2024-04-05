@@ -1168,7 +1168,7 @@ func checkIOPSDecimal(t *testing.T, path string, data []byte) {
 		decimals := value.Get("fieldConfig.defaults.decimals").String()
 
 		if decimals != "0" {
-			t.Errorf(`dashboard=%s path=%s panel="%s", decimals should be 2 got=%s`,
+			t.Errorf(`dashboard=%s path=%s panel="%s", decimals should be 0 got=%s`,
 				dashPath, path, value.Get("title").String(), decimals)
 		}
 	})
