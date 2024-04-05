@@ -185,6 +185,78 @@ exporters, the following parameters can be defined:
 * `instance_labels` (list): display names of labels to export as a separate data-point
 * `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
 
+#### Endpoints
+
+In Harvest REST templates, `endpoints` are additional queries that enhance the data collected from the main query. The main query, identified by the `query` parameter, is the primary REST API for data collection. For example, the main query for a `disk` object is `api/storage/disks`.
+
+Within the `endpoints` section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own `query` and associated `counters`, allowing you to collect additional metrics or labels from various API. 
+These `endpoints` collect additional metrics or labels from various API, which are then integrated with the main dataset using a key. This key is denoted by the `^^` notation in the counters of both the main query and the `endpoints`.
+
+In the example below, the `endpoints` section makes an additional query to `api/private/cli/disk`, which collects metrics such as `stats_io_kbps`, `stats_sectors_read`, and `stats_sectors_written`. The `uuid` is the key that links the data from the `api/storage/disks` and `api/private/cli/disk` API.
+The `type` label from the `api/private/cli/disk` endpoint is included as outlined in the `export_options`.
+
+```yaml
+name:             Disk
+query:            api/storage/disks
+object:           disk
+
+counters:
+  - ^^uid                       => uuid
+  - ^bay                        => shelf_bay
+  - ^container_type
+  - ^home_node.name             => owner_node
+  - ^model
+  - ^name                       => disk
+  - ^node.name                  => node
+  - ^node.uuid
+  - ^outage.reason              => outage
+  - ^serial_number
+  - ^shelf.uid                  => shelf
+  - ^state
+  - bytes_per_sector            => bytes_per_sector
+  - sector_count                => sectors
+  - stats.average_latency       => stats_average_latency
+  - stats.power_on_hours        => power_on_hours
+  - usable_size
+
+endpoints:
+  - query: api/private/cli/disk
+    counters:
+      - ^^uid                   => uuid
+      - ^type
+      - disk_io_kbps_total      => stats_io_kbps
+      - sectors_read            => stats_sectors_read
+      - sectors_written         => stats_sectors_written
+
+plugins:
+  - Disk
+  - LabelAgent:
+      value_to_num:
+        - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
+      join:
+        - index `_` node,disk
+  - MetricAgent:
+      compute_metric:
+        - uptime MULTIPLY stats.power_on_hours 60 60 #convert to second for zapi parity
+
+export_options:
+  instance_keys:
+    - disk
+    - index
+    - node
+  instance_labels:
+    - container_type
+    - failed
+    - model
+    - outage
+    - owner_node
+    - serial_number
+    - shared
+    - shelf
+    - shelf_bay
+    - type
+```
+
 ## RestPerf Collector
 
 RestPerf collects performance metrics from ONTAP systems using the REST protocol. The collector is designed to be easily
