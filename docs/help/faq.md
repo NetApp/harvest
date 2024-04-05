@@ -79,68 +79,68 @@ Additional details: [here](https://stackoverflow.com/questions/38783424/promethe
 
 ## Where are Harvest container images published?
 
-Harvest images are published to both NetApp's (cr.netapp.io) and Docker's (hub.docker.com) image registry. By default, cr.netapp.io is used.
+Harvest container images are published to both GitHub's image registry (ghcr.io) and Docker's image registry (hub.docker.com). By default, `ghcr.io` is used for pulling images.
 
-### How do I switch from DockerHub to NetApp's image registry (cr.netapp.io) or vice-versa?
+Please note that `cr.netapp.io` is no longer being maintained. If you have been using `cr.netapp.io` to pull Harvest images, we encourage you to switch to `ghcr.io` or Docker Hub as your container image registry. Starting in 2024, we will cease publishing Harvest container images to `cr.netapp.io`.
+
+### How do I switch from Github (ghcr.io) to Docker's image registry (hub.docker.com) or vice-versa?
 
 ### Answer
 
-Replace all instances of `rahulguptajss/harvest:latest` with `cr.netapp.io/harvest:latest`
+Replace all instances of `ghcr.io/netapp/harvest:latest` with `rahulguptajss/harvest:latest`
 
-- Edit your docker-compose file and make those replacements or regenerate the compose file using the `--image cr.netapp.io/harvest:latest` option)
+- Edit your docker-compose file and make those replacements or regenerate the compose file using the `--image rahulguptajss/harvest:latest` option)
 
 - Update any shell or Ansible scripts you have that are also using those images
 
 - After making these changes, you should stop your containers, pull new images, and restart.
 
-You can verify that you're using the cr.netapp.io images like so:
+You can verify that you're using the Docker Hub images like so:
 
 **Before**
 
 ```
 docker image ls -a
-REPOSITORY              TAG       IMAGE ID       CREATED        SIZE
-rahulguptajss/harvest   latest    80061bbe1c2c   10 days ago    85.4MB <=== no prefix in the repository 
-prom/prometheus         v2.33.1   e528f02c45a6   3 weeks ago    204MB       column means from DockerHub
-grafana/grafana         8.3.4     4a34578e4374   5 weeks ago    274MB
+REPOSITORY                  TAG       IMAGE ID       CREATED        SIZE
+ghcr.io/netapp/harvest      latest    80061bbe1c2c   10 days ago    56.4MB <=== GitHub Container Registry
+prom/prometheus             v2.33.1   e528f02c45a6   3 weeks ago    204MB
+grafana/grafana             8.3.4     4a34578e4374   5 weeks ago    274MB
 ```
 
-**Pull image from cr.netapp.io**
+**Pull image from Docker Hub**
 
 ```
-docker pull cr.netapp.io/harvest
+docker pull rahulguptajss/harvest:latest
 Using default tag: latest
-latest: Pulling from harvest
+latest: Pulling from rahulguptajss/harvest
 Digest: sha256:6ff88153812ebb61e9dd176182bf8a792cde847748c5654d65f4630e61b1f3ae
-Status: Image is up to date for cr.netapp.io/harvest:latest
-cr.netapp.io/harvest:latest
+Status: Image is up to date for rahulguptajss/harvest:latest
+rahulguptajss/harvest:latest
 ```
 
 Notice that the `IMAGE ID` for both images are identical since the images are the same.
 
 ```
 docker image ls -a
-REPOSITORY              TAG       IMAGE ID       CREATED        SIZE
-cr.netapp.io/harvest    latest    80061bbe1c2c   10 days ago    85.4MB  <== Harvest image from cr.netapp.io
-rahulguptajss/harvest   latest    80061bbe1c2c   10 days ago    85.4MB
-prom/prometheus         v2.33.1   e528f02c45a6   3 weeks ago    204MB
-grafana/grafana         8.3.4     4a34578e4374   5 weeks ago    274MB
-grafana/grafana         latest    1d60b4b996ad   2 months ago   275MB
-prom/prometheus         latest    c10e9cbf22cd   3 months ago   194MB
+REPOSITORY                  TAG       IMAGE ID       CREATED        SIZE
+rahulguptajss/harvest       latest    80061bbe1c2c   10 days ago    56.4MB  <== Harvest image from Docker Hub
+ghcr.io/netapp/harvest      latest    80061bbe1c2c   10 days ago    56.4MB
+prom/prometheus             v2.33.1   e528f02c45a6   3 weeks ago    204MB
+grafana/grafana             8.3.4     4a34578e4374   5 weeks ago    274MB
 ```
 
 We can now remove the DockerHub pulled image
 
 ```
-docker image rm rahulguptajss/harvest
-Untagged: rahulguptajss/harvest:latest
-Untagged: rahulguptajss/harvest@sha256:6ff88153812ebb61e9dd176182bf8a792cde847748c5654d65f4630e61b1f3ae
+docker image rm ghcr.io/netapp/harvest:latest
+Untagged: ghcr.io/netapp/harvest:latest
+Untagged: ghcr.io/netapp/harvest@sha256:6ff88153812ebb61e9dd176182bf8a792cde847748c5654d65f4630e61b1f3ae
 
 docker image ls -a
-REPOSITORY             TAG       IMAGE ID       CREATED        SIZE
-cr.netapp.io/harvest   latest    80061bbe1c2c   10 days ago    85.4MB
-prom/prometheus        v2.33.1   e528f02c45a6   3 weeks ago    204MB
-grafana/grafana        8.3.4     4a34578e4374   5 weeks ago    274MB
+REPOSITORY              TAG       IMAGE ID       CREATED        SIZE
+rahulguptajss/harvest   latest    80061bbe1c2c   10 days ago    56.4MB
+prom/prometheus         v2.33.1   e528f02c45a6   3 weeks ago    204MB
+grafana/grafana         8.3.4     4a34578e4374   5 weeks ago    274MB
 ```
 
 ## Ports
