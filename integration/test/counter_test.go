@@ -182,8 +182,7 @@ func readCounters(t *node.Node, path, kind string, countersData map[string][]cou
 					continue
 				}
 				name, _, _, _ := util.ParseMetric(c)
-				nameArray := strings.Split(name, ".#")
-				counters = append(counters, replacer.Replace(nameArray[0]))
+				counters = append(counters, util.HandleArrayFormat(replacer.Replace(name)))
 			}
 		}
 		if kind == "rest" {

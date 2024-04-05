@@ -9,13 +9,13 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/rs/zerolog v1.32.0
-	github.com/shirou/gopsutil/v3 v3.24.2
+	github.com/shirou/gopsutil/v3 v3.24.3
 	github.com/spf13/cobra v1.8.0
 	github.com/tidwall/gjson v1.17.1
 	github.com/tidwall/pretty v1.2.1
 	github.com/tidwall/sjson v1.2.5
 	github.com/zekroTJA/timedmap v1.5.2
-	golang.org/x/exp v0.0.0-20240314144324-c7f7c6466f7f
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8
 	golang.org/x/sys v0.18.0
 	golang.org/x/term v0.18.0
 	golang.org/x/text v0.14.0

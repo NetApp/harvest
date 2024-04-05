@@ -171,8 +171,9 @@ func (z *ZapiPerf) InitCache() error {
 	z.Matrix[z.Object].Object = z.object
 	z.Logger.Debug().Msgf("object= %s --> %s", z.Object, z.object)
 
-	// Add metadata metric for skips
+	// Add metadata metric for skips/numPartials
 	_, _ = z.Metadata.NewMetricUint64("skips")
+	_, _ = z.Metadata.NewMetricUint64("numPartials")
 
 	return nil
 }
@@ -345,6 +346,21 @@ func (z *ZapiPerf) loadParamInt(name string, defaultValue int) int {
 	return defaultValue
 }
 
+func (z *ZapiPerf) isPartialAggregation(instance *node.Node) bool {
+	aggregation := instance.GetChildS("aggregation")
+	if aggregation != nil {
+		aggregationData := aggregation.GetChildS("aggregation-data")
+		if aggregationData != nil {
+			result := aggregationData.GetChildS("result")
+			if result != nil {
+				r := result.GetContentS()
+				return r == "partial_aggregation"
+			}
+		}
+	}
+	return false
+}
+
 // PollData updates the data cache of the collector. During first poll, no data will
 // be emitted. Afterward, final metric values will be calculated from previous poll.
 func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
@@ -353,6 +369,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		instanceKeys []string
 		err          error
 		skips        int
+		numPartials  uint64
 		apiT         time.Duration
 		parseT       time.Duration
 	)
@@ -463,12 +480,20 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath)
 		if err != nil {
+			errMsg := strings.ToLower(err.Error())
 			// if ONTAP complains about batch size, use a smaller batch size
-			if strings.Contains(err.Error(), "resource limit exceeded") && z.batchSize > 100 {
+			if strings.Contains(errMsg, "resource limit exceeded") && z.batchSize > 100 {
 				z.Logger.Error().Err(err).
 					Int("oldBatchSize", z.batchSize).
 					Int("newBatchSize", z.batchSize-100).
 					Msg("Changed batch_size")
+				z.batchSize -= 100
+				return nil, nil
+			} else if strings.Contains(errMsg, "timeout: operation") && z.batchSize > 100 {
+				z.Logger.Error().Err(err).
+					Int("oldBatchSize", z.batchSize).
+					Int("newBatchSize", z.batchSize-100).
+					Msg("ONTAP timeout, reducing batch size")
 				z.batchSize -= 100
 				return nil, nil
 			}
@@ -540,6 +565,11 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					Str("key", key).
 					Msg("Skip instance key, not found in cache")
 				continue
+			}
+
+			if z.isPartialAggregation(i) {
+				instance.SetPartial(true)
+				numPartials++
 			}
 
 			instance.SetExportable(true)
@@ -755,6 +785,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instanceKeys)))
 	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx)
 	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls)
+	_ = z.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 
 	z.AddCollectCount(count)
 
@@ -771,7 +802,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	z.Logger.Trace().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true}) // @TODO implement copy data
+	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true}) // @TODO implement copy data
 
 	// order metrics, such that those requiring base counters are processed last
 	orderedMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
@@ -1677,7 +1708,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	newSize = len(mat.GetInstances())
 	added = newSize - (oldSize - removed)
 
-	z.Logger.Debug().Int("new", added).Int("removed", removed).Int("total", newSize).Msg("instances")
+	z.Logger.Trace().Int("new", added).Int("removed", removed).Int("total", newSize).Msg("instances")
 
 	// update metadata for collector logs
 	_ = z.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())

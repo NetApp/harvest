@@ -646,7 +646,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by(node))",
+          "expr": "topk($TopResources, sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1201,7 +1201,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalData\"}) by(node))",
+          "expr": "topk($TopResources, sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node))",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -2782,7 +2782,7 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "expr": "sum(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster) + sum(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)",
+              "expr": "sum(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -4453,7 +4453,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]) + avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4463,7 +4463,7 @@
         "name": "TopVolumeTotalData",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]) + avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,

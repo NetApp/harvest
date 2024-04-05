@@ -4,7 +4,6 @@ object:                   fcp
 
 counters:
   - ^^id
-  - ^link.speed                         => speed
   - ^name                               => port
   - ^node.name                          => node
   - average_other_latency               => avg_other_latency
@@ -16,6 +15,7 @@ counters:
   - invalid.transmission_word           => invalid_transmission_word
   - isr.count                           => isr_count
   - link.down                           => link_down
+  - link.speed                          => speed
   - link.up                             => link_up
   - link_failure                        => link_failure
   - loss_of_signal
@@ -58,6 +58,9 @@ counters:
   - total_ops
   - write_data
   - write_ops
+
+override:
+  - link.speed: string
 
 plugins:
   - Fcp

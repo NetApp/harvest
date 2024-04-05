@@ -5,6 +5,7 @@ linters:
     - bidichk
     - bodyclose
     - contextcheck
+    - copyloopvar
     - dogsled
     - dupword
     - durationcheck
@@ -13,7 +14,6 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
     - gocheckcompilerdirectives
     - gochecksumtype
     - gocritic
@@ -21,6 +21,7 @@ linters:
     - gosimple
     - govet
     - ineffassign
+    - intrange
     - makezero
     - mirror
     - nilerr
@@ -52,7 +53,8 @@ issues:
     - EXC0009
 
 output:
-  format: github-actions
+  formats:
+  - format: github-actions
 
 linters-settings:
   thelper:

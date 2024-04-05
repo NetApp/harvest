@@ -214,7 +214,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(topk($TopResources, volume_write_data+volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
+          "expr": "sum(topk($TopResources, volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -451,7 +451,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})+topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeAvgThroughput\"})",
+          "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end())) ",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -7145,7 +7145,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Physical space used trend detail in the volume.",
+          "description": "Physical space used growth rate per second in the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -7155,7 +7155,7 @@
                 "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
-                "axisLabel": "Physical Used",
+                "axisLabel": "Physical Used Growth Rate",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -7202,7 +7202,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
+              "unit": "binBps",
               "unitScale": true
             },
             "overrides": []
@@ -7213,7 +7213,8 @@
             "x": 0,
             "y": 12
           },
-          "id": 133,
+          "hideTimeOverride": false,
+          "id": 137,
           "options": {
             "legend": {
               "calcs": [
@@ -7236,37 +7237,21 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[60d] @ end()))",
+              "expr": "rate(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]) and topk($TopResources, avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "Actual - {{svm}} - {{volume}}",
+              "legendFormat": "{{svm}} - {{volume}}",
               "range": true,
               "refId": "B"
-            },
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "disableTextWrap": false,
-              "editorMode": "code",
-              "expr": "predict_linear(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[60d], 30*24*3600) and topk($TopResources, avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[60d] @ end()))",
-              "fullMetaSearch": false,
-              "hide": false,
-              "includeNullMetadata": true,
-              "instant": false,
-              "legendFormat": "Trend - {{svm}} - {{volume}}",
-              "range": true,
-              "refId": "A",
-              "useBackend": false
             }
           ],
-          "timeFrom": "60d",
-          "timeShift": "0d+30d",
-          "title": "Top $TopResources Volumes Per Physical Used Trend",
+          "title": "Top $TopResources Volumes Per Growth Rate of Physical Used",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Logical space used trend detail in the volume.",
+          "description": "Logical space used growth rate per second in the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -7276,7 +7261,7 @@
                 "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
-                "axisLabel": "Logical Used",
+                "axisLabel": "Logical Used Growth Rate",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
@@ -7323,7 +7308,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
+              "unit": "binBps",
               "unitScale": true
             },
             "overrides": []
@@ -7334,7 +7319,8 @@
             "x": 12,
             "y": 12
           },
-          "id": 136,
+          "hideTimeOverride": false,
+          "id": 138,
           "options": {
             "legend": {
               "calcs": [
@@ -7357,31 +7343,15 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[60d] @ end()))",
+              "expr": "rate(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]) and topk($TopResources, avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
               "hide": false,
               "interval": "",
-              "legendFormat": "Actual - {{svm}} - {{volume}}",
+              "legendFormat": "{{svm}} - {{volume}}",
               "range": true,
               "refId": "B"
-            },
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "disableTextWrap": false,
-              "editorMode": "code",
-              "expr": "predict_linear(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[60d], 30*24*3600) and topk($TopResources, avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[60d] @ end()))",
-              "fullMetaSearch": false,
-              "hide": false,
-              "includeNullMetadata": true,
-              "instant": false,
-              "legendFormat": "Trend - {{svm}} - {{volume}}",
-              "range": true,
-              "refId": "A",
-              "useBackend": false
             }
           ],
-          "timeFrom": "60d",
-          "timeShift": "0d+30d",
-          "title": "Top $TopResources Volumes Per Logical Used Trend",
+          "title": "Top $TopResources Volumes Per Growth Rate of Logical Used",
           "transformations": [],
           "type": "timeseries"
         }
@@ -7392,7 +7362,7 @@
           "refId": "A"
         }
       ],
-      "title": "Forecast Volume Capacity",
+      "title": "Volume Growth Rate",
       "type": "row"
     }
   ],
@@ -7621,29 +7591,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeAvgThroughput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       },
       {
         "allValue": null,

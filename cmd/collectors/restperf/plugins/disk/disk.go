@@ -9,7 +9,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"sort"
+	"golang.org/x/exp/maps"
+	"slices"
 	"strings"
 	"time"
 )
@@ -237,7 +238,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	d.initMaps()
 
 	var output []*matrix.Matrix
-	noSet := make(map[string]any)
+	noSet := make(map[string]struct{})
 
 	// Purge and reset data
 	for _, data1 := range d.shelfData {
@@ -354,11 +355,8 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	}
 
 	if len(noSet) > 0 {
-		attributes := make([]string, 0)
-		for k := range noSet {
-			attributes = append(attributes, k)
-		}
-		sort.Strings(attributes)
+		attributes := maps.Keys(noSet)
+		slices.Sort(attributes)
 		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
 
@@ -398,7 +396,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	}
 
 	// calculate power for returned disks in perf response
-	for _, instance := range data.GetInstances() {
+	for key, instance := range data.GetInstances() {
 		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
 			diskUUID := instance.GetLabel("disk_uuid")
 			diskName := instance.GetLabel("disk")
@@ -428,7 +426,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 					Msg("Missing disk info")
 			}
 		} else {
-			d.Logger.Warn().Msg("Instance not exported")
+			d.Logger.Debug().Str("key", key).Msg("Instance not exported")
 		}
 	}
 
@@ -469,14 +467,13 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	aggrData.Reset()
 
 	// fill aggr power matrix with power calculated above
-	for k, v := range d.aggrMap {
-		instanceKey := k
+	for instanceKey, v := range d.aggrMap {
 		instance, err := aggrData.NewInstance(instanceKey)
 		if err != nil {
 			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
 			continue
 		}
-		instance.SetLabel("aggr", k)
+		instance.SetLabel("aggr", instanceKey)
 		instance.SetLabel("derivedType", string(v.derivedType))
 		instance.SetLabel("node", v.node)
 

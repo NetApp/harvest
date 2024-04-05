@@ -284,7 +284,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$TopVolumeAvgThroughput\"})+topk($TopResources, volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$TopVolumeAvgThroughput\"})",
+          "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\"}[$__range] @ end())) ",
           "interval": "",
           "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
@@ -2763,29 +2763,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeAvgThroughput",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\"}[${__range}])+avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },

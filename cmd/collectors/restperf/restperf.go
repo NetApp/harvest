@@ -24,6 +24,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
+	"golang.org/x/exp/maps"
 	"path"
 	"regexp"
 	"strconv"
@@ -61,8 +62,9 @@ var qosDetailQueries = map[string]string{
 }
 
 type RestPerf struct {
-	*rest2.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	perfProp    *perfProp
+	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	perfProp        *perfProp
+	archivedMetrics map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
 }
 
 type counter struct {
@@ -109,6 +111,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	r.InitProp()
 
 	r.perfProp.counterInfo = make(map[string]*counter)
+	r.archivedMetrics = make(map[string]*rest2.Metric)
 
 	if err = r.InitClient(); err != nil {
 		return err
@@ -188,8 +191,9 @@ func (r *RestPerf) InitMatrix() error {
 		}
 	}
 
-	// Add metadata metric for skips
+	// Add metadata metric for skips/numPartials
 	_, _ = r.Metadata.NewMetricUint64("skips")
+	_, _ = r.Metadata.NewMetricUint64("numPartials")
 	return nil
 }
 
@@ -276,6 +280,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 		counterSchema gjson.Result
 		parseT        time.Time
 	)
+
 	mat := r.Matrix[r.Object]
 	firstRecord := records[0]
 
@@ -286,6 +291,8 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	} else {
 		return nil, errs.New(errs.ErrConfig, "no data found")
 	}
+	seenMetrics := make(map[string]bool)
+
 	// populate denominator metric to prop metrics
 	counterSchema.ForEach(func(_, c gjson.Result) bool {
 		if !c.IsObject() {
@@ -295,8 +302,18 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 
 		name := strings.Clone(c.Get("name").String())
 		dataType := strings.Clone(c.Get("type").String())
+
 		if p := r.GetOverride(name); p != "" {
 			dataType = p
+		}
+
+		// Check if the metric was previously archived and restore it
+		if archivedMetric, found := r.archivedMetrics[name]; found {
+			r.Prop.Metrics[name] = archivedMetric
+			delete(r.archivedMetrics, name) // Remove from archive after restoring
+			r.Logger.Info().
+				Str("key", name).
+				Msg("Metric found in archive. Restore it")
 		}
 
 		if _, has := r.Prop.Metrics[name]; has {
@@ -304,8 +321,8 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 				if _, ok := r.Prop.InstanceLabels[name]; !ok {
 					r.Prop.InstanceLabels[name] = r.Prop.Counters[name]
 				}
-				// remove from metrics
-				delete(r.Prop.Metrics, name)
+				// set exportable as false
+				r.Prop.Metrics[name].Exportable = false
 				return true
 			}
 			d := strings.Clone(c.Get("denominator.name").String())
@@ -329,6 +346,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 
 		name := strings.Clone(c.Get("name").String())
 		if _, has := r.Prop.Metrics[name]; has {
+			seenMetrics[name] = true
 			if _, ok := r.perfProp.counterInfo[name]; !ok {
 				r.perfProp.counterInfo[name] = &counter{
 					name:        name,
@@ -348,6 +366,17 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 		}
 		return true
 	})
+
+	for name, metric := range r.Prop.Metrics {
+		if !seenMetrics[name] {
+			r.archivedMetrics[name] = metric
+			// Log the metric that is not present in counterSchema.
+			r.Logger.Warn().
+				Str("key", name).
+				Msg("Metric not found in counterSchema")
+			delete(r.Prop.Metrics, name)
+		}
+	}
 
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
@@ -675,9 +704,13 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
+	var filter []string
+	filter = append(filter, "counters.name="+strings.Join(maps.Keys(r.Prop.Metrics), "|"))
+
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
 		Fields([]string{"*"}).
+		Filter(filter).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
@@ -694,6 +727,40 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	return r.pollData(startTime, perfRecords)
 }
 
+// getMetric retrieves the metric associated with the given key from the current matrix (curMat).
+// If the metric does not exist in curMat, it is created with the provided display settings.
+// The function also ensures that the same metric exists in the previous matrix (prevMat) to
+// allow for subsequent calculations (e.g., prevMetric - curMetric).
+// This is particularly important in cases such as ONTAP upgrades, where curMat may contain
+// additional metrics that are not present in prevMat. If prevMat does not have the metric,
+// it is created to prevent a panic when attempting to perform calculations with non-existent metrics.
+//
+// This metric creation process within RestPerf is necessary during PollData because the information about whether a metric
+// is an array is not available in the RestPerf PollCounter. The determination of whether a metric is an array
+// is made by examining the actual data in RestPerf. Therefore, metric creation in RestPerf is performed during
+// the poll data phase, and special handling is required for such cases.
+//
+// The function returns the current metric and any error encountered during its retrieval or creation.
+func (r *RestPerf) getMetric(curMat *matrix.Matrix, prevMat *matrix.Matrix, key string, display ...string) (*matrix.Metric, error) {
+	var err error
+	curMetric := curMat.GetMetric(key)
+	if curMetric == nil {
+		curMetric, err = curMat.NewMetricFloat64(key, display...)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	prevMetric := prevMat.GetMetric(key)
+	if prevMetric == nil {
+		_, err = prevMat.NewMetricFloat64(key, display...)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return curMetric, nil
+}
+
 func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) (map[string]*matrix.Matrix, error) {
 	var (
 		count        uint64
@@ -701,6 +768,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		err          error
 		instanceKeys []string
 		skips        int
+		numPartials  uint64
 		instIndex    int
 		ts           float64
 		prevMat      *matrix.Matrix
@@ -819,6 +887,12 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				return true
 			}
 
+			// check for partial aggregation
+			if instanceData.Get("aggregation.complete").String() == "false" {
+				instance.SetPartial(true)
+				numPartials++
+			}
+
 			for label, display := range r.Prop.InstanceLabels {
 				value, ok := props[label]
 				if ok {
@@ -933,15 +1007,10 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 						description := strings.ToLower(r.perfProp.counterInfo[name].description)
 						if len(labels) > 0 && strings.Contains(description, "histogram") {
 							key := name + ".bucket"
-							histogramMetric = curMat.GetMetric(key)
-							if histogramMetric != nil {
-								r.Logger.Trace().Str("metric", key).Msg("Updating array metric attributes")
-							} else {
-								histogramMetric, err = curMat.NewMetricFloat64(key, metric.Label)
-								if err != nil {
-									r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
-									continue
-								}
+							histogramMetric, err = r.getMetric(curMat, prevMat, key, metric.Label)
+							if err != nil {
+								r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
+								continue
 							}
 							histogramMetric.SetArray(true)
 							histogramMetric.SetExportable(metric.Exportable)
@@ -953,7 +1022,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							k := name + arrayKeyToken + label
 							metr, ok := curMat.GetMetrics()[k]
 							if !ok {
-								if metr, err = curMat.NewMetricFloat64(k, metric.Label); err != nil {
+								if metr, err = r.getMetric(curMat, prevMat, k, metric.Label); err != nil {
 									r.Logger.Error().Err(err).
 										Str("name", k).
 										Msg("NewMetricFloat64")
@@ -997,7 +1066,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					} else {
 						metr, ok := curMat.GetMetrics()[name]
 						if !ok {
-							if metr, err = curMat.NewMetricFloat64(name, metric.Label); err != nil {
+							if metr, err = r.getMetric(curMat, prevMat, name, metric.Label); err != nil {
 								r.Logger.Error().Err(err).
 									Str("name", name).
 									Int("instIndex", instIndex).
@@ -1055,6 +1124,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
 	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 
 	r.AddCollectCount(count)
 
@@ -1071,7 +1141,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	r.Logger.Trace().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
@@ -1126,8 +1196,8 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		// used in volume.go plugin
 		metric.SetComment(counter.denominator)
 
-		// RAW - submit without post-processing
-		if property == "raw" {
+		// raw/string - submit without post-processing
+		if property == "raw" || property == "string" {
 			continue
 		}
 

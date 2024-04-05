@@ -1,0 +1,70 @@
+{
+  "records": [
+    {
+      "uuid": "1b3abd60-c958-11ed-b61b-00a098d39e12",
+      "name": "NS_svm_nvme-wid9168",
+      "workload_class": "user_defined",
+      "wid": 9168,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "651a7693-c957-11ed-bc46-00a098d390f2",
+        "name": "svm_nvme",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/651a7693-c957-11ed-bc46-00a098d390f2"
+          }
+        }
+      },
+      "volume": "NS_svm_nvme",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/1b3abd60-c958-11ed-b61b-00a098d39e12"
+        }
+      }
+    },
+    {
+      "uuid": "837e9edd-af97-11ee-bb71-00a098d390f2",
+      "name": "xyz-wid28278",
+      "workload_class": "user_defined",
+      "wid": 28278,
+      "policy": {
+        "uuid": "b7189398-e572-48ab-8f69-82cd46580812",
+        "name": "extreme-fixed",
+        "_links": {
+          "self": {
+            "href": "/api/storage/qos/policies/b7189398-e572-48ab-8f69-82cd46580812"
+          }
+        }
+      },
+      "svm": {
+        "uuid": "3fb7b0b7-ef89-11eb-80e3-00a098d39e12",
+        "name": "astra_301",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/3fb7b0b7-ef89-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": "xyz",
+      "_links": {
+        "self": {
+          "href": "/api/storage/qos/workloads/837e9edd-af97-11ee-bb71-00a098d390f2"
+        }
+      }
+    }
+  ],
+  "num_records": 2,
+  "_links": {
+    "self": {
+      "href": "/api/storage/qos/workloads?return_records=true&fields=*&name=*NS*|*xyz*"
+    }
+  }
+}

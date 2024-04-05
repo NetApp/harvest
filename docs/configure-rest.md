@@ -348,5 +348,10 @@ The output of this template would look like:
 ```
 fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="DIMM-1",node="umeng-aff300-02",serial_number="s2",status="pass"} 1.0
 fru_check_labels{cluster="umeng-aff300-01-02",datacenter="u2",name="PCIe Devices",node="umeng-aff300-02",serial_number="s1",status="pass"} 1.0
-...
 ```
+
+## Partial Aggregation
+
+There are instances when ONTAP may report partial aggregate results for certain objects (for example, during a node outage). In such cases, the RestPerf Collector will skip the reporting of performance counters for the affected objects.
+
+To determine whether partial aggregation affects an object, check the `numPartials` entry in the Harvest logs. If `numPartials` is greater than zero, it indicates that partial aggregations have occurred for that object. e.g. `Collected Poller=aff-251 collector=RestPerf:NFSv4 instances=56 numPartials=15`

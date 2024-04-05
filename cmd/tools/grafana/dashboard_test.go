@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/pretty"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -60,7 +61,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 					isColorBackgroundSet := false
 					expectedColorBackground := map[string][]string{
 						"table": {"color-background", "lcd-gauge"},
-						"stat":  {"background"},
+						"stat":  {"background", "value"},
 					}
 					// check in default also for stat. For table, we only want the relevant column background and override settings
 					if kind == "stat" {
@@ -95,7 +96,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 					if kind == "stat" {
 						colorMode := value.Get("options.colorMode")
 						if !slices.Contains(expectedColorBackground[kind], colorMode.String()) {
-							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct colorMode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], colorMode.String())
+							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s doesn't have correct colorMode got %s want %s", path, panelTitle, kind, expr, colorMode.String(), expectedColorBackground[kind])
 						} else {
 							isColorBackgroundSet = true
 						}
@@ -125,7 +126,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		dsResult := value.Get("datasource")
 		panelTitle := value.Get("title").String()
 		if !dsResult.Exists() {
-			t.Errorf("dashboard=%s panel=%s don't have datasource", path, panelTitle)
+			t.Errorf(`dashboard="%s" panel="%s" doesn't have a datasource`, path, panelTitle)
 			return
 		}
 
@@ -134,9 +135,8 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 			if value.Get("type").String() == "row" {
 				return
 			}
-			t.Errorf("dashboard=%s panel=%s has a null datasource", path, panelTitle)
-		}
-		if dsResult.String() != "${DS_PROMETHEUS}" {
+			t.Errorf(`dashboard=%s panel="%s" has a null datasource, should be ${DS_PROMETHEUS}`, path, panelTitle)
+		} else if dsResult.String() != "${DS_PROMETHEUS}" {
 			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", path, panelTitle, dsResult.String())
 		}
 
@@ -212,7 +212,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	})
 
 	if !doesDsPromExist {
-		t.Errorf("dashboard=%s should define variable has DS_PROMETHEUS", path)
+		t.Errorf("dashboard=%s should define the variable DS_PROMETHEUS", path)
 	}
 }
 
@@ -233,6 +233,8 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"_lag_time":                       {"", "s", "short"},
 		"qos_detail_service_time_latency": {"µs", "percent"},
 		"qos_detail_resource_latency":     {"µs", "percent"},
+		"volume_space_physical_used":      {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"volume_space_logical_used":       {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 	}
 
 	// Normalize rates to their base unit
@@ -597,6 +599,10 @@ func TestVariablesIncludeAllOption(t *testing.T) {
 		})
 }
 
+var exceptionToAll = map[string]bool{
+	"cmode/details/volumeDeepDive.json": true,
+}
+
 func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 	shouldHaveAll := map[string]bool{
 		"Cluster":   true,
@@ -604,6 +610,10 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 		"Volume":    true,
 		"SVM":       true,
 		"Aggregate": true,
+	}
+
+	if exceptionToAll[ShortPath(path)] {
+		return
 	}
 
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
@@ -751,10 +761,19 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 	}
 }
 
+var uidExceptions = map[string]bool{
+	"cmode/details/volumeBySVM.json":    true,
+	"cmode/details/volumeDeepDive.json": true,
+}
+
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
+	path = ShortPath(path)
+	if uidExceptions[path] {
+		return
+	}
 	uid := gjson.GetBytes(data, "uid").String()
 	if uid != "" {
-		t.Errorf(`dashboard=%s uid should be "" but is %s`, ShortPath(path), uid)
+		t.Errorf(`dashboard=%s uid should be "" but is %s`, path, uid)
 	}
 }
 
@@ -866,9 +885,17 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				}
 
 				// Test if the selected value matches the expected text "5"
-				if (text == "5") != selected {
-					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
-						ShortPath(path), v.name, text, selected)
+				// Unless the dashboard is volumeDeepDive, in which case the text "1" should be selected
+				if ShortPath(path) == "cmode/details/volumeDeepDive.json" {
+					if text == "1" != selected {
+						t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
+							ShortPath(path), v.name, text, selected)
+					}
+				} else {
+					if text == "5" != selected {
+						t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' has incorrect selected state: %t",
+							ShortPath(path), v.name, text, selected)
+					}
 				}
 			}
 		}
@@ -886,16 +913,17 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
-		"cmode/shelf.json":            2,
-		"cmode/fsa.json":              2,
-		"cmode/flexcache.json":        2,
-		"cmode/workload.json":         2,
-		"cmode/smb.json":              2,
-		"cmode/health.json":           2,
-		"cmode/power.json":            2,
-		"storagegrid/fabricpool.json": 2,
+		"cmode/shelf.json":              2,
+		"cmode/fsa.json":                2,
+		"cmode/flexcache.json":          2,
+		"cmode/workload.json":           2,
+		"cmode/smb.json":                2,
+		"cmode/health.json":             2,
+		"cmode/power.json":              2,
+		"storagegrid/fabricpool.json":   2,
+		"cmode/nfsTroubleshooting.json": 3,
 	}
-	// count number of expanded sections in dashboard and ensure num expanded = 1
+	// count the number of expanded sections in the dashboard and ensure num expanded = 1
 	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
@@ -1075,7 +1103,8 @@ func checkTableFilter(t *testing.T, path string, data []byte) {
 		if panelType == "table" {
 			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").String()
 			if isFilterable != "true" {
-				t.Errorf(`dashboard=%s path=panels[%d] does not enable filtering for the table`, dashPath, key.Int())
+				t.Errorf(`dashboard=%s path=panels[%d] title="%s" does not enable filtering for the table`,
+					dashPath, key.Int(), value.Get("title").String())
 			}
 		}
 	})
@@ -1274,7 +1303,7 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 			if string(sorted) != string(data) {
 				sortedPath := writeSorted(t, path, sorted)
 				path = "grafana/dashboards/" + path
-				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s. Run cp %s %s",
+				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s.\ncp %s %s",
 					path, sortedPath, sortedPath, path)
 			}
 		})
@@ -1407,7 +1436,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 				} else {
 					*count = *count + 1
-					t.Errorf(`dashboard=%s panel="%s" hasn't panel description %d`, dashPath, title, *count)
+					t.Errorf(`dashboard=%s panel="%s" does not have panel description %d`, dashPath, title, *count)
 				}
 			} else {
 				// This indicates table/timeseries with more than 1 expression, After deciding next steps, this will be uncommented.
@@ -1418,5 +1447,136 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 			// Few panels have description text from variable, which would be ignored.
 			t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
 		}
+	})
+}
+
+func TestFSxFriendlyVariables(t *testing.T) {
+	VisitDashboards(dashboards,
+		func(path string, data []byte) {
+			checkVariablesAreFSxFriendly(t, path, data)
+		})
+}
+
+func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		// Only consider query variables
+		if value.Get("type").String() != "query" {
+			return true
+		}
+
+		query := value.Get("query").String()
+		definition := value.Get("definition").String()
+		varName := value.Get("name").String()
+
+		if varName != "Cluster" && varName != "Datacenter" {
+			return true
+		}
+
+		if strings.Contains(query, "node_labels") {
+			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" has "node_labels" in query. Use "cluster_new_status" instead.`,
+				ShortPath(path), key.String(), varName)
+		}
+
+		if strings.Contains(definition, "node_labels") {
+			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" has "node_labels" in definition. Use "cluster_new_status" instead.`,
+				ShortPath(path), key.String(), varName)
+		}
+		return true
+	})
+}
+
+var linkPath = regexp.MustCompile(`/d/(.*?)/`)
+
+func TestLinks(t *testing.T) {
+	hasLinks := map[string][]string{}
+	uids := map[string]string{}
+
+	VisitDashboards(dashboards, func(path string, data []byte) {
+		checkLinks(path, data, hasLinks, uids)
+	})
+
+	// Check that the links are valid URLs and that the link points to an existing dashboard
+
+	for path, list := range hasLinks {
+		hasOrgID := false
+		for _, link := range list {
+			parse, err := url.Parse(link)
+			if err != nil {
+				t.Errorf(`dashboard=%s link="%s" is not a valid URL`, path, link)
+				continue
+			}
+			matches := linkPath.FindStringSubmatch(parse.Path)
+			if len(matches) != 2 {
+				t.Errorf(`dashboard=%s link="%s" does not have a valid path`, path, link)
+				continue
+			}
+
+			// Check if the dashboard exists
+			if _, ok := uids[matches[1]]; !ok {
+				t.Errorf(`dashboard=%s links to not existant dashboard with link="%s"`, path, link)
+			}
+
+			query, err := url.ParseQuery(link)
+			if err != nil {
+				t.Errorf(`dashboard=%s link="%s" is not a valid URL`, path, link)
+				continue
+			}
+			if len(query) < 3 {
+				t.Errorf(`dashboard=%s link="%s" does not have enough query parameters`, path, link)
+			}
+			for k, v := range query {
+				if strings.HasSuffix(k, "?orgId") {
+					if v[0] != "1" {
+						t.Errorf(`dashboard=%s link="%s" does not have orgId=1`, path, link)
+					}
+					hasOrgID = true
+					continue
+				}
+				if strings.HasPrefix(k, "${") {
+					if v[0] != "" {
+						t.Errorf(`dashboard=%s link="%s" has variable in query. got key="%s" value="%s" want value=""`,
+							path, link, k, v[0])
+					}
+				} else if strings.HasPrefix(k, "var-") {
+					if v[0] == "" {
+						t.Errorf(`dashboard=%s link="%s" has empty variable in query. got key="%s" value="%s" want non empty value`,
+							path, link, k, v[0])
+					}
+				}
+			}
+		}
+
+		if !hasOrgID {
+			t.Errorf(`dashboard=%s does not have orgId=1`, path)
+		}
+	}
+}
+
+func checkLinks(path string, data []byte, hasLinks map[string][]string, uids map[string]string) {
+	dashPath := ShortPath(path)
+
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
+		checkPanelLinks(value, dashPath, hasLinks)
+	})
+
+	uid := gjson.GetBytes(data, "uid").String()
+	if uid != "" {
+		uids[uid] = dashPath
+	}
+}
+
+func checkPanelLinks(value gjson.Result, path string, hasLinks map[string][]string) {
+	value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
+		anOverride.Get("properties").ForEach(func(_, propValue gjson.Result) bool {
+			propValue.Get("value").ForEach(func(_, value gjson.Result) bool {
+				link := value.Get("url").String()
+				if link != "" {
+					hasLinks[path] = append(hasLinks[path], link)
+				}
+				return true
+			})
+			return true
+		})
+		return true
 	})
 }

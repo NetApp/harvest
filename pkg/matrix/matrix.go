@@ -32,11 +32,12 @@ type Matrix struct {
 }
 
 type With struct {
-	Data            bool
-	Metrics         bool
-	Instances       bool
-	ExportInstances bool
-	Labels          []string
+	Data             bool
+	Metrics          bool
+	Instances        bool
+	ExportInstances  bool
+	PartialInstances bool
+	Labels           []string
 }
 
 func New(uuid, object string, identifier string) *Matrix {
@@ -88,6 +89,9 @@ func (m *Matrix) Clone(with With) *Matrix {
 				clone.instances[key] = instance.Clone(instance.IsExportable(), with.Labels...)
 			} else {
 				clone.instances[key] = instance.Clone(false, with.Labels...)
+			}
+			if with.PartialInstances {
+				clone.instances[key].SetPartial(instance.IsPartial())
 			}
 		}
 	} else {
@@ -364,6 +368,22 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 						Str("instKey", key).
 						Msg("Negative cooked value")
 				}
+				// Check for partial Aggregation
+				ppaOk := prevInstance.IsPartial()
+				cpaOk := currInstance.IsPartial()
+				if ppaOk || cpaOk {
+					curMetric.record[currIndex] = false
+					skips++
+					logger.Debug().
+						Str("metric", curMetric.GetName()).
+						Float64("currentRaw", curRaw).
+						Float64("previousRaw", prevRaw[prevIndex]).
+						Bool("prevPartial", ppaOk).
+						Bool("curPartial", cpaOk).
+						Interface("instanceLabels", currInstance.GetLabels()).
+						Str("instKey", key).
+						Msg("Partial Aggregation")
+				}
 			} else {
 				curMetric.record[currIndex] = false
 				skips++
@@ -371,6 +391,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 					Str("metric", curMetric.GetName()).
 					Float64("currentRaw", curRaw).
 					Float64("previousRaw", prevRaw[prevIndex]).
+					Interface("instanceLabels", currInstance.GetLabels()).
 					Str("instKey", key).
 					Msg("Delta calculation skipped")
 			}
@@ -380,6 +401,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 			logger.Trace().
 				Str("metric", curMetric.GetName()).
 				Float64("currentRaw", curRaw).
+				Interface("instanceLabels", currInstance.GetLabels()).
 				Str("instKey", key).
 				Msg("New instance added")
 		}
@@ -396,7 +418,8 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 	if len(metric.values) != len(sValues) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(metric.values), len(sValues)))
 	}
-	for i := range len(metric.values) {
+	for key, instance := range m.GetInstances() {
+		i := instance.index
 		if metric.record[i] && sRecord[i] {
 			if sValues[i] != 0 {
 				// Don't pass along the value if the numerator or denominator is < 0
@@ -409,6 +432,8 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 						Str("key", metricKey).
 						Float64("numerator", metric.values[i]).
 						Float64("denominator", sValues[i]).
+						Interface("instanceLabels", instance.GetLabels()).
+						Str("instKey", key).
 						Msg("Divide calculation skipped")
 				}
 				metric.values[i] /= sValues[i]
@@ -423,6 +448,8 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 				Str("key", metricKey).
 				Float64("numerator", metric.values[i]).
 				Float64("denominator", sValues[i]).
+				Interface("instanceLabels", instance.GetLabels()).
+				Str("instKey", key).
 				Msg("Divide calculation skipped")
 		}
 	}
@@ -449,7 +476,8 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 	if len(metric.values) != len(sValues) || len(sValues) != len(tValues) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d, time=%d", len(metric.values), len(sValues), len(tValues)))
 	}
-	for i := range len(metric.values) {
+	for key, instance := range m.GetInstances() {
+		i := instance.index
 		v := metric.values[i]
 		// Don't pass along the value if the numerator or denominator is < 0
 		// It is important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
@@ -461,6 +489,8 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 				Str("key", metricKey).
 				Float64("numerator", v).
 				Float64("denominator", sValues[i]).
+				Interface("instanceLabels", instance.GetLabels()).
+				Str("instKey", key).
 				Msg("Negative values")
 		} else if metric.record[i] && sRecord[i] {
 			// For a latency counter, ensure that the base counter has sufficient operations for accurate calculation.
@@ -484,6 +514,8 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 							Float64("current_raw_latency", curRawMetric.values[i]).
 							Float64("prev_raw_base", prevBaseRawMetric.values[i]).
 							Float64("current_raw_base", curBaseRawMetric.values[i]).
+							Interface("instanceLabels", instance.GetLabels()).
+							Str("instKey", key).
 							Msg("Detected high latency value in the metric")
 					}
 				}
@@ -498,6 +530,8 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 				Str("key", metricKey).
 				Float64("numerator", metric.values[i]).
 				Float64("denominator", sValues[i]).
+				Interface("instanceLabels", instance.GetLabels()).
+				Str("instKey", key).
 				Msg("Divide threshold calculation skipped")
 		}
 	}

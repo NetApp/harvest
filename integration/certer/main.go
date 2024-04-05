@@ -179,10 +179,9 @@ func addCertificateAuthToHarvestUser() error {
 		},
 	}
 	for _, perm := range perms {
-		p := perm
 		err := newRequest().
 			Pathf("/api/private/cli/security/login").
-			BodyJSON(&p).
+			BodyJSON(&perm). // #nosec G601
 			Fetch(context.Background())
 
 		if err != nil {

@@ -1,0 +1,687 @@
+<results status="passed">
+    <counters>
+        <counter-info>
+            <desc>This is the name of the aggregate containing this workload. If the workload is associated with a vserver, then this counter is blank.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>aggr_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the UUID of the aggregate containing this workload. If the workload is associated with a vserver, then this counter is blank.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>aggr_uuid</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>High 8 bytes of the instance constituent UUID. This partial key is used for archival purposes only.</desc>
+            <is-deprecated>false</is-deprecated>
+            <is-key>true</is-key>
+            <name>archive_uuid_hi</name>
+            <privilege-level>admin</privilege-level>
+            <properties>raw,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Low 8 bytes of the instance constituent UUID. This partial key is used for archival purposes only.</desc>
+            <is-deprecated>false</is-deprecated>
+            <is-key>true</is-key>
+            <name>archive_uuid_lo</name>
+            <privilege-level>admin</privilege-level>
+            <properties>raw,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of requests that were classified as part of this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>classified</name>
+            <privilege-level>diag</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>cloud_io_other_ops</base-counter>
+            <desc>LIST/DELETE op average latency from filer to the object store server.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cloud_io_other_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>LIST/DELETE ops from filer to the object store server.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cloud_io_other_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>cloud_io_read_ops</base-counter>
+            <desc>GET op average latency from filer to the object store server.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cloud_io_read_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>GET ops from filer to the object store server.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cloud_io_read_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>cloud_io_write_ops</base-counter>
+            <desc>PUT op average latency from filer to the object store server.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cloud_io_write_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>PUT ops from filer to the object store server.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>cloud_io_write_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the average number of concurrent requests for the workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>concurrency</name>
+            <privilege-level>diag</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the file handle of the file on which this data object is defined. It is blank if the data_object_type is not 'file'.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>data_object_file_handle</name>
+            <privilege-level>admin</privilege-level>
+            <properties>raw,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the name associated with the data object on which the workload is defined. This data object name is also included as part of the workload instance_name.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>data_object_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the data object type on which this workload is defined. It is one of 'vserver', 'volume', 'lun', or 'file'.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>data_object_type</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the UUID of the vserver, volume, or LUN on which this data object is defined. For 'file', this is the volume UUID.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>data_object_uuid</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of dirty buffers that were accumulated by the workload. It represents this workloads contribution (amongst all other workloads) to the total disk write traffic tracked by the _WAFL_CP workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>dirty_buffers</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of seconds of history that are available for the unique_blocks and total_blocks counters.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>estimator_age</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of hard disk reads replaced by external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_disk_reads_replaced</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of directory buffers served off external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_hit_directory</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of indirect file buffers served off external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_hit_indirect</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of flushq buffers served off external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_hit_lopri</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of metadata buffers served off external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_hit_metadata</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of normal level 0 wafl buffers served off external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_hit_normal_lev0</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>ext_cache_total_accesses</base-counter>
+            <desc>This is the ratio of cache lookup hits to accesses as a percentage for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_hit_percent</name>
+            <privilege-level>test</privilege-level>
+            <properties>percent,no-zero-values</properties>
+            <unit>percent</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of hits from the external cache.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_hits</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of inserts into the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_inserts</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of directory buffers inserted into the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_inserts_directory</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of indirect blocks inserted into the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_inserts_indirects</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of metadata file buffers inserted into the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_inserts_metadata_file</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of normal level 0 wafl buffers inserted into the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_inserts_normal_lev0</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of level 0 random write buffers inserted into the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_inserts_random_write_lev0</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of level 0 readahead blocks inserted into the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_inserts_readahead_lev0</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the external cache misses accessing directory buffers for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_miss_directory</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the external cache misses accessing indirect file buffers for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_miss_indirect</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the external cache misses accessing metadata file buffers for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_miss_metadata_file</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the external cache misses accessing normal level 0 buffers for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_miss_normal_lev0</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of misses from the external cache for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_misses</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of external cache accesses for this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ext_cache_total_accesses</name>
+            <privilege-level>test</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of freed blocks that were accumulated by the workload. It represents this workloads contribution (amongst all other workloads) to the total file deletion traffic tracked by the _BACKGROUND_DELETE workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>freed_blocks</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Workload name of the auto-aggregated workload instance. This field was required by the CM infrastructure to remove the need for string translation to be done on this field in the mhost.</desc>
+            <is-deprecated>false</is-deprecated>
+            <is-key>true</is-key>
+            <name>instance_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Unique identifier (UUID) of the auto-aggregated workload instance. This field was required by the CM infrastructure to remove the need for string translation to be done on this field in the mhost.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>instance_uuid</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the sum of the squares of the interarrival times of the received requests by this workload. This value can be used to compute the variance of the arrival times of operations received by the filer by this workload. This value cannot be aggregated with any other workload's interarrival_time_sum_squares counter to provide useful information. The units are square microseconds.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>interarrival_time_sum_squares</name>
+            <privilege-level>diag</privilege-level>
+            <properties>delta</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Whether workload is adaptive or not.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>is_adaptive</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>ops</base-counter>
+            <desc>This is the average response time for requests that were initiated by the workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the histogram of response times for requests that were initiated by this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>&lt;2us,&lt;6us,&lt;10us,&lt;14us,&lt;20us,&lt;40us,&lt;60us,&lt;80us,&lt;100us,&lt;200us,&lt;400us,&lt;600us,&lt;800us,&lt;1ms,&lt;2ms,&lt;4ms,&lt;6ms,&lt;8ms,&lt;10ms,&lt;12ms,&lt;14ms,&lt;16ms,&lt;18ms,&lt;20ms,&lt;40ms,&lt;60ms,&lt;80ms,&lt;100ms,&lt;200ms,&lt;400ms,&lt;600ms,&lt;800ms,&lt;1s,&lt;2s,&lt;4s,&lt;6s,&lt;8s,&lt;10s,&lt;20s,&gt;20s</label-info>
+            </labels>
+            <name>latency_hist</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <type>array</type>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the variance of the operation latency for this workload for the past archive interval time.</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>variance,mean,count</label-info>
+            </labels>
+            <name>latency_variance</name>
+            <privilege-level>test</privilege-level>
+            <properties>raw</properties>
+            <type>array</type>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Imposed workload max-throughput in IOPS derived from QoS adaptive policy</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>max_throughput</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Imposed workload max-throughput in bytes per second derived from QoS adaptive policy</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>max_throughput_bps</name>
+            <privilege-level>admin</privilege-level>
+            <properties>raw,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Imposed Workload min-throughput in IOPS derived from QoS adaptive policy</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>min_throughput</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Imposed Workload min-throughput in bytes per second derived from QoS adaptive policy</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>min_throughput_bps</name>
+            <privilege-level>admin</privilege-level>
+            <properties>raw,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>System node name</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>node_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>System node id</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>node_uuid</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Workload operations executed per second.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the rate of this workload's other operations that completed during the measurement interval.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>other_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>The internal policy group identifier that is used by dblade processes for QoS control purposes.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>pgid</name>
+            <privilege-level>test</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the name of the policy group containing this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>policy_group_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the UUID of the policy group containing this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>policy_group_uuid</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Ontap process that provided this instance</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>process_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the amount of data read per second from the filer by the workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_data</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>b_per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of RAID IO read-done messages that were accumulated by the workload. It represents this workloads contribution (amongst all other workloads) to the total disk read traffic tracked by the _RAIDIO_READ_DONE workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_done</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>read_io_type_base</base-counter>
+            <desc>This is the percentage of read requests served from various components (e.g., buffer cache, ext_cache, disk, etc.).</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>cache,pmem,ext_cache,disk,bamboo_ssd,hya_hdd,hya_cache,hya_non_cache,cloud,fc_miss,cloud_s2c</label-info>
+            </labels>
+            <name>read_io_type</name>
+            <privilege-level>diag</privilege-level>
+            <properties>percent</properties>
+            <type>array</type>
+            <unit>percent</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of WAFL read requests. It is used as a base counter (or denominator) for the read_io_types counter, to compute the percentage of reads by various WAFL components.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_io_type_base</name>
+            <privilege-level>admin</privilege-level>
+            <properties>raw,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>read_ops</base-counter>
+            <desc>This is the average response time for read requests that were initiated by the workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the histogram of response times for read requests that were initiated by this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>&lt;2us,&lt;6us,&lt;10us,&lt;14us,&lt;20us,&lt;40us,&lt;60us,&lt;80us,&lt;100us,&lt;200us,&lt;400us,&lt;600us,&lt;800us,&lt;1ms,&lt;2ms,&lt;4ms,&lt;6ms,&lt;8ms,&lt;10ms,&lt;12ms,&lt;14ms,&lt;16ms,&lt;18ms,&lt;20ms,&lt;40ms,&lt;60ms,&lt;80ms,&lt;100ms,&lt;200ms,&lt;400ms,&lt;600ms,&lt;800ms,&lt;1s,&lt;2s,&lt;4s,&lt;6s,&lt;8s,&lt;10s,&lt;20s,&gt;20s</label-info>
+            </labels>
+            <name>read_latency_hist</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <type>array</type>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the rate of this workload's read operations that completed during the measurement interval.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the number of cross-stripe readahead messages that were issued on behalf of the workload. It represents this workloads (amongst all other workloads) contribution to the total readahead work tracked in the _RA_STRIPE_X workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>readahead_x_stripe</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>sequential_reads_base</base-counter>
+            <desc>This is the percentage of reads, performed on behalf of the workload, that were sequential.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>sequential_reads</name>
+            <privilege-level>diag</privilege-level>
+            <properties>percent,no-zero-values</properties>
+            <unit>percent</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of reads, performed on behalf of the workload. It is used as a base counter (or denominator) for the sequential_reads counter to compute the percentage of sequential reads.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>sequential_reads_base</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>sequential_writes_base</base-counter>
+            <desc>This is the percentage of writes, performed on behalf of the workload, that were sequential. This counter is only available on platforms with more than 4GB of NVRAM.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>sequential_writes</name>
+            <privilege-level>diag</privilege-level>
+            <properties>percent,no-zero-values</properties>
+            <unit>percent</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total number of writes, performed on behalf of the workload. This is used as a base counter (or denominator) for the sequential_writes counter to compute the percentage of sequential writes.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>sequential_writes_base</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is an array of estimates of number of total blocks accessed by the workload over the most recent period of time specified by the index. If the index is higher than estimator_age, the history applies only to the most recent estimator_age seconds.</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>read</label-info>
+                <label-info>1m,2m,5m,10m,1h,6h,1d,2d,oo</label-info>
+            </labels>
+            <name>total_blocks</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw,no-zero-values</properties>
+            <type>array</type>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the total amount of data read/written per second from/to the filer by the workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>total_data</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>b_per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is an array of estimates of number of unique blocks accessed by the workload over the most recent period of time specified by the index. If the index is higher than estimator_age, the history applies only to the most recent estimator_age seconds.</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>read</label-info>
+                <label-info>1m,2m,5m,10m,1h,6h,1d,2d,oo</label-info>
+            </labels>
+            <name>unique_blocks</name>
+            <privilege-level>diag</privilege-level>
+            <properties>raw,no-zero-values</properties>
+            <type>array</type>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Note: This counter is deprecated and will be removed in a future release.  Unique identifier (UUID) for the volume. While the volume name may change, the UUID will be invariant.</desc>
+            <is-deprecated>true</is-deprecated>
+            <name>volume_uuid</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the internal workload ID. It is used internally to identify a workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>wid</name>
+            <privilege-level>diag</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the amount of data written per second to the filer by the workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>write_data</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>b_per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>write_ops</base-counter>
+            <desc>This is the average response time for write requests that were initiated by the workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>write_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average,no-zero-values</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the histogram of response times for write requests that were initiated by this workload.</desc>
+            <is-deprecated>false</is-deprecated>
+            <labels>
+                <label-info>&lt;2us,&lt;6us,&lt;10us,&lt;14us,&lt;20us,&lt;40us,&lt;60us,&lt;80us,&lt;100us,&lt;200us,&lt;400us,&lt;600us,&lt;800us,&lt;1ms,&lt;2ms,&lt;4ms,&lt;6ms,&lt;8ms,&lt;10ms,&lt;12ms,&lt;14ms,&lt;16ms,&lt;18ms,&lt;20ms,&lt;40ms,&lt;60ms,&lt;80ms,&lt;100ms,&lt;200ms,&lt;400ms,&lt;600ms,&lt;800ms,&lt;1s,&lt;2s,&lt;4s,&lt;6s,&lt;8s,&lt;10s,&lt;20s,&gt;20s</label-info>
+            </labels>
+            <name>write_latency_hist</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>delta,no-zero-values</properties>
+            <type>array</type>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>This is the workload's write operations that completed during the measurement interval; measured per second.</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>write_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate,no-zero-values</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+    </counters>
+</results>

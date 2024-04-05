@@ -1,7 +1,4 @@
-name: Build, Test, Lint License
-
-env:
-  GO_VERSION: "1.22.1"
+name: Build and make ci
 
 on:
   push:
@@ -14,51 +11,19 @@ on:
     - 'release/**'
 
 jobs:
-  govulncheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      - run: go install golang.org/x/vuln/cmd/govulncheck@latest
-      - run: govulncheck ./...
-
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
+    - name: read environment file
+      run: cat .harvest.env >> "$GITHUB_ENV"
 
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -race -shuffle=on ./...
-
-    - name: Check code formatting using gofmt
-      uses: Jerome1337/gofmt-action@v1.0.5
-      
-  license_check:
-      name: License check
-      if: '!github.event.deleted'
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v4
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
-      - name: Install wwhrd
-        run: go install github.com/frapposelli/wwhrd@latest
-      - name: go mod vendor
-        env:
-          GO111MODULE: 'on'
-        run: go mod vendor
-      - name: wwhrd check
-        run: wwhrd check
+    - name: Makefile ci
+      run: |
+        make ci

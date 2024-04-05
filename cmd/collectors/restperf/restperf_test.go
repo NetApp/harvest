@@ -77,7 +77,7 @@ func TestMain(m *testing.M) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 
 	benchPerf = newRestPerf("Volume", "volume.yaml")
-	counters := jsonToPerfRecords("testdata/volume-counters.json")
+	counters := jsonToPerfRecords("testdata/volume-counters-1.json")
 	_, _ = benchPerf.pollCounter(counters[0].Records.Array(), 0)
 	now := time.Now().Truncate(time.Second)
 	propertiesData = jsonToPerfRecords("testdata/volume-poll-properties.json.gz")
@@ -123,18 +123,35 @@ func TestRestPerf_pollData(t *testing.T) {
 		numMetrics    int
 		sum           int64
 		pollCounters  string
+		pollCounters2 string
 		counter       string
+		record        bool
 	}{
 		{
 			name:          "bytes_read",
 			counter:       "bytes_read",
-			pollCounters:  "testdata/volume-counters.json",
+			pollCounters:  "testdata/volume-counters-1.json",
+			pollCounters2: "testdata/volume-counters-2.json",
 			pollInstance:  "testdata/volume-poll-instance.json",
 			pollDataPath1: "testdata/volume-poll-1.json",
 			pollDataPath2: "testdata/volume-poll-2.json",
 			numInstances:  2,
 			numMetrics:    40,
 			sum:           26,
+			record:        true,
+		},
+		{
+			name:          "abc",
+			counter:       "abc",
+			pollCounters:  "testdata/volume-counters-1.json",
+			pollCounters2: "testdata/volume-counters-2.json",
+			pollInstance:  "testdata/volume-poll-instance.json",
+			pollDataPath1: "testdata/volume-poll-1.json",
+			pollDataPath2: "testdata/volume-poll-3.json",
+			numInstances:  2,
+			numMetrics:    42,
+			sum:           526336,
+			record:        false,
 		},
 	}
 	for _, tt := range tests {
@@ -156,6 +173,11 @@ func TestRestPerf_pollData(t *testing.T) {
 			now := time.Now().Truncate(time.Second)
 			pollData[0].Timestamp = now.UnixNano()
 			_, err = r.pollData(now, pollData)
+			if err != nil {
+				t.Fatal(err)
+			}
+			counters = jsonToPerfRecords(tt.pollCounters2)
+			_, err = r.pollCounter(counters[0].Records.Array(), 0)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -187,12 +209,12 @@ func TestRestPerf_pollData(t *testing.T) {
 				names = append(names, n)
 			}
 			sort.Strings(names)
-			bytesRead := m.GetMetric(tt.counter)
+			metric := m.GetMetric(tt.counter)
 			for _, name := range names {
 				i := m.GetInstance(name)
-				val, recorded := bytesRead.GetValueInt64(i)
-				if !recorded {
-					t.Errorf("pollData() recorded = false, want true")
+				val, recorded := metric.GetValueInt64(i)
+				if recorded != tt.record {
+					t.Errorf("pollData() recorded got=%v, want=%v", recorded, tt.record)
 				}
 				sum += val
 			}
@@ -200,6 +222,124 @@ func TestRestPerf_pollData(t *testing.T) {
 				t.Errorf("pollData() sum got=%v, want=%v", sum, tt.sum)
 			}
 		})
+	}
+}
+
+func (r *RestPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile string, expectedExportedInst, expectedExportedMetrics int) {
+	// Additional logic to count metrics
+	pollData := jsonToPerfRecords(pollDataFile)
+	data, err := r.pollData(time.Now().Truncate(time.Second), pollData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	totalMetrics := 0
+	exportableInstance := 0
+	mat := data[r.Object]
+	if mat != nil {
+		for _, instance := range mat.GetInstances() {
+			if instance.IsExportable() {
+				exportableInstance++
+			}
+		}
+		for _, met := range mat.GetMetrics() {
+			if !met.IsExportable() {
+				continue
+			}
+			records := met.GetRecords()
+			for _, v := range records {
+				if v {
+					totalMetrics++
+				}
+			}
+		}
+	}
+
+	if exportableInstance != expectedExportedInst {
+		t.Errorf("Exported instances got=%d, expected=%d", exportableInstance, expectedExportedInst)
+	}
+
+	// Check if the total number of metrics matches the expected value
+	if totalMetrics != expectedExportedMetrics {
+		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedExportedMetrics)
+	}
+}
+
+func TestPollCounter(t *testing.T) {
+	var (
+		err error
+	)
+	r := newRestPerf("Workload", "workload.yaml")
+
+	counters := jsonToPerfRecords("testdata/partialAggregation/qos-counters.json")
+	_, err = r.pollCounter(counters[0].Records.Array(), 0)
+	if err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
+
+	if len(r.Prop.Metrics) != len(r.perfProp.counterInfo) {
+		t.Errorf("Prop metrics and counterInfo size should be same")
+	}
+}
+
+func TestPartialAggregationSequence(t *testing.T) {
+	var (
+		err error
+	)
+	r := newRestPerf("Workload", "workload.yaml")
+
+	counters := jsonToPerfRecords("testdata/partialAggregation/qos-counters.json")
+	_, err = r.pollCounter(counters[0].Records.Array(), 0)
+	if err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
+	pollInstance := jsonToPerfRecords("testdata/partialAggregation/qos-poll-instance.json")
+	_, err = r.pollInstance(pollInstance[0].Records.Array(), 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// First Poll
+	pollData := jsonToPerfRecords("testdata/partialAggregation/qos-poll-data-1.json")
+	now := time.Now().Truncate(time.Second)
+	pollData[0].Timestamp = now.UnixNano()
+	t.Log("Running First Poll")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 0, 0)
+
+	// Complete Poll
+	t.Log("Running Complete Poll")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 48)
+
+	// Partial Poll
+	t.Log("Running Partial Poll")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
+
+	// Partial Poll 2
+	t.Log("Running Partial Poll 2")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
+	if t.Failed() {
+		t.Fatal("Partial Poll 2 failed")
+	}
+
+	// First Complete Poll After Partial
+	t.Log("Running First Complete Poll After Partial")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 0)
+	if t.Failed() {
+		t.Fatal("First Complete Poll After Partial failed")
+	}
+
+	// Second Complete Poll After Partial
+	t.Log("Running Second Complete Poll After Partial")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 48)
+	if t.Failed() {
+		t.Fatal("Second Complete Poll After Partial failed")
+	}
+
+	// Partial Poll 3
+	t.Log("Running Partial Poll 3")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
+	if t.Failed() {
+		t.Fatal("Partial Poll 3 failed")
 	}
 }
 

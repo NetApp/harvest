@@ -180,7 +180,7 @@ func Init(c Collector) error {
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
 				logger.Debug().Str("task", task.GetNameS()).
-					Str("delay", jitterR.String()).
+					Str("jitter", jitterR.String()).
 					Str("schedule", task.GetContentS()).
 					Send()
 				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), jitterR, foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
@@ -459,7 +459,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 							}
 							if pluginData != nil {
 								results = append(results, pluginData...)
-								c.Logger.Debug().
+								c.Logger.Trace().
 									Str("pluginName", plg.GetName()).
 									Int("dataLength", len(pluginData)).
 									Msg("plugin added data")
@@ -523,7 +523,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					exporterStats.InstancesExported += stats.InstancesExported
 					exporterStats.MetricsExported += stats.MetricsExported
 				} else {
-					c.Logger.Debug().Str("UUID", data.UUID).Str("object", data.Object).Msg("skipped non-exportable data")
+					c.Logger.Trace().Str("UUID", data.UUID).Str("object", data.Object).Msg("skipped non-exportable data")
 				}
 			}
 		}

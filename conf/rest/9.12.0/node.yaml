@@ -13,6 +13,7 @@ counters:
   - ^location
   - ^model
   - ^serial_number                                    => serial
+  - ^service_processor.firmware_version               => bmc_firmware_version
   - ^state
   - ^uuid
   - ^version.full                                     => version
@@ -46,6 +47,7 @@ export_options:
     - node
     - serial
   instance_labels:
+    - bmc_firmware_version
     - cpu_firmware_release
     - healthy
     - location

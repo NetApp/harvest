@@ -9,6 +9,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"golang.org/x/exp/maps"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -330,7 +332,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	}
 
 	// calculate power for returned disks in zapiperf response
-	for _, instance := range data.GetInstances() {
+	for key, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
 			continue
 		}
@@ -355,7 +357,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 				d.Logger.Warn().Str("diskUUID", diskUUID).Msg("Missing disk info")
 			}
 		} else {
-			d.Logger.Warn().Msg("Instance not exported")
+			d.Logger.Debug().Str("key", key).Msg("Instance not exported")
 		}
 	}
 
@@ -396,14 +398,13 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	aggrData.Reset()
 
 	// fill aggr power matrix with power calculated above
-	for k, v := range d.aggrMap {
-		instanceKey := k
+	for instanceKey, v := range d.aggrMap {
 		instance, err := aggrData.NewInstance(instanceKey)
 		if err != nil {
 			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
 			continue
 		}
-		instance.SetLabel("aggr", k)
+		instance.SetLabel("aggr", instanceKey)
 		instance.SetLabel("derivedType", string(v.derivedType))
 		instance.SetLabel("node", v.node)
 
@@ -813,9 +814,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 }
 
 func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
-	var (
-		output []*matrix.Matrix
-	)
+	var output []*matrix.Matrix
+	noSet := make(map[string]struct{})
 
 	d.Logger.Trace().
 		Int("shelfCounters", len(shelves)).
@@ -843,7 +843,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 				objectElem := s.GetChildS(attribute)
 				if objectElem == nil {
-					d.Logger.Warn().Msgf("no [%s] instances on this system", attribute)
+					noSet[attribute] = struct{}{}
 					continue
 				}
 
@@ -895,11 +895,19 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
 								if err := m.SetValueString(instance, value); err != nil {
-									d.Logger.Debug().
-										Str("metricKey", metricKey).
-										Str("value", value).
-										Err(err).
-										Msg("failed to parse value")
+									if value != "-" {
+										d.Logger.Debug().
+											Str("metricKey", metricKey).
+											Str("value", value).
+											Err(err).
+											Msg("failed to parse value")
+									} else {
+										d.Logger.Trace().
+											Str("metricKey", metricKey).
+											Str("value", value).
+											Err(err).
+											Msg("failed to parse value")
+									}
 								} else {
 									d.Logger.Trace().
 										Str("metricKey", metricKey).
@@ -908,7 +916,6 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 								}
 							}
 						}
-
 					} else {
 						d.Logger.Debug().Msgf("instance without [%s], skipping", d.instanceKeys[attribute])
 					}
@@ -917,6 +924,12 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 				output = append(output, data1)
 			}
 		}
+	}
+
+	if len(noSet) > 0 {
+		attributes := maps.Keys(noSet)
+		slices.Sort(attributes)
+		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
 
 	return output, nil
