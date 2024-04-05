@@ -1145,6 +1145,35 @@ func asTitle(id string) string {
 	return replacer.Replace(path)
 }
 
+func TestIOPS(t *testing.T) {
+	VisitDashboards(
+		dashboards,
+		func(path string, data []byte) {
+			checkIOPSDecimal(t, path, data)
+		})
+}
+
+func checkIOPSDecimal(t *testing.T, path string, data []byte) {
+	dashPath := ShortPath(path)
+
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType != "timeseries" {
+			return
+		}
+		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		if defaultUnit != "iops" {
+			return
+		}
+		decimals := value.Get("fieldConfig.defaults.decimals").String()
+
+		if decimals != "0" {
+			t.Errorf(`dashboard=%s path=%s panel="%s", decimals should be 2 got=%s`,
+				dashPath, path, value.Get("title").String(), decimals)
+		}
+	})
+}
+
 func TestPercentHasMinMax(t *testing.T) {
 	VisitDashboards(
 		dashboards,

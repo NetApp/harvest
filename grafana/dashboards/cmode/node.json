@@ -706,6 +706,7 @@
               "mode": "off"
             }
           },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1384,6 +1385,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2305,6 +2307,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2653,6 +2656,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -3428,6 +3432,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3673,6 +3678,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -4198,6 +4204,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -4614,6 +4621,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -5028,6 +5036,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
