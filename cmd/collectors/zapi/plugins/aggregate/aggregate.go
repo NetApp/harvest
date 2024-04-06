@@ -52,8 +52,8 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	// invoke aggr-object-store-get-iter zapi and populate cloud stores info
 	if err := a.getCloudStores(); err != nil {
-		if errors.Is(err, errs.ErrNoInstance) {
-			a.Logger.Trace().Err(err).Msg("Failed to collect cloud store data")
+		if !errors.Is(err, errs.ErrNoInstance) {
+			a.Logger.Error().Err(err).Msg("Failed to update get cloud stores")
 		}
 	}
 

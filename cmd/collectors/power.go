@@ -127,16 +127,6 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 			isVoltageMatch := voltageRegex.MatchString(sensorName)
 			isCurrentMatch := CurrentRegex.MatchString(sensorName)
 
-			logger.Trace().
-				Bool("isAmbientMatch", isAmbientMatch).
-				Bool("isPowerMatch", isPowerMatch).
-				Bool("isVoltageMatch", isVoltageMatch).
-				Bool("isCurrentMatch", isCurrentMatch).
-				Str("sensorType", sensorType).
-				Str("sensorUnit", sensorUnit).
-				Str("sensorName", sensorName).
-				Send()
-
 			if sensorType == "thermal" && isAmbientMatch {
 				if value, ok := metric.GetValueFloat64(instance); ok {
 					sensorEnvironmentMetricMap[iKey].ambientTemperature = append(sensorEnvironmentMetricMap[iKey].ambientTemperature, value)

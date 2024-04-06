@@ -150,7 +150,6 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	)
 
 	metrics := make(map[string]*matrix.Matrix)
-	s.Logger.Trace().Msg("starting data poll")
 	s.Matrix[s.Object].Reset()
 	startTime = time.Now()
 
@@ -259,7 +258,6 @@ func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 		records      []gjson.Result
 	)
 
-	s.Logger.Trace().Msg("starting data poll")
 	s.Matrix[s.Object].Reset()
 	startTime = time.Now()
 
@@ -339,7 +337,6 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 			if s.Params.GetChildContentS("only_cluster_instance") == "true" {
 				instanceKey = "cluster"
 			} else {
-				s.Logger.Trace().Msg("Instance key is empty, skipping")
 				continue
 			}
 		}
@@ -369,11 +366,6 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 					instance.SetLabel(display, value.String())
 				}
 				count++
-			} else {
-				s.Logger.Trace().
-					Str("instanceKey", instanceKey).
-					Str("label", label).
-					Msg("Missing label value")
 			}
 		}
 

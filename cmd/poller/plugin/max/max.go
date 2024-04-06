@@ -6,11 +6,9 @@ package max
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/rs/zerolog"
 	"regexp"
 	"strconv"
 	"strings"
@@ -61,14 +59,11 @@ func (m *Max) parseRules() error {
 
 	for _, line := range m.Params.GetAllChildContentS() {
 
-		m.Logger.Trace().Msgf("parsing raw rule: [%s]", line)
-
 		r := rule{}
 
 		fields := strings.Fields(line)
 		if len(fields) == 2 || len(fields) == 1 {
 			// parse label, possibly followed by value and object
-			m.Logger.Trace().Msgf("handling first field: [%s]", fields[0])
 			prefix := strings.SplitN(fields[0], "<", 2)
 			r.label = strings.TrimSpace(prefix[0])
 			if len(prefix) == 2 {
@@ -89,7 +84,6 @@ func (m *Max) parseRules() error {
 						m.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
 						return err
 					}
-					m.Logger.Trace().Msgf("parsed regex: [%s]", r.checkRegex.String())
 				} else if value != "" {
 					r.checkValue = value
 				}
@@ -99,7 +93,6 @@ func (m *Max) parseRules() error {
 				}
 			}
 			if len(fields) == 2 {
-				m.Logger.Trace().Msgf("handling second field: [%s]", fields[1])
 				if strings.TrimSpace(fields[1]) == "..." {
 					r.allLabels = true
 				} else {
@@ -162,20 +155,14 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			continue
 		}
 
-		if m.Logger.GetLevel() == zerolog.TraceLevel {
-			m.Logger.Trace().Msgf("handling instance with labels [%s]", dict.String(instance.GetLabels()))
-		}
-
 		for i, rule := range m.rules {
 
-			m.Logger.Trace().Msgf("handling rule [%v]", rule)
 			if objName = instance.GetLabel(rule.label); objName == "" {
 				m.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
 				continue
 			}
 
 			if rule.checkLabel != "" {
-				m.Logger.Trace().Msgf("checking label (%s => %s)....", rule.checkLabel, rule.checkValue)
 				if rule.checkRegex != nil {
 					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
 						continue
@@ -186,8 +173,6 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			}
 
 			objKey = objName
-			m.Logger.Trace().Msgf("instance (%s= %s): formatted key [%s]", rule.label, objName, objKey)
-
 			for key, metric := range data.GetMetrics() {
 
 				matrixKey := strconv.Itoa(i) + key

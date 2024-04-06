@@ -130,7 +130,6 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 			}
 
 			_ = metric.SetValueFloat64(instance, result)
-			a.Logger.Trace().Str("metricName", r.metric).Float64("metricValue", result).Msg("computeMetrics: new metric created")
 		}
 	}
 	if len(metricNotFound) > 0 {

@@ -361,12 +361,6 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 				if isInvalidZero || isNegative {
 					curMetric.record[currIndex] = false
 					skips++
-					logger.Trace().
-						Str("metric", curMetric.GetName()).
-						Float64("currentRaw", curRaw).
-						Float64("previousRaw", prevRaw[prevIndex]).
-						Str("instKey", key).
-						Msg("Negative cooked value")
 				}
 				// Check for partial Aggregation
 				ppaOk := prevInstance.IsPartial()
@@ -387,29 +381,16 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 			} else {
 				curMetric.record[currIndex] = false
 				skips++
-				logger.Trace().
-					Str("metric", curMetric.GetName()).
-					Float64("currentRaw", curRaw).
-					Float64("previousRaw", prevRaw[prevIndex]).
-					Interface("instanceLabels", currInstance.GetLabels()).
-					Str("instKey", key).
-					Msg("Delta calculation skipped")
 			}
 		} else {
 			curMetric.record[currIndex] = false
 			skips++
-			logger.Trace().
-				Str("metric", curMetric.GetName()).
-				Float64("currentRaw", curRaw).
-				Interface("instanceLabels", currInstance.GetLabels()).
-				Str("instKey", key).
-				Msg("New instance added")
 		}
 	}
 	return skips, nil
 }
 
-func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger) (int, error) {
+func (m *Matrix) Divide(metricKey string, baseKey string) (int, error) {
 	var skips int
 	metric := m.GetMetric(metricKey)
 	base := m.GetMetric(baseKey)
@@ -418,7 +399,7 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 	if len(metric.values) != len(sValues) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(metric.values), len(sValues)))
 	}
-	for key, instance := range m.GetInstances() {
+	for _, instance := range m.GetInstances() {
 		i := instance.index
 		if metric.record[i] && sRecord[i] {
 			if sValues[i] != 0 {
@@ -427,14 +408,6 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 				if metric.values[i] < 0 || sValues[i] < 0 {
 					metric.record[i] = false
 					skips++
-					logger.Trace().
-						Str("metric", metric.GetName()).
-						Str("key", metricKey).
-						Float64("numerator", metric.values[i]).
-						Float64("denominator", sValues[i]).
-						Interface("instanceLabels", instance.GetLabels()).
-						Str("instKey", key).
-						Msg("Divide calculation skipped")
 				}
 				metric.values[i] /= sValues[i]
 			} else {
@@ -443,14 +416,6 @@ func (m *Matrix) Divide(metricKey string, baseKey string, logger *logging.Logger
 		} else {
 			metric.record[i] = false
 			skips++
-			logger.Trace().
-				Str("metric", metric.GetName()).
-				Str("key", metricKey).
-				Float64("numerator", metric.values[i]).
-				Float64("denominator", sValues[i]).
-				Interface("instanceLabels", instance.GetLabels()).
-				Str("instKey", key).
-				Msg("Divide calculation skipped")
 		}
 	}
 	return skips, nil
@@ -484,14 +449,6 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 		if metric.values[i] < 0 || sValues[i] < 0 {
 			metric.record[i] = false
 			skips++
-			logger.Trace().
-				Str("metric", metric.GetName()).
-				Str("key", metricKey).
-				Float64("numerator", v).
-				Float64("denominator", sValues[i]).
-				Interface("instanceLabels", instance.GetLabels()).
-				Str("instKey", key).
-				Msg("Negative values")
 		} else if metric.record[i] && sRecord[i] {
 			// For a latency counter, ensure that the base counter has sufficient operations for accurate calculation.
 			minimumBase := tValues[i] * x
@@ -525,20 +482,12 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 		} else {
 			metric.record[i] = false
 			skips++
-			logger.Trace().
-				Str("metric", metric.GetName()).
-				Str("key", metricKey).
-				Float64("numerator", metric.values[i]).
-				Float64("denominator", sValues[i]).
-				Interface("instanceLabels", instance.GetLabels()).
-				Str("instKey", key).
-				Msg("Divide threshold calculation skipped")
 		}
 	}
 	return skips, nil
 }
 
-func (m *Matrix) MultiplyByScalar(metricKey string, s uint, logger *logging.Logger) (int, error) {
+func (m *Matrix) MultiplyByScalar(metricKey string, s uint) (int, error) {
 	var skips int
 	x := float64(s)
 	metric := m.GetMetric(metricKey)
@@ -548,23 +497,11 @@ func (m *Matrix) MultiplyByScalar(metricKey string, s uint, logger *logging.Logg
 			if metric.values[i] < 0 {
 				metric.record[i] = false
 				skips++
-				logger.Trace().
-					Str("metric", metric.GetName()).
-					Str("key", metricKey).
-					Float64("currentRaw", metric.values[i]).
-					Uint("scalar", s).
-					Msg("Negative value")
 			}
 			metric.values[i] *= x
 		} else {
 			metric.record[i] = false
 			skips++
-			logger.Trace().
-				Str("metric", metric.GetName()).
-				Str("key", metricKey).
-				Float64("currentRaw", metric.values[i]).
-				Uint("scalar", s).
-				Msg("Scalar multiplication skipped")
 		}
 	}
 	return skips, nil

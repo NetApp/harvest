@@ -118,8 +118,6 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p.Logger.Trace().Msgf("(httpd) serving request [%s] (%s)", r.RequestURI, r.RemoteAddr)
-
 	p.cache.Lock()
 	for _, metrics := range p.cache.Get() {
 		data = append(data, metrics...)
@@ -233,13 +231,11 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	p.Logger.Debug().Msgf("(httpd) fetching %d cached elements", len(cache))
 
 	for key, data := range cache {
-		p.Logger.Trace().Msgf("(httpd) key => [%s] (%d)", key, len(data))
 		var collector, object string
 
 		if keys := strings.Split(key, "."); len(keys) == 3 {
 			collector = keys[0]
 			object = keys[1]
-			p.Logger.Trace().Msgf("(httpd) collector [%s] - object [%s]", collector, object)
 		} else {
 			continue
 		}

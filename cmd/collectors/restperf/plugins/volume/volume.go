@@ -63,7 +63,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		v.Logger.Error().Err(err).Msg("add metric")
 		return nil, nil, err
 	}
-	v.Logger.Trace().Msgf("added metric: (%s) %v", metricName, metric)
 
 	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".Volume"
@@ -157,8 +156,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 					continue
 				}
 
-				v.Logger.Trace().Msgf("(%s) handling metric (%s)", fg.GetLabel("volume"), mkey)
-
 				if value, ok := m.GetValueFloat64(i); ok {
 
 					fgv, _ := fgm.GetValueFloat64(fg)
@@ -170,10 +167,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 						if err != nil {
 							v.Logger.Error().Err(err).Msg("error")
 						}
-						// just for debugging
-						fgv2, _ := fgm.GetValueFloat64(fg)
 
-						v.Logger.Trace().Msgf("   > simple increment %f + %f = %f", fgv, value, fgv2)
 						continue
 					}
 
@@ -182,7 +176,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 					if strings.Contains(mkey, "_latency") {
 						opsKey = m.GetComment()
 					}
-					v.Logger.Trace().Msgf("    > weighted increment <%s * %s>", mkey, opsKey)
 
 					if ops := data.GetMetric(opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok {
@@ -213,13 +206,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 							if err != nil {
 								v.Logger.Error().Err(err).Msg("error")
 							}
-
-							// debugging
-							fgv2, _ := fgm.GetValueFloat64(fg)
-
-							v.Logger.Trace().Msgf("       %f + (%f * %f) (=%f) = %f", fgv, value, opsValue, prod, fgv2)
-						} else {
-							v.Logger.Trace().Msg("       no ops value SKIP")
 						}
 					}
 

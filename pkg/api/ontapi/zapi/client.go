@@ -247,7 +247,6 @@ func (c *Client) buildRequest(query *node.Node, forceCluster bool) error {
 // invokeZapi will issue API requests with batching
 // The method bails on the first error
 func (c *Client) invokeZapi(request *node.Node, handle func([]*node.Node) error) error {
-	var output []*node.Node
 	tag := "initial"
 
 	for {
@@ -285,8 +284,6 @@ func (c *Client) invokeZapi(request *node.Node, handle func([]*node.Node) error)
 			return err
 		}
 	}
-
-	c.Logger.Trace().Int("object", len(output)).Msg("fetching")
 
 	return nil
 }

@@ -110,7 +110,6 @@ func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *logging.Log
 		}
 	}
 
-	logger.Trace().Str("cluster time", clusterTime.String()).Send()
 	return clusterTime, nil
 }
 
@@ -219,24 +218,14 @@ func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, l
 	healthy := instance.GetLabel("healthy")
 	schedule := instance.GetLabel("schedule")
 	lastError := instance.GetLabel("last_transfer_error")
-	relationshipID := instance.GetLabel("relationship_id")
 
 	// If SM relationship is healthy, has a schedule, last_transfer_error is empty, and last_transfer_bytes is 0, Then we are setting lag_time to 0
 	// Otherwise, report the lag_time which ONTAP has originally reported.
 	if lastBytes, ok := lastTransferSize.GetValueFloat64(instance); ok {
 		if healthy == "true" && schedule != "" && lastError == "" && lastBytes == 0 {
-			lag, _ := lagTime.GetValueFloat64(instance)
 			if err := lagTime.SetValueFloat64(instance, 0); err != nil {
 				logger.Error().Err(err).Str("metric", lagTime.GetName()).Msg("Unable to set value on metric")
 			}
-			logger.Trace().
-				Float64("lag", lag).
-				Str("relationshipID", relationshipID).
-				Str("healthy", healthy).
-				Str("schedule", schedule).
-				Float64("lastBytes", lastBytes).
-				Str("lastError", lastError).
-				Msg("lagTime value set from lag to 0")
 		}
 	}
 }

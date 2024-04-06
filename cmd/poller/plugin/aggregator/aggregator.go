@@ -7,11 +7,9 @@ package aggregator
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/rs/zerolog"
 	"golang.org/x/exp/maps"
 	"regexp"
 	"strings"
@@ -58,14 +56,11 @@ func (a *Aggregator) parseRules() error {
 
 	for _, line := range a.Params.GetAllChildContentS() {
 
-		a.Logger.Trace().Str("line", line).Msg("parsing raw rule")
-
 		r := rule{}
 
 		fields := strings.Fields(line)
 		if len(fields) == 2 || len(fields) == 1 {
 			// parse label, possibly followed by value and object
-			a.Logger.Trace().Str("fields[0]", fields[0]).Msg("handling first field")
 			prefix := strings.SplitN(fields[0], "<", 2)
 			r.label = strings.TrimSpace(prefix[0])
 			if len(prefix) == 2 {
@@ -86,7 +81,6 @@ func (a *Aggregator) parseRules() error {
 						a.Logger.Error().Err(err).Msg("ignore rule")
 						return err
 					}
-					a.Logger.Trace().Str("pattern", r.checkRegex.String()).Msg("parsed regex")
 				} else if value != "" {
 					r.checkValue = value
 				}
@@ -96,7 +90,6 @@ func (a *Aggregator) parseRules() error {
 				}
 			}
 			if len(fields) == 2 {
-				a.Logger.Trace().Str("fields[1]", fields[1]).Msg("handling second field")
 				if strings.TrimSpace(fields[1]) == "..." {
 					r.allLabels = true
 				} else {
@@ -150,20 +143,14 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			continue
 		}
 
-		if a.Logger.GetLevel() == zerolog.TraceLevel {
-			a.Logger.Trace().Str("labels", dict.String(instance.GetLabels())).Msg("handling instance with labels")
-		}
-
 		for i, rule := range a.rules {
 
-			a.Logger.Trace().Str("label", rule.label).Str("object", rule.object).Msg("handling rule")
 			if objName = instance.GetLabel(rule.label); objName == "" {
 				a.Logger.Warn().Str("label", rule.label).Msg("label missing, skipped")
 				continue
 			}
 
 			if rule.checkLabel != "" {
-				a.Logger.Trace().Str("checkLabel", rule.checkLabel).Str("checkValue", rule.checkValue).Msg("checking label")
 				if rule.checkRegex != nil {
 					if !rule.checkRegex.MatchString(instance.GetLabel(rule.checkLabel)) {
 						continue
@@ -183,11 +170,6 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			} else {
 				objKey = objName
 			}
-			a.Logger.Trace().
-				Str("label", rule.label).
-				Str("objName", objName).
-				Str("objKey", objKey).
-				Msg("instance formatted key")
 
 			if objInstance = matrices[i].GetInstance(objKey); objInstance == nil {
 				rule.counts[objKey] = make(map[string]float64)
@@ -269,8 +251,6 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			if !avg {
 				continue
 			}
-
-			a.Logger.Trace().Str("mk", mk).Str("mn", mn).Msg("normalizing values as average")
 
 			for key, instance := range m.GetInstances() {
 
