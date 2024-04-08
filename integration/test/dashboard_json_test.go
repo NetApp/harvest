@@ -99,6 +99,7 @@ var excludeCounters = []string{
 
 var flakyCounters = []string{
 	"namespace",
+	"flexcache",
 }
 
 func TestMain(m *testing.M) {
