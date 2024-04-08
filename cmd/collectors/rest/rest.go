@@ -387,8 +387,6 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		records   []gjson.Result
 	)
 
-	r.Logger.Trace().Msg("starting data poll")
-
 	r.Matrix[r.Object].Reset()
 	r.Client.Metadata.Reset()
 
@@ -558,13 +556,10 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 				value := instanceData.Get(k)
 				if value.Exists() {
 					instanceKey += value.String()
-				} else {
-					r.Logger.Trace().Str("key", k).Msg("missing key")
 				}
 			}
 
 			if instanceKey == "" {
-				r.Logger.Trace().Msg("Instance key is empty, skipping")
 				continue
 			}
 		}
@@ -574,7 +569,6 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 		// Used for endpoints as we don't want to create additional instances
 		if isEndPoint && instance == nil {
 			// Moved to trace as with filter, this log may spam
-			r.Logger.Trace().Str("instKey", instanceKey).Msg("Instance not found")
 			continue
 		}
 
@@ -612,8 +606,6 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 					instance.SetLabel(display, value.String())
 				}
 				count++
-			} else {
-				r.Logger.Trace().Str("instKey", instanceKey).Str("label", label).Msg("Missing label value")
 			}
 		}
 
@@ -659,7 +651,6 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 		// remove deleted instances
 		for key := range oldInstances.Iter() {
 			mat.RemoveInstance(key)
-			r.Logger.Trace().Str("key", key).Msg("removed instance")
 		}
 	}
 

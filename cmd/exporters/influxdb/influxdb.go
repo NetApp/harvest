@@ -332,8 +332,6 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 			countTmp++
 		}
 
-		e.Logger.Trace().Msgf("rendering from: %s", m.String())
-
 		// skip instance with no tag set (no metrics)
 		if len(m.fieldSet) == 0 {
 			e.Logger.Debug().Msgf("skip instance (%s), no field set parsed", key)

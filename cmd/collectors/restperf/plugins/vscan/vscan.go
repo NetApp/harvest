@@ -102,7 +102,6 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *uti
 					Msg("Failed to find metric in scanner cache")
 				continue
 			}
-			v.Logger.Trace().Str("scanner", scanner).Str("metric", mKey).Msg("Handling scanner metric")
 			if value, ok := m.GetValueFloat64(i); ok {
 				fv, _ := psm.GetValueFloat64(ps)
 
@@ -113,12 +112,7 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *uti
 						v.Logger.Error().Err(err).Str("metric", "scan_request_dispatched_rate").
 							Msg("Error setting metric value")
 					}
-					// for tracing
-					fgv2, _ := psm.GetValueFloat64(ps)
-					v.Logger.Trace().Float64("fv", fv).
-						Float64("value", value).
-						Float64("fgv2", fgv2).
-						Msg("> simple increment fv + value = fgv2")
+
 					continue
 				} else if strings.HasSuffix(mKey, "_used") {
 					// these need averaging

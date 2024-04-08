@@ -322,7 +322,6 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	// Filter out names which exist on the cluster.
 	// ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
 	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
-	e.Logger.Trace().Strs("querying for events", filteredNames).Send()
 	_, missingNames := util.Intersection(filteredNames, names)
 	e.Logger.Debug().Strs("skipped events", missingNames).Send()
 	e.eventNames = filteredNames
@@ -359,8 +358,6 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		err                  error
 		records              []gjson.Result
 	)
-
-	e.Logger.Trace().Msg("starting data poll")
 
 	// Update cache for bookend ems
 	e.updateMatrix(time.Now())

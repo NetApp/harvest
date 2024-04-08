@@ -83,10 +83,6 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				} else {
 					// NIC speed value converted from Mbps to Bps(bytes per second)
 					speed = base * 125000
-					n.Logger.Trace().
-						Str("originalSpeed", s).
-						Int("convertedSpeed", speed).
-						Msg("converted speed to numeric")
 				}
 			} else if speed, err = strconv.Atoi(s); err != nil {
 				n.Logger.Warn().Msgf("convert speed [%s]", s)
@@ -130,10 +126,6 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				// NIC speed value converted from Mbps to bps(bits per second)
 				speed = base * 1_000_000
 				instance.SetLabel("speed", strconv.Itoa(speed))
-				n.Logger.Trace().
-					Str("originalSpeed", s).
-					Int("convertedSpeed", speed).
-					Msg("converted speed to numeric")
 			}
 		}
 

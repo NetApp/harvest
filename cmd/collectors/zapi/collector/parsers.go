@@ -5,7 +5,6 @@
 package zapi
 
 import (
-	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -104,12 +103,10 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 	if content[0] == '^' {
 		z.instanceLabelPaths[key] = display
 		// data.AddLabel(key, display)
-		z.Logger.Trace().Msgf("%sadd (%s) as label [%s]%s => %v", color.Yellow, key, display, color.End, fullPath)
 		if content[1] == '^' {
 			copied := make([]string, len(fullPath))
 			copy(copied, fullPath)
 			z.instanceKeyPaths = append(z.instanceKeyPaths, copied)
-			z.Logger.Trace().Msgf("%sadd (%s) as instance key [%s]%s => %v", color.Red, key, display, color.End, fullPath)
 		}
 	} else {
 		// use user-defined metric type
@@ -121,9 +118,6 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 		}
 		if err != nil {
 			z.Logger.Error().Err(err).Str("key", key).Str("display", display).Msg("Failed to add metric")
-		} else {
-			z.Logger.Trace().Str("key", key).Str("display", display).Strs("fullPath", fullPath).
-				Msg("Add metric")
 		}
 	}
 

@@ -213,8 +213,6 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 
 		dtype := _DataTypes[name]
 
-		u.Logger.Trace().Msgf("handling (%s) (%s) dtype=%s", name, display, dtype)
-
 		// counter is scalar metric
 		if _, has := _Metrics[name]; has {
 

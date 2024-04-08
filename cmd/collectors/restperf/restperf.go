@@ -15,7 +15,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -359,11 +358,8 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 					r.perfProp.counterInfo[name].counterType = p
 				}
 			}
-		} else {
-			r.Logger.Trace().
-				Str("key", name).
-				Msg("Skip counter not requested")
 		}
+
 		return true
 	})
 
@@ -672,8 +668,6 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 					denominator: "ops",
 				}
 				m.SetLabel("resource", resource)
-
-				r.Logger.Trace().Str("name", name).Str("resource", resource).Msg("added workload latency metric")
 			}
 		}
 	}
@@ -686,8 +680,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		perfRecords []rest.PerfRecord
 		startTime   time.Time
 	)
-
-	r.Logger.Trace().Msg("updating data cache")
 
 	mat := r.Matrix[r.Object]
 	if len(mat.GetInstances()) == 0 {
@@ -830,7 +822,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				}
 
 				if instanceKey == "" {
-					r.Logger.Trace().Msg("instanceKey is empty, skipping")
 					return true
 				}
 			}
@@ -858,9 +849,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				for _, wm := range workloadDetailMetrics {
 					mLayer := layer + wm
 					if l := curMat.GetMetric(mLayer); l == nil {
-						r.Logger.Trace().
-							Str("layer", layer).
-							Msg("Resource-latency metric missing in cache")
 						return true
 					}
 				}
@@ -874,12 +862,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 			instance = curMat.GetInstance(instanceKey)
 			if instance == nil {
-				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-					// Filtering is involved with these objects, such as the workload class and the constituent disable. Therefore, logs are being moved to trace.
-					r.Logger.Trace().
-						Str("instanceKey", instanceKey).
-						Msg("Skip instanceKey, not found in cache")
-				} else {
+				if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
 					r.Logger.Warn().
 						Str("instanceKey", instanceKey).
 						Msg("Skip instanceKey, not found in cache")
@@ -947,10 +930,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 										Str("value", f.value).
 										Msg("Add resource_latency failed")
 								} else {
-									r.Logger.Trace().
-										Str("name", name).
-										Str("value", f.value).
-										Msg("Add resource_latency")
 									count++
 								}
 								continue
@@ -963,10 +942,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 										Str("value", f.value).
 										Msg("Add service_time_latency failed")
 								} else {
-									r.Logger.Trace().
-										Str("name", name).
-										Str("value", f.value).
-										Msg("Add service_time_latency")
 									count++
 								}
 							} else if wm == "wait_time_latency" && name == "wait_time" {
@@ -978,10 +953,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 										Str("value", f.value).
 										Msg("Add wait_time_latency failed")
 								} else {
-									r.Logger.Trace().
-										Str("name", name).
-										Str("value", f.value).
-										Msg("Add wait_time_latency")
 									count++
 								}
 							}
@@ -1055,12 +1026,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 									Msg("Set value failed")
 								continue
 							}
-							r.Logger.Trace().
-								Str("name", name).
-								Str("label", label).
-								Str("value", values[i]).
-								Int("instIndex", instIndex).
-								Msg("Set name.label = value")
 							count++
 						}
 					} else {
@@ -1081,13 +1046,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 									Str("metric", metric.Label).
 									Int("instIndex", instIndex).
 									Msg("Unable to set float key on metric")
-							} else {
-								r.Logger.Trace().
-									Int("instIndex", instIndex).
-									Str("key", instanceKey).
-									Str("counter", name).
-									Str("value", f.value).
-									Msg("Set metric")
 							}
 						} else {
 							r.Logger.Error().Err(err).
@@ -1137,8 +1095,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	}
 
 	calcStart := time.Now()
-
-	r.Logger.Trace().Msg("starting delta calculations from previous cache")
 
 	// cache raw data for next poll
 	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
@@ -1245,7 +1201,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			if strings.HasSuffix(metric.GetName(), "latency") {
 				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, cachedData, prevMat, r.Logger)
 			} else {
-				skips, err = curMat.Divide(key, counter.denominator, r.Logger)
+				skips, err = curMat.Divide(key, counter.denominator)
 			}
 
 			if err != nil {
@@ -1260,7 +1216,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		}
 
 		if property == "percent" {
-			if skips, err = curMat.MultiplyByScalar(key, 100, r.Logger); err != nil {
+			if skips, err = curMat.MultiplyByScalar(key, 100); err != nil {
 				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
 			} else {
 				totalSkips += skips
@@ -1282,7 +1238,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if skips, err = curMat.Divide(orderedKeys[i], "timestamp", r.Logger); err != nil {
+				if skips, err = curMat.Divide(orderedKeys[i], "timestamp"); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).
@@ -1383,7 +1339,6 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		}
 		instance = data.GetInstance(instanceKey)
 		if instance == nil {
-			r.Logger.Trace().Str("key", instanceKey).Msg("skip instance not found in cache")
 			continue
 		}
 
@@ -1392,8 +1347,6 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		if f.value != "" {
 			if err = ops.SetValueString(instance, f.value); err != nil {
 				r.Logger.Error().Err(err).Str("metric", counterName).Str("value", value.String()).Msg("set metric")
-			} else {
-				r.Logger.Trace().Msgf("+ metric (%s) = [%s%s%s]", counterName, color.Cyan, value, color.End)
 			}
 		}
 	}
@@ -1551,15 +1504,9 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 			oldInstances.Remove(instanceKey)
 			instance := mat.GetInstance(instanceKey)
 			r.updateQosLabels(instanceData, instance, instanceKey)
-			r.Logger.Trace().
-				Str("instanceKey", instanceKey).
-				Msg("updated instance")
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error().Err(err).Str("instanceKey", instanceKey).Msg("add instance")
 		} else {
-			r.Logger.Trace().
-				Str("key", instanceKey).
-				Msg("Added new instance")
 			r.updateQosLabels(instanceData, instance, instanceKey)
 		}
 	}
@@ -1592,11 +1539,9 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, key string) {
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 		for label, display := range r.perfProp.qosLabels {
+			// lun,file,qtree may not always exist for workload
 			if value := qos.Get(label); value.Exists() {
 				instance.SetLabel(display, strings.Clone(value.String()))
-			} else {
-				// lun,file,qtree may not always exist for workload
-				r.Logger.Trace().Str("label", label).Str("key", key).Msg("Missing label")
 			}
 		}
 		if r.Logger.GetLevel() == zerolog.DebugLevel {

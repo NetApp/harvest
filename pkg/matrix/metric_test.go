@@ -248,7 +248,7 @@ func TestMetricFloat64_Divide(t *testing.T) {
 					return
 				}
 			}
-			skips, err := curMat.Divide(latency, "total_ops", logging.Get())
+			skips, err := curMat.Divide(latency, "total_ops")
 			matrixTestAdv(t, tt, curMat, skips, err, latency)
 		})
 	}
@@ -299,7 +299,7 @@ func TestMetricFloat64_MultiplyByScalar(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, current := setupMatrix(tt.prevRaw, tt.curRaw, oneInstance)
-			skips, err := current.MultiplyByScalar("speed", tt.scalar, logging.Get())
+			skips, err := current.MultiplyByScalar("speed", tt.scalar)
 			matrixTest(t, tt, current, skips, err)
 		})
 	}

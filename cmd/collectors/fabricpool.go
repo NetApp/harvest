@@ -111,8 +111,6 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 							if err != nil {
 								l.Logger.Error().Err(err).Msg("error")
 							}
-						} else {
-							l.Logger.Trace().Msg("no ops value SKIP")
 						}
 					}
 				}

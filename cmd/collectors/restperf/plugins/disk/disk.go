@@ -166,34 +166,17 @@ func (d *Disk) Init() error {
 				d.instanceLabels[attribute][metricName] = display
 				instanceLabels.NewChildS("", display)
 				instanceKeys.NewChildS("", display)
-				d.Logger.Trace().
-					Str("attribute", attribute).
-					Str("display", display).
-					Msg("added instance key")
 			case "label":
 				d.instanceLabels[attribute][metricName] = display
 				instanceLabels.NewChildS("", display)
-				d.Logger.Trace().
-					Str("attribute", attribute).
-					Str("display", display).
-					Msg("added instance label")
 			case "float":
 				_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
 				if err != nil {
 					d.Logger.Error().Stack().Err(err).Msg("add metric")
 					return err
 				}
-				d.Logger.Trace().
-					Str("attribute", attribute).
-					Str("display", display).
-					Msg("added metric")
 			}
 		}
-
-		d.Logger.Trace().
-			Str("attribute", attribute).
-			Int("numMetrics", len(d.shelfData[attribute].GetMetrics())).
-			Msg("added shelfData with metrics")
 
 		d.shelfData[attribute].SetExportOptions(exportOptions)
 	}
@@ -289,11 +272,6 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 									d.Logger.Error().Err(err).Str("attribute", attribute).Str("instanceKey", instanceKey).Msg("Failed to add instance")
 									break
 								}
-								d.Logger.Trace().
-									Str("attribute", attribute).
-									Str("shelfSerialNumber", shelfSerialNumber).
-									Str("combinedKey", combinedKey).
-									Msg("add instance")
 
 								for label, labelDisplay := range d.instanceLabels[attribute] {
 									if value := obj.Get(label); value.Exists() {
@@ -334,8 +312,6 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 										if err = m.SetValueString(shelfChildInstance, value.String()); err != nil { // float
 											d.Logger.Error().Err(err).Str("key", metricKey).Str("metric", m.GetName()).Str("value", value.String()).
 												Msg("Unable to set float key on metric")
-										} else {
-											d.Logger.Trace().Str("metricKey", metricKey).Str("value", value.String()).Msg("added")
 										}
 									}
 								}

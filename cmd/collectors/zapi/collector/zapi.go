@@ -185,15 +185,11 @@ func (z *Zapi) InitCache() error {
 	if z.Client.IsClustered() {
 		if b := z.Params.GetChildContentS("batch_size"); b != "" {
 			if _, err := strconv.Atoi(b); err == nil {
-				z.Logger.Trace().Msgf("using batch-size [%s]", z.batchSize)
 				z.batchSize = b
 			}
 		}
 		if z.batchSize == "" && z.Params.GetChildContentS("no_max_records") != "true" {
-			z.Logger.Trace().Msgf("using default batch-size [%s]", BatchSize)
 			z.batchSize = BatchSize
-		} else {
-			z.Logger.Trace().Msg("using default no batch-size")
 		}
 	}
 
@@ -277,7 +273,6 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		newPath := path
 		newPath = append(newPath, node.GetNameS())
 		key := strings.Join(newPath, ".")
-		z.Logger.Trace().Msgf(" > %s(%s)%s <%s%d%s> name=[%s%s%s%s] value=[%s%s%s]", color.Grey, newPath, color.End, color.Red, len(node.GetChildren()), color.End, color.Bold, color.Cyan, node.GetNameS(), color.End, color.Yellow, node.GetContentS(), color.End)
 
 		if value := node.GetContentS(); value != "" {
 			if label, has := z.instanceLabelPaths[key]; has {
@@ -287,10 +282,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 					currentVal := strings.Split(previousValue+","+value, ",")
 					sort.Strings(currentVal)
 					instance.SetLabel(label, strings.Join(currentVal, ","))
-					z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, instance.GetLabel(label)+","+value, color.End)
 				} else {
 					instance.SetLabel(label, value)
-					z.Logger.Trace().Msgf(" > %slabel (%s) [%s] set value (%s)%s", color.Yellow, key, label, value, color.End)
 				}
 				count++
 			} else if metric := mat.GetMetric(key); metric != nil {
@@ -298,29 +291,23 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 					z.Logger.Error().Msgf("%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
 					skipped++
 				} else {
-					z.Logger.Trace().Msgf(" > %smetric (%s) set value (%s)%s", color.Green, key, value, color.End)
 					count++
 				}
 			} else {
-				z.Logger.Trace().Msgf(" > %sskipped (%s) with value (%s): not in metric or label cache%s", color.Blue, key, value, color.End)
 				skipped++
 			}
 		} else {
-			z.Logger.Trace().Msgf(" > %sskippped (%s) with no value%s", color.Cyan, key, color.End)
 			skipped++
 		}
 
 		for _, child := range node.GetChildren() {
 			if util.HasDuplicates(child.GetAllChildNamesS()) {
-				z.Logger.Trace().Str("name", child.GetNameS()).Msg("Array detected")
 				fetch(instance, child, newPath, true)
 			} else {
 				fetch(instance, child, newPath, isAppend)
 			}
 		}
 	}
-
-	z.Logger.Trace().Msg("starting data poll")
 
 	mat.Reset()
 
@@ -360,10 +347,6 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		if len(instances) == 0 {
 			break
 		}
-
-		z.Logger.Trace().
-			Int("size", len(instances)).
-			Msg("fetched instance elements")
 
 		if z.Params.GetChildContentS("only_cluster_instance") == "true" {
 			instance := mat.GetInstance("cluster")
