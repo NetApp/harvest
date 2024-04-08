@@ -325,6 +325,7 @@ func (a *LabelAgent) parseReplaceRegexRule(rule string) {
 	if fields := strings.SplitN(rule, " `", 3); len(fields) == 3 {
 		if labels := strings.Fields(fields[0]); len(labels) == 2 {
 			r := replaceRegexRule{source: labels[0], target: labels[1]}
+			a.newLabelNames = append(a.newLabelNames, r.target)
 			var err error
 			if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err != nil {
 				a.Logger.Error().Err(err).Msg("(replace_regex) invalid regex")
