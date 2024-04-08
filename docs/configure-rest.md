@@ -188,9 +188,10 @@ exporters, the following parameters can be defined:
 #### Endpoints
 
 In Harvest REST templates, `endpoints` are additional queries that enhance the data collected from the main query. The main query, identified by the `query` parameter, is the primary REST API for data collection. For example, the main query for a `disk` object is `api/storage/disks`.
+Typically `endpoints` are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.
 
-Within the `endpoints` section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own `query` and associated `counters`, allowing you to collect additional metrics or labels from various API. 
-These `endpoints` collect additional metrics or labels from various API, which are then integrated with the main dataset using a key. This key is denoted by the `^^` notation in the counters of both the main query and the `endpoints`.
+Within the `endpoints` section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own `query` and associated `counters`, allowing you to collect additional metrics or labels from various API.
+These additional metrics or labels are associated with the main dataset via a key. The key is denoted by the `^^` notation in the counters of both the main query and the `endpoints`.
 
 In the example below, the `endpoints` section makes an additional query to `api/private/cli/disk`, which collects metrics such as `stats_io_kbps`, `stats_sectors_read`, and `stats_sectors_written`. The `uuid` is the key that links the data from the `api/storage/disks` and `api/private/cli/disk` API.
 The `type` label from the `api/private/cli/disk` endpoint is included as outlined in the `export_options`.
