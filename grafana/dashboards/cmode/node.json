@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1712576468736,
+  "iteration": 1712576468739,
   "links": [
     {
       "asDropdown": true,
@@ -1034,6 +1034,18 @@
             "matcher": {
               "id": "byName",
               "options": "BMC Firmware Version"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Firmware Version"
             },
             "properties": [
               {
