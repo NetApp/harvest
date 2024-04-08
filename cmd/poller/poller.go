@@ -207,9 +207,15 @@ func (p *Poller) Init() error {
 		}()
 	}
 
+	getwd, err := os.Getwd()
+	if err != nil {
+		logger.Error().Err(err).Msg("Unable to get current working directory")
+		getwd = ""
+	}
 	logger.Info().
 		Str("logLevel", zeroLogLevel.String()).
 		Str("configPath", configPath).
+		Str("cwd", getwd).
 		Str("version", strings.TrimSpace(version.String())).
 		EmbedObject(p.options).
 		Msg("Init")

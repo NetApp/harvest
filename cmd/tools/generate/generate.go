@@ -10,10 +10,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
-	"github.com/tidwall/pretty"
-	"github.com/tidwall/sjson"
 	"io"
 	"log"
 	"os"
@@ -646,12 +645,9 @@ func generateDescription(dPath string, data []byte, counters map[string]Counter)
 	}
 
 	// Sorted json
-	sorted := pretty.PrettyOptions(data, &pretty.Options{
-		SortKeys: true,
-		Indent:   "  ",
-	})
+	result := gjson.GetBytes(data, `@pretty:{"sortKeys":true, "indent":"  ", "width":0}`)
 
-	if err = os.WriteFile(dPath, sorted, grafana.GPerm); err != nil {
+	if err = os.WriteFile(dPath, []byte(result.Raw), grafana.GPerm); err != nil {
 		log.Fatalf("failed to write dashboard=%s err=%v\n", dPath, err)
 	}
 }

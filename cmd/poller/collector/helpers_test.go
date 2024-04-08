@@ -1,8 +1,8 @@
 package collector
 
 import (
-	"github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/third_party/go-version"
 	"sort"
 	"testing"
 )

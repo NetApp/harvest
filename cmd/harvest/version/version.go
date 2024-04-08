@@ -7,7 +7,7 @@ package version
 import (
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/spf13/cobra"
 	"net/http"
 	"net/url"

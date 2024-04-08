@@ -10,7 +10,6 @@ package collector
 import (
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
@@ -21,6 +20,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/third_party/go-version"
 	"os"
 	"path/filepath"
 	"regexp"
