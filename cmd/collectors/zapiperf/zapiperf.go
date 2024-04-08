@@ -641,11 +641,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				// special case for workload_detail
 				if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 					for _, wm := range workloadDetailMetrics {
-						// "visits" are ignored
-						if name == "visits" {
-							continue
-						}
-
 						wMetric := curMat.GetMetric(layer + wm)
 
 						if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
@@ -807,6 +802,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// We assume that delta of base counters is already calculated
 		// (name of base counter is stored as Comment)
 		if base = curMat.GetMetric(metric.GetComment()); base == nil {
+			if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+				// The workload detail generates metrics at the resource level. The 'service_time' and 'wait_time' metrics are used as raw values for these resource-level metrics. Their denominator, 'visits', is not collected; therefore, a check is added here to prevent warnings.
+				// There is no need to cook these metrics further.
+				if key == "service_time" || key == "wait_time" {
+					continue
+				}
+			}
 			z.Logger.Warn().
 				Str("key", key).
 				Str("property", property).
@@ -1120,6 +1122,12 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			if r := z.addCounter(counter, key, display, true, counters); r != "" {
 				_, ok = wanted[r]
 				if !ok {
+					if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+						// It is not needed because 'ops' is used as the denominator in latency calculations.
+						if r == "visits" {
+							continue
+						}
+					}
 					missing.Add(r) // required base counter, missing in template
 				}
 			}
@@ -1178,10 +1186,9 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		// there original counters will be discarded
 		if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 
-			var service, wait, visits, ops *matrix.Metric
+			var service, wait, ops *matrix.Metric
 			oldMetrics.Remove("service_time")
 			oldMetrics.Remove("wait_time")
-			oldMetrics.Remove("visits")
 			oldMetrics.Remove("ops")
 
 			if service = mat.GetMetric("service_time"); service == nil {
@@ -1192,11 +1199,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 				z.Logger.Error().Err(nil).Msg("metric [wait-time] required to calculate workload missing")
 			}
 
-			if visits = mat.GetMetric("visits"); visits == nil {
-				z.Logger.Error().Err(nil).Msg("metric [visits] required to calculate workload missing")
-			}
-
-			if service == nil || wait == nil || visits == nil {
+			if service == nil || wait == nil {
 				return nil, errs.New(errs.ErrMissingParam, "workload metrics")
 			}
 
@@ -1204,12 +1207,11 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 				if ops, err = mat.NewMetricFloat64("ops"); err != nil {
 					return nil, err
 				}
-				ops.SetProperty(visits.GetProperty())
+				ops.SetProperty("rate")
 			}
 
 			service.SetExportable(false)
 			wait.SetExportable(false)
-			visits.SetExportable(false)
 
 			resourceMap := z.Params.GetChildS("resource_map")
 			if resourceMap == nil {
