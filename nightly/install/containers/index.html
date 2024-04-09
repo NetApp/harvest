@@ -566,6 +566,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#customize-prometheuss-retention-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      Customize Prometheus's Retention Time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#grafana" class="md-nav__link">
     <span class="md-ellipsis">
       Grafana
@@ -1770,6 +1779,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#customize-prometheuss-retention-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      Customize Prometheus's Retention Time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#grafana" class="md-nav__link">
     <span class="md-ellipsis">
       Grafana
@@ -1956,33 +1974,6 @@ generate<span class="w"> </span>docker<span class="w"> </span>full<span class="w
 <p>Bring everything up <img alt="🚀" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/1f680.svg" title=":rocket:" /></p>
 <div class="highlight"><pre><span></span><code>docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
-<details class="question">
-<summary>What if I want to customize the Prometheus configuration, for example, the retention time?</summary>
-<p>By default, <code>prom-stack.yml</code> is configured for a 15-day data retention period. To increase this, for example to 1 year, you can create a specific configuration file and make your changes there. This prevents your custom settings from being overwritten if you regenerate the default <code>prom-stack.yml</code> file. Here's the process:</p>
-<ol>
-<li>
-<p>Copy the original <code>prom-stack.yml</code> to a new file named <code>prom-stack-prod.yml</code>:</p>
-<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>prom-stack.yml<span class="w"> </span>prom-stack-prod.yml
-</code></pre></div>
-</li>
-<li>
-<p>Edit <code>prom-stack-prod.yml</code> to include the extended data retention setting by adding the <code>--storage.tsdb.retention.time=1y</code> line under the <strong>Prometheus</strong> service's <code>command</code> section:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">command</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--config.file=/etc/prometheus/prometheus.yml&#39;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.path=/prometheus&#39;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.retention.time=1y&#39;</span><span class="w">       </span><span class="c1"># Sets data retention to 1 year</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.libraries=/usr/share/prometheus/console_libraries&#39;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.templates=/usr/share/prometheus/consoles&#39;</span>
-</code></pre></div>
-</li>
-<li>
-<p>Save the changes to <code>prom-stack-prod.yml</code>.</p>
-<p>Now, you can start your Docker containers with the updated configuration that includes the 1-year data retention period by executing the command below:</p>
-<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>-f<span class="w"> </span>prom-stack-prod.yml<span class="w"> </span>-f<span class="w"> </span>harvest-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--remove-orphans
-</code></pre></div>
-</li>
-</ol>
-</details>
 <h3 id="note-on-docker-logging-configuration">Note on Docker Logging Configuration<a class="headerlink" href="#note-on-docker-logging-configuration" title="Permanent link">&para;</a></h3>
 <p>By default, Docker uses the <code>json-file</code> logging driver which does not limit the size of the logs. This can cause your system to run out of disk space. Docker provides several options for logging configuration, including different logging drivers and options for log rotation.</p>
 <p>Docker recommends using the <code>local</code> driver to prevent disk-exhaustion. More details can be found in <a href="https://docs.docker.com/config/containers/logging/configure/">Docker logging documentation</a></p>
@@ -1994,6 +1985,34 @@ If you do not want their end-points exposed, add the <code>--port=false</code> o
 <h3 id="prometheus">Prometheus<a class="headerlink" href="#prometheus" title="Permanent link">&para;</a></h3>
 <p>After bringing up the <code>prom-stack.yml</code> compose file, you can check Prometheus's list of targets
 at <code>http://IP_OF_PROMETHEUS:9090/targets</code>.</p>
+<h3 id="customize-prometheuss-retention-time">Customize Prometheus's Retention Time<a class="headerlink" href="#customize-prometheuss-retention-time" title="Permanent link">&para;</a></h3>
+<p>By default, <code>prom-stack.yml</code> is configured for a 15-day data retention period.
+To increase this, for example, to one year, you can create a specific configuration file and make your changes there.
+This prevents your custom settings from being overwritten if you regenerate the default <code>prom-stack.yml</code> file.
+Here's the process:</p>
+<ul>
+<li>Copy the original <code>prom-stack.yml</code> to a new file named <code>prom-stack-prod.yml</code>:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>prom-stack.yml<span class="w"> </span>prom-stack-prod.yml
+</code></pre></div>
+<ul>
+<li>Edit <code>prom-stack-prod.yml</code> to include the extended data retention setting by adding the <code>--storage.tsdb.retention.time=1y</code> line under the <strong>Prometheus</strong> service's <code>command</code> section:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">command</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--config.file=/etc/prometheus/prometheus.yml&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.path=/prometheus&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.retention.time=1y&#39;</span><span class="w">       </span><span class="c1"># Sets data retention to 1 year</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.libraries=/usr/share/prometheus/console_libraries&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.templates=/usr/share/prometheus/consoles&#39;</span>
+</code></pre></div>
+<ul>
+<li>Save the changes to <code>prom-stack-prod.yml</code>.</li>
+</ul>
+<p>Now,
+you can start your Docker containers with the updated configuration
+that includes the 1-year data retention period by executing the command below:</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>-f<span class="w"> </span>prom-stack-prod.yml<span class="w"> </span>-f<span class="w"> </span>harvest-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--remove-orphans
+</code></pre></div>
 <h3 id="grafana">Grafana<a class="headerlink" href="#grafana" title="Permanent link">&para;</a></h3>
 <p>After bringing up the <code>prom-stack.yml</code> compose file, you can access Grafana at <code>http://IP_OF_GRAFANA:3000</code>.</p>
 <p>You will be prompted to create a new password the first time you log in. Grafana's default credentials are</p>
@@ -2027,7 +2046,7 @@ Alternatively, you can stop the Harvest, Prometheus, and Grafana containers by u
 Harvest <code>22.11</code>, please read how
 to <a href="https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md">migrate your Prometheus volume</a>
 before continuing with the upgrade steps below.</p>
-<p>If you need to customize your Prometheus configuration, such as changing the data retention period, please refer to the instructions on <a href="#what-if-i-want-to-customize-the-prometheus-configuration-for-example-the-retention-time:~:text=What%20if%20I-,want,-to%20customize%20the">customizing the Prometheus configuration</a>.</p>
+<p>If you need to customize your Prometheus configuration, such as changing the data retention period, please refer to the instructions on <a href="#customize-prometheuss-retention-time">customizing the Prometheus configuration</a>.</p>
 </blockquote>
 <p>To upgrade Harvest:</p>
 <ol>
@@ -2067,7 +2086,8 @@ before continuing with the upgrade steps below.</p>
 </code></pre></div>
 <h2 id="building-harvest-docker-image">Building Harvest Docker Image<a class="headerlink" href="#building-harvest-docker-image" title="Permanent link">&para;</a></h2>
 <p>Building a custom Harvest Docker image is only necessary if you require a tailored solution. If your intention is to run Harvest using Docker without any customizations, please refer to the <a href="#docker-compose">Overview</a> section above.</p>
-<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache
+<div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>.harvest.env
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>--build-arg<span class="w"> </span><span class="nv">GO_VERSION</span><span class="o">=</span><span class="si">${</span><span class="nv">GO_VERSION</span><span class="si">}</span><span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache
 </code></pre></div>
 
 

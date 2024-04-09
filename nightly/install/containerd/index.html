@@ -1551,7 +1551,8 @@ are considered alpha. They work, but are still undergoing a lot of change.</p>
 <h2 id="create-harvest-docker-image">Create Harvest Docker image<a class="headerlink" href="#create-harvest-docker-image" title="Permanent link">&para;</a></h2>
 <p>You only need to <a href="../containers/#building-harvest-docker-image">create a new image</a> if you've made changes to Harvest. If you just want to use the latest version of Harvest, skip this step.</p>
 <p>These are the same steps outline on <a href="../containers/#building-harvest-docker-image">Building Harvest Docker Image</a> except we replace <code>docker build</code> with <code>nerdctl</code> like so:</p>
-<div class="highlight"><pre><span></span><code>nerdctl<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache<span class="w"> </span>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>.harvest.env
+nerdctl<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>container/onePollerPerContainer/Dockerfile<span class="w"> </span>--build-arg<span class="w"> </span><span class="nv">GO_VERSION</span><span class="o">=</span><span class="si">${</span><span class="nv">GO_VERSION</span><span class="si">}</span><span class="w"> </span>-t<span class="w"> </span>harvest:latest<span class="w"> </span>.<span class="w"> </span>--no-cache<span class="w"> </span>
 </code></pre></div>
 <h2 id="generate-a-harvest-compose-file">Generate a Harvest compose file<a class="headerlink" href="#generate-a-harvest-compose-file" title="Permanent link">&para;</a></h2>
 <p>Follow the existing documentation to set up your <code>harvest.yml</code> <a href="../containers/#setup-harvestyml">file</a></p>
