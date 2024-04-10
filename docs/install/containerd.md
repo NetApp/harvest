@@ -35,7 +35,8 @@ You only need to [create a new image](containers.md#building-harvest-docker-imag
 These are the same steps outline on [Building Harvest Docker Image](containers.md#building-harvest-docker-image) except we replace `docker build` with `nerdctl` like so:
 
 ```sh
-nerdctl build -f container/onePollerPerContainer/Dockerfile -t harvest:latest . --no-cache 
+source .harvest.env
+nerdctl build -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} -t harvest:latest . --no-cache 
 ```
 
 ## Generate a Harvest compose file

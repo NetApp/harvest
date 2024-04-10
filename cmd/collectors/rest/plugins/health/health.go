@@ -2,7 +2,6 @@ package health
 
 import (
 	"fmt"
-	goversion "github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -10,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/tidwall/gjson"
 	"strconv"
 	"time"
