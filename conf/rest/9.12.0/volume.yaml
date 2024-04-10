@@ -74,6 +74,11 @@ endpoints:
       - volume_blocks_footprint_bin1              => capacity_tier_footprint
       - volume_blocks_footprint_bin1_percent      => capacity_tier_footprint_percent
 
+  - query: api/private/cli/volume/snapshot/autodelete
+    counters:
+      - ^^volume
+      - ^^vserver                                 => svm
+      - ^enabled                                  => snapshot_autodelete
 
 plugins:
   - Volume:
