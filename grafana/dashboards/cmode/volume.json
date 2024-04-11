@@ -7581,7 +7581,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 25
       },
       "id": 136,
       "panels": [
@@ -7657,7 +7657,7 @@
             "x": 0,
             "y": 12
           },
-          "id": 139,
+          "id": 149,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
@@ -7843,7 +7843,7 @@
             "x": 12,
             "y": 12
           },
-          "id": 140,
+          "id": 150,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
