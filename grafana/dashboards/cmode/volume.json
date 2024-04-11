@@ -7378,7 +7378,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This table would show 15 day predicted value of Physical space used for top volumes.",
+          "description": "This table would show 15 day predicted value of Physical space used percentage for top volumes.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -7389,6 +7389,7 @@
                 "filterable": true,
                 "inspect": false
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -7399,10 +7400,47 @@
                   }
                 ]
               },
-              "unit": "bytes",
+              "unit": "percent",
               "unitScale": true
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Current Value"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 132
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "SVM"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volume"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 7,
@@ -7436,7 +7474,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "predict_linear(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
+              "expr": "predict_linear(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -7449,7 +7487,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
+              "expr": "volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -7458,7 +7496,7 @@
               "refId": "B"
             }
           ],
-          "title": "Top $TopResources Volumes Per Physical Used Trend",
+          "title": "Top $TopResources Volumes Per Physical Used Percentage Trend",
           "transformations": [
             {
               "id": "merge",
@@ -7499,7 +7537,7 @@
                 },
                 "renameByName": {
                   "Value": "Predicted Value ",
-                  "Value #A": "Predicted value",
+                  "Value #A": "Predicted 15th Day Value",
                   "Value #B": "Current Value",
                   "Value #C": "Size",
                   "Value #D": "",
@@ -7526,7 +7564,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This table would show 15 day predicted value of Logical space used for top volumes.",
+          "description": "This table would show 15 day predicted value of Logical space used percentage for top volumes.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -7537,6 +7575,7 @@
                 "filterable": true,
                 "inspect": false
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -7547,10 +7586,47 @@
                   }
                 ]
               },
-              "unit": "bytes",
+              "unit": "percent",
               "unitScale": true
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Current Value"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 130
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "SVM"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volume"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 7,
@@ -7584,7 +7660,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "predict_linear(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
+              "expr": "predict_linear(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -7597,7 +7673,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
+              "expr": "volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range] @ end()))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -7606,7 +7682,7 @@
               "refId": "B"
             }
           ],
-          "title": "Top $TopResources Volumes Per Logical Used Trend",
+          "title": "Top $TopResources Volumes Per Logical Used Percentage Trend",
           "transformations": [
             {
               "id": "merge",
@@ -7646,7 +7722,7 @@
                 },
                 "renameByName": {
                   "Value": "Predicted Value ",
-                  "Value #A": "Predicted Value",
+                  "Value #A": "Predicted 15th Day Value",
                   "Value #B": "Current Value",
                   "Value #C": "Size",
                   "Value #D": "",
