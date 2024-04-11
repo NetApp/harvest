@@ -208,8 +208,6 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	p.Lock()
 	defer p.Unlock()
 
-	p.Logger.Trace().Str("uuid", data.UUID).Str("object", data.Object).Msg("incoming")
-
 	// render metrics into Prometheus format
 	start := time.Now()
 	metrics, stats = p.render(data)
@@ -233,7 +231,6 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	p.cache.Lock()
 	p.cache.Put(key, metrics)
 	p.cache.Unlock()
-	p.Logger.Trace().Str("key", key).Msg("added to cache")
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
@@ -292,12 +289,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 	if x := options.GetChildS("instance_labels"); x != nil {
 		labelsToInclude = x.GetAllChildContentS()
-		p.Logger.Trace().Strs("requested instance_labels", labelsToInclude).Send()
 	}
 
 	if x := options.GetChildS("instance_keys"); x != nil {
 		keysToInclude = x.GetAllChildContentS()
-		p.Logger.Trace().Strs("requested keys_labels", keysToInclude).Send()
 	}
 
 	includeAllLabels := false
@@ -321,14 +316,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		globalLabels = append(globalLabels, escape(replacer, key, value))
 	}
 
-	for key, instance := range data.GetInstances() {
+	for _, instance := range data.GetInstances() {
 
 		if !instance.IsExportable() {
-			p.Logger.Trace().Msgf("skip instance [%s]: disabled for export", key)
 			continue
 		}
 		instancesExported++
-		p.Logger.Trace().Msgf("rendering instance [%s] (%v)", key, instance.GetLabels())
 
 		instanceKeys := make([]string, len(globalLabels))
 		copy(instanceKeys, globalLabels)
@@ -354,7 +347,6 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
 				}
-				p.Logger.Trace().Msgf("++ key [%s] (%s) found=%v", key, value, value != "")
 			}
 
 			for _, label := range labelsToInclude {
@@ -366,12 +358,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				}
 				instanceLabelsSet[kv] = struct{}{}
 				instanceLabels = append(instanceLabels, kv)
-				p.Logger.Trace().Msgf("++ label [%s] (%s) %t", label, value, value != "")
 			}
 
 			// @TODO, probably be strict, and require all keys to be present
 			if !instanceKeysOk && requireInstanceKeys {
-				p.Logger.Trace().Msgf("skip instance, no keys parsed (%v) (%v)", instanceKeys, instanceLabels)
 				continue
 			}
 
@@ -399,8 +389,6 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					rendered = append(rendered, []byte("# TYPE "+prefix+"_labels gauge"))
 				}
 				rendered = append(rendered, []byte(labelData))
-			} else {
-				p.Logger.Trace().Msgf("skip instance labels, no labels parsed (%v) (%v)", instanceKeys, instanceLabels)
 			}
 		}
 
@@ -408,14 +396,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			sort.Strings(instanceKeys)
 		}
 		histograms = make(map[string]*histogram)
-		for mkey, metric := range data.GetMetrics() {
+		for _, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
-				p.Logger.Trace().Str("mkey", mkey).Msg("metric disabled for export")
 				continue
 			}
-
-			p.Logger.Trace().Str("mkey", mkey).Msg("rendering metric")
 
 			if value, ok := metric.GetValueString(instance); ok {
 
@@ -475,8 +460,6 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 					rendered = append(rendered, []byte(x))
 				}
-			} else {
-				p.Logger.Trace().Str("mkey", mkey).Msg("skipped: no data value")
 			}
 		}
 		// All metrics have been processed and flattened metrics accumulated. Determine which histograms can be
@@ -491,7 +474,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				normalizedNames := make([]string, 0, len(*bucketNames))
 				// check if the buckets can be normalized and collect normalized names
 				for _, bucketName := range *bucketNames {
-					normalized := p.normalizeHistogram(metric, bucketName, data.Object)
+					normalized := p.normalizeHistogram(bucketName)
 					if normalized == "" {
 						canNormalize = false
 						break
@@ -551,12 +534,6 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			}
 		}
 	}
-	p.Logger.Trace().
-		Str("object", data.Object).
-		Int("rendered", len(rendered)).
-		Int("instances", len(data.GetInstances())).
-		Msg("Rendered data points for instances")
-
 	stats := exporter.Stats{
 		InstancesExported: instancesExported,
 		MetricsExported:   uint64(len(rendered)),
@@ -569,7 +546,7 @@ var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)
 
 // normalizeHistogram tries to normalize ONTAP values by converting units to multiples of the smallest unit.
 // When the unit cannot be determined, return an empty string
-func (p *Prometheus) normalizeHistogram(metric *matrix.Metric, ontap string, object string) string {
+func (p *Prometheus) normalizeHistogram(ontap string) string {
 	numAndUnit := ontap
 	if strings.HasPrefix(ontap, "<") {
 		numAndUnit = ontap[1:]
@@ -578,18 +555,12 @@ func (p *Prometheus) normalizeHistogram(metric *matrix.Metric, ontap string, obj
 	}
 	submatch := numAndUnitRe.FindStringSubmatch(numAndUnit)
 	if len(submatch) != 3 {
-		p.Logger.Trace().
-			Str("object", object).
-			Str("metric", metric.GetName()).
-			Str("numAndUnit", numAndUnit).
-			Msg("No units found")
 		return ""
 	}
 	num := submatch[1]
 	unit := submatch[2]
 	float, err := strconv.ParseFloat(num, 64)
 	if err != nil {
-		p.Logger.Trace().Str("num", num).Msg("Unable to convert to float64")
 		return ""
 	}
 	var normal float64
@@ -601,7 +572,6 @@ func (p *Prometheus) normalizeHistogram(metric *matrix.Metric, ontap string, obj
 	case "s", "sec":
 		normal = 1_000_000 * float
 	default:
-		p.Logger.Trace().Str("unit", unit).Msg("Unknown unit")
 		return ""
 	}
 	return strconv.FormatFloat(normal, 'f', -1, 64)

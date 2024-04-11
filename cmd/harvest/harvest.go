@@ -28,7 +28,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
-	tw "github.com/olekukonko/tablewriter"
+	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"log"
 	"net"

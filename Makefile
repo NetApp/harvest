@@ -32,6 +32,13 @@ BIN_PLATFORM ?= linux
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 MKDOCS_EXISTS := $(shell which mkdocs)
 FETCH_ASUP_EXISTS := $(shell which ./.github/fetch-asup)
+HARVEST_ENV := .harvest.env
+
+# Read the environment file if it exists and export the uncommented variables
+ifneq (,$(wildcard $(HARVEST_ENV)))
+    include $(HARVEST_ENV)
+	export $(shell sed '/^\#/d; s/=.*//' $(HARVEST_ENV))
+endif
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -41,7 +48,6 @@ header:
 	@echo "   | || |__ _ _ ___ _____ __| |_  |_  ) /  \  "
 	@echo "   | __ / _\` | '_\ V / -_|_-<  _|  / / | () | "
 	@echo "   |_||_\__,_|_|  \_/\___/__/\__| /___(_)__/  "
-	@echo
 
 deps: header ## Check dependencies
 	@# Make sure that go exists
@@ -61,7 +67,9 @@ clean: ## Cleanup the project binary (bin) folders
 
 test: ## run tests
 	@echo "Running tests"
-	go test -race -shuffle=on ./...
+	# The ldflags force the old Apple linker to suppress ld warning messages on MacOS
+	# See https://github.com/golang/go/issues/61229#issuecomment-1988965927
+	go test -ldflags=-extldflags=-Wl,-ld_classic -race -shuffle=on ./...
 
 fmt: ## format the go source files
 	@echo "Formatting"
@@ -156,7 +164,7 @@ endif
 	-@docker volume rm harvest_grafana_data harvest_prometheus_data 2>/dev/null || true
 	@if [ "$(ci)" != "harvest.yml" ]; then cp $(ci) harvest.yml; else echo "Source and destination files are the same, skipping copy"; fi
 	@./bin/harvest generate docker full --port --output harvest-compose.yml
-	@docker build -f container/onePollerPerContainer/Dockerfile -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg VERSION=${VERSION}
+	@docker build -f container/onePollerPerContainer/Dockerfile -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=${VERSION}
 	@docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 	@cp harvest.yml integration/test/
 	VERSION=${VERSION} INSTALL_DOCKER=1 ./integration/test/test.sh

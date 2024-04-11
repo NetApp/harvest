@@ -125,8 +125,6 @@ func (d *Disk) Init() error {
 
 	d.query = "storage-shelf-info-get-iter"
 
-	d.Logger.Trace().Msg("plugin connected!")
-
 	d.shelfData = make(map[string]*matrix.Matrix)
 	d.powerData = make(map[string]*matrix.Matrix)
 
@@ -174,38 +172,18 @@ func (d *Disk) Init() error {
 					d.instanceLabels[attribute][metricName] = display
 					instanceLabels.NewChildS("", display)
 					instanceKeys.NewChildS("", display)
-					d.Logger.Trace().
-						Str("attribute", attribute).
-						Str("name", x.GetNameS()).
-						Str("display", display).
-						Msg("added instance key")
 				case "label":
 					d.instanceLabels[attribute][metricName] = display
 					instanceLabels.NewChildS("", display)
-					d.Logger.Trace().
-						Str("attribute", attribute).
-						Str("name", x.GetNameS()).
-						Str("display", display).
-						Msg("added instance label")
 				case "float":
 					_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
 					if err != nil {
 						d.Logger.Error().Stack().Err(err).Msg("add metric")
 						return err
 					}
-					d.Logger.Trace().
-						Str("attribute", attribute).
-						Str("name", x.GetNameS()).
-						Str("display", display).
-						Msg("added metric")
 				}
 			}
 		}
-
-		d.Logger.Trace().
-			Str("attribute", attribute).
-			Int("metrics", len(d.shelfData[attribute].GetMetrics())).
-			Msg("added shelfData for attribute with metrics")
 
 		d.shelfData[attribute].SetExportOptions(exportOptions)
 	}
@@ -817,10 +795,6 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 	var output []*matrix.Matrix
 	noSet := make(map[string]struct{})
 
-	d.Logger.Trace().
-		Int("shelfCounters", len(shelves)).
-		Msg("fetching shelf counters")
-
 	// Purge and reset data
 	for _, data1 := range d.shelfData {
 		data1.PurgeInstances()
@@ -847,11 +821,6 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 					continue
 				}
 
-				d.Logger.Trace().
-					Int("instances", len(objectElem.GetChildren())).
-					Str("attribute", attribute).
-					Msg("fetching instances")
-
 				for _, obj := range objectElem.GetChildren() {
 
 					if keys := d.instanceKeys[attribute]; len(keys) != 0 {
@@ -868,11 +837,6 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 							d.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
 							return nil, err
 						}
-						d.Logger.Trace().
-							Str("attribute", attribute).
-							Str("shelfID", shelfID).
-							Str("key", combinedKey).
-							Msg("add instance")
 
 						for label, labelDisplay := range d.instanceLabels[attribute] {
 							if value := obj.GetChildContentS(label); value != "" {
@@ -901,18 +865,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 											Str("value", value).
 											Err(err).
 											Msg("failed to parse value")
-									} else {
-										d.Logger.Trace().
-											Str("metricKey", metricKey).
-											Str("value", value).
-											Err(err).
-											Msg("failed to parse value")
 									}
-								} else {
-									d.Logger.Trace().
-										Str("metricKey", metricKey).
-										Str("value", value).
-										Msg("added value")
 								}
 							}
 						}

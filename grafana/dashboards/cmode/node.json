@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1712067123953,
+  "iteration": 1712576468739,
   "links": [
     {
       "asDropdown": true,
@@ -706,6 +706,7 @@
               "mode": "off"
             }
           },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1026,6 +1027,30 @@
               {
                 "id": "custom.displayMode",
                 "value": "color-text"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "BMC Firmware Version"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Firmware Version"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
               }
             ]
           }
@@ -1384,6 +1409,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2305,6 +2331,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2653,6 +2680,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "min": 0,
               "thresholds": {
@@ -3428,6 +3456,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -3673,6 +3702,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -4198,6 +4228,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -4614,6 +4645,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -5028,6 +5060,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -5937,5 +5970,5 @@
   "timezone": "",
   "title": "ONTAP: Node",
   "uid": "",
-  "version": 11
+  "version": 12
 }

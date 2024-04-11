@@ -2,7 +2,6 @@ package aggregate
 
 import (
 	"errors"
-	goversion "github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
@@ -11,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"strconv"
 	"strings"
 )
@@ -52,8 +52,8 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	// invoke aggr-object-store-get-iter zapi and populate cloud stores info
 	if err := a.getCloudStores(); err != nil {
-		if errors.Is(err, errs.ErrNoInstance) {
-			a.Logger.Trace().Err(err).Msg("Failed to collect cloud store data")
+		if !errors.Is(err, errs.ErrNoInstance) {
+			a.Logger.Error().Err(err).Msg("Failed to update get cloud stores")
 		}
 	}
 

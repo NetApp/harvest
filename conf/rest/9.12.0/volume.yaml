@@ -88,9 +88,11 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
-      replace:
+      replace_regex:
         - svm_root root_volume `false` `No`
         - svm_root root_volume `true` `Yes`
+        - svm_root root_volume `^$` `Yes`      # svm_root is not available in Rest response for volumes like vol0
+
       # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex:
 #        # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix

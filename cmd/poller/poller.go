@@ -207,9 +207,15 @@ func (p *Poller) Init() error {
 		}()
 	}
 
+	getwd, err := os.Getwd()
+	if err != nil {
+		logger.Error().Err(err).Msg("Unable to get current working directory")
+		getwd = ""
+	}
 	logger.Info().
 		Str("logLevel", zeroLogLevel.String()).
 		Str("configPath", configPath).
+		Str("cwd", getwd).
 		Str("version", strings.TrimSpace(version.String())).
 		EmbedObject(p.options).
 		Msg("Init")
@@ -406,10 +412,6 @@ func (p *Poller) Start() {
 
 	// start collectors
 	for _, col = range p.collectors {
-		logger.Trace().
-			Str("collectorName", col.GetName()).
-			Str("object", col.GetObject()).
-			Msg("launching collector")
 		wg.Add(1)
 		go col.Start(&wg)
 	}
@@ -461,14 +463,7 @@ func (p *Poller) Run() {
 
 			// update status of collectors
 			for _, c := range p.collectors {
-				code, status, msg := c.GetStatus()
-				logger.Trace().
-					Str("collectorName", c.GetName()).
-					Str("object", c.GetObject()).
-					Uint8("code", code).
-					Str("status", status).
-					Str("message", msg).
-					Msg("collector status")
+				code, _, msg := c.GetStatus()
 
 				if code == 0 {
 					upc++
@@ -706,14 +701,8 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 		obj := col.GetObject()
 
 		for _, expName := range col.WantedExporters(p.params.Exporters) {
-			logger.Trace().Msgf("expName %s", expName)
 			if exp := p.loadExporter(expName); exp != nil {
 				col.LinkExporter(exp)
-				logger.Trace().
-					Str("name", name).
-					Str("object", obj).
-					Str("exporterName", expName).
-					Msg("linked to exporter")
 			} else {
 				logger.Warn().
 					Str("exporterName", expName).

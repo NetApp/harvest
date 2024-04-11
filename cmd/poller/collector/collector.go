@@ -409,9 +409,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						// API was rejected, this happens when a resource is not available or does not exist
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 						// Log metro cluster at trace level
-						if errors.Is(err, errs.ErrMetroClusterNotConfigured) {
-							c.Logger.Trace().Err(err).Str("task", task.Name).Msg("Entering standby mode")
-						} else {
+						if !errors.Is(err, errs.ErrMetroClusterNotConfigured) {
 							// Log as info since these are not errors.
 							c.Logger.Info().Err(err).Str("task", task.Name).Msg("Entering standby mode")
 						}
@@ -459,12 +457,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 							}
 							if pluginData != nil {
 								results = append(results, pluginData...)
-								c.Logger.Trace().
-									Str("pluginName", plg.GetName()).
-									Int("dataLength", len(pluginData)).
-									Msg("plugin added data")
-							} else {
-								c.Logger.Trace().Str("pluginName", plg.GetName()).Msg("plugin completed")
 							}
 							if pluginMetadata != nil {
 								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
@@ -490,8 +482,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 		}
 
 		// pass results to exporters
-
-		c.Logger.Trace().Int("results", len(results)).Msg("exporting data")
 
 		exportStart = time.Now()
 		exporterStats := exporter.Stats{}
@@ -522,8 +512,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 					exporterStats.InstancesExported += stats.InstancesExported
 					exporterStats.MetricsExported += stats.MetricsExported
-				} else {
-					c.Logger.Trace().Str("UUID", data.UUID).Str("object", data.Object).Msg("skipped non-exportable data")
 				}
 			}
 		}
@@ -535,7 +523,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 		}
 
 		if nd := c.Schedule.NextDue(); nd > 0 {
-			c.Logger.Trace().Str("dur", nd.String()).Msg("sleep until next poll")
 			c.Schedule.Sleep()
 			// log if lagging by more than 500 ms
 			// < is used since larger durations are more negative

@@ -5,12 +5,12 @@
 package conf
 
 import (
-	"dario.cat/mergo"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/third_party/mergo"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"

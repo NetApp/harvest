@@ -120,13 +120,11 @@ func (q *Qtree) Init() error {
 	for _, obj := range quotaMetric {
 		metricName, display, _, _ := util.ParseMetric(obj)
 
-		metric, err := q.data.NewMetricFloat64(metricName, display)
+		_, err := q.data.NewMetricFloat64(metricName, display)
 		if err != nil {
 			q.Logger.Error().Stack().Err(err).Msg("add metric")
 			return err
 		}
-
-		q.Logger.Trace().Msgf("added metric: (%s) [%s] %v", metricName, display, metric)
 	}
 
 	q.Logger.Debug().Msgf("added data with %d metrics", len(q.data.GetMetrics()))
@@ -220,7 +218,6 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 
 		// If quota-type is not a tree, then skip
 		if quotaType != "tree" {
-			q.Logger.Trace().Str("quotaType", quotaType).Msg("Quota is not tree type, skipping")
 			continue
 		}
 
@@ -232,13 +229,6 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 				q.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
 				return err
 			}
-			q.Logger.Trace().
-				Str("quotaInstanceKey", quotaInstanceKey).
-				Str("svm", vserver).
-				Str("volume", volume).
-				Str("tree", tree).
-				Str("qIndex", qIndex).
-				Msg("add quota instance")
 		}
 
 		// qtree instancekey would be qtree, svm and volume(sorted keys)
@@ -293,7 +283,6 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 				q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
 				*numMetrics++
-				q.Logger.Trace().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 		}
 	}
@@ -366,7 +355,6 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 				q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 			} else {
 				*numMetrics++
-				q.Logger.Trace().Str("attribute", attribute).Float64("value", value).Msg("added value")
 			}
 		}
 	}

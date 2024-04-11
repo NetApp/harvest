@@ -3,7 +3,6 @@ package grafana
 import (
 	"fmt"
 	"github.com/tidwall/gjson"
-	"github.com/tidwall/pretty"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -1148,6 +1147,35 @@ func asTitle(id string) string {
 	return replacer.Replace(path)
 }
 
+func TestIOPS(t *testing.T) {
+	VisitDashboards(
+		dashboards,
+		func(path string, data []byte) {
+			checkIOPSDecimal(t, path, data)
+		})
+}
+
+func checkIOPSDecimal(t *testing.T, path string, data []byte) {
+	dashPath := ShortPath(path)
+
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType != "timeseries" {
+			return
+		}
+		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		if defaultUnit != "iops" {
+			return
+		}
+		decimals := value.Get("fieldConfig.defaults.decimals").String()
+
+		if decimals != "0" {
+			t.Errorf(`dashboard=%s path=%s panel="%s", decimals should be 0 got=%s`,
+				dashPath, path, value.Get("title").String(), decimals)
+		}
+	})
+}
+
 func TestPercentHasMinMax(t *testing.T) {
 	VisitDashboards(
 		dashboards,
@@ -1296,11 +1324,8 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 		dashboards,
 		func(path string, data []byte) {
 			path = ShortPath(path)
-			sorted := pretty.PrettyOptions(data, &pretty.Options{
-				SortKeys: true,
-				Indent:   "  ",
-			})
-			if string(sorted) != string(data) {
+			sorted := gjson.GetBytes(data, `@pretty:{"sortKeys":true, "indent":"  ", "width":0}`).String()
+			if sorted != string(data) {
 				sortedPath := writeSorted(t, path, sorted)
 				path = "grafana/dashboards/" + path
 				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s.\ncp %s %s",
@@ -1309,7 +1334,7 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 		})
 }
 
-func writeSorted(t *testing.T, path string, sorted []byte) string {
+func writeSorted(t *testing.T, path string, sorted string) string {
 	dir, file := filepath.Split(path)
 	dir = filepath.Dir(dir)
 	dest := filepath.Join("/tmp", dir, file)
@@ -1325,7 +1350,7 @@ func writeSorted(t *testing.T, path string, sorted []byte) string {
 		t.Errorf("failed to create file=%s err=%v", dest, err)
 		return ""
 	}
-	_, err = create.Write(sorted)
+	_, err = create.WriteString(sorted)
 	if err != nil {
 		t.Errorf("failed to write sorted json to file=%s err=%v", dest, err)
 		return ""

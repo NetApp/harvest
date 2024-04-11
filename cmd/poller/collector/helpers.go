@@ -10,7 +10,6 @@ package collector
 import (
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-version"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
@@ -21,6 +20,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/third_party/go-version"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -140,7 +140,6 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 			if templates, err := os.ReadDir(filepath.Join(pathPrefix, file.Name())); err == nil {
 				for _, t := range templates {
 					if t.Name() == name {
-						c.Logger.Trace().Str("dir", file.Name()).Msg("available version dir")
 						availableVersions = append(availableVersions, file.Name())
 						break
 					}
@@ -148,8 +147,6 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 			}
 		}
 	}
-
-	c.Logger.Trace().Strs("availableVersions", availableVersions).Msg("checking available versions")
 
 	if len(availableVersions) == 0 {
 		return "", nil
@@ -159,7 +156,6 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 	for i, raw := range availableVersions {
 		v, err := version.NewVersion(raw)
 		if err != nil {
-			c.Logger.Trace().Err(err).Str("raw", raw).Msg("unable to parse version")
 			continue
 		}
 		versions[i] = v

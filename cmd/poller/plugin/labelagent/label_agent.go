@@ -7,7 +7,6 @@ package labelagent
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -78,7 +77,6 @@ func (a *LabelAgent) splitSimple(matrix *matrix.Matrix) error {
 				for i := range r.targets {
 					if r.targets[i] != "" && values[i] != "" {
 						instance.SetLabel(r.targets[i], values[i])
-						a.Logger.Trace().Msgf("splitSimple: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], values[i])
 					}
 				}
 			}
@@ -95,7 +93,6 @@ func (a *LabelAgent) splitRegex(matrix *matrix.Matrix) error {
 				for i := range r.targets {
 					if r.targets[i] != "" && m[i+1] != "" {
 						instance.SetLabel(r.targets[i], m[i+1])
-						a.Logger.Trace().Msgf("splitRegex: (%s) [%s] => (%s) [%s]", r.source, instance.GetLabel(r.source), r.targets[i], m[i+1])
 					}
 				}
 			}
@@ -132,7 +129,6 @@ func (a *LabelAgent) joinSimple(matrix *matrix.Matrix) error {
 			}
 			if len(values) != 0 {
 				instance.SetLabel(r.target, strings.Join(values, r.sep))
-				a.Logger.Trace().Msgf("joinSimple: (%v) => (%s) [%s]", r.sources, r.target, instance.GetLabel(r.target))
 			}
 		}
 	}
@@ -146,7 +142,6 @@ func (a *LabelAgent) replaceSimple(matrix *matrix.Matrix) error {
 			if old := instance.GetLabel(r.source); old != "" {
 				if value := strings.ReplaceAll(old, r.old, r.new); value != old {
 					instance.SetLabel(r.target, value)
-					a.Logger.Trace().Msgf("replaceSimple: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
 				}
 			}
 		}
@@ -160,22 +155,17 @@ func (a *LabelAgent) replaceRegex(matrix *matrix.Matrix) error {
 		for _, r := range a.replaceRegexRules {
 			old := instance.GetLabel(r.source)
 			if m := r.reg.FindStringSubmatch(old); m != nil {
-				a.Logger.Trace().Msgf("replaceRegex: (%d) matches= %v", len(m)-1, m[1:])
 				s := make([]interface{}, 0)
 				for _, i := range r.indices {
 					if i < len(m)-1 {
 						s = append(s, m[i+1])
-						a.Logger.Trace().Msgf("substring [%d] = (%s)", i, m[i+1])
 					} else {
 						// probably we need to throw warning
 						s = append(s, "")
-						a.Logger.Trace().Msgf("substring [%d] = no match!", i)
 					}
 				}
-				a.Logger.Trace().Msgf("replaceRegex: (%d) substitution strings= %v", len(s), s)
 				if value := fmt.Sprintf(r.format, s...); value != "" && value != old {
 					instance.SetLabel(r.target, value)
-					a.Logger.Trace().Msgf("replaceRegex: (%s) [%s] => (%s) [%s]", r.source, old, r.target, value)
 				}
 			}
 		}
@@ -189,10 +179,6 @@ func (a *LabelAgent) excludeEquals(matrix *matrix.Matrix) error {
 		for _, r := range a.excludeEqualsRules {
 			if instance.GetLabel(r.label) == r.value {
 				instance.SetExportable(false)
-				a.Logger.Trace().Str("label", r.label).
-					Str("value", r.value).
-					Str("instance labels", dict.String(instance.GetLabels())).
-					Msg("excludeEquals: excluded")
 				break
 			}
 		}
@@ -206,10 +192,6 @@ func (a *LabelAgent) excludeContains(matrix *matrix.Matrix) error {
 		for _, r := range a.excludeContainsRules {
 			if strings.Contains(instance.GetLabel(r.label), r.value) {
 				instance.SetExportable(false)
-				a.Logger.Trace().Str("label", r.label).
-					Str("value", r.value).
-					Str("instance labels", dict.String(instance.GetLabels())).
-					Msg("excludeContains: excluded")
 				break
 			}
 		}
@@ -223,10 +205,6 @@ func (a *LabelAgent) excludeRegex(matrix *matrix.Matrix) error {
 		for _, r := range a.excludeRegexRules {
 			if r.reg.MatchString(instance.GetLabel(r.label)) {
 				instance.SetExportable(false)
-				a.Logger.Trace().Str("label", r.label).
-					Str("regex", r.reg.String()).
-					Str("instance labels", dict.String(instance.GetLabels())).
-					Msg("excludeRegex: excluded")
 				break
 			}
 		}
@@ -242,10 +220,6 @@ func (a *LabelAgent) includeEquals(matrix *matrix.Matrix) error {
 			for _, r := range a.includeEqualsRules {
 				if instance.GetLabel(r.label) == r.value {
 					isExport = true
-					a.Logger.Trace().Str("label", r.label).
-						Str("value", r.value).
-						Str("instance labels", dict.String(instance.GetLabels())).
-						Msg("includeEquals: included")
 					break
 				}
 			}
@@ -263,10 +237,6 @@ func (a *LabelAgent) includeContains(matrix *matrix.Matrix) error {
 			for _, r := range a.includeContainsRules {
 				if strings.Contains(instance.GetLabel(r.label), r.value) {
 					isExport = true
-					a.Logger.Trace().Str("label", r.label).
-						Str("value", r.value).
-						Str("instance labels", dict.String(instance.GetLabels())).
-						Msg("includeContains: included")
 					break
 				}
 			}
@@ -286,10 +256,6 @@ func (a *LabelAgent) includeRegex(matrix *matrix.Matrix) error {
 			for _, r := range a.includeRegexRules {
 				if r.reg.MatchString(instance.GetLabel(r.label)) {
 					isExport = true
-					a.Logger.Trace().Str("label", r.label).
-						Str("regex", r.reg.String()).
-						Str("instance labels", dict.String(instance.GetLabels())).
-						Msg("includeRegex: included")
 					break
 				}
 			}
@@ -317,13 +283,11 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 			metric.SetProperty("value_to_num mapping")
 		}
 
-		for key, instance := range m.GetInstances() {
+		for _, instance := range m.GetInstances() {
 			if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
 				_ = metric.SetValueUint8(instance, v)
-				a.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to %d", r.metric, key, instance.GetLabel(r.label), v)
 			} else if r.hasDefault {
 				_ = metric.SetValueUint8(instance, r.defaultValue)
-				a.Logger.Trace().Msgf("valueToNumMapping: [%s] [%s] mapped (%s) value to default %d", r.metric, key, instance.GetLabel(r.label), r.defaultValue)
 			}
 		}
 	}
@@ -347,14 +311,12 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 			metric.SetProperty("value_to_num_regex mapping")
 		}
 
-		for key, instance := range m.GetInstances() {
+		for _, instance := range m.GetInstances() {
 			value := instance.GetLabel(r.label)
 			if r.reg[0].MatchString(value) || r.reg[1].MatchString(value) {
 				_ = metric.SetValueUint8(instance, uint8(1))
-				a.Logger.Trace().Msgf("valueToNumRegexMapping: [%s] [%s] mapped (%s) value to %d, regex1: %s, regex2: %s", r.metric, key, value, 1, r.reg[0], r.reg[1])
 			} else if r.hasDefault {
 				_ = metric.SetValueUint8(instance, r.defaultValue)
-				a.Logger.Trace().Msgf("valueToNumRegexMapping: [%s] [%s] mapped (%s) value to default %d, regex1: %s, regex2: %s", r.metric, key, value, r.defaultValue, r.reg[0], r.reg[1])
 			}
 		}
 	}

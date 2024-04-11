@@ -7,7 +7,7 @@ package util
 import (
 	"errors"
 	"fmt"
-	"github.com/hashicorp/go-version"
+	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/process"
 	"golang.org/x/exp/maps"
@@ -77,7 +77,6 @@ func AllSame(elements [][]string, k int) bool {
 	return true
 }
 
-var pollerRegex = regexp.MustCompile(`poller\s+--poller\s+(.*?)\s`)
 var profRegex = regexp.MustCompile(`--profiling (\d+)`)
 var promRegex = regexp.MustCompile(`--promPort (\d+)`)
 
@@ -98,12 +97,29 @@ func GetPollerStatuses() ([]PollerStatus, error) {
 		if !strings.Contains(line, "poller --poller ") {
 			continue
 		}
-		matches := pollerRegex.FindStringSubmatch(line)
-		if len(matches) != 2 {
+
+		args, err := p.CmdlineSlice()
+
+		if err != nil {
+			if !errors.Is(err, unix.EINVAL) && !errors.Is(err, unix.ENOENT) {
+				fmt.Printf("Unable to read process cmdline pid=%d err=%v\n", p.Pid, err)
+			}
+			continue
+		}
+
+		name := ""
+		for i, arg := range args {
+			if arg == "--poller" && i+1 < len(args) {
+				name = args[i+1]
+				break
+			}
+		}
+
+		if name == "" {
 			continue
 		}
 		s := PollerStatus{
-			Name:   matches[1],
+			Name:   name,
 			Pid:    p.Pid,
 			Status: "running",
 		}
@@ -147,7 +163,7 @@ func CheckCert(certPath string, name string, configPath string, logger zerolog.L
 }
 
 // SaveConfig adds or updates the Grafana token in the harvest.yml config
-// and saves it to fp. The Yaml marshaller is ued so comments are preserved
+// and saves it to fp. The Yaml marshaller is used so comments are preserved
 func SaveConfig(fp string, token string) error {
 	contents, err := os.ReadFile(fp)
 	if err != nil {
@@ -160,9 +176,9 @@ func SaveConfig(fp string, token string) error {
 	}
 
 	// Three cases to consider:
-	//	1. Tools is missing
-	//  2. Tools is present but empty (nil)
-	//  3. Tools is present - overwrite value
+	//	1. Tools are missing
+	//  2. Tools are present but empty (nil)
+	//  3. Tools are present - overwrite value
 	tokenSet := false
 	if len(root.Content) > 0 {
 		nodes := root.Content[0].Content
@@ -244,7 +260,7 @@ func Intersection(a []string, b []string) ([]string, []string) {
 }
 
 // ParseMetric parses display name and type of field and metric type from the raw name of the metric as defined in (sub)template.
-// Users can rename a metric with "=>" (e.g. some_long_metric_name => short).
+// Users can rename a metric with "=>" (e.g., some_long_metric_name => short).
 // Trailing "^" characters are ignored/cleaned as they have special meaning in some collectors.
 func ParseMetric(rawName string) (string, string, string, string) {
 	var (
@@ -294,7 +310,7 @@ func SumNumbers(s []float64) float64 {
 	return total
 }
 
-// Max returns 0 when passed an empty slice, slices.Max panics if input is empty
+// Max returns 0 when passed an empty slice, slices.Max panics if input is empty,
 // This function can be removed once all callers are checked for empty slices
 func Max(input []float64) float64 {
 	if len(input) > 0 {
@@ -303,7 +319,7 @@ func Max(input []float64) float64 {
 	return 0
 }
 
-// Min returns 0 when passed an empty slice, slices.Min panics if input is empty
+// Min returns 0 when passed an empty slice, slices.Min panics if input is empty,
 // This function can be removed once all callers are checked for empty slices
 func Min(input []float64) float64 {
 	if len(input) > 0 {
