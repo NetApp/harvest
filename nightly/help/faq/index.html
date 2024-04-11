@@ -1454,9 +1454,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#how-do-i-switch-from-dockerhub-to-netapps-image-registry-crnetappio-or-vice-versa" class="md-nav__link">
+  <a href="#how-do-i-switch-between-image-registries" class="md-nav__link">
     <span class="md-ellipsis">
-      How do I switch from DockerHub to NetApp's image registry (cr.netapp.io) or vice-versa?
+      How do I switch between image registries?
     </span>
   </a>
   
@@ -2260,9 +2260,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#how-do-i-switch-from-dockerhub-to-netapps-image-registry-crnetappio-or-vice-versa" class="md-nav__link">
+  <a href="#how-do-i-switch-between-image-registries" class="md-nav__link">
     <span class="md-ellipsis">
-      How do I switch from DockerHub to NetApp's image registry (cr.netapp.io) or vice-versa?
+      How do I switch between image registries?
     </span>
   </a>
   
@@ -2513,13 +2513,14 @@ You can use that + metadata mapping the user &lt;-&gt; SVM. With both of those y
 </ul>
 <p>Additional details: <a href="https://stackoverflow.com/questions/38783424/prometheus-topk-returns-more-results-than-expected">here</a>, <a href="https://www.robustperception.io/graph-top-n-time-series-in-grafana">here</a>, and <a href="https://grafana.com/docs/grafana/latest/datasources/prometheus/">here</a></p>
 <h2 id="where-are-harvest-container-images-published">Where are Harvest container images published?<a class="headerlink" href="#where-are-harvest-container-images-published" title="Permanent link">&para;</a></h2>
-<p>Harvest images are published to both NetApp's (cr.netapp.io) and Docker's (hub.docker.com) image registry. By default, cr.netapp.io is used.</p>
-<h3 id="how-do-i-switch-from-dockerhub-to-netapps-image-registry-crnetappio-or-vice-versa">How do I switch from DockerHub to NetApp's image registry (cr.netapp.io) or vice-versa?<a class="headerlink" href="#how-do-i-switch-from-dockerhub-to-netapps-image-registry-crnetappio-or-vice-versa" title="Permanent link">&para;</a></h3>
+<p>Harvest container images are published to both GitHub's image registry (ghcr.io) and Docker's image registry (hub.docker.com). By default, <code>ghcr.io</code> is used for pulling images.</p>
+<p>Please note that <code>cr.netapp.io</code> is no longer being maintained. If you have been using <code>cr.netapp.io</code> to pull Harvest images, we encourage you to switch to <code>ghcr.io</code> or Docker Hub as your container image registry. Starting in 2024, we will cease publishing Harvest container images to <code>cr.netapp.io</code>.</p>
+<h3 id="how-do-i-switch-between-image-registries">How do I switch between image registries?<a class="headerlink" href="#how-do-i-switch-between-image-registries" title="Permanent link">&para;</a></h3>
 <h3 id="answer_7">Answer<a class="headerlink" href="#answer_7" title="Permanent link">&para;</a></h3>
-<p>Replace all instances of <code>rahulguptajss/harvest:latest</code> with <code>cr.netapp.io/harvest:latest</code></p>
+<p>Replace all instances of <code>rahulguptajss/harvest:latest</code> with <code>ghcr.io/netapp/harvest:latest</code>:</p>
 <ul>
 <li>
-<p>Edit your docker-compose file and make those replacements or regenerate the compose file using the <code>--image cr.netapp.io/harvest:latest</code> option)</p>
+<p>Edit your docker-compose file and make those replacements or regenerate the compose file.</p>
 </li>
 <li>
 <p>Update any shell or Ansible scripts you have that are also using those images</p>
@@ -2528,42 +2529,40 @@ You can use that + metadata mapping the user &lt;-&gt; SVM. With both of those y
 <p>After making these changes, you should stop your containers, pull new images, and restart.</p>
 </li>
 </ul>
-<p>You can verify that you're using the cr.netapp.io images like so:</p>
+<p>You can verify that you're using the GitHub Container Registry images like so:</p>
 <p><strong>Before</strong></p>
 <div class="highlight"><pre><span></span><code>docker image ls -a
-REPOSITORY              TAG       IMAGE ID       CREATED        SIZE
-rahulguptajss/harvest   latest    80061bbe1c2c   10 days ago    85.4MB &lt;=== no prefix in the repository 
-prom/prometheus         v2.33.1   e528f02c45a6   3 weeks ago    204MB       column means from DockerHub
-grafana/grafana         8.3.4     4a34578e4374   5 weeks ago    274MB
+REPOSITORY                  TAG       IMAGE ID       CREATED        SIZE
+rahulguptajss/harvest       latest    80061bbe1c2c   10 days ago    56.4MB &lt;=== Docker Hub
+prom/prometheus             v2.33.1   e528f02c45a6   3 weeks ago    204MB
+grafana/grafana             8.3.4     4a34578e4374   5 weeks ago    274MB
 </code></pre></div>
-<p><strong>Pull image from cr.netapp.io</strong></p>
-<div class="highlight"><pre><span></span><code>docker pull cr.netapp.io/harvest
+<p><strong>Pull image from GitHub Container Registry</strong></p>
+<div class="highlight"><pre><span></span><code>docker pull ghcr.io/netapp/harvest:latest
 Using default tag: latest
-latest: Pulling from harvest
+latest: Pulling from ghcr.io/netapp/harvest
 Digest: sha256:6ff88153812ebb61e9dd176182bf8a792cde847748c5654d65f4630e61b1f3ae
-Status: Image is up to date for cr.netapp.io/harvest:latest
-cr.netapp.io/harvest:latest
+Status: Image is up to date for ghcr.io/netapp/harvest:latest
+ghcr.io/netapp/harvest:latest
 </code></pre></div>
 <p>Notice that the <code>IMAGE ID</code> for both images are identical since the images are the same.</p>
 <div class="highlight"><pre><span></span><code>docker image ls -a
-REPOSITORY              TAG       IMAGE ID       CREATED        SIZE
-cr.netapp.io/harvest    latest    80061bbe1c2c   10 days ago    85.4MB  &lt;== Harvest image from cr.netapp.io
-rahulguptajss/harvest   latest    80061bbe1c2c   10 days ago    85.4MB
-prom/prometheus         v2.33.1   e528f02c45a6   3 weeks ago    204MB
-grafana/grafana         8.3.4     4a34578e4374   5 weeks ago    274MB
-grafana/grafana         latest    1d60b4b996ad   2 months ago   275MB
-prom/prometheus         latest    c10e9cbf22cd   3 months ago   194MB
+REPOSITORY                  TAG       IMAGE ID       CREATED        SIZE
+ghcr.io/netapp/harvest      latest    80061bbe1c2c   10 days ago    56.4MB  &lt;== Harvest image from GitHub Container Registry
+rahulguptajss/harvest       latest    80061bbe1c2c   10 days ago    56.4MB
+prom/prometheus             v2.33.1   e528f02c45a6   3 weeks ago    204MB
+grafana/grafana             8.3.4     4a34578e4374   5 weeks ago    274MB
 </code></pre></div>
-<p>We can now remove the DockerHub pulled image</p>
-<div class="highlight"><pre><span></span><code>docker image rm rahulguptajss/harvest
+<p>We can now remove the Docker Hub pulled image</p>
+<div class="highlight"><pre><span></span><code>docker image rm rahulguptajss/harvest:latest
 Untagged: rahulguptajss/harvest:latest
 Untagged: rahulguptajss/harvest@sha256:6ff88153812ebb61e9dd176182bf8a792cde847748c5654d65f4630e61b1f3ae
 
 docker image ls -a
-REPOSITORY             TAG       IMAGE ID       CREATED        SIZE
-cr.netapp.io/harvest   latest    80061bbe1c2c   10 days ago    85.4MB
-prom/prometheus        v2.33.1   e528f02c45a6   3 weeks ago    204MB
-grafana/grafana        8.3.4     4a34578e4374   5 weeks ago    274MB
+REPOSITORY              TAG       IMAGE ID       CREATED        SIZE
+ghcr.io/netapp/harvest   latest    80061bbe1c2c   10 days ago    56.4MB
+prom/prometheus         v2.33.1   e528f02c45a6   3 weeks ago    204MB
+grafana/grafana         8.3.4     4a34578e4374   5 weeks ago    274MB
 </code></pre></div>
 <h2 id="ports">Ports<a class="headerlink" href="#ports" title="Permanent link">&para;</a></h2>
 <h3 id="what-ports-does-harvest-use">What ports does Harvest use?<a class="headerlink" href="#what-ports-does-harvest-use" title="Permanent link">&para;</a></h3>

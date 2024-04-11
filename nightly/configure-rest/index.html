@@ -1058,6 +1058,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1924,6 +1933,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2285,6 +2303,73 @@ exporters, the following parameters can be defined:</p>
 <li><code>instance_labels</code> (list): display names of labels to export as a separate data-point</li>
 <li><code>include_all_labels</code> (bool): export all labels with each data-point (overrides previous two parameters)</li>
 </ul>
+<h4 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">&para;</a></h4>
+<p>In Harvest REST templates, <code>endpoints</code> are additional queries that enhance the data collected from the main query. The main query, identified by the <code>query</code> parameter, is the primary REST API for data collection. For example, the main query for a <code>disk</code> object is <code>api/storage/disks</code>.
+Typically <code>endpoints</code> are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.</p>
+<p>Within the <code>endpoints</code> section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own <code>query</code> and associated <code>counters</code>, allowing you to collect additional metrics or labels from various API.
+These additional metrics or labels are associated with the main dataset via a key. The key is denoted by the <code>^^</code> notation in the counters of both the main query and the <code>endpoints</code>.</p>
+<p>In the example below, the <code>endpoints</code> section makes an additional query to <code>api/private/cli/disk</code>, which collects metrics such as <code>stats_io_kbps</code>, <code>stats_sectors_read</code>, and <code>stats_sectors_written</code>. The <code>uuid</code> is the key that links the data from the <code>api/storage/disks</code> and <code>api/private/cli/disk</code> API.
+The <code>type</code> label from the <code>api/private/cli/disk</code> endpoint is included as outlined in the <code>export_options</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">             </span><span class="l l-Scalar l-Scalar-Plain">Disk</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">api/storage/disks</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">           </span><span class="l l-Scalar l-Scalar-Plain">disk</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^uid                       =&gt; uuid</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^bay                        =&gt; shelf_bay</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^container_type</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^home_node.name             =&gt; owner_node</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^model</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^name                       =&gt; disk</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^node.name                  =&gt; node</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^node.uuid</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^outage.reason              =&gt; outage</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^serial_number</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^shelf.uid                  =&gt; shelf</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^state</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bytes_per_sector            =&gt; bytes_per_sector</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sector_count                =&gt; sectors</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stats.average_latency       =&gt; stats_average_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stats.power_on_hours        =&gt; power_on_hours</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">usable_size</span>
+
+<span class="nt">endpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api/private/cli/disk</span>
+<span class="w">    </span><span class="nt">counters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^uid                   =&gt; uuid</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^type</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk_io_kbps_total      =&gt; stats_io_kbps</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sectors_read            =&gt; stats_sectors_read</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sectors_written         =&gt; stats_sectors_written</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Disk</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">LabelAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">value_to_num</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new_status outage - - `0`</span><span class="w"> </span><span class="c1">#ok_value is empty value, &#39;-&#39; would be converted to blank while processing.</span>
+<span class="w">      </span><span class="nt">join</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index `_` node,disk</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MetricAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">compute_metric</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uptime MULTIPLY stats.power_on_hours 60 60</span><span class="w"> </span><span class="c1">#convert to second for zapi parity</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">container_type</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">failed</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">model</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">outage</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">owner_node</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">serial_number</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shared</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shelf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shelf_bay</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
+</code></pre></div>
 <h2 id="restperf-collector">RestPerf Collector<a class="headerlink" href="#restperf-collector" title="Permanent link">&para;</a></h2>
 <p>RestPerf collects performance metrics from ONTAP systems using the REST protocol. The collector is designed to be easily
 extendable to collect new objects or to collect additional counters from already configured objects.</p>
