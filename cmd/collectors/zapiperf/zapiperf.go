@@ -1388,9 +1388,13 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			if baseKey != "" && len(baseLabels) != 0 {
 				baseKey += "." + baseLabels[i]
 			}
-			if m, err = mat.NewMetricFloat64(key, display); err != nil {
-				z.Logger.Error().Err(err).Msgf("add array metric element [%s]: ", key)
-				return ""
+			m = mat.GetMetric(key)
+			if m == nil {
+				m, err = mat.NewMetricFloat64(key, display)
+				if err != nil {
+					z.Logger.Error().Err(err).Str("key", key).Msg("add array metric element")
+					return ""
+				}
 			}
 
 			m.SetProperty(property)
@@ -1416,10 +1420,13 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 
 		// counter type is scalar
 	} else {
-		var m *matrix.Metric
-		if m, err = mat.NewMetricFloat64(name, display); err != nil {
-			z.Logger.Error().Err(err).Msgf("add scalar metric [%s]", name)
-			return ""
+		m := mat.GetMetric(name)
+		if m == nil {
+			m, err = mat.NewMetricFloat64(name, display)
+			if err != nil {
+				z.Logger.Error().Err(err).Str("key", name).Msg("add scalar metric")
+				return ""
+			}
 		}
 
 		z.scalarCounters = append(z.scalarCounters, name)
