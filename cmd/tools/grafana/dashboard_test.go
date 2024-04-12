@@ -807,12 +807,12 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 	})
 }
 
-// - collect all expressions that include "topk". Ignore expressions that are:
+// - Collect all expressions and variables that include "topk".
+// Ignore expressions that are:
 // 		- part of a table or stat or
 //      - calculate a percentage
-// - for each expression - check if any variable used in the expression has a topk range
-//   a) if it does, pass
-//   b) otherwise fail, printing the expression, path, dashboard
+// - if the var|expression includes a `rate|deriv`, ensure the look-back is 4m
+// - otherwise, the look-back should be 3h
 
 func TestTopKRange(t *testing.T) {
 	VisitDashboards(
@@ -846,24 +846,29 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 		if strings.Contains(expr.expr, "/") {
 			continue
 		}
-		hasRange := false
-	vars:
+
 		for _, name := range expr.vars {
-			for _, v := range variables {
-				if v.name == name && strings.Contains(v.query, "__range") {
-					hasRange = true
-					break vars
-				}
+			v, ok := variables[name]
+			if !ok {
+				t.Errorf(`dashboard=%s path=%s is using var that does not exist. var=%s`,
+					ShortPath(path), expr.path, name)
+				continue
+			}
+			if !strings.Contains(v.query, "topk") {
+				continue
+			}
+
+			noWhitespace := strings.ReplaceAll(v.query, " ", "")
+			problem := ensureLookBack(noWhitespace)
+			if problem != "" {
+				t.Errorf(`dashboard=%s var=%s topk got=%s %s`, ShortPath(path), v.name, v.query, problem)
 			}
 		}
 
 		noWhitespace := strings.ReplaceAll(expr.expr, " ", "")
-		if strings.Contains(noWhitespace, "[$__range]@end()") {
-			hasRange = true
-		}
-		if !hasRange {
-			t.Errorf(`dashboard=%s path=%s use topk but no variable has range. expr=%s`,
-				ShortPath(path), expr.path, expr.expr)
+		problem := ensureLookBack(noWhitespace)
+		if problem != "" {
+			t.Errorf(`dashboard=%s path=%s topk got=%s %s`, ShortPath(path), expr.path, expr.expr, problem)
 		}
 	}
 
@@ -905,6 +910,22 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 		}
 	}
 
+}
+
+func ensureLookBack(noWhitespace string) string {
+	if !strings.Contains(noWhitespace, "[") {
+		return ""
+	}
+	if strings.Contains(noWhitespace, "rate(") || strings.Contains(noWhitespace, "deriv(") {
+		if !strings.Contains(noWhitespace, "[4m]") {
+			return "rate/deriv want=[4m]"
+		}
+	} else {
+		if !strings.Contains(noWhitespace, "[3h]") {
+			return "range lookback want=[3h]"
+		}
+	}
+	return ""
 }
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
