@@ -345,7 +345,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of insync snapmirrors.",
+      "description": "Number of consistency group protected snapmirrors.",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -377,6 +377,78 @@
         "h": 4,
         "w": 4,
         "x": 12,
+        "y": 3
+      },
+      "id": 23,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "expr": "count (count by (relationship_id) (snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",relationship_id!=\"\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Consistency Group",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of insync snapmirrors.",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "light-purple",
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-purple",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
         "y": 3
       },
       "id": 22,
@@ -449,7 +521,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 16,
+        "x": 20,
         "y": 3
       },
       "id": 21,
@@ -675,6 +747,40 @@
                 "value": 200
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Type"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "consistencygroup": {
+                        "index": 2,
+                        "text": "Consistency Group"
+                      },
+                      "flexgroup": {
+                        "index": 3,
+                        "text": "FlexGroup"
+                      },
+                      "none": {
+                        "index": 0,
+                        "text": "Volume"
+                      },
+                      "vserver": {
+                        "index": 1,
+                        "text": "SVM DR"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -721,6 +827,16 @@
           "interval": "",
           "legendFormat": "",
           "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
         }
       ],
       "timeFrom": null,
@@ -740,7 +856,8 @@
                 "source_vserver",
                 "Value #C",
                 "Value #A",
-                "Value #B"
+                "Value #B",
+                "group_type"
               ]
             }
           }
@@ -787,19 +904,16 @@
               "source_vserver": false
             },
             "indexByName": {
-              "Time": 1,
-              "__name__": 2,
-              "cluster": 4,
-              "datacenter": 5,
-              "destination_node": 6,
-              "destination_volume": 8,
-              "destination_vserver": 7,
-              "instance": 11,
-              "job": 12,
-              "relationship_id": 0,
-              "source_cluster": 3,
-              "source_volume": 10,
-              "source_vserver": 9
+              "Value #A": 8,
+              "Value #B": 9,
+              "Value #C": 7,
+              "cluster": 1,
+              "destination_volume": 3,
+              "destination_vserver": 2,
+              "group_type": 6,
+              "source_cluster": 0,
+              "source_volume": 5,
+              "source_vserver": 4
             },
             "renameByName": {
               "Value #A": "Size",
@@ -808,6 +922,7 @@
               "cluster": "Destination Cluster",
               "destination_volume": "Destination Volume",
               "destination_vserver": "Destination SVM",
+              "group_type": "Type",
               "source_cluster": "Source Cluster",
               "source_volume": "Source Volume",
               "source_vserver": "Source SVM"
@@ -3932,7 +4047,7 @@
             "x": 14,
             "y": 42
           },
-          "id": 131,
+          "id": 137,
           "options": {
             "footer": {
               "fields": "",
@@ -3990,6 +4105,599 @@
         }
       ],
       "title": "SnapMirror Data Protection Analysis per Cluster",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 43,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": []
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 13,
+            "x": 0,
+            "y": 7
+          },
+          "id": 113,
+          "options": {
+            "displayLabels": [],
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"extended_data_protection\"}) or vector(0)",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Asynchronous Mirror",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"mirror_vault\"}) or vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Asynchronous Mirror and Vault",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"vault\"}) or vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Asynchronous Vault",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"sync_mirror_strict\"}) or vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "StrictSync",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"sync_mirror\"}) or vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Sync",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"automated_failover\"}) or vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Automated Failover",
+              "refId": "F"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"automated_failover_duplex\"}) or vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Automated Failover Duplex",
+              "refId": "G"
+            }
+          ],
+          "title": "Consistency Group relationship count by relationship type",
+          "transformations": [],
+          "type": "piechart"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": []
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unhealthy"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 11,
+            "x": 13,
+            "y": 7
+          },
+          "id": 114,
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",healthy=\"true\",cg_name=~\"$ConsistencyGroup\",relationship_id!=\"\"}) or vector (0)",
+              "format": "time_series",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Healthy",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",healthy=\"false\",cg_name=~\"$ConsistencyGroup\",relationship_id!=\"\"}) or vector (0)",
+              "format": "time_series",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Unhealthy",
+              "refId": "B"
+            }
+          ],
+          "title": "Consistency Group relationship count by relationship health",
+          "type": "piechart"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "source_volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Source Volume"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 410
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "derived_relationship_type"
+                },
+                "properties": [
+                  {
+                    "id": "custom.filterable",
+                    "value": true
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 300
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Protection Policy"
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "automated_failover": {
+                            "index": 5,
+                            "text": "Automated Failover"
+                          },
+                          "automated_failover_duplex": {
+                            "index": 6,
+                            "text": "Automated Failover Duplex"
+                          },
+                          "extended_data_protection": {
+                            "index": 2,
+                            "text": "Asynchronous Mirror"
+                          },
+                          "mirror_vault": {
+                            "index": 0,
+                            "text": "Asynchronous Mirror and Vault"
+                          },
+                          "sync_mirror": {
+                            "index": 1,
+                            "text": "Sync"
+                          },
+                          "sync_mirror_strict": {
+                            "index": 4,
+                            "text": "StrictSync"
+                          },
+                          "vault": {
+                            "index": 3,
+                            "text": "Asynchronous Vault"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "destination_volume"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 410
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Destination Volume"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Consistency Group"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 14,
+            "w": 13,
+            "x": 0,
+            "y": 42
+          },
+          "id": 132,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",relationship_id!=\"\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Consistency Group relationship count by relationship type",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "derived_relationship_type",
+                    "destination_volume",
+                    "source_volume",
+                    "cg_name"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cg_name": 0,
+                  "derived_relationship_type": 3,
+                  "destination_volume": 2,
+                  "source_volume": 1
+                },
+                "renameByName": {
+                  "cg_name": "Consistency Group",
+                  "derived_relationship_type": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy Status"
+                },
+                "properties": [
+                  {
+                    "id": "custom.filterable",
+                    "value": true
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "Unhealthy"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Healthy"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Source Volume"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 310
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Destination Volume"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 310
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Consistency Group"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 14,
+            "w": 11,
+            "x": 14,
+            "y": 42
+          },
+          "id": 131,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",relationship_id!=\"\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Consistency Group relationship count by relationship health",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "destination_volume",
+                    "source_volume",
+                    "healthy",
+                    "cg_name"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cg_name": 0,
+                  "destination_volume": 2,
+                  "healthy": 3,
+                  "source_volume": 1
+                },
+                "renameByName": {
+                  "cg_name": "Consistency Group",
+                  "destination_volume": "Destination Volume",
+                  "healthy": "Healthy Status",
+                  "source_volume": "Source Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Consistency Group Data Protection Analysis per Cluster",
       "type": "row"
     }
   ],
@@ -4349,6 +5057,32 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, cg_name)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "ConsistencyGroup",
+        "options": [],
+        "query": {
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, cg_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },

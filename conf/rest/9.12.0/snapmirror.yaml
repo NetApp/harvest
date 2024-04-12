@@ -59,6 +59,7 @@ export_options:
     - source_volume
     - source_vserver
   instance_labels:
+    - cg_name
     - derived_relationship_type
     - group_type
     - healthy
