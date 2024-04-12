@@ -858,15 +858,13 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				continue
 			}
 
-			noWhitespace := strings.ReplaceAll(v.query, " ", "")
-			problem := ensureLookBack(noWhitespace)
+			problem := ensureLookBack(v.query)
 			if problem != "" {
 				t.Errorf(`dashboard=%s var=%s topk got=%s %s`, ShortPath(path), v.name, v.query, problem)
 			}
 		}
 
-		noWhitespace := strings.ReplaceAll(expr.expr, " ", "")
-		problem := ensureLookBack(noWhitespace)
+		problem := ensureLookBack(expr.expr)
 		if problem != "" {
 			t.Errorf(`dashboard=%s path=%s topk got=%s %s`, ShortPath(path), expr.path, expr.expr, problem)
 		}
@@ -912,19 +910,41 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 
 }
 
-func ensureLookBack(noWhitespace string) string {
-	if !strings.Contains(noWhitespace, "[") {
+var lookBackRe = regexp.MustCompile(`\[(.*?)]`)
+
+// ensureLookBack ensures that the look-back for a topk query is either 4m or 3h.
+// If the query contains a rate or deriv function, the look-back should be 4m
+// otherwise, the look-back should be 3h.
+// If the look-back is incorrect, the function returns a string describing the correct look-back
+func ensureLookBack(text string) string {
+	if !strings.Contains(text, "[") {
 		return ""
 	}
-	if strings.Contains(noWhitespace, "rate(") || strings.Contains(noWhitespace, "deriv(") {
-		if !strings.Contains(noWhitespace, "[4m]") {
-			return "rate/deriv want=[4m]"
+	// search for the first look-back
+	matches := lookBackRe.FindAllStringSubmatch(text, -1)
+	indexes := lookBackRe.FindAllStringIndex(text, -1)
+
+	for i, match := range matches {
+		indexOfLookBack := indexes[i][1]
+
+		// search backwards for the function
+		openIndex := strings.LastIndex(text[:indexOfLookBack], "(")
+		space := strings.LastIndex(text[:openIndex], " ")
+		if space == -1 {
+			space = 0
 		}
-	} else {
-		if !strings.Contains(noWhitespace, "[3h]") {
+		function := text[space:openIndex]
+
+		if strings.Contains(function, "rate") || strings.Contains(function, "deriv") {
+			if match[1] != "4m" {
+				return "rate/deriv want=[4m]"
+			}
+		} else if match[1] != "3h" {
 			return "range lookback want=[3h]"
 		}
+
 	}
+
 	return ""
 }
 
