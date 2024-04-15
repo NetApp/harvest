@@ -2108,7 +2108,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "plex_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggr\"}[$__range] @ end()))",
+              "expr": "plex_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",aggr=~\"$Aggr\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2344,7 +2344,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
+              "expr": "plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_reads{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2441,7 +2441,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
+              "expr": "plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_writes{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2534,7 +2534,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
+              "expr": "plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_read_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[3h] @ end()))",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -2625,7 +2625,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[$__range] @ end()))",
+              "expr": "plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"} \n  and \ntopk($TopResources, avg_over_time(plex_disk_user_write_latency{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}.{{aggr}}.{{plex}}",
@@ -2735,7 +2735,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}\n  and \ntopk($TopResources, avg_over_time(hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[$__range] @ end()))",
+              "expr": "hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}\n  and \ntopk($TopResources, avg_over_time(hostadapter_bytes_read{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}} - {{hostadapter}}",
@@ -2829,7 +2829,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}\n  and \ntopk($TopResources, avg_over_time(hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[$__range] @ end()))",
+              "expr": "hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}\n  and \ntopk($TopResources, avg_over_time(hostadapter_bytes_written{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}} - {{hostadapter}}",

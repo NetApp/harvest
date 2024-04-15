@@ -211,7 +211,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"} \n  and \ntopk($TopResources, avg_over_time(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__range] @ end()))",
+          "expr": "cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"} \n  and \ntopk($TopResources, avg_over_time(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{client_ip}} - {{protocol}}",
           "refId": "A"

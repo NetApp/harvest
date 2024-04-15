@@ -808,7 +808,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
+          "expr": "environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}}",
@@ -899,7 +899,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
+          "expr": "environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -989,7 +989,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
+          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -1080,7 +1080,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
+          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -1171,7 +1171,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
+          "expr": "aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{cluster}} - {{aggr}}",
