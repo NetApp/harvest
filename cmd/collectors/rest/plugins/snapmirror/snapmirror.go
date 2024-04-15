@@ -12,14 +12,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"regexp"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 const PluginInvocationRate = 10
-
-var cgNameRe = regexp.MustCompile(`^(?:[^\/]*\/){2}([^\/]*)`)
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
@@ -188,10 +186,7 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 	for _, key := range keys {
 		cgInstance := data.GetInstance(key)
 		// find cgName from the destination_location
-		matches := cgNameRe.FindStringSubmatch(cgInstance.GetLabel("destination_location"))
-		if len(matches) == 2 {
-			cgInstance.SetLabel("cg_name", matches[1])
-		}
+		cgInstance.SetLabel("cg_name", filepath.Base(cgInstance.GetLabel("destination_location")))
 
 		cgItemMappings := cgInstance.GetLabel("cg_item_mappings")
 		// cg_item_mappings would be array of cgMapping. Example: vols1:@vold1,vols2:@vold2
