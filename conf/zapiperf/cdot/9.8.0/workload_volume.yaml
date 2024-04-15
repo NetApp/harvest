@@ -9,8 +9,6 @@ object:                   qos
 # recommended to use large interval, since workload objects are expensive
 client_timeout:           1m30s
 schedule:
-  - counter:  20m
-  - instance: 10m
   - data:      3m
 
 instance_key:             name
