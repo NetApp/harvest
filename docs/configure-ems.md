@@ -1,8 +1,11 @@
 ## EMS collector
 
 The `EMS collector`
-collects [ONTAP event management system](https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=62286) (
-EMS) events via the ONTAP REST API.
+collects [ONTAP event management system](https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=62286)
+(EMS) events via the ONTAP REST API.
+
+The [EMS alert runbook](resources/ems-alert-runbook.md) includes descriptions and remediation steps for the EMS events
+that Harvest collects.
 
 This collector uses a YAML template file to define which events to collect, export, and what labels to attach to each
 metric. This means you can collect new EMS events or attach new labels by editing
