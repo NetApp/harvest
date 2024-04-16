@@ -6,6 +6,8 @@ This document describes each [ONTAP event management system](https://mysupport.n
 
 **Impact**: Availability
 
+**EMS Event**: `cloud.aws.iamNotInitialized`
+
 This event occurs when a module attempts to access Amazon Web Services (AWS) Identity and Access Management (IAM) role-based credentials from the cloud credentials thread before they are initialized.
 
 **Remediation**
@@ -15,6 +17,8 @@ Wait for the cloud credential thread, as well as the system, to complete initial
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.vscanConnBackPressure`
+
 The antivirus server is too busy to accept any new scan requests.
 
 **Remediation**
@@ -23,6 +27,8 @@ If this message occurs frequently, ensure that there are enough antivirus server
 ### Cloud Tier Unreachable
 
 **Impact**: Availability
+
+**EMS Event**: `object.store.unavailable`
 
 A storage node cannot connect to Cloud Tier object store API. Some data will be inaccessible.
 
@@ -46,20 +52,28 @@ If you use Cloud Volumes ONTAP, perform the following corrective actions:
 
 **Impact**: Availability
 
+**EMS Event**: `disk.outOfService`
+
 This event occurs when a disk is removed from service because it has been marked failed, is being sanitized, or has entered the Maintenance Center.
 ### Disk Shelf Power Supply Discovered
 
 **Impact**: Configuration
+
+**EMS Event**: `diskShelf.psu.added`
 
 This message occurs when a power supply unit is added to the disk shelf.
 ### Disk Shelves Power Supply Removed
 
 **Impact**: Availability
 
+**EMS Event**: `diskShelf.psu.removed`
+
 This message occurs when a power supply unit is removed from the disk shelf.
 ### FC Target Port Commands Exceeded
 
 **Impact**: Availability
+
+**EMS Event**: `scsitarget.fct.port.full`
 
 The number of outstanding commands on the physical FC target port exceeds the supported limit. The port does not have sufficient buffers for the outstanding commands. It is overrun or the fan-in is too steep because too many initiator I/Os are using it.
 
@@ -79,10 +93,14 @@ Perform the following corrective actions:
 
 **Impact**: Capacity
 
+**EMS Event**: `wafl.ca.resync.complete`
+
 This message occurs when Data ONTAP(R) completes the resync process from the primary object store to the mirror object store for a mirrored FabricPool aggregate.
 ### FabricPool Space Usage Limit Nearly Reached
 
 **Impact**: Capacity
+
+**EMS Event**: `fabricpool.nearly.full`
 
 The total cluster-wide FabricPool space usage of object stores from capacity-licensed providers has nearly reached the licensed limit.
 
@@ -97,6 +115,8 @@ Perform the following corrective actions:
 
 **Impact**: Capacity
 
+**EMS Event**: `fabricpool.full`
+
 The total cluster-wide FabricPool space usage of object stores from capacity-licensed providers has reached  the license limit.
 
 **Remediation**
@@ -109,6 +129,8 @@ Perform the following corrective actions:
 ### Giveback of Storage Pool Failed
 
 **Impact**: Availability
+
+**EMS Event**: `gb.netra.ca.check.failed`
 
 This event occurs during the migration of an storage pool (aggregate) as part of a storage failover (SFO) giveback, when the destination node cannot reach the object stores.
 
@@ -126,6 +148,8 @@ Contact NetApp technical support for more information or assistance.
 ### HA Interconnect Down
 
 **Impact**: Availability
+
+**EMS Event**: `callhome.hainterconnect.down`
 
 The high-availability (HA) interconnect is down. Risk of service outage when failover is not available.
 
@@ -145,10 +169,14 @@ Contact NetApp technical support if the issue persists.
 
 **Impact**: Availability
 
+**EMS Event**: `LUN.destroy`
+
 This event occurs when a LUN is destroyed.
 ### LUN Offline
 
 **Impact**: Availability
+
+**EMS Event**: `LUN.offline`
 
 This message occurs when a LUN is brought offline manually.
 
@@ -158,6 +186,8 @@ Bring the LUN back online.
 ### Main Unit Fan Failed
 
 **Impact**: Availability
+
+**EMS Event**: `monitor.fan.failed`
 
 One or more main unit fans have failed. The system remains operational.
 
@@ -170,6 +200,8 @@ Reseat the failed fans. If the error persists, replace them.
 
 **Impact**: Availability
 
+**EMS Event**: `monitor.fan.warning`
+
 This event occurs when one or more main unit fans are in a warning state.
 
 **Remediation**
@@ -178,6 +210,8 @@ Replace the indicated fans to avoid overheating.
 ### Max Sessions Per User Exceeded
 
 **Impact**: Availability
+
+**EMS Event**: `Nblade.cifsMaxSessPerUsrConn`
 
 You have exceeded the maximum number of sessions allowed per user over a TCP connection. Any request to establish a session will be denied until some sessions are released.
 
@@ -193,6 +227,8 @@ Perform the following corrective actions:
 ### Max Times Open Per File Exceeded
 
 **Impact**: Availability
+
+**EMS Event**: `Nblade.cifsMaxOpenSameFile`
 
 You have exceeded the maximum number of times that you can open the file over a TCP connection. Any request to open this file will be denied until you close some open instances of the file. This typically indicates abnormal application behavior.
 
@@ -211,6 +247,8 @@ Perform the following corrective actions:
 
 **Impact**: Availability
 
+**EMS Event**: `mcc.config.auso.stDisabled`
+
 This message occurs when automatic unplanned switchover capability is disabled.
 
 **Remediation**
@@ -219,6 +257,8 @@ Run the "metrocluster modify -node-name <nodename> -automatic-switchover-onfailu
 ### MetroCluster Monitoring
 
 **Impact**: Availability
+
+**EMS Event**: `hm.alert.raised`
 
 Aggregate was left behind during switchback.
 
@@ -230,6 +270,8 @@ Aggregate was left behind during switchback.
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.nfsV4PoolExhaust`
+
 A NFSv4 store pool has been exhausted.
 
 **Remediation**
@@ -239,20 +281,28 @@ If the NFS server is unresponsive for more than 10 minutes after this event, con
 
 **Impact**: Availability
 
+**EMS Event**: `NVMeNS.destroy`
+
 This event occurs when an NVMe namespace is destroyed.
 ### NVMe Namespace Offline
 
 **Impact**: Availability
+
+**EMS Event**: `NVMeNS.offline`
 
 This event occurs when an NVMe namespace is brought offline manually.
 ### NVMe Namespace Online
 
 **Impact**: Availability
 
+**EMS Event**: `NVMeNS.online`
+
 This event occurs when an NVMe namespace is brought online manually.
 ### NVMe-oF License Grace Period Active
 
 **Impact**: Availability
+
+**EMS Event**: `nvmf.graceperiod.active`
 
 This event occurs on a daily basis when the NVMe over Fabrics (NVMe-oF) protocol is in use and the grace period of the license is active. The NVMe-oF functionality requires a license after the license grace period expires. NVMe-oF functionality is disabled when the license grace period is over.
 
@@ -263,6 +313,8 @@ Contact your sales representative to obtain an NVMe-oF license, and add it to th
 
 **Impact**: Availability
 
+**EMS Event**: `nvmf.graceperiod.expired`
+
 The NVMe over Fabrics (NVMe-oF) license grace period is over and the NVMe-oF functionality is disabled.
 
 **Remediation**
@@ -272,6 +324,8 @@ Contact your sales representative to obtain an NVMe-oF license, and add it to th
 
 **Impact**: Availability
 
+**EMS Event**: `nvmf.graceperiod.start`
+
 The NVMe over Fabrics (NVMe-oF) configuration was detected during the upgrade to ONTAP 9.5 software. NVMe-oF functionality requires a license after the license grace period expires.
 
 **Remediation**
@@ -280,6 +334,8 @@ Contact your sales representative to obtain an NVMe-oF license, and add it to th
 ### NVRAM Battery Low
 
 **Impact**: Availability
+
+**EMS Event**: `callhome.battery.low`
 
 The NVRAM battery capacity is critically low. There might be a potential data loss if the battery runs out of power.
 
@@ -296,6 +352,8 @@ Perform the following corrective actions:
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.cifsNbNameConflict`
+
 The NetBIOS Name Service has received a negative response to a name registration request, from a remote machine. This is typically caused by a conflict in the NetBIOS name or an alias. As a result, clients might not be able to access data or connect to the right data-serving node in the cluster.
 
 **Remediation**
@@ -311,6 +369,8 @@ Perform any one of the following corrective actions:
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.vscanNoRegdScanner`
+
 The antivirus connector notified ONTAP that it does not have a registered scan engine. This might cause data unavailability if the "scan-mandatory" option is enabled.
 
 **Remediation**
@@ -323,6 +383,8 @@ Perform the following corrective actions:
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.vscanNoScannerConn`
+
 ONTAP has no Vscan connection to service virus scan requests. This might cause data unavailability if the "scan-mandatory" option is enabled.
 
 **Remediation**
@@ -332,6 +394,8 @@ Ensure that the scanner pool is properly configured and the antivirus servers ar
 
 **Impact**: Performance
 
+**EMS Event**: `sk.panic`
+
 This event is issued when a panic occurs.
 
 **Remediation**
@@ -340,6 +404,8 @@ Contact NetApp customer support.
 ### Node Root Volume Space Low
 
 **Impact**: Capacity
+
+**EMS Event**: `mgmtgwd.rootvolrec.low.space`
 
 The system has detected that the root volume is dangerously low on space. The node is not fully operational. Data LIFs might have failed over within the cluster, because of which NFS and CIFS access is limited on the node. Administrative capability is limited to local recovery procedures for the node to clear up space on the root volume.
 
@@ -355,6 +421,8 @@ Contact NetApp technical support for more information or assistance.
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.vscanConnInactive`
+
 This event occurs when ONTAP(R) detects a non-responsive antivirus (AV) server and forcibly closes its Vscan connection.
 
 **Remediation**
@@ -363,6 +431,8 @@ Ensure that the AV server installed on the AV connector can connect to the Stora
 ### Nonexistent Admin Share
 
 **Impact**: Availability
+
+**EMS Event**: `Nblade.cifsNoPrivShare`
 
 Vscan issue: a client has attempted to connect to a nonexistent ONTAP_ADMIN$ share.
 
@@ -373,10 +443,14 @@ Ensure that Vscan is enabled for the mentioned SVM ID. Enabling Vscan on a SVM c
 
 **Impact**: Protection
 
+**EMS Event**: `sm.mediator.added`
+
 This message occurs when ONTAP Mediator is added successfully on a cluster.
 ### ONTAP Mediator CA Certificate Expired
 
 **Impact**: Protection
+
+**EMS Event**: `sm.mediator.cacert.expired`
 
 This message occurs when the ONTAP Mediator certificate authority (CA) certificate has expired. As a result, all further communication to the ONTAP Mediator will not be possible.
 
@@ -387,6 +461,8 @@ Remove the configuration of the current ONTAP Mediator by using the "snapmirror 
 
 **Impact**: Protection
 
+**EMS Event**: `sm.mediator.cacert.expiring`
+
 This message occurs when the ONTAP Mediator certificate authority (CA) certificate is due to expire within the next 30 days.
 
 **Remediation**
@@ -395,6 +471,8 @@ Before this certificate expires, remove the configuration of the current ONTAP M
 ### ONTAP Mediator Client Certificate Expired
 
 **Impact**: Protection
+
+**EMS Event**: `sm.mediator.clientc.expired`
 
 This message occurs when the ONTAP Mediator client certificate has expired. As a result, all further communication to the ONTAP Mediator will not be possible.
 
@@ -405,6 +483,8 @@ Remove the configuration of the current ONTAP Mediator by using the "snapmirror 
 
 **Impact**: Protection
 
+**EMS Event**: `sm.mediator.clientc.expiring`
+
 This message occurs when the ONTAP Mediator client certificate is due to expire within the next 30 days.
 
 **Remediation**
@@ -413,6 +493,8 @@ Before this certificate expires, remove the configuration of the current ONTAP M
 ### ONTAP Mediator Not Accessible
 
 **Impact**: Protection
+
+**EMS Event**: `sm.mediator.misconfigured`
 
 This message occurs when either the ONTAP Mediator is repurposed or the Mediator package is no longer installed on the Mediator server. As a result, SnapMirror failover is not possible.
 
@@ -423,10 +505,14 @@ Remove the configuration of the current ONTAP Mediator by using the "snapmirror 
 
 **Impact**: Protection
 
+**EMS Event**: `sm.mediator.removed`
+
 This message occurs when ONTAP Mediator is removed successfully from a cluster.
 ### ONTAP Mediator Server Certificate Expired
 
 **Impact**: Protection
+
+**EMS Event**: `sm.mediator.serverc.expired`
 
 This message occurs when the ONTAP Mediator server certificate has expired. As a result, all further communication to the ONTAP Mediator will not be possible.
 
@@ -437,6 +523,8 @@ Remove the configuration of the current ONTAP Mediator by using the "snapmirror 
 
 **Impact**: Protection
 
+**EMS Event**: `sm.mediator.serverc.expiring`
+
 This message occurs when the ONTAP Mediator server certificate is due to expire within the next 30 days.
 
 **Remediation**
@@ -445,6 +533,8 @@ Before this certificate expires, remove the configuration of the current ONTAP M
 ### ONTAP Mediator Unreachable
 
 **Impact**: Protection
+
+**EMS Event**: `sm.mediator.unreachable`
 
 This message occurs when the ONTAP Mediator is unreachable on a cluster. As a result, SnapMirror failover is not possible.
 
@@ -455,6 +545,8 @@ Check the network connectivity to the ONTAP Mediator by using the "network ping"
 
 **Impact**: Availability
 
+**EMS Event**: `objstore.host.unresolvable`
+
 The object store server host name cannot be resolved to an IP address. The object store client cannot communicate with the object-store server without resolving to an IP address. As a result, data might be inaccessible.
 
 **Remediation**
@@ -463,6 +555,8 @@ Check the DNS configuration to verify that the host name is configured correctly
 ### Object Store Intercluster LIF Down
 
 **Impact**: Availability
+
+**EMS Event**: `objstore.interclusterlifDown`
 
 The object-store client cannot find an operational LIF to communicate with the object store server. The node will not allow object store client traffic until the intercluster LIF is operational. As a result, data might be inaccessible.
 
@@ -477,6 +571,8 @@ Perform the following corrective actions:
 
 **Impact**: Availability
 
+**EMS Event**: `osc.signatureMismatch`
+
 The request signature sent to the object store server does not match the signature calculated by the client. As a result, data might be inaccessible.
 
 **Remediation**
@@ -486,6 +582,8 @@ Verify that the secret access key is configured correctly. If it is configured c
 
 **Impact**: Capacity
 
+**EMS Event**: `qos.monitor.memory.maxed`
+
 This event occurs when a QoS subsystem's dynamic memory reaches its limit for the current platform hardware. As a result, some QoS features might operate in a limited capacity.
 
 **Remediation**
@@ -494,6 +592,8 @@ Delete some active workloads or streams to free up memory. Use the "statistics s
 ### READDIR Timeout
 
 **Impact**: Availability
+
+**EMS Event**: `wafl.readdir.expired`
 
 A READDIR file operation has exceeded the timeout that it is allowed to run in WAFL. This can be because of very large or sparse directories. Corrective action is recommended.
 
@@ -510,6 +610,8 @@ Perform the following corrective actions:
 
 **Impact**: Security
 
+**EMS Event**: `callhome.arw.activity.seen`
+
 To protect the data from the detected ransomware, a Snapshot copy has been taken that can be used to restore original data.
 
 Your system generates and transmits an AutoSupport or "call home" message to NetApp technical support and any configured destinations. AutoSupport message improves problem determination and resolution.
@@ -520,6 +622,8 @@ Refer to the anti-ransomware documentation to take remedial measures for ransomw
 ### Relocation of Storage Pool Failed
 
 **Impact**: Availability
+
+**EMS Event**: `arl.netra.ca.check.failed`
 
 This event occurs during the relocation of an storage pool (aggregate), when the destination node cannot reach the object stores.
 
@@ -538,6 +642,8 @@ Contact NetApp technical support for more information or assistance.
 
 **Impact**: Availability
 
+**EMS Event**: `scsiblade.san.config.active`
+
 The SAN pathing is no longer symmetric. Pathing should be asymmetric only on ASA, because AFF and FAS are both asymmetric.
 
 **Remediation**
@@ -546,6 +652,8 @@ Try and enable the "active-active" state. Contact customer support if the proble
 ### SFP in FC target adapter receiving low power
 
 **Impact**: Availability
+
+**EMS Event**: `scsitarget.fct.sfpRxPowerLow`
 
 This alert occurs when the power received (RX) by a small form-factor pluggable transceiver (SFP in FC target) is at a level below the defined threshold, which might indicate a failing or faulty part.
 
@@ -556,6 +664,8 @@ Monitor the operating value. If it continues to decrease, then replace the SFP a
 
 **Impact**: Availability
 
+**EMS Event**: `scsitarget.fct.sfpTxPowerLow`
+
 This alert occurs when the power transmitted (TX) by a small form-factor pluggable transceiver (SFP in FC target) is at a level below the defined threshold, which might indicate a failing or faulty part.
 
 **Remediation**
@@ -564,6 +674,8 @@ Monitor the operating value. If it continues to decrease, then replace the SFP a
 ### Service Processor Heartbeat Missed
 
 **Impact**: Availability
+
+**EMS Event**: `callhome.sp.hbt.missed`
 
 This message occurs when ONTAP does not receive an expected "heartbeat" signal from the Service Processor (SP). Along with this message, log files from SP will be sent out for debugging. ONTAP will reset the SP to attempt to restore communication. The SP will be unavailable for up to two minutes while it reboots.
 
@@ -574,6 +686,8 @@ Contact NetApp technical support.
 
 **Impact**: Availability
 
+**EMS Event**: `callhome.sp.hbt.stopped`
+
 This message occurs when ONTAP is no longer receiving heartbeats from the Service Processor (SP). Depending on the hardware design, the system may continue to serve data or may determine to shut down to prevent data loss or hardware damage. The system continues to serve data, but because the SP might not be working, the system cannot send notifications of down appliances, boot errors, or Open Firmware (OFW) Power-On Self-Test (POST) errors. If your system is configured to do so, it generates and transmits an AutoSupport (or 'call home') message to NetApp technical support and to the configured destinations. Successful delivery of an AutoSupport message significantly improves problem determination and resolution.
 
 **Remediation**
@@ -582,6 +696,8 @@ If the system has shut down, attempt a hard power cycle: Pull the controller out
 ### Service Processor Not Configured
 
 **Impact**: Availability
+
+**EMS Event**: `sp.notConfigured`
 
 This event occurs on a weekly basis, to remind you to configure the Service Processor (SP). The SP is a physical device that is incorporated into your system to provide remote access and remote management capabilities. You should configure the SP to use its full functionality.
 
@@ -597,6 +713,8 @@ Perform the following corrective actions:
 ### Service Processor Offline
 
 **Impact**: Availability
+
+**EMS Event**: `sp.ipmi.lost.shutdown`
 
 ONTAP is no longer receiving heartbeats from the Service Processor (SP), even though all the SP recovery actions have been taken. ONTAP cannot monitor the health of the hardware without the SP.
 
@@ -614,6 +732,8 @@ Power-cycle the system by performing the following actions:
 
 **Impact**: Availability
 
+**EMS Event**: `cifs.shadowcopy.failure`
+
 A Volume Shadow Copy Service (VSS), a Microsoft Server backup and restore service operation, has failed.
 
 **Remediation**
@@ -630,6 +750,8 @@ Check the following using the information provided in the event message:
 
 **Impact**: Availability
 
+**EMS Event**: `ses.status.fanError`
+
 The indicated cooling fan or fan module of the shelf has failed. The disks in the shelf might not receive enough cooling airflow, which might result in disk failure.
 
 **Remediation**
@@ -644,6 +766,8 @@ Perform the following corrective actions:
 
 **Impact**: Protection
 
+**EMS Event**: `sms.status.out.of.sync`
+
 This event occurs when a SnapMirror(R) Sync relationship status changes from "in-sync" to "out-of-sync". I/O restrictions are imposed on the source volume based on the mode of replication. Client read or write access to the volume is not allowed for relationships of the "strict-sync-mirror" policy type. Data protection is affected.
 
 **Remediation**
@@ -653,6 +777,8 @@ Check the network connection between the source and destination volumes. Monitor
 
 **Impact**: Protection
 
+**EMS Event**: `sms.status.out.of.sync.cg`
+
 This message occurs when a SnapMirror for Business Continuity (SMBC) relationship changes status from "in-sync" to "out-of-sync". Due to this RPO=0 data protection will be disrupted.
 
 **Remediation**
@@ -661,6 +787,8 @@ Check the network connection between the source and destination volumes. Monitor
 ### Storage Switch Power Supplies Failed
 
 **Impact**: Availability
+
+**EMS Event**: `cluster.switch.pwr.fail`
 
 There is a missing power supply in the cluster switch. Redundancy is reduced, risk of outage with any further power failures.
 
@@ -676,6 +804,8 @@ Contact NetApp technical support if the issue persists.
 
 **Impact**: Security
 
+**EMS Event**: `arw.vserver.state`
+
 The anti-ransomware monitoring for the storage VM is disabled.
 
 **Remediation**
@@ -684,6 +814,8 @@ Enable anti-ransomware to protect the storage VM.
 ### Storage VM Stop Succeeded
 
 **Impact**: Availability
+
+**EMS Event**: `vserver.stop.succeeded`
 
 This message occurs when a 'vserver stop' operation succeeds.
 
@@ -694,6 +826,8 @@ Use 'vserver start' command to start the data access on a storage VM.
 
 **Impact**: Availability
 
+**EMS Event**: `monitor.fan.critical`
+
 One or more main unit fans have failed, disrupting system operation. This might lead to a potential data loss.
 
 **Remediation**
@@ -703,6 +837,8 @@ Replace the failed fans.
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.cifsManyAuths`
+
 Many authentication negotiations have occurred simultaneously. There are 256 incomplete new session requests from this client.
 
 **Remediation**
@@ -711,6 +847,8 @@ Investigate why the client has created 256 or more new connection requests. You 
 ### Unassigned Disks
 
 **Impact**: Availability
+
+**EMS Event**: `unowned.disk.reminder`
 
 System has unassigned disks - capacity is being wasted and your system may have some misconfiguration or partial configuration change applied.
 
@@ -724,6 +862,8 @@ Perform the following corrective actions:
 
 **Impact**: Security
 
+**EMS Event**: `Nblade.vscanBadUserPrivAccess`
+
 A client has attempted to connect to the privileged ONTAP_ADMIN$ share even though their logged-in user is not an allowed user.
 
 **Remediation**
@@ -736,6 +876,8 @@ Perform the following corrective actions:
 
 **Impact**: Availability
 
+**EMS Event**: `Nblade.vscanVirusDetected`
+
 A Vscan server has reported an error to the storage system. This typically indicates that a virus has been found. However, other errors on the Vscan server can cause this event.
 
 Client access to the file is denied. The Vscan server might, depending on its settings and configuration, clean the file, quarantine it, or delete it.
@@ -747,6 +889,8 @@ Check the log of the Vscan server reported in the "syslog" event to see if it wa
 
 **Impact**: Security
 
+**EMS Event**: `arw.volume.state`
+
 The anti-ransomware monitoring for the volume is disabling.
 
 **Remediation**
@@ -756,10 +900,14 @@ Enable anti-ransomware to protect the storage VM.
 
 **Impact**: Capacity
 
+**EMS Event**: `wafl.vol.autoSize.done`
+
 This event occurs when the automatic resizing of a volume is successful. It happens when the "autosize grow" option is enabled, and the volume reaches the grow threshold percentage.
 ### Volume Offline
 
 **Impact**: Availability
+
+**EMS Event**: `wafl.vvol.offline`
 
 This message indicates that a volume has been taken offline.
 
@@ -769,6 +917,8 @@ Bring the volume back online.
 ### Volume Restricted
 
 **Impact**: Availability
+
+**EMS Event**: `wafl.vvol.restrict`
 
 This event indicates that a flexible volume is made restricted.
 
