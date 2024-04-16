@@ -4377,7 +4377,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 410
+                    "value": 260
                   }
                 ]
               },
@@ -4393,7 +4393,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 300
+                    "value": 220
                   },
                   {
                     "id": "displayName",
@@ -4447,7 +4447,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 410
+                    "value": 270
                   },
                   {
                     "id": "displayName",
@@ -4570,7 +4570,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 160
+                    "value": 130
                   },
                   {
                     "id": "mappings",
@@ -4600,7 +4600,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 310
+                    "value": 240
                   }
                 ]
               },
@@ -4612,7 +4612,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 310
+                    "value": 240
                   }
                 ]
               },
