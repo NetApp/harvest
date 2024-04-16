@@ -10,15 +10,12 @@ instance_key:             name
 client_timeout:           1m30s
 
 schedule:
-  - counter:  20m
-  - instance: 10m
   - data:      3m
 
 counters:
   - instance_name
   - instance_uuid
   - service_time
-  - visits
   - wait_time
   - refine:
       - with_constituents: false # The possible values are true or false. Setting this to true will include constituents in the results, while false will exclude them.

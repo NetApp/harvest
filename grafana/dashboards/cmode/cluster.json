@@ -4041,7 +4041,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
+              "expr": "svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -4216,7 +4216,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[$__range] @ end()))",
+              "expr": "svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -4410,7 +4410,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4420,7 +4420,7 @@
         "name": "TopSVMs",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4433,7 +4433,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4443,7 +4443,7 @@
         "name": "TopVolumeAvgLatency",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4456,7 +4456,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4466,7 +4466,7 @@
         "name": "TopVolumeTotalData",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4479,7 +4479,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[3h]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4489,7 +4489,7 @@
         "name": "TopVolumeTotalOps",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[3h]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,

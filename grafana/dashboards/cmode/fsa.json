@@ -526,7 +526,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\"}[$__range] @ end()))",
+          "expr": "volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{svm}}-{{volume}}-{{dir_name}}",
           "refId": "A"

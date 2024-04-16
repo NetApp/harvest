@@ -233,6 +233,7 @@ The `qos-workload-get-iter` ZAPI supports filtering on the following fields:
 
 - workload-uuid
 - workload-name
+- workload-class
 - wid
 - category
 - policy-group

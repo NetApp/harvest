@@ -12,6 +12,30 @@ import (
 	"testing"
 )
 
+func TestZapiPerfPollCounter(t *testing.T) {
+	z := NewZapiPerf("Volume", "volume.yaml")
+
+	expectedCounter := 27
+
+	z.testFilePath = "testdata/pollCounter.xml"
+	if _, err := z.PollCounter(); err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
+
+	if len(z.scalarCounters) != expectedCounter {
+		t.Errorf("counter count got=%d, expected=%d", len(z.scalarCounters), expectedCounter)
+	}
+
+	z.testFilePath = "testdata/pollCounter.xml"
+	if _, err := z.PollCounter(); err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
+
+	if len(z.scalarCounters) != expectedCounter {
+		t.Errorf("counter count got=%d, expected=%d", len(z.scalarCounters), expectedCounter)
+	}
+}
+
 func TestZapiPerfSequence(t *testing.T) {
 	// Initialize the ZapiPerf collector for Volume object
 	z := NewZapiPerf("Volume", "volume.yaml")

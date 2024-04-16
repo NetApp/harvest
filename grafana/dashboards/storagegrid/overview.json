@@ -2338,7 +2338,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[3h]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2348,7 +2348,7 @@
         "name": "TopTenantUsageBytes",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[3h]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -2361,7 +2361,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\"}[3h]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2371,7 +2371,7 @@
         "name": "TopNodesByDataUsage",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\"}[3h]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -2384,7 +2384,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\"}[3h]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2394,7 +2394,7 @@
         "name": "TopNodeByCPU",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources,(avg_over_time(storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\"}[3h]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -2407,7 +2407,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+        "definition": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[3h])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[3h]))))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2417,7 +2417,7 @@
         "name": "TopTenantUsedPercent",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[${__range}])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[${__range}]))))",
+          "query": "query_result(topk($TopResources, avg by(tenant,datacenter)(avg_over_time(storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\"}[3h])/avg_over_time(storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\"}[3h]))))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -2430,7 +2430,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2440,7 +2440,7 @@
         "name": "TopPolicyRx",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -2453,7 +2453,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2463,7 +2463,7 @@
         "name": "TopPolicyTx",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -2476,7 +2476,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2486,7 +2486,7 @@
         "name": "TopPolicyRequestCount",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -2499,7 +2499,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -2509,7 +2509,7 @@
         "name": "TopPolicyRequestTime",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,

@@ -327,6 +327,12 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 			d := strings.Clone(c.Get("denominator.name").String())
 			if d != "" {
 				if _, has := r.Prop.Metrics[d]; !has {
+					if isWorkloadDetailObject(r.Prop.Query) {
+						// It is not needed because 'ops' is used as the denominator in latency calculations.
+						if d == "visits" {
+							return true
+						}
+					}
 					// export false
 					m := &rest2.Metric{Label: "", Name: d, MetricType: "", Exportable: false}
 					r.Prop.Metrics[d] = m
@@ -609,7 +615,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 			metr.SetExportable(metric.Exportable)
 		}
 
-		var service, wait, visits, ops *matrix.Metric
+		var service, wait, ops *matrix.Metric
 
 		if service = mat.GetMetric("service_time"); service == nil {
 			r.Logger.Error().Msg("metric [service_time] required to calculate workload missing")
@@ -619,11 +625,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 			r.Logger.Error().Msg("metric [wait-time] required to calculate workload missing")
 		}
 
-		if visits = mat.GetMetric("visits"); visits == nil {
-			r.Logger.Error().Msg("metric [visits] required to calculate workload missing")
-		}
-
-		if service == nil || wait == nil || visits == nil {
+		if service == nil || wait == nil {
 			return nil, errs.New(errs.ErrMissingParam, "workload metrics")
 		}
 
@@ -634,15 +636,14 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 			r.perfProp.counterInfo["ops"] = &counter{
 				name:        "ops",
 				description: "",
-				counterType: r.perfProp.counterInfo[visits.GetName()].counterType,
-				unit:        r.perfProp.counterInfo[visits.GetName()].unit,
+				counterType: "rate",
+				unit:        "per_sec",
 				denominator: "",
 			}
 		}
 
 		service.SetExportable(false)
 		wait.SetExportable(false)
-		visits.SetExportable(false)
 
 		resourceMap := r.Params.GetChildS("resource_map")
 		if resourceMap == nil {
@@ -916,10 +917,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					// special case for workload_detail
 					if isWorkloadDetailObject(r.Prop.Query) {
 						for _, wm := range workloadDetailMetrics {
-							// "visits" are ignored. This counter is only used to set properties of ops counter
-							if name == "visits" {
-								continue
-							}
 							wMetric := curMat.GetMetric(layer + wm)
 							if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
 								if err := wMetric.AddValueString(instance, f.value); err != nil {
@@ -1181,6 +1178,13 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		// For the next two properties we need base counters
 		// We assume that delta of base counters is already calculated
 		if base = curMat.GetMetric(counter.denominator); base == nil {
+			if isWorkloadDetailObject(r.Prop.Query) {
+				// The workload detail generates metrics at the resource level. The 'service_time' and 'wait_time' metrics are used as raw values for these resource-level metrics. Their denominator, 'visits', is not collected; therefore, a check is added here to prevent warnings.
+				// There is no need to cook these metrics further.
+				if key == "service_time" || key == "wait_time" {
+					continue
+				}
+			}
 			r.Logger.Warn().
 				Str("key", key).
 				Str("property", property).

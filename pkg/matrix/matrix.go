@@ -358,16 +358,17 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 				// A non-zero curCooked under these conditions indicates an issue with the current or previous poll.
 				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && curCooked != 0
 				isNegative := curCooked < 0
-				if isInvalidZero || isNegative {
-					curMetric.record[currIndex] = false
-					skips++
-				}
+
 				// Check for partial Aggregation
 				ppaOk := prevInstance.IsPartial()
 				cpaOk := currInstance.IsPartial()
-				if ppaOk || cpaOk {
+
+				if isInvalidZero || isNegative || ppaOk || cpaOk {
 					curMetric.record[currIndex] = false
 					skips++
+				}
+
+				if ppaOk || cpaOk {
 					logger.Debug().
 						Str("metric", curMetric.GetName()).
 						Float64("currentRaw", curRaw).
@@ -377,6 +378,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 						Interface("instanceLabels", currInstance.GetLabels()).
 						Str("instKey", key).
 						Msg("Partial Aggregation")
+
 				}
 			} else {
 				curMetric.record[currIndex] = false

@@ -106,22 +106,23 @@ type variable struct {
 	options []gjson.Result
 }
 
-func allVariables(data []byte) []variable {
-	variables := make([]variable, 0)
+func allVariables(data []byte) map[string]variable {
+	variables := make(map[string]variable)
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		// The datasource variable can be ignored
 		if value.Get("type").String() == "datasource" {
 			return true
 		}
 
-		variables = append(variables, variable{
+		v := variable{
 			name:    value.Get("name").String(),
 			kind:    value.Get("type").String(),
 			query:   value.Get("query.query").String(),
 			refresh: value.Get("refresh").String(),
 			options: value.Get("options").Array(),
 			path:    key.String(),
-		})
+		}
+		variables[v.name] = v
 		return true
 	})
 	return variables
