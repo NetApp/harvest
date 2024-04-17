@@ -3824,7 +3824,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 300
+                    "value": 290
                   },
                   {
                     "id": "mappings",
@@ -3901,6 +3901,10 @@
                         "type": "value"
                       }
                     ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 120
                   }
                 ]
               },
@@ -3912,7 +3916,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 266
+                    "value": 240
                   }
                 ]
               },
@@ -3924,7 +3928,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 298
+                    "value": 240
                   }
                 ]
               }
@@ -4288,7 +4292,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 310
+                    "value": 290
                   },
                   {
                     "id": "mappings",
@@ -4380,7 +4384,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 180
+                    "value": 120
                   }
                 ]
               },
@@ -4404,7 +4408,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 250
+                    "value": 240
                   }
                 ]
               },
@@ -4416,7 +4420,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 260
+                    "value": 240
                   }
                 ]
               }
@@ -4591,7 +4595,7 @@
         "definition": "label_values(snapmirror_labels{system_type!=\"7mode\", source_cluster=~\"$SourceCluster\"}, destination_node)",
         "description": null,
         "error": null,
-        "hide": 0,
+        "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": true,
@@ -4617,7 +4621,7 @@
         "definition": "query_result((snapmirror_labels{system_type!=\"7mode\",source_cluster=~\"$SourceCluster\"} * on (source_volume, source_vserver, source_cluster) group_left(source_node)  label_replace( label_replace( label_replace( label_replace (volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$SourceCluster\",node!=\"\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_node\", \"$1\", \"node\", \"(.*)\") , \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) \n\n\n",
         "description": null,
         "error": null,
-        "hide": 0,
+        "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": true,
