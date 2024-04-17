@@ -45,6 +45,7 @@ nav:
       - 'Log Collection': 'help/log-collection.md'
       - 'Config Collection': 'help/config-collection.md'
   - Reference:
+      - 'EMS Alert Runbook': 'resources/ems-alert-runbook.md'
       - 'Matrix': 'resources/matrix.md'
       - 'ONTAP Metrics': 'ontap-metrics.md'
       - 'Power Algorithm': 'resources/power-algorithm.md'
