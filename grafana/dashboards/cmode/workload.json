@@ -204,7 +204,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -292,7 +292,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -380,7 +380,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -468,7 +468,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -555,7 +555,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -642,7 +642,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -729,7 +729,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -816,7 +816,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -903,7 +903,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -990,7 +990,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[$__range] @ end()))",
+          "expr": "qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -1702,7 +1702,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1791,7 +1791,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1880,7 +1880,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -1969,7 +1969,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2058,7 +2058,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2147,7 +2147,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2236,7 +2236,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2325,7 +2325,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2414,7 +2414,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2503,7 +2503,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"}[$__range] @ end()))",
+              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -2710,7 +2710,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -2811,7 +2811,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -2916,7 +2916,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3021,7 +3021,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3126,7 +3126,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3231,7 +3231,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3336,7 +3336,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3441,7 +3441,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"})\n)\n",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"})\n)\n",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3546,7 +3546,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3651,7 +3651,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"})\n)\n",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"})\n)\n",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3756,7 +3756,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3860,7 +3860,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -3964,7 +3964,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4068,7 +4068,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[$__range] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"})\n)",
+              "expr": "100 * (\n  (qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[3h] @ end())))\n  / on() group_left sum(qos_detail_service_time_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"})\n)",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4276,7 +4276,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"frontend\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"frontend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4377,7 +4377,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"backend\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"backend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4482,7 +4482,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cluster\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cluster\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4587,7 +4587,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cp\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cp\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4692,7 +4692,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"disk\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"disk\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4797,7 +4797,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"network\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"network\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -4902,7 +4902,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"nvlog\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"nvlog\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5007,7 +5007,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"suspend\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"suspend\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5112,7 +5112,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"throttle\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"throttle\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5217,7 +5217,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"qos_min\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"qos_min\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5322,7 +5322,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"cloud\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"cloud\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5426,7 +5426,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"sync_repl\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"sync_repl\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5530,7 +5530,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_ral\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_ral\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -5634,7 +5634,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[$__range] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"})",
+              "expr": "100 * (\n  qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}\n  and\n  topk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\",resource=\"flexcache_spinhi\"}[3h] @ end()))\n) / on() group_left sum(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",resource=\"flexcache_spinhi\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",

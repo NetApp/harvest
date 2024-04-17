@@ -304,5 +304,317 @@
             <properties>rate</properties>
             <unit>per_sec</unit>
         </counter-info>
+        <counter-info>
+            <base-counter>total_ops</base-counter>
+            <desc>Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>avg_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_access_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol access requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_access_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS accesses per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_access_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS accesses per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_access_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_getattr_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol getattr requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_getattr_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_lookup_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol lookup requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_lookup_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS lookups per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_lookup_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_other_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_other_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of other NFS operations per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_other_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_punch_hole_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_punch_hole_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS hole-punch requests per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_punch_hole_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_read_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_read_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS reads per second from the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_read_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_read_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_read_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS reads per second from the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_read_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_setattr_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol setattr requests to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_setattr_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS setattr requests per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_setattr_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>nfs_write_ops</base-counter>
+            <desc>Average time for the WAFL filesystem to process NFS protocol write requests to the volume; not including NFS protocol request processing or network communication timewhich will also be included in client observed NFS request latency</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_write_latency</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS writes per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_write_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>other_ops</base-counter>
+            <desc>Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>other_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of other operations per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>other_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>read_ops</base-counter>
+            <desc>Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of reads per second from the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of operations per second serviced by the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>total_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Bytes written per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>write_data</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>b_per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>write_ops</base-counter>
+            <desc>Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>write_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of writes per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>write_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of NFS getattr per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_getattr_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Bytes read per second from the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>read_data</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>b_per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of total NFS operations per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>nfs_total_ops</name>
+            <privilege-level>advanced</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Instance UUID</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>instance_uuid</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string,no-display</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Instance Name</desc>
+            <is-deprecated>false</is-deprecated>
+            <is-key>true</is-key>
+            <name>instance_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Name of hosting aggregate</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>parent_aggr</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Name of the vserver owning this volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <is-key>true</is-key>
+            <name>vserver_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <desc>System node name</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>node_name</name>
+            <privilege-level>admin</privilege-level>
+            <properties>string</properties>
+            <unit>none</unit>
+        </counter-info>
+        <counter-info>
+            <base-counter>access_ops</base-counter>
+            <desc>Average latency in microseconds for the WAFL filesystem to process access request to the volume; not including request processing or network communication time</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>access_latency</name>
+            <privilege-level>admin</privilege-level>
+            <properties>average</properties>
+            <unit>microsec</unit>
+        </counter-info>
+        <counter-info>
+            <desc>Number of access ops per second to the volume</desc>
+            <is-deprecated>false</is-deprecated>
+            <name>access_ops</name>
+            <privilege-level>admin</privilege-level>
+            <properties>rate</properties>
+            <unit>per_sec</unit>
+        </counter-info>
     </counters>
 </results>
