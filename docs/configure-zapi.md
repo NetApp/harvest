@@ -6,11 +6,11 @@
 
 ## Zapi Collector
 
-The Zapi collectors uses the ZAPI protocol to collect data from ONTAP systems. The collector submits data as received
+The Zapi collectors use the ZAPI protocol to collect data from ONTAP systems. The collector submits data as received
 from the target system, and does not perform any calculations or post-processing. Since the attributes of most APIs have
 an irregular tree structure, sometimes a plugin will be required to collect all metrics from an API.
 
-The [ZapiPerf collector](#zapiperf-collector) is an extension of this collector, therefore they share many parameters
+The [ZapiPerf collector](#zapiperf-collector) is an extension of this collector, therefore, they share many parameters
 and configuration settings.
 
 ### Target System
@@ -46,25 +46,82 @@ for more details.
 
 ### Parameters
 
-The parameters and configuration are similar to those of the [ZapiPerf collector](#zapiperf-collector). Only the
-differences will be discussed below.
+The parameters of the collector are distributed across three files:
+
+- [Harvest configuration file](configure-harvest-basic.md#pollers) (default: `harvest.yml`)
+- ZAPI configuration file (default: `conf/zapi/default.yaml`)
+- Each object has its own configuration file (located in `conf/zapi/$version/`)
+
+Except for `addr` and `datacenter`, all other parameters of the ZAPI collector can be
+defined in either of these three files.
+Parameters defined in the lower-level file, override parameters in the higher-level ones.
+This allows you to configure each object individually, or use the same parameters for all
+objects.
+
+The full set of parameters are described [below](#collector-configuration-file).
 
 #### Collector configuration file
 
+The parameters are similar to those of the [ZapiPerf collector](#zapiperf-collector).
 Parameters different from ZapiPerf:
 
 | parameter               | type           | description                                                                                                  | default |
 |-------------------------|----------------|--------------------------------------------------------------------------------------------------------------|---------|
-| `schedule`              | required       | same as for ZapiPerf, but only two elements: `instance` and `data` (collector does not run a `counter` poll) ||
+| `schedule`              | required       | same as for ZapiPerf, but only two elements: `instance` and `data` (collector does not run a `counter` poll) |         |
 | `no_max_records`        | bool, optional | don't add `max-records` to the ZAPI request                                                                  |         |
 | `collect_only_labels`   | bool, optional | don't look for numeric metrics, only submit labels  (suppresses the `ErrNoMetrics` error)                    |         |
-| `only_cluster_instance` | bool, optional | don't look for instance keys and assume only instance is the cluster itself                                  ||
+| `only_cluster_instance` | bool, optional | don't look for instance keys and assume only instance is the cluster itself                                  |         |
 
 #### Object configuration file
 
 The Zapi collector does not have the parameters `instance_key` and `override` parameters. The optional
 parameter `metric_type` allows you to override the default metric type (`uint64`). The value of this parameter should be
 one of the metric types supported by [the matrix data-structure](resources/matrix.md).
+
+The Object configuration file ("subtemplate") should contain the following parameters:
+
+| parameter        | type                 | description                                                 | default |
+|------------------|----------------------|-------------------------------------------------------------|---------|
+| `name`           | string, **required** | display name of the collector that will collect this object |         |
+| `query`          | string, **required** | REST endpoint used to issue a REST request                  |         |
+| `object`         | string, **required** | short name of the object                                    |         |
+| `counters`       | string               | list of counters to collect (see notes below)               |         |
+| `plugins`        | list                 | plugins and their parameters to run on the collected data   |         |
+| `export_options` | list                 | parameters to pass to exporters (see notes below)           |         |
+
+#### Counters
+
+This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
+histograms. The exact property of each counter is fetched from ONTAP and updated periodically.
+
+Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but
+the missing data won't be exported.
+
+The display name of a counter can be changed with `=>` (e.g., `nfsv3_ops => ops`). There's one conversion Harvest does
+for you by default, the `instance_name` counter will be renamed to the value of `object`.
+
+Counters that are stored as labels will only be exported if they are included in the `export_options` section.
+
+#### Export_options
+
+Parameters in this section tell the exporters how to handle the collected data.
+
+There are two different kinds of time-series that Harvest publishes: metrics and instance labels.
+
+- Metrics are numeric data with associated labels (key-value pairs). E.g. `volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123`. The `volume_read_ops_total` metric is exporting three labels: `cluster`, `node`, and `volume` and the metric value is `123`.
+- Instance labels are named after their associated config object (e.g., `volume_labels`, `qtree_labels`, etc.). There will be one instance label for each object instance, and each instance label will contain a set of associated labels (key-value pairs) that are defined in the templates `instance_labels` parameter. E.g. `volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1`. The `volume_labels` instance label is exporting four labels: `cluster`, `node`, `volume`, and `svm`. Instance labels always export a metric value of `1`.
+
+The `export_options` section allows you to define how to export these time-series.
+
+The set of parameters varies by exporter.
+For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md) exporters,
+the following parameters can be defined:
+
+* `instances_keys` (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the `svm` counter under `instances_keys`,
+  that key-value will be included in all time-series metrics and all instance-labels.
+* `instance_labels` (list): display names of labels to export with the corresponding instance label config object. For example, if you want the `volume` counter to be exported with the `volume_labels` instance label, you would list `volume` in the `instance_labels` section.
+* `include_all_labels` (bool): exports all labels for all time-series metrics. If there are no metrics defined in the template, this option will do nothing. This option also overrides the previous two parameters. See also [collect_only_labels](#collector-configuration-file).
 
 ## ZapiPerf Collector
 
@@ -101,23 +158,12 @@ The parameters of the collector are distributed across three files:
   7Mode systems respectively)
 
 Except for `addr`, `datacenter` and `auth_style`, all other parameters of the ZapiPerf collector can be
-defined in either of these three files. Parameters defined in the lower-level file, override parameters in the
-higher-level file. This allows the user to configure each objects individually, or use the same parameters for all
-objects.
+defined in either of these three files. 
+Parameters defined in the lower-level file, override parameters in the higher-level file. 
+This allows the user to configure each object individually, 
+or use the same parameters for all objects.
 
 The full set of parameters are described [below](#zapiperf-configuration-file).
-
-### Harvest configuration file
-
-Parameters in poller section should define (at least) the address and authentication method of the target system:
-
-| parameter              | type             | description                                                                    | default      |
-|------------------------|------------------|--------------------------------------------------------------------------------|--------------|
-| `addr`                 | string, required | address (IP or FQDN) of the ONTAP system                                       |              |
-| `datacenter`           | string, required | name of the datacenter where the target system is located                      |              |
-| `auth_style`           | string, optional | authentication method: either `basic_auth` or `certificate_auth`               | `basic_auth` |
-| `ssl_cert`, `ssl_key`  | string, optional | full path of the SSL certificate and key pairs (when using `certificate_auth`) |              |
-| `username`, `password` | string, optional | full path of the SSL certificate and key pairs (when using `basic_auth`)       |              |
 
 ### ZapiPerf configuration file
 
@@ -182,13 +228,34 @@ Counters that are stored as labels will only be exported if they are included in
 
 #### `export_options`
 
-Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
-exporter. For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md)
-exporters, the following parameters can be defined:
+Parameters in this section tell the exporters how to handle the collected data.
 
-* `instances_keys` (list): display names of labels to export with each data-point
-* `instance_labels` (list): display names of labels to export as a separate data-point
-* `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
+There are two different kinds of time-series that Harvest publishes: metrics and instance labels.
+ 
+- Metrics are numeric data with associated labels (key-value pairs). E.g. `volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123`. The `volume_read_ops_total` metric is exporting three labels: `cluster`, `node`, and `volume` and the metric value is `123`.
+- Instance labels are named after their associated config object (e.g., `volume_labels`, `nic_labels`, etc.).
+  There will be one instance label for each object instance, 
+  and each instance label will contain a set of associated labels
+  (key-value pairs) that are defined in the templates `instance_labels` parameter.
+  E.g. `volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1`. 
+  The `volume_labels` instance label is exporting four labels:
+  `cluster`, `node`, `volume`, and `svm`.
+  Instance labels always export a metric value of `1`.
+
+??? tip "Instance labels are rarely used with ZapiPerf templates"
+
+    They can be useful for exporting labels that are not associated with a metric value.
+
+The `export_options` section allows you to define how to export these time-series.
+
+The set of parameters varies by exporter. 
+For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md) exporters, 
+the following parameters can be defined:
+
+* `instances_keys` (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the `svm` counter under `instances_keys`,
+  that key-value will be included in all time-series metrics and all instance-labels.
+* `instance_labels` (list): display names of labels to export with the corresponding instance label config object. For example, if you want the `volume` counter to be exported with the `volume_labels` instance label, you would list `volume` in the `instance_labels` section.
 
 ### Filter
 

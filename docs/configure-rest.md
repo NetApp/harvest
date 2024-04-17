@@ -148,7 +148,7 @@ export_options:
     - state
 ```
 
-#### `counters`
+#### Counters
 
 This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
 histograms. The exact property of each counter is fetched from ONTAP and updated periodically.
@@ -159,11 +159,11 @@ Counters that are stored as labels will only be exported if they are included in
 
 The `counters` section allows you to specify `hidden_fields` and `filter` parameters. Please find the detailed explanation below.
 
-##### `hidden_fields`
+##### Hidden_fields
 
 There are some fields that ONTAP will not return unless you explicitly ask for them, even when using the URL parameter `fields=**`. `hidden_fields` is how you tell ONTAP which additional fields it should include in the REST response.
 
-##### `filter`
+##### Filter
 
 The `filter` is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. The filtering uses ONTAP's REST record filtering. The example above asks ONTAP to only return records where a volume's name matches `*harvest*`.
 
@@ -175,15 +175,26 @@ https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&name
 
 Refer to the ONTAP API specification, sections: `query parameters` and `record filtering`, for more details.
 
-#### `export_options`
+#### Export_options
 
-Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
-exporter. For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md)
-exporters, the following parameters can be defined:
+Parameters in this section tell the exporters how to handle the collected data.
 
-* `instances_keys` (list): display names of labels to export with each data-point
-* `instance_labels` (list): display names of labels to export as a separate data-point
-* `include_all_labels` (bool): export all labels with each data-point (overrides previous two parameters)
+There are two different kinds of time-series that Harvest publishes: metrics and instance labels.
+
+- Metrics are numeric data with associated labels (key-value pairs). E.g. `volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123`. The `volume_read_ops_total` metric is exporting three labels: `cluster`, `node`, and `volume` and the metric value is `123`.
+- Instance labels are named after their associated config object (e.g., `volume_labels`, `qtree_labels`, etc.). There will be one instance label for each object instance, and each instance label will contain a set of associated labels (key-value pairs) that are defined in the templates `instance_labels` parameter. E.g. `volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1`. The `volume_labels` instance label is exporting four labels: `cluster`, `node`, `volume`, and `svm`. Instance labels always export a metric value of `1`.
+
+The `export_options` section allows you to define how to export these time-series.
+
+The set of parameters varies by exporter.
+For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md) exporters,
+the following parameters can be defined:
+
+* `instances_keys` (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the `svm` counter under `instances_keys`,
+  that key-value will be included in all time-series metrics and all instance-labels.
+* `instance_labels` (list): display names of labels to export with the corresponding instance label config object. For example, if you want the `volume` counter to be exported with the `volume_labels` instance label, you would list `volume` in the `instance_labels` section.
+* `include_all_labels` (bool): exports all labels for all time-series metrics. If there are no metrics defined in the template, this option will do nothing. This option also overrides the previous two parameters. See also [collect_only_labels](#collector-configuration-file).
 
 #### Endpoints
 
@@ -267,12 +278,12 @@ This collector is an extension of the [Rest collector](#rest-collector). The maj
 RestPerf collects only the performance (`perf`) APIs. Additionally, RestPerf always calculates final values from the
 deltas of two subsequent polls.
 
-## Metrics
+### Metrics
 
 RestPerf metrics are calculated the same as ZapiPerf metrics. More details about how
 performance metrics are calculated can be found [here](configure-zapi.md#metrics_1).
 
-## Parameters
+### Parameters
 
 The parameters of the collector are distributed across three files:
 
@@ -287,7 +298,7 @@ objects.
 
 The full set of parameters are described [below](#restperf-configuration-file).
 
-### RestPerf configuration file
+#### RestPerf configuration file
 
 This configuration file (the "template") contains a list of objects that should be collected and the filenames of their
 configuration (explained in the next section).
@@ -323,16 +334,16 @@ RestPerf will fetch and validate counter metadata from the system.)
 
 Refer [Object configuration file](configure-rest.md#object-configuration-file)
 
-#### `counters`
+#### Counters
 
-Refer [Counters](configure-rest.md#counters)
+See [Counters](configure-rest.md#counters)
 
 Some counters require a "base-counter" for post-processing. If the base-counter is missing, RestPerf will still run, but
 the missing data won't be exported.
 
-#### `export_options`
+#### Export_options
 
-Refer [Export Options](configure-rest.md#export_options)
+See [Export Options](configure-rest.md#export_options)
 
 ## ONTAP Private CLI
 
