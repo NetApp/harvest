@@ -3803,13 +3803,9 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "source_volume"
+                  "options": "Source Volume"
                 },
                 "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Source Volume"
-                  },
                   {
                     "id": "custom.width",
                     "value": 410
@@ -3819,7 +3815,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "derived_relationship_type"
+                  "options": "Protection Policy"
                 },
                 "properties": [
                   {
@@ -3829,10 +3825,6 @@
                   {
                     "id": "custom.width",
                     "value": 300
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Protection Policy"
                   },
                   {
                     "id": "mappings",
@@ -3877,16 +3869,62 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "destination_volume"
+                  "options": "Destination Volume"
                 },
                 "properties": [
                   {
                     "id": "custom.width",
                     "value": 410
-                  },
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy Status"
+                },
+                "properties": [
                   {
-                    "id": "displayName",
-                    "value": "Destination Volume"
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "Unhealthy"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Healthy"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Destination Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 266
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Source Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 298
                   }
                 ]
               }
@@ -3894,7 +3932,7 @@
           },
           "gridPos": {
             "h": 14,
-            "w": 13,
+            "w": 24,
             "x": 0,
             "y": 42
           },
@@ -3922,7 +3960,7 @@
               "refId": "A"
             }
           ],
-          "title": "Volume relationship count by relationship type",
+          "title": "Volume relationship count by Relationship type & Health",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -3931,156 +3969,10 @@
                   "names": [
                     "derived_relationship_type",
                     "destination_volume",
-                    "source_volume"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "derived_relationship_type": 5,
-                  "destination_volume": 2,
-                  "destination_vserver": 3,
-                  "policy_type": 4,
-                  "source_volume": 0,
-                  "source_vserver": 1
-                },
-                "renameByName": {
-                  "derived_relationship_type": ""
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "fixedColor": "transparent",
-                "mode": "fixed"
-              },
-              "custom": {
-                "align": "left",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Healthy Status"
-                },
-                "properties": [
-                  {
-                    "id": "custom.filterable",
-                    "value": true
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 160
-                  },
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "false": {
-                            "index": 1,
-                            "text": "Unhealthy"
-                          },
-                          "true": {
-                            "index": 0,
-                            "text": "Healthy"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Source Volume"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 310
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Destination Volume"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 310
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 11,
-            "x": 14,
-            "y": 42
-          },
-          "id": 137,
-          "options": {
-            "footer": {
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": []
-          },
-          "pluginVersion": "8.4.11",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",relationship_id!=\"\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ",
-              "format": "table",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Volume relationship count by relationship health",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "destination_volume",
+                    "healthy",
                     "source_volume",
-                    "healthy"
+                    "source_cluster",
+                    "cluster"
                   ]
                 }
               }
@@ -4090,12 +3982,19 @@
               "options": {
                 "excludeByName": {},
                 "indexByName": {
+                  "cluster": 3,
+                  "derived_relationship_type": 4,
                   "destination_volume": 1,
+                  "healthy": 5,
+                  "source_cluster": 2,
                   "source_volume": 0
                 },
                 "renameByName": {
+                  "cluster": "Destination Cluster",
+                  "derived_relationship_type": "Protection Policy",
                   "destination_volume": "Destination Volume",
                   "healthy": "Healthy Status",
+                  "source_cluster": "Source Cluster",
                   "source_volume": "Source Volume"
                 }
               }
@@ -4368,23 +4267,19 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "source_volume"
+                  "options": "Source Volume"
                 },
                 "properties": [
                   {
-                    "id": "displayName",
-                    "value": "Source Volume"
-                  },
-                  {
                     "id": "custom.width",
-                    "value": 260
+                    "value": 310
                   }
                 ]
               },
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "derived_relationship_type"
+                  "options": "Protection Policy"
                 },
                 "properties": [
                   {
@@ -4393,11 +4288,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 220
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Protection Policy"
+                    "value": 310
                   },
                   {
                     "id": "mappings",
@@ -4442,16 +4333,12 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "destination_volume"
+                  "options": "Destination Volume"
                 },
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 270
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Destination Volume"
+                    "value": 320
                   }
                 ]
               },
@@ -4463,7 +4350,73 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 170
+                    "value": 220
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "Unhealthy"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Healthy"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 180
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Destination Volume"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 304
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Source Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 250
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Destination Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
                   }
                 ]
               }
@@ -4471,7 +4424,7 @@
           },
           "gridPos": {
             "h": 14,
-            "w": 13,
+            "w": 24,
             "x": 0,
             "y": 42
           },
@@ -4499,178 +4452,20 @@
               "refId": "A"
             }
           ],
-          "title": "Consistency Group relationship count by relationship type",
+          "title": "Consistency Group relationship count by Relationship type & Health",
           "transformations": [
             {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
                   "names": [
+                    "cg_name",
                     "derived_relationship_type",
                     "destination_volume",
-                    "source_volume",
-                    "cg_name"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "cg_name": 0,
-                  "derived_relationship_type": 3,
-                  "destination_volume": 2,
-                  "source_volume": 1
-                },
-                "renameByName": {
-                  "cg_name": "Consistency Group",
-                  "derived_relationship_type": ""
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "fixedColor": "transparent",
-                "mode": "fixed"
-              },
-              "custom": {
-                "align": "left",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Healthy Status"
-                },
-                "properties": [
-                  {
-                    "id": "custom.filterable",
-                    "value": true
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 130
-                  },
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "false": {
-                            "index": 1,
-                            "text": "Unhealthy"
-                          },
-                          "true": {
-                            "index": 0,
-                            "text": "Healthy"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Source Volume"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 240
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Destination Volume"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 240
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Consistency Group"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 170
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 11,
-            "x": 14,
-            "y": 42
-          },
-          "id": 131,
-          "options": {
-            "footer": {
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": []
-          },
-          "pluginVersion": "8.4.11",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type=\"consistencygroup\",cg_name=~\"$ConsistencyGroup\",relationship_id!=\"\"}",
-              "format": "table",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Consistency Group relationship count by relationship health",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "destination_volume",
-                    "source_volume",
                     "healthy",
-                    "cg_name"
+                    "source_volume",
+                    "cluster",
+                    "source_cluster"
                   ]
                 }
               }
@@ -4681,14 +4476,20 @@
                 "excludeByName": {},
                 "indexByName": {
                   "cg_name": 0,
+                  "cluster": 4,
+                  "derived_relationship_type": 5,
                   "destination_volume": 2,
-                  "healthy": 3,
+                  "healthy": 6,
+                  "source_cluster": 3,
                   "source_volume": 1
                 },
                 "renameByName": {
                   "cg_name": "Consistency Group",
+                  "cluster": "Destination Cluster",
+                  "derived_relationship_type": "Protection Policy",
                   "destination_volume": "Destination Volume",
                   "healthy": "Healthy Status",
+                  "source_cluster": "Source Cluster",
                   "source_volume": "Source Volume"
                 }
               }
