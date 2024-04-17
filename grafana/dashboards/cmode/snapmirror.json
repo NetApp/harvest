@@ -804,7 +804,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",destination_location=~\".*$ConsistencyGroup\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -821,7 +821,7 @@
           "refId": "A"
         },
         {
-          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",destination_location=~\".*$ConsistencyGroup\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -830,7 +830,7 @@
         },
         {
           "exemplar": false,
-          "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\"}",
+          "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",destination_location=~\".*$ConsistencyGroup\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1018,7 +1018,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[3h] @ end()))",
+          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_duration{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -1117,7 +1117,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[3h] @ end()))",
+          "expr": "snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_lag_time{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -1215,7 +1215,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[3h] @ end()))",
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{destination_volume}} - {{source_volume}}",
@@ -4692,7 +4692,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_volume)",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",destination_vserver=~\"$DestinationSVM\"}, destination_volume)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4702,7 +4702,7 @@
         "name": "DestinationVolume",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, destination_volume)",
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",destination_vserver=~\"$DestinationSVM\"}, destination_volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4718,7 +4718,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_volume)",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\"}, source_volume)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4728,7 +4728,7 @@
         "name": "SourceVolume",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_volume)",
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\"}, source_volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4837,33 +4837,10 @@
         "type": "custom"
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopTransferDataById",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*relationship_id=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, cg_name)",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\", destination_vserver=~\"$DestinationSVM\"}, cg_name)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4873,7 +4850,7 @@
         "name": "ConsistencyGroup",
         "options": [],
         "query": {
-          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, cg_name)",
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\", destination_vserver=~\"$DestinationSVM\"}, cg_name)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4884,6 +4861,29 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}[3h])))",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "TopTransferDataById",
+        "options": [],
+        "query": {
+          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$ConsistencyGroup\"}[3h])))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": ".*relationship_id=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
