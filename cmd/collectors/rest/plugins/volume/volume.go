@@ -259,7 +259,10 @@ func (v *Volume) getVolumeInfo() (map[string]volumeInfo, error) {
 	if _, err := v.getVolume("is_constituent=false", fields, volumeMap); err != nil {
 		return nil, err
 	}
-	return v.getVolume("is_constituent=true", fields, volumeMap)
+	if v.includeConstituents {
+		return v.getVolume("is_constituent=true", fields, volumeMap)
+	}
+	return volumeMap, nil
 }
 
 func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]volumeInfo) (map[string]volumeInfo, error) {
