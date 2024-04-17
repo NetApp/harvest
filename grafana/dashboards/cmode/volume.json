@@ -7575,7 +7575,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This table would show 15 day predicted value of Physical space used percentage for top volumes.",
+          "description": "This table would show 15 day predicted value of size used percentage for top volumes.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -7587,7 +7587,30 @@
                 "inspect": false
               },
               "decimals": 2,
-              "mappings": [],
+              "mappings": [
+                {
+                  "options": {
+                    "from": 100,
+                    "result": {
+                      "index": 0,
+                      "text": "100%"
+                    },
+                    "to": 999999
+                  },
+                  "type": "range"
+                },
+                {
+                  "options": {
+                    "from": -9999999,
+                    "result": {
+                      "index": 1,
+                      "text": "0%"
+                    },
+                    "to": 0
+                  },
+                  "type": "range"
+                }
+              ],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -7609,7 +7632,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 132
+                    "value": 170
                   }
                 ]
               },
@@ -7621,7 +7644,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 170
+                    "value": 260
                   }
                 ]
               },
@@ -7633,7 +7656,55 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 150
+                    "value": 330
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 280
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Node"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Aggr"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Predicted 15th Day Value"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 200
                   }
                 ]
               }
@@ -7641,7 +7712,7 @@
           },
           "gridPos": {
             "h": 7,
-            "w": 12,
+            "w": 24,
             "x": 0,
             "y": 12
           },
@@ -7662,7 +7733,7 @@
             "sortBy": [
               {
                 "desc": true,
-                "displayName": "space used"
+                "displayName": "Current Value"
               }
             ]
           },
@@ -7671,7 +7742,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "predict_linear(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "expr": "predict_linear(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -7684,16 +7755,16 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
               "format": "table",
               "hide": false,
               "instant": true,
-              "legendFormat": "__auto",
+              "legendFormat": "",
               "range": false,
               "refId": "B"
             }
           ],
-          "title": "Top $TopResources Volumes Per Physical Used Percentage Trend",
+          "title": "Top $TopResources Volumes Per Size Used Percentage Trend",
           "transformations": [
             {
               "id": "merge",
@@ -7707,11 +7778,9 @@
                   "Value": false,
                   "Value #C": false,
                   "__name__": true,
-                  "cluster": true,
                   "datacenter": true,
                   "instance": true,
                   "job": true,
-                  "node": true,
                   "state": true,
                   "style": true
                 },
@@ -7721,12 +7790,12 @@
                   "Value #A": 11,
                   "Value #B": 10,
                   "__name__": 12,
-                  "aggr": 3,
+                  "aggr": 2,
                   "cluster": 5,
                   "datacenter": 6,
                   "instance": 7,
                   "job": 8,
-                  "node": 2,
+                  "node": 3,
                   "style": 9,
                   "svm": 1,
                   "volume": 0
@@ -7748,192 +7817,9 @@
                   "clone_parent_snapshot": "Clone Parent Snapshot",
                   "clone_parent_svm": "Clone Parent SVM",
                   "clone_parent_volume": "Clone Parent Volume",
+                  "cluster": "Cluster",
                   "junction_path": "Junction Path",
-                  "node": "",
-                  "svm": "SVM",
-                  "volume": "Volume"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This table would show 15 day predicted value of Logical space used percentage for top volumes.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "left",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "filterable": true,
-                "inspect": false
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgb(31, 176, 196)",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "percent",
-              "unitScale": true
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Current Value"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 130
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "SVM"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 170
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Volume"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 150
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 12
-          },
-          "id": 150,
-          "interval": "1m",
-          "maxDataPoints": 2,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "space used"
-              }
-            ]
-          },
-          "pluginVersion": "10.3.1",
-          "targets": [
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "predict_linear(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "A"
-            },
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "exemplar": false,
-              "expr": "volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "legendFormat": "__auto",
-              "range": false,
-              "refId": "B"
-            }
-          ],
-          "title": "Top $TopResources Volumes Per Logical Used Percentage Trend",
-          "transformations": [
-            {
-              "id": "merge",
-              "options": {}
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true,
-                  "Value": false,
-                  "Value #C": false,
-                  "__name__": true,
-                  "cluster": true,
-                  "datacenter": true,
-                  "instance": true,
-                  "job": true,
-                  "node": true,
-                  "state": true,
-                  "style": true
-                },
-                "includeByName": {},
-                "indexByName": {
-                  "Time": 4,
-                  "Value #A": 11,
-                  "Value #B": 10,
-                  "__name__": 12,
-                  "aggr": 3,
-                  "cluster": 5,
-                  "datacenter": 6,
-                  "instance": 7,
-                  "job": 8,
-                  "node": 2,
-                  "style": 9,
-                  "svm": 1,
-                  "volume": 0
-                },
-                "renameByName": {
-                  "Value": "Predicted Value ",
-                  "Value #A": "Predicted 15th Day Value",
-                  "Value #B": "Current Value",
-                  "Value #C": "Size",
-                  "Value #D": "",
-                  "Value #E": "Dedupe Space Saved",
-                  "Value #F": "Compression Space Saved",
-                  "Value #G": "Total Space Saved",
-                  "Value #H": "Logical Space Used",
-                  "Value #I": "Physical Space Used",
-                  "Value #J": "Clone Split Estimate",
-                  "aggr": "Aggr",
-                  "clone_parent_snapshot": "Clone Parent Snapshot",
-                  "clone_parent_svm": "Clone Parent SVM",
-                  "clone_parent_volume": "Clone Parent Volume",
-                  "junction_path": "Junction Path",
-                  "node": "",
+                  "node": "Node",
                   "svm": "SVM",
                   "volume": "Volume"
                 }
