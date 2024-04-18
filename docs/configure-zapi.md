@@ -113,10 +113,6 @@ There are two different kinds of time-series that Harvest publishes: metrics and
 
 The `export_options` section allows you to define how to export these time-series.
 
-The set of parameters varies by exporter.
-For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md) exporters,
-the following parameters can be defined:
-
 * `instances_keys` (list): display names of labels to export to both metric and instance labels.
   For example, if you list the `svm` counter under `instances_keys`,
   that key-value will be included in all time-series metrics and all instance-labels.
@@ -247,10 +243,6 @@ There are two different kinds of time-series that Harvest publishes: metrics and
     They can be useful for exporting labels that are not associated with a metric value.
 
 The `export_options` section allows you to define how to export these time-series.
-
-The set of parameters varies by exporter. 
-For [Prometheus](prometheus-exporter.md) and [InfluxDB](influxdb-exporter.md) exporters, 
-the following parameters can be defined:
 
 * `instances_keys` (list): display names of labels to export to both metric and instance labels.
   For example, if you list the `svm` counter under `instances_keys`,
