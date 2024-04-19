@@ -110,7 +110,7 @@ func (d *Disk) Init() error {
 
 	var err error
 
-	if err = d.InitAbc(); err != nil {
+	if err := d.InitAbc(); err != nil {
 		return err
 	}
 
@@ -119,7 +119,7 @@ func (d *Disk) Init() error {
 		return err
 	}
 
-	if err = d.client.Init(5); err != nil {
+	if err := d.client.Init(5); err != nil {
 		return err
 	}
 

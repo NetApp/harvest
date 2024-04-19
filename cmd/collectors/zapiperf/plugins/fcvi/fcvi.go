@@ -23,7 +23,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (f *FCVI) Init() error {
 	var err error
-	if err = f.InitAbc(); err != nil {
+	if err := f.InitAbc(); err != nil {
 		return err
 	}
 

@@ -248,7 +248,7 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 	}
 
 	if content[0] != '^' {
-		return key, strings.Join([]string{object, display}, "_")
+		return key, object + "_" + display
 	}
 
 	return "", ""
@@ -287,7 +287,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 				continue
 			}
 			description := searchDescriptionSwagger(model.Object, name)
-			harvestName := strings.Join([]string{model.Object, display}, "_")
+			harvestName := model.Object + "_" + display
 			if m == "float" {
 				co := Counter{
 					Name:        harvestName,
@@ -405,7 +405,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 				display = strings.TrimPrefix(display, model.Object)
 				display = strings.TrimPrefix(display, "_")
 			}
-			harvestName := strings.Join([]string{model.Object, display}, "_")
+			harvestName := model.Object + "_" + display
 			if m == "float" {
 				if _, ok := excludeCounters[name]; ok {
 					continue
@@ -417,7 +417,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 						APIs: []MetricDef{
 							{
 								API:          "ZAPI",
-								Endpoint:     strings.Join([]string{"perf-object-get-instances", model.Query}, " "),
+								Endpoint:     "perf-object-get-instances" + " " + model.Query,
 								Template:     path,
 								ONTAPCounter: name,
 								Unit:         zapiUnitMap[name],
@@ -760,7 +760,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
 			if m == "float" {
-				counterMap[name] = strings.Join([]string{model.Object, display}, "_")
+				counterMap[name] = model.Object + "_" + display
 				counterMapNoPrefix[name] = display
 			}
 		}
@@ -859,7 +859,7 @@ func specialHandlingPerfCounters(counters map[string]Counter, model template2.Mo
 
 func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix string, noPrefix string) {
 	if !strings.HasSuffix(c.Description, ".") {
-		c.Description = c.Description + "."
+		c.Description += "."
 	}
 	if metric.IsMax {
 		c.Name = metric.Name + "_" + noPrefix

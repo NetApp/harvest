@@ -374,7 +374,7 @@ type IntRange struct {
 	Max int
 }
 
-var rangeRegex, _ = regexp.Compile(`(\d+)\s*-\s*(\d+)`)
+var rangeRegex = regexp.MustCompile(`(\d+)\s*-\s*(\d+)`)
 
 func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
 	if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {

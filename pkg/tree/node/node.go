@@ -349,7 +349,7 @@ func (n *Node) FlatList(list *[]string, prefix string) {
 	}
 	if len(n.Children) == 0 {
 		var sub string
-		if len(prefix) > 0 {
+		if prefix != "" {
 			sub = prefix + " " + simpleName(n.GetContentS())
 		} else {
 			sub = simpleName(n.GetContentS())
@@ -357,7 +357,7 @@ func (n *Node) FlatList(list *[]string, prefix string) {
 		*list = append(*list, sub)
 	} else {
 		nameS := n.GetNameS()
-		if len(nameS) > 0 && nameS != "counters" {
+		if nameS != "" && nameS != "counters" {
 			if prefix == "" {
 				prefix = nameS
 			} else {
@@ -391,11 +391,11 @@ func (n *Node) printN(depth int, b *strings.Builder) {
 		name = n.GetNameS()
 	}
 
-	if len(n.GetContentS()) > 0 && n.GetContentS()[0] != '<' {
+	if n.GetContentS() != "" && n.GetContentS()[0] != '<' {
 		content = n.GetContentS()
 	}
 	fname := fmt.Sprintf("%s[%s]", strings.Repeat("  ", depth), name)
-	b.WriteString(fmt.Sprintf("%-50s - %35s\n", fname, content))
+	_, _ = fmt.Fprintf(b, "%-50s - %35s\n", fname, content)
 	for _, child := range n.Children {
 		child.printN(depth+1, b)
 	}
@@ -415,11 +415,9 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 		} else {
 			newPath = slices.Clone(currentPath)
 		}
-		// fmt.Printf(" -> current_path=%v \t new_path=%v\n", currentPath, newPath)
 		for _, path := range paths {
 			if slices.Equal(newPath, path) {
 				matches = append(matches, node.GetContentS())
-				// fmt.Println("    MATCH!")
 				break
 			}
 		}
@@ -432,7 +430,6 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 
 	search(n, []string{})
 
-	// fmt.Printf("matches (%d):\n%v\n", len(matches), matches)
 	return matches, len(matches) > 0
 }
 

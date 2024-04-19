@@ -61,22 +61,22 @@ func (s *StorageGrid) Init(a *collector.AbstractCollector) error {
 	s.AbstractCollector = a
 	s.InitProp()
 
-	if err = s.initClient(); err != nil {
+	if err := s.initClient(); err != nil {
 		return err
 	}
 	if s.Props.TemplatePath, err = s.LoadTemplate(); err != nil {
 		return err
 	}
 	s.InitAPIPath()
-	if err = collector.Init(s); err != nil {
+	if err := collector.Init(s); err != nil {
 		return err
 	}
 
-	if err = s.InitCache(); err != nil {
+	if err := s.InitCache(); err != nil {
 		return err
 	}
 
-	if err = s.InitMatrix(); err != nil {
+	if err := s.InitMatrix(); err != nil {
 		return err
 	}
 
@@ -254,14 +254,13 @@ func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 		count        uint64
 		apiD, parseD time.Duration
 		startTime    time.Time
-		err          error
 		records      []gjson.Result
 	)
 
 	s.Matrix[s.Object].Reset()
 	startTime = time.Now()
 
-	if err = s.getRest(s.Props.Query, &records); err != nil {
+	if err := s.getRest(s.Props.Query, &records); err != nil {
 		return nil, err
 	}
 
@@ -420,7 +419,7 @@ func (s *StorageGrid) initClient() error {
 		return nil
 	}
 
-	if err = s.client.Init(5); err != nil {
+	if err := s.client.Init(5); err != nil {
 		return err
 	}
 	s.client.TraceLogSet(s.Name, s.Params)

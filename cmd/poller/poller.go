@@ -355,7 +355,7 @@ func (p *Poller) Init() error {
 					p.firstAutoSupport()
 				})
 			}
-			if err = p.schedule.NewTaskString("asup", asupSchedule, 0, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
+			if err := p.schedule.NewTaskString("asup", asupSchedule, 0, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
 				return err
 			}
 			logger.Info().
@@ -797,7 +797,6 @@ func Union2(hNode *node.Node, poller *conf.Poller) {
 					newNode := node.NewS(yNode.Value)
 					// this is the value that goes along with the key from yNode
 					valNode := rootContent.Content[index+1]
-					// fmt.Printf("node type=%s val=%s %s\n", yNode.Value, valNode.Tag, valNode.Value)
 					switch valNode.Tag {
 					case "!!str", "!!bool":
 						newNode.Content = []byte(valNode.Value)
@@ -853,7 +852,7 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 	)
 
 	// stop here if exporter is already loaded
-	if exp = p.getExporter(name); exp != nil {
+	if exp := p.getExporter(name); exp != nil {
 		return exp
 	}
 

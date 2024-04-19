@@ -52,7 +52,7 @@ func (q *Qtree) Init() error {
 		// "threshold",   # deprecated
 	}
 
-	if err = q.InitAbc(); err != nil {
+	if err := q.InitAbc(); err != nil {
 		return err
 	}
 
@@ -69,7 +69,7 @@ func (q *Qtree) Init() error {
 		return err
 	}
 
-	if err = q.client.Init(5); err != nil {
+	if err := q.client.Init(5); err != nil {
 		return err
 	}
 
@@ -148,7 +148,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	// Set all global labels from Rest.go if already not exist
 	q.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	filter := []string{"return_unmatched_nested_array_objects=true", "show_default_records=false", "type=" + strings.Join(q.quotaType[:], "|")}
+	filter := []string{"return_unmatched_nested_array_objects=true", "show_default_records=false", "type=" + strings.Join(q.quotaType, "|")}
 
 	// In 22.05, all qtrees were exported
 	if q.historicalLabels {
@@ -156,7 +156,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 			qtreeInstance.SetExportable(true)
 		}
 		// In 22.05, we would need default records as well.
-		filter = []string{"return_unmatched_nested_array_objects=true", "show_default_records=true", "type=" + strings.Join(q.quotaType[:], "|")}
+		filter = []string{"return_unmatched_nested_array_objects=true", "show_default_records=true", "type=" + strings.Join(q.quotaType, "|")}
 	}
 
 	href := rest.NewHrefBuilder().

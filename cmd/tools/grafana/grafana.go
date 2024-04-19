@@ -400,10 +400,10 @@ func initImportVars() {
 
 	// default behaviour
 	if opts.dir == "grafana/dashboards" && opts.serverfolder.name == "" {
-		m[filepath.Join(opts.dir, "/cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
-		m[filepath.Join(opts.dir, "/cmode/details")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT Details"}
-		m[filepath.Join(opts.dir, "/7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
-		m[filepath.Join(opts.dir, "/storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
+		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
+		m[filepath.Join(opts.dir, "cmode", "details")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT Details"}
+		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
+		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
 	} else if opts.dir != "" && opts.serverfolder.name != "" {
 		m[opts.dir] = &Folder{name: opts.serverfolder.name}
 	}
@@ -429,7 +429,7 @@ func checkAndCreateServerFolder(folder *Folder) error {
 
 	if folder.uid != "" && folder.id != 0 {
 		fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.name)
-	} else if err = createServerFolder(folder); err != nil {
+	} else if err := createServerFolder(folder); err != nil {
 		return err
 	} else {
 		fmt.Printf("created Grafana folder [%s] - OK\n", folder.name)
@@ -746,17 +746,17 @@ func addPrefixToMetricNames(expr, prefix string) string {
 				for i := range submatch {
 					submatch[i] = prefix + submatch[i]
 				}
-				expr = strings.Replace(expr, m[1], strings.Join(submatch, "+"), -1)
+				expr = strings.ReplaceAll(expr, m[1], strings.Join(submatch, "+"))
 				// multiple metrics used with `-`
 			} else if strings.Contains(m[1], "-") {
 				submatch = strings.Split(m[1], "-")
 				for i := range submatch {
 					submatch[i] = prefix + submatch[i]
 				}
-				expr = strings.Replace(expr, m[1], strings.Join(submatch, "-"), -1)
+				expr = strings.ReplaceAll(expr, m[1], strings.Join(submatch, "-"))
 				// single metric
 			} else {
-				expr = strings.Replace(expr, m[1], prefix+m[1], -1)
+				expr = strings.ReplaceAll(expr, m[1], prefix+m[1])
 			}
 			visitedMap[m[1]] = true
 		}
@@ -832,7 +832,7 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 			}
 			conf.Config.Tools.GrafanaAPIToken = opts.token
 			fmt.Printf("saving config file [%s]\n", configPath)
-			if err = util.SaveConfig(configPath, opts.token); err != nil {
+			if err := util.SaveConfig(configPath, opts.token); err != nil {
 				return err
 			}
 		}
@@ -1061,8 +1061,6 @@ func doRequest(opts *options, method, url string, query map[string]any) ([]byte,
 	if err != nil {
 		return nil, status, code, err
 	}
-
-	// fmt.Printf("(debug) send request [%s]\n", request.URL.String())
 
 	request.Header = opts.headers
 

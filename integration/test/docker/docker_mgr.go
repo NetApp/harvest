@@ -19,7 +19,7 @@ func IsDockerBasedPoller() bool {
 }
 
 func StoreContainerLog(containerID string, logFile string) error {
-	cli := fmt.Sprintf(`docker logs %s &> "%s"`, containerID, logFile)
+	cli := fmt.Sprintf(`docker logs %s &> %q`, containerID, logFile)
 	command := exec.Command("bash", "-c", cli)
 	err := command.Run()
 	if err != nil {

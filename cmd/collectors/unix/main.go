@@ -146,7 +146,7 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 		return errs.New(errs.ErrImplement, "platform not supported")
 	}
 
-	if err = collector.Init(u); err != nil {
+	if err := collector.Init(u); err != nil {
 		return err
 	}
 
@@ -346,7 +346,7 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 	mat := u.Matrix[u.Object]
 	mat.Reset()
 
-	if err = u.system.Reload(); err != nil {
+	if err := u.system.Reload(); err != nil {
 		return nil, err
 	}
 

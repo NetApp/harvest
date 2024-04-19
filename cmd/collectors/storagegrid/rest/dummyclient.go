@@ -16,7 +16,7 @@ func NewDummyClient() *Client {
 		Timeout: time.Second * 10,
 	}
 
-	httpRequest, _ := http.NewRequest(http.MethodGet, "http://example.com", nil)
+	httpRequest, _ := http.NewRequest(http.MethodGet, "http://example.com", http.NoBody)
 
 	buffer := new(bytes.Buffer)
 
