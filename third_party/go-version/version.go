@@ -160,7 +160,7 @@ func (v *Version) Compare(other *Version) int {
 			// this means Other had the lower specificity
 			// Check to see if the remaining segments in Self are all zeros -
 			if !allZero(segmentsSelf[i:]) {
-				//if not, it means that Self has to be greater than Other
+				// if not, it means that Self has to be greater than Other
 				return 1
 			}
 			break
@@ -337,10 +337,10 @@ func (v *Version) Prerelease() string {
 // This excludes any metadata or pre-release information. For example,
 // for a version "1.2.3-beta", segments will return a slice of
 // 1, 2, 3.
-func (v *Version) Segments() []int {
-	segmentSlice := make([]int, len(v.segments))
+func (v *Version) Segments() []int64 {
+	segmentSlice := make([]int64, len(v.segments))
 	for i, v := range v.segments {
-		segmentSlice[i] = int(v)
+		segmentSlice[i] = v
 	}
 	return segmentSlice
 }

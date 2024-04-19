@@ -322,9 +322,9 @@ func (c *Client) SetVersion(v string) error {
 	// e.g 11.6.0.3-20220802.2201.f58633a
 	segments := newVersion.Segments()
 	if len(segments) >= 3 {
-		c.Cluster.Version[0] = segments[0]
-		c.Cluster.Version[1] = segments[1]
-		c.Cluster.Version[2] = segments[2]
+		c.Cluster.Version[0] = int(segments[0])
+		c.Cluster.Version[1] = int(segments[1])
+		c.Cluster.Version[2] = int(segments[2])
 	} else {
 		return fmt.Errorf("failed to parse version %s", v)
 	}
