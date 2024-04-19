@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/tidwall/gjson"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"strings"
@@ -322,13 +323,20 @@ func (c *Client) SetVersion(v string) error {
 	// e.g 11.6.0.3-20220802.2201.f58633a
 	segments := newVersion.Segments()
 	if len(segments) >= 3 {
-		c.Cluster.Version[0] = int(segments[0])
-		c.Cluster.Version[1] = int(segments[1])
-		c.Cluster.Version[2] = int(segments[2])
+		c.Cluster.Version[0] = check(segments[0])
+		c.Cluster.Version[1] = check(segments[1])
+		c.Cluster.Version[2] = check(segments[2])
 	} else {
 		return fmt.Errorf("failed to parse version %s", v)
 	}
 	return nil
+}
+
+func check(i int64) int {
+	if i > 0 && i <= math.MaxInt32 {
+		return int(i)
+	}
+	return 0
 }
 
 type authBody struct {
