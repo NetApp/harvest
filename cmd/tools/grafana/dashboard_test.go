@@ -1375,7 +1375,8 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 func writeSorted(t *testing.T, path string, sorted string) string {
 	dir, file := filepath.Split(path)
 	dir = filepath.Dir(dir)
-	dest := filepath.Join("/tmp", dir, file)
+	tempDir := "/tmp"
+	dest := filepath.Join(tempDir, dir, file)
 	destDir := filepath.Dir(dest)
 	err := os.MkdirAll(destDir, 0750)
 	if err != nil {
