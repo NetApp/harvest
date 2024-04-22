@@ -185,8 +185,9 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
 	for _, key := range keys {
 		cgInstance := data.GetInstance(key)
-		// find cgName from the destination_location
-		cgInstance.SetLabel("cg_name", filepath.Base(cgInstance.GetLabel("destination_location")))
+		// find cgName from the destination_location, source_location
+		cgInstance.SetLabel("destination_cg_name", filepath.Base(cgInstance.GetLabel("destination_location")))
+		cgInstance.SetLabel("source_cg_name", filepath.Base(cgInstance.GetLabel("source_location")))
 
 		cgItemMappings := cgInstance.GetLabel("cg_item_mappings")
 		// cg_item_mappings would be array of cgMapping. Example: vols1:@vold1,vols2:@vold2
