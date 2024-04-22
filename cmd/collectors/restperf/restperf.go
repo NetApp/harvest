@@ -112,7 +112,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	r.perfProp.counterInfo = make(map[string]*counter)
 	r.archivedMetrics = make(map[string]*rest2.Metric)
 
-	if err = r.InitClient(); err != nil {
+	if err := r.InitClient(); err != nil {
 		return err
 	}
 
@@ -122,19 +122,19 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 
 	r.InitVars(a.Params)
 
-	if err = collector.Init(r); err != nil {
+	if err := collector.Init(r); err != nil {
 		return err
 	}
 
-	if err = r.InitCache(); err != nil {
+	if err := r.InitCache(); err != nil {
 		return err
 	}
 
-	if err = r.InitMatrix(); err != nil {
+	if err := r.InitMatrix(); err != nil {
 		return err
 	}
 
-	if err = r.InitQOS(); err != nil {
+	if err := r.InitQOS(); err != nil {
 		return err
 	}
 

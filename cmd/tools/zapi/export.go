@@ -55,44 +55,34 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 
 	for _, ch := range item.GetChildren() {
-		if ch.GetChildContentS("is-deprecated") != "true" {
-			name := ch.GetChildContentS("name")
-			prop := ch.GetChildContentS("properties")
+		if ch.GetChildContentS("is-deprecated") == "true" {
+			continue
+		}
+		name := ch.GetChildContentS("name")
+		prop := ch.GetChildContentS("properties")
 
-			if strings.Contains(prop, "no-display") {
-				continue
-			}
+		if strings.Contains(prop, "no-display") {
+			continue
+		}
 
-			counters.NewChildS("", name)
+		counters.NewChildS("", name)
 
-			if name != "instance_uuid" && strings.Contains(prop, "string") {
-				if name == "instance_name" {
-					instanceKeys.NewChildS("", object)
-				} else {
-					instanceKeys.NewChildS("", name)
-				}
+		if name != "instance_uuid" && strings.Contains(prop, "string") {
+			if name == "instance_name" {
+				instanceKeys.NewChildS("", object)
+			} else {
+				instanceKeys.NewChildS("", name)
 			}
 		}
 	}
-	/*
-		fmt.Println("\n===========================================================================\n")
-		template.Print(0)
-		fmt.Println("\n===========================================================================\n")
-	*/
 	if dump, err = yaml.Dump(template); err != nil {
 		fmt.Println(err)
 		return err
-	} /*/else {
-		fmt.Println(string(dump))
 	}
-	fmt.Println("\n===========================================================================\n")
-	*/
 	var fp []string
 
 	harvestHomePath = conf.Path("")
-	fp = append(fp, harvestHomePath)
-	fp = append(fp, "conf/")
-	fp = append(fp, "zapiperf/")
+	fp = append(fp, harvestHomePath, "conf/", "zapiperf/")
 
 	if c.IsClustered() {
 		fp = append(fp, "cdot")
@@ -100,9 +90,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		fp = append(fp, "7mode")
 	}
 
-	// fp = append(fp, fmt.Sprintf("%d.%d.%d", c.System.Version[0], c.System.Version[1], c.System.Version[2]))
-	fp = append(fp, "9.8.0")
-	fp = append(fp, strings.ReplaceAll(args.Object, ":", "_")+".yaml")
+	fp = append(fp, "9.8.0", strings.ReplaceAll(args.Object, ":", "_")+".yaml")
 
 	if err = os.MkdirAll(filepath.Join(fp[:5]...), 0750); err != nil {
 		fmt.Println("mkdirall")
@@ -134,7 +122,7 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 		custom.NewChildS("objects", "")
 	}
 
-	customFp := filepath.Join(harvestHomePath, "conf/", "zapiperf/", "custom.yaml")
+	customFp := filepath.Join(harvestHomePath, "conf", "zapiperf", "custom.yaml")
 
 	if objects := custom.GetChildS("objects"); objects != nil {
 

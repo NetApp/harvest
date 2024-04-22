@@ -654,9 +654,9 @@ func generateDescription(dPath string, data []byte, counters map[string]Counter)
 
 func generatePanelPathWithDescription(path string, desc string) (string, string) {
 	if desc != "" && !strings.HasSuffix(desc, ".") {
-		desc = desc + "."
+		desc += "."
 	}
-	return strings.Replace(strings.Replace(path, "[", ".", -1), "]", ".", -1) + "description", desc
+	return strings.Replace(strings.ReplaceAll(path, "[", "."), "]", ".", -1) + "description", desc
 }
 
 func init() {

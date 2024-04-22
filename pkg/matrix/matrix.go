@@ -281,7 +281,7 @@ func (m *Matrix) RemoveInstance(key string) {
 		for _, i := range m.instances {
 			if i.index > deletedIndex {
 				// reduce index by 1
-				i.index = i.index - 1
+				i.index--
 			}
 		}
 	}

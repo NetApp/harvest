@@ -54,11 +54,11 @@ func (h *Health) Init() error {
 
 	var err error
 
-	if err = h.InitAbc(); err != nil {
+	if err := h.InitAbc(); err != nil {
 		return err
 	}
 
-	if err = h.initAllMatrix(); err != nil {
+	if err := h.initAllMatrix(); err != nil {
 		return err
 	}
 

@@ -31,7 +31,7 @@ func (my *Security) Init() error {
 
 	var err error
 
-	if err = my.InitAbc(); err != nil {
+	if err := my.InitAbc(); err != nil {
 		return err
 	}
 
@@ -40,7 +40,7 @@ func (my *Security) Init() error {
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err := my.client.Init(5); err != nil {
 		return err
 	}
 
@@ -65,13 +65,11 @@ func (my *Security) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 		// invoke security-config-get zapi with 'ssl' interface and get fips status
 		if my.fipsEnabled, err = my.getSecurityConfig(); err != nil {
 			my.Logger.Warn().Err(err).Msg("Failed to collect fips enable status")
-			// return nil, nil
 		}
 
 		// invoke security-protocol-get zapi with 'telnet' and 'rsh' and get
 		if my.telnetEnabled, my.rshEnabled, err = my.getSecurityProtocols(); err != nil {
 			my.Logger.Warn().Err(err).Msg("Failed to collect telnet and rsh enable status")
-			// return nil, nil
 		}
 
 		// update instance based on the above zapi response

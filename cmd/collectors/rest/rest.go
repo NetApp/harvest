@@ -142,7 +142,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	r.InitProp()
 
-	if err = r.InitClient(); err != nil {
+	if err := r.InitClient(); err != nil {
 		return err
 	}
 
@@ -152,19 +152,19 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	r.InitVars(a.Params)
 
-	if err = r.initEndPoints(); err != nil {
+	if err := r.initEndPoints(); err != nil {
 		return err
 	}
 
-	if err = collector.Init(r); err != nil {
+	if err := collector.Init(r); err != nil {
 		return err
 	}
 
-	if err = r.InitCache(); err != nil {
+	if err := r.InitCache(); err != nil {
 		return err
 	}
 
-	if err = r.InitMatrix(); err != nil {
+	if err := r.InitMatrix(); err != nil {
 		return err
 	}
 
@@ -204,7 +204,7 @@ func (r *Rest) InitClient() error {
 	if r.Options.IsTest {
 		return nil
 	}
-	if err = r.Client.Init(5); err != nil {
+	if err := r.Client.Init(5); err != nil {
 		return err
 	}
 	r.Client.TraceLogSet(r.Name, r.Params)

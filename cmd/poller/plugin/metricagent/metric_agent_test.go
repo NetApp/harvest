@@ -9,13 +9,13 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
-	//"github.com/netapp/harvest/v2/share/logger"
+	// "github.com/netapp/harvest/v2/share/logger"
 )
 
 func newAgent() *MetricAgent {
 
 	// uncomment for debugging
-	//logger.SetLevel(0)
+	// logger.SetLevel(0)
 
 	// define plugin rules
 	params := node.NewS("MetricAgent")

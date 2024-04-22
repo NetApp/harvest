@@ -149,7 +149,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		t.Errorf("got %v, want %v", got8, want8)
 	}
 
-	//export_options add new instance_key
+	// export_options add new instance_key
 	want6 := 6
 	got6 := 0
 	counters = defaultTemplate.GetChildS("export_options").GetChildS("instance_keys")
@@ -163,7 +163,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		t.Errorf("got %v, want %v", want6, got6)
 	}
 
-	//export_options add same instance_labels
+	// export_options add same instance_labels
 	want7 := 1
 	got7 := 0
 	counters = defaultTemplate.GetChildS("export_options").GetChildS("instance_labels")
@@ -177,7 +177,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		t.Errorf("got %v, want %v", want7, got7)
 	}
 
-	//override block
+	// override block
 	want9 := 2
 	got9 := 0
 	counters = defaultTemplate.GetChildS("override")

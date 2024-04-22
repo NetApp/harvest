@@ -504,32 +504,31 @@ func labelValueDiff(label string, labelNames []string) {
 	skipMatch := make([]string, 0)
 	skipMatch = append(skipMatch, "datacenter")
 
-	if strings.HasPrefix(label, "disk_") || strings.Compare(label, "shelf_labels") == 0 {
+	if strings.HasPrefix(label, "disk_") || label == "shelf_labels" {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "serial_number"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if strings.Compare(label, "shelf_psu_labels") == 0 {
+	if label == "shelf_psu_labels" {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "psu_id"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if strings.Compare(label, "shelf_fan_labels") == 0 {
+	if label == "shelf_fan_labels" {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "fan_id"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
 	if slices.Contains([]string{"shelf_voltage_labels", "shelf_temperature_labels", "shelf_sensor_labels"}, label) {
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "shelf"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "sensor_id"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "shelf"), IndexOf(finalLabelNames, "sensor_id"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if strings.Compare(label, "ntpserver_labels") == 0 {
+	if label == "ntpserver_labels" {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "servers"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
@@ -541,30 +540,32 @@ func labelValueDiff(label string, labelNames []string) {
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if strings.Compare(label, "security_account_labels") == 0 {
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "user_name"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "applications"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "methods"))
+	if label == "security_account_labels" {
+		keyIndexes = append(keyIndexes,
+			IndexOf(finalLabelNames, "user_name"),
+			IndexOf(finalLabelNames, "applications"),
+			IndexOf(finalLabelNames, "svm"),
+			IndexOf(finalLabelNames, "methods"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if strings.Compare(label, "security_labels") == 0 {
+	if label == "security_labels" {
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if strings.Compare(label, "support_labels") == 0 {
+	if label == "support_labels" {
 		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "node"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
-	if strings.Compare(label, "security_certificate_labels") == 0 {
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "name"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "serial_number"))
+	if label == "security_certificate_labels" {
+		keyIndexes = append(keyIndexes,
+			IndexOf(finalLabelNames, "name"),
+			IndexOf(finalLabelNames, "svm"),
+			IndexOf(finalLabelNames, "serial_number"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
@@ -576,23 +577,22 @@ func labelValueDiff(label string, labelNames []string) {
 	}
 
 	if strings.HasPrefix(label, "volume_") {
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "volume"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "volume"), IndexOf(finalLabelNames, "svm"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
 	if strings.HasPrefix(label, "aggr_") {
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "aggr"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "node"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "aggr"), IndexOf(finalLabelNames, "node"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
 
 	if strings.HasPrefix(label, "lun_") {
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "lun"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "node"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		keyIndexes = append(keyIndexes,
+			IndexOf(finalLabelNames, "lun"),
+			IndexOf(finalLabelNames, "node"),
+			IndexOf(finalLabelNames, "svm"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
@@ -604,8 +604,7 @@ func labelValueDiff(label string, labelNames []string) {
 	}
 
 	if strings.HasPrefix(label, "qtree_") {
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "export_policy"))
-		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "svm"))
+		keyIndexes = append(keyIndexes, IndexOf(finalLabelNames, "export_policy"), IndexOf(finalLabelNames, "svm"))
 		dataCenterIndex = IndexOf(finalLabelNames, "datacenter")
 		results = gjson.GetMany(data, prefixLabelsName...)
 	}
@@ -745,7 +744,7 @@ func difference(a, b []string) ([]string, []string) {
 }
 
 func getResponse(url string) (string, error) {
-	//#nosec G107 -- http is default for Prometheus
+	// #nosec G107 -- http is the default for Prometheus
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln(err)

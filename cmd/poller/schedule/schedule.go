@@ -157,7 +157,6 @@ func (s *Schedule) Recover() {
 				t.timer = time.Now().Add(-t.interval)
 			}
 		}
-		// s.cachedInterval = nil
 		s.standByTask = nil
 		s.standByMode = false
 		return

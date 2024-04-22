@@ -44,7 +44,7 @@ func (a *LabelAgent) Init() error {
 		count int
 	)
 
-	if err = a.AbstractPlugin.Init(); err != nil {
+	if err := a.AbstractPlugin.Init(); err != nil {
 		return err
 	}
 

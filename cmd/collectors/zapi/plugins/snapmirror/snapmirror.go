@@ -36,14 +36,14 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 func (my *SnapMirror) Init() error {
 	var err error
-	if err = my.InitAbc(); err != nil {
+	if err := my.InitAbc(); err != nil {
 		return err
 	}
 	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
 		my.Logger.Error().Stack().Err(err).Msg("connecting")
 		return err
 	}
-	if err = my.client.Init(5); err != nil {
+	if err := my.client.Init(5); err != nil {
 		return err
 	}
 	my.nodeUpdCounter = 0

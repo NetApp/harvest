@@ -14,6 +14,7 @@ import (
 	"strings"
 	"testing"
 	"unicode"
+	"unicode/utf8"
 )
 
 const toConf = "../../../conf"
@@ -200,7 +201,8 @@ func TestMetricColumnAlignmentAndCase(t *testing.T) {
 					t.Errorf("metric=%s should use _ not - on right side path=%s", m.right, shortPath(path))
 				}
 			}
-			if len(m.right) > 0 && unicode.IsUpper([]rune(m.right)[0]) {
+			first, _ := utf8.DecodeRuneInString(m.right)
+			if len(m.right) > 0 && unicode.IsUpper(first) {
 				t.Errorf("metric=%s should start with a lowercase, path=%s", m.line, shortPath(path))
 			}
 		}

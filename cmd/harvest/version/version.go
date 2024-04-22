@@ -77,7 +77,6 @@ func checkLatest() {
 }
 
 func isNewerAvailable(current string, remote string) (bool, error) {
-	// fmt.Printf("isNewerAvail cur=%s remote=%s ", current, remote)
 	if remote == current {
 		return false, nil
 	}

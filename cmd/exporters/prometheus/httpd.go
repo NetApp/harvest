@@ -130,14 +130,6 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	md, _ := p.render(p.Metadata)
 	data = append(data, md...)
 	count += len(md)
-	/*
-
-		e.Metadata.SetValueSS("count", "render", float64(count))
-
-		if md, err := e.Render(e.Metadata); err == nil {
-			data = append(data, md...)
-		}
-	*/
 
 	if p.addMetaTags {
 		data = filterMetaTags(data)

@@ -63,5 +63,11 @@ linters-settings:
   gocritic:
     disabled-tags:
       - style
+    enabled-tags:
+      - diagnostic
+      - performance
+    disabled-checks:
+      - hugeParam
+      - rangeValCopy
   dogsled:
     max-blank-identifiers: 3

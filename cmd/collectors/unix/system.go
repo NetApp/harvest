@@ -15,14 +15,16 @@ import (
 // System - provides memory size and boot time of the system
 type System struct {
 	memTotal uint64
-	//cpu_total float64
+	// cpu_total float64
 	bootTime float64
 }
 
 // NewSystem - creates an initialized instance of System
 func NewSystem() (*System, error) {
 	s := &System{}
-	return s, s.Reload()
+
+	err := s.Reload()
+	return s, err
 }
 
 // Reload - refresh metrics
@@ -39,7 +41,7 @@ func (s *System) Reload() error {
 func (s *System) loadStat() error {
 
 	var (
-		//cpu float64
+		// cpu float64
 		num           int64
 		data          []byte
 		lines, fields []string

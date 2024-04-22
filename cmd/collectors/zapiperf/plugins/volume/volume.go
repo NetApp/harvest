@@ -27,9 +27,8 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (v *Volume) Init() error {
-	var err error
 
-	if err = v.InitAbc(); err != nil {
+	if err := v.InitAbc(); err != nil {
 		return err
 	}
 

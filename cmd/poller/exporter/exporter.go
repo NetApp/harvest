@@ -103,7 +103,6 @@ func (e *AbstractExporter) InitAbc() error {
 		return err
 	}
 
-	// e.Metadata.AddLabel("task", "")
 	if instance, err := e.Metadata.NewInstance("export"); err == nil {
 		instance.SetLabel("task", "export")
 	} else {
