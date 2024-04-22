@@ -37,6 +37,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volumetag"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/vscan"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/color"
@@ -147,6 +148,8 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 		return fcvi.New(abc)
 	case "FlexCache":
 		return flexcache.New(abc)
+	case "Workload":
+		return workload.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapiPerf plugin found for %s", kind)
 	}

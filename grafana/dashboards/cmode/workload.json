@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705298276949,
+  "iteration": 1713535934233,
   "links": [
     {
       "asDropdown": true,
@@ -1100,7 +1100,7 @@
               "refId": "A"
             }
           ],
-          "title": "Fixed QoS Utilized IOPs (%)",
+          "title": "Top $TopResources Fixed QoS Utilized IOPs (%)",
           "transformations": [],
           "type": "timeseries"
         },
@@ -1191,7 +1191,7 @@
               "refId": "A"
             }
           ],
-          "title": "Fixed QoS Bandwidth Utilization (%)",
+          "title": "Top $TopResources Fixed QoS Bandwidth Utilization (%)",
           "type": "timeseries"
         },
         {
@@ -1622,6 +1622,482 @@
         "x": 0,
         "y": 59
       },
+      "id": 226,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 60
+          },
+          "id": 228,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_used_ops_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_used_ops_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Adaptive QoS Utilized IOPs (%)",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel is active only when the block size is set to values, excluding the `any`.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 60
+          },
+          "id": 229,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_used_throughput_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_used_throughput_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources QoS Bandwidth Utilization (%)",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 70
+          },
+          "id": 231,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_used_ops_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} ",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Adaptive QoS Utilized IOPs (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "file",
+                    "lun",
+                    "max_throughput_iops",
+                    "policy_group",
+                    "svm",
+                    "volume",
+                    "workload",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "indexByName": {
+                  "QOS Used %": 7,
+                  "Value": 9,
+                  "Value / max_throughput_iops": 11,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "file": 4,
+                  "lun": 5,
+                  "max_throughput_iops": 10,
+                  "policy_group": 8,
+                  "svm": 2,
+                  "volume": 3,
+                  "workload": 6
+                },
+                "renameByName": {
+                  "Value": "Used %",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "file": "File",
+                  "lun": "Lun",
+                  "max_throughput_iops": "Max IOPS",
+                  "policy_group": "Policy",
+                  "svm": "SVM",
+                  "volume": "Volume",
+                  "workload": "Workload"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel is active only when the block size is set to values, excluding the `any`.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 79
+          },
+          "id": 233,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "QOS Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_used_throughput_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} ",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Adaptive QoS Bandwidth Utilization (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "file",
+                    "lun",
+                    "max_throughput_mbps",
+                    "policy_group",
+                    "svm",
+                    "volume",
+                    "workload",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "indexByName": {
+                  "QOS Used %": 7,
+                  "Value": 9,
+                  "Value / max_throughput_iops": 11,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "file": 4,
+                  "lun": 5,
+                  "max_throughput_iops": 10,
+                  "policy_group": 8,
+                  "svm": 2,
+                  "volume": 3,
+                  "workload": 6
+                },
+                "renameByName": {
+                  "Value": "Used %",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "file": "File",
+                  "lun": "Lun",
+                  "max_throughput_iops": "Max IOPS",
+                  "max_throughput_mbps": "Max Throughput",
+                  "policy_group": "Policy",
+                  "svm": "SVM",
+                  "volume": "Volume",
+                  "workload": "Workload"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "QOS Adaptive Utilized%",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 60
+      },
       "id": 175,
       "panels": [
         {
@@ -1681,7 +2157,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 60
+            "y": 11
           },
           "id": 172,
           "options": {
@@ -1770,7 +2246,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 60
+            "y": 11
           },
           "id": 176,
           "options": {
@@ -1859,7 +2335,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 70
+            "y": 21
           },
           "id": 177,
           "options": {
@@ -1948,7 +2424,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 70
+            "y": 21
           },
           "id": 178,
           "options": {
@@ -2037,7 +2513,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 80
+            "y": 31
           },
           "id": 179,
           "options": {
@@ -2126,7 +2602,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 80
+            "y": 31
           },
           "id": 180,
           "options": {
@@ -2215,7 +2691,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 90
+            "y": 41
           },
           "id": 181,
           "options": {
@@ -2304,7 +2780,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 90
+            "y": 41
           },
           "id": 182,
           "options": {
@@ -2393,7 +2869,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 100
+            "y": 51
           },
           "id": 183,
           "options": {
@@ -2482,7 +2958,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 100
+            "y": 51
           },
           "id": 184,
           "options": {
@@ -2525,7 +3001,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 61
       },
       "id": 186,
       "panels": [
@@ -4091,7 +4567,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 62
       },
       "id": 127,
       "panels": [
@@ -5963,5 +6439,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "",
-  "version": 5
+  "version": 6
 }

@@ -24,6 +24,8 @@ import (
 	"strings"
 )
 
+const bytesInTB = 1e12
+
 var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
 
 var IsCollector = map[string]struct{}{
@@ -459,4 +461,19 @@ func HandleArrayFormat(name string) string {
 		return matches[1]
 	}
 	return name
+}
+
+func StringBytesToTerabytes(s string) (float64, error) {
+	if s == "" {
+		return 0, nil
+	}
+	bytes, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	return float64(bytes) / bytesInTB, nil
+}
+
+func ConvertStringToFloat64(s string) (float64, error) {
+	return strconv.ParseFloat(s, 64)
 }
