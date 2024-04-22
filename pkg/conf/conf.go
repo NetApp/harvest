@@ -5,6 +5,7 @@
 package conf
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -281,11 +282,7 @@ func Path(aPath string) string {
 }
 
 func GetHarvestLogPath() string {
-	logPath := os.Getenv("HARVEST_LOGS")
-	if logPath == "" {
-		return "/var/log/harvest/"
-	}
-	return logPath
+	return cmp.Or(os.Getenv("HARVEST_LOGS"), "/var/log/harvest/")
 }
 
 // GetPrometheusExporterPorts returns the Prometheus port for the given poller
