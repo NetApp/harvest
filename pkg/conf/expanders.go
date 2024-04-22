@@ -31,8 +31,8 @@ func ExpandVars(in []byte) ([]byte, error) {
 	return in, nil
 }
 
-func expandEnv(bytes []byte) ([]byte, error) {
-	s := string(bytes)
+func expandEnv(data []byte) ([]byte, error) {
+	s := string(data)
 	envValue := os.Getenv(s)
 
 	// if env variable is hostname, and the var is empty, use os.Hostname

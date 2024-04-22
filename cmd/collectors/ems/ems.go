@@ -388,12 +388,10 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 			h = e.getHref(e.eventNames[start:end], filter)
 			hrefs = append(hrefs, h)
 			start = end
-		} else {
-			if end == len(e.eventNames)-1 {
-				end = len(e.eventNames)
-				h = e.getHref(e.eventNames[start:end], filter)
-				hrefs = append(hrefs, h)
-			}
+		} else if end == len(e.eventNames)-1 {
+			end = len(e.eventNames)
+			h = e.getHref(e.eventNames[start:end], filter)
+			hrefs = append(hrefs, h)
 		}
 	}
 	for _, h := range hrefs {
@@ -641,18 +639,18 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 							metr.SetExportable(metric.Exportable)
 						}
-						if metric.Name == "events" {
+						switch {
+						case metric.Name == "events":
 							if err = metr.SetValueFloat64(instance, 1); err != nil {
 								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 									Msg("Unable to set float key on metric")
 							}
-						} else if metric.Name == "timestamp" {
+						case metric.Name == "timestamp":
 							if err = metr.SetValueFloat64(instance, float64(time.Now().UnixMicro())); err != nil {
 								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 									Msg("Unable to set timestamp on metric")
 							}
-						} else {
-							// this code will not execute as ems only support [events, timestamp] metric
+						default:
 							e.Logger.Warn().Str("key", metric.Name).Str("metric", metric.Label).
 								Msg("Unable to find metric")
 						}

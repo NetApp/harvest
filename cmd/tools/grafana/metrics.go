@@ -59,7 +59,7 @@ func visitExpressionsAndQueries(path string, data []byte) {
 		allMatches := metricRe.FindAllStringSubmatch(expr.expr, -1)
 		for _, match := range allMatches {
 			m := match[1]
-			if len(m) == 0 {
+			if m == "" {
 				continue
 			}
 			metricsSeen[m] = struct{}{}
@@ -72,7 +72,7 @@ func visitExpressionsAndQueries(path string, data []byte) {
 		allMatches := metricRe.FindAllStringSubmatch(v.query, -1)
 		for _, match := range allMatches {
 			m := match[1]
-			if len(m) == 0 {
+			if m == "" {
 				continue
 			}
 			metricsSeen[m] = struct{}{}

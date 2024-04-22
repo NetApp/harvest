@@ -268,13 +268,14 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 }
 
 func (v *VolumeAnalytics) getLabelBucket(label string) string {
-	if strings.Contains(label, "-W") {
+	switch {
+	case strings.Contains(label, "-W"):
 		return "Weekly"
-	} else if strings.Contains(label, "-Q") {
+	case strings.Contains(label, "-Q"):
 		return "Quarterly"
-	} else if strings.Contains(label, "-") && !strings.Contains(label, "--") {
+	case strings.Contains(label, "-") && !strings.Contains(label, "--"):
 		return "Monthly"
-	} else if strings.Contains(label, "unknown") {
+	case strings.Contains(label, "unknown"):
 		return "Unknown"
 	}
 	return "Yearly"
