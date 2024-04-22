@@ -42,13 +42,10 @@ func (z *Zapi) LoadCounters(counters *node.Node) (bool, *node.Node) {
 		z.ParseCounters(c, desired, []string{})
 	}
 
-	// counters.SetXMLNameS("desired-attributes")
-	// counters.SetContentS("")
 	return len(z.Matrix[z.Object].GetMetrics()) > 0, desired
 }
 
 func (z *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
-	// logger.Debug("", "%v Parsing [%s] [%s] with %d values and %d children", new_path, elem.Name, elem.Value, len(elem.Values), len(elem.Children))
 
 	var d *node.Node
 
@@ -102,7 +99,6 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 
 	if content[0] == '^' {
 		z.instanceLabelPaths[key] = display
-		// data.AddLabel(key, display)
 		if content[1] == '^' {
 			copied := make([]string, len(fullPath))
 			copy(copied, fullPath)

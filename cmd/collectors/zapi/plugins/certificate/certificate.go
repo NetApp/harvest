@@ -36,7 +36,7 @@ func (my *Certificate) Init() error {
 
 	var err error
 
-	if err = my.InitAbc(); err != nil {
+	if err := my.InitAbc(); err != nil {
 		return err
 	}
 
@@ -45,7 +45,7 @@ func (my *Certificate) Init() error {
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err := my.client.Init(5); err != nil {
 		return err
 	}
 

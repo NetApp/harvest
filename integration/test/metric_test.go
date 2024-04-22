@@ -131,7 +131,7 @@ func metricAndLabelKey(metric string, rest string) string {
 				}
 			}
 			labelValue := rest[equalIndex+1 : labelEnd]
-			labels = append(labels, fmt.Sprintf(`%s="%s"`, label, labelValue))
+			labels = append(labels, fmt.Sprintf(`%s=%q`, label, labelValue))
 			scanner = labelEnd + 1
 			if string(rest[scanner]) == "," {
 				scanner++

@@ -218,7 +218,7 @@ func SaveConfig(fp string, token string) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(fp, marshal, 0600)
+	return os.WriteFile(fp, marshal, 0o0600)
 }
 
 type Status string
@@ -369,7 +369,7 @@ func ParseZAPIDisplay(obj string, path []string) string {
 
 func AddIntString(input string, value int) string {
 	i, _ := strconv.Atoi(input)
-	i = i + value
+	i += value
 	return strconv.FormatInt(int64(i), 10)
 }
 

@@ -337,7 +337,6 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 			e.Logger.Debug().Msgf("skip instance (%s), no field set parsed", key)
 		} else if r, err := m.Render(); err == nil {
 			rendered = append(rendered, []byte(r))
-			// logger.Debug(e.Prefix, "M= [%s%s%s]", color.Blue, r, color.End)
 			count += countTmp
 		} else {
 			e.Logger.Debug().Msg(err.Error())

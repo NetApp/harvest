@@ -385,8 +385,9 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 				if tagged != nil && !tagged.Has(prefix+"_labels") {
 					tagged.Add(prefix + "_labels")
-					rendered = append(rendered, []byte("# HELP "+prefix+"_labels Pseudo-metric for "+data.Object+" labels"))
-					rendered = append(rendered, []byte("# TYPE "+prefix+"_labels gauge"))
+					rendered = append(rendered,
+						[]byte("# HELP "+prefix+"_labels Pseudo-metric for "+data.Object+" labels"),
+						[]byte("# TYPE "+prefix+"_labels gauge"))
 				}
 				rendered = append(rendered, []byte(labelData))
 			}
@@ -443,8 +444,9 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
-						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
-						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
+						rendered = append(rendered,
+							[]byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object),
+							[]byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
 					}
 
 					rendered = append(rendered, []byte(x))
@@ -454,8 +456,9 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
-						rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
-						rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" gauge"))
+						rendered = append(rendered,
+							[]byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object),
+							[]byte("# TYPE "+prefix+"_"+metric.GetName()+" gauge"))
 					}
 
 					rendered = append(rendered, []byte(x))
@@ -488,8 +491,9 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 			if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 				tagged.Add(prefix + "_" + metric.GetName())
-				rendered = append(rendered, []byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object))
-				rendered = append(rendered, []byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
+				rendered = append(rendered,
+					[]byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object),
+					[]byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
 			}
 
 			normalizedNames, canNormalize := normalizedLabels[objectMetric]
@@ -529,8 +533,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				rendered = append(rendered, []byte(x))
 			}
 			if canNormalize {
-				rendered = append(rendered, []byte(countMetric))
-				rendered = append(rendered, []byte(sumMetric))
+				rendered = append(rendered, []byte(countMetric), []byte(sumMetric))
 			}
 		}
 	}
@@ -600,7 +603,7 @@ func escape(replacer *strings.Replacer, key string, value string) string {
 	// label_value can be any sequence of UTF-8 characters, but the backslash (\), double-quote ("),
 	// and line feed (\n) characters have to be escaped as \\, \", and \n, respectively.
 
-	return fmt.Sprintf("%s=\"%s\"", key, replacer.Replace(value))
+	return fmt.Sprintf("%s=%q", key, replacer.Replace(value))
 }
 
 type histogram struct {

@@ -320,7 +320,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 						}
 					}
 				}
-				failText.WriteString(fmt.Sprintf("unit=%s %s path=%s title=\"%s\"\n",
+				failText.WriteString(fmt.Sprintf("unit=%s %s path=%s title=%q\n",
 					unit, row.dashboard, row.path, row.title))
 			}
 		}
@@ -1375,7 +1375,7 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 func writeSorted(t *testing.T, path string, sorted string) string {
 	dir, file := filepath.Split(path)
 	dir = filepath.Dir(dir)
-	dest := filepath.Join("/tmp", dir, file)
+	dest := filepath.Join("tmp", dir, file)
 	destDir := filepath.Dir(dest)
 	err := os.MkdirAll(destDir, 0750)
 	if err != nil {
@@ -1498,7 +1498,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 					// t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
 					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 				} else {
-					*count = *count + 1
+					*count++
 					t.Errorf(`dashboard=%s panel="%s" does not have panel description %d`, dashPath, title, *count)
 				}
 			} else {

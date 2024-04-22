@@ -68,7 +68,7 @@ func (e HarvestError) Error() string {
 	if e.ErrNum == "" && e.StatusCode == 0 {
 		return fmt.Sprintf("%s => %s", e.Inner.Error(), e.Message)
 	}
-	return fmt.Sprintf(`%s => %s errNum="%s" statusCode="%d"`, e.Inner.Error(), e.Message, e.ErrNum, e.StatusCode)
+	return fmt.Sprintf(`%s => %s errNum=%q statusCode="%d"`, e.Inner.Error(), e.Message, e.ErrNum, e.StatusCode)
 }
 
 func (e HarvestError) Unwrap() error {

@@ -354,7 +354,7 @@ func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string) (*node.No
 		request.SetChildContentS("tag", tag)
 	}
 
-	if err = c.BuildRequest(request); err != nil {
+	if err := c.BuildRequest(request); err != nil {
 		return nil, "", rd, pd, err
 	}
 
@@ -517,7 +517,7 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 
 	// check if the request was successful
 	if result = root.GetChildS("results"); result == nil {
-		return result, responseT, parseT, errs.New(errs.ErrAPIResponse, "missing \"results\"")
+		return nil, responseT, parseT, errs.New(errs.ErrAPIResponse, "missing \"results\"")
 	}
 
 	if status, found = result.GetAttrValueS("status"); !found {

@@ -98,7 +98,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	e.bookendEmsMap = make(map[string]*set.Set)
 	e.resolveAfter = make(map[string]time.Duration)
 
-	if err = e.InitClient(); err != nil {
+	if err := e.InitClient(); err != nil {
 		return err
 	}
 
@@ -106,11 +106,11 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err = collector.Init(e); err != nil {
+	if err := collector.Init(e); err != nil {
 		return err
 	}
 
-	if err = e.InitCache(); err != nil {
+	if err := e.InitCache(); err != nil {
 		return err
 	}
 
@@ -384,7 +384,7 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 				return nil, fmt.Errorf("maxURLSize=%d is too small to form queries. Increase it to at least %d",
 					e.maxURLSize, len(h))
 			}
-			end = end - 1
+			end--
 			h = e.getHref(e.eventNames[start:end], filter)
 			hrefs = append(hrefs, h)
 			start = end

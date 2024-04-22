@@ -38,7 +38,7 @@ func (v *Volume) Init() error {
 
 	var err error
 
-	if err = v.InitAbc(); err != nil {
+	if err := v.InitAbc(); err != nil {
 		return err
 	}
 
@@ -47,7 +47,7 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	if err = v.client.Init(5); err != nil {
+	if err := v.client.Init(5); err != nil {
 		return err
 	}
 

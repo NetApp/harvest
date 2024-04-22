@@ -380,7 +380,7 @@ func getCPUInfo() (string, uint8) {
 
 	if hostInfo, err = host.Info(); err == nil {
 		if hostInfo != nil {
-			arch = (*hostInfo).Platform
+			arch = hostInfo.Platform
 		}
 	}
 

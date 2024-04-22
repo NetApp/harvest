@@ -584,7 +584,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				name := cnt.GetChildContentS("name")
 				value := cnt.GetChildContentS("value")
 
-				// sanity check
+				// validation
 				if name == "" || value == "" {
 					// skip counters with empty value or name
 					continue
@@ -889,14 +889,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 // workload_detail and workload_detail_volume. This counter is already
 // collected by the other ZapiPerf collectors, so this poll is redundant
 // (until we implement some sort of inter-collector communication).
-func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (time.Duration, time.Duration, error) {
+func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, keyAttr string) (time.Duration, time.Duration, error) {
 
 	var (
 		ops          *matrix.Metric
 		object       string
 		instanceKeys []string
 		apiT, parseT time.Duration
-		err          error
 	)
 
 	if z.Query == objWorkloadDetail {
@@ -940,15 +939,15 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, KeyAttr string) (ti
 
 		z.Logger.Debug().Msgf("starting batch poll for instances [%d:%d]", startIndex, endIndex)
 
-		request.PopChildS(KeyAttr + "s")
-		requestInstances := request.NewChildS(KeyAttr+"s", "")
+		request.PopChildS(keyAttr + "s")
+		requestInstances := request.NewChildS(keyAttr+"s", "")
 		for _, key := range instanceKeys[startIndex:endIndex] {
-			requestInstances.NewChildS(KeyAttr, key)
+			requestInstances.NewChildS(keyAttr, key)
 		}
 
 		startIndex = endIndex
 
-		if err = z.Client.BuildRequest(request); err != nil {
+		if err := z.Client.BuildRequest(request); err != nil {
 			return apiT, parseT, err
 		}
 
@@ -1065,7 +1064,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	request = node.NewXMLS("perf-object-counter-list-info")
 	request.NewChildS("objectname", z.Query)
 
-	if err = z.Client.BuildRequest(request); err != nil {
+	if err := z.Client.BuildRequest(request); err != nil {
 		return nil, err
 	}
 

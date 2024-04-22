@@ -30,7 +30,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 func (s *SecurityAccount) Init() error {
 	var err error
 
-	if err = s.InitAbc(); err != nil {
+	if err := s.InitAbc(); err != nil {
 		return err
 	}
 
@@ -46,7 +46,7 @@ func (s *SecurityAccount) Init() error {
 		return fmt.Errorf("failed to connect err=%w", err)
 	}
 
-	if err = s.client.Init(5); err != nil {
+	if err := s.client.Init(5); err != nil {
 		return err
 	}
 
