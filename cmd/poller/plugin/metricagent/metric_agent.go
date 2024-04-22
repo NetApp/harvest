@@ -30,7 +30,7 @@ func (a *MetricAgent) Init() error {
 		count int
 	)
 
-	if err = a.AbstractPlugin.Init(); err != nil {
+	if err := a.AbstractPlugin.Init(); err != nil {
 		return err
 	}
 

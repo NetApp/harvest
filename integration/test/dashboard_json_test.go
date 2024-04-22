@@ -419,8 +419,6 @@ func generateQueryWithValue(query string, expression string) string {
 	newExpression = strings.ReplaceAll(newExpression, "$Eth", "$Nic")
 	newExpression = strings.ReplaceAll(newExpression, "$NFSv", "$Nfsv")
 	newExpression = strings.ReplaceAll(newExpression, "$DestinationNode", "$Destination_node")
-	// newExpression = strings.ReplaceAll(newExpression, "$SourceNode", "$Source_node")
-	// newExpression = strings.ReplaceAll(newExpression, "$Source_node", "$Source_node")
 	newExpression = strings.ReplaceAll(newExpression, "$SourceSVM", "$Source_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$DestinationSVM", "$Destination_vserver")
 	newExpression = strings.ReplaceAll(newExpression, "$System", "$Cluster")

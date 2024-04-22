@@ -30,7 +30,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 func (o *OntapS3Service) Init() error {
 	var err error
 
-	if err = o.InitAbc(); err != nil {
+	if err := o.InitAbc(); err != nil {
 		return err
 	}
 
@@ -47,7 +47,7 @@ func (o *OntapS3Service) Init() error {
 		return err
 	}
 
-	if err = o.client.Init(5); err != nil {
+	if err := o.client.Init(5); err != nil {
 		return err
 	}
 

@@ -183,7 +183,7 @@ func TestChainedParsing(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			wrappedInDef := fmt.Sprintf(`"definition": "%s"`, tt.json)
+			wrappedInDef := `"definition": "` + tt.json + `"`
 			got := toChainedVar(wrappedInDef, "foo")
 			if got != tt.want {
 				t.Errorf("TestChainedParsing\n got=[%v]\nwant=[%v]", got, tt.want)

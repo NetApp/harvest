@@ -393,7 +393,7 @@ func (my *Sensor) Init() error {
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err := my.client.Init(5); err != nil {
 		return err
 	}
 

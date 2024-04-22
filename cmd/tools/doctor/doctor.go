@@ -329,7 +329,7 @@ func checkConfTemplates(confPaths []string) validation {
 						fileName = strings.TrimSpace(fileName) // Remove any leading or trailing spaces
 						if !templateExists(searchDir, fileName) {
 							valid.isValid = false
-							msg := fmt.Sprintf(`%s references template file "%s" which does not exist in %s`,
+							msg := fmt.Sprintf(`%s references template file %q which does not exist in %s`,
 								custom, fileName, path.Join(searchDir, "**"))
 							valid.invalid = append(valid.invalid, msg)
 							continue

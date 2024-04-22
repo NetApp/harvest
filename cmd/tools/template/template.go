@@ -107,8 +107,7 @@ func addOverride(tm *Model, n *y3.Node) {
 		tm.Override = make(map[string]string)
 	}
 
-	switch n.Tag {
-	case "!!seq":
+	if n.Tag == "!!seq" {
 		for _, child := range n.Content {
 			if child.Tag == "!!map" && len(child.Content) >= 2 {
 				key := child.Content[0].Value

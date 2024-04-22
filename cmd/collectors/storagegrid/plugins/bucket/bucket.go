@@ -22,7 +22,7 @@ func (b *Bucket) Init() error {
 
 	var err error
 
-	if err = b.InitAbc(); err != nil {
+	if err := b.InitAbc(); err != nil {
 		return err
 	}
 
@@ -32,7 +32,7 @@ func (b *Bucket) Init() error {
 		return err
 	}
 
-	if err = b.client.Init(5); err != nil {
+	if err := b.client.Init(5); err != nil {
 		return err
 	}
 

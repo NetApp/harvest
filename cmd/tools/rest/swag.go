@@ -82,7 +82,7 @@ func showModels(a Args, ontapSwag ontap) {
 		pathItem := ontapSwag.collectionsApis[name]
 		if compile.MatchString(name) {
 			if pathItem.Get.OperationProps.Responses != nil {
-				schema := (*pathItem.Get.OperationProps.Responses).ResponsesProps.StatusCodeResponses[200].ResponseProps.Schema
+				schema := pathItem.Get.OperationProps.Responses.ResponsesProps.StatusCodeResponses[200].ResponseProps.Schema
 				if schema != nil {
 					responseModel := schemaFromRef(schema.Ref.GetURL())
 					if responseModel != "" {
@@ -228,7 +228,7 @@ func showParams(a Args, ontapSwag ontap) {
 			sort.SliceStable(pathItem.Get.OperationProps.Parameters, sortParams(pathItem))
 			responseModel := ""
 			if pathItem.Get.OperationProps.Responses != nil {
-				schema := (*pathItem.Get.OperationProps.Responses).ResponsesProps.StatusCodeResponses[200].ResponseProps.Schema
+				schema := pathItem.Get.OperationProps.Responses.ResponsesProps.StatusCodeResponses[200].ResponseProps.Schema
 				if schema != nil {
 					responseModel = schemaFromRef(schema.Ref.GetURL())
 				}

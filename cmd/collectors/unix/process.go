@@ -45,7 +45,9 @@ func NewProcess(pid int) (*Process, error) {
 	me.io = make(map[string]uint64)
 	me.net = make(map[string]uint64)
 	me.ctx = make(map[string]uint64)
-	return me, me.Reload()
+
+	err := me.Reload()
+	return me, err
 }
 
 // Name - common name of the process
@@ -71,8 +73,6 @@ func (p *Process) State() string {
 // Reload - load or refresh stats
 func (p *Process) Reload() error {
 
-	var err error
-
 	p.dirpath = path.Join("/proc", strconv.Itoa(p.pid)+"/")
 
 	if s, err := os.Stat(p.dirpath); err != nil || !s.IsDir() {
@@ -82,31 +82,31 @@ func (p *Process) Reload() error {
 		return errs.New(ErrProcessNotFound, err.Error())
 	}
 
-	if err = p.loadCmdline(); err != nil {
+	if err := p.loadCmdline(); err != nil {
 		return err
 	}
 
-	if err = p.loadStatus(); err != nil {
+	if err := p.loadStatus(); err != nil {
 		return err
 	}
 
-	if err = p.loadStat(); err != nil {
+	if err := p.loadStat(); err != nil {
 		return err
 	}
 
-	if err = p.loadSmaps(); err != nil {
+	if err := p.loadSmaps(); err != nil {
 		return err
 	}
 
-	if err = p.loadIo(); err != nil {
+	if err := p.loadIo(); err != nil {
 		return err
 	}
 
-	if err = p.loadNetDev(); err != nil {
+	if err := p.loadNetDev(); err != nil {
 		return err
 	}
 
-	if err = p.loadFdinfo(); err != nil {
+	if err := p.loadFdinfo(); err != nil {
 		return err
 	}
 

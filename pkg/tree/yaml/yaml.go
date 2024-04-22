@@ -17,23 +17,24 @@ func Dump(root *node.Node) ([]byte, error) {
 	return bytes.Join(data, []byte("\n")), nil
 }
 
-func dumpRecursive(node *node.Node, data *[][]byte, depth int) {
+func dumpRecursive(aNode *node.Node, data *[][]byte, depth int) {
 	indentation := bytes.Repeat([]byte("  "), depth)
 	parentName := "Root"
-	if node.GetParent() != nil {
-		parentName = node.GetParent().GetNameS()
+	if aNode.GetParent() != nil {
+		parentName = aNode.GetParent().GetNameS()
 	}
-	// workaround to handle list of maps
-	if parentName == "labels" {
-		*data = append(*data, joinAll(indentation, []byte("- "), node.GetName(), []byte(": "), node.GetContent()))
-	} else if len(node.GetName()) != 0 && len(node.GetContent()) != 0 {
-		*data = append(*data, joinAll(indentation, node.GetName(), []byte(": "), node.GetContent()))
-	} else if len(node.GetName()) != 0 {
-		*data = append(*data, joinAll(indentation, node.GetName(), []byte(":")))
-	} else {
-		*data = append(*data, joinAll(indentation, []byte("- "), node.GetContent()))
+	// workaround to handle a list of maps
+	switch {
+	case parentName == "labels":
+		*data = append(*data, joinAll(indentation, []byte("- "), aNode.GetName(), []byte(": "), aNode.GetContent()))
+	case len(aNode.GetName()) != 0 && len(aNode.GetContent()) != 0:
+		*data = append(*data, joinAll(indentation, aNode.GetName(), []byte(": "), aNode.GetContent()))
+	case len(aNode.GetName()) != 0:
+		*data = append(*data, joinAll(indentation, aNode.GetName(), []byte(":")))
+	default:
+		*data = append(*data, joinAll(indentation, []byte("- "), aNode.GetContent()))
 	}
-	for _, child := range node.GetChildren() {
+	for _, child := range aNode.GetChildren() {
 		dumpRecursive(child, data, depth+1)
 	}
 }

@@ -99,8 +99,6 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		_ = cmd.Flags().Set("loglevel", "0")
 	}
 
-	// cmd.DebugFlags()  // uncomment to print flags
-
 	_, err = conf.LoadHarvestConfig(opts.config)
 	if err != nil {
 		if os.IsNotExist(err) {
