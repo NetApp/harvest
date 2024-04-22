@@ -39,8 +39,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (w *Workload) Init() error {
-	var err error
-	if err = w.InitAbc(); err != nil {
+	if err := w.InitAbc(); err != nil {
 		return err
 	}
 

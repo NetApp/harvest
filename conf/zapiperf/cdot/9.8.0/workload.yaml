@@ -43,6 +43,9 @@ qos_labels:
   - wid
   - workload-name => workload
 
+plugins:
+  - Workload
+
 export_options:
   instance_keys:
     - file

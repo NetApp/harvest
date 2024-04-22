@@ -42,6 +42,9 @@ qos_labels:
   - policy.name  => policy_group
   - wid
 
+plugins:
+  - Workload
+
 export_options:
   instance_keys:
     - file
