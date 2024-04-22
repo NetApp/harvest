@@ -1019,17 +1019,17 @@
           <li class="md-nav__item">
   <a href="#counters" class="md-nav__link">
     <span class="md-ellipsis">
-      counters
+      Counters
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="counters">
+    <nav class="md-nav" aria-label="Counters">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#hidden_fields" class="md-nav__link">
     <span class="md-ellipsis">
-      hidden_fields
+      Hidden_fields
     </span>
   </a>
   
@@ -1038,7 +1038,7 @@
           <li class="md-nav__item">
   <a href="#filter" class="md-nav__link">
     <span class="md-ellipsis">
-      filter
+      Filter
     </span>
   </a>
   
@@ -1052,7 +1052,7 @@
           <li class="md-nav__item">
   <a href="#export_options" class="md-nav__link">
     <span class="md-ellipsis">
-      export_options
+      Export_options
     </span>
   </a>
   
@@ -1084,9 +1084,10 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="RestPerf Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#metrics_1" class="md-nav__link">
     <span class="md-ellipsis">
       Metrics
@@ -1094,8 +1095,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#parameters_1" class="md-nav__link">
     <span class="md-ellipsis">
       Parameters
@@ -1114,6 +1115,11 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#object-configuration-file_1" class="md-nav__link">
     <span class="md-ellipsis">
@@ -1127,7 +1133,7 @@
           <li class="md-nav__item">
   <a href="#counters_1" class="md-nav__link">
     <span class="md-ellipsis">
-      counters
+      Counters
     </span>
   </a>
   
@@ -1136,7 +1142,7 @@
           <li class="md-nav__item">
   <a href="#export_options_1" class="md-nav__link">
     <span class="md-ellipsis">
-      export_options
+      Export_options
     </span>
   </a>
   
@@ -1915,17 +1921,17 @@
           <li class="md-nav__item">
   <a href="#counters" class="md-nav__link">
     <span class="md-ellipsis">
-      counters
+      Counters
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="counters">
+    <nav class="md-nav" aria-label="Counters">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#hidden_fields" class="md-nav__link">
     <span class="md-ellipsis">
-      hidden_fields
+      Hidden_fields
     </span>
   </a>
   
@@ -1934,7 +1940,7 @@
           <li class="md-nav__item">
   <a href="#filter" class="md-nav__link">
     <span class="md-ellipsis">
-      filter
+      Filter
     </span>
   </a>
   
@@ -1948,7 +1954,7 @@
           <li class="md-nav__item">
   <a href="#export_options" class="md-nav__link">
     <span class="md-ellipsis">
-      export_options
+      Export_options
     </span>
   </a>
   
@@ -1980,9 +1986,10 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="RestPerf Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#metrics_1" class="md-nav__link">
     <span class="md-ellipsis">
       Metrics
@@ -1990,8 +1997,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#parameters_1" class="md-nav__link">
     <span class="md-ellipsis">
       Parameters
@@ -2010,6 +2017,11 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#object-configuration-file_1" class="md-nav__link">
     <span class="md-ellipsis">
@@ -2023,7 +2035,7 @@
           <li class="md-nav__item">
   <a href="#counters_1" class="md-nav__link">
     <span class="md-ellipsis">
-      counters
+      Counters
     </span>
   </a>
   
@@ -2032,7 +2044,7 @@
           <li class="md-nav__item">
   <a href="#export_options_1" class="md-nav__link">
     <span class="md-ellipsis">
-      export_options
+      Export_options
     </span>
   </a>
   
@@ -2301,28 +2313,34 @@ configuration file that closest matches the version of the target ONTAP system.<
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">antiRansomwareState</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span>
 </code></pre></div>
-<h4 id="counters"><code>counters</code><a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
+<h4 id="counters">Counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
 <p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
 histograms. The exact property of each counter is fetched from ONTAP and updated periodically.</p>
 <p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>space.block_storage.size =&gt; space_total</code>).</p>
 <p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
 <p>The <code>counters</code> section allows you to specify <code>hidden_fields</code> and <code>filter</code> parameters. Please find the detailed explanation below.</p>
-<h5 id="hidden_fields"><code>hidden_fields</code><a class="headerlink" href="#hidden_fields" title="Permanent link">&para;</a></h5>
+<h5 id="hidden_fields">Hidden_fields<a class="headerlink" href="#hidden_fields" title="Permanent link">&para;</a></h5>
 <p>There are some fields that ONTAP will not return unless you explicitly ask for them, even when using the URL parameter <code>fields=**</code>. <code>hidden_fields</code> is how you tell ONTAP which additional fields it should include in the REST response.</p>
-<h5 id="filter"><code>filter</code><a class="headerlink" href="#filter" title="Permanent link">&para;</a></h5>
+<h5 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h5>
 <p>The <code>filter</code> is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. The filtering uses ONTAP's REST record filtering. The example above asks ONTAP to only return records where a volume's name matches <code>*harvest*</code>.</p>
 <p>If you're familiar with ONTAP's REST record filtering, the <a href="#template-example">example</a> above would become <code>name=*harvest*</code> and appended to the final URL like so:</p>
 <div class="highlight"><pre><span></span><code>https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&amp;name=*harvest*
 </code></pre></div>
 <p>Refer to the ONTAP API specification, sections: <code>query parameters</code> and <code>record filtering</code>, for more details.</p>
-<h4 id="export_options"><code>export_options</code><a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
-<p>Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
-exporter. For <a href="../prometheus-exporter/">Prometheus</a> and <a href="../influxdb-exporter/">InfluxDB</a>
-exporters, the following parameters can be defined:</p>
+<h4 id="export_options">Export_options<a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
+<p>Parameters in this section tell the exporters how to handle the collected data.</p>
+<p>There are two different kinds of time-series that Harvest publishes: metrics and instance labels.</p>
 <ul>
-<li><code>instances_keys</code> (list): display names of labels to export with each data-point</li>
-<li><code>instance_labels</code> (list): display names of labels to export as a separate data-point</li>
-<li><code>include_all_labels</code> (bool): export all labels with each data-point (overrides previous two parameters)</li>
+<li>Metrics are numeric data with associated labels (key-value pairs). E.g. <code>volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123</code>. The <code>volume_read_ops_total</code> metric is exporting three labels: <code>cluster</code>, <code>node</code>, and <code>volume</code> and the metric value is <code>123</code>.</li>
+<li>Instance labels are named after their associated config object (e.g., <code>volume_labels</code>, <code>qtree_labels</code>, etc.). There will be one instance label for each object instance, and each instance label will contain a set of associated labels (key-value pairs) that are defined in the templates <code>instance_labels</code> parameter. E.g. <code>volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1</code>. The <code>volume_labels</code> instance label is exporting four labels: <code>cluster</code>, <code>node</code>, <code>volume</code>, and <code>svm</code>. Instance labels always export a metric value of <code>1</code>.</li>
+</ul>
+<p>The <code>export_options</code> section allows you to define how to export these time-series.</p>
+<ul>
+<li><code>instances_keys</code> (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the <code>svm</code> counter under <code>instances_keys</code>,
+  that key-value will be included in all time-series metrics and all instance-labels.</li>
+<li><code>instance_labels</code> (list): display names of labels to export with the corresponding instance label config object. For example, if you want the <code>volume</code> counter to be exported with the <code>volume_labels</code> instance label, you would list <code>volume</code> in the <code>instance_labels</code> section.</li>
+<li><code>include_all_labels</code> (bool): exports all labels for all time-series metrics. If there are no metrics defined in the template, this option will do nothing. This option also overrides the previous two parameters. See also <a href="#collector-configuration-file">collect_only_labels</a>.</li>
 </ul>
 <h4 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">&para;</a></h4>
 <p>In Harvest REST templates, <code>endpoints</code> are additional queries that enhance the data collected from the main query. The main query, identified by the <code>query</code> parameter, is the primary REST API for data collection. For example, the main query for a <code>disk</code> object is <code>api/storage/disks</code>.
@@ -2397,10 +2415,10 @@ extendable to collect new objects or to collect additional counters from already
 <p>This collector is an extension of the <a href="#rest-collector">Rest collector</a>. The major difference between them is that
 RestPerf collects only the performance (<code>perf</code>) APIs. Additionally, RestPerf always calculates final values from the
 deltas of two subsequent polls.</p>
-<h2 id="metrics_1">Metrics<a class="headerlink" href="#metrics_1" title="Permanent link">&para;</a></h2>
+<h3 id="metrics_1">Metrics<a class="headerlink" href="#metrics_1" title="Permanent link">&para;</a></h3>
 <p>RestPerf metrics are calculated the same as ZapiPerf metrics. More details about how
 performance metrics are calculated can be found <a href="../configure-zapi/#metrics_1">here</a>.</p>
-<h2 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h2>
+<h3 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h3>
 <p>The parameters of the collector are distributed across three files:</p>
 <ul>
 <li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
@@ -2412,7 +2430,7 @@ defined in either of these three files. Parameters defined in the lower-level fi
 higher-level file. This allows the user to configure each objects individually, or use the same parameters for all
 objects.</p>
 <p>The full set of parameters are described <a href="#restperf-configuration-file">below</a>.</p>
-<h3 id="restperf-configuration-file">RestPerf configuration file<a class="headerlink" href="#restperf-configuration-file" title="Permanent link">&para;</a></h3>
+<h4 id="restperf-configuration-file">RestPerf configuration file<a class="headerlink" href="#restperf-configuration-file" title="Permanent link">&para;</a></h4>
 <p>This configuration file (the "template") contains a list of objects that should be collected and the filenames of their
 configuration (explained in the next section).</p>
 <p>Additionally, this file contains the parameters that are applied as defaults to all objects. (As mentioned before, any
@@ -2483,12 +2501,12 @@ configuration file that closest matches to the version of the target ONTAP syste
 RestPerf will fetch and validate counter metadata from the system.)</p>
 <h3 id="object-configuration-file_1">Object configuration file<a class="headerlink" href="#object-configuration-file_1" title="Permanent link">&para;</a></h3>
 <p>Refer <a href="./#object-configuration-file">Object configuration file</a></p>
-<h4 id="counters_1"><code>counters</code><a class="headerlink" href="#counters_1" title="Permanent link">&para;</a></h4>
-<p>Refer <a href="./#counters">Counters</a></p>
+<h4 id="counters_1">Counters<a class="headerlink" href="#counters_1" title="Permanent link">&para;</a></h4>
+<p>See <a href="./#counters">Counters</a></p>
 <p>Some counters require a "base-counter" for post-processing. If the base-counter is missing, RestPerf will still run, but
 the missing data won't be exported.</p>
-<h4 id="export_options_1"><code>export_options</code><a class="headerlink" href="#export_options_1" title="Permanent link">&para;</a></h4>
-<p>Refer <a href="./#export_options">Export Options</a></p>
+<h4 id="export_options_1">Export_options<a class="headerlink" href="#export_options_1" title="Permanent link">&para;</a></h4>
+<p>See <a href="./#export_options">Export Options</a></p>
 <h2 id="ontap-private-cli">ONTAP Private CLI<a class="headerlink" href="#ontap-private-cli" title="Permanent link">&para;</a></h2>
 <p>The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collector can make full use of ONTAP's private CLI. This means when ONTAP's public REST API is missing counters, Harvest can still collect them as long as those counters are available via ONTAP's CLI.</p>
 <p>For more information on using the ONTAP private CLI with the REST API, you can refer to the following resources:</p>

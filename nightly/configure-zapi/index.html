@@ -980,6 +980,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export_options
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1029,15 +1047,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#harvest-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Harvest configuration file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#zapiperf-configuration-file" class="md-nav__link">
     <span class="md-ellipsis">
       ZapiPerf configuration file
@@ -1057,7 +1066,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
+  <a href="#counters_1" class="md-nav__link">
     <span class="md-ellipsis">
       counters
     </span>
@@ -1066,7 +1075,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#export_options" class="md-nav__link">
+  <a href="#export_options_1" class="md-nav__link">
     <span class="md-ellipsis">
       export_options
     </span>
@@ -1846,6 +1855,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export_options
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1895,15 +1922,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#harvest-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Harvest configuration file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#zapiperf-configuration-file" class="md-nav__link">
     <span class="md-ellipsis">
       ZapiPerf configuration file
@@ -1923,7 +1941,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
+  <a href="#counters_1" class="md-nav__link">
     <span class="md-ellipsis">
       counters
     </span>
@@ -1932,7 +1950,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#export_options" class="md-nav__link">
+  <a href="#export_options_1" class="md-nav__link">
     <span class="md-ellipsis">
       export_options
     </span>
@@ -2019,10 +2037,10 @@ Don't worry, Harvest has you covered. Switch to Harvest's REST collectors
 and collect idential metrics. See <a href="https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md">REST Strategy</a> for more details. </p>
 </div>
 <h2 id="zapi-collector">Zapi Collector<a class="headerlink" href="#zapi-collector" title="Permanent link">&para;</a></h2>
-<p>The Zapi collectors uses the ZAPI protocol to collect data from ONTAP systems. The collector submits data as received
+<p>The Zapi collectors use the ZAPI protocol to collect data from ONTAP systems. The collector submits data as received
 from the target system, and does not perform any calculations or post-processing. Since the attributes of most APIs have
 an irregular tree structure, sometimes a plugin will be required to collect all metrics from an API.</p>
-<p>The <a href="#zapiperf-collector">ZapiPerf collector</a> is an extension of this collector, therefore they share many parameters
+<p>The <a href="#zapiperf-collector">ZapiPerf collector</a> is an extension of this collector, therefore, they share many parameters
 and configuration settings.</p>
 <h3 id="target-system">Target System<a class="headerlink" href="#target-system" title="Permanent link">&para;</a></h3>
 <p>Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files
@@ -2046,10 +2064,21 @@ and <code>aggr_snapshot_files_total</code>. (The algorithm to generate a name fo
 possible, but sometimes it's useful to manually set a short display name. See <a href="../configure-templates/#counters">counters</a>
 for more details.</p>
 <h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
-<p>The parameters and configuration are similar to those of the <a href="#zapiperf-collector">ZapiPerf collector</a>. Only the
-differences will be discussed below.</p>
+<p>The parameters of the collector are distributed across three files:</p>
+<ul>
+<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
+<li>ZAPI configuration file (default: <code>conf/zapi/default.yaml</code>)</li>
+<li>Each object has its own configuration file (located in <code>conf/zapi/$version/</code>)</li>
+</ul>
+<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the ZAPI collector can be
+defined in either of these three files.
+Parameters defined in the lower-level file, override parameters in the higher-level ones.
+This allows you to configure each object individually, or use the same parameters for all
+objects.</p>
+<p>The full set of parameters are described <a href="#collector-configuration-file">below</a>.</p>
 <h4 id="collector-configuration-file">Collector configuration file<a class="headerlink" href="#collector-configuration-file" title="Permanent link">&para;</a></h4>
-<p>Parameters different from ZapiPerf:</p>
+<p>The parameters are similar to those of the <a href="#zapiperf-collector">ZapiPerf collector</a>.
+Parameters different from ZapiPerf:</p>
 <table>
 <thead>
 <tr>
@@ -2090,6 +2119,78 @@ differences will be discussed below.</p>
 <p>The Zapi collector does not have the parameters <code>instance_key</code> and <code>override</code> parameters. The optional
 parameter <code>metric_type</code> allows you to override the default metric type (<code>uint64</code>). The value of this parameter should be
 one of the metric types supported by <a href="../resources/matrix/">the matrix data-structure</a>.</p>
+<p>The Object configuration file ("subtemplate") should contain the following parameters:</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string, <strong>required</strong></td>
+<td>display name of the collector that will collect this object</td>
+<td></td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>string, <strong>required</strong></td>
+<td>REST endpoint used to issue a REST request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>object</code></td>
+<td>string, <strong>required</strong></td>
+<td>short name of the object</td>
+<td></td>
+</tr>
+<tr>
+<td><code>counters</code></td>
+<td>string</td>
+<td>list of counters to collect (see notes below)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td>list</td>
+<td>plugins and their parameters to run on the collected data</td>
+<td></td>
+</tr>
+<tr>
+<td><code>export_options</code></td>
+<td>list</td>
+<td>parameters to pass to exporters (see notes below)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="counters">Counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
+<p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
+histograms. The exact property of each counter is fetched from ONTAP and updated periodically.</p>
+<p>Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but
+the missing data won't be exported.</p>
+<p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>nfsv3_ops =&gt; ops</code>). There's one conversion Harvest does
+for you by default, the <code>instance_name</code> counter will be renamed to the value of <code>object</code>.</p>
+<p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
+<h4 id="export_options">Export_options<a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
+<p>Parameters in this section tell the exporters how to handle the collected data.</p>
+<p>There are two different kinds of time-series that Harvest publishes: metrics and instance labels.</p>
+<ul>
+<li>Metrics are numeric data with associated labels (key-value pairs). E.g. <code>volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123</code>. The <code>volume_read_ops_total</code> metric is exporting three labels: <code>cluster</code>, <code>node</code>, and <code>volume</code> and the metric value is <code>123</code>.</li>
+<li>Instance labels are named after their associated config object (e.g., <code>volume_labels</code>, <code>qtree_labels</code>, etc.). There will be one instance label for each object instance, and each instance label will contain a set of associated labels (key-value pairs) that are defined in the templates <code>instance_labels</code> parameter. E.g. <code>volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1</code>. The <code>volume_labels</code> instance label is exporting four labels: <code>cluster</code>, <code>node</code>, <code>volume</code>, and <code>svm</code>. Instance labels always export a metric value of <code>1</code>.</li>
+</ul>
+<p>The <code>export_options</code> section allows you to define how to export these time-series.</p>
+<ul>
+<li><code>instances_keys</code> (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the <code>svm</code> counter under <code>instances_keys</code>,
+  that key-value will be included in all time-series metrics and all instance-labels.</li>
+<li><code>instance_labels</code> (list): display names of labels to export with the corresponding instance label config object. For example, if you want the <code>volume</code> counter to be exported with the <code>volume_labels</code> instance label, you would list <code>volume</code> in the <code>instance_labels</code> section.</li>
+<li><code>include_all_labels</code> (bool): exports all labels for all time-series metrics. If there are no metrics defined in the template, this option will do nothing. This option also overrides the previous two parameters. See also <a href="#collector-configuration-file">collect_only_labels</a>.</li>
+</ul>
 <h2 id="zapiperf-collector">ZapiPerf Collector<a class="headerlink" href="#zapiperf-collector" title="Permanent link">&para;</a></h2>
 <h1 id="zapiperf">ZapiPerf<a class="headerlink" href="#zapiperf" title="Permanent link">&para;</a></h1>
 <p>ZapiPerf collects performance metrics from ONTAP systems using the ZAPI protocol. The collector is designed to be easily
@@ -2146,54 +2247,11 @@ attributes of each metric, the following properties are supported:</p>
   7Mode systems respectively)</li>
 </ul>
 <p>Except for <code>addr</code>, <code>datacenter</code> and <code>auth_style</code>, all other parameters of the ZapiPerf collector can be
-defined in either of these three files. Parameters defined in the lower-level file, override parameters in the
-higher-level file. This allows the user to configure each objects individually, or use the same parameters for all
-objects.</p>
+defined in either of these three files. 
+Parameters defined in the lower-level file, override parameters in the higher-level file. 
+This allows the user to configure each object individually, 
+or use the same parameters for all objects.</p>
 <p>The full set of parameters are described <a href="#zapiperf-configuration-file">below</a>.</p>
-<h3 id="harvest-configuration-file">Harvest configuration file<a class="headerlink" href="#harvest-configuration-file" title="Permanent link">&para;</a></h3>
-<p>Parameters in poller section should define (at least) the address and authentication method of the target system:</p>
-<table>
-<thead>
-<tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>addr</code></td>
-<td>string, required</td>
-<td>address (IP or FQDN) of the ONTAP system</td>
-<td></td>
-</tr>
-<tr>
-<td><code>datacenter</code></td>
-<td>string, required</td>
-<td>name of the datacenter where the target system is located</td>
-<td></td>
-</tr>
-<tr>
-<td><code>auth_style</code></td>
-<td>string, optional</td>
-<td>authentication method: either <code>basic_auth</code> or <code>certificate_auth</code></td>
-<td><code>basic_auth</code></td>
-</tr>
-<tr>
-<td><code>ssl_cert</code>, <code>ssl_key</code></td>
-<td>string, optional</td>
-<td>full path of the SSL certificate and key pairs (when using <code>certificate_auth</code>)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>username</code>, <code>password</code></td>
-<td>string, optional</td>
-<td>full path of the SSL certificate and key pairs (when using <code>basic_auth</code>)</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <h3 id="zapiperf-configuration-file">ZapiPerf configuration file<a class="headerlink" href="#zapiperf-configuration-file" title="Permanent link">&para;</a></h3>
 <p>This configuration file (the "template") contains a list of objects that should be collected and the filenames of their
 configuration (explained in the next section).</p>
@@ -2331,7 +2389,7 @@ ZapiPerf will fetch and validate counter metadata from the system.)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="counters"><code>counters</code><a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
+<h4 id="counters_1"><code>counters</code><a class="headerlink" href="#counters_1" title="Permanent link">&para;</a></h4>
 <p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
 histograms. The exact property of each counter is fetched from ONTAP and updated periodically.</p>
 <p>Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but
@@ -2339,14 +2397,30 @@ the missing data won't be exported.</p>
 <p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>nfsv3_ops =&gt; ops</code>). There's one conversion Harvest does
 for you by default, the <code>instance_name</code> counter will be renamed to the value of <code>object</code>.</p>
 <p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
-<h4 id="export_options"><code>export_options</code><a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
-<p>Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
-exporter. For <a href="../prometheus-exporter/">Prometheus</a> and <a href="../influxdb-exporter/">InfluxDB</a>
-exporters, the following parameters can be defined:</p>
+<h4 id="export_options_1"><code>export_options</code><a class="headerlink" href="#export_options_1" title="Permanent link">&para;</a></h4>
+<p>Parameters in this section tell the exporters how to handle the collected data.</p>
+<p>There are two different kinds of time-series that Harvest publishes: metrics and instance labels.</p>
 <ul>
-<li><code>instances_keys</code> (list): display names of labels to export with each data-point</li>
-<li><code>instance_labels</code> (list): display names of labels to export as a separate data-point</li>
-<li><code>include_all_labels</code> (bool): export all labels with each data-point (overrides previous two parameters)</li>
+<li>Metrics are numeric data with associated labels (key-value pairs). E.g. <code>volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123</code>. The <code>volume_read_ops_total</code> metric is exporting three labels: <code>cluster</code>, <code>node</code>, and <code>volume</code> and the metric value is <code>123</code>.</li>
+<li>Instance labels are named after their associated config object (e.g., <code>volume_labels</code>, <code>nic_labels</code>, etc.).
+  There will be one instance label for each object instance, 
+  and each instance label will contain a set of associated labels
+  (key-value pairs) that are defined in the templates <code>instance_labels</code> parameter.
+  E.g. <code>volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1</code>. 
+  The <code>volume_labels</code> instance label is exporting four labels:
+  <code>cluster</code>, <code>node</code>, <code>volume</code>, and <code>svm</code>.
+  Instance labels always export a metric value of <code>1</code>.</li>
+</ul>
+<details class="tip">
+<summary>Instance labels are rarely used with ZapiPerf templates</summary>
+<p>They can be useful for exporting labels that are not associated with a metric value.</p>
+</details>
+<p>The <code>export_options</code> section allows you to define how to export these time-series.</p>
+<ul>
+<li><code>instances_keys</code> (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the <code>svm</code> counter under <code>instances_keys</code>,
+  that key-value will be included in all time-series metrics and all instance-labels.</li>
+<li><code>instance_labels</code> (list): display names of labels to export with the corresponding instance label config object. For example, if you want the <code>volume</code> counter to be exported with the <code>volume_labels</code> instance label, you would list <code>volume</code> in the <code>instance_labels</code> section.</li>
 </ul>
 <h3 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
 <p>This guide provides instructions on how to use the <code>filter</code> feature in ZapiPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.</p>

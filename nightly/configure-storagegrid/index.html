@@ -1061,7 +1061,7 @@
           <li class="md-nav__item">
   <a href="#counters" class="md-nav__link">
     <span class="md-ellipsis">
-      counters
+      Counters
     </span>
   </a>
   
@@ -1070,7 +1070,7 @@
           <li class="md-nav__item">
   <a href="#export_options" class="md-nav__link">
     <span class="md-ellipsis">
-      export_options
+      Export_options
     </span>
   </a>
   
@@ -1756,7 +1756,7 @@
           <li class="md-nav__item">
   <a href="#counters" class="md-nav__link">
     <span class="md-ellipsis">
-      counters
+      Counters
     </span>
   </a>
   
@@ -1765,7 +1765,7 @@
           <li class="md-nav__item">
   <a href="#export_options" class="md-nav__link">
     <span class="md-ellipsis">
-      export_options
+      Export_options
     </span>
   </a>
   
@@ -1990,19 +1990,25 @@ configuration file that closest matches the version of the target StorageGRID sy
 </tr>
 </tbody>
 </table>
-<h4 id="counters"><code>counters</code><a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
+<h4 id="counters">Counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
 <p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
 histograms. The exact property of each counter is fetched from StorageGRID and updated periodically.</p>
 <p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>policy.quotaObjectBytes =&gt; logical_quota</code>).</p>
 <p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
-<h4 id="export_options"><code>export_options</code><a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
-<p>Parameters in this section tell the exporters how to handle the collected data. The set of parameters varies by
-exporter. For <a href="../prometheus-exporter/">Prometheus</a> and <a href="../influxdb-exporter/">InfluxDB</a>
-exporters, the following parameters can be defined:</p>
+<h4 id="export_options">Export_options<a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
+<p>Parameters in this section tell the exporters how to handle the collected data.</p>
+<p>There are two different kinds of time-series that Harvest publishes: metrics and instance labels.</p>
 <ul>
-<li><code>instances_keys</code> (list): display names of labels to export with each data-point</li>
-<li><code>instance_labels</code> (list): display names of labels to export as a separate <code>_label</code> metric</li>
-<li><code>include_all_labels</code> (bool): export all labels with each data-point (overrides previous two parameters)</li>
+<li>Metrics are numeric data with associated labels (key-value pairs). E.g. <code>volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123</code>. The <code>volume_read_ops_total</code> metric is exporting three labels: <code>cluster</code>, <code>node</code>, and <code>volume</code> and the metric value is <code>123</code>.</li>
+<li>Instance labels are named after their associated config object (e.g., <code>volume_labels</code>, <code>qtree_labels</code>, etc.). There will be one instance label for each object instance, and each instance label will contain a set of associated labels (key-value pairs) that are defined in the templates <code>instance_labels</code> parameter. E.g. <code>volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1</code>. The <code>volume_labels</code> instance label is exporting four labels: <code>cluster</code>, <code>node</code>, <code>volume</code>, and <code>svm</code>. Instance labels always export a metric value of <code>1</code>.</li>
+</ul>
+<p>The <code>export_options</code> section allows you to define how to export these time-series.</p>
+<ul>
+<li><code>instances_keys</code> (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the <code>svm</code> counter under <code>instances_keys</code>,
+  that key-value will be included in all time-series metrics and all instance-labels.</li>
+<li><code>instance_labels</code> (list): display names of labels to export with the corresponding instance label config object. For example, if you want the <code>volume</code> counter to be exported with the <code>volume_labels</code> instance label, you would list <code>volume</code> in the <code>instance_labels</code> section.</li>
+<li><code>include_all_labels</code> (bool): exports all labels for all time-series metrics. If there are no metrics defined in the template, this option will do nothing. This option also overrides the previous two parameters. See also <a href="#collector-configuration-file">collect_only_labels</a>.</li>
 </ul>
 
 
