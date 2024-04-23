@@ -305,12 +305,13 @@ func getFieldName(source string, parent string) []string {
 	res := make([]string, 0)
 	var arr map[string]gjson.Result
 	r := gjson.Parse(source)
-	if r.IsArray() {
+	switch {
+	case r.IsArray():
 		newR := r.Get("0")
 		arr = newR.Map()
-	} else if r.IsObject() {
+	case r.IsObject():
 		arr = r.Map()
-	} else {
+	default:
 		return []string{parent}
 	}
 	if len(arr) == 0 {

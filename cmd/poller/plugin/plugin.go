@@ -113,14 +113,14 @@ type AbstractPlugin struct {
 }
 
 // New creates an AbstractPlugin
-func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object string, auth *auth.Credentials) *AbstractPlugin {
+func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object string, credentials *auth.Credentials) *AbstractPlugin {
 	return &AbstractPlugin{
 		Parent:       parent,
 		Options:      o,
 		Params:       p,
 		ParentParams: pp,
 		Object:       object,
-		Auth:         auth,
+		Auth:         credentials,
 	}
 }
 

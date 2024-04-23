@@ -741,21 +741,20 @@ func addPrefixToMetricNames(expr, prefix string) string {
 	for _, m := range match {
 		if _, has := visitedMap[m[1]]; !has {
 			// multiple metrics used with `+`
-			if strings.Contains(m[1], "+") {
+			switch {
+			case strings.Contains(m[1], "+"):
 				submatch = strings.Split(m[1], "+")
 				for i := range submatch {
 					submatch[i] = prefix + submatch[i]
 				}
 				expr = strings.ReplaceAll(expr, m[1], strings.Join(submatch, "+"))
-				// multiple metrics used with `-`
-			} else if strings.Contains(m[1], "-") {
+			case strings.Contains(m[1], "-"):
 				submatch = strings.Split(m[1], "-")
 				for i := range submatch {
 					submatch[i] = prefix + submatch[i]
 				}
 				expr = strings.ReplaceAll(expr, m[1], strings.Join(submatch, "-"))
-				// single metric
-			} else {
+			default:
 				expr = strings.ReplaceAll(expr, m[1], prefix+m[1])
 			}
 			visitedMap[m[1]] = true

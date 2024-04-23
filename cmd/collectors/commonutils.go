@@ -149,22 +149,24 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 		isConstituentVolumeRelationshipWithinCG := groupType == "consistencygroup" && !strings.Contains(destinationLocation, ":/cg/")
 
 		// Update protectedBy label
-		if isSvmDr || isConstituentVolumeRelationshipWithinSvmDr {
+		switch {
+		case isSvmDr || isConstituentVolumeRelationshipWithinSvmDr:
 			instance.SetLabel("protectedBy", "storage_vm")
-		} else if isCg || isConstituentVolumeRelationshipWithinCG {
+		case isCg || isConstituentVolumeRelationshipWithinCG:
 			instance.SetLabel("protectedBy", "cg")
-		} else {
+		default:
 			instance.SetLabel("protectedBy", "volume")
 		}
 
 		// SVM-DR related information is populated, Update protectionSourceType label
-		if isSvmDr {
+		switch {
+		case isSvmDr:
 			instance.SetLabel("protectionSourceType", "storage_vm")
-		} else if isCg {
+		case isCg:
 			instance.SetLabel("protectionSourceType", "cg")
-		} else if isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup" {
+		case isConstituentVolumeRelationshipWithinSvmDr || isConstituentVolumeRelationshipWithinCG || groupType == "none" || groupType == "flexgroup":
 			instance.SetLabel("protectionSourceType", "volume")
-		} else {
+		default:
 			instance.SetLabel("protectionSourceType", "not_mapped")
 		}
 	}
@@ -172,17 +174,18 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 	// Update derived_relationship_type field based on the policyType
 	relationshipType := instance.GetLabel("relationship_type")
 	if policyType := instance.GetLabel("policy_type"); policyType != "" {
-		if policyType == "strict_sync_mirror" {
+		switch {
+		case policyType == "strict_sync_mirror":
 			instance.SetLabel("derived_relationship_type", "sync_mirror_strict")
-		} else if policyType == "sync_mirror" {
+		case policyType == "sync_mirror":
 			instance.SetLabel("derived_relationship_type", "sync_mirror")
-		} else if policyType == "mirror_vault" {
+		case policyType == "mirror_vault":
 			instance.SetLabel("derived_relationship_type", "mirror_vault")
-		} else if policyType == "automated_failover" {
+		case policyType == "automated_failover":
 			instance.SetLabel("derived_relationship_type", "automated_failover")
-		} else if policyType == "automated_failover_duplex" {
+		case policyType == "automated_failover_duplex":
 			instance.SetLabel("derived_relationship_type", "automated_failover_duplex")
-		} else {
+		default:
 			instance.SetLabel("derived_relationship_type", relationshipType)
 		}
 	} else {

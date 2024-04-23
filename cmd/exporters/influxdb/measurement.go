@@ -55,7 +55,7 @@ func (m *Measurement) Render() (string, error) {
 		sep1 = ","
 	}
 
-	if len(m.timestamp) == 0 {
+	if m.timestamp == "" {
 		sep2 = ""
 	} else {
 		sep2 = " "

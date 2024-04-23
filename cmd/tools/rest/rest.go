@@ -127,16 +127,16 @@ func doShow(_ *cobra.Command, a []string) {
 	}
 }
 
-func validateArgs(strings []string) check {
+func validateArgs(slice []string) check {
 	// One of Poller or SwaggerPath are allowed, but not both
 	if args.Poller != "" && args.SwaggerPath != "" {
 		fmt.Printf("Both poller and swagger are set. Only one or the other can be set, not both\n")
 		return check{isValid: false}
 	}
-	if len(strings) == 0 {
+	if len(slice) == 0 {
 		args.Item = ""
 	} else {
-		args.Item = strings[0]
+		args.Item = slice[0]
 	}
 	qfSet := args.QueryField != ""
 	qvSet := args.QueryValue != ""

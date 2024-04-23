@@ -52,12 +52,12 @@ func (z *Zapi) ParseCounters(elem, desired *node.Node, path []string) {
 	name := elem.GetNameS()
 	newPath := path
 
-	if len(elem.GetNameS()) != 0 {
+	if elem.GetNameS() != "" {
 		newPath = append(newPath, name)
 		d = node.NewXMLS(name)
 	}
 
-	if len(elem.GetContentS()) != 0 {
+	if elem.GetContentS() != "" {
 		if clean := z.HandleCounter(newPath, elem.GetContentS()); clean != "" {
 			d = node.NewXMLS(clean)
 		}
