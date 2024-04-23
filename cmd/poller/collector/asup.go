@@ -325,7 +325,7 @@ func attachMemory(msg *Payload) {
 			continue
 		}
 		pp.Cmdline = cmdline
-		if len(cmdline) == 0 {
+		if cmdline == "" {
 			continue
 		}
 
@@ -380,7 +380,7 @@ func getCPUInfo() (string, uint8) {
 
 	if hostInfo, err = host.Info(); err == nil {
 		if hostInfo != nil {
-			arch = (*hostInfo).Platform
+			arch = hostInfo.Platform
 		}
 	}
 
@@ -429,9 +429,9 @@ func sha1Sum(s string) string {
 
 // checkAndDeleteIfPermissionsMismatch checks if the permissions of the file or directory at the given path
 // match the required permissions. If they don't match, it deletes the file or directory.
-func checkAndDeleteIfPermissionsMismatch(path string, requiredFileMode os.FileMode) error {
+func checkAndDeleteIfPermissionsMismatch(aPath string, requiredFileMode os.FileMode) error {
 	// Get the file or directory information
-	fileInfo, err := os.Stat(path)
+	fileInfo, err := os.Stat(aPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil
@@ -441,7 +441,7 @@ func checkAndDeleteIfPermissionsMismatch(path string, requiredFileMode os.FileMo
 	// Check if the current permissions match the required permissions
 	currentPermissions := fileInfo.Mode().Perm()
 	if currentPermissions != requiredFileMode {
-		err = os.RemoveAll(path)
+		err = os.RemoveAll(aPath)
 		if err != nil {
 			return fmt.Errorf("error deleting file or directory: %w", err)
 		}

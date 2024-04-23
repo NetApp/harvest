@@ -110,7 +110,7 @@ func (d *Disk) Init() error {
 
 	var err error
 
-	if err = d.InitAbc(); err != nil {
+	if err := d.InitAbc(); err != nil {
 		return err
 	}
 
@@ -119,7 +119,7 @@ func (d *Disk) Init() error {
 		return err
 	}
 
-	if err = d.client.Init(5); err != nil {
+	if err := d.client.Init(5); err != nil {
 		return err
 	}
 
@@ -662,7 +662,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				shelfEnvironmentMetricMap[iKey] = &shelfEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 			}
 			for mkey, metric := range o.GetMetrics() {
-				if o.Object == "shelf_temperature" {
+				switch {
+				case o.Object == "shelf_temperature":
 					if mkey == "temp-sensor-reading" {
 						isAmbient := instance.GetLabel("temp_is_ambient")
 						if isAmbient == "true" {
@@ -676,13 +677,13 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 							}
 						}
 					}
-				} else if o.Object == "shelf_fan" {
+				case o.Object == "shelf_fan":
 					if mkey == "fan-rpm" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							shelfEnvironmentMetricMap[iKey].fanSpeed = append(shelfEnvironmentMetricMap[iKey].fanSpeed, value)
 						}
 					}
-				} else if o.Object == "shelf_voltage" {
+				case o.Object == "shelf_voltage":
 					if mkey == "voltage-sensor-reading" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
@@ -691,7 +692,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
 						}
 					}
-				} else if o.Object == "shelf_sensor" {
+				case o.Object == "shelf_sensor":
 					if mkey == "current-sensor-reading" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {
@@ -808,74 +809,75 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 		shelfID := s.GetChildContentS("shelf-id")
 
 		for attribute, data1 := range d.shelfData {
-			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
+			statusMetric := data1.GetMetric("status")
+			if statusMetric == nil {
+				continue
+			}
+			if len(d.instanceKeys[attribute]) == 0 {
+				d.Logger.Warn().Msgf("no instance keys defined for object [%s], skipping", attribute)
+				continue
+			}
 
-				if len(d.instanceKeys[attribute]) == 0 {
-					d.Logger.Warn().Msgf("no instance keys defined for object [%s], skipping", attribute)
-					continue
-				}
+			objectElem := s.GetChildS(attribute)
+			if objectElem == nil {
+				noSet[attribute] = struct{}{}
+				continue
+			}
 
-				objectElem := s.GetChildS(attribute)
-				if objectElem == nil {
-					noSet[attribute] = struct{}{}
-					continue
-				}
+			for _, obj := range objectElem.GetChildren() {
 
-				for _, obj := range objectElem.GetChildren() {
+				if keys := d.instanceKeys[attribute]; len(keys) != 0 {
+					var sKeys []string
+					for _, k := range keys {
+						v := obj.GetChildContentS(k)
+						sKeys = append(sKeys, v)
+					}
+					combinedKey := strings.Join(sKeys, "")
+					instanceKey := shelfUID + "#" + combinedKey
+					instance, err := data1.NewInstance(instanceKey)
 
-					if keys := d.instanceKeys[attribute]; len(keys) != 0 {
-						var sKeys []string
-						for _, k := range keys {
-							v := obj.GetChildContentS(k)
-							sKeys = append(sKeys, v)
+					if err != nil {
+						d.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
+						return nil, err
+					}
+
+					for label, labelDisplay := range d.instanceLabels[attribute] {
+						if value := obj.GetChildContentS(label); value != "" {
+							instance.SetLabel(labelDisplay, value)
 						}
-						combinedKey := strings.Join(sKeys, "")
-						instanceKey := shelfUID + "#" + combinedKey
-						instance, err := data1.NewInstance(instanceKey)
+					}
 
-						if err != nil {
-							d.Logger.Error().Err(err).Str("attribute", attribute).Msg("Failed to add instance")
-							return nil, err
-						}
+					instance.SetLabel("shelf", shelfName)
+					instance.SetLabel("shelf_id", shelfID)
 
-						for label, labelDisplay := range d.instanceLabels[attribute] {
-							if value := obj.GetChildContentS(label); value != "" {
-								instance.SetLabel(labelDisplay, value)
-							}
-						}
+					// Each child would have different possible values which is an ugly way to write all of them,
+					// so normal value would be mapped to 1 and rest all are mapped to 0.
+					if instance.GetLabel("status") == "normal" {
+						_ = statusMetric.SetValueInt64(instance, 1)
+					} else {
+						_ = statusMetric.SetValueInt64(instance, 0)
+					}
 
-						instance.SetLabel("shelf", shelfName)
-						instance.SetLabel("shelf_id", shelfID)
+					for metricKey, m := range data1.GetMetrics() {
 
-						// Each child would have different possible values which is an ugly way to write all of them,
-						// so normal value would be mapped to 1 and rest all are mapped to 0.
-						if instance.GetLabel("status") == "normal" {
-							_ = statusMetric.SetValueInt64(instance, 1)
-						} else {
-							_ = statusMetric.SetValueInt64(instance, 0)
-						}
-
-						for metricKey, m := range data1.GetMetrics() {
-
-							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
-								if err := m.SetValueString(instance, value); err != nil {
-									if value != "-" {
-										d.Logger.Debug().
-											Str("metricKey", metricKey).
-											Str("value", value).
-											Err(err).
-											Msg("failed to parse value")
-									}
+						if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+							if err := m.SetValueString(instance, value); err != nil {
+								if value != "-" {
+									d.Logger.Debug().
+										Str("metricKey", metricKey).
+										Str("value", value).
+										Err(err).
+										Msg("failed to parse value")
 								}
 							}
 						}
-					} else {
-						d.Logger.Debug().Msgf("instance without [%s], skipping", d.instanceKeys[attribute])
 					}
+				} else {
+					d.Logger.Debug().Msgf("instance without [%s], skipping", d.instanceKeys[attribute])
 				}
-
-				output = append(output, data1)
 			}
+
+			output = append(output, data1)
 		}
 	}
 

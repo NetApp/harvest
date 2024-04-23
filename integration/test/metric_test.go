@@ -42,7 +42,7 @@ func TestPollerMetrics(t *testing.T) {
 		rows := strings.Split(sb, "\n")
 		for i := range rows {
 			row := rows[i]
-			if len(row) == 0 {
+			if row == "" {
 				continue
 			}
 			// Ignore comments
@@ -131,7 +131,7 @@ func metricAndLabelKey(metric string, rest string) string {
 				}
 			}
 			labelValue := rest[equalIndex+1 : labelEnd]
-			labels = append(labels, fmt.Sprintf(`%s="%s"`, label, labelValue))
+			labels = append(labels, fmt.Sprintf(`%s=%q`, label, labelValue))
 			scanner = labelEnd + 1
 			if string(rest[scanner]) == "," {
 				scanner++

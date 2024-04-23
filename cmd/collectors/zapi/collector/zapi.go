@@ -361,12 +361,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, instanceElem := range instances {
-			// c.logger.Printf(c.Prefix, "Handling instance element <%v> [%s]", &instance, instance.GetName())
 			keys, found := instanceElem.SearchContent(z.shortestPathPrefix, z.instanceKeyPaths)
-			// logger.Debug(z.Prefix, "Fetched instance keys: %s", strings.Join(keys, "."))
 
 			if !found {
-				// logger.Debug(z.Prefix, "Skipping instance: no keys fetched")
 				continue
 			}
 

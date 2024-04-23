@@ -227,34 +227,32 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 			switch k {
 			case "power":
 				var sumPower float64
-				if len(v.powerSensor) > 0 {
+				switch {
+				case len(v.powerSensor) > 0:
 					for _, v1 := range v.powerSensor {
-						if v1.unit == "mW" || v1.unit == "mW*hr" {
+						switch {
+						case v1.unit == "mW" || v1.unit == "mW*hr":
 							sumPower += v1.value / 1000
-						} else if v1.unit == "W" || v1.unit == "W*hr" {
+						case v1.unit == "W" || v1.unit == "W*hr":
 							sumPower += v1.value
-						} else {
+						default:
 							logger.Logger.Warn().Str("node", key).Str("name", v1.name).Str("unit", v1.unit).Float64("value", v1.value).Msg("unknown power unit")
 						}
 						if v1.unit == "mW*hr" || v1.unit == "W*hr" {
 							whrSensors[v1.name] = v1
 						}
 					}
-				} else if len(v.voltageSensor) > 0 && len(v.voltageSensor) == len(v.currentSensor) {
-					// sort voltage keys
+				case len(v.voltageSensor) > 0 && len(v.voltageSensor) == len(v.currentSensor):
 					voltageKeys := make([]string, 0, len(v.voltageSensor))
 					for k := range v.voltageSensor {
 						voltageKeys = append(voltageKeys, k)
 					}
 					sort.Strings(voltageKeys)
-
-					// sort current keys
 					currentKeys := make([]string, 0, len(v.currentSensor))
 					for k := range v.currentSensor {
 						currentKeys = append(currentKeys, k)
 					}
 					sort.Strings(currentKeys)
-
 					for i := range currentKeys {
 						currentKey := currentKeys[i]
 						voltageKey := voltageKeys[i]
@@ -265,13 +263,13 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 
 						// convert units
 						if currentSensorValue.unit == "mA" {
-							currentSensorValue.value = currentSensorValue.value / 1000
+							currentSensorValue.value /= 1000
 						} else if currentSensorValue.unit != "A" {
 							logger.Logger.Warn().Str("node", key).Str("unit", currentSensorValue.unit).Float64("value", currentSensorValue.value).Msg("unknown current unit")
 						}
 
 						if voltageSensorValue.unit == "mV" {
-							voltageSensorValue.value = voltageSensorValue.value / 1000
+							voltageSensorValue.value /= 1000
 						} else if voltageSensorValue.unit != "V" {
 							logger.Logger.Warn().Str("node", key).Str("unit", voltageSensorValue.unit).Float64("value", voltageSensorValue.value).Msg("unknown voltage unit")
 						}
@@ -279,12 +277,12 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 						p := currentSensorValue.value * voltageSensorValue.value
 
 						if !strings.EqualFold(voltageSensorValue.name, "in") && !strings.EqualFold(currentSensorValue.name, "in") {
-							p = p / 0.93 // If the sensor names to do NOT contain "IN" or "in", then we need to adjust the power to account for loss in the power supply. We will use 0.93 as the power supply efficiency factor for all systems.
+							p /= 0.93 // If the sensor names to do NOT contain "IN" or "in", then we need to adjust the power to account for loss in the power supply. We will use 0.93 as the power supply efficiency factor for all systems.
 						}
 
 						sumPower += p
 					}
-				} else {
+				default:
 					logger.Logger.Warn().Str("node", key).Int("current size", len(v.currentSensor)).Int("voltage size", len(v.voltageSensor)).Msg("current and voltage sensor are ignored")
 				}
 
@@ -293,7 +291,7 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 					logger.Logger.Warn().Str("node", key).Msg("node not found in nodeToNumNode map")
 					numNode = 1
 				}
-				sumPower = sumPower / float64(numNode)
+				sumPower /= float64(numNode)
 				err2 = m.SetValueFloat64(instance, sumPower)
 				if err2 != nil {
 					logger.Logger.Error().Float64("power", sumPower).Err(err2).Msg("Unable to set power")
@@ -393,7 +391,7 @@ func (my *Sensor) Init() error {
 		return err
 	}
 
-	if err = my.client.Init(5); err != nil {
+	if err := my.client.Init(5); err != nil {
 		return err
 	}
 

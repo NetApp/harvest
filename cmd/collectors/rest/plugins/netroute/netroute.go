@@ -11,7 +11,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"strconv"
-	"strings"
 )
 
 type NetRoute struct {
@@ -35,9 +34,8 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (n *NetRoute) Init() error {
-	var err error
 
-	if err = n.InitAbc(); err != nil {
+	if err := n.InitAbc(); err != nil {
 		return err
 	}
 
@@ -79,7 +77,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 
 		if len(names) == len(address) {
 			for i, name := range names {
-				index := strings.Join([]string{cluster, strconv.Itoa(count)}, "_")
+				index := cluster + "_" + strconv.Itoa(count)
 				interfaceInstance, err := n.data.NewInstance(index)
 				if err != nil {
 					n.Logger.Error().Err(err).Str("add instance failed for instance key", key).Send()

@@ -423,10 +423,10 @@ Prometheus includes out-of-the-box support for simple alerting. Alert rules are 
 file. Setup and details can be found in the Prometheus
 guide on [alerting](https://prometheus.io/docs/practices/alerting/).
 
-Harvest also includes [ems alerts](https://github.com/NetApp/harvest/blob/main/container/prometheus/ems_alert_rules.yml)
-and [sample alerts](https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml) for reference.
-Refer [EMS Collector](configure-ems.md) for more details about
-EMS events.
+Harvest also includes [EMS](https://github.com/NetApp/harvest/blob/main/container/prometheus/ems_alert_rules.yml)
+and [sample](https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml) alerts for reference. 
+Refer to the [EMS Collector](configure-ems.md) for more details about EMS events.
+Refer to the [EMS alert runbook](resources/ems-alert-runbook.md) for descriptions and remediation steps.
 
 ### Alertmanager
 

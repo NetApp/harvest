@@ -36,7 +36,7 @@ func (n *NodeMon) Init(a *collector.AbstractCollector) error {
 	n.AbstractCollector = a
 	var err error
 
-	if err = collector.Init(n); err != nil {
+	if err := collector.Init(n); err != nil {
 		return err
 	}
 

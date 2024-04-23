@@ -23,7 +23,7 @@ func (s *SystemNode) Init() error {
 
 	var err error
 
-	if err = s.InitAbc(); err != nil {
+	if err := s.InitAbc(); err != nil {
 		return err
 	}
 
@@ -32,7 +32,7 @@ func (s *SystemNode) Init() error {
 		return err
 	}
 
-	if err = s.client.Init(5); err != nil {
+	if err := s.client.Init(5); err != nil {
 		return err
 	}
 

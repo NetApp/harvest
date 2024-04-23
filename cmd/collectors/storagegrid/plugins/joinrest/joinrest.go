@@ -41,10 +41,10 @@ plugins:
 func (t *JoinRest) Init() error {
 	var err error
 
-	if err = t.InitAbc(); err != nil {
+	if err := t.InitAbc(); err != nil {
 		return err
 	}
-	if err = t.initClient(); err != nil {
+	if err := t.initClient(); err != nil {
 		return err
 	}
 
@@ -161,7 +161,7 @@ func (t *JoinRest) initClient() error {
 		return err
 	}
 
-	if err = t.client.Init(5); err != nil {
+	if err := t.client.Init(5); err != nil {
 		return err
 	}
 	t.client.TraceLogSet(t.Name, t.Params)

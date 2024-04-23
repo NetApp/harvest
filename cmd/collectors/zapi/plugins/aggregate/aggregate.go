@@ -29,7 +29,7 @@ func (a *Aggregate) Init() error {
 
 	var err error
 
-	if err = a.InitAbc(); err != nil {
+	if err := a.InitAbc(); err != nil {
 		return err
 	}
 
@@ -38,7 +38,7 @@ func (a *Aggregate) Init() error {
 		return err
 	}
 
-	if err = a.client.Init(5); err != nil {
+	if err := a.client.Init(5); err != nil {
 		return err
 	}
 

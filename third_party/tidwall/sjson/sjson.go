@@ -502,6 +502,8 @@ type sliceHeader struct {
 	cap  int
 }
 
+const OneGigabyte = 1024 * 1024 * 1024
+
 func set(jstr, path, raw string,
 	stringify, del, optimistic, inplace bool) ([]byte, error) {
 	if path == "" {
@@ -511,6 +513,9 @@ func set(jstr, path, raw string,
 		res := gjson.Get(jstr, path)
 		if res.Exists() && res.Index > 0 {
 			sz := len(jstr) - len(res.Raw) + len(raw)
+			if sz > OneGigabyte {
+				return []byte(jstr), &errorType{"json size exceeds 1GB"}
+			}
 			if stringify {
 				sz += 2
 			}

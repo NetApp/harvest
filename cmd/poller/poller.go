@@ -355,7 +355,7 @@ func (p *Poller) Init() error {
 					p.firstAutoSupport()
 				})
 			}
-			if err = p.schedule.NewTaskString("asup", asupSchedule, 0, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
+			if err := p.schedule.NewTaskString("asup", asupSchedule, 0, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
 				return err
 			}
 			logger.Info().
@@ -666,16 +666,15 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	for _, oc := range ocs {
 		col, err := p.newCollector(oc.class, oc.object, oc.template)
 		if err != nil {
-			if errors.Is(err, errs.ErrConnection) {
+			switch {
+			case errors.Is(err, errs.ErrConnection):
 				logger.Warn().Err(err).
 					Str("collector", oc.class).
 					Str("object", oc.object).
 					Msg("abort collector")
-				break
-			} else if errors.Is(err, errs.ErrWrongTemplate) {
-				// status_7mode will never be loaded in cdot, ignore
+			case errors.Is(err, errs.ErrWrongTemplate):
 				logger.Debug().Err(err).Msg("Zapi Status_7mode failed to load")
-			} else {
+			default:
 				logger.Warn().Err(err).
 					Str("collector", oc.class).
 					Str("object", oc.object).
@@ -797,7 +796,6 @@ func Union2(hNode *node.Node, poller *conf.Poller) {
 					newNode := node.NewS(yNode.Value)
 					// this is the value that goes along with the key from yNode
 					valNode := rootContent.Content[index+1]
-					// fmt.Printf("node type=%s val=%s %s\n", yNode.Value, valNode.Tag, valNode.Value)
 					switch valNode.Tag {
 					case "!!str", "!!bool":
 						newNode.Content = []byte(valNode.Value)
@@ -853,7 +851,7 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 	)
 
 	// stop here if exporter is already loaded
-	if exp = p.getExporter(name); exp != nil {
+	if exp := p.getExporter(name); exp != nil {
 		return exp
 	}
 

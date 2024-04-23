@@ -281,19 +281,16 @@ func TestUnitsAndExprMatch(t *testing.T) {
 					t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
 						metric, unit, v.GrafanaJSON, location[0].dashboard, location[0].path, location[0].title)
 				}
-			} else {
-
+			} else if strings.HasSuffix(metric, "_latency") {
 				// special case latency that dashboard uses unit microseconds µs
-				if strings.HasSuffix(metric, "_latency") {
-					expectedGrafanaUnit = defaultLatencyUnit
-					if unit != expectedGrafanaUnit {
-						// Check if this metric is in the allowedSuffix map and has a matching unit
-						if slices.Contains(allowedSuffix[metric], unit) {
-							continue
-						}
-						t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
-							metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
+				expectedGrafanaUnit = defaultLatencyUnit
+				if unit != expectedGrafanaUnit {
+					// Check if this metric is in the allowedSuffix map and has a matching unit
+					if slices.Contains(allowedSuffix[metric], unit) {
+						continue
 					}
+					t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
+						metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
 				}
 			}
 
@@ -320,7 +317,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 						}
 					}
 				}
-				failText.WriteString(fmt.Sprintf("unit=%s %s path=%s title=\"%s\"\n",
+				failText.WriteString(fmt.Sprintf("unit=%s %s path=%s title=%q\n",
 					unit, row.dashboard, row.path, row.title))
 			}
 		}
@@ -1375,7 +1372,8 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 func writeSorted(t *testing.T, path string, sorted string) string {
 	dir, file := filepath.Split(path)
 	dir = filepath.Dir(dir)
-	dest := filepath.Join("/tmp", dir, file)
+	tempDir := "/tmp"
+	dest := filepath.Join(tempDir, dir, file)
 	destDir := filepath.Dir(dest)
 	err := os.MkdirAll(destDir, 0750)
 	if err != nil {
@@ -1498,7 +1496,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 					// t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
 					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
 				} else {
-					*count = *count + 1
+					*count++
 					t.Errorf(`dashboard=%s panel="%s" does not have panel description %d`, dashPath, title, *count)
 				}
 			} else {

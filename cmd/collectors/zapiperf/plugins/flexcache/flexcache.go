@@ -28,7 +28,7 @@ func (f *FlexCache) Init() error {
 
 	var err error
 
-	if err = f.InitAbc(); err != nil {
+	if err := f.InitAbc(); err != nil {
 		return err
 	}
 
@@ -37,7 +37,7 @@ func (f *FlexCache) Init() error {
 		return err
 	}
 
-	if err = f.client.Init(5); err != nil {
+	if err := f.client.Init(5); err != nil {
 		return err
 	}
 	return nil

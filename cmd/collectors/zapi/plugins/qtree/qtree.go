@@ -38,7 +38,7 @@ func (q *Qtree) Init() error {
 
 	var err error
 
-	if err = q.InitAbc(); err != nil {
+	if err := q.InitAbc(); err != nil {
 		return err
 	}
 
@@ -47,7 +47,7 @@ func (q *Qtree) Init() error {
 		return err
 	}
 
-	if err = q.client.Init(5); err != nil {
+	if err := q.client.Init(5); err != nil {
 		return err
 	}
 
@@ -159,7 +159,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		// add quota filter
 		query := request.NewChildS("query", "")
 		quotaQuery := query.NewChildS("quota", "")
-		quotaQuery.NewChildS("quota-type", strings.Join(q.quotaType[:], "|"))
+		quotaQuery.NewChildS("quota-type", strings.Join(q.quotaType, "|"))
 	}
 
 	tag := "initial"
@@ -344,15 +344,16 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 
 		// ignore default quotas and set user/group
 		// Rest uses service side filtering to remove default records
-		if quotaType == "user" {
+		switch {
+		case quotaType == "user":
 			if (uName == "*" && uid == "*") || (uName == "" && uid == "") {
 				continue
 			}
-		} else if quotaType == "group" {
+		case quotaType == "group":
 			if uName == "*" || uName == "" {
 				continue
 			}
-		} else if quotaType == "tree" {
+		case quotaType == "tree":
 			if tree == "" {
 				continue
 			}

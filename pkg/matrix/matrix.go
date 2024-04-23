@@ -281,7 +281,7 @@ func (m *Matrix) RemoveInstance(key string) {
 		for _, i := range m.instances {
 			if i.index > deletedIndex {
 				// reduce index by 1
-				i.index = i.index - 1
+				i.index--
 			}
 		}
 	}
@@ -448,11 +448,11 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 		v := metric.values[i]
 		// Don't pass along the value if the numerator or denominator is < 0
 		// It is important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
-		if metric.values[i] < 0 || sValues[i] < 0 {
+		switch {
+		case metric.values[i] < 0 || sValues[i] < 0:
 			metric.record[i] = false
 			skips++
-		} else if metric.record[i] && sRecord[i] {
-			// For a latency counter, ensure that the base counter has sufficient operations for accurate calculation.
+		case metric.record[i] && sRecord[i]:
 			minimumBase := tValues[i] * x
 			if metric.GetName() == "optimal_point_latency" {
 				// An exception is made for headroom latency because the base counter always has a few IOPS
@@ -481,7 +481,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 			} else {
 				metric.values[i] = 0
 			}
-		} else {
+		default:
 			metric.record[i] = false
 			skips++
 		}

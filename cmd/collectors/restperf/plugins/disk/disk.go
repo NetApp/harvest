@@ -107,7 +107,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 func (d *Disk) Init() error {
 	var err error
 
-	if err = d.InitAbc(); err != nil {
+	if err := d.InitAbc(); err != nil {
 		return err
 	}
 
@@ -117,7 +117,7 @@ func (d *Disk) Init() error {
 		return err
 	}
 
-	if err = d.client.Init(5); err != nil {
+	if err := d.client.Init(5); err != nil {
 		return err
 	}
 
@@ -474,26 +474,28 @@ func (d *Disk) populateShelfIOPS(data *matrix.Matrix) error {
 	}
 
 	for _, instance := range data.GetInstances() {
-		if v, ok := totalTransfers.GetValueFloat64(instance); ok {
-			diskUUID := instance.GetLabel("disk_uuid")
-			diskName := instance.GetLabel("disk")
+		v, ok := totalTransfers.GetValueFloat64(instance)
+		if !ok {
+			continue
+		}
+		diskUUID := instance.GetLabel("disk_uuid")
+		diskName := instance.GetLabel("disk")
 
-			di, has := d.diskMap[diskUUID]
-			// search via diskName
-			if !has {
-				di, has = d.diskNameMap[diskName]
+		di, has := d.diskMap[diskUUID]
+		// search via diskName
+		if !has {
+			di, has = d.diskNameMap[diskName]
+		}
+		if has {
+			shelfID := di.shelfID
+			sh, ok := d.ShelfMap[shelfID]
+			if ok {
+				sh.iops += v
 			}
-			if has {
-				shelfID := di.shelfID
-				sh, ok := d.ShelfMap[shelfID]
-				if ok {
-					sh.iops += v
-				}
-			} else {
-				d.Logger.Warn().Str("diskUUID", diskUUID).
-					Str("diskName", diskName).
-					Msg("Missing disk info")
-			}
+		} else {
+			d.Logger.Warn().Str("diskUUID", diskUUID).
+				Str("diskName", diskName).
+				Msg("Missing disk info")
 		}
 	}
 	return nil
@@ -715,7 +717,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				shelfEnvironmentMetricMap[iKey] = &shelfEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 			}
 			for mkey, metric := range o.GetMetrics() {
-				if o.Object == "shelf_temperature" {
+				switch {
+				case o.Object == "shelf_temperature":
 					if mkey == "temperature" {
 						isAmbient := instance.GetLabel("temp_is_ambient")
 						if isAmbient == "true" {
@@ -729,13 +732,13 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 							}
 						}
 					}
-				} else if o.Object == "shelf_fan" {
+				case o.Object == "shelf_fan":
 					if mkey == "rpm" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							shelfEnvironmentMetricMap[iKey].fanSpeed = append(shelfEnvironmentMetricMap[iKey].fanSpeed, value)
 						}
 					}
-				} else if o.Object == "shelf_voltage" {
+				case o.Object == "shelf_voltage":
 					if mkey == "voltage" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
@@ -744,7 +747,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
 						}
 					}
-				} else if o.Object == "shelf_sensor" {
+				case o.Object == "shelf_sensor":
 					if mkey == "current" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {

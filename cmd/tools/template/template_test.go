@@ -14,6 +14,7 @@ import (
 	"strings"
 	"testing"
 	"unicode"
+	"unicode/utf8"
 )
 
 const toConf = "../../../conf"
@@ -195,12 +196,13 @@ func TestMetricColumnAlignmentAndCase(t *testing.T) {
 			}
 			// left side can use - since Harvest wil convert to underscore automatically,
 			// right side can't
-			if len(m.right) > 0 {
+			if m.right != "" {
 				if strings.Contains(m.right, "-") {
 					t.Errorf("metric=%s should use _ not - on right side path=%s", m.right, shortPath(path))
 				}
 			}
-			if len(m.right) > 0 && unicode.IsUpper([]rune(m.right)[0]) {
+			first, _ := utf8.DecodeRuneInString(m.right)
+			if m.right != "" && unicode.IsUpper(first) {
 				t.Errorf("metric=%s should start with a lowercase, path=%s", m.line, shortPath(path))
 			}
 		}

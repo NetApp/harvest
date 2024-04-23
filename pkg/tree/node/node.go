@@ -263,13 +263,12 @@ func (n *Node) Union(source *Node) {
 		n.SetContent(source.GetContent())
 	}
 	for _, child := range source.Children {
-		if !n.HasChild(child.GetName()) {
+		switch {
+		case !n.HasChild(child.GetName()):
 			n.AddChild(child)
-		} else if child.GetChildren() != nil {
-			// union at child level
+		case child.GetChildren() != nil:
 			n.GetChild(child.GetName()).Union(child)
-		} else {
-			// child template would take precedence over parent
+		default:
 			n.SetChildContentS(child.GetNameS(), child.GetContentS())
 		}
 	}
@@ -295,7 +294,7 @@ func (n *Node) PreprocessTemplate() {
 		mine := n.GetChild(child.GetName())
 		if mine != nil && len(child.GetName()) > 0 {
 			if mine.searchAncestor("LabelAgent") != nil {
-				if len(mine.GetContentS()) > 0 {
+				if mine.GetContentS() != "" {
 					mine.NewChildS("", child.GetContentS())
 					mine.SetContentS("")
 				}
@@ -316,17 +315,16 @@ func (n *Node) Merge(subtemplate *Node, skipOverwrite []string) {
 	}
 	for _, child := range subtemplate.Children {
 		mine := n.GetChild(child.GetName())
-		if len(child.GetName()) == 0 {
+		switch {
+		case len(child.GetName()) == 0:
 			if mine != nil && mine.GetParent() != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
 				mine.GetParent().AddChild(child)
-			} else {
-				if n.GetChildByContent(child.GetContentS()) == nil {
-					n.AddChild(child)
-				}
+			} else if n.GetChildByContent(child.GetContentS()) == nil {
+				n.AddChild(child)
 			}
-		} else if mine == nil {
+		case mine == nil:
 			n.AddChild(child)
-		} else {
+		default:
 			if mine.GetParent() != nil && slices.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
 				mine.SetContentS(mine.GetContentS() + "," + child.GetContentS())
 			} else {
@@ -349,7 +347,7 @@ func (n *Node) FlatList(list *[]string, prefix string) {
 	}
 	if len(n.Children) == 0 {
 		var sub string
-		if len(prefix) > 0 {
+		if prefix != "" {
 			sub = prefix + " " + simpleName(n.GetContentS())
 		} else {
 			sub = simpleName(n.GetContentS())
@@ -357,7 +355,7 @@ func (n *Node) FlatList(list *[]string, prefix string) {
 		*list = append(*list, sub)
 	} else {
 		nameS := n.GetNameS()
-		if len(nameS) > 0 && nameS != "counters" {
+		if nameS != "" && nameS != "counters" {
 			if prefix == "" {
 				prefix = nameS
 			} else {
@@ -391,11 +389,11 @@ func (n *Node) printN(depth int, b *strings.Builder) {
 		name = n.GetNameS()
 	}
 
-	if len(n.GetContentS()) > 0 && n.GetContentS()[0] != '<' {
+	if n.GetContentS() != "" && n.GetContentS()[0] != '<' {
 		content = n.GetContentS()
 	}
 	fname := fmt.Sprintf("%s[%s]", strings.Repeat("  ", depth), name)
-	b.WriteString(fmt.Sprintf("%-50s - %35s\n", fname, content))
+	_, _ = fmt.Fprintf(b, "%-50s - %35s\n", fname, content)
 	for _, child := range n.Children {
 		child.printN(depth+1, b)
 	}
@@ -415,11 +413,9 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 		} else {
 			newPath = slices.Clone(currentPath)
 		}
-		// fmt.Printf(" -> current_path=%v \t new_path=%v\n", currentPath, newPath)
 		for _, path := range paths {
 			if slices.Equal(newPath, path) {
 				matches = append(matches, node.GetContentS())
-				// fmt.Println("    MATCH!")
 				break
 			}
 		}
@@ -432,7 +428,6 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 
 	search(n, []string{})
 
-	// fmt.Printf("matches (%d):\n%v\n", len(matches), matches)
 	return matches, len(matches) > 0
 }
 

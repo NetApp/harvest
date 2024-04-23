@@ -19,11 +19,10 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (m *MetroclusterCheck) Init() error {
 
-	var err error
 	pluginMetrics := []string{"cluster_status", "node_status", "aggr_status", "volume_status"}
 	pluginLabels := []string{"result", "name", "node", "aggregate", "volume"}
 
-	if err = m.InitAbc(); err != nil {
+	if err := m.InitAbc(); err != nil {
 		return err
 	}
 
@@ -36,7 +35,7 @@ func (m *MetroclusterCheck) Init() error {
 	m.data.SetExportOptions(exportOptions)
 
 	for _, metric := range pluginMetrics {
-		if err = m.createMetric(metric); err != nil {
+		if err := m.createMetric(metric); err != nil {
 			return err
 		}
 	}

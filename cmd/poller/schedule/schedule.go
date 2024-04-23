@@ -114,13 +114,14 @@ func (s *Schedule) IsTaskStandBy(t *Task) bool {
 // and i. That interval will be used for the task until the Schedule recovers to normal mode.
 func (s *Schedule) SetStandByModeMax(t *Task, i time.Duration) {
 	for _, x := range s.tasks {
-		if x.Name == t.Name {
-			s.standByTask = t
-			t.interval = max(i, t.interval)
-			t.timer = time.Now()
-			s.standByMode = true
-			return
+		if x.Name != t.Name {
+			continue
 		}
+		s.standByTask = t
+		t.interval = max(i, t.interval)
+		t.timer = time.Now()
+		s.standByMode = true
+		return
 	}
 	panic("invalid task: " + t.Name)
 }
@@ -130,13 +131,14 @@ func (s *Schedule) SetStandByModeMax(t *Task, i time.Duration) {
 // the task until the Schedule recovers to normal mode.
 func (s *Schedule) SetStandByMode(t *Task, i time.Duration) {
 	for _, x := range s.tasks {
-		if x.Name == t.Name {
-			s.standByTask = t
-			t.interval = i
-			t.timer = time.Now()
-			s.standByMode = true
-			return
+		if x.Name != t.Name {
+			continue
 		}
+		s.standByTask = t
+		t.interval = i
+		t.timer = time.Now()
+		s.standByMode = true
+		return
 	}
 	panic("invalid task: " + t.Name)
 }
@@ -157,7 +159,6 @@ func (s *Schedule) Recover() {
 				t.timer = time.Now().Add(-t.interval)
 			}
 		}
-		// s.cachedInterval = nil
 		s.standByTask = nil
 		s.standByMode = false
 		return

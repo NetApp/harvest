@@ -100,8 +100,8 @@ func doDoctorCmd(cmd *cobra.Command, _ []string) {
 	checkAll(pathI, confPath)
 }
 
-func doDoctor(path string) string {
-	contents, err := os.ReadFile(path)
+func doDoctor(aPath string) string {
+	contents, err := os.ReadFile(aPath)
 	if err != nil {
 		fmt.Printf("error reading config file. err=%+v\n", err)
 		return ""
@@ -115,9 +115,9 @@ func doDoctor(path string) string {
 		}
 	}
 
-	parentRoot, err := printRedactedConfig(path, contents)
+	parentRoot, err := printRedactedConfig(aPath, contents)
 	if err != nil {
-		fmt.Printf("error processing parent config file=[%s] %+v\n", path, err)
+		fmt.Printf("error processing parent config file=[%s] %+v\n", aPath, err)
 		return ""
 	}
 
@@ -157,7 +157,7 @@ func doDoctor(path string) string {
 
 	marshaled, err := yaml.Marshal(parentRoot)
 	if err != nil {
-		fmt.Printf("error marshalling yaml sanitized from config file=[%s] %+v\n", path, err)
+		fmt.Printf("error marshalling yaml sanitized from config file=[%s] %+v\n", aPath, err)
 		return ""
 	}
 	out := string(marshaled)
@@ -208,13 +208,13 @@ func mergeYamlNodes(parent, child *yaml.Node) {
 // checkAll runs all doctor checks
 // If all checks succeed, print nothing and exit with a return code of 0
 // Otherwise, print what failed and exit with a return code of 1
-func checkAll(path string, confPath string) {
+func checkAll(aPath string, confPath string) {
 	// See https://github.com/NetApp/harvest/issues/16 for more checks to add
 	color.DetectConsole(opts.Color)
 
-	_, err := conf.LoadHarvestConfig(path)
+	_, err := conf.LoadHarvestConfig(aPath)
 	if err != nil {
-		fmt.Printf("error reading config file=[%s] %+v\n", path, err)
+		fmt.Printf("error reading config file=[%s] %+v\n", aPath, err)
 		os.Exit(1)
 		return
 	}
@@ -329,7 +329,7 @@ func checkConfTemplates(confPaths []string) validation {
 						fileName = strings.TrimSpace(fileName) // Remove any leading or trailing spaces
 						if !templateExists(searchDir, fileName) {
 							valid.isValid = false
-							msg := fmt.Sprintf(`%s references template file "%s" which does not exist in %s`,
+							msg := fmt.Sprintf(`%s references template file %q which does not exist in %s`,
 								custom, fileName, path.Join(searchDir, "**"))
 							valid.invalid = append(valid.invalid, msg)
 							continue
@@ -529,11 +529,11 @@ func checkPollersExportToUniquePromPorts(config conf.HarvestConfig) validation {
 	return valid
 }
 
-func printRedactedConfig(path string, contents []byte) (*yaml.Node, error) {
+func printRedactedConfig(aPath string, contents []byte) (*yaml.Node, error) {
 	root := &yaml.Node{}
 	err := yaml.Unmarshal(contents, root)
 	if err != nil {
-		fmt.Printf("error reading config file=[%s] %+v\n", path, err)
+		fmt.Printf("error reading config file=[%s] %+v\n", aPath, err)
 		return nil, err
 	}
 	var nodes []*yaml.Node

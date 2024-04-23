@@ -98,7 +98,7 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 	e.bookendEmsMap = make(map[string]*set.Set)
 	e.resolveAfter = make(map[string]time.Duration)
 
-	if err = e.InitClient(); err != nil {
+	if err := e.InitClient(); err != nil {
 		return err
 	}
 
@@ -106,11 +106,11 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err = collector.Init(e); err != nil {
+	if err := collector.Init(e); err != nil {
 		return err
 	}
 
-	if err = e.InitCache(); err != nil {
+	if err := e.InitCache(); err != nil {
 		return err
 	}
 
@@ -384,16 +384,14 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 				return nil, fmt.Errorf("maxURLSize=%d is too small to form queries. Increase it to at least %d",
 					e.maxURLSize, len(h))
 			}
-			end = end - 1
+			end--
 			h = e.getHref(e.eventNames[start:end], filter)
 			hrefs = append(hrefs, h)
 			start = end
-		} else {
-			if end == len(e.eventNames)-1 {
-				end = len(e.eventNames)
-				h = e.getHref(e.eventNames[start:end], filter)
-				hrefs = append(hrefs, h)
-			}
+		} else if end == len(e.eventNames)-1 {
+			end = len(e.eventNames)
+			h = e.getHref(e.eventNames[start:end], filter)
+			hrefs = append(hrefs, h)
 		}
 	}
 	for _, h := range hrefs {
@@ -641,18 +639,18 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 							metr.SetExportable(metric.Exportable)
 						}
-						if metric.Name == "events" {
+						switch {
+						case metric.Name == "events":
 							if err = metr.SetValueFloat64(instance, 1); err != nil {
 								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 									Msg("Unable to set float key on metric")
 							}
-						} else if metric.Name == "timestamp" {
+						case metric.Name == "timestamp":
 							if err = metr.SetValueFloat64(instance, float64(time.Now().UnixMicro())); err != nil {
 								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
 									Msg("Unable to set timestamp on metric")
 							}
-						} else {
-							// this code will not execute as ems only support [events, timestamp] metric
+						default:
 							e.Logger.Warn().Str("key", metric.Name).Str("metric", metric.Label).
 								Msg("Unable to find metric")
 						}
