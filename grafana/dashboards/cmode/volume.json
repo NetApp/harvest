@@ -7633,6 +7633,10 @@
                   {
                     "id": "custom.width",
                     "value": 170
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
                   }
                 ]
               },
@@ -7704,7 +7708,23 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 200
+                    "value": 220
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 190
                   }
                 ]
               }
@@ -7733,7 +7753,7 @@
             "sortBy": [
               {
                 "desc": true,
-                "displayName": "Current Value"
+                "displayName": "Predicted 15th Day Value"
               }
             ]
           },
@@ -7778,27 +7798,27 @@
                   "Value": false,
                   "Value #C": false,
                   "__name__": true,
-                  "datacenter": true,
+                  "datacenter": false,
                   "instance": true,
                   "job": true,
+                  "node": true,
                   "state": true,
                   "style": true
                 },
                 "includeByName": {},
                 "indexByName": {
-                  "Time": 4,
-                  "Value #A": 11,
-                  "Value #B": 10,
-                  "__name__": 12,
-                  "aggr": 2,
-                  "cluster": 5,
-                  "datacenter": 6,
-                  "instance": 7,
-                  "job": 8,
-                  "node": 3,
-                  "style": 9,
-                  "svm": 1,
-                  "volume": 0
+                  "Time": 5,
+                  "Value #A": 10,
+                  "Value #B": 9,
+                  "__name__": 11,
+                  "aggr": 4,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "instance": 6,
+                  "job": 7,
+                  "style": 8,
+                  "svm": 3,
+                  "volume": 2
                 },
                 "renameByName": {
                   "Value": "Predicted Value ",
@@ -7818,8 +7838,8 @@
                   "clone_parent_svm": "Clone Parent SVM",
                   "clone_parent_volume": "Clone Parent Volume",
                   "cluster": "Cluster",
+                  "datacenter": "Datacenter",
                   "junction_path": "Junction Path",
-                  "node": "Node",
                   "svm": "SVM",
                   "volume": "Volume"
                 }
