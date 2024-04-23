@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1713535934233,
+  "iteration": 1713794854200,
   "links": [
     {
       "asDropdown": true,
@@ -1883,7 +1883,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_used_ops_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} ",
+              "expr": "qos_used_ops_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) \ngroup_left(expected_iops_allocation,peak_iops,peak_iops_allocation,expected_iops,absolute_min_iops) label_replace(qos_policy_adaptive_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1900,9 +1900,8 @@
                   "names": [
                     "cluster",
                     "datacenter",
-                    "file",
                     "lun",
-                    "max_throughput_iops",
+                    "peak_iops",
                     "policy_group",
                     "svm",
                     "volume",
@@ -1915,6 +1914,7 @@
             {
               "id": "organize",
               "options": {
+                "excludeByName": {},
                 "indexByName": {
                   "QOS Used %": 7,
                   "Value": 9,
@@ -1936,6 +1936,7 @@
                   "file": "File",
                   "lun": "Lun",
                   "max_throughput_iops": "Max IOPS",
+                  "peak_iops": "Peak IOPS/TB",
                   "policy_group": "Policy",
                   "svm": "SVM",
                   "volume": "Volume",
@@ -2021,7 +2022,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_used_throughput_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} ",
+              "expr": "qos_used_throughput_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) \ngroup_left(expected_iops_allocation,peak_iops,peak_iops_allocation,expected_iops,absolute_min_iops,block_size) label_replace(qos_policy_adaptive_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2038,14 +2039,14 @@
                   "names": [
                     "cluster",
                     "datacenter",
-                    "file",
                     "lun",
-                    "max_throughput_mbps",
+                    "peak_iops",
                     "policy_group",
                     "svm",
                     "volume",
                     "workload",
-                    "Value"
+                    "Value",
+                    "block_size"
                   ]
                 }
               }
@@ -2053,28 +2054,29 @@
             {
               "id": "organize",
               "options": {
+                "excludeByName": {},
                 "indexByName": {
-                  "QOS Used %": 7,
-                  "Value": 9,
-                  "Value / max_throughput_iops": 11,
+                  "Value": 7,
+                  "block_size": 9,
                   "cluster": 1,
                   "datacenter": 0,
-                  "file": 4,
-                  "lun": 5,
-                  "max_throughput_iops": 10,
-                  "policy_group": 8,
+                  "lun": 4,
+                  "peak_iops": 8,
+                  "policy_group": 6,
                   "svm": 2,
                   "volume": 3,
-                  "workload": 6
+                  "workload": 5
                 },
                 "renameByName": {
                   "Value": "Used %",
+                  "block_size": "Block Size",
                   "cluster": "Cluster",
                   "datacenter": "Datacenter",
                   "file": "File",
                   "lun": "Lun",
                   "max_throughput_iops": "Max IOPS",
                   "max_throughput_mbps": "Max Throughput",
+                  "peak_iops": "Peak IOPS/TB",
                   "policy_group": "Policy",
                   "svm": "SVM",
                   "volume": "Volume",

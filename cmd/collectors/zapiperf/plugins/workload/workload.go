@@ -107,7 +107,7 @@ func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 		file := v.GetLabel("file")
 		svm := v.GetLabel("svm")
 
-		// ignore constituents
+		// ignore constituents as qos is applied to flexgroups as a whole and not at constituent level
 		if match := constituentRegex.FindStringSubmatch(volume); len(match) == 3 {
 			continue
 		}

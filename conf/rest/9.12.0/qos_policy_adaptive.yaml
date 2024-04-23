@@ -6,6 +6,7 @@ object:             qos_policy_adaptive
 counters:
   - ^^uuid                     => uuid
   - ^absolute_min_iops         => absolute_min_iops
+  - ^block_size                => block_size
   - ^expected_iops             => expected_iops
   - ^expected_iops_allocation  => expected_iops_allocation
   - ^num_workloads             => object_count
@@ -23,6 +24,7 @@ export_options:
     - svm
   instance_labels:
     - absolute_min_iops
+    - block_size
     - expected_iops
     - expected_iops_allocation
     - object_count

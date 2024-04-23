@@ -7,6 +7,7 @@ counters:
   qos-adaptive-policy-group-info:
     - ^^uuid                     => uuid
     - ^absolute-min-iops         => absolute_min_iops
+    - ^block-size                => block_size
     - ^expected-iops             => expected_iops
     - ^expected-iops-allocation  => expected_iops_allocation
     - ^num-workloads             => object_count
@@ -26,6 +27,7 @@ export_options:
     - svm
   instance_labels:
     - absolute_min_iops
+    - block_size
     - expected_iops
     - expected_iops_allocation
     - object_count
