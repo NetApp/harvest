@@ -45,6 +45,9 @@ var zapiCounterMap = map[string]struct{}{
 var restCounterMap = map[string]struct{}{
 	"aggr_snapshot_inode_used_percent": {},
 	"flexcache_":                       {},
+	// remove after Rest implementation
+	"qos_used_ops_percent":        {},
+	"qos_used_throughput_percent": {},
 }
 
 // excludeCounters consists of counters which should be excluded from both Zapi/Rest in CI test
