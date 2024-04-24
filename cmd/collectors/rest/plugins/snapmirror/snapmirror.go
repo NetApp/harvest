@@ -21,10 +21,11 @@ const PluginInvocationRate = 10
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
-	data           *matrix.Matrix
-	client         *rest.Client
-	currentVal     int
-	svmPeerDataMap map[string]Peer // [peer SVM alias name] -> [peer detail] map
+	data               *matrix.Matrix
+	client             *rest.Client
+	currentVal         int
+	svmPeerDataMap     map[string]Peer   // [peer SVM alias name] -> [peer detail] map
+	clusterPeerDataMap map[string]string // [peer Cluster alias name] -> [peer Cluster actual name] map
 }
 
 type Peer struct {
@@ -55,6 +56,7 @@ func (my *SnapMirror) Init() error {
 	}
 
 	my.svmPeerDataMap = make(map[string]Peer)
+	my.clusterPeerDataMap = make(map[string]string)
 
 	my.data = matrix.New(my.Parent+".SnapMirror", "snapmirror", "snapmirror")
 
@@ -98,7 +100,11 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 			if err := my.getSVMPeerData(cluster); err != nil {
 				return nil, nil, err
 			}
-			my.Logger.Debug().Msg("updated svm peer detail")
+			my.Logger.Debug().Msg("updated svm peer map detail")
+			if err := my.getClusterPeerData(); err != nil {
+				return nil, nil, err
+			}
+			my.Logger.Debug().Msg("updated cluster peer map detail")
 		}
 	}
 
@@ -140,6 +146,35 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	return nil
 }
 
+func (my *SnapMirror) getClusterPeerData() error {
+	// Clean clusterPeerDataMap map
+	my.clusterPeerDataMap = make(map[string]string)
+	fields := []string{"name", "remote.name"}
+	query := "api/cluster/peers"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Build()
+
+	result, err := rest.Fetch(my.client, href)
+	if err != nil {
+		my.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return err
+	}
+
+	if len(result) == 0 {
+		my.Logger.Debug().Msg("No cluster peer found")
+		return nil
+	}
+
+	for _, peerData := range result {
+		localClusterName := peerData.Get("name").String()
+		actualClusterName := peerData.Get("remote.name").String()
+		my.clusterPeerDataMap[localClusterName] = actualClusterName
+	}
+	return nil
+}
+
 func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 	var keys []string
 	cluster := data.GetGlobalLabels()["cluster"]
@@ -162,7 +197,10 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 		// Update source_vserver in snapmirror (In case of inter-cluster SM - vserver name may differ)
 		if peerDetail, ok := my.svmPeerDataMap[vserverName]; ok {
 			instance.SetLabel("source_vserver", peerDetail.svm)
-			instance.SetLabel("source_cluster", peerDetail.cluster)
+			// Update source_cluster in snapmirror (In case of inter-cluster SM - cluster name may differ)
+			if peerClusterName, exist := my.clusterPeerDataMap[peerDetail.cluster]; exist {
+				instance.SetLabel("source_cluster", peerClusterName)
+			}
 		}
 
 		if sourceCluster := instance.GetLabel("source_cluster"); sourceCluster == "" {
