@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1713794854200,
+  "iteration": 1713941923885,
   "links": [
     {
       "asDropdown": true,
@@ -1718,7 +1718,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel is active only when the block size is set to values, excluding the `any`.",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1804,7 +1804,7 @@
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources QoS Bandwidth Utilization (%)",
+          "title": "Top $TopResources Adaptive QoS Bandwidth Utilization (%)",
           "transformations": [],
           "type": "timeseries"
         },
@@ -1949,7 +1949,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel is active only when the block size is set to values, excluding the `any`.",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2037,16 +2037,16 @@
               "options": {
                 "include": {
                   "names": [
+                    "block_size",
                     "cluster",
                     "datacenter",
                     "lun",
-                    "peak_iops",
                     "policy_group",
                     "svm",
                     "volume",
                     "workload",
                     "Value",
-                    "block_size"
+                    "peak_iops"
                   ]
                 }
               }
