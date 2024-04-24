@@ -179,7 +179,6 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 	// handle CG relationships
 	my.handleCGRelationships(data, keys)
-
 }
 
 func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
@@ -217,11 +216,10 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 				for k, v := range cgInstance.GetLabels() {
 					cgVolumeInstance.SetLabel(k, v)
 				}
-				cgVolumeInstance.SetLabel("relationship_id", cgVolumeInstanceKey)
+				cgVolumeInstance.SetLabel("relationship_id", "")
 				cgVolumeInstance.SetLabel("source_volume", sourceVol)
 				cgVolumeInstance.SetLabel("destination_volume", destinationVol)
 			}
 		}
 	}
-
 }
