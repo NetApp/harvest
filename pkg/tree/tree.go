@@ -39,9 +39,10 @@ func LoadYaml(data []byte) (*node.Node, error) {
 }
 
 func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
-	if y.Kind == y3.ScalarNode {
+	switch {
+	case y.Kind == y3.ScalarNode:
 		r.NewChildS(key, y.Value)
-	} else if y.Kind == y3.MappingNode {
+	case y.Kind == y3.MappingNode:
 		var s = r
 		if key != "" || makeNewChild {
 			s = r.NewChildS(key, "")
@@ -55,7 +56,7 @@ func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
 			}
 			consume(s, k, y.Content[i+1], false)
 		}
-	} else { // sequence
+	default:
 		s := r.NewChildS(key, "")
 		for _, child := range y.Content {
 			makeNewChild := false

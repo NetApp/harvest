@@ -262,7 +262,7 @@ func counterIsMissing(flavor string, counter string, waitFor time.Duration) bool
 }
 
 func shouldIgnoreCounter(counter string, flavor string) bool {
-	if len(counter) == 0 {
+	if counter == "" {
 		return true
 	}
 	if flavor == zapi {
@@ -316,7 +316,7 @@ func getAllCounters(expression string) []string {
 
 allLoop:
 	for _, counter := range all {
-		if len(counter) == 0 {
+		if counter == "" {
 			continue
 		}
 		// check if this counter should be ignored
@@ -331,7 +331,7 @@ allLoop:
 }
 
 func validateExpr(expression string) (bool, string) {
-	if len(expression) > 0 {
+	if expression != "" {
 		counters := FindStringBetweenTwoChar(expression, "{", "(")
 		newExpression := expression
 		if len(counters) > 0 {
@@ -372,20 +372,22 @@ func FindStringBetweenTwoChar(stringValue string, startChar string, endChar stri
 	firstSet := strings.Split(stringValue, startChar)
 	for _, actualString := range firstSet {
 		counterArray := strings.Split(actualString, endChar)
-		if strings.Contains(actualString, "+") { // check for inner expression such as top
+		switch {
+		case strings.Contains(actualString, "+"): // check for inner expression such as top:
 			counterArray = strings.Split(actualString, "+")
-		} else if strings.Contains(actualString, "/") { // check for inner expression such as top
+		case strings.Contains(actualString, "/"): // check for inner expression such as top:
 			counterArray = strings.Split(actualString, "/")
-		} else if strings.Contains(actualString, ",") { // check for inner expression such as top
+		case strings.Contains(actualString, ","): // check for inner expression such as top:
 			counterArray = strings.Split(actualString, ",")
 		}
+
 		counter := strings.TrimSpace(counterArray[len(counterArray)-1])
 		counterArray = strings.Split(counter, endChar)
 		counter = strings.TrimSpace(counterArray[len(counterArray)-1])
 		if _, err := strconv.Atoi(counter); err == nil {
 			continue
 		}
-		if isStringAlphabetic(counter) && len(counter) > 0 {
+		if isStringAlphabetic(counter) && counter != "" {
 			counters = append(counters, counter)
 		}
 	}

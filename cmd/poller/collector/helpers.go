@@ -174,12 +174,12 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 // getClosestIndex returns the closest left match to the sorted list of input versions
 // returns -1 when the version's list is empty
 // returns equal or closest match to the left
-func getClosestIndex(versions []*version.Version, version *version.Version) int {
+func getClosestIndex(versions []*version.Version, aVersion *version.Version) int {
 	if len(versions) == 0 {
 		return -1
 	}
 	idx := sort.Search(len(versions), func(i int) bool {
-		return versions[i].GreaterThanOrEqual(version)
+		return versions[i].GreaterThanOrEqual(aVersion)
 	})
 
 	// if we are at length of slice
@@ -188,7 +188,7 @@ func getClosestIndex(versions []*version.Version, version *version.Version) int 
 	}
 
 	// if idx is greater than 0 but less than length of slice
-	if idx > 0 && idx < len(versions) && !versions[idx].Equal(version) {
+	if idx > 0 && idx < len(versions) && !versions[idx].Equal(aVersion) {
 		return idx - 1
 	}
 	return idx

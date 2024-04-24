@@ -42,7 +42,7 @@ func TestPollerMetrics(t *testing.T) {
 		rows := strings.Split(sb, "\n")
 		for i := range rows {
 			row := rows[i]
-			if len(row) == 0 {
+			if row == "" {
 				continue
 			}
 			// Ignore comments

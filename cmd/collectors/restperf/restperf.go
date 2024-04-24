@@ -537,51 +537,52 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 	instanceDataS := instanceData.String()
 	t := gjson.Get(instanceDataS, "counters.#.name")
 	for _, name := range t.Array() {
-		if name.String() == metric {
-			metricPath := "counters.#(name=" + metric + ")"
-			many := gjson.Parse(instanceDataS)
-			value := many.Get(metricPath + ".value")
-			values := many.Get(metricPath + ".values")
-			labels := many.Get(metricPath + ".labels")
-			subLabels := many.Get(metricPath + ".counters.#.label")
-			subValues := many.Get(metricPath + ".counters.#.values")
-			if value.String() != "" {
-				return &metricResponse{value: strings.Clone(value.String()), label: ""}
+		if name.String() != metric {
+			continue
+		}
+		metricPath := "counters.#(name=" + metric + ")"
+		many := gjson.Parse(instanceDataS)
+		value := many.Get(metricPath + ".value")
+		values := many.Get(metricPath + ".values")
+		labels := many.Get(metricPath + ".labels")
+		subLabels := many.Get(metricPath + ".counters.#.label")
+		subValues := many.Get(metricPath + ".counters.#.values")
+		if value.String() != "" {
+			return &metricResponse{value: strings.Clone(value.String()), label: ""}
+		}
+		if values.String() != "" {
+			return &metricResponse{
+				value:   util.ArrayMetricToString(strings.Clone(values.String())),
+				label:   util.ArrayMetricToString(strings.Clone(labels.String())),
+				isArray: true,
 			}
-			if values.String() != "" {
-				return &metricResponse{
-					value:   util.ArrayMetricToString(strings.Clone(values.String())),
-					label:   util.ArrayMetricToString(strings.Clone(labels.String())),
-					isArray: true,
-				}
-			}
+		}
 
-			// check for sub metrics
-			if subLabels.String() != "" {
-				var finalLabels []string
-				var finalValues []string
-				subLabelsS := strings.Clone(labels.String())
-				subLabelsS = util.ArrayMetricToString(subLabelsS)
-				subLabelSlice := strings.Split(subLabelsS, ",")
-				ls := subLabels.Array()
-				vs := subValues.Array()
-				var vLen int
-				for i, v := range vs {
-					label := strings.Clone(ls[i].String())
-					m := util.ArrayMetricToString(strings.Clone(v.String()))
-					ms := strings.Split(m, ",")
-					for range ms {
-						finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
-						vLen++
-					}
-					if vLen > len(subLabelSlice) {
-						break
-					}
-					finalValues = append(finalValues, ms...)
+		// check for sub metrics
+		if subLabels.String() != "" {
+			var finalLabels []string
+			var finalValues []string
+			subLabelsS := strings.Clone(labels.String())
+			subLabelsS = util.ArrayMetricToString(subLabelsS)
+			subLabelSlice := strings.Split(subLabelsS, ",")
+			ls := subLabels.Array()
+			vs := subValues.Array()
+			var vLen int
+			for i, v := range vs {
+				label := strings.Clone(ls[i].String())
+				m := util.ArrayMetricToString(strings.Clone(v.String()))
+				ms := strings.Split(m, ",")
+				for range ms {
+					finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
+					vLen++
 				}
-				if vLen == len(subLabelSlice) {
-					return &metricResponse{value: strings.Join(finalValues, ","), label: strings.Join(finalLabels, ","), isArray: true}
+				if vLen > len(subLabelSlice) {
+					break
 				}
+				finalValues = append(finalValues, ms...)
+			}
+			if vLen == len(subLabelSlice) {
+				return &metricResponse{value: strings.Join(finalValues, ","), label: strings.Join(finalLabels, ","), isArray: true}
 			}
 		}
 	}
@@ -918,7 +919,8 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					if isWorkloadDetailObject(r.Prop.Query) {
 						for _, wm := range workloadDetailMetrics {
 							wMetric := curMat.GetMetric(layer + wm)
-							if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
+							switch {
+							case wm == "resource_latency" && (name == "wait_time" || name == "service_time"):
 								if err := wMetric.AddValueString(instance, f.value); err != nil {
 									r.Logger.Error().
 										Stack().
@@ -930,7 +932,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 									count++
 								}
 								continue
-							} else if wm == "service_time_latency" && name == "service_time" {
+							case wm == "service_time_latency" && name == "service_time":
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
 									r.Logger.Error().
 										Stack().
@@ -941,7 +943,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 								} else {
 									count++
 								}
-							} else if wm == "wait_time_latency" && name == "wait_time" {
+							case wm == "wait_time_latency" && name == "wait_time":
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
 									r.Logger.Error().
 										Stack().

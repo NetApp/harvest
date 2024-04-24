@@ -29,15 +29,16 @@ func TestSchedule_Recover(t *testing.T) {
 	setStandByTasks(s)
 	s.Recover()
 	for _, task := range s.GetTasks() {
-		if task.Name == "counter" {
+		switch {
+		case task.Name == "counter":
 			if task.interval != 1.2e+12 {
 				t.Errorf("expected = %v, got %d", 1.2e+12, task.interval)
 			}
-		} else if task.Name == "data" {
+		case task.Name == "data":
 			if task.interval != 1.8e+11 {
 				t.Errorf("expected = %b, got %b", 1.8e+11, task.interval)
 			}
-		} else if task.Name == "instance" {
+		case task.Name == "instance":
 			if task.interval != 6e+11 {
 				t.Errorf("expected = %b, got %b", 6e+11, task.interval)
 			}

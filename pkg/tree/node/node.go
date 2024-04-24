@@ -263,13 +263,12 @@ func (n *Node) Union(source *Node) {
 		n.SetContent(source.GetContent())
 	}
 	for _, child := range source.Children {
-		if !n.HasChild(child.GetName()) {
+		switch {
+		case !n.HasChild(child.GetName()):
 			n.AddChild(child)
-		} else if child.GetChildren() != nil {
-			// union at child level
+		case child.GetChildren() != nil:
 			n.GetChild(child.GetName()).Union(child)
-		} else {
-			// child template would take precedence over parent
+		default:
 			n.SetChildContentS(child.GetNameS(), child.GetContentS())
 		}
 	}
@@ -295,7 +294,7 @@ func (n *Node) PreprocessTemplate() {
 		mine := n.GetChild(child.GetName())
 		if mine != nil && len(child.GetName()) > 0 {
 			if mine.searchAncestor("LabelAgent") != nil {
-				if len(mine.GetContentS()) > 0 {
+				if mine.GetContentS() != "" {
 					mine.NewChildS("", child.GetContentS())
 					mine.SetContentS("")
 				}
@@ -316,17 +315,16 @@ func (n *Node) Merge(subtemplate *Node, skipOverwrite []string) {
 	}
 	for _, child := range subtemplate.Children {
 		mine := n.GetChild(child.GetName())
-		if len(child.GetName()) == 0 {
+		switch {
+		case len(child.GetName()) == 0:
 			if mine != nil && mine.GetParent() != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
 				mine.GetParent().AddChild(child)
-			} else {
-				if n.GetChildByContent(child.GetContentS()) == nil {
-					n.AddChild(child)
-				}
+			} else if n.GetChildByContent(child.GetContentS()) == nil {
+				n.AddChild(child)
 			}
-		} else if mine == nil {
+		case mine == nil:
 			n.AddChild(child)
-		} else {
+		default:
 			if mine.GetParent() != nil && slices.Contains(skipOverwrite, mine.GetParent().GetNameS()) {
 				mine.SetContentS(mine.GetContentS() + "," + child.GetContentS())
 			} else {

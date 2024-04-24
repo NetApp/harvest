@@ -13,19 +13,20 @@ const (
 )
 
 func GetInstaller(installType string, path string) (Installer, error) {
-	if installType == RHEL {
+	switch {
+	case installType == RHEL:
 		d := new(RPM)
 		d.Init(path)
 		return d, nil
-	} else if installType == NATIVE {
+	case installType == NATIVE:
 		d := new(Native)
 		d.Init(path)
 		return d, nil
-	} else if installType == GRAFANA {
+	case installType == GRAFANA:
 		d := new(Grafana)
 		d.Init(path)
 		return d, nil
-	} else if installType == PROMETHEUS {
+	case installType == PROMETHEUS:
 		d := new(Prometheus)
 		d.Init(path)
 		return d, nil

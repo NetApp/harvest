@@ -646,7 +646,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					for _, wm := range workloadDetailMetrics {
 						wMetric := curMat.GetMetric(layer + wm)
 
-						if wm == "resource_latency" && (name == "wait_time" || name == "service_time") {
+						switch {
+						case wm == "resource_latency" && (name == "wait_time" || name == "service_time"):
 							if err := wMetric.AddValueString(instance, value); err != nil {
 								z.Logger.Error().
 									Err(err).
@@ -658,7 +659,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 								count++
 							}
 							continue
-						} else if wm == "service_time_latency" && name == "service_time" {
+						case wm == "service_time_latency" && name == "service_time":
 							if err = wMetric.SetValueString(instance, value); err != nil {
 								z.Logger.Error().
 									Err(err).
@@ -669,7 +670,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 							} else {
 								count++
 							}
-						} else if wm == "wait_time_latency" && name == "wait_time" {
+						case wm == "wait_time_latency" && name == "wait_time":
 							if err = wMetric.SetValueString(instance, value); err != nil {
 								z.Logger.Error().
 									Err(err).
@@ -1300,17 +1301,18 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 	mat := z.Matrix[z.Object]
 
 	p := counter.GetChildContentS("properties")
-	if strings.Contains(p, "raw") {
+	switch {
+	case strings.Contains(p, "raw"):
 		property = "raw"
-	} else if strings.Contains(p, "delta") {
+	case strings.Contains(p, "delta"):
 		property = "delta"
-	} else if strings.Contains(p, "rate") {
+	case strings.Contains(p, "rate"):
 		property = "rate"
-	} else if strings.Contains(p, "average") {
+	case strings.Contains(p, "average"):
 		property = "average"
-	} else if strings.Contains(p, "percent") {
+	case strings.Contains(p, "percent"):
 		property = "percent"
-	} else {
+	default:
 		z.Logger.Warn().Msgf("skip counter [%s] with unknown property [%s]", name, p)
 		return ""
 	}
@@ -1502,7 +1504,8 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	keyAttrs = z.instanceKeys
 
 	// hack for workload objects: get instances from Zapi
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+	switch {
+	case z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume:
 		request = node.NewXMLS("qos-workload-get-iter")
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
@@ -1519,16 +1522,14 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		} else {
 			keyAttrs = []string{"workload-uuid"}
 		}
-		// syntax for cdot/perf
-	} else if z.Client.IsClustered() {
+	case z.Client.IsClustered():
 		request = node.NewXMLS("perf-object-instance-list-info-iter")
 		request.NewChildS("objectname", z.Query)
 		if z.filter != "" {
 			request.NewChildS("filter-data", z.filter)
 		}
 		instancesAttr = "attributes-list"
-	} else {
-		// syntax for 7mode/perf
+	default:
 		request = node.NewXMLS("perf-object-instance-list-info")
 		request.NewChildS("objectname", z.Query)
 		instancesAttr = "instances"

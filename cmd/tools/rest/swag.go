@@ -4,6 +4,7 @@ package rest
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"github.com/go-openapi/spec"
@@ -139,17 +140,14 @@ func walkRefs(ontapSwag ontap, name string) (*spec.Schema, string) {
 		schemaProps := records.Items.Schema.SchemaProps
 		if schemaProps.Type == nil {
 			ref := schemaFromRef(schemaProps.Ref.GetURL())
-			if len(ref) > 0 {
+			if ref != "" {
 				schema, ok := ontapSwag.swagger.Definitions[ref]
 				if ok {
 					return &schema, ref
 				}
 			}
 		} else {
-			ref := schemaFromRef(records.Items.Schema.Ref.GetURL())
-			if len(ref) == 0 {
-				ref = name
-			}
+			ref := cmp.Or(schemaFromRef(records.Items.Schema.Ref.GetURL()), name)
 			return records.Items.Schema, ref
 		}
 	}
@@ -172,7 +170,7 @@ func printProperty(args propArgs) {
 	if args.schema.Type == nil {
 		// check if this is a reference to another schema
 		refModel := schemaFromRef(args.schema.Ref.GetURL())
-		if len(refModel) > 0 {
+		if refModel != "" {
 			_, seen := args.seen[refModel]
 			if !seen {
 				refSchema, ok := args.ontapSwag.swagger.Definitions[refModel]
@@ -244,7 +242,7 @@ func showParams(a Args, ontapSwag ontap) {
 				cleanDesc := html.UnescapeString(description)
 				text := w.Wrap(cleanDesc, descriptionWidth)
 
-				if len(param.Name) > 0 {
+				if param.Name != "" {
 					required := " "
 					if param.ParamProps.Required {
 						required = "*"
@@ -257,10 +255,10 @@ func showParams(a Args, ontapSwag ontap) {
 	}
 }
 
-func schemaFromRef(url *url.URL) string {
+func schemaFromRef(u *url.URL) string {
 	responseModel := ""
-	if url != nil {
-		responseModel = url.Fragment
+	if u != nil {
+		responseModel = u.Fragment
 		lastSlash := strings.LastIndex(responseModel, "/")
 		if lastSlash > -1 && lastSlash+1 < len(responseModel) {
 			responseModel = responseModel[lastSlash+1:]

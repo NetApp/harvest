@@ -98,12 +98,13 @@ func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	if r.Method == http.MethodPut {
+	switch {
+	case r.Method == http.MethodPut:
 		a.apiPublish(w, r)
-	} else if r.Method == http.MethodGet {
+	case r.Method == http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write(a.makeTargets())
-	} else {
+	default:
 		w.WriteHeader(http.StatusBadRequest)
 	}
 }

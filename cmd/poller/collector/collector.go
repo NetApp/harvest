@@ -111,11 +111,11 @@ type AbstractCollector struct {
 	HostUUID    string
 }
 
-func New(name, object string, options *options.Options, params *node.Node, credentials *auth.Credentials) *AbstractCollector {
+func New(name, object string, o *options.Options, params *node.Node, credentials *auth.Credentials) *AbstractCollector {
 	return &AbstractCollector{
 		Name:     name,
 		Object:   object,
-		Options:  options,
+		Options:  o,
 		Logger:   logging.Get().SubLogger("collector", name+":"+object),
 		Params:   params,
 		countMux: &sync.Mutex{},
@@ -351,7 +351,8 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			taskTime = time.Since(start)
 
 			// poll returned error, try to understand what to do
-			if err != nil {
+			switch {
+			case err != nil:
 				if !c.Schedule.IsStandBy() {
 					c.Logger.Debug().Msgf("handling error during [%s] poll...", task.Name)
 				}
@@ -402,18 +403,17 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Msg("no metrics of object on system, entering standby mode")
 				// not an error we are expecting, so enter failed or standby state
 				default:
-					if errors.Is(err, errs.ErrPermissionDenied) {
+					switch {
+					case errors.Is(err, errs.ErrPermissionDenied):
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 						c.Logger.Error().Err(err).Str("task", task.Name).Msg("Entering standby mode")
-					} else if errors.Is(err, errs.ErrAPIRequestRejected) {
-						// API was rejected, this happens when a resource is not available or does not exist
+					case errors.Is(err, errs.ErrAPIRequestRejected):
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-						// Log metro cluster at trace level
 						if !errors.Is(err, errs.ErrMetroClusterNotConfigured) {
 							// Log as info since these are not errors.
 							c.Logger.Info().Err(err).Str("task", task.Name).Msg("Entering standby mode")
 						}
-					} else {
+					default:
 						c.Logger.Error().Err(err).Str("task", task.Name).Send()
 					}
 
@@ -425,15 +425,13 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 					c.SetStatus(2, errMsg)
 				}
-				// stop here if we had errors
 				continue
-			} else if c.Schedule.IsStandBy() {
-				// recover from standby mode
+			case c.Schedule.IsStandBy():
 				c.Schedule.Recover()
 				retryDelay = 1
 				c.SetStatus(0, "running")
 				c.Logger.Info().Str("task", task.Name).Msg("recovered from standby mode, back to normal schedule")
-			} else {
+			default:
 				c.SetStatus(0, "running")
 			}
 

@@ -191,7 +191,7 @@ func (a *LabelAgent) parseSplitSimpleRule(rule string) {
 
 func (a *LabelAgent) addNewLabels(targets []string) {
 	for _, target := range targets {
-		if len(target) > 0 {
+		if target != "" {
 			a.newLabelNames = append(a.newLabelNames, target)
 		}
 	}
@@ -335,7 +335,7 @@ func (a *LabelAgent) parseReplaceRegexRule(rule string) {
 			r.indices = make([]int, 0)
 			errPos := -1
 
-			if fields[2] = strings.TrimSuffix(fields[2], "`"); len(fields[2]) != 0 {
+			if fields[2] = strings.TrimSuffix(fields[2], "`"); fields[2] != "" {
 				insideNum := false
 				num := ""
 				for i, b := range fields[2] {

@@ -373,9 +373,9 @@ type IntRange struct {
 
 var rangeRegex = regexp.MustCompile(`(\d+)\s*-\s*(\d+)`)
 
-func (i *IntRange) UnmarshalYAML(node *yaml.Node) error {
-	if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
-		matches := rangeRegex.FindStringSubmatch(node.Value)
+func (i *IntRange) UnmarshalYAML(n *yaml.Node) error {
+	if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
+		matches := rangeRegex.FindStringSubmatch(n.Value)
 		if len(matches) == 3 {
 			minVal, err1 := strconv.Atoi(matches[1])
 			maxVal, err2 := strconv.Atoi(matches[2])
@@ -530,10 +530,8 @@ func ZapiPoller(n *node.Node) *Poller {
 	p.Name = n.GetChildContentS("poller_name")
 	if apiVersion := n.GetChildContentS("api_version"); apiVersion != "" {
 		p.APIVersion = apiVersion
-	} else {
-		if p.APIVersion == "" {
-			p.APIVersion = DefaultAPIVersion
-		}
+	} else if p.APIVersion == "" {
+		p.APIVersion = DefaultAPIVersion
 	}
 	if vfiler := n.GetChildContentS("api_vfiler"); vfiler != "" {
 		p.APIVfiler = vfiler
@@ -582,10 +580,8 @@ func ZapiPoller(n *node.Node) *Poller {
 	}
 	if clientTimeout := n.GetChildContentS("client_timeout"); clientTimeout != "" {
 		p.ClientTimeout = clientTimeout
-	} else {
-		if p.ClientTimeout == "" {
-			p.ClientTimeout = DefaultTimeout
-		}
+	} else if p.ClientTimeout == "" {
+		p.ClientTimeout = DefaultTimeout
 	}
 	if tlsMinVersion := n.GetChildContentS("tls_min_version"); tlsMinVersion != "" {
 		p.TLSMinVersion = tlsMinVersion
@@ -656,10 +652,10 @@ func (c *Collector) UnmarshalYAML(n *yaml.Node) error {
 	return nil
 }
 
-func (i *Pollers) UnmarshalYAML(node *yaml.Node) error {
-	if node.Kind == yaml.MappingNode {
+func (i *Pollers) UnmarshalYAML(n *yaml.Node) error {
+	if n.Kind == yaml.MappingNode {
 		var namesInOrder []string
-		for _, n := range node.Content {
+		for _, n := range n.Content {
 			if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
 				namesInOrder = append(namesInOrder, n.Value)
 			}
