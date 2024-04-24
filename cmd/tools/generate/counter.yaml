@@ -935,3 +935,38 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/metrocluster_check.yaml
+
+  - Name: flashpool_hya_read_hit_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: flashpool_hya_read_miss_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: flashpool_hya_write_hdd_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: flashpool_hya_write_ssd_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: fabricpool_cloud_bin_op_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec

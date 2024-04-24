@@ -801,6 +801,9 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 			}
 		}
 		if v, ok := counterMap[ontapCounterName]; ok {
+			if ty == "string" {
+				return true
+			}
 			c := Counter{
 				Name:        v,
 				Description: description,
