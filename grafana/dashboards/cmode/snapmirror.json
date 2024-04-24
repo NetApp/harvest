@@ -827,6 +827,10 @@
                         "index": 1,
                         "text": "Async Mirror"
                       },
+                      "automated_failover": {
+                        "index": 4,
+                        "text": "Automated Failover"
+                      },
                       "automated_failover_duplex": {
                         "index": 0,
                         "text": "Automated Failover Duplex"
@@ -3898,6 +3902,10 @@
                           "automated_failover_duplex": {
                             "index": 6,
                             "text": "Automated Failover Duplex"
+                          },
+                          "data_protection": {
+                            "index": 7,
+                            "text": "Data Protection"
                           },
                           "extended_data_protection": {
                             "index": 2,

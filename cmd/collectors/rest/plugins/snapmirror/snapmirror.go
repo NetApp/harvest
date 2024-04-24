@@ -176,7 +176,8 @@ func (my *SnapMirror) getClusterPeerData() error {
 }
 
 func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
-	var keys []string
+	var cgKeys []string
+	var svmDrKeys []string
 	cluster := data.GetGlobalLabels()["cluster"]
 
 	lastTransferSizeMetric := data.GetMetric("last_transfer_size")
@@ -190,7 +191,9 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 	for key, instance := range data.GetInstances() {
 		if instance.GetLabel("group_type") == "consistencygroup" {
-			keys = append(keys, key)
+			cgKeys = append(cgKeys, key)
+		} else if instance.GetLabel("group_type") == "vserver" {
+			svmDrKeys = append(svmDrKeys, key)
 		}
 		vserverName := instance.GetLabel("source_vserver")
 
@@ -216,7 +219,10 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 	}
 
 	// handle CG relationships
-	my.handleCGRelationships(data, keys)
+	my.handleCGRelationships(data, cgKeys)
+
+	// handle SVM-DR relationships
+	my.handleSVMDRRelationships(data, svmDrKeys)
 }
 
 func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
@@ -258,6 +264,19 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 				cgVolumeInstance.SetLabel("source_volume", sourceVol)
 				cgVolumeInstance.SetLabel("destination_volume", destinationVol)
 			}
+		}
+	}
+}
+
+func (my *SnapMirror) handleSVMDRRelationships(data *matrix.Matrix, keys []string) {
+	for _, key := range keys {
+		svmDrInstance := data.GetInstance(key)
+		// check source_volume and destination_volume in svm-dr relationships to identify volumes in svm
+		sourceVolume := svmDrInstance.GetLabel("source_volume")
+		destinationVolume := svmDrInstance.GetLabel("destination_volume")
+
+		if sourceVolume != "" && destinationVolume != "" {
+			svmDrInstance.SetLabel("relationship_id", "")
 		}
 	}
 }
