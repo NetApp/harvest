@@ -24699,7 +24699,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-Feb-21
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Apr-24
 ONTAP Version: 9.13.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -28409,13 +28409,13 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/wafl_comp_aggr_vol_bin</code></td>
-<td><code>cloud_bin_op_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td><code>cloud_bin_op_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/wafl_comp_aggr_vol_bin.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances wafl_comp_aggr_vol_bin</code></td>
-<td><code>cloud_bin_op_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span></td>
+<td><code>cloud_bin_op_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/wafl_comp_aggr_vol_bin.yaml</td>
 </tr>
 </tbody>
@@ -30973,13 +30973,13 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/wafl_hya_per_aggregate</code></td>
-<td><code>hya_read_hit_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count</td>
+<td><code>hya_read_hit_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count</td>
 <td>conf/restperf/9.12.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances wafl_hya_per_aggr</code></td>
-<td><code>hya_read_hit_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count</td>
+<td><code>hya_read_hit_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count</td>
 <td>conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 </tbody>
@@ -30999,13 +30999,13 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/wafl_hya_per_aggregate</code></td>
-<td><code>hya_read_miss_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count</td>
+<td><code>hya_read_miss_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count</td>
 <td>conf/restperf/9.12.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances wafl_hya_per_aggr</code></td>
-<td><code>hya_read_miss_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count</td>
+<td><code>hya_read_miss_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count</td>
 <td>conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 </tbody>
@@ -31025,13 +31025,13 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/wafl_hya_per_aggregate</code></td>
-<td><code>hya_write_hdd_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count</td>
+<td><code>hya_write_hdd_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count</td>
 <td>conf/restperf/9.12.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances wafl_hya_per_aggr</code></td>
-<td><code>hya_write_hdd_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count</td>
+<td><code>hya_write_hdd_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count</td>
 <td>conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 </tbody>
@@ -31051,13 +31051,13 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/cluster/counter/tables/wafl_hya_per_aggregate</code></td>
-<td><code>hya_write_ssd_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count</td>
+<td><code>hya_write_ssd_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count</td>
 <td>conf/restperf/9.12.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances wafl_hya_per_aggr</code></td>
-<td><code>hya_write_ssd_latency_average</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count</td>
+<td><code>hya_write_ssd_latency_average</code><br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count</td>
 <td>conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml</td>
 </tr>
 </tbody>
