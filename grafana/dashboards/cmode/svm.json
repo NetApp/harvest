@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1702493990302,
+  "iteration": 1713968515424,
   "links": [
     {
       "asDropdown": true,
@@ -3956,7 +3956,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 4
+            "y": 21
           },
           "id": 99,
           "options": {
@@ -4015,7 +4015,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 4
+            "y": 21
           },
           "id": 103,
           "options": {
@@ -4037,7 +4037,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(svm_cifs_read_ops+svm_cifs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum(svm_cifs_op_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -4048,7 +4048,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "SVM CIFS IOPs.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4106,7 +4106,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 4
+            "y": 21
           },
           "id": 107,
           "options": {
@@ -4181,7 +4181,7 @@
             "h": 4,
             "w": 4,
             "x": 0,
-            "y": 8
+            "y": 25
           },
           "id": 100,
           "options": {
@@ -4247,7 +4247,7 @@
             "h": 4,
             "w": 4,
             "x": 4,
-            "y": 8
+            "y": 25
           },
           "id": 101,
           "options": {
@@ -4305,7 +4305,7 @@
             "h": 4,
             "w": 4,
             "x": 8,
-            "y": 8
+            "y": 25
           },
           "id": 104,
           "options": {
@@ -4363,7 +4363,7 @@
             "h": 4,
             "w": 4,
             "x": 12,
-            "y": 8
+            "y": 25
           },
           "id": 105,
           "options": {
@@ -4453,7 +4453,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 12
+            "y": 29
           },
           "id": 102,
           "options": {
@@ -4503,7 +4503,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "SVM CIFS IOPs.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4561,7 +4561,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 12
+            "y": 29
           },
           "id": 106,
           "options": {
@@ -4582,18 +4582,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(svm_cifs_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum(svm_cifs_op_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read",
+              "legendFormat": "Total",
               "refId": "A"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(svm_cifs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Write",
-              "refId": "B"
             }
           ],
           "timeFrom": null,
@@ -4661,7 +4653,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 12
+            "y": 29
           },
           "id": 108,
           "options": {
@@ -4751,7 +4743,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 21
+            "y": 38
           },
           "id": 242,
           "options": {
@@ -4846,7 +4838,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 21
+            "y": 38
           },
           "id": 243,
           "options": {
@@ -4942,7 +4934,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 21
+            "y": 38
           },
           "id": 244,
           "options": {
@@ -14886,5 +14878,5 @@
   "timezone": "",
   "title": "ONTAP: SVM",
   "uid": "",
-  "version": 25
+  "version": 26
 }
