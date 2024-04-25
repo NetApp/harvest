@@ -825,11 +825,11 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	expressions := make([]exprP, 0)
 
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
-		doTarget("", key, value, func(path string, expr string, format string) {
+		doTarget("", key, value, func(path string, expr string, format string, title string) {
 			if format == "table" || format == "stat" {
 				return
 			}
-			expressions = append(expressions, newExpr(path, expr))
+			expressions = append(expressions, newExpr(path, expr, title))
 		})
 	})
 
