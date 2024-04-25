@@ -204,22 +204,27 @@ func (a PollerAuth) Certificate() (tls.Certificate, error) {
 	return tls.LoadX509KeyPair(a.CertPath, a.KeyPath)
 }
 
-func (a PollerAuth) NewCertPool() (*x509.CertPool, error) {
-	// Create a CA certificate pool and add certificate if specified
-	caCertPool := x509.NewCertPool()
-	if a.CaCertPath != "" {
-		caCert, err := os.ReadFile(a.CaCertPath)
-		if err != nil {
-			return caCertPool, err
-		}
-		if caCert != nil {
-			ok := caCertPool.AppendCertsFromPEM(caCert)
-			if !ok {
-				return caCertPool, fmt.Errorf("failed to append ca cert path=%s", a.CaCertPath)
-			}
-		}
+// If the CA certificate path is specified, create a CA certificate pool and add the certificate to it.
+// Otherwise, return nil so the host's root CA set is used.
+func (a PollerAuth) loadCertPool(logger *logging.Logger) *x509.CertPool {
+	if a.CaCertPath == "" {
+		return nil
 	}
-	return caCertPool, nil
+
+	caCert, err := os.ReadFile(a.CaCertPath)
+	if err != nil {
+		logger.Error().Err(err).Str("caCertPath", a.CaCertPath).Msg("Failed to read CA certificate. Use host's root CA set.")
+		return nil
+	}
+
+	caCertPool := x509.NewCertPool()
+	ok := caCertPool.AppendCertsFromPEM(caCert)
+	if !ok {
+		logger.Warn().Str("caCertPath", a.CaCertPath).Msg("Failed to append CA certificate to pool. Use host's root CA set.")
+		return nil
+	}
+	logger.Debug().Str("caCertPath", a.CaCertPath).Msg("CA certificate loaded")
+	return caCertPool
 }
 
 func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
@@ -262,7 +267,12 @@ func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
 		return handCertificateAuth(c, poller, insecureTLS)
 	}
 	if poller.Password != "" {
-		return PollerAuth{Username: poller.Username, Password: poller.Password, insecureTLS: insecureTLS}, nil
+		return PollerAuth{
+			Username:    poller.Username,
+			Password:    poller.Password,
+			insecureTLS: insecureTLS,
+			CaCertPath:  poller.CaCertPath,
+		}, nil
 	}
 	if poller.CredentialsScript.Path != "" {
 		pass, err := c.password(poller)
@@ -275,6 +285,7 @@ func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
 			HasCredentialScript: true,
 			Schedule:            poller.CredentialsScript.Schedule,
 			insecureTLS:         insecureTLS,
+			CaCertPath:          poller.CaCertPath,
 		}, nil
 	}
 	if poller.CredentialsFile != "" {
@@ -282,9 +293,18 @@ func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
 		if err != nil {
 			return PollerAuth{}, err
 		}
-		return PollerAuth{Username: poller.Username, Password: poller.Password, insecureTLS: insecureTLS}, nil
+		return PollerAuth{
+			Username:    poller.Username,
+			Password:    poller.Password,
+			insecureTLS: insecureTLS,
+			CaCertPath:  poller.CaCertPath,
+		}, nil
 	}
-	return PollerAuth{Username: poller.Username, insecureTLS: insecureTLS}, nil
+	return PollerAuth{
+		Username:    poller.Username,
+		insecureTLS: insecureTLS,
+		CaCertPath:  poller.CaCertPath,
+	}, nil
 }
 
 func handCertificateAuth(c *Credentials, poller *conf.Poller, insecureTLS bool) (PollerAuth, error) {
@@ -303,6 +323,7 @@ func handCertificateAuth(c *Credentials, poller *conf.Poller, insecureTLS bool) 
 			PemCert:              cert,
 			PemKey:               key,
 			insecureTLS:          insecureTLS,
+			CaCertPath:           poller.CaCertPath,
 		}, nil
 	}
 
@@ -367,15 +388,11 @@ func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) 
 		if err != nil {
 			return nil, err
 		}
-		caCertPool, err := pollerAuth.NewCertPool()
-		if err != nil {
-			return nil, err
-		}
 
 		transport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
-				RootCAs:            caCertPool,
+				RootCAs:            pollerAuth.loadCertPool(c.logger),
 				Certificates:       []tls.Certificate{cert},
 				InsecureSkipVerify: pollerAuth.insecureTLS, //nolint:gosec
 			},
@@ -392,8 +409,11 @@ func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) 
 			request.SetBasicAuth(pollerAuth.Username, password)
 		}
 		transport = &http.Transport{
-			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: pollerAuth.insecureTLS}, //nolint:gosec
+			Proxy: http.ProxyFromEnvironment,
+			TLSClientConfig: &tls.Config{
+				RootCAs:            pollerAuth.loadCertPool(c.logger),
+				InsecureSkipVerify: pollerAuth.insecureTLS, //nolint:gosec
+			},
 		}
 	}
 	return transport, err
