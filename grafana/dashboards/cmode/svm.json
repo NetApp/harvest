@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1713968515424,
+  "iteration": 1714048726251,
   "links": [
     {
       "asDropdown": true,
@@ -4580,6 +4580,22 @@
           },
           "pluginVersion": "8.1.8",
           "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(svm_cifs_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Read",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(svm_cifs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Write",
+              "refId": "C"
+            },
             {
               "exemplar": false,
               "expr": "sum(svm_cifs_op_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
