@@ -37,6 +37,7 @@ type volumeInfo struct {
 	arwState                 string
 	cloneSnapshotName        string
 	cloneSplitEstimateMetric float64
+	isObjectStoreVolume      bool
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -147,6 +148,10 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(v.aggrsMap[volume.GetLabel("aggr")]))
 
 		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
+			if vInfo.isObjectStoreVolume {
+				volume.SetExportable(!vInfo.isObjectStoreVolume)
+				continue
+			}
 			volume.SetLabel("anti_ransomware_start_time", vInfo.arwStartTime)
 			volume.SetLabel("antiRansomwareState", vInfo.arwState)
 			if volume.GetLabel("is_flexclone") == "true" {
@@ -249,7 +254,7 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 
 func (v *Volume) getVolumeInfo() (map[string]volumeInfo, error) {
 	volumeMap := make(map[string]volumeInfo)
-	fields := []string{"name", "svm.name", "clone.parent_snapshot.name", "clone.split_estimate"}
+	fields := []string{"name", "svm.name", "clone.parent_snapshot.name", "clone.split_estimate", "is_object_store"}
 	if !v.isArwSupportedVersion {
 		return v.getVolume("", fields, volumeMap)
 	}
@@ -288,7 +293,8 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 		arwState := volume.Get("anti_ransomware.state").String()
 		cloneSnapshotName := volume.Get("clone.parent_snapshot.name").String()
 		cloneSplitEstimate := volume.Get("clone.split_estimate").Float()
-		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, arwState: arwState, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate}
+		isObjectStoreVolume := volume.Get("is_object_store").Bool()
+		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, arwState: arwState, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate, isObjectStoreVolume: isObjectStoreVolume}
 	}
 	return volumeMap, nil
 }
