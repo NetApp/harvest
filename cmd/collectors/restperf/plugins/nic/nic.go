@@ -33,7 +33,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
 func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
-	var read, write, rx, tx, util *matrix.Metric
+	var read, write, rx, tx, utilPercent *matrix.Metric
 	var err error
 	data := dataMap[n.Object]
 
@@ -61,9 +61,9 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		}
 	}
 
-	if util = data.GetMetric("util_percent"); util == nil {
-		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
-			util.SetProperty("raw")
+	if utilPercent = data.GetMetric("util_percent"); utilPercent == nil {
+		if utilPercent, err = data.NewMetricFloat64("util_percent"); err == nil {
+			utilPercent.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
@@ -110,7 +110,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				}
 
 				if rxOk || txOk {
-					err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
+					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 					if err != nil {
 						n.Logger.Error().Stack().Err(err).Msg("error")
 					}

@@ -134,15 +134,14 @@ func getExp(expr string, expressions *[]string) {
 	match := regex.FindAllStringSubmatch(expr, -1)
 	for _, m := range match {
 		// multiple metrics used with `+`
-		if strings.Contains(m[1], "+") {
+		switch {
+		case strings.Contains(m[1], "+"):
 			submatch := strings.Split(m[1], "+")
 			*expressions = append(*expressions, submatch...)
-			// multiple metrics used with `-`
-		} else if strings.Contains(m[1], "-") {
+		case strings.Contains(m[1], "-"):
 			submatch := strings.Split(m[1], "-")
 			*expressions = append(*expressions, submatch...)
-			// single metric
-		} else {
+		default:
 			*expressions = append(*expressions, m[1])
 		}
 	}

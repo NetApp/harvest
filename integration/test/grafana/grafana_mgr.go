@@ -32,7 +32,7 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 		panic(err)
 	}
 	directoryOption := ""
-	if len(jsonDir) > 0 {
+	if jsonDir != "" {
 		directoryOption = "--directory"
 	}
 	grafanaURL := utils.GetGrafanaURL()

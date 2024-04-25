@@ -85,12 +85,12 @@ func doShow(_ *cobra.Command, a []string) {
 	doCmd("show")
 }
 
-func validateArgs(strings []string) {
+func validateArgs(slice []string) {
 	ok := true
-	if len(strings) == 0 {
+	if len(slice) == 0 {
 		args.Item = ""
 	} else {
-		args.Item = strings[0]
+		args.Item = slice[0]
 	}
 
 	if args.Item == "data" && args.API == "" && args.Object == "" {

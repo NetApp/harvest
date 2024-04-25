@@ -208,11 +208,11 @@ func parseZapiCounters(elem *node.Node, path []string, object string, zc map[str
 	name := elem.GetNameS()
 	newPath := path
 
-	if len(elem.GetNameS()) != 0 {
+	if elem.GetNameS() != "" {
 		newPath = append(newPath, name)
 	}
 
-	if len(elem.GetContentS()) != 0 {
+	if elem.GetContentS() != "" {
 		v, k := handleZapiCounter(newPath, elem.GetContentS(), object)
 		if k != "" {
 			zc[k] = v
@@ -281,34 +281,35 @@ func processRestConfigCounters(path string) map[string]Counter {
 	}
 
 	for _, c := range templateCounters.GetAllChildContentS() {
-		if c != "" {
-			name, display, m, _ := util.ParseMetric(c)
-			if _, ok := excludeCounters[name]; ok {
-				continue
-			}
-			description := searchDescriptionSwagger(model.Object, name)
-			harvestName := model.Object + "_" + display
-			if m == "float" {
-				co := Counter{
-					Name:        harvestName,
-					Description: description,
-					APIs: []MetricDef{
-						{
-							API:          "REST",
-							Endpoint:     model.Query,
-							Template:     path,
-							ONTAPCounter: name,
-						},
+		if c == "" {
+			continue
+		}
+		name, display, m, _ := util.ParseMetric(c)
+		if _, ok := excludeCounters[name]; ok {
+			continue
+		}
+		description := searchDescriptionSwagger(model.Object, name)
+		harvestName := model.Object + "_" + display
+		if m == "float" {
+			co := Counter{
+				Name:        harvestName,
+				Description: description,
+				APIs: []MetricDef{
+					{
+						API:          "REST",
+						Endpoint:     model.Query,
+						Template:     path,
+						ONTAPCounter: name,
 					},
-				}
-				counters[harvestName] = co
+				},
+			}
+			counters[harvestName] = co
 
-				// If the template has any MultiplierMetrics, add them
-				for _, metric := range model.MultiplierMetrics {
-					mc := co
-					addAggregatedCounter(&mc, metric, harvestName, display)
-					counters[mc.Name] = mc
-				}
+			// If the template has any MultiplierMetrics, add them
+			for _, metric := range model.MultiplierMetrics {
+				mc := co
+				addAggregatedCounter(&mc, metric, harvestName, display)
+				counters[mc.Name] = mc
 			}
 		}
 	}
@@ -382,19 +383,21 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	// fetch counter elements
 	if elems := response.GetChildS("counters"); elems != nil && len(elems.GetChildren()) != 0 {
 		for _, counter := range elems.GetChildren() {
-			if name := counter.GetChildContentS("name"); name != "" {
-				ty := counter.GetChildContentS("properties")
-				if override != nil {
-					oty := override.GetChildContentS(name)
-					if oty != "" {
-						ty = oty
-					}
-				}
-				zapiUnitMap[name] = counter.GetChildContentS("unit")
-				zapiDescMap[name] = updateDescription(counter.GetChildContentS("desc"))
-				zapiTypeMap[name] = ty
-				zapiBaseCounterMap[name] = counter.GetChildContentS("base-counter")
+			name := counter.GetChildContentS("name")
+			if name == "" {
+				continue
 			}
+			ty := counter.GetChildContentS("properties")
+			if override != nil {
+				oty := override.GetChildContentS(name)
+				if oty != "" {
+					ty = oty
+				}
+			}
+			zapiUnitMap[name] = counter.GetChildContentS("unit")
+			zapiDescMap[name] = updateDescription(counter.GetChildContentS("desc"))
+			zapiTypeMap[name] = ty
+			zapiBaseCounterMap[name] = counter.GetChildContentS("base-counter")
 		}
 	}
 
@@ -798,6 +801,9 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 			}
 		}
 		if v, ok := counterMap[ontapCounterName]; ok {
+			if ty == "string" {
+				return true
+			}
 			c := Counter{
 				Name:        v,
 				Description: description,

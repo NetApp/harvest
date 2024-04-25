@@ -26,7 +26,7 @@ func HasValidData(query string) bool {
 }
 
 func HasMinRecord(query string, limit int) bool {
-	query = strings.Replace(query, "$__range", "3h", -1)
+	query = strings.ReplaceAll(query, "$__range", "3h")
 	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", PrometheusURL,
 		url.QueryEscape(query))
 	resp, err := utils.GetResponse(queryURL)

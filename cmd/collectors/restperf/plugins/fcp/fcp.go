@@ -20,7 +20,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
-	var rx, tx, util, read, write *matrix.Metric
+	var rx, tx, utilPercent, read, write *matrix.Metric
 	var err error
 	data := dataMap[f.Object]
 
@@ -48,9 +48,9 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		}
 	}
 
-	if util = data.GetMetric("util_percent"); util == nil {
-		if util, err = data.NewMetricFloat64("util_percent"); err == nil {
-			util.SetProperty("raw")
+	if utilPercent = data.GetMetric("util_percent"); utilPercent == nil {
+		if utilPercent, err = data.NewMetricFloat64("util_percent"); err == nil {
+			utilPercent.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
@@ -90,7 +90,7 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			}
 
 			if rxOk || txOk {
-				err := util.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
+				err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
 					f.Logger.Error().Stack().Err(err).Msg("error")
 				}

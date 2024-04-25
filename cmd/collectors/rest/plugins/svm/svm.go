@@ -226,11 +226,9 @@ func (my *SVM) GetKerberosConfig() (map[string]string, error) {
 		svmName := kerberosConfig.Get("svm.name").String()
 		if _, ok := svmKerberosMap[svmName]; !ok {
 			svmKerberosMap[svmName] = enable
-		} else {
+		} else if enable == "true" {
 			// If any interface on the svm has kerberos on, then only set to true
-			if enable == "true" {
-				svmKerberosMap[svmName] = enable
-			}
+			svmKerberosMap[svmName] = enable
 		}
 	}
 
@@ -262,11 +260,9 @@ func (my *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 		svmName := fpolicyData.Get("svm.name").String()
 		if _, ok := svmFpolicyMap[svmName]; !ok {
 			svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
-		} else {
+		} else if svmFpolicyMap[svmName].enable == "false" {
 			// If svm is already present, update the status value only if it is false
-			if svmFpolicyMap[svmName].enable == "false" {
-				svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
-			}
+			svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
 		}
 	}
 
@@ -297,11 +293,9 @@ func (my *SVM) GetIscsiServices() (map[string]string, error) {
 		svmName := iscsiData.Get("svm.name").String()
 		if _, ok := svmIscsiServiceMap[svmName]; !ok {
 			svmIscsiServiceMap[svmName] = iscsiServiceEnable
-		} else {
+		} else if svmIscsiServiceMap[svmName] == "false" {
 			// If svm is already present, update the map value only if previous value is false
-			if svmIscsiServiceMap[svmName] == "false" {
-				svmIscsiServiceMap[svmName] = iscsiServiceEnable
-			}
+			svmIscsiServiceMap[svmName] = iscsiServiceEnable
 		}
 	}
 

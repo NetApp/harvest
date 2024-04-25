@@ -119,98 +119,100 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	// create summary
 	for _, i := range data.GetInstances() {
-		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
-			// instance key is svm.flexgroup-volume
-			key := i.GetLabel("svm") + "." + match[1]
+		match := re.FindStringSubmatch(i.GetLabel("volume"))
+		if len(match) != 3 {
+			continue
+		}
+		// instance key is svm.flexgroup-volume
+		key := i.GetLabel("svm") + "." + match[1]
 
-			// set aggrs label for flexgroup in new metrics
-			flexgroupInstance := volumeAggrmetric.GetInstance(key)
-			if flexgroupInstance != nil {
-				// make sure the order of aggregate is same for each poll
-				aggrs := flexgroupAggrsMap[key].Values()
-				sort.Strings(aggrs)
-				flexgroupInstance.SetLabel("aggr", strings.Join(aggrs, ","))
-			}
+		// set aggrs label for flexgroup in new metrics
+		flexgroupInstance := volumeAggrmetric.GetInstance(key)
+		if flexgroupInstance != nil {
+			// make sure the order of aggregate is same for each poll
+			aggrs := flexgroupAggrsMap[key].Values()
+			sort.Strings(aggrs)
+			flexgroupInstance.SetLabel("aggr", strings.Join(aggrs, ","))
+		}
 
-			fg := cache.GetInstance(key)
-			if fg == nil {
-				v.Logger.Error().Msgf("instance [%s] not in local cache", key)
+		fg := cache.GetInstance(key)
+		if fg == nil {
+			v.Logger.Error().Msgf("instance [%s] not in local cache", key)
+			continue
+		}
+
+		// set aggrs label for fg, make sure the order of aggregate is same for each poll
+		aggrs := fgAggrMap[key].Values()
+		sort.Strings(aggrs)
+		fg.SetLabel("aggr", strings.Join(aggrs, ","))
+
+		for mkey, m := range data.GetMetrics() {
+
+			if !m.IsExportable() && m.GetType() != "float64" {
 				continue
 			}
 
-			// set aggrs label for fg, make sure the order of aggregate is same for each poll
-			aggrs := fgAggrMap[key].Values()
-			sort.Strings(aggrs)
-			fg.SetLabel("aggr", strings.Join(aggrs, ","))
+			fgm := cache.GetMetric(mkey)
+			if fgm == nil {
+				v.Logger.Error().Msgf("metric [%s] not in local cache", mkey)
+				continue
+			}
 
-			for mkey, m := range data.GetMetrics() {
+			if value, ok := m.GetValueFloat64(i); ok {
 
-				if !m.IsExportable() && m.GetType() != "float64" {
+				fgv, _ := fgm.GetValueFloat64(fg)
+
+				// non-latency metrics: simple sum
+				if !strings.HasSuffix(m.GetName(), "_latency") {
+
+					err := fgm.SetValueFloat64(fg, fgv+value)
+					if err != nil {
+						v.Logger.Error().Err(err).Msg("error")
+					}
+
 					continue
 				}
 
-				fgm := cache.GetMetric(mkey)
-				if fgm == nil {
-					v.Logger.Error().Msgf("metric [%s] not in local cache", mkey)
-					continue
+				// latency metric: weighted sum
+				opsKey := ""
+				if strings.Contains(mkey, "_latency") {
+					opsKey = m.GetComment()
 				}
 
-				if value, ok := m.GetValueFloat64(i); ok {
+				if ops := data.GetMetric(opsKey); ops != nil {
+					if opsValue, ok := ops.GetValueFloat64(i); ok {
+						var tempOpsV float64
 
-					fgv, _ := fgm.GetValueFloat64(fg)
+						prod := value * opsValue
+						tempOpsKey := opsKeyPrefix + opsKey
+						// Create temp ops metrics. These should not be exported.
+						// A base counter can be part base for multiple metrics hence we should not be changing base counter for weighted average calculation
+						tempOps := cache.GetMetric(tempOpsKey)
 
-					// non-latency metrics: simple sum
-					if !strings.HasSuffix(m.GetName(), "_latency") {
-
-						err := fgm.SetValueFloat64(fg, fgv+value)
-						if err != nil {
-							v.Logger.Error().Err(err).Msg("error")
+						if tempOps == nil {
+							if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
+								return nil, nil, err
+							}
+							tempOps.SetExportable(false)
+						} else {
+							tempOpsV, _ = tempOps.GetValueFloat64(fg)
 						}
-
-						continue
-					}
-
-					// latency metric: weighted sum
-					opsKey := ""
-					if strings.Contains(mkey, "_latency") {
-						opsKey = m.GetComment()
-					}
-
-					if ops := data.GetMetric(opsKey); ops != nil {
-						if opsValue, ok := ops.GetValueFloat64(i); ok {
-							var tempOpsV float64
-
-							prod := value * opsValue
-							tempOpsKey := opsKeyPrefix + opsKey
-							// Create temp ops metrics. These should not be exported.
-							// A base counter can be part base for multiple metrics hence we should not be changing base counter for weighted average calculation
-							tempOps := cache.GetMetric(tempOpsKey)
-
-							if tempOps == nil {
-								if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
-									return nil, nil, err
-								}
-								tempOps.SetExportable(false)
-							} else {
-								tempOpsV, _ = tempOps.GetValueFloat64(fg)
-							}
-							// If latency value is 0 then it's ops value is not used in weighted average calculation
-							if value != 0 {
-								err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
-								if err != nil {
-									v.Logger.Error().Err(err).Msg("error")
-								}
-							}
-							err = fgm.SetValueFloat64(fg, fgv+prod)
+						// If latency value is 0 then it's ops value is not used in weighted average calculation
+						if value != 0 {
+							err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 							if err != nil {
 								v.Logger.Error().Err(err).Msg("error")
 							}
 						}
+						err = fgm.SetValueFloat64(fg, fgv+prod)
+						if err != nil {
+							v.Logger.Error().Err(err).Msg("error")
+						}
 					}
-
 				}
 
 			}
+
 		}
 	}
 

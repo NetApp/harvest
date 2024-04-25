@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Feb-21
+Creation Date : 2024-Apr-24
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -1479,8 +1479,8 @@ Cloud bin operation latency average in milliseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/wafl_comp_aggr_vol_bin` | `cloud_bin_op_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_comp_aggr_vol_bin.yaml | 
-| ZAPI | `perf-object-get-instances wafl_comp_aggr_vol_bin` | `cloud_bin_op_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_comp_aggr_vol_bin.yaml | 
+| REST | `api/cluster/counter/tables/wafl_comp_aggr_vol_bin` | `cloud_bin_op_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_comp_aggr_vol_bin.yaml | 
+| ZAPI | `perf-object-get-instances wafl_comp_aggr_vol_bin` | `cloud_bin_op_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_comp_aggr_vol_bin.yaml | 
 
 
 ### fabricpool_cloud_bin_operation
@@ -2473,8 +2473,8 @@ Average of RAID I/O latency on read hit.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
-| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
+| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
+| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
 
 
 ### flashpool_hya_read_miss_latency_average
@@ -2483,8 +2483,8 @@ Average read miss latency.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_read_miss_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
-| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_miss_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
+| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_read_miss_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
+| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_miss_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
 
 
 ### flashpool_hya_write_hdd_latency_average
@@ -2493,8 +2493,8 @@ Average write latency to HDD.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_write_hdd_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
-| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_write_hdd_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
+| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_write_hdd_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
+| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_write_hdd_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
 
 
 ### flashpool_hya_write_ssd_latency_average
@@ -2503,8 +2503,8 @@ Average of RAID I/O latency on write to SSD.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_write_ssd_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
-| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_write_ssd_latency_average`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
+| REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_write_ssd_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml | 
+| ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_write_ssd_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml | 
 
 
 ### flashpool_read_cache_ins_rate
@@ -13118,7 +13118,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `bytes_read, bytes_written`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
+| REST | `api/cluster/counter/tables/volume` | `bytes_read, bytes_written`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
 | ZAPI | `volume` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 

@@ -281,19 +281,16 @@ func TestUnitsAndExprMatch(t *testing.T) {
 					t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
 						metric, unit, v.GrafanaJSON, location[0].dashboard, location[0].path, location[0].title)
 				}
-			} else {
-
+			} else if strings.HasSuffix(metric, "_latency") {
 				// special case latency that dashboard uses unit microseconds µs
-				if strings.HasSuffix(metric, "_latency") {
-					expectedGrafanaUnit = defaultLatencyUnit
-					if unit != expectedGrafanaUnit {
-						// Check if this metric is in the allowedSuffix map and has a matching unit
-						if slices.Contains(allowedSuffix[metric], unit) {
-							continue
-						}
-						t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
-							metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
+				expectedGrafanaUnit = defaultLatencyUnit
+				if unit != expectedGrafanaUnit {
+					// Check if this metric is in the allowedSuffix map and has a matching unit
+					if slices.Contains(allowedSuffix[metric], unit) {
+						continue
 					}
+					t.Errorf(`%s should not have unit=%s expected=%s %s path=%s title="%s"`,
+						metric, unit, defaultLatencyUnit, location[0].dashboard, location[0].path, location[0].title)
 				}
 			}
 
@@ -828,11 +825,11 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	expressions := make([]exprP, 0)
 
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
-		doTarget("", key, value, func(path string, expr string, format string) {
+		doTarget("", key, value, func(path string, expr string, format string, title string) {
 			if format == "table" || format == "stat" {
 				return
 			}
-			expressions = append(expressions, newExpr(path, expr))
+			expressions = append(expressions, newExpr(path, expr, title))
 		})
 	})
 

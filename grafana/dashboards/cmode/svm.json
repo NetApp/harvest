@@ -70,7 +70,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1713796307846,
+  "iteration": 1714048726251,
   "links": [
     {
       "asDropdown": true,
@@ -3955,7 +3955,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 4
+            "y": 21
           },
           "id": 99,
           "options": {
@@ -4014,7 +4014,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 4
+            "y": 21
           },
           "id": 103,
           "options": {
@@ -4036,7 +4036,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(svm_cifs_read_ops+svm_cifs_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum(svm_cifs_op_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -4047,7 +4047,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "SVM CIFS IOPs.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4105,7 +4105,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 4
+            "y": 21
           },
           "id": 107,
           "options": {
@@ -4180,7 +4180,7 @@
             "h": 4,
             "w": 4,
             "x": 0,
-            "y": 8
+            "y": 25
           },
           "id": 100,
           "options": {
@@ -4246,7 +4246,7 @@
             "h": 4,
             "w": 4,
             "x": 4,
-            "y": 8
+            "y": 25
           },
           "id": 101,
           "options": {
@@ -4304,7 +4304,7 @@
             "h": 4,
             "w": 4,
             "x": 8,
-            "y": 8
+            "y": 25
           },
           "id": 104,
           "options": {
@@ -4362,7 +4362,7 @@
             "h": 4,
             "w": 4,
             "x": 12,
-            "y": 8
+            "y": 25
           },
           "id": 105,
           "options": {
@@ -4452,7 +4452,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 12
+            "y": 29
           },
           "id": 102,
           "options": {
@@ -4502,7 +4502,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "SVM CIFS IOPs.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4560,7 +4560,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 12
+            "y": 29
           },
           "id": 106,
           "options": {
@@ -4582,9 +4582,10 @@
             {
               "exemplar": false,
               "expr": "sum(svm_cifs_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "hide": false,
               "interval": "",
               "legendFormat": "Read",
-              "refId": "A"
+              "refId": "B"
             },
             {
               "exemplar": false,
@@ -4592,7 +4593,14 @@
               "hide": false,
               "interval": "",
               "legendFormat": "Write",
-              "refId": "B"
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(svm_cifs_op_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "interval": "",
+              "legendFormat": "Total",
+              "refId": "A"
             }
           ],
           "timeFrom": null,
@@ -4660,7 +4668,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 12
+            "y": 29
           },
           "id": 108,
           "options": {
@@ -4750,7 +4758,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 21
+            "y": 38
           },
           "id": 242,
           "options": {
@@ -4845,7 +4853,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 21
+            "y": 38
           },
           "id": 243,
           "options": {
@@ -4941,7 +4949,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 21
+            "y": 38
           },
           "id": 244,
           "options": {
@@ -8328,7 +8336,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 25
+            "y": 38
           },
           "id": 154,
           "options": {
@@ -8403,7 +8411,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 25
+            "y": 38
           },
           "id": 155,
           "interval": null,
@@ -8503,7 +8511,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 25
+            "y": 38
           },
           "id": 166,
           "interval": null,
@@ -8594,7 +8602,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 30
+            "y": 43
           },
           "id": 158,
           "options": {
@@ -8660,7 +8668,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 30
+            "y": 43
           },
           "id": 159,
           "options": {
@@ -8735,7 +8743,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 30
+            "y": 43
           },
           "id": 160,
           "interval": null,
@@ -8835,7 +8843,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 30
+            "y": 43
           },
           "id": 161,
           "interval": null,
@@ -8935,7 +8943,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 30
+            "y": 43
           },
           "id": 162,
           "interval": null,
@@ -9035,7 +9043,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 30
+            "y": 43
           },
           "id": 163,
           "interval": null,
@@ -9149,7 +9157,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 35
+            "y": 48
           },
           "id": 145,
           "options": {
@@ -9248,7 +9256,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 35
+            "y": 48
           },
           "id": 146,
           "options": {
@@ -9343,7 +9351,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 35
+            "y": 48
           },
           "id": 147,
           "options": {
@@ -9446,7 +9454,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 56
           },
           "id": 157,
           "options": {
@@ -9547,7 +9555,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 43
+            "y": 56
           },
           "id": 149,
           "options": {
@@ -9639,7 +9647,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 11
+            "y": 39
           },
           "id": 164,
           "options": {
@@ -9714,7 +9722,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 11
+            "y": 39
           },
           "id": 165,
           "interval": null,
@@ -9814,7 +9822,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 11
+            "y": 39
           },
           "id": 156,
           "interval": null,
@@ -9905,7 +9913,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 16
+            "y": 44
           },
           "id": 140,
           "options": {
@@ -9971,7 +9979,7 @@
             "h": 5,
             "w": 4,
             "x": 4,
-            "y": 16
+            "y": 44
           },
           "id": 167,
           "options": {
@@ -10046,7 +10054,7 @@
             "h": 5,
             "w": 4,
             "x": 8,
-            "y": 16
+            "y": 44
           },
           "id": 168,
           "interval": null,
@@ -10146,7 +10154,7 @@
             "h": 5,
             "w": 4,
             "x": 12,
-            "y": 16
+            "y": 44
           },
           "id": 169,
           "interval": null,
@@ -10246,7 +10254,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 16
+            "y": 44
           },
           "id": 170,
           "interval": null,
@@ -10346,7 +10354,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 16
+            "y": 44
           },
           "id": 171,
           "interval": null,
@@ -10460,7 +10468,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 21
+            "y": 49
           },
           "id": 172,
           "options": {
@@ -10559,7 +10567,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 21
+            "y": 49
           },
           "id": 173,
           "options": {
@@ -10659,7 +10667,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 21
+            "y": 49
           },
           "id": 174,
           "options": {
@@ -10765,7 +10773,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 29
+            "y": 57
           },
           "id": 175,
           "options": {
@@ -10866,7 +10874,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 29
+            "y": 57
           },
           "id": 176,
           "options": {
@@ -10914,7 +10922,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,

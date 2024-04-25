@@ -53,14 +53,14 @@ func GenerateAdminCerts(opts *tlsOptions, flavor string) {
 
 	for _, ipaddress := range opts.Ipaddress {
 		ip := strings.TrimSpace(ipaddress)
-		if len(ip) > 0 {
+		if ip != "" {
 			template.IPAddresses = append(template.IPAddresses, net.ParseIP(ip))
 		}
 	}
 
 	for _, n := range opts.DNSName {
 		name := strings.TrimSpace(n)
-		if len(name) > 0 {
+		if name != "" {
 			template.DNSNames = append(template.DNSNames, n)
 		}
 	}
