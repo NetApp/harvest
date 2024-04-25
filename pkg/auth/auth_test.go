@@ -424,6 +424,20 @@ Pollers:
       addr: a.b.c
 `,
 		},
+
+		{
+			name:           "poller user/pass with caCert",
+			pollerName:     "test",
+			want:           PollerAuth{Username: "username", Password: "pass", IsCert: false, CaCertPath: "testdata/ca.pem"},
+			defaultDefined: true,
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    username: username
+    password: pass
+    ca_cert: testdata/ca.pem`,
+		},
 	}
 
 	hostname, err := os.Hostname()
@@ -482,6 +496,9 @@ Pollers:
 			}
 			if tt.want.KeyPath != got.KeyPath && got.KeyPath != hostKeyPath {
 				t.Errorf("got KeyPath=[%s], want KeyPath=[%s]", got.KeyPath, tt.want.KeyPath)
+			}
+			if tt.want.CaCertPath != got.CaCertPath {
+				t.Errorf("got CaCertPath=[%s], want CaCertPath=[%s]", got.CaCertPath, tt.want.CaCertPath)
 			}
 		})
 	}
