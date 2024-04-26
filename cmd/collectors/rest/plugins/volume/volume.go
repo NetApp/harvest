@@ -160,6 +160,10 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 					v.Logger.Error().Err(err).Str("metric", "cloneSplitEstimateMetric").Msg("Unable to set value on metric")
 				}
 			}
+		} else {
+			// Difference between private cli and public api would be node root volumes and temp volumes
+			// This case can be handled by ignoring them.
+			volume.SetExportable(false)
 		}
 	}
 }

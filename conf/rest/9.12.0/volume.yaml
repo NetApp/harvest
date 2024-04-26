@@ -54,7 +54,6 @@ counters:
   - used                                          => size_used
   - filter:
       - is_constituent=*
-      - type=rw|dp
 
 endpoints:
   - query: api/private/cli/volume/efficiency/stat
