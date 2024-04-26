@@ -149,7 +149,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
 			if vInfo.isObjectStoreVolume {
-				volume.SetExportable(!vInfo.isObjectStoreVolume)
+				volume.SetExportable(false)
 				continue
 			}
 			volume.SetLabel("anti_ransomware_start_time", vInfo.arwStartTime)
@@ -161,8 +161,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 				}
 			}
 		} else {
-			// Difference between private cli and public api would be node root volumes and temp volumes
-			// This case can be handled by ignoring them.
+			// The public API does not include node root and temp volumes, while the private CLI does include them. Harvest will exclude them the same as the public API by not exporting them.
 			volume.SetExportable(false)
 		}
 	}
