@@ -839,6 +839,10 @@
                         "index": 2,
                         "text": "Mirror Vault"
                       },
+                      "sync_mirror": {
+                        "index": 5,
+                        "text": "Sync"
+                      },
                       "vault": {
                         "index": 3,
                         "text": "Vault"
@@ -3670,7 +3674,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",derived_relationship_type=\"extended_data_protection\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",derived_relationship_type=\"extended_data_protection\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Asynchronous Mirror",
@@ -3678,7 +3682,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",derived_relationship_type=\"mirror_vault\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",derived_relationship_type=\"mirror_vault\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3687,7 +3691,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",derived_relationship_type=\"vault\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",derived_relationship_type=\"vault\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3696,7 +3700,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",derived_relationship_type=\"sync_mirror_strict\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",derived_relationship_type=\"sync_mirror_strict\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3705,7 +3709,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",derived_relationship_type=\"sync_mirror\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",derived_relationship_type=\"sync_mirror\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3714,7 +3718,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",derived_relationship_type=\"automated_failover\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",derived_relationship_type=\"automated_failover\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3723,7 +3727,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",derived_relationship_type=\"automated_failover_duplex\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$SourceCluster\",derived_relationship_type=\"automated_failover_duplex\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\")) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3818,7 +3822,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count((snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",healthy=\"true\",relationship_id!=\"\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") )) or vector (0)",
+              "expr": "count((snapmirror_labels{source_cluster=~\"$SourceCluster\",healthy=\"true\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") )) or vector (0)",
               "format": "time_series",
               "instant": true,
               "interval": "",
@@ -3827,7 +3831,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",healthy=\"false\",relationship_id!=\"\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) or vector (0)",
+              "expr": "count(group by (source_volume,source_vserver,source_cluster)(snapmirror_labels{source_cluster=~\"$SourceCluster\",healthy=\"false\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\", type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ) ) or vector (0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -4024,7 +4028,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\",group_type!=\"consistencygroup\",relationship_id!=\"\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ",
+              "expr": "snapmirror_labels{source_cluster=~\"$SourceCluster\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$SourceCluster\",volume!~\"MDV.*\",type=\"rw\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\") ",
               "format": "table",
               "instant": true,
               "interval": "",
