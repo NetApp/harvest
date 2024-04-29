@@ -926,7 +926,7 @@ Total Physical Used
 
 ### aggr_volume_count
 
-Number of volumes in the aggregate.
+Number of volumes in the aggregate. This includes flexvols + flexgroup constituents.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

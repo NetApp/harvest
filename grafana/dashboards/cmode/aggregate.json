@@ -252,7 +252,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of volumes in the aggregate.",
+      "description": "Number of volumes in the aggregate. This includes flexvols + flexgroup constituents.",
       "fieldConfig": {
         "defaults": {
           "color": {
