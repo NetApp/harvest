@@ -252,7 +252,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of flexvol volumes in the aggregate.",
+      "description": "Number of volumes in the aggregate.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -310,7 +310,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(aggr_volume_count_flexvol{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_volume_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -892,7 +892,7 @@
           "refId": "A"
         },
         {
-          "expr": "aggr_volume_count_flexvol{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_volume_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
           "format": "table",
           "hide": false,
           "instant": true,

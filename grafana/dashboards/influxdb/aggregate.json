@@ -464,7 +464,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"volume_count_flexvol\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false) ",
+          "query": "from(bucket: \"${Bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\" and r[\"_field\"] == \"volume_count\")\r\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\r\n  |> filter(fn: (r) => contains(value: r[\"node\"], set: ${Node:json}))\r\n  |> group()\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false) ",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -995,7 +995,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\n  |> filter(fn: (r) => contains(value: r[\"_field\"], set: [\"new_status_code\", \"volume_count_flexvol\", \"raid_disk_count\", \"space_total\", \"space_used\", \"space_used_percent\"]))\n  |> last()",
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"aggr\")\n  |> filter(fn: (r) => r[\"cluster\"] == \"${Cluster}\")\n  |> filter(fn: (r) => contains(value: r[\"_field\"], set: [\"new_status_code\", \"volume_count\", \"raid_disk_count\", \"space_total\", \"space_used\", \"space_used_percent\"]))\n  |> last()",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1050,7 +1050,7 @@
               "space_total": 8,
               "space_used": 9,
               "space_used_percent": 10,
-              "volume_count_flexvol": 7
+              "volume_count": 7
             },
             "renameByName": {
               "Time": "",
@@ -1062,7 +1062,7 @@
               "space_total": "capacity",
               "space_used": "used",
               "space_used_percent": "used %",
-              "volume_count_flexvol": "volumes"
+              "volume_count": "volumes"
             }
           }
         }

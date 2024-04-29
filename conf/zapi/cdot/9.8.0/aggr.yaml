@@ -58,7 +58,7 @@ counters:
         - size-used                              => space_used
         - total-reserved-space                   => space_reserved
     - aggr-volume-count-attributes:
-        - flexvol-count
+        - flexvol-count                          => volume_count
 
 plugins:
   - Aggregate

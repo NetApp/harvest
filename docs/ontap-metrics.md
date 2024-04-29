@@ -924,9 +924,9 @@ Total Physical Used
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-physical-used` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
 
-### aggr_volume_count_flexvol
+### aggr_volume_count
 
-Number of flexvol volumes in the aggregate.
+Number of volumes in the aggregate.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
