@@ -118,6 +118,12 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			continue
 		}
 
+		// The ZAPI does include node root and temp volumes. Harvest will exclude them by not exporting them.
+		if volume.GetLabel("node_root") == "true" || volume.GetLabel("type") == "tmp" {
+			volume.SetExportable(false)
+			continue
+		}
+
 		if volume.GetLabel("style") == "flexgroup_constituent" {
 			volume.SetExportable(v.includeConstituents)
 		}
