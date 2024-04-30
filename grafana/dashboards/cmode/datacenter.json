@@ -226,7 +226,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Object Count.",
+          "description": "Object Count.\n\nNote: The REST and ZAPI collectors return a different number of volumes depending on whether you have set up object store servers on your cluster. \n\nFor more details, visit the [ZAPI and REST Gaps](https://netapp.github.io/harvest/latest/zapi-and-rest-gap.md).",
           "fieldConfig": {
             "defaults": {
               "color": {

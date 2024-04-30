@@ -1,7 +1,7 @@
-# Zapi and Rest gaps
+# ZAPI and REST Gaps
 
 ## Volume Count difference
-`REST` and `ZAPI` collector will return different counts of volume object depending on whether you have object store servers setup on your cluster or not.
+The `REST` and `ZAPI` collectors return a different number of `volume_labels` depending on whether you have set up object store servers on your cluster.
 
-- `REST` collector would return all the volumes but object store servers volumes.
-- `ZAPI` collector would return all the volumes including object store servers volumes.
+- The `REST` collector does not include `volume_labels` for volumes associated with object store servers.
+- The `ZAPI` collector includes `volume_labels` for volumes associated with object store servers. If you have not set up any object store servers on your cluster, both collectors will return the same number of `volume_labels`.
