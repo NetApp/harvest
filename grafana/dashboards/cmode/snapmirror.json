@@ -1220,7 +1220,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror break operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1327,7 +1327,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror resync operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1433,7 +1433,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror update operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1634,7 +1634,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror break operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1740,7 +1740,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror resync operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1846,7 +1846,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror update operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
