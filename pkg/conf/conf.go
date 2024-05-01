@@ -128,7 +128,7 @@ func LoadHarvestConfig(configPath string) (string, error) {
 		return "", errors.Join(duplicates...)
 	}
 
-	// After processing all the configuration files, check if Config.Pollers is still empty.
+	// After processing all the configuration files, check if the Config.Pollers parameter is still empty.
 	if len(Config.Pollers) == 0 {
 		return "", errs.New(errs.ErrConfig, "[Pollers] section not found")
 	}
@@ -137,7 +137,25 @@ func LoadHarvestConfig(configPath string) (string, error) {
 	for i, name := range Config.PollersOrdered {
 		Config.Pollers[name].promIndex = i
 	}
+
+	fixupExporters()
 	return configPath, nil
+}
+
+func fixupExporters() {
+	for _, pollerName := range Config.PollersOrdered {
+		poller := Config.Pollers[pollerName]
+		for i, e := range poller.ExporterDefs {
+			exporterName := e.name
+			if exporterName == "" {
+				// This is an embedded exporter, synthesize a name for it
+				exporterName = fmt.Sprintf("%s-%d", pollerName, i)
+				Config.Exporters[exporterName] = e.Exporter
+			}
+
+			poller.Exporters = append(poller.Exporters, exporterName)
+		}
+	}
 }
 
 func unmarshalConfig(contents []byte) (*HarvestConfig, error) {
@@ -285,8 +303,9 @@ func GetHarvestLogPath() string {
 	return cmp.Or(os.Getenv("HARVEST_LOGS"), "/var/log/harvest/")
 }
 
-// GetPrometheusExporterPorts returns the Prometheus port for the given poller
-func GetPrometheusExporterPorts(pollerName string, validatePortInUse bool) (int, error) {
+// GetLastPromPort returns the Prometheus port for the given poller
+// If multiple Prometheus exporters are configured for a poller, the port for the last exporter is returned.
+func GetLastPromPort(pollerName string, validatePortInUse bool) (int, error) {
 	var port int
 	var isPrometheusExporterConfigured bool
 
@@ -299,29 +318,28 @@ func GetPrometheusExporterPorts(pollerName string, validatePortInUse bool) (int,
 	}
 
 	exporters := poller.Exporters
-	if len(exporters) > 0 {
-		for _, e := range exporters {
-			exporter := Config.Exporters[e]
-			if exporter.Type == "Prometheus" {
-				isPrometheusExporterConfigured = true
-				if exporter.PortRange != nil {
-					ports := promPortRangeMapping[e]
-					preferredPort := exporter.PortRange.Min + poller.promIndex
-					_, isFree := ports.freePorts[preferredPort]
-					if isFree {
-						port = preferredPort
-						delete(ports.freePorts, preferredPort)
-						break
-					}
-					for k := range ports.freePorts {
-						port = k
-						delete(ports.freePorts, k)
-						break
-					}
-				} else if exporter.Port != nil && *exporter.Port != 0 {
-					port = *exporter.Port
+	for i := len(exporters) - 1; i >= 0; i-- {
+		e := exporters[i]
+		exporter := Config.Exporters[e]
+		if exporter.Type == "Prometheus" {
+			isPrometheusExporterConfigured = true
+			if exporter.PortRange != nil {
+				ports := promPortRangeMapping[e]
+				preferredPort := exporter.PortRange.Min + poller.promIndex
+				_, isFree := ports.freePorts[preferredPort]
+				if isFree {
+					port = preferredPort
+					delete(ports.freePorts, preferredPort)
 					break
 				}
+				for k := range ports.freePorts {
+					port = k
+					delete(ports.freePorts, k)
+					break
+				}
+			} else if exporter.Port != nil && *exporter.Port != 0 {
+				port = *exporter.Port
+				break
 			}
 		}
 	}
@@ -458,6 +476,25 @@ type CertificateScript struct {
 	Timeout string `yaml:"timeout,omitempty"`
 }
 
+type ExportDef struct {
+	name string
+	Exporter
+}
+
+func (e *ExportDef) UnmarshalYAML(n *yaml.Node) error {
+	if n.Kind == yaml.MappingNode {
+		var aExporter *Exporter
+		err := n.Decode(&aExporter)
+		if err != nil {
+			return fmt.Errorf("error unmarshalling embedded exporter: %w", err)
+		}
+		e.Exporter = *aExporter
+	} else if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
+		e.name = n.Value
+	}
+	return nil
+}
+
 type Poller struct {
 	Addr              string               `yaml:"addr,omitempty"`
 	APIVersion        string               `yaml:"api_version,omitempty"`
@@ -470,7 +507,7 @@ type Poller struct {
 	CredentialsScript CredentialsScript    `yaml:"credentials_script,omitempty"`
 	CertificateScript CertificateScript    `yaml:"certificate_script,omitempty"`
 	Datacenter        string               `yaml:"datacenter,omitempty"`
-	Exporters         []string             `yaml:"exporters,omitempty"`
+	ExporterDefs      []ExportDef          `yaml:"exporters,omitempty"`
 	IsKfs             bool                 `yaml:"is_kfs,omitempty"`
 	Labels            *[]map[string]string `yaml:"labels,omitempty"`
 	LogMaxBytes       int64                `yaml:"log_max_bytes,omitempty"`
@@ -485,6 +522,7 @@ type Poller struct {
 	Username          string               `yaml:"username,omitempty"`
 	PreferZAPI        bool                 `yaml:"prefer_zapi,omitempty"`
 	ConfPath          string               `yaml:"conf_path,omitempty"`
+	Exporters         []string             `yaml:"-"`
 	promIndex         int
 	Name              string
 }

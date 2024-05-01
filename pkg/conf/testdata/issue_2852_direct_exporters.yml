@@ -1,0 +1,26 @@
+Exporters:
+  prometheus1:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port_range: 2000-2030
+
+Defaults:
+  exporters:
+    - prometheus1
+    - exporter: Prometheus
+      port: 32990
+
+Pollers:
+  u2:
+    addr: 10.193.48.11
+    exporters:
+      - prometheus1
+      - exporter: Prometheus
+        port: 12990
+      - exporter: InfluxDB
+        addr: localhost
+        bucket: harvest
+        org: harvest
+
+  u3:
+    addr: 10.0.1.1
