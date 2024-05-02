@@ -188,7 +188,7 @@ func generateDocker(kind int) {
 	filesd := make([]string, 0, len(conf.Config.PollersOrdered))
 
 	for _, v := range conf.Config.PollersOrdered {
-		port, _ := conf.GetPrometheusExporterPorts(v, true)
+		port, _ := conf.GetLastPromPort(v, true)
 		pollerInfo := PollerInfo{
 			ServiceName:   normalizeContainerNames(v),
 			PollerName:    v,

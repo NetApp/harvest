@@ -31,7 +31,7 @@ func TestPollerMetrics(t *testing.T) {
 	}
 	var duplicateMetrics []string
 	for _, pollerName := range conf.Config.PollersOrdered {
-		port, _ := conf.GetPrometheusExporterPorts(pollerName, true)
+		port, _ := conf.GetLastPromPort(pollerName, true)
 		portString := strconv.Itoa(port)
 		var validCounters = 0
 		uniqueSetOfMetricLabels := make(map[string]bool)

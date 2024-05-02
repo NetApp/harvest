@@ -839,8 +839,8 @@ func (p *Poller) newCollector(class string, object string, template *node.Node) 
 	return col, err
 }
 
-// returns exporter that matches to name, if exporter is not loaded
-// tries to load and return
+// Returns the exporter with the matching name.
+// If the exporter is not loaded, load and return it.
 func (p *Poller) loadExporter(name string) exporter.Exporter {
 
 	var (
