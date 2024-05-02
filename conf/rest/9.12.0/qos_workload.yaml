@@ -4,17 +4,17 @@ object:           qos_workload
 
 counters:
   - ^^uuid               => uuid
+  - ^class               => class
   - ^file                => file
   - ^is_adaptive         => is_adaptive
   - ^lun                 => lun
   - ^max_throughput      => max_xput
-  - ^name                => workload
   - ^policy_group        => policy_group
   - ^qtree               => qtree
   - ^volume              => volume
   - ^vserver             => svm
   - ^wid                 => wid
-  - ^workload_class      => class
+  - ^workload            => workload
 
 plugins:
   - LabelAgent:
