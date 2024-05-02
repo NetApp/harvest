@@ -18,6 +18,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -174,6 +175,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return aggregate.New(abc)
 	case "SystemNode":
 		return systemnode.New(abc)
+	case "Workload":
+		return workload.New(abc)
 	default:
 		z.Logger.Info().Msgf("no zapi plugin found for %s", kind)
 	}
