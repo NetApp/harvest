@@ -1483,6 +1483,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		description := value.Get("description").String()
 		targetsSlice := value.Get("targets").Array()
 		title := value.Get("title").String()
+		panelType := value.Get("type").String()
 		if slices.Contains(ignoreList, title) {
 			fmt.Printf(`dashboard=%s panel="%s" has different description\n`, dashPath, title)
 			return
@@ -1493,16 +1494,19 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 				expr := targetsSlice[0].Get("expr").String()
 				if strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
-					// t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
-					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
+					// t.Errorf(`dashboard=%s panel="%s" has arithmetic operations`, dashPath, value.Get("title").String())
+					fmt.Printf(`dashboard=%s panel="%s" has arithmetic operations \n`, dashPath, title)
 				} else {
 					*count++
 					t.Errorf(`dashboard=%s panel="%s" does not have panel description %d`, dashPath, title, *count)
 				}
 			} else {
 				// This indicates table/timeseries with more than 1 expression, After deciding next steps, this will be uncommented.
-				// t.Errorf(`dashboard=%s panel="%s" has many expressions`, dashPath, value.Get("title").String())
-				fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
+				if panelType == "table" {
+					fmt.Printf(`dashboard=%s panel="%s" has table with multiple expression \n`, dashPath, title)
+				} else {
+					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
+				}
 			}
 		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
 			// Few panels have description text from variable, which would be ignored.
