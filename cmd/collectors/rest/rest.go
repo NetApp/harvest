@@ -20,6 +20,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -517,6 +518,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return metroclustercheck.New(abc)
 	case "SystemNode":
 		return systemnode.New(abc)
+	case "Workload":
+		return workload.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
