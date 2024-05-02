@@ -14,7 +14,6 @@ var metrics = []string{
 
 type Workload struct {
 	*plugin.AbstractPlugin
-	collectors.QosCommon
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -57,7 +56,7 @@ func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 			instance.SetExportable(false)
 			continue
 		}
-		w.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", w.Logger)
+		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", w.Logger)
 	}
 
 	return nil, nil, nil

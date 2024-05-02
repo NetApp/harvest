@@ -16,7 +16,6 @@ var metrics = []string{
 
 type QosPolicyFixed struct {
 	*plugin.AbstractPlugin
-	collectors.QosCommon
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -48,8 +47,8 @@ func (q *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 			instance.SetExportable(false)
 			continue
 		}
-		q.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", q.Logger)
-		q.SetThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps", q.Logger)
+		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", q.Logger)
+		collectors.SetThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps", q.Logger)
 	}
 
 	return nil, nil, nil
