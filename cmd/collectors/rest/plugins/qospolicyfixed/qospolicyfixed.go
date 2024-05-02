@@ -17,7 +17,6 @@ var metrics = []string{
 
 type QosPolicyFixed struct {
 	*plugin.AbstractPlugin
-	collectors.QosCommon
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -63,8 +62,8 @@ func (q *QosPolicyFixed) setFixed(data *matrix.Matrix, instance *matrix.Instance
 		q.Logger.Error().Err(err).Str("label", after).Msg("Failed to parse fixed xput label")
 		return
 	}
-	q.SetLabel("min_throughput_iops", data, instance, minV.IOPS, q.Logger)
-	q.SetLabel("max_throughput_iops", data, instance, maxV.IOPS, q.Logger)
-	q.SetLabel("min_throughput_mbps", data, instance, minV.Mbps, q.Logger)
-	q.SetLabel("max_throughput_mbps", data, instance, maxV.Mbps, q.Logger)
+	collectors.QosSetLabel("min_throughput_iops", data, instance, minV.IOPS, q.Logger)
+	collectors.QosSetLabel("max_throughput_iops", data, instance, maxV.IOPS, q.Logger)
+	collectors.QosSetLabel("min_throughput_mbps", data, instance, minV.Mbps, q.Logger)
+	collectors.QosSetLabel("max_throughput_mbps", data, instance, maxV.Mbps, q.Logger)
 }

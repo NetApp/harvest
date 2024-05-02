@@ -27,10 +27,7 @@ type MaxXput struct {
 	Mbps string
 }
 
-type QosCommon struct {
-}
-
-func (q *QosCommon) SetThroughput(data *matrix.Matrix, instance *matrix.Instance, labelName string, iopLabel string, mbpsLabel string, logger *logging.Logger) {
+func SetThroughput(data *matrix.Matrix, instance *matrix.Instance, labelName string, iopLabel string, mbpsLabel string, logger *logging.Logger) {
 	val := instance.GetLabel(labelName)
 	if val == "" {
 		return
@@ -40,11 +37,11 @@ func (q *QosCommon) SetThroughput(data *matrix.Matrix, instance *matrix.Instance
 		logger.Warn().Str(labelName, val).Msg("Unable to convert label, skipping")
 		return
 	}
-	q.SetLabel(iopLabel, data, instance, xput.IOPS, logger)
-	q.SetLabel(mbpsLabel, data, instance, xput.Mbps, logger)
+	QosSetLabel(iopLabel, data, instance, xput.IOPS, logger)
+	QosSetLabel(mbpsLabel, data, instance, xput.Mbps, logger)
 }
 
-func (q *QosCommon) SetLabel(labelName string, data *matrix.Matrix, instance *matrix.Instance, value string, logger *logging.Logger) {
+func QosSetLabel(labelName string, data *matrix.Matrix, instance *matrix.Instance, value string, logger *logging.Logger) {
 	if value == "" {
 		return
 	}
