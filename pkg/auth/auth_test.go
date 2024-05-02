@@ -438,6 +438,74 @@ Pollers:
     password: pass
     ca_cert: testdata/ca.pem`,
 		},
+		{
+			name:       "credentials_script returns username and password in JSON",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "script-username",
+				Password:            "script-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_credentials_json
+`,
+		},
+
+		{
+			name:       "credentials_script returns only password in plain text",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "username", // Fallback to the username provided in the poller configuration
+				Password:            "plain-text-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    username: username
+    credentials_script:
+      path: testdata/get_password_plain
+`,
+		},
+
+		{
+			name:       "credentials_script returns username and password in JSON, no username in poller config",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "script-username",
+				Password:            "script-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_credentials_json
+`,
+		},
+
+		{
+			name:       "credentials_script returns only password in plain text, no username in poller config",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "", // No username provided, so it should be empty
+				Password:            "plain-text-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_password_plain
+`,
+		},
 	}
 
 	hostname, err := os.Hostname()
