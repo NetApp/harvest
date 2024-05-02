@@ -113,5 +113,10 @@ func ZapiXputToRest(zapi string) (MaxXput, error) {
 		return empty, fmt.Errorf("failed to convert qos-policy unit [%s] of [%s]", numStr, zapi)
 	}
 	mbps := float32(num) * multiple
-	return MaxXput{Mbps: strconv.Itoa(int(mbps)), IOPS: ""}, nil
+	mbpsStr := strconv.FormatFloat(float64(mbps), 'f', 2, 32)
+
+	// Trim unnecessary trailing zeros and decimal points
+	mbpsStr = strings.TrimRight(mbpsStr, "0")
+	mbpsStr = strings.TrimRight(mbpsStr, ".")
+	return MaxXput{Mbps: mbpsStr, IOPS: ""}, nil
 }

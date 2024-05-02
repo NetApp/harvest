@@ -25,11 +25,11 @@ func Test_zapiXputToRest(t *testing.T) {
 
 		{zapi: "1GB/s", want: collectors.MaxXput{IOPS: "", Mbps: "1000"}},
 		{zapi: "100B/s", want: collectors.MaxXput{IOPS: "", Mbps: "0"}},
-		{zapi: "10KB/s", want: collectors.MaxXput{IOPS: "", Mbps: "0"}},
+		{zapi: "10KB/s", want: collectors.MaxXput{IOPS: "", Mbps: "0.01"}},
 		{zapi: "1mb/s", want: collectors.MaxXput{IOPS: "", Mbps: "1"}},
 		{zapi: "1tb/s", want: collectors.MaxXput{IOPS: "", Mbps: "1000000"}},
 		{zapi: "1000KB/s", want: collectors.MaxXput{IOPS: "", Mbps: "1"}},
-		{zapi: "15000IOPS,468.8MB/s", want: collectors.MaxXput{IOPS: "15000", Mbps: "468"}},
+		{zapi: "15000IOPS,468.8MB/s", want: collectors.MaxXput{IOPS: "15000", Mbps: "468.8"}},
 		{zapi: "50000IOPS,1.53GB/s", want: collectors.MaxXput{IOPS: "50000", Mbps: "1530"}},
 
 		{zapi: "1 foople/s", want: collectors.MaxXput{IOPS: "", Mbps: ""}, isErr: true},
