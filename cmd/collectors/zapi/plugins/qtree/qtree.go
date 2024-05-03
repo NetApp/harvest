@@ -208,7 +208,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 			err = q.handlingHistoricalMetrics(quotas, data, cluster, &quotaIndex, &numMetrics)
 		} else {
 			// Populate metrics with quota prefix and current labels
-			err = q.handlingQuotaMetrics(quotas, cluster, &quotaIndex, &numMetrics)
+			err = q.handlingQuotaMetrics(quotas, &quotaIndex, &numMetrics)
 		}
 
 		if err != nil {
@@ -322,7 +322,7 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 	return nil
 }
 
-func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaCount *int, numMetrics *int) error {
+func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, quotaCount *int, numMetrics *int) error {
 	for _, quota := range quotas {
 		var vserver, quotaInstanceKey, uid, uName string
 
@@ -359,7 +359,6 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaC
 			}
 		}
 		*quotaCount++
-		quotaIndex := volume + "." + tree + "." + uName
 
 		for attribute, m := range q.data.GetMetrics() {
 
@@ -372,9 +371,9 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaC
 
 				// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 				if q.client.IsClustered() {
-					quotaInstanceKey = vserver + "." + quotaIndex + "." + attribute
+					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + uName + "." + attribute
 				} else {
-					quotaInstanceKey = quotaIndex + "." + attribute
+					quotaInstanceKey = volume + "." + tree + "." + uName + "." + attribute
 				}
 				quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 				if err != nil {
@@ -386,7 +385,6 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaC
 				quotaInstance.SetLabel("qtree", tree)
 				quotaInstance.SetLabel("volume", volume)
 				quotaInstance.SetLabel("svm", vserver)
-				quotaInstance.SetLabel("index", cluster+"_"+quotaIndex)
 
 				if quotaType == "user" {
 					if uName != "" {

@@ -446,7 +446,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -457,7 +457,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -468,7 +468,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -479,7 +479,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -490,7 +490,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_soft_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_soft_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -501,7 +501,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_disk_used_pct_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_disk_used_pct_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -512,7 +512,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_files_used_pct_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_files_used_pct_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -523,7 +523,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "quota_soft_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}",
+          "expr": "label_join(quota_soft_file_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",qtree=~\"$Qtree\"}, \"index\", \"-\", \"datacenter\", \"cluster\", \"svm\", \"volume\", \"qtree\", \"group\", \"user\")",
           "format": "table",
           "hide": false,
           "instant": true,
