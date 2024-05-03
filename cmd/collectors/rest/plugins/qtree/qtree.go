@@ -290,7 +290,7 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 }
 
 func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quotaCount *int, numMetrics *int) error {
-	for quotaIndex, quota := range result {
+	for _, quota := range result {
 		var tree string
 
 		if !quota.IsObject() {
@@ -308,12 +308,13 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 		uid := quota.Get("users.0.id").String()
 		group := quota.Get("group.name").String()
 		*quotaCount++
+		quotaIndex := vserver + "." + volume + "." + tree + "." + group + "." + uName
 
 		for attribute, m := range q.data.GetMetrics() {
 			// set -1 for unlimited
 			value := -1.0
 
-			quotaInstanceKey := strconv.Itoa(quotaIndex) + "." + attribute
+			quotaInstanceKey := quotaIndex + "." + attribute
 
 			quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 			if err != nil {
@@ -325,7 +326,7 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 			quotaInstance.SetLabel("qtree", tree)
 			quotaInstance.SetLabel("volume", volume)
 			quotaInstance.SetLabel("svm", vserver)
-			quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(quotaIndex))
+			quotaInstance.SetLabel("index", cluster+"_"+quotaIndex)
 
 			if quotaType == "user" {
 				if uName != "" {
