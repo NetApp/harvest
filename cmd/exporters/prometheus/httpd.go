@@ -97,7 +97,7 @@ func (p *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 
 	p.Logger.Debug().Msgf("(httpd) denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
 	w.WriteHeader(http.StatusForbidden)
-	w.Header().Set("content-type", "text/plain")
+	w.Header().Set("Content-Type", "text/plain")
 	_, err := w.Write([]byte("403 Forbidden"))
 	if err != nil {
 		p.Logger.Error().Stack().Err(err).Msg("error")
@@ -136,7 +136,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("content-type", "text/plain")
+	w.Header().Set("Content-Type", "text/plain")
 	_, err := w.Write(bytes.Join(data, []byte("\n")))
 	if err != nil {
 		p.Logger.Error().Err(err).Msg("write metrics")
@@ -273,7 +273,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	bodyFlat := fmt.Sprintf(htmlTemplate, poller, poller, poller, numCollectors, numObjects, numMetrics, strings.Join(body, "\n\n"))
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("content-type", "text/html")
+	w.Header().Set("Content-Type", "text/html")
 	_, err := w.Write([]byte(bodyFlat))
 	if err != nil {
 		p.Logger.Error().Stack().Err(err).Msg("error")

@@ -89,11 +89,11 @@ func (a *Admin) startServer() {
 }
 
 func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	if a.httpSD.AuthBasic.Username != "" {
 		user, pass, ok := r.BasicAuth()
 		if !ok || !a.verifyAuth(user, pass) {
-			w.Header().Set("WWW-Authenticate", `Basic realm="api"`)
+			w.Header().Set("Www-Authenticate", `Basic realm="api"`)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
