@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1714725409357,
+  "iteration": 1714734444899,
   "links": [
     {
       "asDropdown": true,
@@ -1848,12 +1848,12 @@
                     "value": "gradient-gauge"
                   },
                   {
-                    "id": "max",
-                    "value": 100
-                  },
-                  {
                     "id": "unit",
                     "value": "percent"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
                   },
                   {
                     "id": "decimals",
@@ -1893,7 +1893,7 @@
             "x": 0,
             "y": 70
           },
-          "id": 235,
+          "id": 239,
           "options": {
             "showHeader": true,
             "sortBy": [
@@ -1944,54 +1944,67 @@
               }
             },
             {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
-                  "names": [
-                    "cluster 1",
-                    "datacenter 1",
-                    "file 1",
-                    "lun 1",
-                    "policy_group 1",
-                    "svm 1",
-                    "volume 1",
-                    "workload 1",
-                    "Value #A",
-                    "Value #B",
-                    "Value #C"
-                  ]
+                  "pattern": "^(?!.* \\d+$).*$"
                 }
               }
             },
             {
               "id": "organize",
               "options": {
-                "excludeByName": {},
+                "excludeByName": {
+                  "Time": true,
+                  "Value #C": false,
+                  "__name__": true,
+                  "class": true,
+                  "instance": true,
+                  "is_adaptive": true,
+                  "job": true,
+                  "unique_id": true,
+                  "wid": true
+                },
                 "indexByName": {
-                  "Value #A": 8,
-                  "Value #B": 9,
-                  "Value #C": 10,
-                  "cluster 1": 1,
-                  "datacenter 1": 0,
-                  "file 1": 6,
-                  "lun 1": 7,
-                  "policy_group 1": 4,
-                  "svm 1": 2,
-                  "volume 1": 5,
-                  "workload 1": 3
+                  "Time": 1,
+                  "Value #A": 9,
+                  "Value #B": 11,
+                  "Value #C": 12,
+                  "__name__": 13,
+                  "class": 14,
+                  "cluster": 3,
+                  "datacenter": 2,
+                  "file": 6,
+                  "instance": 16,
+                  "is_adaptive": 17,
+                  "job": 18,
+                  "lun": 7,
+                  "policy_group": 10,
+                  "svm": 4,
+                  "unique_id": 0,
+                  "volume": 5,
+                  "wid": 15,
+                  "workload": 8
                 },
                 "renameByName": {
                   "Value #A": "Used %",
                   "Value #B": "IOPs",
                   "Value #C": "Max IOPs",
-                  "cluster 1": "Cluster",
-                  "datacenter 1": "Datacenter",
-                  "file 1": "File",
-                  "lun 1": "Lun",
-                  "policy_group 1": "Policy",
-                  "svm 1": "SVM",
-                  "volume 1": "Volume",
-                  "workload 1": "Workload"
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "file": "File",
+                  "lun": "Lun",
+                  "policy_group": "Policy",
+                  "svm": "SVM",
+                  "volume": "Volume",
+                  "workload": "Workload"
                 }
               }
             }
@@ -2038,16 +2051,16 @@
                     "value": "percent"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
-                  },
-                  {
                     "id": "max",
                     "value": 100
                   },
                   {
                     "id": "decimals",
                     "value": 2
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
                   }
                 ]
               },
@@ -2071,7 +2084,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "Bps"
+                    "value": "MBs"
                   }
                 ]
               }
@@ -2083,7 +2096,7 @@
             "x": 0,
             "y": 79
           },
-          "id": 237,
+          "id": 241,
           "options": {
             "showHeader": true,
             "sortBy": [
@@ -2134,54 +2147,66 @@
               }
             },
             {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
-                  "names": [
-                    "cluster 1",
-                    "datacenter 1",
-                    "file 1",
-                    "lun 1",
-                    "policy_group 1",
-                    "svm 1",
-                    "volume 1",
-                    "workload 1",
-                    "Value #A",
-                    "Value #B",
-                    "Value #C"
-                  ]
+                  "pattern": "^(?!.* \\d+$).*$"
                 }
               }
             },
             {
               "id": "organize",
               "options": {
-                "excludeByName": {},
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "class": true,
+                  "instance": true,
+                  "is_adaptive": true,
+                  "job": true,
+                  "unique_id": true,
+                  "wid": true
+                },
                 "indexByName": {
-                  "Value #A": 8,
-                  "Value #B": 9,
-                  "Value #C": 10,
-                  "cluster 1": 1,
-                  "datacenter 1": 0,
-                  "file 1": 6,
-                  "lun 1": 7,
-                  "policy_group 1": 4,
-                  "svm 1": 2,
-                  "volume 1": 5,
-                  "workload 1": 3
+                  "Time": 1,
+                  "Value #A": 10,
+                  "Value #B": 12,
+                  "Value #C": 13,
+                  "__name__": 14,
+                  "class": 15,
+                  "cluster": 3,
+                  "datacenter": 2,
+                  "file": 6,
+                  "instance": 16,
+                  "is_adaptive": 17,
+                  "job": 18,
+                  "lun": 7,
+                  "policy_group": 11,
+                  "svm": 4,
+                  "unique_id": 0,
+                  "volume": 5,
+                  "wid": 9,
+                  "workload": 8
                 },
                 "renameByName": {
                   "Value #A": "Used %",
                   "Value #B": "Throughput",
                   "Value #C": "Max Throughput",
-                  "cluster 1": "Cluster",
-                  "datacenter 1": "Datacenter",
-                  "file 1": "File",
-                  "lun 1": "Lun",
-                  "policy_group 1": "Policy",
-                  "svm 1": "SVM",
-                  "volume 1": "Volume",
-                  "workload 1": "Workload"
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "file": "File",
+                  "lun": "Lun",
+                  "policy_group": "Policy",
+                  "svm": "SVM",
+                  "volume": "Volume",
+                  "workload": "Workload"
                 }
               }
             }
@@ -6542,5 +6567,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "",
-  "version": 8
+  "version": 9
 }
