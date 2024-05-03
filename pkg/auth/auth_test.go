@@ -477,7 +477,7 @@ Pollers:
 			pollerName: "test",
 			want: PollerAuth{
 				Username:            "username", // Fallback to the username provided in the poller configuration
-				Password:            "script-password",
+				Password:            "password #\"`!@#$%^&*()-=[]|:'<>/ password",
 				HasCredentialScript: true,
 			},
 			yaml: `
@@ -520,6 +520,24 @@ Pollers:
     addr: a.b.c
     credentials_script:
       path: testdata/get_password_plain
+`,
+		},
+
+		{
+			name:       "credentials_script returns username and password in YAML via Heredoc",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "myuser",
+				Password:            "my # password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    username: username
+    credentials_script:
+      path: testdata/get_credentials_yaml_heredoc
 `,
 		},
 	}
