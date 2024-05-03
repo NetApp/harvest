@@ -5,7 +5,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
@@ -14,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/third_party/mergo"
+	"gopkg.in/yaml.v3"
 	"net/http"
 	"os"
 	"os/exec"
@@ -123,8 +123,8 @@ func (c *Credentials) fetchCerts(p *conf.Poller) (string, error) {
 }
 
 type ScriptResponse struct {
-	Data     string `json:"password"`
-	Username string `json:"username,omitempty"`
+	Username string `yaml:"username"`
+	Data     string `yaml:"password"`
 }
 
 func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e func(ctx context.Context, path string) *exec.Cmd) (ScriptResponse, error) {
@@ -183,7 +183,18 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 		return response, fmt.Errorf("script execute failed script=%s kind=%s err=%w", lookPath, kind, err)
 	}
 
-	err = json.Unmarshal(stdout.Bytes(), &response)
+	err = yaml.Unmarshal(stdout.Bytes(), &response)
+	if err != nil {
+		// Log the error but do not return it, we will try to use the output as plain text next.
+		c.logger.Debug().Err(err).
+			Str("script", lookPath).
+			Str("timeout", duration.String()).
+			Str("stderr", stderr.String()).
+			Str("stdout", stdout.String()).
+			Str("kind", kind).
+			Msg("Failed to parse YAML output. Treating as plain text.")
+	}
+
 	if err == nil && response.Data != "" {
 		// If parsing is successful and data is not empty, return the response.
 		// Username is optional, so it's okay if it's not present.

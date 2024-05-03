@@ -267,42 +267,69 @@ Pollers:
 
 ## Credentials Script
 
-The `credentials_script` allows you to fetch authentication information via an external script. This feature can be configured in the `Pollers` section of your `harvest.yml` file, as shown in the example below.
+The `credentials_script` feature allows you to fetch authentication information via an external script. This can be configured in the `Pollers` section of your `harvest.yml` file, as shown in the example below.
 
-At runtime, Harvest will invoke the script specified in the `credentials_script` `path` section. Harvest will call the script with two arguments in the following manner: `./script $addr $username`.
+At runtime, Harvest will invoke the script specified in the `credentials_script` `path` section. Harvest will call the script with two arguments, where the second argument is optional: `./script $addr [$username]`.
 
 - The first argument (`$addr`) is the address of the cluster taken from the `addr` field under the `Pollers` section of your `harvest.yml` file.
-- The second argument (`$username`) is the username for the cluster taken from the `username` field under the `Pollers` section of your `harvest.yml` file.
+- The second argument (`$username`) is the username for the cluster taken from the `username` field under the `Pollers` section of your `harvest.yml` file, if provided.
 
 The script should return the credentials through its standard output (stdout). Harvest supports two output formats from the script:
 
-1. **JSON format:** If the script outputs a JSON object with `username` and `password` keys, Harvest will parse the JSON and use both the `username` and `password` from the script. For example, the script's stdout might be `{"username": "myuser", "password": "mypassword"}`.
-2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password and the `username` from the `harvest.yml` file. For example, the script's stdout might be `mypassword`.
+1. **YAML format:** If the script outputs a YAML object with `username` and `password` keys, Harvest will parse the YAML and use both the `username` and `password` from the script. For example, the script's stdout might be:
+   ```yaml
+   username: myuser
+   password: mypassword
+   ```
+   If only the `password` is provided, Harvest will use the `username` from the `harvest.yml` file, if available.
+
+2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available. For example, the script's stdout might be:
+   ```
+   mypassword
+   ```
 
 If the script doesn't finish within the specified `timeout`, Harvest will terminate the script and any spawned processes.
 
 Credential scripts are defined under the `credentials_script` section within `Pollers` in your `harvest.yml`. Below are the options for the `credentials_script` section:
 
-| parameter | type                    | description                                                                                                                                                                 | default |
-|-----------|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| path      | string                  | Absolute path to the script that takes two arguments: `addr` and `username`, in that order                                                                                  |         |
-| schedule  | go duration or `always` | Schedule for calling the authentication script. If set to `always`, the script is called every time a password is requested; otherwise, the previously cached value is used | 24h     |
-| timeout   | go duration             | Maximum time Harvest will wait for the script to finish before terminating it and its descendants                                                                           | 10s     |
+| parameter | type                    | description                                                                                                                                                                  | default |
+|-----------|-------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| path      | string                  | Absolute path to the script that takes two arguments: `addr` and `username`, in that order.                                                                                  |         |
+| schedule  | go duration or `always` | Schedule for calling the authentication script. If set to `always`, the script is called every time a password is requested; otherwise, the previously cached value is used. | 24h     |
+| timeout   | go duration             | Maximum time Harvest will wait for the script to finish before terminating it and its descendants.                                                                           | 10s     |
 
 ### Example
+
+Here is an example of how to configure the `credentials_script` in the `harvest.yml` file:
 
 ```yaml
 Pollers:
   ontap1:
     datacenter: rtp
     addr: 10.1.1.1
+    username: admin # Optional: if not provided, the script must return the username
     collectors:
       - Rest
       - RestPerf
     credentials_script:
-      path: ./get_pass
+      path: ./get_credentials
       schedule: 3h
       timeout: 10s
+```
+
+In this example, the `get_credentials` script should be located in the same directory as the `harvest.yml` file and should be executable. It should output the credentials in either YAML or plain text format. Here are two example scripts:
+
+`get_credentials` that outputs YAML:
+```bash
+#!/bin/bash
+echo "username: myuser"
+echo "password: mypassword"
+```
+
+`get_credentials` that outputs only the password in plain text:
+```bash
+#!/bin/bash
+echo "mypassword"
 ```
 
 ### Troubleshooting

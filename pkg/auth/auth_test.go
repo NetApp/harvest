@@ -439,7 +439,7 @@ Pollers:
     ca_cert: testdata/ca.pem`,
 		},
 		{
-			name:       "credentials_script returns username and password in JSON",
+			name:       "credentials_script returns username and password in YAML",
 			pollerName: "test",
 			want: PollerAuth{
 				Username:            "script-username",
@@ -451,7 +451,7 @@ Pollers:
   test:
     addr: a.b.c
     credentials_script:
-      path: testdata/get_credentials_json
+      path: testdata/get_credentials_yaml
 `,
 		},
 
@@ -472,9 +472,25 @@ Pollers:
       path: testdata/get_password_plain
 `,
 		},
-
 		{
-			name:       "credentials_script returns username and password in JSON, no username in poller config",
+			name:       "credentials_script returns only password in YAML format",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "username", // Fallback to the username provided in the poller configuration
+				Password:            "script-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    username: username
+    credentials_script:
+      path: testdata/get_credentials_yaml_password
+`,
+		},
+		{
+			name:       "credentials_script returns username and password in YAML, no username in poller config",
 			pollerName: "test",
 			want: PollerAuth{
 				Username:            "script-username",
@@ -486,7 +502,7 @@ Pollers:
   test:
     addr: a.b.c
     credentials_script:
-      path: testdata/get_credentials_json
+      path: testdata/get_credentials_yaml
 `,
 		},
 
