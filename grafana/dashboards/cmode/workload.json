@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1714655986006,
+  "iteration": 1714725409357,
   "links": [
     {
       "asDropdown": true,
@@ -1718,7 +1718,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
+          "description": "The Adaptive QoS Utilized Throughput (%) panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1844,16 +1844,16 @@
                 },
                 "properties": [
                   {
-                    "id": "unit",
-                    "value": "percent"
-                  },
-                  {
                     "id": "custom.displayMode",
                     "value": "gradient-gauge"
                   },
                   {
                     "id": "max",
                     "value": 100
+                  },
+                  {
+                    "id": "unit",
+                    "value": "percent"
                   },
                   {
                     "id": "decimals",
@@ -1893,7 +1893,7 @@
             "x": 0,
             "y": 70
           },
-          "id": 231,
+          "id": 235,
           "options": {
             "showHeader": true,
             "sortBy": [
@@ -1981,27 +1981,16 @@
                   "workload 1": 3
                 },
                 "renameByName": {
-                  "Value": "Used %",
                   "Value #A": "Used %",
                   "Value #B": "IOPs",
                   "Value #C": "Max IOPs",
-                  "cluster": "Cluster",
                   "cluster 1": "Cluster",
-                  "datacenter": "Datacenter",
                   "datacenter 1": "Datacenter",
-                  "file": "File",
                   "file 1": "File",
-                  "lun": "Lun",
                   "lun 1": "Lun",
-                  "max_throughput_iops": "Max IOPS",
-                  "peak_iops": "Peak IOPS/TB",
-                  "policy_group": "Policy",
                   "policy_group 1": "Policy",
-                  "svm": "SVM",
                   "svm 1": "SVM",
-                  "volume": "Volume",
                   "volume 1": "Volume",
-                  "workload": "Workload",
                   "workload 1": "Workload"
                 }
               }
@@ -2011,7 +2000,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the current usage of IOPs as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current IOPs usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
+          "description": "The Adaptive QoS Utilized Throughput (%) panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2082,7 +2071,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "MBs"
+                    "value": "Bps"
                   }
                 ]
               }
@@ -2094,7 +2083,7 @@
             "x": 0,
             "y": 79
           },
-          "id": 233,
+          "id": 237,
           "options": {
             "showHeader": true,
             "sortBy": [
@@ -2174,37 +2163,24 @@
                   "Value #C": 10,
                   "cluster 1": 1,
                   "datacenter 1": 0,
-                  "file 1": 2,
-                  "lun 1": 3,
+                  "file 1": 6,
+                  "lun 1": 7,
                   "policy_group 1": 4,
-                  "svm 1": 5,
-                  "volume 1": 6,
-                  "workload 1": 7
+                  "svm 1": 2,
+                  "volume 1": 5,
+                  "workload 1": 3
                 },
                 "renameByName": {
-                  "Value": "Used %",
                   "Value #A": "Used %",
                   "Value #B": "Throughput",
                   "Value #C": "Max Throughput",
-                  "block_size": "Block Size",
-                  "cluster": "Cluster",
                   "cluster 1": "Cluster",
-                  "datacenter": "Datacenter",
                   "datacenter 1": "Datacenter",
-                  "file": "File",
                   "file 1": "File",
-                  "lun": "Lun",
                   "lun 1": "Lun",
-                  "max_throughput_iops": "Max IOPS",
-                  "max_throughput_mbps": "Max Throughput",
-                  "peak_iops": "Peak IOPS/TB",
-                  "policy_group": "Policy",
-                  "policy_group 1": "Policy Group",
-                  "svm": "SVM",
+                  "policy_group 1": "Policy",
                   "svm 1": "SVM",
-                  "volume": "Volume",
                   "volume 1": "Volume",
-                  "workload": "Workload",
                   "workload 1": "Workload"
                 }
               }
