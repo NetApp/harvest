@@ -438,6 +438,108 @@ Pollers:
     password: pass
     ca_cert: testdata/ca.pem`,
 		},
+		{
+			name:       "credentials_script returns username and password in YAML",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "script-username",
+				Password:            "script-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_credentials_yaml
+`,
+		},
+
+		{
+			name:       "credentials_script returns only password in plain text",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "username", // Fallback to the username provided in the poller configuration
+				Password:            "plain-text-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    username: username
+    credentials_script:
+      path: testdata/get_password_plain
+`,
+		},
+		{
+			name:       "credentials_script returns only password in YAML format",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "username", // Fallback to the username provided in the poller configuration
+				Password:            "password #\"`!@#$%^&*()-=[]|:'<>/ password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    username: username
+    credentials_script:
+      path: testdata/get_credentials_yaml_password
+`,
+		},
+		{
+			name:       "credentials_script returns username and password in YAML, no username in poller config",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "script-username",
+				Password:            "script-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_credentials_yaml
+`,
+		},
+
+		{
+			name:       "credentials_script returns only password in plain text, no username in poller config",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "", // No username provided, so it should be empty
+				Password:            "plain-text-password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_password_plain
+`,
+		},
+
+		{
+			name:       "credentials_script returns username and password in YAML via Heredoc",
+			pollerName: "test",
+			want: PollerAuth{
+				Username:            "myuser",
+				Password:            "my # password",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    username: username
+    credentials_script:
+      path: testdata/get_credentials_yaml_heredoc
+`,
+		},
 	}
 
 	hostname, err := os.Hostname()
