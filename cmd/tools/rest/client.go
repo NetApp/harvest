@@ -127,7 +127,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.request.Header.Set("accept", "application/json")
+	c.request.Header.Set("Accept", "application/json")
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
 		return nil, err

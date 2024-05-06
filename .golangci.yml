@@ -4,6 +4,7 @@ linters:
     - asasalint
     - bidichk
     - bodyclose
+    - canonicalheader
     - contextcheck
     - copyloopvar
     - dogsled
