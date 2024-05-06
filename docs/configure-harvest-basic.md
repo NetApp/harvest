@@ -269,21 +269,22 @@ Pollers:
 
 The `credentials_script` feature allows you to fetch authentication information via an external script. This can be configured in the `Pollers` section of your `harvest.yml` file, as shown in the example below.
 
-At runtime, Harvest will invoke the script specified in the `credentials_script` `path` section. Harvest will call the script with two arguments, where the second argument is optional: `./script $addr [$username]`.
+At runtime, Harvest will invoke the script specified in the `credentials_script` `path` section. Harvest will call the script with one or two arguments depending on how your poller is configured in the `harvest.yml` file. The script will be called like this: `./script $addr` or `./script $addr $username`.
 
-- The first argument (`$addr`) is the address of the cluster taken from the `addr` field under the `Pollers` section of your `harvest.yml` file.
-- The second argument (`$username`) is the username for the cluster taken from the `username` field under the `Pollers` section of your `harvest.yml` file, if provided.
+- The first argument `$addr` is the address of the cluster taken from the `addr` field under the `Pollers` section of your `harvest.yml` file.
+- The second argument `$username` is the username for the cluster taken from the `username` field under the `Pollers` section of your `harvest.yml` file. If your `harvest.yml` does not include a username, nothing will be passed.
 
-The script should return the credentials through its standard output (stdout). Harvest supports two output formats from the script:
+The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:
 
-1. **YAML format:** If the script outputs a YAML object with `username` and `password` keys, Harvest will parse the YAML and use both the `username` and `password` from the script. For example, the script's stdout might be:
+1. **YAML format:** If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
    ```yaml
    username: myuser
    password: mypassword
    ```
-   If only the `password` is provided, Harvest will use the `username` from the `harvest.yml` file, if available.
+   If only the `password` is provided, Harvest will use the `username` from the `harvest.yml` file, if available. If your username or password contains spaces, `#`, or other characters with special meaning in YAML, make sure you quote the value like so:
+   `password: "my password with spaces"`
 
-2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available. For example, the script's stdout might be:
+2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the `harvest.yml` and `mypassword` for the poller's credentials.
    ```
    mypassword
    ```
@@ -322,8 +323,10 @@ In this example, the `get_credentials` script should be located in the same dire
 `get_credentials` that outputs YAML:
 ```bash
 #!/bin/bash
-echo "username: myuser"
-echo "password: mypassword"
+cat << EOF
+username: myuser
+password: mypassword
+EOF
 ```
 
 `get_credentials` that outputs only the password in plain text:
