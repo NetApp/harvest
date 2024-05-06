@@ -201,7 +201,7 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 		return response, nil
 	}
 
-	// If JSON parsing fails or the data is empty,
+	// If YAML parsing fails or the data is empty,
 	// assume the output is the data (password or certificate) in plain text for backward compatibility.
 	response.Data = strings.TrimSpace(stdout.String())
 	return response, nil
