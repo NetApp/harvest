@@ -2378,18 +2378,30 @@ See <a href="https://github.com/NetApp/harvest/discussions/884">#884</a> for exa
 <span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
 </code></pre></div>
 <h2 id="credentials-script">Credentials Script<a class="headerlink" href="#credentials-script" title="Permanent link">&para;</a></h2>
-<p>You can fetch authentication information via an external script by using the <code>credentials_script</code> section in
-the <code>Pollers</code> section of your <code>harvest.yml</code> as shown in the <a href="#example">example below</a>. </p>
-<p>At runtime, Harvest will invoke the script referenced in the <code>credentials_script</code> <code>path</code> section.
-Harvest will call the script with two arguments like so: <code>./script $addr $username</code>. </p>
+<p>The <code>credentials_script</code> feature allows you to fetch authentication information via an external script. This can be configured in the <code>Pollers</code> section of your <code>harvest.yml</code> file, as shown in the example below.</p>
+<p>At runtime, Harvest will invoke the script specified in the <code>credentials_script</code> <code>path</code> section. Harvest will call the script with one or two arguments depending on how your poller is configured in the <code>harvest.yml</code> file. The script will be called like this: <code>./script $addr</code> or <code>./script $addr $username</code>.</p>
 <ul>
-<li>The first argument is the address of the cluster taken from your <code>harvest.yaml</code> file, section <code>Pollers addr</code></li>
-<li>The second argument is the username of the cluster taken from your <code>harvest.yaml</code> file, section <code>Pollers username</code></li>
+<li>The first argument <code>$addr</code> is the address of the cluster taken from the <code>addr</code> field under the <code>Pollers</code> section of your <code>harvest.yml</code> file.</li>
+<li>The second argument <code>$username</code> is the username for the cluster taken from the <code>username</code> field under the <code>Pollers</code> section of your <code>harvest.yml</code> file. If your <code>harvest.yml</code> does not include a username, nothing will be passed.</li>
 </ul>
-<p>The script should use the two arguments to look up and return the password via the script's <code>standard out</code>.
-If the script doesn't finish within the specified <code>timeout</code>, Harvest will kill the script and any spawned processes.</p>
-<p>Credential scripts are defined in your <code>harvest.yml</code> under the <code>Pollers</code> <code>credentials_script</code> section. 
-Below are the options for the <code>credentials_script</code> section  </p>
+<p>The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:</p>
+<ol>
+<li>
+<p><strong>YAML format:</strong> If the script outputs a YAML object with <code>username</code> and <code>password</code> keys, Harvest will use both the <code>username</code> and <code>password</code> from the output. For example, if the script writes the following, Harvest will use <code>myuser</code> and <code>mypassword</code> for the poller's credentials.
+   <div class="highlight"><pre><span></span><code><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myuser</span>
+<span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypassword</span>
+</code></pre></div>
+   If only the <code>password</code> is provided, Harvest will use the <code>username</code> from the <code>harvest.yml</code> file, if available. If your username or password contains spaces, <code>#</code>, or other characters with special meaning in YAML, make sure you quote the value like so:
+   <code>password: "my password with spaces"</code></p>
+</li>
+<li>
+<p><strong>Plain text format:</strong> If the script outputs plain text, Harvest will use the output as the password. The <code>username</code> will be taken from the <code>harvest.yml</code> file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the <code>harvest.yml</code> and <code>mypassword</code> for the poller's credentials.
+   <div class="highlight"><pre><span></span><code>mypassword
+</code></pre></div></p>
+</li>
+</ol>
+<p>If the script doesn't finish within the specified <code>timeout</code>, Harvest will terminate the script and any spawned processes.</p>
+<p>Credential scripts are defined under the <code>credentials_script</code> section within <code>Pollers</code> in your <code>harvest.yml</code>. Below are the options for the <code>credentials_script</code> section:</p>
 <table>
 <thead>
 <tr>
@@ -2403,36 +2415,50 @@ Below are the options for the <code>credentials_script</code> section  </p>
 <tr>
 <td>path</td>
 <td>string</td>
-<td>absolute path to script that takes two arguments: addr and username, in that order</td>
+<td>Absolute path to the script that takes two arguments: <code>addr</code> and <code>username</code>, in that order.</td>
 <td></td>
 </tr>
 <tr>
 <td>schedule</td>
 <td>go duration or <code>always</code></td>
-<td>schedule used to call the authentication script. If the value is <code>always</code>, the script will be called everytime a password is requested, otherwise use the earlier cached value</td>
+<td>Schedule for calling the authentication script. If set to <code>always</code>, the script is called every time a password is requested; otherwise, the previously cached value is used.</td>
 <td>24h</td>
 </tr>
 <tr>
 <td>timeout</td>
 <td>go duration</td>
-<td>amount of time Harvest will wait for the script to finish before killing it and descendents</td>
+<td>Maximum time Harvest will wait for the script to finish before terminating it and its descendants.</td>
 <td>10s</td>
 </tr>
 </tbody>
 </table>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<p>Here is an example of how to configure the <code>credentials_script</code> in the <code>harvest.yml</code> file:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">ontap1</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rtp</span>
-<span class="w">        </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.1.1.1</span>
-<span class="w">        </span><span class="nt">collectors</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rest</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RestPerf</span>
-<span class="w">        </span><span class="nt">credentials_script</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./get_pass</span>
-<span class="w">            </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3h</span>
-<span class="w">            </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">  </span><span class="nt">ontap1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rtp</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.1.1.1</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span><span class="w"> </span><span class="c1"># Optional: if not provided, the script must return the username</span>
+<span class="w">    </span><span class="nt">collectors</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rest</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RestPerf</span>
+<span class="w">    </span><span class="nt">credentials_script</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./get_credentials</span>
+<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3h</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
 </code></pre></div>
+<p>In this example, the <code>get_credentials</code> script should be located in the same directory as the <code>harvest.yml</code> file and should be executable. It should output the credentials in either YAML or plain text format. Here are two example scripts:</p>
+<p><code>get_credentials</code> that outputs YAML:
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">username: myuser</span>
+<span class="s">password: mypassword</span>
+<span class="s">EOF</span>
+</code></pre></div></p>
+<p><code>get_credentials</code> that outputs only the password in plain text:
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;mypassword&quot;</span>
+</code></pre></div></p>
 <h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Make sure your script is executable </li>
