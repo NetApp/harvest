@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1714734444899,
+  "iteration": 1714973870447,
   "links": [
     {
       "asDropdown": true,
@@ -1954,7 +1954,7 @@
               "id": "filterFieldsByName",
               "options": {
                 "include": {
-                  "pattern": "^(?!.* \\d+$).*$"
+                  "pattern": ""
                 }
               }
             },
@@ -1963,14 +1963,34 @@
               "options": {
                 "excludeByName": {
                   "Time": true,
+                  "Time 2": true,
+                  "Time 3": true,
                   "Value #C": false,
                   "__name__": true,
                   "class": true,
+                  "cluster 2": true,
+                  "cluster 3": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "file 2": true,
+                  "file 3": true,
                   "instance": true,
                   "is_adaptive": true,
                   "job": true,
+                  "lun 2": true,
+                  "lun 3": true,
+                  "policy_group 2": true,
+                  "policy_group 3": true,
+                  "svm 2": true,
+                  "svm 3": true,
                   "unique_id": true,
-                  "wid": true
+                  "volume 2": true,
+                  "volume 3": true,
+                  "wid": true,
+                  "wid 2": true,
+                  "wid 3": true,
+                  "workload 2": true,
+                  "workload 3": true
                 },
                 "indexByName": {
                   "Time": 1,
@@ -2157,7 +2177,7 @@
               "id": "filterFieldsByName",
               "options": {
                 "include": {
-                  "pattern": "^(?!.* \\d+$).*$"
+                  "pattern": ""
                 }
               }
             },
@@ -2166,13 +2186,33 @@
               "options": {
                 "excludeByName": {
                   "Time": true,
+                  "Time 2": true,
+                  "Time 3": true,
                   "__name__": true,
                   "class": true,
+                  "cluster 2": true,
+                  "cluster 3": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "file 2": true,
+                  "file 3": true,
                   "instance": true,
                   "is_adaptive": true,
                   "job": true,
+                  "lun 2": true,
+                  "lun 3": true,
+                  "policy_group 2": true,
+                  "policy_group 3": true,
+                  "svm 2": true,
+                  "svm 3": true,
                   "unique_id": true,
-                  "wid": true
+                  "volume 2": true,
+                  "volume 3": true,
+                  "wid": true,
+                  "wid 2": true,
+                  "wid 3": true,
+                  "workload 2": true,
+                  "workload 3": true
                 },
                 "indexByName": {
                   "Time": 1,
@@ -2285,7 +2325,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 11
+            "y": 61
           },
           "id": 172,
           "options": {
@@ -2374,7 +2414,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 11
+            "y": 61
           },
           "id": 176,
           "options": {
@@ -2463,7 +2503,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 21
+            "y": 71
           },
           "id": 177,
           "options": {
@@ -2552,7 +2592,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 21
+            "y": 71
           },
           "id": 178,
           "options": {
@@ -2641,7 +2681,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 81
           },
           "id": 179,
           "options": {
@@ -2730,7 +2770,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 81
           },
           "id": 180,
           "options": {
@@ -2819,7 +2859,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 41
+            "y": 91
           },
           "id": 181,
           "options": {
@@ -2908,7 +2948,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 41
+            "y": 91
           },
           "id": 182,
           "options": {
@@ -2997,7 +3037,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 51
+            "y": 101
           },
           "id": 183,
           "options": {
@@ -3086,7 +3126,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 51
+            "y": 101
           },
           "id": 184,
           "options": {
