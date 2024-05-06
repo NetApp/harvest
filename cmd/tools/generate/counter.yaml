@@ -46,7 +46,7 @@ counters:
     Description: Total Physical Used
 
   - Name: aggr_volume_count
-    Description: Number of volumes in the aggregate. This includes flexvols + flexgroup constituents.
+    Description: The aggregate's volume count, which includes both FlexVols and FlexGroup constituents.
 
   - Name: cluster_new_status
     Description: It is an indicator of the overall health status of the cluster, with
