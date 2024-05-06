@@ -587,7 +587,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows total power consumed by Node, Shelf and both.",
       "fieldConfig": {
         "defaults": {
           "color": {

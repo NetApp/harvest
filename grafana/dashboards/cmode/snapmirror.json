@@ -1125,6 +1125,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows count of snapmirror relationships by destination node.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1967,6 +1968,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows count of snapmirror relationships by source SVM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2062,7 +2064,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows count of snapmirror relationships by destination SVM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2407,7 +2409,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"volume\"}) * on(source_volume,source_vserver,source_cluster) group_left() group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"storage_vm\"} )) or vector (0)",
+              "expr": "count(group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"volume\"}) * on (source_volume,source_vserver,source_cluster) group_left() group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"storage_vm\"} )) or vector (0)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3440,7 +3442,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows volume relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3558,7 +3560,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows volume relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3662,6 +3664,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows volume relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3843,6 +3846,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows volume relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {

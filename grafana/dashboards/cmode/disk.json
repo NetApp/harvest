@@ -2229,7 +2229,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of number of disk kilobytes (KB) read/written per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2327,7 +2327,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of bytes written/read through a host adapter.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2425,7 +2425,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of array of counts of different types of Consistency Points (CP) and average latency in microseconds for the WAFL filesystem to process write request to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2564,7 +2564,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of external cache hit rate and estimated number of disk reads per second replaced by cache.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2694,7 +2694,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of percentage of HDD read operations replace by SSD and number of HDD read operations replaced by SSD reads per second.",
           "fieldConfig": {
             "defaults": {
               "color": {

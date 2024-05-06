@@ -1490,7 +1490,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows detail of Percentage saved by compacting the data and Percentage of space saved by storage efficiency.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1681,7 +1681,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows detail of Number of user-visible files used in the referenced file system and Maximum number of user-visible files that this referenced file system can currently hold.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1777,7 +1777,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows detail of number of files that can currently be stored on disk for system metadata files and number of files that can currently be stored on disk for user-visible files.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1873,7 +1873,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows detail of space used by snapshot copies and available space for Snapshot copies in bytes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2247,7 +2247,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows detail of total files allowed in snapshot copies and total files created in snapshot copies.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2344,7 +2344,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows detail of files in use by snapshot copies, the largest value to which the maxfiles-available parameter can be increased by reconfiguration, on the referenced file system and maximum files available for snapshot copies.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3422,7 +3422,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of percentage of HDD read operations replace by SSD and number of HDD read operations replaced by SSD reads per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3559,7 +3559,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of average of RAID I/O latency on read hit and average read miss latency.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3657,7 +3657,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of total read/write/total cached SSD blocks.",
           "fieldConfig": {
             "defaults": {
               "color": {

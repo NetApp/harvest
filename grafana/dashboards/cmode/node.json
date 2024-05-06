@@ -2096,7 +2096,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of average latency in microseconds for the WAFL filesystem to process read/write/other request to the volume and aggregated to node level.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2197,7 +2197,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of bytes read/written per second and aggregated at node level.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2297,7 +2297,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of Number of read/write/other operations per second from the volume and aggregated at node level.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2403,7 +2403,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of system utilization based on cpu busy, cpu domain busy, disk busy and array of percentage time spent in different phases of Consistency Point (CP).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2646,7 +2646,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of CIFS/NFS/FCP/ISCSI/NVMF operation per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2988,6 +2988,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows detail of rate of NFSv3 total/write/read data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3103,7 +3104,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows number of NFS total/other/write/read operations per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3232,6 +3233,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows detail of average latency of read/write procedure requests.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3327,6 +3329,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows detail of rate of NFSv3 read/write data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3422,7 +3425,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of total observed NFSv3 total/read/write operations per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3760,7 +3763,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows CIFS connection detail.",
           "fieldConfig": {
             "defaults": {
               "color": {
