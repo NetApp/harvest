@@ -1267,7 +1267,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows error detail of disk, shelf, node, network port, license compliance, HA down and sensor failure alerts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1387,7 +1387,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows warning detail of disk, shelf, health monitor, lif, volume move and volume anti-ransomware alerts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2595,7 +2595,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of power consumed by a node/shelf/total in Watts.",
           "fieldConfig": {
             "defaults": {
               "color": {

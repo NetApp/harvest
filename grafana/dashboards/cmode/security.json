@@ -117,7 +117,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percentage of clusters which are compliant.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -279,7 +279,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percentage of SVMs which are compliant.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -442,7 +442,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percentage of volumes which are encrypted.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -638,7 +638,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Percentage of SVMs which are anti-ransomware enabled.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -731,7 +731,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows cluster compliant detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -915,7 +915,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows SVM compliant detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1083,7 +1083,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows volume encryption detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1181,7 +1181,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector.",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector. \n\nThis panel shows volume anti ransomware detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1279,7 +1279,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows SVM anti ransomware detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1492,7 +1492,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "Number of AD & LDAP authentication.",
       "fieldConfig": {
         "defaults": {
           "color": {

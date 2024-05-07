@@ -3933,6 +3933,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panels shows average read/write latency in microseconds for all operations on the LUN.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4027,6 +4028,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows Read/Write bytes data.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4121,6 +4123,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows number of read/write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4216,6 +4219,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows detail of I/O to or from a LUN which is not owned by the storage system handling the I/O and number of operations received by a storage system that does not own the LUN targeted by the operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4323,6 +4327,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows detail of number of compare and write requests, number of unmap command requests, number of write same command requests, number of write same commands requests with unmap bit set and total number of xcopy operations on the LUN.",
           "fieldConfig": {
             "defaults": {
               "color": {

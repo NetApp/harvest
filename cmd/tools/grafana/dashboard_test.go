@@ -1464,17 +1464,19 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 	ignoreList := []string{
 		// These are from fsa
 		"Volume Access ($Activity) History", "Volume Access ($Activity) History By Percent", "Volume Modify ($Activity) History", "Volume Modify ($Activity) History By Percent",
-		// These are from snapmirror
-		"Destination Relationships per Node", "Source Relationships per SVM", "Destination Relationships per SVM",
 		// This is from workload
 		"Service Latency by Resources",
 		// These are from svm
-		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap",
-		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap",
-		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap",
+		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap", "NFSv3 Latency by Op Type", "NFSv3 IOPs per Type",
+		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap", "NFSv4 Latency by Op Type", "NFSv4 IOPs per Type",
+		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap", "NFSv4.1 Latency by Op Type", "NFSv4.1 IOPs per Type",
+		"NFSv4.2 Latency by Op Type", "NFSv4.2 IOPs per Type", "SVM NVMe/FC Throughput", "Copy Manager Requests",
 		// This is from volume
-		"Top $TopResources Volumes by Inode Files Used Percentage", "Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail",
-		"Volume Latency by Op Type", "Volume IOPs per Type",
+		"Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail", "Volume Latency by Op Type", "Volume IOPs per Type",
+		// This is from lun
+		"IO Size",
+		// This is from nfs4storePool
+		"Allocations over 50%", "All nodes with 1% or more allocations in $Datacenter",
 	}
 
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
@@ -1494,9 +1496,10 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		if description == "" {
 			if len(targetsSlice) == 1 {
 				expr := targetsSlice[0].Get("expr").String()
-				if strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on") {
+				if strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, " on ") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
-					// t.Errorf(`dashboard=%s panel="%s" has arithmetic operations`, dashPath, value.Get("title").String())
+					// *count++
+					// t.Errorf(`dashboard=%s panel="%s" has arithmetic operations %d`, dashPath, value.Get("title").String(), *count)
 					fmt.Printf(`dashboard=%s panel="%s" has arithmetic operations \n`, dashPath, title)
 				} else {
 					*count++
@@ -1505,9 +1508,11 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 			} else {
 				// This indicates table/timeseries with more than 1 expression, After deciding next steps, this will be uncommented.
 				if panelType == "table" {
-					fmt.Printf(`dashboard=%s panel="%s" has table with multiple expression \n`, dashPath, title)
+					*count++
+					t.Errorf(`dashboard=%s panel="%s" has table with multiple expression %d`, dashPath, title, *count)
 				} else {
-					fmt.Printf(`dashboard=%s panel="%s" has many expressions \n`, dashPath, title)
+					*count++
+					t.Errorf(`dashboard=%s panel="%s" has many expressions %d`, dashPath, title, *count)
 				}
 			}
 		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
