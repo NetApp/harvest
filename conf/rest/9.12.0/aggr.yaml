@@ -57,7 +57,7 @@ counters:
   - space.snapshot.total                                           => snapshot_size_total
   - space.snapshot.used                                            => snapshot_size_used
   - space.snapshot.used_percent                                    => snapshot_used_percent
-  - volume_count                                                   => volume_count_flexvol
+  - volume_count                                                   => volume_count
   - hidden_fields:
       - inode_attributes
       - block_storage

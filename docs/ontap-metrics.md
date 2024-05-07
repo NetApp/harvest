@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Apr-24
+Creation Date : 2024-Apr-29
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -924,9 +924,9 @@ Total Physical Used
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-physical-used` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
 
-### aggr_volume_count_flexvol
+### aggr_volume_count
 
-Number of flexvol volumes in the aggregate.
+The aggregate's volume count, which includes both FlexVols and FlexGroup constituents.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
