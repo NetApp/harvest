@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1714973870447,
+  "iteration": 1715178744330,
   "links": [
     {
       "asDropdown": true,
@@ -1093,7 +1093,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSIOPsPercent\"} / on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "expr": "clamp_max(\n  (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}\n      / on(datacenter,cluster,policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    ) * 100\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,policy_group)\n    group_left\n    avg_over_time(\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )[3h:] @ end()\n    )\n  )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
@@ -1185,7 +1185,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$TopFixedQOSMBsPercent\"} / (1000 * 1000)) / on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")) * 100",
+              "expr": "clamp_max(\n  (\n    (\n      (\n        qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100 / (1000 * 1000)\n      )\n      / on(datacenter,cluster,policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,policy_group)\n    group_left\n    avg_over_time(\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )[3h:] @ end()\n    )\n  )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -6538,52 +6538,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFixedQOSIOPsPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time((qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFixedQOSMBsPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time((qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\"))[$__range:])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*workload=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
