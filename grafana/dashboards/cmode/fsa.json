@@ -83,7 +83,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705057781816,
+  "iteration": 1715087315407,
   "links": [
     {
       "asDropdown": true,
@@ -670,7 +670,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources,volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
+          "expr": "volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\"}[3h] @ end()))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -679,7 +679,7 @@
         },
         {
           "exemplar": false,
-          "expr": "topk($TopResources,volume_analytics_dir_file_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
+          "expr": "volume_analytics_dir_file_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\"}[3h] @ end()))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -689,7 +689,7 @@
         },
         {
           "exemplar": false,
-          "expr": "topk($TopResources,volume_analytics_dir_subdir_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",volume=~\"$Volume\",dir_name=~\"$TopDirUsed\"})",
+          "expr": "volume_analytics_dir_subdir_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\"}[3h] @ end()))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1644,29 +1644,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\",}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "TopDirUsed",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",dir_name!=\".\",}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*dir_name=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -1690,5 +1667,5 @@
   "timezone": "",
   "title": "ONTAP: File System Analytics (FSA)",
   "uid": "",
-  "version": 4
+  "version": 5
 }

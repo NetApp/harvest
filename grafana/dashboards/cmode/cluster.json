@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705052013312,
+  "iteration": 1715071877072,
   "links": [
     {
       "asDropdown": true,
@@ -646,7 +646,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node))",
+          "expr": "sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -745,7 +745,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalOps\"}) by (node))",
+          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1109,7 +1109,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeAvgLatency\"}) by (node))",
+          "expr": "sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1201,7 +1201,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$TopVolumeTotalData\"}) by (node))",
+          "expr": "sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1294,7 +1294,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum by (node)(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node=~\"$TopVolumeTotalOps\"}))",
+          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -2607,7 +2607,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 36
       },
       "id": 97,
       "panels": [
@@ -2671,7 +2671,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 64
+            "y": 37
           },
           "id": 106,
           "options": {
@@ -2763,7 +2763,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 64
+            "y": 37
           },
           "id": 107,
           "options": {
@@ -2855,7 +2855,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 64
+            "y": 37
           },
           "id": 108,
           "options": {
@@ -2948,7 +2948,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 72
+            "y": 45
           },
           "id": 136,
           "options": {
@@ -3042,7 +3042,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 72
+            "y": 45
           },
           "id": 180,
           "options": {
@@ -3136,7 +3136,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 72
+            "y": 45
           },
           "id": 2,
           "options": {
@@ -3230,7 +3230,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 81
+            "y": 54
           },
           "id": 241,
           "options": {
@@ -3273,7 +3273,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 37
       },
       "id": 184,
       "panels": [
@@ -3302,7 +3302,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 91
+            "y": 64
           },
           "id": 188,
           "options": {
@@ -3358,7 +3358,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 91
+            "y": 64
           },
           "id": 189,
           "options": {
@@ -3414,7 +3414,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 91
+            "y": 64
           },
           "id": 187,
           "options": {
@@ -3500,7 +3500,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 95
+            "y": 68
           },
           "id": 195,
           "options": {
@@ -3584,7 +3584,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 95
+            "y": 68
           },
           "id": 192,
           "options": {
@@ -3668,7 +3668,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 103
+            "y": 76
           },
           "id": 193,
           "options": {
@@ -3752,7 +3752,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 103
+            "y": 76
           },
           "id": 196,
           "options": {
@@ -3836,7 +3836,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 111
+            "y": 84
           },
           "id": 191,
           "options": {
@@ -3920,7 +3920,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 111
+            "y": 84
           },
           "id": 194,
           "options": {
@@ -3960,7 +3960,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 38
       },
       "id": 214,
       "panels": [
@@ -4021,7 +4021,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 38
+            "y": 39
           },
           "id": 216,
           "options": {
@@ -4107,7 +4107,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 38
+            "y": 39
           },
           "id": 218,
           "options": {
@@ -4127,7 +4127,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_read_data{cluster=~\"$Cluster\", svm=~\"$TopSVMs\"}+svm_vol_write_data{cluster=~\"$Cluster\",svm=~\"$TopSVMs\"}",
+              "expr": "(\n    svm_vol_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n    +\n    svm_vol_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n)\nand on(datacenter,cluster, svm)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n    + avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n  )\n)",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -4196,7 +4196,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 38
+            "y": 39
           },
           "id": 219,
           "options": {
@@ -4407,98 +4407,6 @@
         "type": "custom"
       },
       {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopSVMs",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])+avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*svm=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeAvgLatency",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeTotalData",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", node!=\"\"}[3h]))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[3h]))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeTotalOps",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, sum by (node) (avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node!=\"\"}[3h]))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*node=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
         "current": {
           "selected": false,
           "text": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
@@ -4542,5 +4450,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "",
-  "version": 22
+  "version": 4
 }
