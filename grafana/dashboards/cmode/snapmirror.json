@@ -4335,7 +4335,7 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[3h])))",
         "description": null,
         "error": null,
         "hide": 2,
@@ -4345,7 +4345,7 @@
         "name": "TopTransferDataById",
         "options": [],
         "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[${__range}])))",
+          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[3h])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,

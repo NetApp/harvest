@@ -236,6 +236,9 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"volume_space_logical_used":       {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 		"qos_ops":                         {"iops", "percent"},
 		"qos_total_data":                  {"Bps", "percent"},
+		"aggr_space_used":                 {"bytes", "percent"},
+		"volume_size_used":                {"bytes", "percent"},
+		"volume_num_compress_fail":        {"short", "percent"},
 	}
 
 	// Normalize rates to their base unit
