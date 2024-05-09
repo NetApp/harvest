@@ -177,7 +177,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		err = q.handlingHistoricalMetrics(result, data, cluster, &quotaCount, &numMetrics)
 	} else {
 		// Populate metrics with quota prefix and current labels
-		err = q.handlingQuotaMetrics(result, cluster, &quotaCount, &numMetrics)
+		err = q.handlingQuotaMetrics(result, &quotaCount, &numMetrics)
 	}
 
 	if err != nil {
@@ -289,8 +289,8 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 	return nil
 }
 
-func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quotaCount *int, numMetrics *int) error {
-	for quotaIndex, quota := range result {
+func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, numMetrics *int) error {
+	for _, quota := range result {
 		var tree string
 
 		if !quota.IsObject() {
@@ -313,7 +313,7 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 			// set -1 for unlimited
 			value := -1.0
 
-			quotaInstanceKey := strconv.Itoa(quotaIndex) + "." + attribute
+			quotaInstanceKey := vserver + "." + volume + "." + tree + "." + group + "." + uName + "." + attribute
 
 			quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 			if err != nil {
@@ -325,7 +325,6 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 			quotaInstance.SetLabel("qtree", tree)
 			quotaInstance.SetLabel("volume", volume)
 			quotaInstance.SetLabel("svm", vserver)
-			quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(quotaIndex))
 
 			if quotaType == "user" {
 				if uName != "" {
