@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1712576468739,
+  "iteration": 1715328794817,
   "links": [
     {
       "asDropdown": true,
@@ -1123,22 +1123,29 @@
           }
         },
         {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) 1$",
+            "renamePattern": "$1"
+          }
+        },
+        {
           "id": "filterFieldsByName",
           "options": {
             "include": {
               "names": [
-                "cluster 1",
-                "datacenter 1",
+                "cluster",
+                "datacenter",
                 "Value #A",
                 "Value #B",
                 "Value #C",
+                "bmc_firmware_version",
                 "cpu_firmware_release",
                 "healthy",
                 "location",
                 "model",
                 "vendor",
-                "version",
-                "bmc_firmware_version"
+                "version"
               ]
             }
           }
@@ -1146,15 +1153,28 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {},
+            "excludeByName": {
+              "cluster 2": true,
+              "cluster 3": true,
+              "cluster 4": true,
+              "datacenter 2": true,
+              "datacenter 3": true,
+              "datacenter 4": true
+            },
             "indexByName": {
               "Value #A": 2,
               "Value #B": 3,
               "Value #C": 4,
               "bmc_firmware_version": 10,
-              "cluster 1": 1,
+              "cluster": 1,
+              "cluster 2": 12,
+              "cluster 3": 14,
+              "cluster 4": 16,
               "cpu_firmware_release": 9,
-              "datacenter 1": 0,
+              "datacenter": 0,
+              "datacenter 2": 13,
+              "datacenter 3": 15,
+              "datacenter 4": 17,
               "healthy": 5,
               "location": 7,
               "model": 6,
@@ -1166,9 +1186,9 @@
               "Value #B": "Fan Status",
               "Value #C": "Power Status",
               "bmc_firmware_version": "BMC Firmware Version",
-              "cluster 1": "Cluster",
+              "cluster": "Cluster",
               "cpu_firmware_release": "CPU Firmware Version",
-              "datacenter 1": "Datacenter",
+              "datacenter": "Datacenter",
               "healthy": "Healthy",
               "location": "Location",
               "model": "Model",
@@ -5973,5 +5993,5 @@
   "timezone": "",
   "title": "ONTAP: Node",
   "uid": "",
-  "version": 12
+  "version": 13
 }
