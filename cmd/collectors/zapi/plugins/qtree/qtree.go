@@ -28,6 +28,7 @@ type Qtree struct {
 	query            string
 	quotaType        []string
 	historicalLabels bool // supports labels, metrics for 22.05
+	qtreeMetrics     bool // supports quota metrics with qtree prefix
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -62,6 +63,10 @@ func (q *Qtree) Init() error {
 	q.instanceKeys = make(map[string]string)
 	q.instanceLabels = make(map[string]map[string]string)
 	q.historicalLabels = false
+
+	if q.Params.HasChildS("qtreeMetrics") {
+		q.qtreeMetrics = true
+	}
 
 	if q.Params.HasChildS("historicalLabels") {
 		exportOptions := node.NewS("export_options")
@@ -224,12 +229,15 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		Str("batchSize", q.batchSize).
 		Msg("Collected")
 
-	// metrics with qtree prefix and quota prefix are available to support backward compatibility
-	qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	qtreePluginData.UUID = q.Parent + ".Qtree"
-	qtreePluginData.Object = "qtree"
-	qtreePluginData.Identifier = "qtree"
-	return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
+	if q.qtreeMetrics || q.historicalLabels {
+		// metrics with qtree prefix and quota prefix are available to support backward compatibility
+		qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+		qtreePluginData.UUID = q.Parent + ".Qtree"
+		qtreePluginData.Object = "qtree"
+		qtreePluginData.Identifier = "qtree"
+		return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
+	}
+	return []*matrix.Matrix{q.data}, q.client.Metadata, nil
 }
 
 func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
