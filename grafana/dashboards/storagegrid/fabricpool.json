@@ -1655,7 +1655,7 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_labels{cloud_stores!=\"\"}, cluster)",
@@ -1681,7 +1681,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_labels{cluster=~\"$Cluster\",cloud_stores!=\"\"}, aggr)",
@@ -1707,7 +1707,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(storagegrid_storage_utilization_data_bytes,cluster)",

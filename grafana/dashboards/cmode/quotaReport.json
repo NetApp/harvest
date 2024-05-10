@@ -707,7 +707,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
@@ -732,7 +732,7 @@
         "type": "query"
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
@@ -757,7 +757,7 @@
         "type": "query"
       },
       {
-        "allValue": "(.*)",
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",

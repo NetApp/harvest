@@ -612,6 +612,10 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 		"SVM":       true,
 		"Aggregate": true,
 	}
+	exceptionForAllValues := map[string]bool{
+		"cmode/volume.json":   true,
+		"cmode/security.json": true,
+	}
 
 	if exceptionToAll[ShortPath(path)] {
 		return
@@ -641,6 +645,16 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 			t.Errorf("variable=%s should have includeAll=true dashboard=%s path=templating.list[%s].includeAll",
 				varName, ShortPath(path), key.String())
 		}
+
+		allValues := value.Get("allValue").String()
+		if allValues != ".*" {
+			if exceptionForAllValues[ShortPath(path)] {
+				return true
+			}
+			t.Errorf("dashboard=%s variable=%s is not .*. Should be \"allValues\": .*,",
+				ShortPath(path), varName)
+		}
+
 		return true
 	})
 }
