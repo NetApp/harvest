@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -20,10 +21,11 @@ const PluginInvocationRate = 10
 
 type SnapMirror struct {
 	*plugin.AbstractPlugin
-	data           *matrix.Matrix
-	client         *rest.Client
-	currentVal     int
-	svmPeerDataMap map[string]Peer // [peer SVM alias name] -> [peer detail] map
+	data               *matrix.Matrix
+	client             *rest.Client
+	currentVal         int
+	svmPeerDataMap     map[string]Peer   // [peer SVM alias name] -> [peer detail] map
+	clusterPeerDataMap map[string]string // [peer Cluster alias name] -> [peer Cluster actual name] map
 }
 
 type Peer struct {
@@ -54,6 +56,7 @@ func (my *SnapMirror) Init() error {
 	}
 
 	my.svmPeerDataMap = make(map[string]Peer)
+	my.clusterPeerDataMap = make(map[string]string)
 
 	my.data = matrix.New(my.Parent+".SnapMirror", "snapmirror", "snapmirror")
 
@@ -97,7 +100,11 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 			if err := my.getSVMPeerData(cluster); err != nil {
 				return nil, nil, err
 			}
-			my.Logger.Debug().Msg("updated svm peer detail")
+			my.Logger.Debug().Msg("updated svm peer map detail")
+			if err := my.getClusterPeerData(); err != nil {
+				return nil, nil, err
+			}
+			my.Logger.Debug().Msg("updated cluster peer map detail")
 		}
 	}
 
@@ -139,8 +146,38 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	return nil
 }
 
+func (my *SnapMirror) getClusterPeerData() error {
+	// Clean clusterPeerDataMap map
+	my.clusterPeerDataMap = make(map[string]string)
+	fields := []string{"name", "remote.name"}
+	query := "api/cluster/peers"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Build()
+
+	result, err := rest.Fetch(my.client, href)
+	if err != nil {
+		my.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		return err
+	}
+
+	if len(result) == 0 {
+		my.Logger.Debug().Msg("No cluster peer found")
+		return nil
+	}
+
+	for _, peerData := range result {
+		localClusterName := peerData.Get("name").String()
+		actualClusterName := peerData.Get("remote.name").String()
+		my.clusterPeerDataMap[localClusterName] = actualClusterName
+	}
+	return nil
+}
+
 func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
-	var keys []string
+	var cgKeys []string
+	var svmDrKeys []string
 	cluster := data.GetGlobalLabels()["cluster"]
 
 	lastTransferSizeMetric := data.GetMetric("last_transfer_size")
@@ -154,14 +191,19 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 	for key, instance := range data.GetInstances() {
 		if instance.GetLabel("group_type") == "consistencygroup" {
-			keys = append(keys, key)
+			cgKeys = append(cgKeys, key)
+		} else if instance.GetLabel("group_type") == "vserver" {
+			svmDrKeys = append(svmDrKeys, key)
 		}
 		vserverName := instance.GetLabel("source_vserver")
 
 		// Update source_vserver in snapmirror (In case of inter-cluster SM - vserver name may differ)
 		if peerDetail, ok := my.svmPeerDataMap[vserverName]; ok {
 			instance.SetLabel("source_vserver", peerDetail.svm)
-			instance.SetLabel("source_cluster", peerDetail.cluster)
+			// Update source_cluster in snapmirror (In case of inter-cluster SM - cluster name may differ)
+			if peerClusterName, exist := my.clusterPeerDataMap[peerDetail.cluster]; exist {
+				instance.SetLabel("source_cluster", peerClusterName)
+			}
 		}
 
 		if sourceCluster := instance.GetLabel("source_cluster"); sourceCluster == "" {
@@ -177,14 +219,19 @@ func (my *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 	}
 
 	// handle CG relationships
-	my.handleCGRelationships(data, keys)
+	my.handleCGRelationships(data, cgKeys)
 
+	// handle SVM-DR relationships
+	my.handleSVMDRRelationships(data, svmDrKeys)
 }
 
 func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
-
 	for _, key := range keys {
 		cgInstance := data.GetInstance(key)
+		// find cgName from the destination_location, source_location
+		cgInstance.SetLabel("destination_cg_name", filepath.Base(cgInstance.GetLabel("destination_location")))
+		cgInstance.SetLabel("source_cg_name", filepath.Base(cgInstance.GetLabel("source_location")))
+
 		cgItemMappings := cgInstance.GetLabel("cg_item_mappings")
 		// cg_item_mappings would be array of cgMapping. Example: vols1:@vold1,vols2:@vold2
 		cgMappingData := strings.Split(cgItemMappings, ",")
@@ -213,11 +260,23 @@ func (my *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) 
 				for k, v := range cgInstance.GetLabels() {
 					cgVolumeInstance.SetLabel(k, v)
 				}
-				cgVolumeInstance.SetLabel("relationship_id", cgVolumeInstanceKey)
+				cgVolumeInstance.SetLabel("relationship_id", "")
 				cgVolumeInstance.SetLabel("source_volume", sourceVol)
 				cgVolumeInstance.SetLabel("destination_volume", destinationVol)
 			}
 		}
 	}
+}
 
+func (my *SnapMirror) handleSVMDRRelationships(data *matrix.Matrix, keys []string) {
+	for _, key := range keys {
+		svmDrInstance := data.GetInstance(key)
+		// check source_volume and destination_volume in svm-dr relationships to identify volumes in svm
+		sourceVolume := svmDrInstance.GetLabel("source_volume")
+		destinationVolume := svmDrInstance.GetLabel("destination_volume")
+
+		if sourceVolume != "" && destinationVolume != "" {
+			svmDrInstance.SetLabel("relationship_id", "")
+		}
+	}
 }
