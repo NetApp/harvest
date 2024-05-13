@@ -606,14 +606,15 @@ var exceptionToAll = map[string]bool{
 
 func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 	shouldHaveAll := map[string]bool{
-		"Cluster":   true,
-		"Node":      true,
-		"Volume":    true,
-		"SVM":       true,
-		"Aggregate": true,
+		"Cluster":     true,
+		"Node":        true,
+		"Volume":      true,
+		"SVM":         true,
+		"Aggregate":   true,
+		"FlexGroup":   true,
+		"Constituent": true,
 	}
 	exceptionForAllValues := map[string]bool{
-		"cmode/volume.json":   true,
 		"cmode/security.json": true,
 	}
 
