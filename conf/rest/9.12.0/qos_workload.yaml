@@ -1,15 +1,39 @@
 name:             QosWorkload
-query:            api/storage/qos/workloads
+query:            api/private/cli/qos/workload
 object:           qos_workload
 
 counters:
   - ^^uuid               => uuid
-  - ^name                => workload
-  - ^workload_class      => class
+  - ^class               => class
+  - ^file                => file
+  - ^is_adaptive         => is_adaptive
+  - ^lun                 => lun
+  - ^max_throughput      => max_xput
+  - ^policy_group        => policy_group
+  - ^qtree               => qtree
+  - ^volume              => volume
+  - ^vserver             => svm
+  - ^wid                 => wid
+  - ^workload            => workload
+
+plugins:
+  - LabelAgent:
+      replace_regex:
+        - is_adaptive is_adaptive `false` `No`
+        - is_adaptive is_adaptive `true` `Yes`
+  - Workload
 
 export_options:
   instance_keys:
-    - uuid
-  instance_labels:
     - class
+    - file
+    - is_adaptive
+    - lun
+    - policy_group
+    - qtree
+    - svm
+    - volume
+    - wid
+    - workload
+  instance_labels:
     - workload

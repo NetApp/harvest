@@ -28,6 +28,7 @@ type Qtree struct {
 	query            string
 	quotaType        []string
 	historicalLabels bool // supports labels, metrics for 22.05
+	qtreeMetrics     bool // supports quota metrics with qtree prefix
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -62,6 +63,10 @@ func (q *Qtree) Init() error {
 	q.instanceKeys = make(map[string]string)
 	q.instanceLabels = make(map[string]map[string]string)
 	q.historicalLabels = false
+
+	if q.Params.HasChildS("qtreeMetrics") {
+		q.qtreeMetrics = true
+	}
 
 	if q.Params.HasChildS("historicalLabels") {
 		exportOptions := node.NewS("export_options")
@@ -208,7 +213,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 			err = q.handlingHistoricalMetrics(quotas, data, cluster, &quotaIndex, &numMetrics)
 		} else {
 			// Populate metrics with quota prefix and current labels
-			err = q.handlingQuotaMetrics(quotas, cluster, &quotaIndex, &numMetrics)
+			err = q.handlingQuotaMetrics(quotas, &quotaIndex, &numMetrics)
 		}
 
 		if err != nil {
@@ -224,12 +229,15 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		Str("batchSize", q.batchSize).
 		Msg("Collected")
 
-	// metrics with qtree prefix and quota prefix are available to support backward compatibility
-	qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	qtreePluginData.UUID = q.Parent + ".Qtree"
-	qtreePluginData.Object = "qtree"
-	qtreePluginData.Identifier = "qtree"
-	return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
+	if q.qtreeMetrics || q.historicalLabels {
+		// metrics with qtree prefix and quota prefix are available to support backward compatibility
+		qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+		qtreePluginData.UUID = q.Parent + ".Qtree"
+		qtreePluginData.Object = "qtree"
+		qtreePluginData.Identifier = "qtree"
+		return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
+	}
+	return []*matrix.Matrix{q.data}, q.client.Metadata, nil
 }
 
 func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
@@ -322,7 +330,7 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 	return nil
 }
 
-func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaIndex *int, numMetrics *int) error {
+func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, quotaCount *int, numMetrics *int) error {
 	for _, quota := range quotas {
 		var vserver, quotaInstanceKey, uid, uName string
 
@@ -344,20 +352,21 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 
 		// ignore default quotas and set user/group
 		// Rest uses service side filtering to remove default records
-		if quotaType == "user" {
+		switch {
+		case quotaType == "user":
 			if (uName == "*" && uid == "*") || (uName == "" && uid == "") {
 				continue
 			}
-		} else if quotaType == "group" {
+		case quotaType == "group":
 			if uName == "*" || uName == "" {
 				continue
 			}
-		} else if quotaType == "tree" {
+		case quotaType == "tree":
 			if tree == "" {
 				continue
 			}
 		}
-		*quotaIndex++
+		*quotaCount++
 
 		for attribute, m := range q.data.GetMetrics() {
 
@@ -370,9 +379,9 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 
 				// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 				if q.client.IsClustered() {
-					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + strconv.Itoa(*quotaIndex) + "." + attribute
+					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + uName + "." + attribute
 				} else {
-					quotaInstanceKey = volume + "." + tree + "." + strconv.Itoa(*quotaIndex) + "." + attribute
+					quotaInstanceKey = volume + "." + tree + "." + uName + "." + attribute
 				}
 				quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 				if err != nil {
@@ -384,7 +393,6 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, cluster string, quotaI
 				quotaInstance.SetLabel("qtree", tree)
 				quotaInstance.SetLabel("volume", volume)
 				quotaInstance.SetLabel("svm", vserver)
-				quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(*quotaIndex))
 
 				if quotaType == "user" {
 					if uName != "" {

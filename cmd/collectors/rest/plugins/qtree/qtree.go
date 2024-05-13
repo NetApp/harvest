@@ -28,6 +28,7 @@ type Qtree struct {
 	query            string
 	quotaType        []string
 	historicalLabels bool // supports labels, metrics for 22.05
+	qtreeMetrics     bool // supports quota metrics with qtree prefix
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -79,6 +80,10 @@ func (q *Qtree) Init() error {
 	q.instanceKeys = make(map[string]string)
 	q.instanceLabels = make(map[string]map[string]string)
 	q.historicalLabels = false
+
+	if q.Params.HasChildS("qtreeMetrics") {
+		q.qtreeMetrics = true
+	}
 
 	if q.Params.HasChildS("historicalLabels") {
 		exportOptions := node.NewS("export_options")
@@ -177,7 +182,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		err = q.handlingHistoricalMetrics(result, data, cluster, &quotaCount, &numMetrics)
 	} else {
 		// Populate metrics with quota prefix and current labels
-		err = q.handlingQuotaMetrics(result, cluster, &quotaCount, &numMetrics)
+		err = q.handlingQuotaMetrics(result, &quotaCount, &numMetrics)
 	}
 
 	if err != nil {
@@ -189,12 +194,15 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		Int("metrics", numMetrics).
 		Msg("Collected")
 
-	// metrics with qtree prefix and quota prefix are available to support backward compatibility
-	qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	qtreePluginData.UUID = q.Parent + ".Qtree"
-	qtreePluginData.Object = "qtree"
-	qtreePluginData.Identifier = "qtree"
-	return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
+	if q.qtreeMetrics || q.historicalLabels {
+		// metrics with qtree prefix and quota prefix are available to support backward compatibility
+		qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+		qtreePluginData.UUID = q.Parent + ".Qtree"
+		qtreePluginData.Object = "qtree"
+		qtreePluginData.Identifier = "qtree"
+		return []*matrix.Matrix{qtreePluginData, q.data}, q.client.Metadata, nil
+	}
+	return []*matrix.Matrix{q.data}, q.client.Metadata, nil
 }
 
 func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
@@ -289,8 +297,8 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 	return nil
 }
 
-func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quotaCount *int, numMetrics *int) error {
-	for quotaIndex, quota := range result {
+func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, numMetrics *int) error {
+	for _, quota := range result {
 		var tree string
 
 		if !quota.IsObject() {
@@ -313,7 +321,7 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 			// set -1 for unlimited
 			value := -1.0
 
-			quotaInstanceKey := strconv.Itoa(quotaIndex) + "." + attribute
+			quotaInstanceKey := vserver + "." + volume + "." + tree + "." + group + "." + uName + "." + attribute
 
 			quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 			if err != nil {
@@ -325,7 +333,6 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, cluster string, quot
 			quotaInstance.SetLabel("qtree", tree)
 			quotaInstance.SetLabel("volume", volume)
 			quotaInstance.SetLabel("svm", vserver)
-			quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(quotaIndex))
 
 			if quotaType == "user" {
 				if uName != "" {

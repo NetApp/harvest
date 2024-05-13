@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705492466249,
+  "iteration": 1715583786669,
   "links": [
     {
       "asDropdown": true,
@@ -885,7 +885,7 @@
         },
         {
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",relationship_id=~\"$TopTransferDataById\"}",
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$DestinationConsistencyGroup\",source_location=~\".*$SourceConsistencyGroup\",relationship_id!=\"\"}\nand\ntopk(\n    $TopResources,\n    avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\", source_volume=~\"$SourceVolume\", destination_volume=~\"$DestinationVolume\", source_vserver=~\"$SourceSVM\", destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$DestinationConsistencyGroup\",source_location=~\".*$SourceConsistencyGroup\",relationship_id!=\"\"}[3h])\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1308,6 +1308,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows count of snapmirror relationships by destination node.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1403,7 +1404,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror break operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1510,7 +1511,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror resync operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1616,7 +1617,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror update operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1817,7 +1818,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror break operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1923,7 +1924,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror resync operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2029,7 +2030,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "The number of failed/successful SnapMirror update operations for the relationship.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2150,6 +2151,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows count of snapmirror relationships by source SVM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2245,7 +2247,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows count of snapmirror relationships by destination SVM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2590,7 +2592,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"volume\"}) * on(source_volume,source_vserver,source_cluster) group_left() group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"storage_vm\"} )) or vector (0)",
+              "expr": "count(group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"volume\"}) * on (source_volume,source_vserver,source_cluster) group_left() group by (source_volume,source_vserver,source_cluster) (snapmirror_labels{source_cluster=~\"$SourceCluster\",protectedBy=\"storage_vm\"} )) or vector (0)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3623,7 +3625,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows volume relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3741,7 +3743,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows volume relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3845,6 +3847,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows volume relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4317,6 +4320,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows volume relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4966,29 +4970,6 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$DestinationConsistencyGroup\",source_location=~\".*$SourceConsistencyGroup\",relationship_id!=\"\"}[3h])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopTransferDataById",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",destination_location=~\".*$DestinationConsistencyGroup\",source_location=~\".*$SourceConsistencyGroup\",relationship_id!=\"\"}[3h])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*relationship_id=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -5023,5 +5004,5 @@
   "timezone": "",
   "title": "ONTAP: SnapMirror",
   "uid": "",
-  "version": 5
+  "version": 6
 }

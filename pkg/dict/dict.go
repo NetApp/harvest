@@ -16,7 +16,7 @@ func String(m map[string]string) string {
 	}
 
 	s := b.String()
-	if len(s) > 0 {
+	if s != "" {
 		return s[:len(s)-2]
 	}
 	return s

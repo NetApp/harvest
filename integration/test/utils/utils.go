@@ -49,7 +49,7 @@ func MkDir(dirname string) {
 
 func GetConfigDir() string {
 	value := os.Getenv("TEST_CONFIG")
-	if len(value) > 0 {
+	if value != "" {
 		return value
 	}
 	return "/u/mpeg/harvest"
@@ -64,7 +64,7 @@ func Exec(dir string, command string, env []string, arg ...string) (string, erro
 	cmd := exec.Command(command, arg...)
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, env...)
-	if len(dir) > 0 {
+	if dir != "" {
 		cmd.Dir = dir
 	}
 	var out bytes.Buffer
@@ -73,7 +73,7 @@ func Exec(dir string, command string, env []string, arg ...string) (string, erro
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	fmt.Println("----------Output---------")
-	if len(out.String()) > 0 {
+	if out.String() != "" {
 		fmt.Println(out.String())
 	}
 	if err != nil {
@@ -85,7 +85,7 @@ func Exec(dir string, command string, env []string, arg ...string) (string, erro
 
 // DownloadFile will download the url to a local file.
 // It's efficient because it will write as it downloads and not load the whole file into memory.
-func DownloadFile(filepath string, url string) error {
+func DownloadFile(aPath string, url string) error {
 
 	// Get the data
 	resp, err := http.Get(url) //nolint:gosec
@@ -95,7 +95,7 @@ func DownloadFile(filepath string, url string) error {
 	defer resp.Body.Close()
 
 	// Create the file
-	out, err := os.Create(filepath)
+	out, err := os.Create(aPath)
 	if err != nil {
 		return err
 	}
@@ -217,7 +217,7 @@ func CreateGrafanaToken() string {
 	}
 	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["key"])
-	if len(key) > 0 {
+	if key != "" {
 		log.Info().Msg("Grafana: Token has been created successfully.")
 		return key
 	}
@@ -261,7 +261,7 @@ func WriteToken(token string) {
 	PanicIfNotNil(err)
 	tools := conf.Config.Tools
 	if tools != nil {
-		if len(tools.GrafanaAPIToken) > 0 {
+		if tools.GrafanaAPIToken != "" {
 			log.Error().Str("path", abs).Msg("Harvest.yml contains a grafana token")
 			return
 		}
@@ -310,7 +310,7 @@ func RemoveDuplicateStr(strSlice []string) []string {
 	for _, item := range strSlice {
 		if _, value := allKeys[item]; !value {
 			allKeys[item] = true
-			if len(item) > 0 {
+			if item != "" {
 				list = append(list, item)
 			}
 		}

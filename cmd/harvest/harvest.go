@@ -513,7 +513,7 @@ func getPollerPrometheusPort(pollerName string, opts *options) int {
 		return opts.promPort
 	}
 
-	if promPort, err = conf.GetPrometheusExporterPorts(pollerName, false); err != nil {
+	if promPort, err = conf.GetLastPromPort(pollerName, false); err != nil {
 		fmt.Println(err)
 		return 0
 	}

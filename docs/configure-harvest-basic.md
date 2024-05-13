@@ -267,41 +267,72 @@ Pollers:
 
 ## Credentials Script
 
-You can fetch authentication information via an external script by using the `credentials_script` section in
-the `Pollers` section of your `harvest.yml` as shown in the [example below](#example). 
+The `credentials_script` feature allows you to fetch authentication information via an external script. This can be configured in the `Pollers` section of your `harvest.yml` file, as shown in the example below.
 
-At runtime, Harvest will invoke the script referenced in the `credentials_script` `path` section.
-Harvest will call the script with two arguments like so: `./script $addr $username`. 
+At runtime, Harvest will invoke the script specified in the `credentials_script` `path` section. Harvest will call the script with one or two arguments depending on how your poller is configured in the `harvest.yml` file. The script will be called like this: `./script $addr` or `./script $addr $username`.
 
-- The first argument is the address of the cluster taken from your `harvest.yaml` file, section `Pollers addr`
-- The second argument is the username of the cluster taken from your `harvest.yaml` file, section `Pollers username`
+- The first argument `$addr` is the address of the cluster taken from the `addr` field under the `Pollers` section of your `harvest.yml` file.
+- The second argument `$username` is the username for the cluster taken from the `username` field under the `Pollers` section of your `harvest.yml` file. If your `harvest.yml` does not include a username, nothing will be passed.
 
-The script should use the two arguments to look up and return the password via the script's `standard out`.
-If the script doesn't finish within the specified `timeout`, Harvest will kill the script and any spawned processes.
+The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:
 
-Credential scripts are defined in your `harvest.yml` under the `Pollers` `credentials_script` section. 
-Below are the options for the `credentials_script` section  
+1. **YAML format:** If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
+   ```yaml
+   username: myuser
+   password: mypassword
+   ```
+   If only the `password` is provided, Harvest will use the `username` from the `harvest.yml` file, if available. If your username or password contains spaces, `#`, or other characters with special meaning in YAML, make sure you quote the value like so:
+   `password: "my password with spaces"`
 
-| parameter | type                    | description                                                                                                                                                                    | default |
-|-----------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| path      | string                  | absolute path to script that takes two arguments: addr and username, in that order                                                                                             |         |
-| schedule  | go duration or `always` | schedule used to call the authentication script. If the value is `always`, the script will be called everytime a password is requested, otherwise use the earlier cached value | 24h     |
-| timeout   | go duration             | amount of time Harvest will wait for the script to finish before killing it and descendents                                                                                    | 10s     |
+2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the `harvest.yml` and `mypassword` for the poller's credentials.
+   ```
+   mypassword
+   ```
+
+If the script doesn't finish within the specified `timeout`, Harvest will terminate the script and any spawned processes.
+
+Credential scripts are defined under the `credentials_script` section within `Pollers` in your `harvest.yml`. Below are the options for the `credentials_script` section:
+
+| parameter | type                    | description                                                                                                                                                                  | default |
+|-----------|-------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| path      | string                  | Absolute path to the script that takes two arguments: `addr` and `username`, in that order.                                                                                  |         |
+| schedule  | go duration or `always` | Schedule for calling the authentication script. If set to `always`, the script is called every time a password is requested; otherwise, the previously cached value is used. | 24h     |
+| timeout   | go duration             | Maximum time Harvest will wait for the script to finish before terminating it and its descendants.                                                                           | 10s     |
 
 ### Example
 
+Here is an example of how to configure the `credentials_script` in the `harvest.yml` file:
+
 ```yaml
 Pollers:
-    ontap1:
-        datacenter: rtp
-        addr: 10.1.1.1
-        collectors:
-            - Rest
-            - RestPerf
-        credentials_script:
-            path: ./get_pass
-            schedule: 3h
-            timeout: 10s
+  ontap1:
+    datacenter: rtp
+    addr: 10.1.1.1
+    username: admin # Optional: if not provided, the script must return the username
+    collectors:
+      - Rest
+      - RestPerf
+    credentials_script:
+      path: ./get_credentials
+      schedule: 3h
+      timeout: 10s
+```
+
+In this example, the `get_credentials` script should be located in the same directory as the `harvest.yml` file and should be executable. It should output the credentials in either YAML or plain text format. Here are two example scripts:
+
+`get_credentials` that outputs YAML:
+```bash
+#!/bin/bash
+cat << EOF
+username: myuser
+password: mypassword
+EOF
+```
+
+`get_credentials` that outputs only the password in plain text:
+```bash
+#!/bin/bash
+echo "mypassword"
 ```
 
 ### Troubleshooting

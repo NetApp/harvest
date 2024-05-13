@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/third_party/mergo"
+	"gopkg.in/yaml.v3"
 	"net/http"
 	"os"
 	"os/exec"
@@ -43,7 +44,7 @@ type Credentials struct {
 	nextUpdate     time.Time
 	logger         *logging.Logger
 	authMu         *sync.Mutex
-	cachedPassword string
+	cachedResponse ScriptResponse
 }
 
 // Expire will reset the credential schedule if the receiver has a CredentialsScript
@@ -71,39 +72,66 @@ func (c *Credentials) certs(poller *conf.Poller) (string, error) {
 	return c.fetchCerts(poller)
 }
 
-func (c *Credentials) password(poller *conf.Poller) (string, error) {
+func (c *Credentials) password(poller *conf.Poller) (ScriptResponse, error) {
 	if poller.CredentialsScript.Path == "" {
-		return poller.Password, nil
+		return ScriptResponse{
+			Data:     poller.Password,
+			Username: poller.Username,
+		}, nil
 	}
+
+	var response ScriptResponse
+	var err error
 	c.authMu.Lock()
 	defer c.authMu.Unlock()
 	if time.Now().After(c.nextUpdate) {
-		var err error
-		c.cachedPassword, err = c.fetchPassword(poller)
+		response, err = c.fetchPassword(poller)
 		if err != nil {
-			return "", err
+			return ScriptResponse{}, err
 		}
+		// Cache the new response and update the next update time.
+		c.cachedResponse = response
 		c.setNextUpdate()
 	}
-	return c.cachedPassword, nil
+	return c.cachedResponse, nil
 }
 
-func (c *Credentials) fetchPassword(p *conf.Poller) (string, error) {
-	return c.execScript(p.CredentialsScript.Path, "credential", p.CredentialsScript.Timeout, func(ctx context.Context, path string) *exec.Cmd {
+func (c *Credentials) fetchPassword(p *conf.Poller) (ScriptResponse, error) {
+	response, err := c.execScript(p.CredentialsScript.Path, "credential", p.CredentialsScript.Timeout, func(ctx context.Context, path string) *exec.Cmd {
 		return exec.CommandContext(ctx, path, p.Addr, p.Username) // #nosec
 	})
+	if err != nil {
+		return ScriptResponse{}, err
+	}
+	// If username is empty, use harvest config poller username
+	if response.Username == "" {
+		response.Username = p.Username
+	}
+	return response, nil
 }
 
 func (c *Credentials) fetchCerts(p *conf.Poller) (string, error) {
-	return c.execScript(p.CertificateScript.Path, "certificate", p.CertificateScript.Timeout, func(ctx context.Context, path string) *exec.Cmd {
+	response, err := c.execScript(p.CertificateScript.Path, "certificate", p.CertificateScript.Timeout, func(ctx context.Context, path string) *exec.Cmd {
 		return exec.CommandContext(ctx, path, p.Addr) // #nosec
 	})
+	if err != nil {
+		return "", err
+	}
+
+	// The script is expected to return only the certificate data, so we don't need to check for a username.
+	return response.Data, nil
 }
 
-func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e func(ctx context.Context, path string) *exec.Cmd) (string, error) {
+type ScriptResponse struct {
+	Username string `yaml:"username"`
+	Data     string `yaml:"password"`
+}
+
+func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e func(ctx context.Context, path string) *exec.Cmd) (ScriptResponse, error) {
+	response := ScriptResponse{}
 	lookPath, err := exec.LookPath(cmdPath)
 	if err != nil {
-		return "", fmt.Errorf("script lookup failed kind=%s err=%w", kind, err)
+		return response, fmt.Errorf("script lookup failed kind=%s err=%w", kind, err)
 	}
 	if timeout == "" {
 		timeout = defaultTimeout
@@ -141,7 +169,7 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 			Str("stdout", stdout.String()).
 			Str("kind", kind).
 			Msg("Failed to start script")
-		return "", fmt.Errorf("script start failed script=%s kind=%s err=%w", lookPath, kind, err)
+		return response, fmt.Errorf("script start failed script=%s kind=%s err=%w", lookPath, kind, err)
 	}
 	err = cmd.Wait()
 	if err != nil {
@@ -152,9 +180,31 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 			Str("stdout", stdout.String()).
 			Str("kind", kind).
 			Msg("Failed to execute script")
-		return "", fmt.Errorf("script execute failed script=%s kind=%s err=%w", lookPath, kind, err)
+		return response, fmt.Errorf("script execute failed script=%s kind=%s err=%w", lookPath, kind, err)
 	}
-	return strings.TrimSpace(stdout.String()), nil
+
+	err = yaml.Unmarshal(stdout.Bytes(), &response)
+	if err != nil {
+		// Log the error but do not return it, we will try to use the output as plain text next.
+		c.logger.Debug().Err(err).
+			Str("script", lookPath).
+			Str("timeout", duration.String()).
+			Str("stderr", stderr.String()).
+			Str("stdout", stdout.String()).
+			Str("kind", kind).
+			Msg("Failed to parse YAML output. Treating as plain text.")
+	}
+
+	if err == nil && response.Data != "" {
+		// If parsing is successful and data is not empty, return the response.
+		// Username is optional, so it's okay if it's not present.
+		return response, nil
+	}
+
+	// If YAML parsing fails or the data is empty,
+	// assume the output is the data (password or certificate) in plain text for backward compatibility.
+	response.Data = strings.TrimSpace(stdout.String())
+	return response, nil
 }
 
 func (c *Credentials) setNextUpdate() {
@@ -204,22 +254,27 @@ func (a PollerAuth) Certificate() (tls.Certificate, error) {
 	return tls.LoadX509KeyPair(a.CertPath, a.KeyPath)
 }
 
-func (a PollerAuth) NewCertPool() (*x509.CertPool, error) {
-	// Create a CA certificate pool and add certificate if specified
-	caCertPool := x509.NewCertPool()
-	if a.CaCertPath != "" {
-		caCert, err := os.ReadFile(a.CaCertPath)
-		if err != nil {
-			return caCertPool, err
-		}
-		if caCert != nil {
-			ok := caCertPool.AppendCertsFromPEM(caCert)
-			if !ok {
-				return caCertPool, fmt.Errorf("failed to append ca cert path=%s", a.CaCertPath)
-			}
-		}
+// If the CA certificate path is specified, create a CA certificate pool and add the certificate to it.
+// Otherwise, return nil so the host's root CA set is used.
+func (a PollerAuth) loadCertPool(logger *logging.Logger) *x509.CertPool {
+	if a.CaCertPath == "" {
+		return nil
 	}
-	return caCertPool, nil
+
+	caCert, err := os.ReadFile(a.CaCertPath)
+	if err != nil {
+		logger.Error().Err(err).Str("caCertPath", a.CaCertPath).Msg("Failed to read CA certificate. Use host's root CA set.")
+		return nil
+	}
+
+	caCertPool := x509.NewCertPool()
+	ok := caCertPool.AppendCertsFromPEM(caCert)
+	if !ok {
+		logger.Warn().Str("caCertPath", a.CaCertPath).Msg("Failed to append CA certificate to pool. Use host's root CA set.")
+		return nil
+	}
+	logger.Debug().Str("caCertPath", a.CaCertPath).Msg("CA certificate loaded")
+	return caCertPool
 }
 
 func (c *Credentials) GetPollerAuth() (PollerAuth, error) {
@@ -262,19 +317,25 @@ func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
 		return handCertificateAuth(c, poller, insecureTLS)
 	}
 	if poller.Password != "" {
-		return PollerAuth{Username: poller.Username, Password: poller.Password, insecureTLS: insecureTLS}, nil
+		return PollerAuth{
+			Username:    poller.Username,
+			Password:    poller.Password,
+			insecureTLS: insecureTLS,
+			CaCertPath:  poller.CaCertPath,
+		}, nil
 	}
 	if poller.CredentialsScript.Path != "" {
-		pass, err := c.password(poller)
+		response, err := c.password(poller)
 		if err != nil {
 			return PollerAuth{}, err
 		}
 		return PollerAuth{
-			Username:            poller.Username,
-			Password:            pass,
+			Username:            response.Username,
+			Password:            response.Data,
 			HasCredentialScript: true,
 			Schedule:            poller.CredentialsScript.Schedule,
 			insecureTLS:         insecureTLS,
+			CaCertPath:          poller.CaCertPath,
 		}, nil
 	}
 	if poller.CredentialsFile != "" {
@@ -282,9 +343,18 @@ func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
 		if err != nil {
 			return PollerAuth{}, err
 		}
-		return PollerAuth{Username: poller.Username, Password: poller.Password, insecureTLS: insecureTLS}, nil
+		return PollerAuth{
+			Username:    poller.Username,
+			Password:    poller.Password,
+			insecureTLS: insecureTLS,
+			CaCertPath:  poller.CaCertPath,
+		}, nil
 	}
-	return PollerAuth{Username: poller.Username, insecureTLS: insecureTLS}, nil
+	return PollerAuth{
+		Username:    poller.Username,
+		insecureTLS: insecureTLS,
+		CaCertPath:  poller.CaCertPath,
+	}, nil
 }
 
 func handCertificateAuth(c *Credentials, poller *conf.Poller, insecureTLS bool) (PollerAuth, error) {
@@ -303,6 +373,7 @@ func handCertificateAuth(c *Credentials, poller *conf.Poller, insecureTLS bool) 
 			PemCert:              cert,
 			PemKey:               key,
 			insecureTLS:          insecureTLS,
+			CaCertPath:           poller.CaCertPath,
 		}, nil
 	}
 
@@ -367,15 +438,11 @@ func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) 
 		if err != nil {
 			return nil, err
 		}
-		caCertPool, err := pollerAuth.NewCertPool()
-		if err != nil {
-			return nil, err
-		}
 
 		transport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
-				RootCAs:            caCertPool,
+				RootCAs:            pollerAuth.loadCertPool(c.logger),
 				Certificates:       []tls.Certificate{cert},
 				InsecureSkipVerify: pollerAuth.insecureTLS, //nolint:gosec
 			},
@@ -392,8 +459,11 @@ func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) 
 			request.SetBasicAuth(pollerAuth.Username, password)
 		}
 		transport = &http.Transport{
-			Proxy:           http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: pollerAuth.insecureTLS}, //nolint:gosec
+			Proxy: http.ProxyFromEnvironment,
+			TLSClientConfig: &tls.Config{
+				RootCAs:            pollerAuth.loadCertPool(c.logger),
+				InsecureSkipVerify: pollerAuth.insecureTLS, //nolint:gosec
+			},
 		}
 	}
 	return transport, err

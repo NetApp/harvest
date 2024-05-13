@@ -11,7 +11,7 @@ import (
 func TestRHELUpgrade(t *testing.T) {
 	utils.SkipIfMissing(t, utils.UpgradeRPM)
 	var path = os.Getenv("BUILD_PATH")
-	if len(path) == 0 {
+	if path == "" {
 		panic("BUILD_PATH variable is not set.")
 	}
 	installObject, err := installer.GetInstaller(installer.RHEL, path)

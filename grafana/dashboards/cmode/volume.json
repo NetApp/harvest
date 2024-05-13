@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1712855877902,
+  "iteration": 1715150122091,
   "links": [
     {
       "asDropdown": true,
@@ -5468,7 +5468,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 18
+            "y": 20
           },
           "id": 123,
           "options": {
@@ -5563,7 +5563,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 18
+            "y": 20
           },
           "id": 124,
           "options": {
@@ -5658,7 +5658,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 30
+            "y": 32
           },
           "id": 125,
           "options": {
@@ -5753,7 +5753,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 30
+            "y": 32
           },
           "id": 126,
           "options": {
@@ -5847,7 +5847,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 42
+            "y": 44
           },
           "id": 127,
           "options": {
@@ -5954,7 +5954,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 21
           },
           "id": 93,
           "options": {
@@ -6047,7 +6047,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 21
           },
           "id": 94,
           "options": {
@@ -6140,7 +6140,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 33
           },
           "id": 95,
           "options": {
@@ -6233,7 +6233,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 33
           },
           "id": 96,
           "options": {
@@ -6299,7 +6299,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 45
           },
           "id": 90,
           "options": {
@@ -6316,7 +6316,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$TopCloudBinOperation\"}))",
+              "expr": "sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}) \n  and \ntopk($TopResources, sum by (volume) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())))",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -6427,7 +6427,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 20
+            "y": 22
           },
           "id": 119,
           "options": {
@@ -6523,7 +6523,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 20
+            "y": 22
           },
           "id": 120,
           "options": {
@@ -6617,7 +6617,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 34
           },
           "id": 121,
           "options": {
@@ -6713,7 +6713,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 34
           },
           "id": 122,
           "options": {
@@ -6821,7 +6821,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 21
+            "y": 23
           },
           "id": 100,
           "options": {
@@ -6909,7 +6909,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 21
+            "y": 23
           },
           "id": 102,
           "options": {
@@ -6999,7 +6999,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 29
+            "y": 31
           },
           "id": 101,
           "options": {
@@ -7049,7 +7049,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 24
           },
           "id": 110,
           "options": {
@@ -7120,7 +7120,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 24
+            "y": 26
           },
           "id": 108,
           "options": {
@@ -7141,7 +7141,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, (volume_num_compress_fail{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeNumCompressFailPercent\"}/volume_num_compress_attempts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopVolumeNumCompressFailPercent\"})) * 100",
+              "expr": "(\n  (\n    volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"} * 100\n  )\n  / \n  volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end()\n    )\n    /\n    avg_over_time(\n      volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end()\n    )\n  )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -7212,7 +7212,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 24
+            "y": 26
           },
           "id": 106,
           "options": {
@@ -7304,7 +7304,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 24
+            "y": 26
           },
           "id": 107,
           "options": {
@@ -7561,6 +7561,298 @@
       ],
       "title": "Volume Growth Rate",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 136,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This table would show 15 day predicted value of size used percentage for top volumes.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "decimals": 2,
+              "mappings": [
+                {
+                  "options": {
+                    "from": 100,
+                    "result": {
+                      "index": 0,
+                      "text": "100%"
+                    },
+                    "to": 999999
+                  },
+                  "type": "range"
+                },
+                {
+                  "options": {
+                    "from": -9999999,
+                    "result": {
+                      "index": 1,
+                      "text": "0%"
+                    },
+                    "to": 0
+                  },
+                  "type": "range"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Current Value"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "SVM"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volume"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 330
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 280
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Node"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Aggr"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Predicted 15th Day Value"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 220
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 190
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 26
+          },
+          "id": 149,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Predicted 15th Day Value"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "expr": "predict_linear(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d], 15*24*3600) and topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} and topk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "",
+              "range": false,
+              "refId": "B"
+            }
+          ],
+          "title": "Top $TopResources Volumes Per Size Used Percentage Trend",
+          "transformations": [
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": false,
+                  "Value #C": false,
+                  "__name__": true,
+                  "datacenter": false,
+                  "instance": true,
+                  "job": true,
+                  "node": true,
+                  "state": true,
+                  "style": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Time": 5,
+                  "Value #A": 10,
+                  "Value #B": 9,
+                  "__name__": 11,
+                  "aggr": 4,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "instance": 6,
+                  "job": 7,
+                  "style": 8,
+                  "svm": 3,
+                  "volume": 2
+                },
+                "renameByName": {
+                  "Value": "Predicted Value ",
+                  "Value #A": "Predicted 15th Day Value",
+                  "Value #B": "Current Value",
+                  "Value #C": "Size",
+                  "Value #D": "",
+                  "Value #E": "Dedupe Space Saved",
+                  "Value #F": "Compression Space Saved",
+                  "Value #G": "Total Space Saved",
+                  "Value #H": "Logical Space Used",
+                  "Value #I": "Physical Space Used",
+                  "Value #J": "Clone Split Estimate",
+                  "__name__": "",
+                  "aggr": "Aggr",
+                  "clone_parent_snapshot": "Clone Parent Snapshot",
+                  "clone_parent_svm": "Clone Parent SVM",
+                  "clone_parent_volume": "Clone Parent Volume",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "junction_path": "Junction Path",
+                  "svm": "SVM",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "refId": "A"
+        }
+      ],
+      "title": "Forecast Volume Capacity",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -7788,52 +8080,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, sum by (volume) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h]))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopCloudBinOperation",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, sum by (volume) (avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h]))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, (avg_over_time(volume_num_compress_fail{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h])/avg_over_time(volume_num_compress_attempts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopVolumeNumCompressFailPercent",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, (avg_over_time(volume_num_compress_fail{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h])/avg_over_time(volume_num_compress_attempts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -7857,5 +8103,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "",
-  "version": 20
+  "version": 21
 }

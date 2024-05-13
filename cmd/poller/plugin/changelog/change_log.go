@@ -282,7 +282,8 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 // updateChangeLogLabels populates change log labels
 func (c *ChangeLog) updateChangeLogLabels(object string, instance *matrix.Instance, change *Change) {
 	cl := c.changeLogConfig
-	if len(cl.PublishLabels) > 0 {
+	switch {
+	case len(cl.PublishLabels) > 0:
 		for _, l := range cl.PublishLabels {
 			labelValue := instance.GetLabel(l)
 			if labelValue == "" {
@@ -291,9 +292,9 @@ func (c *ChangeLog) updateChangeLogLabels(object string, instance *matrix.Instan
 				change.labels[l] = labelValue
 			}
 		}
-	} else if cl.includeAll {
+	case cl.includeAll:
 		maps.Copy(change.labels, instance.GetLabels())
-	} else {
+	default:
 		c.Logger.Warn().Str("object", object).Msg("missing publish labels")
 	}
 }

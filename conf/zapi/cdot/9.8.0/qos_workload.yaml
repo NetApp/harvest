@@ -5,14 +5,38 @@ object:           qos_workload
 counters:
   qos-workload-info:
     - ^^workload-uuid      => uuid
+    - ^file                => file
+    - ^is-adaptive         => is_adaptive
+    - ^lun                 => lun
+    - ^max-throughput      => max_xput
+    - ^policy-group        => policy_group
+    - ^qtree               => qtree
+    - ^volume              => volume
+    - ^vserver             => svm
+    - ^wid                 => wid
     - ^workload-class      => class
     - ^workload-name       => workload
 
 collect_only_labels: true
 
+plugins:
+  - LabelAgent:
+      replace_regex:
+        - is_adaptive is_adaptive `false` `No`
+        - is_adaptive is_adaptive `true` `Yes`
+  - Workload
+
 export_options:
   instance_keys:
-    - uuid
-  instance_labels:
     - class
+    - file
+    - is_adaptive
+    - lun
+    - policy_group
+    - qtree
+    - svm
+    - volume
+    - wid
+    - workload
+  instance_labels:
     - workload

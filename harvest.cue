@@ -2,6 +2,8 @@ package harvest
 
 Exporters: [Name=_]: #Prom | #Influx
 
+#ExporterDefs: string | #Prom | #Influx
+
 label: [string]: string
 
 #Auth: {
@@ -77,17 +79,17 @@ Pollers: [Name=_]: #Poller
 	credentials_file?:   string
 	credentials_script?: #CredentialsScript
 	datacenter?:         string
-	exporters: [...string]
-	is_kfs?: bool
-	labels?: [...label]
-	log: [...string]
-	log_max_bytes?:    int
-	log_max_files?:    int
-	password?:         string
-	prefer_zapi?:      bool
-	ssl_cert?:         string
-	ssl_key?:          string
-	tls_min_version?:  string
-	use_insecure_tls?: bool
-	username?:         string
+	exporters:           [...#ExporterDefs]
+	is_kfs?:             bool
+	labels?:             [...label]
+	log:                 [...string]
+	log_max_bytes?:      int
+	log_max_files?:      int
+	password?:           string
+	prefer_zapi?:        bool
+	ssl_cert?:           string
+	ssl_key?:            string
+	tls_min_version?:    string
+	use_insecure_tls?:   bool
+	username?:           string
 }

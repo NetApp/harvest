@@ -53,7 +53,7 @@ type Cluster struct {
 	Version [3]int
 }
 
-func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*Client, error) {
+func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials) (*Client, error) {
 	var (
 		client     Client
 		httpclient *http.Client
@@ -64,7 +64,7 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 	)
 
 	client = Client{
-		auth:     auth,
+		auth:     credentials,
 		Metadata: &util.Metadata{},
 	}
 	client.Logger = logging.Get().SubLogger("REST", "Client")
@@ -81,7 +81,7 @@ func New(poller *conf.Poller, timeout time.Duration, auth *auth.Credentials) (*C
 	client.baseURL = url
 	client.Timeout = timeout
 
-	transport, err = auth.Transport(nil)
+	transport, err = credentials.Transport(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.request.Header.Set("accept", "application/json")
+	c.request.Header.Set("Accept", "application/json")
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
 		return nil, err

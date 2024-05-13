@@ -89,10 +89,8 @@ func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger 
 			} else if x := exportOption.GetChildContentS("include_all_labels"); x != "" {
 				if includeAllLabels, err := strconv.ParseBool(x); err != nil {
 					logger.Logger.Error().Err(err).Msg("parameter: include_all_labels")
-				} else {
-					if includeAllLabels {
-						entry.includeAll = true
-					}
+				} else if includeAllLabels {
+					entry.includeAll = true
 				}
 			}
 		}

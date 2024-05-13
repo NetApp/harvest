@@ -4,6 +4,7 @@ linters:
     - asasalint
     - bidichk
     - bodyclose
+    - canonicalheader
     - contextcheck
     - copyloopvar
     - dogsled
@@ -61,13 +62,19 @@ linters-settings:
     test:
       begin: false
   gocritic:
-    disabled-tags:
-      - style
     enabled-tags:
       - diagnostic
       - performance
+      - style
     disabled-checks:
+      - exposedSyncMutex
       - hugeParam
+      - octalLiteral
+      - paramTypeCombine
       - rangeValCopy
+      - regexpSimplify
+      - typeDefFirst
+      - unnamedResult
+      - whyNoLint
   dogsled:
     max-blank-identifiers: 3

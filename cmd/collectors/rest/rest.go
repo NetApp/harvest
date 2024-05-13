@@ -20,6 +20,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -305,12 +306,13 @@ func getFieldName(source string, parent string) []string {
 	res := make([]string, 0)
 	var arr map[string]gjson.Result
 	r := gjson.Parse(source)
-	if r.IsArray() {
+	switch {
+	case r.IsArray():
 		newR := r.Get("0")
 		arr = newR.Map()
-	} else if r.IsObject() {
+	case r.IsObject():
 		arr = r.Map()
-	} else {
+	default:
 		return []string{parent}
 	}
 	if len(arr) == 0 {
@@ -516,6 +518,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return metroclustercheck.New(abc)
 	case "SystemNode":
 		return systemnode.New(abc)
+	case "Workload":
+		return workload.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

@@ -118,6 +118,12 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			continue
 		}
 
+		// ZAPI includes node root and temp volumes, while REST does not. To make ZAPI and REST consistent, Harvest will exclude the node root and temp volumes by not exporting them.
+		if volume.GetLabel("node_root") == "true" || volume.GetLabel("type") == "tmp" {
+			volume.SetExportable(false)
+			continue
+		}
+
 		if volume.GetLabel("style") == "flexgroup_constituent" {
 			volume.SetExportable(v.includeConstituents)
 		}

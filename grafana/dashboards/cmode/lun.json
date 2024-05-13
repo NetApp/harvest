@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705055656580,
+  "iteration": 1715153420803,
   "links": [
     {
       "asDropdown": true,
@@ -1495,7 +1495,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 34
+            "y": 8
           },
           "id": 48,
           "options": {
@@ -1586,7 +1586,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 34
+            "y": 8
           },
           "id": 31,
           "options": {
@@ -1679,7 +1679,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 34
+            "y": 8
           },
           "id": 32,
           "options": {
@@ -1770,7 +1770,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 43
+            "y": 17
           },
           "id": 51,
           "options": {
@@ -1861,7 +1861,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 43
+            "y": 17
           },
           "id": 52,
           "options": {
@@ -1954,7 +1954,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 43
+            "y": 17
           },
           "id": 53,
           "options": {
@@ -2060,7 +2060,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 9
           },
           "id": 57,
           "options": {
@@ -2163,7 +2163,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 9
           },
           "id": 58,
           "options": {
@@ -2267,7 +2267,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 17
           },
           "id": 59,
           "options": {
@@ -3415,7 +3415,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 83
+            "y": 11
           },
           "id": 77,
           "options": {
@@ -3508,7 +3508,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 83
+            "y": 11
           },
           "id": 78,
           "options": {
@@ -3601,7 +3601,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 91
+            "y": 19
           },
           "id": 80,
           "options": {
@@ -3694,7 +3694,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 91
+            "y": 19
           },
           "id": 81,
           "options": {
@@ -3764,7 +3764,7 @@
               },
               "decimals": 2,
               "mappings": [],
-              "max": 1,
+              "max": 100,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",
@@ -3779,7 +3779,7 @@
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -3787,9 +3787,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 99
+            "y": 27
           },
-          "id": 82,
+          "id": 98,
           "options": {
             "legend": {
               "calcs": [
@@ -3808,7 +3808,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, lun_size_used/lun_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopLunPercentUsed\"})",
+              "expr": "lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -3859,7 +3859,7 @@
               },
               "decimals": 2,
               "mappings": [],
-              "max": 1,
+              "max": 100,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",
@@ -3874,7 +3874,7 @@
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "percent"
             },
             "overrides": []
           },
@@ -3882,7 +3882,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 99
+            "y": 27
           },
           "id": 83,
           "options": {
@@ -3903,7 +3903,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, lun_size_used/lun_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$TopLunPercentUsed\"})",
+              "expr": "lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \nbottomk($TopResources, avg_over_time(lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -3933,6 +3933,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panels shows average read/write latency in microseconds for all operations on the LUN.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4027,6 +4028,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows Read/Write bytes data.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4121,6 +4123,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows number of read/write operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4216,6 +4219,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows detail of I/O to or from a LUN which is not owned by the storage system handling the I/O and number of operations received by a storage system that does not own the LUN targeted by the operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4323,6 +4327,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows detail of number of compare and write requests, number of unmap command requests, number of write same command requests, number of write same commands requests with unmap bit set and total number of xcopy operations on the LUN.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4807,29 +4812,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(lun_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])/avg_over_time(lun_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": "",
-        "multi": true,
-        "name": "TopLunPercentUsed",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(lun_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])/avg_over_time(lun_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*volume=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -4853,5 +4835,5 @@
   "timezone": "",
   "title": "ONTAP: LUN",
   "uid": "",
-  "version": 8
+  "version": 9
 }

@@ -289,68 +289,70 @@ func (my *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matri
 			}
 
 			for attribute, data1 := range my.data {
-				if statusMetric := data1.GetMetric("status"); statusMetric != nil {
-
-					if my.instanceKeys[attribute] == "" {
-						my.Logger.Warn().Str("attribute", attribute).Msg("no instance keys defined")
-						continue
-					}
-
-					objectElem := shelf.GetChildS(attribute)
-					if objectElem == nil {
-						my.Logger.Warn().Str("attribute", attribute).Msg("no instances on this system")
-						continue
-					}
-
-					my.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
-
-					for _, obj := range objectElem.GetChildren() {
-
-						if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
-							instanceKey := shelfID + "." + key + "." + channelName
-							instance, err := data1.NewInstance(instanceKey)
-
-							if err != nil {
-								my.Logger.Error().Msgf("add (%s) instance: %v", attribute, err)
-								return nil, err
-							}
-							my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
-
-							for label, labelDisplay := range my.instanceLabels[attribute] {
-								if value := obj.GetChildContentS(label); value != "" {
-									instance.SetLabel(labelDisplay, value)
-								}
-							}
-
-							instance.SetLabel("shelf", shelfName)
-							instance.SetLabel("shelf_id", shelfID)
-							instance.SetLabel("channel", channelName)
-
-							// Each child would have different possible values which is an ugly way to write all of them,
-							// so normal value would be mapped to 1 and rest all are mapped to 0.
-							if instance.GetLabel("status") == "normal" {
-								_ = statusMetric.SetValueInt64(instance, 1)
-							} else {
-								_ = statusMetric.SetValueInt64(instance, 0)
-							}
-
-							// populate numeric data
-							for metricKey, m := range data1.GetMetrics() {
-								if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
-									if err := m.SetValueString(instance, value); err != nil {
-										my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
-									} else {
-										my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
-									}
-								}
-							}
-						} else {
-							my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
-						}
-					}
-
-					output = append(output, data1)
+				statusMetric := data1.GetMetric("status")
+				if statusMetric == nil {
+					continue
 				}
+
+				if my.instanceKeys[attribute] == "" {
+					my.Logger.Warn().Str("attribute", attribute).Msg("no instance keys defined")
+					continue
+				}
+
+				objectElem := shelf.GetChildS(attribute)
+				if objectElem == nil {
+					my.Logger.Warn().Str("attribute", attribute).Msg("no instances on this system")
+					continue
+				}
+
+				my.Logger.Debug().Msgf("fetching %d [%s] instances", len(objectElem.GetChildren()), attribute)
+
+				for _, obj := range objectElem.GetChildren() {
+
+					if key := obj.GetChildContentS(my.instanceKeys[attribute]); key != "" {
+						instanceKey := shelfID + "." + key + "." + channelName
+						instance, err := data1.NewInstance(instanceKey)
+
+						if err != nil {
+							my.Logger.Error().Msgf("add (%s) instance: %v", attribute, err)
+							return nil, err
+						}
+						my.Logger.Debug().Msgf("add (%s) instance: %s.%s", attribute, shelfID, key)
+
+						for label, labelDisplay := range my.instanceLabels[attribute] {
+							if value := obj.GetChildContentS(label); value != "" {
+								instance.SetLabel(labelDisplay, value)
+							}
+						}
+
+						instance.SetLabel("shelf", shelfName)
+						instance.SetLabel("shelf_id", shelfID)
+						instance.SetLabel("channel", channelName)
+
+						// Each child would have different possible values which is an ugly way to write all of them,
+						// so normal value would be mapped to 1 and rest all are mapped to 0.
+						if instance.GetLabel("status") == "normal" {
+							_ = statusMetric.SetValueInt64(instance, 1)
+						} else {
+							_ = statusMetric.SetValueInt64(instance, 0)
+						}
+
+						// populate numeric data
+						for metricKey, m := range data1.GetMetrics() {
+							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+								if err := m.SetValueString(instance, value); err != nil {
+									my.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", metricKey, value, err)
+								} else {
+									my.Logger.Debug().Msgf("(%s) added value (%s)", metricKey, value)
+								}
+							}
+						}
+					} else {
+						my.Logger.Debug().Msgf("instance without [%s], skipping", my.instanceKeys[attribute])
+					}
+				}
+
+				output = append(output, data1)
 			}
 		}
 	}

@@ -199,14 +199,15 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					if err = objMetric.SetValueFloat64(objInstance, value); err != nil {
 						m.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
 					} else {
-						if rule.allLabels {
+						switch {
+						case rule.allLabels:
 							objInstance.SetLabels(instance.GetLabels())
-						} else if len(rule.includeLabels) != 0 {
+						case len(rule.includeLabels) != 0:
 							for _, k := range rule.includeLabels {
 								objInstance.SetLabel(k, instance.GetLabel(k))
 							}
 							objInstance.SetLabel(rule.label, objName)
-						} else {
+						default:
 							objInstance.SetLabel(rule.label, objName)
 						}
 					}

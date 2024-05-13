@@ -188,7 +188,7 @@ func generateDocker(kind int) {
 	filesd := make([]string, 0, len(conf.Config.PollersOrdered))
 
 	for _, v := range conf.Config.PollersOrdered {
-		port, _ := conf.GetPrometheusExporterPorts(v, true)
+		port, _ := conf.GetLastPromPort(v, true)
 		pollerInfo := PollerInfo{
 			ServiceName:   normalizeContainerNames(v),
 			PollerName:    v,
@@ -620,7 +620,7 @@ func generateDescription(dPath string, data []byte, counters map[string]Counter)
 					allMatches := metricRe.FindAllStringSubmatch(expr, -1)
 					for _, match := range allMatches {
 						m := match[1]
-						if len(m) == 0 {
+						if m == "" {
 							continue
 						}
 						expr = m
@@ -656,7 +656,7 @@ func generatePanelPathWithDescription(path string, desc string) (string, string)
 	if desc != "" && !strings.HasSuffix(desc, ".") {
 		desc += "."
 	}
-	return strings.Replace(strings.ReplaceAll(path, "[", "."), "]", ".", -1) + "description", desc
+	return strings.ReplaceAll(strings.ReplaceAll(path, "[", "."), "]", ".") + "description", desc
 }
 
 func init() {

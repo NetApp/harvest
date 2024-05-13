@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
 	"reflect"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -12,7 +13,7 @@ import (
 
 var testYml = "../../cmd/tools/doctor/testdata/testConfig.yml"
 
-func TestGetPrometheusExporterPorts(t *testing.T) {
+func TestGetLastPromPort(t *testing.T) {
 	TestLoadHarvestConfig(testYml)
 	type args struct {
 		pollerNames []string
@@ -29,23 +30,23 @@ func TestGetPrometheusExporterPorts(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for i, v := range tt.args.pollerNames {
-				got, err := GetPrometheusExporterPorts(v, true)
+				got, err := GetLastPromPort(v, true)
 				if (err != nil) != tt.wantErr[i] {
-					t.Errorf("GetPrometheusExporterPorts() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf("GetLastPromPort() error = %v, wantErr %v", err, tt.wantErr)
 					return
 				}
 				if err == nil && got == 0 {
-					t.Errorf("GetPrometheusExporterPorts() got = %v, want %s", got, "non zero value")
+					t.Errorf("GetLastPromPort() got = %v, want %s", got, "non zero value")
 				}
 			}
 		})
 	}
 }
 
-func TestGetPrometheusExporterPortsIssue284(t *testing.T) {
+func TestGetLastPromPortIssue284(t *testing.T) {
 	TestLoadHarvestConfig("../../cmd/tools/doctor/testdata/issue-284.yml")
 	loadPrometheusExporterPortRangeMapping(false)
-	got, _ := GetPrometheusExporterPorts("issue-284", false)
+	got, _ := GetLastPromPort("issue-284", false)
 	if got != 0 {
 		t.Fatalf("expected port to be 0 but was %d", got)
 	}
@@ -462,5 +463,47 @@ func TestEmptyPoller(t *testing.T) {
 		if err != nil {
 			t.Errorf("got no poller, want poller named=%s", pName)
 		}
+	}
+}
+
+func TestEmbeddedExporter(t *testing.T) {
+	t.Helper()
+	resetConfig()
+
+	configYaml := "testdata/issue_2852_direct_exporters.yml"
+	_, err := LoadHarvestConfig(configYaml)
+	if err != nil {
+		t.Fatalf("got error loading config: %s, want no errors", err)
+	}
+
+	p, err := PollerNamed("u2")
+	if err != nil {
+		t.Fatalf("got no poller, want poller named=u2")
+	}
+	if len(p.Exporters) != 3 {
+		t.Errorf("got %d exporters, want 3", len(p.Exporters))
+	}
+
+	port, err := GetLastPromPort("u2", false)
+	if err != nil {
+		t.Fatalf("got error: %v, want no error", err)
+	}
+	if port != 12990 {
+		t.Errorf("got port=%d, want port=12990", port)
+	}
+
+	uniqueExporters := GetUniqueExporters(p.Exporters)
+	want := []string{"u2-1", "u2-2})"}
+	if slices.Equal(uniqueExporters, want) {
+		t.Errorf("got %v, want %v", uniqueExporters, want)
+	}
+
+	// Test that the last default Prometheus exporter is used when no exporters are defined for a poller
+	port, err = GetLastPromPort("u3", false)
+	if err != nil {
+		t.Fatalf("got error: %v, want no error", err)
+	}
+	if port != 32990 {
+		t.Errorf("got port=%d, want port=32990", port)
 	}
 }

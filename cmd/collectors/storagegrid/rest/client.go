@@ -198,7 +198,7 @@ func (c *Client) getRest(request string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.request.Header.Set("accept", "application/json")
+	c.request.Header.Set("Accept", "application/json")
 	c.request.Header.Set("Authorization", "Bearer "+c.token)
 	return c.invoke()
 }
@@ -373,7 +373,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 		if err != nil {
 			return err
 		}
-		req.Header.Set("accept", "application/json")
+		req.Header.Set("Accept", "application/json")
 		req.Header.Set("Content-Type", "application/json")
 
 		// send request to server

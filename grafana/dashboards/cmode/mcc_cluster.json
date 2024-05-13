@@ -41,6 +41,12 @@
       "version": ""
     },
     {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -72,7 +78,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705059143435,
+  "iteration": 1715152880027,
   "links": [
     {
       "asDropdown": true,
@@ -2230,7 +2236,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources,(label_join(plex_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggr\",plex=~\"$TopDiskUtilizationPerPlex\"},\"Field\", \".\", \"cluster\", \"aggr\", \"plex\")))",
+              "expr": "label_join(\n  plex_disk_busy{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node=~\"$Node\", aggr=~\"$Aggr\"},\n  \"Field\",\n  \".\",\n  \"cluster\",\n  \"aggr\",\n  \"plex\"\n)\nand \ntopk(\n  $TopResources,\n  avg_over_time(\n    label_join(\n      plex_disk_busy{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\", aggr=~\"$Aggr\"},\n      \"Field\",\n      \".\",\n      \"cluster\",\n      \"aggr\",\n      \"plex\"\n    )[3h:] @ end()\n  )\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -4099,29 +4105,6 @@
         "refresh_on_load": false,
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(plex_disk_busy{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopDiskUtilizationPerPlex",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(plex_disk_busy{cluster=~\"$Cluster\", datacenter=~\"$Datacenter\", node=~\"$Node\" , aggr=~\"$Aggr\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*plex=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -4162,5 +4145,5 @@
   "timezone": "browser",
   "title": "ONTAP: MetroCluster",
   "uid": "",
-  "version": 9
+  "version": 10
 }

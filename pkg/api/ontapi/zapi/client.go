@@ -93,7 +93,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		return nil, err
 	}
 
-	request.Header.Set("Content-type", "text/xml")
+	request.Header.Set("Content-Type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
 	transport, err = c.Transport(request)

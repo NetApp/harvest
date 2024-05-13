@@ -666,16 +666,15 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	for _, oc := range ocs {
 		col, err := p.newCollector(oc.class, oc.object, oc.template)
 		if err != nil {
-			if errors.Is(err, errs.ErrConnection) {
+			switch {
+			case errors.Is(err, errs.ErrConnection):
 				logger.Warn().Err(err).
 					Str("collector", oc.class).
 					Str("object", oc.object).
 					Msg("abort collector")
-				break
-			} else if errors.Is(err, errs.ErrWrongTemplate) {
-				// status_7mode will never be loaded in cdot, ignore
+			case errors.Is(err, errs.ErrWrongTemplate):
 				logger.Debug().Err(err).Msg("Zapi Status_7mode failed to load")
-			} else {
+			default:
 				logger.Warn().Err(err).
 					Str("collector", oc.class).
 					Str("object", oc.object).
@@ -840,8 +839,8 @@ func (p *Poller) newCollector(class string, object string, template *node.Node) 
 	return col, err
 }
 
-// returns exporter that matches to name, if exporter is not loaded
-// tries to load and return
+// Returns the exporter with the matching name.
+// If the exporter is not loaded, load and return it.
 func (p *Poller) loadExporter(name string) exporter.Exporter {
 
 	var (

@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1707745941374,
+  "iteration": 1715072354966,
   "links": [
     {
       "asDropdown": true,
@@ -96,7 +96,7 @@
   ],
   "panels": [
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
@@ -105,791 +105,790 @@
         "y": 0
       },
       "id": 552,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgb(21, 118, 171)",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
+      "panels": [],
+      "title": "Capacity",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
-          "gridPos": {
-            "h": 7,
-            "w": 9,
-            "x": 0,
-            "y": 1
-          },
-          "id": 576,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Space",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percent of space used.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "decimals": 2,
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgb(21, 118, 171)",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 9,
-            "y": 1
-          },
-          "id": 615,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Space Used %",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Object Count.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "locale"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 7,
-            "x": 17,
-            "y": 1
-          },
-          "id": 660,
-          "options": {
-            "showHeader": true,
-            "sortBy": [
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
               {
-                "desc": false,
-                "displayName": "Object"
+                "color": "rgb(21, 118, 171)",
+                "value": null
               }
             ]
           },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(count(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Nodes",
-              "refId": "A"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "SVMs",
-              "refId": "B"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Aggregates",
-              "refId": "C"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Luns",
-              "refId": "D"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Volumes",
-              "refId": "E"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(namespace_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Namespaces",
-              "refId": "F"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "S3 Buckets",
-              "refId": "G"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Disks",
-              "refId": "H"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Snapmirrrors",
-              "refId": "I"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "LIFs",
-              "refId": "J"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "FC Ports",
-              "refId": "K"
-            },
-            {
-              "exemplar": false,
-              "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Shelves",
-              "refId": "L"
-            }
-          ],
-          "title": "Object Count",
-          "transformations": [
-            {
-              "id": "reduce",
-              "options": {
-                "reducers": [
-                  "lastNotNull"
-                ]
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {},
-                "renameByName": {
-                  "Field": "Object",
-                  "Last *": "Count"
-                }
-              }
-            }
-          ],
-          "type": "table"
+          "unit": "bytes"
         },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Available space.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgb(21, 118, 171)",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 9,
-            "x": 0,
-            "y": 8
-          },
-          "id": 613,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 9,
+        "x": 0,
+        "y": 1
+      },
+      "id": 576,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "title": "Available Space",
-          "type": "stat"
+          "fields": "",
+          "values": false
         },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
         {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgb(21, 118, 171)",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 9,
-            "y": 8
-          },
-          "id": 611,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Used and Reserved Space",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 15
-          },
-          "id": 655,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum by (cluster) (aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Total Space by Cluster",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 15
-          },
-          "id": 656,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum by (cluster) (aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Used and Reserved Space by Cluster",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Available space.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 25
-          },
-          "id": 657,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "sum by (cluster) (aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Available Space by Cluster",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percent of space used.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 25
-          },
-          "id": 658,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "topk($TopResources, (100 * sum by (cluster) (aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$TopClusterUsed\"}) /   sum by (cluster) (aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$TopClusterUsed\"})))",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Space Used % by Cluster",
-          "type": "timeseries"
+          "exemplar": false,
+          "expr": "sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
         }
       ],
-      "title": "Capacity",
-      "type": "row"
+      "title": "Total Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Percent of space used.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 9,
+        "y": 1
+      },
+      "id": 615,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Space Used %",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Object Count.\n\nNote: The REST and ZAPI collectors return a different number of volumes depending on whether you have set up object store servers on your cluster. \n\nFor more details, visit the [ZAPI and REST Gaps](https://netapp.github.io/harvest/latest/zapi-and-rest-gap.md).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 7,
+        "x": 17,
+        "y": 1
+      },
+      "id": 660,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Object"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(count(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Nodes",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "SVMs",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Aggregates",
+          "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Luns",
+          "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Volumes",
+          "refId": "E"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(namespace_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Namespaces",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "S3 Buckets",
+          "refId": "G"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Disks",
+          "refId": "H"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Snapmirrrors",
+          "refId": "I"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "LIFs",
+          "refId": "J"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "FC Ports",
+          "refId": "K"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Shelves",
+          "refId": "L"
+        }
+      ],
+      "title": "Object Count",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Field": "Object",
+              "Last *": "Count"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Available space.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 9,
+        "x": 0,
+        "y": 8
+      },
+      "id": 613,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Available Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 9,
+        "y": 8
+      },
+      "id": 611,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Used and Reserved Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 655,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (cluster) (aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+          "interval": "",
+          "legendFormat": "{{cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Total Space by Cluster",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 656,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (cluster) (aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+          "interval": "",
+          "legendFormat": "{{cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Used and Reserved Space by Cluster",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Available space.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 657,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (cluster) (aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+          "interval": "",
+          "legendFormat": "{{cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Available Space by Cluster",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Percent of space used.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "id": 658,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "(\n    100 * sum by (datacenter,cluster) (aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}) \n    / on(datacenter,cluster) \n    sum by (datacenter,cluster) (aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})\n)\nand on(datacenter,cluster)\ntopk(\n  $TopResources,\n  (\n    100 * sum by (datacenter,cluster) (\n      avg_over_time(aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())\n    )\n    / on(datacenter,cluster)\n    sum by (datacenter,cluster) (\n      avg_over_time(aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())\n    )\n  )\n)",
+          "interval": "",
+          "legendFormat": "{{cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Space Used % by Cluster",
+      "type": "timeseries"
     },
     {
       "collapsed": true,
@@ -898,7 +897,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 35
       },
       "id": 482,
       "panels": [
@@ -1245,7 +1244,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 36
       },
       "id": 617,
       "panels": [
@@ -1267,7 +1266,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows error detail of disk, shelf, node, network port, license compliance, HA down and sensor failure alerts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1387,7 +1386,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows warning detail of disk, shelf, health monitor, lif, volume move and volume anti-ransomware alerts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1641,7 +1640,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 37
       },
       "id": 97,
       "panels": [
@@ -2121,7 +2120,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 38
       },
       "id": 634,
       "panels": [
@@ -2595,7 +2594,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of power consumed by a node/shelf/total in Watts.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2748,7 +2747,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 39
       },
       "id": 627,
       "panels": [
@@ -3105,7 +3104,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 40
       },
       "id": 184,
       "panels": [
@@ -3981,29 +3980,6 @@
         "query": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
         "skipUrlSync": false,
         "type": "textbox"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, (100 * (sum by (cluster) (aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} ) / sum by (cluster) (aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopClusterUsed",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, (100 * (sum by (cluster) (aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} ) / sum by (cluster) (aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*cluster=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -4027,5 +4003,5 @@
   "timezone": "",
   "title": "ONTAP: Datacenter",
   "uid": "",
-  "version": 1
+  "version": 2
 }

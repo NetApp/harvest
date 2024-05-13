@@ -160,14 +160,15 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				}
 			}
 
-			if rule.allLabels {
+			switch {
+			case rule.allLabels:
 				objKey = strings.Join(maps.Values(instance.GetLabels()), ".")
-			} else if len(rule.includeLabels) != 0 {
+			case len(rule.includeLabels) != 0:
 				objKey = objName
 				for _, k := range rule.includeLabels {
 					objKey += "." + instance.GetLabel(k)
 				}
-			} else {
+			default:
 				objKey = objName
 			}
 
@@ -176,14 +177,15 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				if objInstance, err = matrices[i].NewInstance(objKey); err != nil {
 					return nil, nil, err
 				}
-				if rule.allLabels {
+				switch {
+				case rule.allLabels:
 					objInstance.SetLabels(instance.GetLabels())
-				} else if len(rule.includeLabels) != 0 {
+				case len(rule.includeLabels) != 0:
 					for _, k := range rule.includeLabels {
 						objInstance.SetLabel(k, instance.GetLabel(k))
 					}
 					objInstance.SetLabel(rule.label, objName)
-				} else {
+				default:
 					objInstance.SetLabel(rule.label, objName)
 				}
 			}
@@ -240,11 +242,12 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			)
 
 			mn := metric.GetName()
-			if metric.GetProperty() == "average" || metric.GetProperty() == "percent" {
+			switch {
+			case metric.GetProperty() == "average" || metric.GetProperty() == "percent":
 				avg = true
-			} else if strings.Contains(mn, "average_") || strings.Contains(mn, "avg_") {
+			case strings.Contains(mn, "average_") || strings.Contains(mn, "avg_"):
 				avg = true
-			} else if !metric.IsHistogram() && strings.Contains(mn, "_latency") {
+			case !metric.IsHistogram() && strings.Contains(mn, "_latency"):
 				avg = true
 			}
 

@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705055838907,
+  "iteration": 1715148498643,
   "links": [
     {
       "asDropdown": true,
@@ -938,7 +938,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "topk($TopResources, aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopMaxDiskTotalTransfers\"})",
+          "expr": "max by (aggr,node) (aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}) \n  and \ntopk($TopResources, max by (aggr,node) (avg_over_time(aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end())))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -947,7 +947,8 @@
           "refId": "C"
         },
         {
-          "expr": "topk($TopResources, aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopMaxDiskBusy\"})",
+          "exemplar": false,
+          "expr": "max by (aggr,node) (aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}) \n  and \ntopk($TopResources, max by (aggr,node) (avg_over_time(aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end())))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2229,7 +2230,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of number of disk kilobytes (KB) read/written per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2327,7 +2328,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of bytes written/read through a host adapter.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2425,7 +2426,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of array of counts of different types of Consistency Points (CP) and average latency in microseconds for the WAFL filesystem to process write request to the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2564,7 +2565,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of external cache hit rate and estimated number of disk reads per second replaced by cache.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2694,7 +2695,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of percentage of HDD read operations replace by SSD and number of HDD read operations replaced by SSD reads per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3103,52 +3104,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopMaxDiskBusy",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*aggr=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopMaxDiskTotalTransfers",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, max by (aggr) (avg_over_time(aggr_disk_max_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}]))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*aggr=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -3172,5 +3127,5 @@
   "timezone": "",
   "title": "ONTAP: Disk",
   "uid": "",
-  "version": 30
+  "version": 31
 }

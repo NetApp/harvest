@@ -45,8 +45,8 @@ counters:
   - Name: aggr_total_physical_used
     Description: Total Physical Used
 
-  - Name: aggr_volume_count_flexvol
-    Description: Number of flexvol volumes in the aggregate.
+  - Name: aggr_volume_count
+    Description: The aggregate's volume count, which includes both FlexVols and FlexGroup constituents.
 
   - Name: cluster_new_status
     Description: It is an indicator of the overall health status of the cluster, with
@@ -935,3 +935,38 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/metrocluster_check.yaml
+
+  - Name: flashpool_hya_read_hit_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: flashpool_hya_read_miss_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: flashpool_hya_write_hdd_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: flashpool_hya_write_ssd_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec
+
+  - Name: fabricpool_cloud_bin_op_latency_average
+    APIs:
+      - API: REST
+        Unit: millisec
+      - API: ZAPI
+        Unit: millisec

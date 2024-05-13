@@ -73,6 +73,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel shows volume performance detail.",
       "fieldConfig": {
         "defaults": {
           "color": {

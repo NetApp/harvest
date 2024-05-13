@@ -11,7 +11,7 @@ import (
 func TestNativeInstall(t *testing.T) {
 	utils.SkipIfMissing(t, utils.InstallNative)
 	var path = os.Getenv("BUILD_PATH")
-	if len(path) == 0 {
+	if path == "" {
 		panic("BUILD_PATH variable is not set.")
 	}
 	installObject, err := installer.GetInstaller(installer.GRAFANA, "grafana/grafana")

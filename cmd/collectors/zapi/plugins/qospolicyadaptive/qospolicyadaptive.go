@@ -1,7 +1,7 @@
 package qospolicyadaptive
 
 import (
-	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -46,7 +46,7 @@ func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 
 func (p *QosPolicyAdaptive) setIOPs(data *matrix.Matrix, instance *matrix.Instance, labelName string) {
 	val := instance.GetLabel(labelName)
-	xput, err := qospolicyfixed.ZapiXputToRest(val)
+	xput, err := collectors.ZapiXputToRest(val)
 	if err != nil {
 		p.Logger.Warn().Str("label", labelName).Str("val", val).Msg("Unable to convert label, skipping")
 		return
