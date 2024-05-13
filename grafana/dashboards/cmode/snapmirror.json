@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705492466249,
+  "iteration": 1715583786669,
   "links": [
     {
       "asDropdown": true,
@@ -707,7 +707,7 @@
         },
         {
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\",relationship_id=~\"$TopTransferDataById\"}",
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}\nand\ntopk(\n    $TopResources,\n    avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\", source_volume=~\"$SourceVolume\", destination_volume=~\"$DestinationVolume\", source_vserver=~\"$SourceSVM\", destination_vserver=~\"$DestinationSVM\"}[3h])\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -4330,29 +4330,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[3h])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopTransferDataById",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$SourceCluster\",source_volume=~\"$SourceVolume\",destination_volume=~\"$DestinationVolume\",source_vserver=~\"$SourceSVM\",destination_vserver=~\"$DestinationSVM\"}[3h])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*relationship_id=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -4387,5 +4364,5 @@
   "timezone": "",
   "title": "ONTAP: SnapMirror",
   "uid": "",
-  "version": 5
+  "version": 6
 }

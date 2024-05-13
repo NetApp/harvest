@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715328794817,
+  "iteration": 1715581200639,
   "links": [
     {
       "asDropdown": true,
@@ -1057,7 +1057,7 @@
         ]
       },
       "gridPos": {
-        "h": 14,
+        "h": 12,
         "w": 24,
         "x": 0,
         "y": 17
@@ -1207,7 +1207,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 29
       },
       "id": 131,
       "panels": [
@@ -1496,7 +1496,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 30
       },
       "id": 57,
       "panels": [
@@ -1729,7 +1729,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 31
       },
       "id": 107,
       "panels": [
@@ -1794,7 +1794,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 32
           },
           "id": 109,
           "options": {
@@ -1887,7 +1887,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 32
           },
           "id": 110,
           "options": {
@@ -1977,7 +1977,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 40
           },
           "id": 111,
           "options": {
@@ -1998,9 +1998,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, nic_rx_bytes+nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$TopNicXPut\"})",
+              "expr": "(\n    nic_rx_bytes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"} \n    +\n    nic_tx_bytes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}\n)\nand on(datacenter,cluster, nic, node)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n    + avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n  )\n)",
               "interval": "",
-              "legendFormat": "{{cluster}} - {{svm}} - {{node}} - {{nic}}",
+              "legendFormat": "{{cluster}} - {{node}} - {{nic}}",
               "refId": "A"
             }
           ],
@@ -2067,7 +2067,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 40
           },
           "id": 112,
           "options": {
@@ -2088,9 +2088,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "topk($TopResources, fcp_read_data+fcp_write_data+fcp_nvmf_read_data+fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$TopFCUtilXPut\"})",
+              "expr": "(\n    fcp_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"} \n    +\n    fcp_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}\n    +\n    fcp_nvmf_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}\n    +\n    fcp_nvmf_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}\n)\nand on(datacenter,cluster, port, node)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n    + avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n    + avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n    + avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n  )\n)",
               "interval": "",
-              "legendFormat": "{{cluster}} - {{svm}} - {{node}} - {{port}}",
+              "legendFormat": "{{cluster}} - {{node}} - {{port}}",
               "refId": "A"
             }
           ],
@@ -2110,7 +2110,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 32
       },
       "id": 28,
       "panels": [
@@ -2168,7 +2168,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 51
           },
           "id": 30,
           "options": {
@@ -2273,7 +2273,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 47
+            "y": 51
           },
           "id": 31,
           "options": {
@@ -2374,7 +2374,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 47
+            "y": 51
           },
           "id": 32,
           "options": {
@@ -2486,7 +2486,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 56
+            "y": 60
           },
           "id": 41,
           "options": {
@@ -2605,7 +2605,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 56
+            "y": 60
           },
           "id": 43,
           "options": {
@@ -2724,7 +2724,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 56
+            "y": 60
           },
           "id": 42,
           "options": {
@@ -2807,7 +2807,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 33
       },
       "id": 88,
       "panels": [
@@ -3559,7 +3559,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 34
       },
       "id": 59,
       "panels": [
@@ -3904,7 +3904,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 35
       },
       "id": 67,
       "panels": [
@@ -3941,7 +3941,7 @@
             "h": 5,
             "w": 3,
             "x": 0,
-            "y": 27
+            "y": 38
           },
           "id": 84,
           "options": {
@@ -3998,7 +3998,7 @@
             "h": 5,
             "w": 3,
             "x": 3,
-            "y": 27
+            "y": 38
           },
           "id": 69,
           "options": {
@@ -4089,7 +4089,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 27
+            "y": 38
           },
           "id": 72,
           "options": {
@@ -4181,7 +4181,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 27
+            "y": 38
           },
           "id": 73,
           "options": {
@@ -4274,7 +4274,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 27
+            "y": 38
           },
           "id": 74,
           "options": {
@@ -4319,7 +4319,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 36
       },
       "id": 118,
       "panels": [
@@ -4736,7 +4736,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 37
       },
       "id": 76,
       "panels": [
@@ -5151,7 +5151,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 38
       },
       "id": 38,
       "panels": [
@@ -5924,52 +5924,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopNicXPut",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*nic=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopFCUtilXPut",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(fcp_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(fcp_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(fcp_nvmf_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])+avg_over_time(fcp_nvmf_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*port=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -5993,5 +5947,5 @@
   "timezone": "",
   "title": "ONTAP: Node",
   "uid": "",
-  "version": 13
+  "version": 14
 }
