@@ -4098,7 +4098,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows consistency group relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4216,7 +4216,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows consistency group relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {
