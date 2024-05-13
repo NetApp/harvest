@@ -136,7 +136,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
+      "description": "This panel shows total power of nodes and shelves.",
       "fieldConfig": {
         "defaults": {
           "color": {

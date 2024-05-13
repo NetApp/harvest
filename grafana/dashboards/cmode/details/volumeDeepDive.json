@@ -352,6 +352,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel shows detail of average amount of data read per read operation.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -408,6 +409,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel shows detail of average amount of data write per write operation.",
       "fieldConfig": {
         "defaults": {
           "color": {

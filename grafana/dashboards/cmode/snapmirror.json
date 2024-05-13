@@ -1540,6 +1540,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows count of snapmirror relationships by source node.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2298,7 +2299,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volume snapmirror relationships.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2361,7 +2362,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of snapmirror relationships which are being protected by both volume and Storage VM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2545,7 +2546,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of snapmirror relationships having lag time <= 15 minutes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2608,7 +2609,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of snapmirror relationships having lag time between 16 minutes to 30 minutes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2671,7 +2672,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of Storage VM snapmirror relationships.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2734,7 +2735,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes which are not being protected.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2808,7 +2809,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of snapmirror relationships having lag time between 31 minutes to 60 minutes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2871,7 +2872,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of snapmirror relationships having lag time >= 60 minutes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2934,6 +2935,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows local & remote snapmirrors with protected by details.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3114,6 +3116,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows snapmirror relationships with lag duration details.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3336,7 +3339,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows volumes details which are not being protected.",
           "fieldConfig": {
             "defaults": {
               "color": {

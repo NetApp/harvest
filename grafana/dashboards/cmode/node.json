@@ -1921,7 +1921,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows total bytes received & sent in ethernet ports.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2011,7 +2011,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of amount of data read from the storage system/written to the storage system in FC ports.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4125,7 +4125,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of amount of data read from the storage system/written to the storage system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4542,7 +4542,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of amount of data read from the storage system/written to the storage system in NVMe/FC.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4808,7 +4808,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of iSCSI read/write/other operations per second on this logical interface (LIF).",
           "fieldConfig": {
             "defaults": {
               "mappings": [],
@@ -4957,7 +4957,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of amount of data read from the storage system/written to the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -5049,7 +5049,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "This panel shows detail of iSCSI read/write/other operations per second on this logical interface (LIF).",
           "fieldConfig": {
             "defaults": {
               "color": {
