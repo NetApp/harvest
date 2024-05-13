@@ -10,6 +10,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/tidwall/gjson v1.17.1
 	github.com/zekroTJA/timedmap v1.5.2
+	github.com/zekroTJA/timedmap/v2 v2.0.0
 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
 	golang.org/x/sys v0.20.0
 	golang.org/x/term v0.20.0
