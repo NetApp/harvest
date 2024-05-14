@@ -1308,7 +1308,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows count of snapmirror relationships by destination node.",
+          "description": "This panel displays count of snapmirror relationships by destination node.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1723,7 +1723,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows count of snapmirror relationships by source node.",
+          "description": "This panel displays the count of snapmirror relationships by source node.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2152,7 +2152,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows count of snapmirror relationships by source SVM.",
+          "description": "This panel displays count of snapmirror relationships by source SVM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2248,7 +2248,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows count of snapmirror relationships by destination SVM.",
+          "description": "This panel displays count of snapmirror relationships by destination SVM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2545,7 +2545,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of snapmirror relationships which are being protected by both volume and Storage VM.",
+          "description": "Total number of snapmirror relationships that are protected by both volume and Storage VM.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2729,7 +2729,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of snapmirror relationships having lag time <= 15 minutes.",
+          "description": "Total number of snapmirror relationships with a lag time of 15 minutes or less.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2918,7 +2918,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of volumes which are not being protected.",
+          "description": "Total number of volumes that are not protected.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3055,7 +3055,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of snapmirror relationships having lag time >= 60 minutes.",
+          "description": "Total number of snapmirror relationships with a lag time of 60 minutes or more.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3118,7 +3118,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows local & remote snapmirrors with protected by details.",
+          "description": "This panel displays local & remote snapmirrors with protected by details.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3299,7 +3299,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows snapmirror relationships with lag duration details.",
+          "description": "This panel displays snapmirror relationships with lag duration details.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3522,7 +3522,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows volumes details which are not being protected.",
+          "description": "This panel displays details of volumes that are not protected.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3628,7 +3628,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows volume relationship count based on the relationship type.",
+          "description": "This panel displays volume relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3746,7 +3746,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows volume relationship count based on the relationship health.",
+          "description": "This panel displays volume relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3850,7 +3850,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows volume relationship count based on the relationship type.",
+          "description": "This panel displays volume relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4101,7 +4101,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows consistency group relationship count based on the relationship type.",
+          "description": "This panel displays consistency group relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4219,7 +4219,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows consistency group relationship count based on the relationship health.",
+          "description": "This panel displays consistency group relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4323,7 +4323,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows volume relationship count based on the relationship health.",
+          "description": "This panel displays volume relationship count based on the relationship health.",
           "fieldConfig": {
             "defaults": {
               "color": {

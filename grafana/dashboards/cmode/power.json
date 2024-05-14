@@ -136,7 +136,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows total power of nodes and shelves.",
+      "description": "This panel displays total power of nodes and shelves.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -587,7 +587,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows total power consumed by Node, Shelf and both.",
+      "description": "This panel displays total power consumed by Node, Shelf and both.",
       "fieldConfig": {
         "defaults": {
           "color": {

@@ -268,7 +268,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows Number of 'Not Found' responses for the operations.",
+      "description": "This panel displays Number of 'Not Found' responses for the operations.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -355,7 +355,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows cumulative count of all request failures.",
+      "description": "This panel displays cumulative count of all request failures.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -442,7 +442,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows Number of requests sent to the service.",
+      "description": "This panel displays Number of requests sent to the service.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -529,7 +529,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows Number of responses received from the server (does not include timeouts).",
+      "description": "This panel displays Number of responses received from the server (does not include timeouts).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -616,7 +616,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows Number of successful responses to the operation.",
+      "description": "This panel displays Number of successful responses to the operation.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -703,7 +703,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows Number of times requests to the server for this operation timed out.",
+      "description": "This panel displays Number of times requests to the server for this operation timed out.",
       "fieldConfig": {
         "defaults": {
           "color": {
