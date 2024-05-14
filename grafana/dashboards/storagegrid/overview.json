@@ -2198,7 +2198,7 @@
         "type": "query"
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\"},cluster)",

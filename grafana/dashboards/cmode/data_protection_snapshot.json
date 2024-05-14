@@ -1554,12 +1554,8 @@
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "fas8040-206-21",
-          "value": "fas8040-206-21"
-        },
+        "allValue": ".*",
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
         "description": null,

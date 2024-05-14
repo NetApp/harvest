@@ -606,11 +606,16 @@ var exceptionToAll = map[string]bool{
 
 func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 	shouldHaveAll := map[string]bool{
-		"Cluster":   true,
-		"Node":      true,
-		"Volume":    true,
-		"SVM":       true,
-		"Aggregate": true,
+		"Cluster":     true,
+		"Node":        true,
+		"Volume":      true,
+		"SVM":         true,
+		"Aggregate":   true,
+		"FlexGroup":   true,
+		"Constituent": true,
+	}
+	exceptionForAllValues := map[string]bool{
+		"cmode/security.json": true,
 	}
 
 	if exceptionToAll[ShortPath(path)] {
@@ -641,6 +646,16 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 			t.Errorf("variable=%s should have includeAll=true dashboard=%s path=templating.list[%s].includeAll",
 				varName, ShortPath(path), key.String())
 		}
+
+		allValues := value.Get("allValue").String()
+		if allValues != ".*" {
+			if exceptionForAllValues[ShortPath(path)] {
+				return true
+			}
+			t.Errorf("dashboard=%s variable=%s is not .*. Should be \"allValues\": .*,",
+				ShortPath(path), varName)
+		}
+
 		return true
 	})
 }

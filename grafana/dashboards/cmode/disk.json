@@ -2885,7 +2885,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(disk_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
@@ -2911,7 +2911,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(disk_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
@@ -2937,7 +2937,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
@@ -2963,7 +2963,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}, plex)",
@@ -2989,7 +2989,7 @@
         "useTags": false
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\"}, raid)",
