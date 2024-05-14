@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705065859515,
+  "iteration": 1715582801657,
   "links": [
     {
       "asDropdown": true,
@@ -1330,7 +1330,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 13,
         "x": 0,
         "y": 48
@@ -1354,7 +1354,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_disk_user_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
+          "expr": "(\n    sum by (datacenter,cluster, aggr) (aggr_disk_user_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})\n)\nand on(datacenter,cluster, aggr)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster, aggr) (\n        avg_over_time(aggr_disk_user_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n    )\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "Reads  - {{cluster}} - {{aggr}}",
@@ -1362,7 +1362,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(aggr_disk_user_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$TopAggrPower\"}) by (aggr,cluster,node)",
+          "expr": "(\n    sum by (datacenter,cluster, aggr) (aggr_disk_user_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})\n)\nand on(datacenter,cluster, aggr)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster, aggr) (\n        avg_over_time(aggr_disk_user_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n    )\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "Writes  - {{cluster}} - {{aggr}}",
@@ -1381,7 +1381,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 56
+        "y": 57
       },
       "id": 93,
       "panels": [
@@ -1729,7 +1729,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 58
       },
       "id": 84,
       "panels": [
@@ -1854,7 +1854,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 59
       },
       "id": 76,
       "panels": [
@@ -2391,7 +2391,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 60
       },
       "id": 78,
       "panels": [
@@ -3212,29 +3212,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopAggrPower",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*aggr=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -3269,5 +3246,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "",
-  "version": 13
+  "version": 14
 }

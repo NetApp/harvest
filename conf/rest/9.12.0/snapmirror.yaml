@@ -17,6 +17,7 @@ counters:
   - ^relationship_group_type                 => group_type
   - ^relationship_type                       => relationship_type
   - ^schedule                                => schedule
+  - ^source_path                             => source_location
   - ^source_volume                           => source_volume
   - ^source_vserver                          => source_vserver
   - ^status                                  => relationship_status
@@ -56,10 +57,12 @@ export_options:
     - destination_vserver
     - relationship_id
     - source_cluster
+    - source_location
     - source_volume
     - source_vserver
   instance_labels:
     - derived_relationship_type
+    - destination_cg_name
     - group_type
     - healthy
     - last_transfer_error
@@ -71,4 +74,5 @@ export_options:
     - relationship_status
     - relationship_type
     - schedule
+    - source_cg_name
     - unhealthy_reason
