@@ -1483,7 +1483,8 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		// These are from fsa
 		"Volume Access ($Activity) History", "Volume Access ($Activity) History By Percent", "Volume Modify ($Activity) History", "Volume Modify ($Activity) History By Percent",
 		// This is from workload
-		"Service Latency by Resources",
+		"Top $TopResources Workloads by Service Time from sync_repl", "Top $TopResources Workloads by Service Time from flexcache_ral", "Top $TopResources Workloads by Service Time from flexcache_spinhi",
+		"Top $TopResources Workloads by Latency from sync_repl", "Top $TopResources Workloads by Latency from flexcache_ral", "Top $TopResources Workloads by Latency from flexcache_spinhi", "Service Latency by Resources",
 		// These are from svm
 		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap", "NFSv3 Latency by Op Type", "NFSv3 IOPs per Type",
 		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap", "NFSv4 Latency by Op Type", "NFSv4 IOPs per Type",
@@ -1494,7 +1495,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		// This is from lun
 		"IO Size",
 		// This is from nfs4storePool
-		"Allocations over 50%", "All nodes with 1% or more allocations in $Datacenter",
+		"Allocations over 50%", "All nodes with 1% or more allocations in $Datacenter", "SessionConnectionHolderAlloc", "ConnectionParentSessionReferenceAlloc", "SessionHolderAlloc", "SessionAlloc", "StateRefHistoryAlloc",
 	}
 
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
@@ -1516,9 +1517,8 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 				expr := targetsSlice[0].Get("expr").String()
 				if strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, " on ") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
-					// *count++
-					// t.Errorf(`dashboard=%s panel="%s" has arithmetic operations %d`, dashPath, value.Get("title").String(), *count)
-					fmt.Printf(`dashboard=%s panel="%s" has arithmetic operations \n`, dashPath, title)
+					*count++
+					t.Errorf(`dashboard=%s panel="%s" has arithmetic operations %d`, dashPath, value.Get("title").String(), *count)
 				} else {
 					*count++
 					t.Errorf(`dashboard=%s panel="%s" does not have panel description %d`, dashPath, title, *count)
@@ -1534,7 +1534,7 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 				}
 			}
 		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
-			// Few panels have description text from variable, which would be ignored.
+			// Few panels have description text from variable, which would be ignored and description must end with period(.)
 			t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
 		}
 	})

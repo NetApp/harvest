@@ -162,7 +162,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows detail of total number of FC-NVMe/FCP operations and amount of FC-NVMe/FCP traffic to and from the storage system.",
+      "description": "This panel displays detail of total number of FC-NVMe/FCP operations and amount of FC-NVMe/FCP traffic to and from the storage system.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -367,7 +367,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows detail of number of FC-NVMe/FC read operations and amount of data read from the storage system (FC-NVMe/FC).",
+      "description": "This panel displays detail of number of FC-NVMe/FC read operations and amount of data read from the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -460,7 +460,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows detail of Number of FC-NVMe/FC write operations and amount of data written to the storage system (FC-NVMe/FC).",
+      "description": "This panel displays detail of Number of FC-NVMe/FC write operations and amount of data written to the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
           "mappings": [],

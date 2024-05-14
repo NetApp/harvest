@@ -731,7 +731,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows cluster compliant detail.",
+      "description": "This panel displays cluster compliant detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -915,7 +915,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows SVM compliant detail.",
+      "description": "This panel displays SVM compliant detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1083,7 +1083,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows volume encryption detail.",
+      "description": "This panel displays volume encryption detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1279,7 +1279,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows SVM anti ransomware detail.",
+      "description": "This panel displays SVM anti ransomware detail.",
       "fieldConfig": {
         "defaults": {
           "color": {

@@ -205,7 +205,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes that are protected.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -370,7 +370,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes whose snapshot size used is breached the snapshot reserve size.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -433,7 +433,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes that are not protected.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -507,7 +507,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes whose snapshot size used is not breached the snapshot reserve size.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -581,6 +581,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays volumes detail with protected status and snapshot policy.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1004,7 +1005,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes whose snapshot count is < 10.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1067,7 +1068,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes whose snapshot count is between 10 to 100.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1130,7 +1131,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes whose snapshot count is between 101 to 500.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1193,7 +1194,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Total number of volumes whose snapshot count is > 500.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1256,6 +1257,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays volumes detail with snapshot count.",
           "fieldConfig": {
             "defaults": {
               "color": {

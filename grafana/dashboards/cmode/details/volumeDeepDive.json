@@ -90,7 +90,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows volume performance details.",
+      "description": "This panel displays volume performance details.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -352,6 +352,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel displays detail of average amount of data read per read operation.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -408,6 +409,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel displays detail of average amount of data write per write operation.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2657,7 +2659,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows detail of physical size, physical space used, logical space used and size used of the volume, in bytes.",
+          "description": "This panel displays detail of physical size, physical space used, logical space used and size used of the volume, in bytes.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2774,7 +2776,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows detail of physical used %, logical used % and size used % of the volume.",
+          "description": "This panel displays detail of physical used %, logical used % and size used % of the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2888,7 +2890,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows detail of snapshot available size, snapshot reserve size, snapshot reserve available and snapshots size used of the volume.",
+          "description": "This panel displays detail of snapshot available size, snapshot reserve size, snapshot reserve available and snapshots size used of the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3009,7 +3011,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows detail of snapshot reserve %, snapshot reserve used % and size used % of the volume.",
+          "description": "This panel displays detail of snapshot reserve %, snapshot reserve used % and size used % of the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {

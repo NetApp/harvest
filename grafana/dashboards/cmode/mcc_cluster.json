@@ -3458,7 +3458,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows cluster level diagnostics status detail of Metrocluster.",
+          "description": "This panel displays cluster level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3561,7 +3561,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows node level diagnostics status detail of Metrocluster.",
+          "description": "This panel displays node level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3666,7 +3666,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows aggregate level diagnostics status detail of Metrocluster.",
+          "description": "This panel displays aggregate level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3773,7 +3773,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel shows volume level diagnostics status detail of Metrocluster.",
+          "description": "This panel displays volume level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
               "color": {

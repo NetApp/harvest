@@ -764,7 +764,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel shows SVM performance detail.",
+      "description": "This panel displays SVM performance detail.",
       "fieldConfig": {
         "defaults": {
           "color": {
