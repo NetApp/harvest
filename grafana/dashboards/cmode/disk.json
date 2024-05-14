@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715148498643,
+  "iteration": 1715672476697,
   "links": [
     {
       "asDropdown": true,
@@ -2084,6 +2084,17 @@
               }
             },
             {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {}
+            },
+            {
               "id": "organize",
               "options": {
                 "excludeByName": {
@@ -2142,73 +2153,69 @@
                   "shelf_bay": true
                 },
                 "indexByName": {
-                  "Time 1": 6,
-                  "Time 2": 9,
-                  "Time 3": 18,
-                  "Time 4": 27,
-                  "Time 5": 36,
-                  "Value #A": 17,
+                  "Time": 51,
+                  "Time 2": 6,
+                  "Time 3": 14,
+                  "Time 4": 23,
+                  "Time 5": 32,
+                  "Value #A": 13,
                   "Value #B": 5,
-                  "Value #C": 35,
-                  "Value #D": 26,
-                  "Value #E": 54,
-                  "__name__ 1": 10,
-                  "__name__ 2": 19,
-                  "__name__ 3": 28,
-                  "__name__ 4": 37,
-                  "cluster 1": 1,
-                  "cluster 2": 11,
-                  "cluster 3": 20,
-                  "cluster 4": 29,
-                  "cluster 5": 38,
-                  "container_type": 40,
-                  "datacenter 1": 0,
-                  "datacenter 2": 12,
-                  "datacenter 3": 21,
-                  "datacenter 4": 30,
-                  "datacenter 5": 41,
-                  "disk 1": 4,
-                  "disk 2": 13,
-                  "disk 3": 22,
-                  "disk 4": 31,
-                  "disk 5": 42,
-                  "diskStatus": 43,
-                  "failed": 44,
-                  "index": 3,
-                  "instance 1": 7,
-                  "instance 2": 14,
-                  "instance 3": 23,
-                  "instance 4": 32,
-                  "instance 5": 45,
-                  "job 1": 8,
-                  "job 2": 15,
-                  "job 3": 24,
-                  "job 4": 33,
-                  "job 5": 46,
-                  "model": 47,
-                  "node 1": 2,
-                  "node 2": 16,
-                  "node 3": 25,
-                  "node 4": 34,
-                  "node 5": 48,
-                  "owner_node": 49,
-                  "serial_number": 50,
-                  "shared": 51,
-                  "shelf": 52,
-                  "shelf_bay": 53,
-                  "type": 39
+                  "Value #C": 31,
+                  "Value #D": 22,
+                  "Value #E": 50,
+                  "__name__": 54,
+                  "__name__ 2": 15,
+                  "__name__ 3": 24,
+                  "__name__ 4": 33,
+                  "cluster": 1,
+                  "cluster 2": 7,
+                  "cluster 3": 16,
+                  "cluster 4": 25,
+                  "cluster 5": 34,
+                  "container_type": 36,
+                  "datacenter": 0,
+                  "datacenter 2": 8,
+                  "datacenter 3": 17,
+                  "datacenter 4": 26,
+                  "datacenter 5": 37,
+                  "disk": 3,
+                  "disk 2": 9,
+                  "disk 3": 18,
+                  "disk 4": 27,
+                  "disk 5": 38,
+                  "diskStatus": 39,
+                  "failed": 40,
+                  "index": 4,
+                  "instance": 52,
+                  "instance 2": 10,
+                  "instance 3": 19,
+                  "instance 4": 28,
+                  "instance 5": 41,
+                  "job": 53,
+                  "job 2": 11,
+                  "job 3": 20,
+                  "job 4": 29,
+                  "job 5": 42,
+                  "model": 43,
+                  "node": 2,
+                  "node 2": 12,
+                  "node 3": 21,
+                  "node 4": 30,
+                  "node 5": 44,
+                  "owner_node": 45,
+                  "serial_number": 46,
+                  "shared": 47,
+                  "shelf": 48,
+                  "shelf_bay": 49,
+                  "type": 35
                 },
                 "renameByName": {
-                  "cluster 1": "Cluster",
-                  "datacenter 1": "Datacenter",
-                  "disk 1": "Disk",
-                  "node 1": "Node"
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "disk": "Disk",
+                  "node": "Node"
                 }
               }
-            },
-            {
-              "id": "merge",
-              "options": {}
             }
           ],
           "type": "table"
@@ -2286,7 +2293,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 32
+            "y": 48
           },
           "id": 32,
           "options": {
@@ -2384,7 +2391,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 32
+            "y": 48
           },
           "id": 34,
           "options": {
@@ -2523,7 +2530,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 32
+            "y": 48
           },
           "id": 40,
           "options": {
@@ -2653,7 +2660,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 41
+            "y": 57
           },
           "id": 36,
           "options": {
@@ -2783,7 +2790,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 41
+            "y": 57
           },
           "id": 38,
           "options": {
@@ -3127,5 +3134,5 @@
   "timezone": "",
   "title": "ONTAP: Disk",
   "uid": "",
-  "version": 31
+  "version": 32
 }

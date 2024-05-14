@@ -1149,6 +1149,52 @@ func checkTableFilter(t *testing.T, path string, data []byte) {
 	})
 }
 
+func TestJoinExpressions(t *testing.T) {
+	VisitDashboards(
+		dashboards,
+		func(path string, data []byte) {
+			checkJoinExpressions(t, path, data)
+		})
+}
+
+func checkJoinExpressions(t *testing.T, path string, data []byte) {
+	dashPath := ShortPath(path)
+	expectedRegex := "(.*) 1$"
+	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
+		panelType := value.Get("type").String()
+		if panelType == "table" {
+			targetsSlice := value.Get("targets").Array()
+			if len(targetsSlice) > 1 {
+				errorFound := false
+				for _, targetN := range targetsSlice {
+					expr := targetN.Get("expr").String()
+					if strings.Contains(expr, "label_join") {
+						transformationsSlice := value.Get("transformations").Array()
+						regexUsed := false
+						for _, transformationN := range transformationsSlice {
+							if transformationN.Get("id").String() == "renameByRegex" {
+								regex := transformationN.Get("options.regex").String()
+								if regex == expectedRegex {
+									regexUsed = true
+									break
+								}
+							}
+						}
+						if !regexUsed {
+							errorFound = true
+							break
+						}
+					}
+				}
+				if errorFound {
+					t.Errorf(`dashboard=%s path=panels[%d] title="%s" uses label_join but does not use the expected regex`,
+						dashPath, key.Int(), value.Get("title").String())
+				}
+			}
+		}
+	})
+}
+
 func TestTitlesOfTopN(t *testing.T) {
 	VisitDashboards(
 		dashboards,
