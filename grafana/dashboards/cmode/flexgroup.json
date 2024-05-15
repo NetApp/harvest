@@ -2523,7 +2523,8 @@
   "tags": [
     "harvest",
     "ontap",
-    "cdot"
+    "cdot",
+    "fsx"
   ],
   "templating": {
     "list": [
@@ -2790,5 +2791,5 @@
   "timezone": "",
   "title": "ONTAP: FlexGroup",
   "uid": "",
-  "version": 53
+  "version": 54
 }
