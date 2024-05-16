@@ -61,7 +61,7 @@
 
 @BrendonA667, @Nikhita-13, @WayneShen2, @derDaywalker, @faguayot, @figeac888, @jgasher, @johnwarlick, @kbhalaki, @rdecaneva, @s-kuchi, @summertony15, @troysmullerna, @wagneradrian92, @wally007, @ybizeul, AlessandroN, Didlier, Hubert, Rusty Brow, Tamas Zsolt
 
-:seedling: This release includes 41 features, 37 bug fixes, 8 documentation, 1 performance, 6 styling, 9 refactoring, 16 miscellaneous, and 16 ci pull requests.
+:seedling: This release includes 42 features, 37 bug fixes, 9 documentation, 1 performance, 6 styling, 9 refactoring, 16 miscellaneous, and 16 ci pull requests.
 
 ### :rocket: Features
 - Adding Zapi/Rest Templates For Lock-Get-Iter & Protocols/Locks ([#2706](https://github.com/NetApp/harvest/pull/2706))
@@ -102,6 +102,7 @@
 - Adding Description To Panels ([#2891](https://github.com/NetApp/harvest/pull/2891))
 - Add Test Case For Join Queries In A Table ([#2892](https://github.com/NetApp/harvest/pull/2892))
 - Adding Details Folder In Docker ([#2896](https://github.com/NetApp/harvest/pull/2896))
+- Enable Request/Response Logging For Rest And Restperf Plugins ([#2898](https://github.com/NetApp/harvest/pull/2898))
 - Flexgroup And Lun Dashboards Work With Fsx ([#2899](https://github.com/NetApp/harvest/pull/2899))
 - Remove Hidden Topk From Aggregation Dashboard ([#2900](https://github.com/NetApp/harvest/pull/2900))
 - Cdot Dashboards Work With Fsx ([#2903](https://github.com/NetApp/harvest/pull/2903))
@@ -154,6 +155,7 @@
 - Clarify Include_all_labels And Export Options ([#2839](https://github.com/NetApp/harvest/pull/2839))
 - Fix Latency Average Units ([#2851](https://github.com/NetApp/harvest/pull/2851))
 - Add Jitter Documentation ([#2860](https://github.com/NetApp/harvest/pull/2860))
+- Update List Of Supported Fsx Dashboards ([#2906](https://github.com/NetApp/harvest/pull/2906))
 
 ### :zap: Performance
 - Remove Visits Counter From Workload Detail Templates ([#2824](https://github.com/NetApp/harvest/pull/2824))
@@ -214,7 +216,6 @@
 - Bump Dependencies ([#2882](https://github.com/NetApp/harvest/pull/2882))
 
 ---
-
 
 ## 23.11.0 / 2023-11-13 Release
 :pushpin: Highlights of this major release include:
