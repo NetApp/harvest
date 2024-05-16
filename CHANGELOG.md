@@ -6,11 +6,10 @@
 - Harvest supports consistency group (CG) in the SnapMirror dashboard. Thanks to @Nikhita-13 for reporting this.
 - We've fixed an intermittent latency/ops spike problem that impacted all perf objects. A big thank you to @summertony15 for reporting this critical issue.
 - Harvest dashboards are compatible with Grafana 10.x.x versions.
-- :gem: Lun and Flexgroup dashboard updated to work with FSx. Some panels are blank because FSx does not have that data.
-- Harvest includes remediation steps for EMS alerts.
+- :gem: LUN, Flexgroup, CDot, Aggregate dashboard updated to work with FSx. Some panels are blank because FSx does not have that data.
 - The credentials script supports both username and password as output. Thanks to @kbhalaki for reporting.
 - Harvest configuration file supports reading parameters from environment variables. Kudos to @wally007 for the suggestion.
-
+- Harvest includes remediation steps for EMS alerts.
 
 - :gem: New Dashboard:
   - `NFS Troubleshooting` which provides links to detailed dashboards.
