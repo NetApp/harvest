@@ -883,7 +883,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n    100 * volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} \n    / on(datacenter,cluster,svm,aggr,node,volume) \n    volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand on(datacenter,cluster, svm,aggr,node, volume)\ntopk(\n  $TopResources,\n  (\n    (100 * avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())) \n    / on(datacenter,cluster,svm,aggr,node,volume) \n    avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n  )\n  * on(datacenter,cluster, svm, aggr,node,volume) group_left\n  volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"}\n)",
+              "expr": "(\n 100 * volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand on(datacenter,cluster, svm,aggr,node, volume,style)\ntopk(\n $TopResources,\n (\n (100 * avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())) \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n )\n * on(datacenter,cluster, svm, aggr,node,volume,style) group_left\n volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"}\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1236,7 +1236,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n    100 * volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} \n    / on(datacenter,cluster,svm,aggr,node,volume) \n    volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand on(datacenter,cluster, svm,aggr,node, volume)\ntopk(\n  $TopResources,\n  (\n    (100 * avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())) \n    / on(datacenter,cluster,svm,aggr,node,volume) \n    avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n  )\n  * on(datacenter,cluster, svm, aggr,node,volume) group_left\n  volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"}\n)",
+              "expr": "(\n 100 * volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand on(datacenter,cluster, svm,aggr,node, volume,style)\ntopk(\n $TopResources,\n (\n (100 * avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())) \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n )\n * on(datacenter,cluster, svm, aggr,node,volume,style) group_left\n volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -1920,7 +1920,8 @@
   "tags": [
     "harvest",
     "ontap",
-    "cdot"
+    "cdot",
+    "fsx"
   ],
   "templating": {
     "list": [
