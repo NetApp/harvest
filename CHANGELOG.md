@@ -3,40 +3,42 @@
 
 ## 24.05.0 / 2024-05-16 Release
 :pushpin: Highlights of this major release include:
-- Harvest supports consistency group (CG) in the SnapMirror dashboard. Thanks to @Nikhita-13 for reporting this.
-- We've fixed an intermittent latency/ops spike problem that impacted all perf objects. A big thank you to @summertony15 for reporting this critical issue.
+- Harvest supports consistency groups (CG) in the SnapMirror dashboard. Thanks to @Nikhita-13 for reporting this.
+- We've fixed an intermittent latency/ops spike problem caused by Harvest incorrectly handling ONTAP partial aggregation. This impacted all perf objects. A big thank you to @summertony15 for reporting this critical issue.
 - Harvest dashboards are compatible with Grafana 10.x.x versions.
 - :gem: LUN, Flexgroup and cDot dashboard updated to work with FSx. Some panels are blank because FSx does not have that data.
-- The credentials script supports both username and password as output. Thanks to @kbhalaki for reporting.
+- The credentials script supports providing both username and password. Thanks to @kbhalaki for reporting.
 - Harvest configuration file supports reading parameters from environment variables. Kudos to @wally007 for the suggestion.
-- Harvest includes remediation steps for EMS alerts.
+- Harvest includes [remediation steps](https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/) for EMS alerts.
 
-- :gem: New Dashboard:
-  - `NFS Troubleshooting` which provides links to detailed dashboards.
+- :gem: New Dashboards:
+  - `NFS Troubleshooting` which provides links to detailed dashboards. Thanks to RustyBrown for contributing these.
   - Detailed Dashboards: `Volume by SVM` and `Volume Deep Dive`.
 
 - :rocket: Performance Improvements:
-  - Rest/RestPerf Collector only requests metrics defined in templates, reducing API time and collection load.
+  - Rest/RestPerf Collector only requests metrics defined in templates, reducing API time, payload size, and collection load.
   - TopK queries in dashboards are now faster. Thanks to AlessandroN for reporting.
 
 - :star: Several of the existing dashboards include new panels in this release:
-  - Adaptive QoS used percentage tracking in Workload dashboard. Thanks to @faguayot for reporting.
-  - Network dashboard now includes ethernet errors. Thanks to Rusty Brown for contributing.
-  - Volume growth rate panels in Volume dashboard. Thanks to AlessandroN for reporting.
-  - BMC firmware version in Node dashboard. Thanks to @summertony15 for reporting.
-  - I/O density panels in Volume dashboard. Thanks to @jgasher for reporting.
-  - Forecasting Volume capacity in Volume dashboard. Thanks to @s-kuchi for reporting.
+  - Workload dashboard includes adaptive QoS used percentage tracking. Thanks to @faguayot for reporting.
+  - Network dashboard includes ethernet errors. Thanks to Rusty Brown for contributing.
+  - Node dashboard includes the BMC firmware version. Thanks to @summertony15 for reporting.
   - SVM dashboard now includes NFS4.2 panels. Thanks to Didlier for reporting.
+  - The Volume dashboard includes several new panels:
+    - Volume growth rate panels. Thanks to AlessandroN for reporting.
+    - I/O density panels. Thanks to @jgasher for reporting.
+    - Volume capacity forecasting panels, predicting a volume's used sized over the next 15 days. Thanks to @s-kuchi for reporting.
 
-- :ear_of_rice: Harvest includes a new template to collect lock counts at node, SVM, LIF, and volume level. Thanks to @troysmullerna for reporting.
+
+- :ear_of_rice: Harvest includes a new template to collect lock counts at the node, SVM, LIF, and volume levels.. Thanks to @troysmullerna for reporting.
 
 - :closed_book: Documentation Additions:
-  - How to customize Prometheus retention period in Docker instructions. Thanks to @WayneShen2 for the suggestion.
-  - How to use endpoints in REST Collector template. Thanks to Hubert for reporting.
-  - EMS Alert [runbook](https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/).
+  - How to customize Prometheus's retention period in a Docker deployment. Thanks to @WayneShen2 for the suggestion.
+  - How to use endpoints in a REST collector template. Thanks to Hubert for reporting.
+  - Harvest includes [remediation steps](https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/) for EMS alerts.
   - How to use `confpath` to extend templates.
 
-- Harvest supports embedded exporters in Harvest configuration. Thanks to @wagneradrian92 for reporting.
+- Harvest supports embedded exporters in Harvest configuration. This means you can define your exporters in one place instead of multiple. Thanks to @wagneradrian92 for reporting.
 - Harvest supports exporting to multiple InfluxDB instances. Thanks to @figeac888 for reporting.
 - Node label metrics include HA partner details. Thanks to @johnwarlick for reporting.
 
@@ -59,7 +61,7 @@
 
 @BrendonA667, @Nikhita-13, @WayneShen2, @derDaywalker, @faguayot, @figeac888, @jgasher, @johnwarlick, @kbhalaki, @rdecaneva, @s-kuchi, @summertony15, @troysmullerna, @wagneradrian92, @wally007, @ybizeul, AlessandroN, Didlier, Hubert, Rusty Brow, Tamas Zsolt
 
-:seedling: This release includes 37 features, 34 bug fixes, 8 documentation, 1 performance, 6 styling, 9 refactoring, 16 miscellaneous, and 16 ci pull requests.
+:seedling: This release includes 41 features, 37 bug fixes, 8 documentation, 1 performance, 6 styling, 9 refactoring, 16 miscellaneous, and 16 ci pull requests.
 
 ### :rocket: Features
 - Adding Zapi/Rest Templates For Lock-Get-Iter & Protocols/Locks ([#2706](https://github.com/NetApp/harvest/pull/2706))
@@ -99,6 +101,10 @@
 - Remove Hidden Topk Variables From Dashboards ([#2889](https://github.com/NetApp/harvest/pull/2889))
 - Adding Description To Panels ([#2891](https://github.com/NetApp/harvest/pull/2891))
 - Add Test Case For Join Queries In A Table ([#2892](https://github.com/NetApp/harvest/pull/2892))
+- Adding Details Folder In Docker ([#2896](https://github.com/NetApp/harvest/pull/2896))
+- Flexgroup And Lun Dashboards Work With Fsx ([#2899](https://github.com/NetApp/harvest/pull/2899))
+- Remove Hidden Topk From Aggregation Dashboard ([#2900](https://github.com/NetApp/harvest/pull/2900))
+- Cdot Dashboards Work With Fsx ([#2903](https://github.com/NetApp/harvest/pull/2903))
 
 ### :bug: Bug Fixes
 - Handle Inter-Cluster Snapmirrors When Different Datacenter ([#2688](https://github.com/NetApp/harvest/pull/2688))
@@ -135,6 +141,9 @@
 - Adaptive Qos Table Grafana 9 Workaround ([#2873](https://github.com/NetApp/harvest/pull/2873))
 - Handling Index For Quota ([#2874](https://github.com/NetApp/harvest/pull/2874))
 - Add Regex For Node Table ([#2884](https://github.com/NetApp/harvest/pull/2884))
+- Add All To Svm Dropdown In Volume Deep Dive Dashboard ([#2901](https://github.com/NetApp/harvest/pull/2901))
+- Add Restgap For Volume_space_logical_available ([#2904](https://github.com/NetApp/harvest/pull/2904))
+- Handling Missing Protection_mode In Disk Rest Call ([#2905](https://github.com/NetApp/harvest/pull/2905))
 
 ### :closed_book: Documentation
 - Describe How To Use Confpath To Extend Templates ([#2725](https://github.com/NetApp/harvest/pull/2725))
@@ -205,6 +214,7 @@
 - Bump Dependencies ([#2882](https://github.com/NetApp/harvest/pull/2882))
 
 ---
+
 
 ## 23.11.0 / 2023-11-13 Release
 :pushpin: Highlights of this major release include:
