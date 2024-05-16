@@ -26,6 +26,7 @@ import (
 	"golang.org/x/exp/maps"
 	"path"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -212,6 +213,7 @@ func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
 				Send()
 			return defaultValue
 		}
+		slices.Sort(v)
 		s := strings.Join(v, "|")
 		r.Logger.Debug().
 			Str("name", name).
@@ -699,7 +701,11 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
 	var filter []string
-	filter = append(filter, "counters.name="+strings.Join(maps.Keys(r.Prop.Metrics), "|"))
+	// Sort filters so that the href is deterministic
+	metrics := maps.Keys(r.Prop.Metrics)
+	slices.Sort(metrics)
+
+	filter = append(filter, "counters.name="+strings.Join(metrics, "|"))
 
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).

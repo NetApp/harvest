@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -74,8 +75,16 @@ func (b *HrefBuilder) Build() string {
 	href.WriteString(b.apiPath)
 
 	href.WriteString("?return_records=true")
+
+	// Sort fields so that the href is deterministic
+	slices.Sort(b.fields)
+
 	addArg(&href, "&fields=", strings.Join(b.fields, ","))
 	addArg(&href, "&counter_schemas=", b.counterSchema)
+
+	// Sort filters so that the href is deterministic
+	slices.Sort(b.filter)
+
 	for _, f := range b.filter {
 		addArg(&href, "&", f)
 	}
