@@ -241,7 +241,7 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 		result []gjson.Result
 		err    error
 	)
-	fields := []string{"aggregates.name"}
+	fields := []string{"aggregates.name", "protection_mode"}
 	query := "api/storage/disks"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
@@ -307,6 +307,9 @@ func (v *Volume) updateAggrMap(disks []gjson.Result) {
 		// Clean aggrsMap map
 		clear(v.aggrsMap)
 		for _, disk := range disks {
+			if !disk.Get("protection_mode").Exists() {
+				continue
+			}
 			aggrName := disk.Get("aggregates.#.name").Array()
 			for _, aggr := range aggrName {
 				v.aggrsMap[aggr.String()] = true
