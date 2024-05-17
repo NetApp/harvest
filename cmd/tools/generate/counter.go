@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
@@ -20,7 +21,6 @@ import (
 	"slices"
 	"sort"
 	"strings"
-	"text/tabwriter"
 	"text/template"
 	"time"
 )
@@ -594,19 +594,6 @@ func updateDescription(description string) string {
 	return s
 }
 
-func formatMetricDef(def MetricDef) string {
-	return fmt.Sprintf("API: %s, Endpoint: %s, ONTAPCounter: %s, Template: %s",
-		def.API, def.Endpoint, def.ONTAPCounter, def.Template)
-}
-
-func printRow(w *tabwriter.Writer, format string, a ...interface{}) {
-	format = strings.ReplaceAll(format, "\t", "\t|\t")
-	_, err := fmt.Fprintf(w, "| "+format+" |\n", a...)
-	if err != nil {
-		log.Fatalf("Error printing table: %v", err)
-	}
-}
-
 func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 	targetPath := "docs/ontap-metrics.md"
 	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/generate/counter.tmpl")
@@ -625,10 +612,11 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 	sort.Strings(keys)
 	values := make([]Counter, 0, len(keys))
 
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 8, 2, '\t', 0)
-
-	printRow(w, "Missing Descriptions\tCounter Name\tAPIs")
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "Counter", "Template"})
 
 	for _, k := range keys {
 		if k == "" {
@@ -637,24 +625,12 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		counter := counters[k]
 
 		if counter.Description == "" {
-			apis := make([]string, len(counter.APIs))
-			for i, def := range counter.APIs {
-				apis[i] = formatMetricDef(def)
+			for _, def := range counter.APIs {
+				appendRow(table, "Description", counter, def)
 			}
-			printRow(w, "Missing Description\t%s\t%v", counter.Name, apis)
 		}
 		values = append(values, counter)
 	}
-	err = w.Flush()
-	if err != nil {
-		log.Fatalf("Error printing table: %v", err)
-	}
-
-	// Add some space between the tables
-	fmt.Println()
-	fmt.Println()
-	// Define table headers for missing mappings
-	printRow(w, "Missing Mappings\tCounter Name\tAPIs")
 
 	for _, k := range keys {
 		if k == "" {
@@ -674,30 +650,22 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 				}
 				// missing Rest Mapping
 				if isPrint {
-					apis := make([]string, len(counter.APIs))
-					for i, def := range counter.APIs {
-						apis[i] = formatMetricDef(def)
+					for _, def := range counter.APIs {
+						appendRow(table, "REST", counter, def)
 					}
-					printRow(w, "Missing REST mapping\t%s\t%v", counter.Name, apis)
 				}
 			}
 		}
 
 		for _, def := range counter.APIs {
 			if def.ONTAPCounter == "" {
-				apis := make([]string, len(counter.APIs))
-				for i, def := range counter.APIs {
-					apis[i] = formatMetricDef(def)
+				for _, def := range counter.APIs {
+					appendRow(table, "Mapping", counter, def)
 				}
-				printRow(w, "Missing %s mapping\t%s\t%v", def.API, counter.Name, apis)
 			}
 		}
 	}
-	err = w.Flush()
-	if err != nil {
-		log.Fatalf("Error printing table: %v", err)
-	}
-
+	table.Render()
 	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(version)), "."), "[]")
 	c := CounterTemplate{
 		Counters: values,
@@ -712,6 +680,10 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		panic(err)
 	}
 	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
+}
+
+func appendRow(table *tw.Table, missing string, counter Counter, def MetricDef) {
+	table.Append([]string{missing, counter.Name, def.API, def.Endpoint, def.ONTAPCounter, def.Template})
 }
 
 // Regex to match NFS version and operation
