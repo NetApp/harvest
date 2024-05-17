@@ -20,6 +20,7 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"text/tabwriter"
 	"text/template"
 	"time"
 )
@@ -434,7 +435,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 					// If the template has any MultiplierMetrics, add them
 					for _, metric := range model.MultiplierMetrics {
 						mc := co
-						addAggregatedCounter(&mc, metric, harvestName, name)
+						addAggregatedCounter(&mc, metric, harvestName, display)
 						counters[mc.Name] = mc
 					}
 				}
@@ -593,25 +594,68 @@ func updateDescription(description string) string {
 	return s
 }
 
+func formatMetricDef(def MetricDef) string {
+	return fmt.Sprintf("API: %s, Endpoint: %s, ONTAPCounter: %s, Template: %s",
+		def.API, def.Endpoint, def.ONTAPCounter, def.Template)
+}
+
+func printRow(w *tabwriter.Writer, format string, a ...interface{}) {
+	format = strings.ReplaceAll(format, "\t", "\t|\t")
+	_, err := fmt.Fprintf(w, "| "+format+" |\n", a...)
+	if err != nil {
+		log.Fatalf("Error printing table: %v", err)
+	}
+}
+
 func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 	targetPath := "docs/ontap-metrics.md"
 	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/generate/counter.tmpl")
 	if err != nil {
 		panic(err)
 	}
-	var out *os.File
-	out, err = os.Create(targetPath)
+	out, err := os.Create(targetPath)
 	if err != nil {
 		panic(err)
 	}
 
 	keys := make([]string, 0, len(counters))
-
 	for k := range counters {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 	values := make([]Counter, 0, len(keys))
+
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 0, 8, 2, '\t', 0)
+
+	printRow(w, "Missing Descriptions\tCounter Name\tAPIs")
+
+	for _, k := range keys {
+		if k == "" {
+			continue
+		}
+		counter := counters[k]
+
+		if counter.Description == "" {
+			apis := make([]string, len(counter.APIs))
+			for i, def := range counter.APIs {
+				apis[i] = formatMetricDef(def)
+			}
+			printRow(w, "Missing Description\t%s\t%v", counter.Name, apis)
+		}
+		values = append(values, counter)
+	}
+	err = w.Flush()
+	if err != nil {
+		log.Fatalf("Error printing table: %v", err)
+	}
+
+	// Add some space between the tables
+	fmt.Println()
+	fmt.Println()
+	// Define table headers for missing mappings
+	printRow(w, "Missing Mappings\tCounter Name\tAPIs")
+
 	for _, k := range keys {
 		if k == "" {
 			continue
@@ -630,20 +674,28 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 				}
 				// missing Rest Mapping
 				if isPrint {
-					fmt.Printf("Missing %s mapping for %v \n", "REST", counter)
+					apis := make([]string, len(counter.APIs))
+					for i, def := range counter.APIs {
+						apis[i] = formatMetricDef(def)
+					}
+					printRow(w, "Missing REST mapping\t%s\t%v", counter.Name, apis)
 				}
 			}
 		}
 
-		values = append(values, counter)
 		for _, def := range counter.APIs {
 			if def.ONTAPCounter == "" {
-				fmt.Printf("Missing %s mapping for %v \n", def.API, counter)
+				apis := make([]string, len(counter.APIs))
+				for i, def := range counter.APIs {
+					apis[i] = formatMetricDef(def)
+				}
+				printRow(w, "Missing %s mapping\t%s\t%v", def.API, counter.Name, apis)
 			}
 		}
-		if counter.Description == "" {
-			fmt.Printf("Missing Description for %v \n", counter)
-		}
+	}
+	err = w.Flush()
+	if err != nil {
+		log.Fatalf("Error printing table: %v", err)
 	}
 
 	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(version)), "."), "[]")
