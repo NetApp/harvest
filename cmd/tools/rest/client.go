@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"slices"
 	"strings"
 	"time"
 )
@@ -89,17 +90,17 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient
 
+	if poller.LogSet != nil {
+		client.logRest = slices.Contains(*poller.LogSet, "Rest")
+	}
+
 	return &client, nil
 }
 
 func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
 	// check for log sets and enable Rest request logging if collectorName is in the set
 	if llogs := config.GetChildS("log"); llogs != nil {
-		for _, log := range llogs.GetAllChildContentS() {
-			if strings.EqualFold(log, collectorName) {
-				c.logRest = true
-			}
-		}
+		c.logRest = slices.Contains(llogs.GetAllChildContentS(), collectorName)
 	}
 }
 

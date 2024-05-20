@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1706779108045,
+  "iteration": 1715834742006,
   "links": [
     {
       "asDropdown": true,
@@ -2482,7 +2482,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 2
+            "y": 55
           },
           "id": 45,
           "options": {
@@ -2539,7 +2539,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 2
+            "y": 55
           },
           "id": 43,
           "options": {
@@ -2595,7 +2595,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 2
+            "y": 55
           },
           "id": 41,
           "options": {
@@ -2681,7 +2681,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 6
+            "y": 59
           },
           "id": 55,
           "options": {
@@ -2766,7 +2766,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 6
+            "y": 59
           },
           "id": 57,
           "options": {
@@ -2851,7 +2851,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 14
+            "y": 67
           },
           "id": 51,
           "options": {
@@ -2936,7 +2936,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 14
+            "y": 67
           },
           "id": 53,
           "options": {
@@ -3021,7 +3021,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 75
           },
           "id": 47,
           "options": {
@@ -3106,7 +3106,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 75
           },
           "id": 49,
           "options": {
@@ -3285,7 +3285,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node, aggr) (aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskBusy\"})",
+              "expr": "avg by (node, aggr) (aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})\nand \ntopk(\n    $TopResources,\n    avg by (node, aggr) (avg_over_time(aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h]))\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3294,7 +3294,7 @@
               "refId": "B"
             }
           ],
-          "title": "Average Disk Utilization per Aggregate",
+          "title": "Top $TopResources Average Disk Utilization per Aggregate",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -3394,7 +3394,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (node, aggr) (aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$TopDiskBusy\"})",
+              "expr": "avg by (node, aggr) (aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"})\nand \ntopk(\n    $TopResources,\n    avg by (node, aggr) (avg_over_time(aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h]))\n)",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -3402,7 +3402,7 @@
               "refId": "A"
             }
           ],
-          "title": "Average Disk Utilization Per Aggregate",
+          "title": "Top $TopResources Average Disk Utilization Per Aggregate",
           "type": "timeseries"
         }
       ],
@@ -4353,7 +4353,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 107
+            "y": 67
           },
           "id": 83,
           "options": {
@@ -4449,7 +4449,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 107
+            "y": 67
           },
           "id": 84,
           "options": {
@@ -4543,7 +4543,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 119
+            "y": 79
           },
           "id": 87,
           "options": {
@@ -4639,7 +4639,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 119
+            "y": 79
           },
           "id": 85,
           "options": {
@@ -4733,7 +4733,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 131
+            "y": 91
           },
           "id": 95,
           "options": {
@@ -4829,7 +4829,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 131
+            "y": 91
           },
           "id": 97,
           "options": {
@@ -4923,7 +4923,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 143
+            "y": 103
           },
           "id": 99,
           "options": {
@@ -5019,7 +5019,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 143
+            "y": 103
           },
           "id": 101,
           "options": {
@@ -6021,29 +6021,6 @@
       },
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(avg by (aggr) (avg_over_time(aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopDiskBusy",
-        "options": [],
-        "query": {
-          "query": "query_result(avg by (aggr) (avg_over_time(aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*aggr=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
         "current": {
           "selected": true,
           "text": "5",
@@ -6143,5 +6120,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "",
-  "version": 10
+  "version": 11
 }

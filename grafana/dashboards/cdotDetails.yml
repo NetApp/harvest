@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: 'Harvest cDOT Details'
+    orgId: 1
+    folder: 'Harvest-main-cDOT Details'
+    type: file
+    disableDeletion: false
+    editable: true
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/cmode/details
