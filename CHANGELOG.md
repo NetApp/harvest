@@ -1,7 +1,7 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
-## 24.05.0 / 2024-05-16 Release
+## 24.05.0 / 2024-05-20 Release
 :pushpin: Highlights of this major release include:
 - Harvest supports consistency groups (CG) in the SnapMirror dashboard. Thanks to @Nikhita-13 for reporting this.
 - We've fixed an intermittent latency/ops spike problem caused by Harvest incorrectly handling ONTAP partial aggregation. This impacted all perf objects. A big thank you to @summertony15 for reporting this critical issue.
@@ -61,7 +61,7 @@
 
 @BrendonA667, @Nikhita-13, @WayneShen2, @derDaywalker, @faguayot, @figeac888, @jgasher, @johnwarlick, @kbhalaki, @rdecaneva, @s-kuchi, @summertony15, @troysmullerna, @wagneradrian92, @wally007, @ybizeul, AlessandroN, Didlier, Hubert, Rusty Brow, Tamas Zsolt
 
-:seedling: This release includes 42 features, 37 bug fixes, 9 documentation, 1 performance, 6 styling, 9 refactoring, 16 miscellaneous, and 16 ci pull requests.
+:seedling: This release includes 42 features, 38 bug fixes, 10 documentation, 1 performance, 6 styling, 9 refactoring, 16 miscellaneous, and 17 ci pull requests.
 
 ### :rocket: Features
 - Adding Zapi/Rest Templates For Lock-Get-Iter & Protocols/Locks ([#2706](https://github.com/NetApp/harvest/pull/2706))
@@ -145,6 +145,7 @@
 - Add All To Svm Dropdown In Volume Deep Dive Dashboard ([#2901](https://github.com/NetApp/harvest/pull/2901))
 - Add Restgap For Volume_space_logical_available ([#2904](https://github.com/NetApp/harvest/pull/2904))
 - Handling Missing Protection_mode In Disk Rest Call ([#2905](https://github.com/NetApp/harvest/pull/2905))
+- Duplicate Instance Key Issue Quota Metrics ([#2913](https://github.com/NetApp/harvest/pull/2913))
 
 ### :closed_book: Documentation
 - Describe How To Use Confpath To Extend Templates ([#2725](https://github.com/NetApp/harvest/pull/2725))
@@ -156,6 +157,7 @@
 - Fix Latency Average Units ([#2851](https://github.com/NetApp/harvest/pull/2851))
 - Add Jitter Documentation ([#2860](https://github.com/NetApp/harvest/pull/2860))
 - Update List Of Supported Fsx Dashboards ([#2906](https://github.com/NetApp/harvest/pull/2906))
+- 24.05 Ontap Metric Docs ([#2907](https://github.com/NetApp/harvest/pull/2907))
 
 ### :zap: Performance
 - Remove Visits Counter From Workload Detail Templates ([#2824](https://github.com/NetApp/harvest/pull/2824))
@@ -214,6 +216,7 @@
 - Enable Golanglint "Canonicalheader" Linter ([#2876](https://github.com/NetApp/harvest/pull/2876))
 - Bump Go ([#2880](https://github.com/NetApp/harvest/pull/2880))
 - Bump Dependencies ([#2882](https://github.com/NetApp/harvest/pull/2882))
+- Increase Golangci-Lint Timeout ([#2912](https://github.com/NetApp/harvest/pull/2912))
 
 ---
 
