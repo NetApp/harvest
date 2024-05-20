@@ -42,7 +42,7 @@ func Run(command string, arg ...string) (string, error) {
 
 func MkDir(dirname string) {
 	if _, err := os.Stat(dirname); os.IsNotExist(err) {
-		err := os.Mkdir(dirname, os.ModePerm)
+		err := os.Mkdir(dirname, 0750)
 		PanicIfNotNil(err)
 	}
 }
