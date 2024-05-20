@@ -93,7 +93,6 @@ github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo
 github.com/yusufpapurcu/wmi v1.2.4/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
 github.com/zekroTJA/timedmap v1.5.2 h1:5bhWBdyvekLHLrZu8cNJB6iCpIQl4bGaG4HTmPbTNKY=
 github.com/zekroTJA/timedmap v1.5.2/go.mod h1:Go4uPxMN1Wjl5IgO6HYD1tM9IQhkYEVqcrrdsI4ljXo=
-github.com/zekroTJA/timedmap/v2 v2.0.0/go.mod h1:xHDLg687zASqLBJqoysF+WORHxL/kYNphVD36CRJxhM=
 golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 h1:vr/HnozRka3pE4EsMEg1lgkXJkTFJCVUX+S/ZT6wYzM=
 golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842/go.mod h1:XtvwrStGgqGPLc4cjQfWqZHG1YFdYs6swckp8vpsjnc=
 golang.org/x/sys v0.0.0-20190916202348-b4ddaad3f8a3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
