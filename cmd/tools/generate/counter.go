@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
@@ -434,7 +435,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 					// If the template has any MultiplierMetrics, add them
 					for _, metric := range model.MultiplierMetrics {
 						mc := co
-						addAggregatedCounter(&mc, metric, harvestName, name)
+						addAggregatedCounter(&mc, metric, harvestName, display)
 						counters[mc.Name] = mc
 					}
 				}
@@ -599,19 +600,38 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 	if err != nil {
 		panic(err)
 	}
-	var out *os.File
-	out, err = os.Create(targetPath)
+	out, err := os.Create(targetPath)
 	if err != nil {
 		panic(err)
 	}
 
 	keys := make([]string, 0, len(counters))
-
 	for k := range counters {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 	values := make([]Counter, 0, len(keys))
+
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "Counter", "Template"})
+
+	for _, k := range keys {
+		if k == "" {
+			continue
+		}
+		counter := counters[k]
+
+		if counter.Description == "" {
+			for _, def := range counter.APIs {
+				appendRow(table, "Description", counter, def)
+			}
+		}
+		values = append(values, counter)
+	}
+
 	for _, k := range keys {
 		if k == "" {
 			continue
@@ -630,22 +650,22 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 				}
 				// missing Rest Mapping
 				if isPrint {
-					fmt.Printf("Missing %s mapping for %v \n", "REST", counter)
+					for _, def := range counter.APIs {
+						appendRow(table, "REST", counter, def)
+					}
 				}
 			}
 		}
 
-		values = append(values, counter)
 		for _, def := range counter.APIs {
 			if def.ONTAPCounter == "" {
-				fmt.Printf("Missing %s mapping for %v \n", def.API, counter)
+				for _, def := range counter.APIs {
+					appendRow(table, "Mapping", counter, def)
+				}
 			}
 		}
-		if counter.Description == "" {
-			fmt.Printf("Missing Description for %v \n", counter)
-		}
 	}
-
+	table.Render()
 	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(version)), "."), "[]")
 	c := CounterTemplate{
 		Counters: values,
@@ -660,6 +680,10 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		panic(err)
 	}
 	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
+}
+
+func appendRow(table *tw.Table, missing string, counter Counter, def MetricDef) {
+	table.Append([]string{missing, counter.Name, def.API, def.Endpoint, def.ONTAPCounter, def.Template})
 }
 
 // Regex to match NFS version and operation

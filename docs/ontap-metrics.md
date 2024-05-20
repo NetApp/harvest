@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Apr-29
+Creation Date : 2024-May-17
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -114,6 +114,7 @@ The utilization percent of the disk. aggr_disk_max_busy is the maximum of [disk_
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### aggr_disk_max_capacity
@@ -123,6 +124,7 @@ Disk capacity in MB. aggr_disk_max_capacity is the maximum of [disk_capacity](#d
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### aggr_disk_max_cp_read_chain
@@ -153,24 +155,6 @@ Number of disk read operations initiated each second for consistency point proce
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
-
-
-### aggr_disk_max_disk_busy
-
-The utilization percent of the disk. aggr_disk_max_disk_busy is the maximum of [disk_busy](#disk_busy) for label `aggr`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
-
-
-### aggr_disk_max_disk_capacity
-
-Disk capacity in MB. aggr_disk_max_disk_capacity is the maximum of [disk_capacity](#disk_capacity) for label `aggr`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### aggr_disk_max_io_pending
@@ -808,7 +792,7 @@ A summation of volume footprints (including volume guarantees), in bytes. This i
 
 ### aggr_space_performance_tier_used_percent
 
-
+A summation of volume footprints inside the aggregate,as a percentage. A volume's footprint is the amount of space being used for the volume in the aggregate.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -2700,7 +2684,7 @@ Total number of invalidate operation is skipped because cache volume is offline.
 
 ### flexcache_miss_percent
 
-
+This metric represents the percentage of block requests from a client that resulted in a "miss" in the FlexCache. A "miss" occurs when the requested data is not found in the cache and has to be retrieved from the origin volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3376,7 +3360,7 @@ The amount of space consumed by the main data stream of the LUN.<br/>This value 
 
 ### lun_size_used_percent
 
-
+This metric represents the percentage of a LUN that is currently being used.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3752,7 +3736,7 @@ The total provisioned size of the NVMe namespace. Valid in POST and PATCH. The N
 
 ### namespace_size_available
 
-
+This metric represents the amount of available space in a namespace.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3762,7 +3746,7 @@ The total provisioned size of the NVMe namespace. Valid in POST and PATCH. The N
 
 ### namespace_size_available_percent
 
-
+This metric represents the percentage of available space in a namespace.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3802,7 +3786,7 @@ Number of write operations
 
 ### ndmp_session_data_bytes_processed
 
-
+Indicates the NDMP data bytes processed.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3811,7 +3795,7 @@ Number of write operations
 
 ### ndmp_session_mover_bytes_moved
 
-
+Indicates the NDMP mover bytes moved.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4616,6 +4600,7 @@ The utilization percent of the disk. node_disk_max_busy is the maximum of [disk_
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### node_disk_max_capacity
@@ -4625,6 +4610,7 @@ Disk capacity in MB. node_disk_max_capacity is the maximum of [disk_capacity](#d
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### node_disk_max_cp_read_chain
@@ -4655,24 +4641,6 @@ Number of disk read operations initiated each second for consistency point proce
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
-
-
-### node_disk_max_disk_busy
-
-The utilization percent of the disk. node_disk_max_disk_busy is the maximum of [disk_busy](#disk_busy) for label `node`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
-
-
-### node_disk_max_disk_capacity
-
-Disk capacity in MB. node_disk_max_disk_capacity is the maximum of [disk_capacity](#disk_capacity) for label `node`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### node_disk_max_io_pending
@@ -8997,7 +8965,7 @@ Number of Upload Part operations.
 
 ### ontaps3_used_percent
 
-
+The used_percent metric the percentage of a bucket's total capacity that is currently being used.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12525,7 +12493,7 @@ Number of successful token zero requests.
 
 ### volume_autosize_grow_threshold_percent
 
-
+Used space threshold which triggers autogrow. When the size-used is greater than this percent of size-total, the volume will be grown. The computed value is rounded down. The default value of this element varies from 85% to 98%, depending on the volume size. It is an error for the grow threshold to be less than or equal to the shrink threshold.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12535,7 +12503,7 @@ Number of successful token zero requests.
 
 ### volume_autosize_maximum_size
 
-
+The maximum size (in bytes) to which the volume would be grown automatically. The default value is 20% greater than the volume size. It is an error for the maximum volume size to be less than the current volume size. It is also an error for the maximum size to be less than or equal to the minimum size.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12555,7 +12523,7 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 
 ### volume_filesystem_size
 
-
+Filesystem size (in bytes) of the volume.  This is the total usable size of the volume, not including WAFL reserve.  This value is the same as Size except for certain SnapMirror destination volumes.  It is possible for destination volumes to have a different filesystem-size because the filesystem-size is sent across from the source volume.  This field is valid only when the volume is online.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12795,7 +12763,7 @@ amount of storage space that is currently available for overwrites, calculated b
 
 ### volume_overwrite_reserve_total
 
-
+The size (in bytes) that is reserved for overwriting snapshotted data in an otherwise full volume. This space is usable only by space-reserved LUNs and files, and then only when the volume is full.This field is valid only when the volume is online.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12805,7 +12773,7 @@ amount of storage space that is currently available for overwrites, calculated b
 
 ### volume_overwrite_reserve_used
 
-
+The reserved size (in bytes) that is not available for new overwrites. The number includes both the reserved size which has actually been used for overwrites as well as the size which was never allocated in the first place. This field is valid only when the volume is online.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12915,7 +12883,7 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 
 ### volume_size_available
 
-
+The size (in bytes) that is still available in the volume. This field is valid only when the volume is online.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12925,7 +12893,7 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 
 ### volume_size_total
 
-
+Total usable size (in bytes) of the volume, not including WAFL reserve or volume snapshot reserve.  If the volume is restricted or offline, a value of 0 is returned.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12935,7 +12903,7 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 
 ### volume_size_used
 
-
+Number of bytes used in the volume.  If the volume is restricted or offline, a value of 0 is returned.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12965,7 +12933,7 @@ Number of Snapshot copies in the volume.
 
 ### volume_snapshot_reserve_available
 
-
+The size (in bytes) that is available for Snapshot copies inside the Snapshot reserve. This value is zero if Snapshot spill is present. For 'none' guaranteed volumes, this may get reduced due to less available space in the aggregate. This parameter is not supported on Infinite Volumes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12975,7 +12943,7 @@ Number of Snapshot copies in the volume.
 
 ### volume_snapshot_reserve_percent
 
-
+The percentage of volume disk space that has been set aside as reserve for snapshot usage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12985,7 +12953,7 @@ Number of Snapshot copies in the volume.
 
 ### volume_snapshot_reserve_size
 
-
+The size (in bytes) in the volume that has been set aside as reserve for snapshot usage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13005,7 +12973,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_snapshot_reserve_used_percent
 
-
+Percentage of the volume reserved for snapshots that has been used. Note that in some scenarios, it is possible to pass 100% of the space allocated.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13015,7 +12983,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_snapshots_size_available
 
-
+Total free space (in bytes) available in the volume and the snapshot reserve. If this value is 0 or negative, a new snapshot cannot be created.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13025,7 +12993,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_snapshots_size_used
 
-
+The size (in bytes) that is used by snapshots in the volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13035,7 +13003,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_space_expected_available
 
-
+The size (in bytes) that should be available for the volume irrespective of available size in the aggregate.This is same as size-available for 'volume' guaranteed volumes.For 'none' guaranteed volumes this value is calculated as if the aggregate has enough backing disk space to fully support the volume's size.Similar to the size-available property, this does not include Snapshot reserve.This count gets reduced if snapshots consume space above Snapshot reserve threshold.This parameter is not supported on Infinite Volumes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13045,16 +13013,17 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_space_logical_available
 
-
+The size (in bytes) that is logically available in the volume.This is the amount of free space available considering space saved by the storage efficiency features as being used.This does not include Snapshot reserve.This parameter is not supported on FlexGroups or Infinite Volumes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/private/cli/volume` | `logical-available` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_space_logical_used
 
-
+The size (in bytes) that is logically used in the volume.This value includes all the space saved by the storage efficiency features along with the physically used space.This does not include Snapshot reserve but does consider Snapshot spill.This parameter is not supported on FlexGroups or Infinite Volumes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13064,7 +13033,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_space_logical_used_by_afs
 
-
+The size (in bytes) that is logically used by the active filesystem of the volume.This value differs from 'logical-used' by the amount of Snapshot spill that exceeds Snapshot reserve.This parameter is not supported on FlexGroups or Infinite Volumes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13074,7 +13043,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_space_logical_used_by_snapshots
 
-
+The size (in bytes) that is logically used across all Snapshot copies in the volume. This value differs from 'size-used-by-snapshots' by the space saved by the storage efficiency features across the Snapshot copies.This parameter is not supported on FlexGroups or Infinite Volumes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13084,7 +13053,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_space_logical_used_percent
 
-
+Percentage of the logical used size of the volume.This parameter is not supported on FlexGroups or Infinite Volumes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13094,7 +13063,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_space_physical_used
 
-
+The size (in bytes) that is physically used in the volume.This differs from 'total-used' space by the space that is reserved for future writes.The value includes blocks in use by Snapshot copies.This field is valid only if the volume is online.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13104,7 +13073,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_space_physical_used_percent
 
-
+The size (in percent) that is physically used in the volume.The percentage is based on volume size including the space reserved for Snapshot copies.This field is valid only if the volume is online.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13114,7 +13083,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 ### volume_total_data
 
-
+This metric represents the total amount of data that has been read from and written to a specific volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

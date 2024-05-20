@@ -970,3 +970,96 @@ counters:
         Unit: millisec
       - API: ZAPI
         Unit: millisec
+
+  - Name: volume_autosize_grow_threshold_percent
+    Description: Used space threshold which triggers autogrow. When the size-used is greater than this percent of size-total, the volume will be grown. The computed value is rounded down. The default value of this element varies from 85% to 98%, depending on the volume size. It is an error for the grow threshold to be less than or equal to the shrink threshold.
+
+  - Name: volume_autosize_maximum_size
+    Description: The maximum size (in bytes) to which the volume would be grown automatically. The default value is 20% greater than the volume size. It is an error for the maximum volume size to be less than the current volume size. It is also an error for the maximum size to be less than or equal to the minimum size.
+
+  - Name: volume_filesystem_size
+    Description: Filesystem size (in bytes) of the volume.  This is the total usable size of the volume, not including WAFL reserve.  This value is the same as Size except for certain SnapMirror destination volumes.  It is possible for destination volumes to have a different filesystem-size because the filesystem-size is sent across from the source volume.  This field is valid only when the volume is online.
+
+  - Name: volume_overwrite_reserve_total
+    Description: The size (in bytes) that is reserved for overwriting snapshotted data in an otherwise full volume. This space is usable only by space-reserved LUNs and files, and then only when the volume is full.This field is valid only when the volume is online.
+
+  - Name: volume_overwrite_reserve_used
+    Description: The reserved size (in bytes) that is not available for new overwrites. The number includes both the reserved size which has actually been used for overwrites as well as the size which was never allocated in the first place. This field is valid only when the volume is online.
+
+  - Name: volume_size_available
+    Description:  The size (in bytes) that is still available in the volume. This field is valid only when the volume is online.
+
+  - Name: volume_size_total
+    Description: Total usable size (in bytes) of the volume, not including WAFL reserve or volume snapshot reserve.  If the volume is restricted or offline, a value of 0 is returned.
+
+  - Name: volume_size_used
+    Description: Number of bytes used in the volume.  If the volume is restricted or offline, a value of 0 is returned.
+
+  - Name: volume_snapshot_reserve_available
+    Description: The size (in bytes) that is available for Snapshot copies inside the Snapshot reserve. This value is zero if Snapshot spill is present. For 'none' guaranteed volumes, this may get reduced due to less available space in the aggregate. This parameter is not supported on Infinite Volumes.
+
+  - Name: volume_snapshot_reserve_percent
+    Description: The percentage of volume disk space that has been set aside as reserve for snapshot usage.
+
+  - Name: volume_snapshot_reserve_size
+    Description: The size (in bytes) in the volume that has been set aside as reserve for snapshot usage.
+
+  - Name: volume_snapshot_reserve_used_percent
+    Description: Percentage of the volume reserved for snapshots that has been used. Note that in some scenarios, it is possible to pass 100% of the space allocated.
+
+  - Name: volume_snapshots_size_available
+    Description: Total free space (in bytes) available in the volume and the snapshot reserve. If this value is 0 or negative, a new snapshot cannot be created.
+
+  - Name: volume_snapshots_size_used
+    Description: The size (in bytes) that is used by snapshots in the volume.
+
+  - Name: volume_space_expected_available
+    Description: The size (in bytes) that should be available for the volume irrespective of available size in the aggregate.This is same as size-available for 'volume' guaranteed volumes.For 'none' guaranteed volumes this value is calculated as if the aggregate has enough backing disk space to fully support the volume's size.Similar to the size-available property, this does not include Snapshot reserve.This count gets reduced if snapshots consume space above Snapshot reserve threshold.This parameter is not supported on Infinite Volumes.
+
+  - Name: volume_space_logical_available
+    Description: The size (in bytes) that is logically available in the volume.This is the amount of free space available considering space saved by the storage efficiency features as being used.This does not include Snapshot reserve.This parameter is not supported on FlexGroups or Infinite Volumes.
+
+  - Name: volume_space_logical_used
+    Description: The size (in bytes) that is logically used in the volume.This value includes all the space saved by the storage efficiency features along with the physically used space.This does not include Snapshot reserve but does consider Snapshot spill.This parameter is not supported on FlexGroups or Infinite Volumes.
+
+  - Name: volume_space_logical_used_by_afs
+    Description: The size (in bytes) that is logically used by the active filesystem of the volume.This value differs from 'logical-used' by the amount of Snapshot spill that exceeds Snapshot reserve.This parameter is not supported on FlexGroups or Infinite Volumes.
+
+  - Name: volume_space_logical_used_by_snapshots
+    Description: The size (in bytes) that is logically used across all Snapshot copies in the volume. This value differs from 'size-used-by-snapshots' by the space saved by the storage efficiency features across the Snapshot copies.This parameter is not supported on FlexGroups or Infinite Volumes.
+
+  - Name: volume_space_logical_used_percent
+    Description: Percentage of the logical used size of the volume.This parameter is not supported on FlexGroups or Infinite Volumes.
+
+  - Name: volume_space_physical_used
+    Description: The size (in bytes) that is physically used in the volume.This differs from 'total-used' space by the space that is reserved for future writes.The value includes blocks in use by Snapshot copies.This field is valid only if the volume is online.
+
+  - Name: volume_space_physical_used_percent
+    Description: The size (in percent) that is physically used in the volume.The percentage is based on volume size including the space reserved for Snapshot copies.This field is valid only if the volume is online.
+
+  - Name: aggr_space_performance_tier_used_percent
+    Description: A summation of volume footprints inside the aggregate,as a percentage. A volume's footprint is the amount of space being used for the volume in the aggregate.
+
+  - Name: flexcache_miss_percent
+    Description: This metric represents the percentage of block requests from a client that resulted in a "miss" in the FlexCache. A "miss" occurs when the requested data is not found in the cache and has to be retrieved from the origin volume.
+
+  - Name: lun_size_used_percent
+    Description: This metric represents the percentage of a LUN that is currently being used.
+
+  - Name: namespace_size_available
+    Description: This metric represents the amount of available space in a namespace.
+
+  - Name: namespace_size_available_percent
+    Description: This metric represents the percentage of available space in a namespace.
+
+  - Name: ndmp_session_data_bytes_processed
+    Description: Indicates the NDMP data bytes processed.
+
+  - Name: ndmp_session_mover_bytes_moved
+    Description: Indicates the NDMP mover bytes moved.
+
+  - Name: ontaps3_used_percent
+    Description: The used_percent metric the percentage of a bucket's total capacity that is currently being used.
+
+  - Name: volume_total_data
+    Description: This metric represents the total amount of data that has been read from and written to a specific volume.
