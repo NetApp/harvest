@@ -379,7 +379,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, quotaCount *int, numMe
 
 				// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 				if q.client.IsClustered() {
-					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + uName + "." + attribute
+					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + uName + "." + attribute + "." + quotaType
 				} else {
 					quotaInstanceKey = volume + "." + tree + "." + uName + "." + attribute
 				}
