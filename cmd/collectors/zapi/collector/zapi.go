@@ -87,11 +87,12 @@ func (z *Zapi) Init(a *collector.AbstractCollector) error {
 }
 
 func (z *Zapi) InitVars() error {
+	jitter := z.Params.GetChildContentS("jitter")
 	// It's used for unit tests only
 	if z.Options.IsTest {
 		z.Client = client.NewTestClient()
 		templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
-		template, path, err := z.ImportSubTemplate("cdot", templateName, [3]int{9, 8, 0})
+		template, path, err := z.ImportSubTemplate("cdot", templateName, jitter, [3]int{9, 8, 0})
 		if err != nil {
 			return err
 		}
@@ -123,7 +124,7 @@ func (z *Zapi) InitVars() error {
 	z.HostModel = model
 	templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
 
-	template, path, err := z.ImportSubTemplate(model, templateName, z.Client.Version())
+	template, path, err := z.ImportSubTemplate(model, templateName, jitter, z.Client.Version())
 	if err != nil {
 		return err
 	}
