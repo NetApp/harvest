@@ -80,7 +80,7 @@ func (s *StorageGrid) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	s.Logger.Info().Msg("initialized")
+	s.Logger.Debug().Msg("initialized")
 	return nil
 }
 
@@ -472,7 +472,9 @@ func (s *StorageGrid) LoadTemplate() (string, error) {
 		err      error
 	)
 
-	template, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), s.client.Cluster.Version)
+	jitter := s.Params.GetChildContentS("jitter")
+
+	template, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), jitter, s.client.Cluster.Version)
 	if err != nil {
 		return "", err
 	}

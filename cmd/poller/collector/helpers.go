@@ -52,7 +52,7 @@ var versionRegex = regexp.MustCompile(`\d+\.\d+\.\d+`)
 // are sorted, and we try to return the subtemplate that most closely matches the ONTAP version.
 // Model is cdot or 7mode, filename is the name of the subtemplate, and ver is the
 // ONTAP version triple (generation, major, minor)
-func (c *AbstractCollector) ImportSubTemplate(model, filename string, ver [3]int) (*node.Node, string, error) {
+func (c *AbstractCollector) ImportSubTemplate(model, filename, jitter string, ver [3]int) (*node.Node, string, error) {
 
 	var (
 		selectedVersion, templatePath string
@@ -85,7 +85,15 @@ nextFile:
 			}
 
 			templatePath = filepath.Join(selectedVersion, f)
-			c.Logger.Info().Str("path", templatePath).Str("v", verWithDots).Msg("best-fit template")
+			if jitter == "" {
+				jitter = "none"
+			}
+
+			c.Logger.Info().
+				Str("path", templatePath).
+				Str("v", verWithDots).
+				Str("jitter", jitter).
+				Msg("best-fit template")
 			if finalTemplate == nil {
 				finalTemplate, err = tree.ImportYaml(templatePath)
 				if err == nil {

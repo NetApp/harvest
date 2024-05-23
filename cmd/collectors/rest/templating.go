@@ -13,7 +13,8 @@ import (
 
 func (r *Rest) LoadTemplate() (string, error) {
 
-	template, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), r.Client.Cluster().Version)
+	jitter := r.Params.GetChildContentS("jitter")
+	template, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), jitter, r.Client.Cluster().Version)
 	if err != nil {
 		return "", err
 	}

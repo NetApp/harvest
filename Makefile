@@ -66,10 +66,10 @@ clean: ## Cleanup the project binary (bin) folders
 	fi
 
 test: ## run tests
-	@echo "Running tests"
-	# The ldflags force the old Apple linker to suppress ld warning messages on MacOS
-	# See https://github.com/golang/go/issues/61229#issuecomment-1988965927
-	go test -ldflags=-extldflags=-Wl,-ld_classic -race -shuffle=on ./...
+	@echo "Testing"
+	@# The ldflags force the old Apple linker to suppress ld warning messages on MacOS
+	@# See https://github.com/golang/go/issues/61229#issuecomment-1988965927
+	@go test -ldflags=-extldflags=-Wl,-ld_classic -race -shuffle=on ./...
 
 fmt: ## format the go source files
 	@echo "Formatting"
