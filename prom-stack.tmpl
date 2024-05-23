@@ -24,7 +24,8 @@ services:
             - '--storage.tsdb.path=/prometheus'
             - '--web.console.libraries=/usr/share/prometheus/console_libraries'
             - '--web.console.templates=/usr/share/prometheus/consoles'
-            # - '--web.enable-admin-api' # Enable to delete time series data from Prometheus see https://www.robustperception.io/deleting-time-series-from-prometheus 
+            - '--storage.tsdb.retention.time=1y' # Remove data older than one year
+            # - '--web.enable-admin-api' # Enable to delete time series data from Prometheus see https://www.robustperception.io/deleting-time-series-from-prometheus
         ports:
             - "{{ .PromPort }}:9090"
         networks:
