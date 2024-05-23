@@ -51,6 +51,7 @@ type Prometheus struct {
 	checkAddrs      bool
 	addMetaTags     bool
 	globalPrefix    string
+	replacer        *strings.Replacer
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
@@ -70,6 +71,8 @@ func (p *Prometheus) Init() error {
 	} else {
 		return err
 	}
+
+	p.replacer = newReplacer()
 
 	if instance, err := p.Metadata.NewInstance("info"); err == nil {
 		instance.SetLabel("task", "info")
@@ -188,6 +191,10 @@ func (p *Prometheus) Init() error {
 	return nil
 }
 
+func newReplacer() *strings.Replacer {
+	return strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", "\\n")
+}
+
 // Export - Unlike other Harvest exporters, we don't export data
 // but put it in cache. The HTTP daemon serves that cache on request.
 //
@@ -270,7 +277,6 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		keysToInclude     []string
 		prefix            string
 		err               error
-		replacer          *strings.Replacer
 		histograms        map[string]*histogram
 		normalizedLabels  map[string][]string // cache of histogram normalized labels
 		instancesExported uint64
@@ -279,7 +285,6 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	rendered = make([][]byte, 0)
 	globalLabels := make([]string, 0, len(data.GetGlobalLabels()))
 	normalizedLabels = make(map[string][]string)
-	replacer = strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", "\\n")
 
 	if p.addMetaTags {
 		tagged = set.New()
@@ -313,7 +318,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	prefix = p.globalPrefix + data.Object
 
 	for key, value := range data.GetGlobalLabels() {
-		globalLabels = append(globalLabels, escape(replacer, key, value))
+		globalLabels = append(globalLabels, escape(p.replacer, key, value))
 	}
 
 	for _, instance := range data.GetInstances() {
@@ -337,13 +342,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				// instance label (even though it's already a global label for 7modes)
 				_, ok := data.GetGlobalLabels()[label]
 				if !ok {
-					instanceKeys = append(instanceKeys, escape(replacer, label, value)) //nolint:makezero
+					instanceKeys = append(instanceKeys, escape(p.replacer, label, value)) //nolint:makezero
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				instanceKeys = append(instanceKeys, escape(replacer, key, value)) //nolint:makezero
+				instanceKeys = append(instanceKeys, escape(p.replacer, key, value)) //nolint:makezero
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
 				}
@@ -351,7 +356,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 			for _, label := range labelsToInclude {
 				value := instance.GetLabel(label)
-				kv := escape(replacer, label, value)
+				kv := escape(p.replacer, label, value)
 				_, ok := instanceLabelsSet[kv]
 				if ok {
 					continue
@@ -431,7 +436,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					}
 					metricLabels := make([]string, 0, len(metric.GetLabels()))
 					for k, v := range metric.GetLabels() {
-						metricLabels = append(metricLabels, escape(replacer, k, v))
+						metricLabels = append(metricLabels, escape(p.replacer, k, v))
 					}
 					x := fmt.Sprintf(
 						"%s_%s{%s,%s} %s",
@@ -526,7 +531,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						prefix,
 						metric.GetName(),
 						strings.Join(instanceKeys, ","),
-						escape(replacer, "metric", bucketName),
+						escape(p.replacer, "metric", bucketName),
 						value,
 					)
 				}
@@ -603,7 +608,7 @@ func escape(replacer *strings.Replacer, key string, value string) string {
 	// label_value can be any sequence of UTF-8 characters, but the backslash (\), double-quote ("),
 	// and line feed (\n) characters have to be escaped as \\, \", and \n, respectively.
 
-	return fmt.Sprintf("%s=%q", key, replacer.Replace(value))
+	return key + "=" + strconv.Quote(replacer.Replace(value))
 }
 
 type histogram struct {
