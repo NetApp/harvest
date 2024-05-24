@@ -1,0 +1,142 @@
+{
+  "records": [
+    {
+      "svm": {
+        "name": "abcde",
+        "uuid": "0eb01187-2536-11ee-90be-00a098d390f2",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/0eb01187-2536-11ee-90be-00a098d390f2"
+          }
+        }
+      },
+      "volume": {
+        "name": "abcd_root",
+        "uuid": "0ffaa742-2536-11ee-90be-00a098d390f2",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/0ffaa742-2536-11ee-90be-00a098d390f2"
+          }
+        }
+      },
+      "index": 0,
+      "type": "user",
+      "users": [
+        {
+          "name": "root",
+          "id": "0"
+        }
+      ],
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "files": {
+        "used": {
+          "total": 6
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/quota/reports/0ffaa742-2536-11ee-90be-00a098d390f2/0"
+        }
+      }
+    },
+    {
+      "svm": {
+        "name": "abcde",
+        "uuid": "0eb01187-2536-11ee-90be-00a098d390f2",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/0eb01187-2536-11ee-90be-00a098d390f2"
+          }
+        }
+      },
+      "volume": {
+        "name": "abcd_root",
+        "uuid": "0ffaa742-2536-11ee-90be-00a098d390f2",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/0ffaa742-2536-11ee-90be-00a098d390f2"
+          }
+        }
+      },
+      "index": 1152921504606846976,
+      "type": "group",
+      "group": {
+        "name": "root",
+        "id": "0"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "files": {
+        "used": {
+          "total": 6
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/quota/reports/0ffaa742-2536-11ee-90be-00a098d390f2/1152921504606846976"
+        }
+      }
+    },
+    {
+      "svm": {
+        "name": "astra_300",
+        "uuid": "835c0d25-ceb0-11eb-80e3-00a098d39e12",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/835c0d25-ceb0-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "volume": {
+        "name": "trident_qtree_pool_trident_TIXRBILLKA",
+        "uuid": "60972440-6fa6-11ed-a5cd-00a098d39e12",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/60972440-6fa6-11ed-a5cd-00a098d39e12"
+          }
+        }
+      },
+      "index": 2305843013508661248,
+      "type": "tree",
+      "qtree": {
+        "name": "trident_pvc_19913841_a29f_4a54_8bc0_a3c1c4155826",
+        "id": 1,
+        "_links": {
+          "self": {
+            "href": "/api/storage/qtrees/60972440-6fa6-11ed-a5cd-00a098d39e12/1"
+          }
+        }
+      },
+      "space": {
+        "hard_limit": 2147483648,
+        "used": {
+          "total": 0,
+          "hard_limit_percent": 0
+        }
+      },
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/quota/reports/60972440-6fa6-11ed-a5cd-00a098d39e12/2305843013508661248"
+        }
+      }
+    }
+  ],
+  "num_records": 3,
+  "_links": {
+    "self": {
+      "href": "/api/storage/quota/reports?fields=%2A&return_records=true&show_default_records=false"
+    }
+  }
+}
