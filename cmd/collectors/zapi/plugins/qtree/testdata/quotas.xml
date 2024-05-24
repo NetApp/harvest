@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE netapp SYSTEM "file:/etc/netapp_gx.dtd">
+
+<netapp xmlns="http://www.netapp.com/filer/admin" version="1.231">
+    <results status="passed">
+        <attributes-list>
+
+            <quota>
+                <disk-limit>8388608</disk-limit>
+                <disk-used>198532</disk-used>
+                <disk-used-pct-disk-limit>2</disk-used-pct-disk-limit>
+                <file-limit>-</file-limit>
+                <files-used>168</files-used>
+                <quota-target>/vol/trident_qtree_pool_trident_TIXRBILLKA/trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9</quota-target>
+                <quota-type>tree</quota-type>
+                <soft-disk-limit>-</soft-disk-limit>
+                <soft-file-limit>-</soft-file-limit>
+                <threshold>-</threshold>
+                <tree>trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9</tree>
+                <volume>trident_qtree_pool_trident_TIXRBILLKA</volume>
+                <vserver>astra_300</vserver>
+            </quota>
+            <quota>
+                <disk-limit>-</disk-limit>
+                <disk-used>0</disk-used>
+                <file-limit>-</file-limit>
+                <files-used>6</files-used>
+                <quota-target />
+                <quota-type>user</quota-type>
+                <quota-users>
+                    <quota-user>
+                        <quota-user-id>0</quota-user-id>
+                        <quota-user-name>root</quota-user-name>
+                        <quota-user-type>uid</quota-user-type>
+                    </quota-user>
+                </quota-users>
+                <soft-disk-limit>-</soft-disk-limit>
+                <soft-file-limit>-</soft-file-limit>
+                <threshold>-</threshold>
+                <tree />
+                <volume>abcd_root</volume>
+                <vserver>abcde</vserver>
+            </quota>
+            <quota>
+                <disk-limit>-</disk-limit>
+                <disk-used>0</disk-used>
+                <file-limit>-</file-limit>
+                <files-used>6</files-used>
+                <quota-target />
+                <quota-type>group</quota-type>
+                <quota-users>
+                    <quota-user>
+                        <quota-user-id>0</quota-user-id>
+                        <quota-user-name>root</quota-user-name>
+                        <quota-user-type>gid</quota-user-type>
+                    </quota-user>
+                </quota-users>
+                <soft-disk-limit>-</soft-disk-limit>
+                <soft-file-limit>-</soft-file-limit>
+                <threshold>-</threshold>
+                <tree />
+                <volume>abcd_root</volume>
+                <vserver>abcde</vserver>
+            </quota>
+        </attributes-list>
+        <num-records>3</num-records>
+    </results>
+</netapp>
