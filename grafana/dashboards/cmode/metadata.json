@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1709050797246,
+  "iteration": 1716736312324,
   "links": [
     {
       "asDropdown": true,
@@ -121,7 +121,7 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -195,8 +195,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 3,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
       "id": 33,
@@ -270,8 +270,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 6,
+        "w": 6,
+        "x": 12,
         "y": 1
       },
       "id": 70,
@@ -295,7 +295,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count (count by (poller, target) (metadata_component_status{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}))",
+          "exemplar": false,
+          "expr": "count (count by (poller, name, target) (metadata_component_status{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -308,6 +309,86 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Collectors",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of failed collectors.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(1, 179, 255)",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 185,
+      "interval": "20s",
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count (count by (poller, name, target) (metadata_component_status{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"} == 2))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Failed Collectors",
       "type": "stat"
     },
     {
@@ -345,9 +426,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 9,
-        "y": 1
+        "w": 6,
+        "x": 0,
+        "y": 5
       },
       "id": 89,
       "links": [],
@@ -419,9 +500,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 1
+        "w": 6,
+        "x": 6,
+        "y": 5
       },
       "id": 69,
       "links": [],
@@ -493,9 +574,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 1
+        "w": 6,
+        "x": 12,
+        "y": 5
       },
       "id": 72,
       "interval": "",
@@ -568,9 +649,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 1
+        "w": 6,
+        "x": 18,
+        "y": 5
       },
       "id": 157,
       "interval": "",
@@ -668,7 +749,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "id": 183,
       "options": {
@@ -758,7 +839,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 5
+        "y": 9
       },
       "id": 184,
       "options": {
@@ -986,7 +1067,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 17
       },
       "id": 104,
       "interval": "1m",
@@ -1227,7 +1308,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 25
       },
       "id": 156,
       "interval": "1m",
@@ -1462,7 +1543,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 33
       },
       "id": 128,
       "interval": "1m",
@@ -1479,6 +1560,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
+          "exemplar": false,
           "expr": "metadata_component_status{poller=~\"$Poller\",type=\"collector\"}",
           "format": "table",
           "hide": false,
@@ -1690,7 +1772,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 40
       },
       "id": 129,
       "interval": "1m",
@@ -1820,7 +1902,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 43
+        "y": 47
       },
       "id": 140,
       "interval": "",
@@ -1911,7 +1993,7 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 43
+        "y": 47
       },
       "id": 158,
       "interval": "",
@@ -2002,7 +2084,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 43
+        "y": 47
       },
       "id": 159,
       "interval": "",
@@ -2090,7 +2172,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 56
       },
       "id": 181,
       "options": {
@@ -2127,7 +2209,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 64
       },
       "id": 137,
       "panels": [
@@ -2592,7 +2674,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 65
       },
       "id": 176,
       "panels": [
@@ -2999,5 +3081,5 @@
   "timezone": "",
   "title": "Harvest Metadata",
   "uid": "",
-  "version": 7
+  "version": 8
 }
