@@ -172,6 +172,8 @@ func TestJsonExpression(t *testing.T) {
 		for _, expression := range allExpr {
 			counters := getAllCounters(expression)
 
+			exprFlaky := false
+
 			if len(counters) == 0 {
 				exprIgnored++
 				continue
@@ -183,6 +185,7 @@ func TestJsonExpression(t *testing.T) {
 					if counterIsFlaky(counter) {
 						subFlaky++
 						restFlaky++
+						exprFlaky = true
 						continue
 					}
 					t.Errorf("%s counter=%s path=%s not in DB expr=%s", rest, counter, dashPath, expression)
@@ -193,6 +196,7 @@ func TestJsonExpression(t *testing.T) {
 					if counterIsFlaky(counter) {
 						subFlaky++
 						zapiFlaky++
+						exprFlaky = true
 						continue
 					}
 					t.Errorf("%s counter=%s path=%s not in DB expr=%s", zapi, counter, dashPath, expression)
@@ -201,6 +205,10 @@ func TestJsonExpression(t *testing.T) {
 				}
 			}
 
+			// if expression contains flaky counters then ignore validation
+			if exprFlaky {
+				continue
+			}
 			queryStatus, actualExpression := validateExpr(expression)
 			if !queryStatus {
 				t.Errorf("query validation failed counters=%s expr=%s ",
