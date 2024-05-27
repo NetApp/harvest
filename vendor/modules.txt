@@ -44,7 +44,7 @@ github.com/power-devops/perfstat
 # github.com/rivo/uniseg v0.4.7
 ## explicit; go 1.18
 github.com/rivo/uniseg
-# github.com/rs/zerolog v1.32.0
+# github.com/rs/zerolog v1.33.0
 ## explicit; go 1.15
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
@@ -89,7 +89,9 @@ github.com/yusufpapurcu/wmi
 # github.com/zekroTJA/timedmap v1.5.2
 ## explicit; go 1.13
 github.com/zekroTJA/timedmap
-# golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
+# github.com/zekroTJA/timedmap/v2 v2.0.0
+## explicit; go 1.19
+# golang.org/x/exp v0.0.0-20240525044651-4c93da0ed11d
 ## explicit; go 1.20
 golang.org/x/exp/maps
 # golang.org/x/sys v0.20.0
