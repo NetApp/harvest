@@ -768,6 +768,48 @@
                     "value": "bytes"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "",
+                        "url": "/d/f6d3ec79/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "",
+                        "url": "/d/df51cd7f/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },

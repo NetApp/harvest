@@ -780,6 +780,8 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 var uidExceptions = map[string]bool{
 	"cmode/details/volumeBySVM.json":    true,
 	"cmode/details/volumeDeepDive.json": true,
+	"cmode/svm.json":                    true,
+	"cmode/aggregate.json":              true,
 }
 
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {
