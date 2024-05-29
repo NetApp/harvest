@@ -129,8 +129,8 @@ at `http://IP_OF_PROMETHEUS:9090/targets`.
 
 ### Customize Prometheus's Retention Time
 
-By default, `prom-stack.yml` is configured for a 15-day data retention period.
-To increase this, for example, to one year, you can create a specific configuration file and make your changes there.
+By default, `prom-stack.yml` is configured for a 1-year data retention period.
+To increase this, for example, to two years, you can create a specific configuration file and make your changes there.
 This prevents your custom settings from being overwritten if you regenerate the default `prom-stack.yml` file.
 Here's the process:
 
@@ -140,13 +140,13 @@ Here's the process:
 cp prom-stack.yml prom-stack-prod.yml
 ```
 
-- Edit `prom-stack-prod.yml` to include the extended data retention setting by adding the `--storage.tsdb.retention.time=1y` line under the **Prometheus** service's `command` section:
+- Edit `prom-stack-prod.yml` to include the extended data retention setting by updating the `--storage.tsdb.retention.time=2y` line under the **Prometheus** service's `command` section:
 
 ```yaml
 command:
   - '--config.file=/etc/prometheus/prometheus.yml'
   - '--storage.tsdb.path=/prometheus'
-  - '--storage.tsdb.retention.time=1y'       # Sets data retention to 1 year
+  - '--storage.tsdb.retention.time=2y'       # Sets data retention to 2 years
   - '--web.console.libraries=/usr/share/prometheus/console_libraries'
   - '--web.console.templates=/usr/share/prometheus/consoles'
 ```
@@ -227,7 +227,8 @@ To upgrade Harvest:
 2. [Stop all containers](#stop-all-containers)
 
 3. Regenerate your `harvest-compose.yml` file by
-   running [harvest generate](#generate-a-docker-compose-for-your-pollers)
+   running [harvest generate](#generate-a-docker-compose-for-your-pollers).
+   This step is essential as it updates local copies of templates and dashboards, which are then mounted to the containers
    By default, generate will use the `latest` tag. If you want to upgrade to a `nightly` build see the twisty.
 
     ??? question "I want to upgrade to a nightly build"
