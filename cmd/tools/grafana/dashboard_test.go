@@ -782,6 +782,10 @@ var uidExceptions = map[string]bool{
 	"cmode/details/volumeDeepDive.json": true,
 	"cmode/svm.json":                    true,
 	"cmode/aggregate.json":              true,
+	"cmode/volume.json":                 true,
+	"cmode/node.json":                   true,
+	"cmode/cluster.json":                true,
+	"cmode/datacenter.json":             true,
 }
 
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {

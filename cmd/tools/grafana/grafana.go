@@ -25,6 +25,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -488,10 +489,9 @@ func importFiles(dir string, folder *Folder) {
 		// If the dashboard has an uid defined, change the uid to the empty string, unless overwrite is true.
 		// We do comparison for dashboard create/update based on title
 		if !opts.overwrite {
-
 			// Don't change the uid of linked dashboards since that will break the links
-			isLinkedDashboard := file.Name() == "volumeBySVM.json" || file.Name() == "volumeDeepDive.json"
-
+			linkedDashboards := []string{"volumeBySVM.json", "volumeDeepDive.json", "volume.json", "aggregate.json", "svm.json", "node.json", "datacenter.json", "cluster.json"}
+			isLinkedDashboard := slices.Contains(linkedDashboards, file.Name())
 			if !isLinkedDashboard {
 				dashboardID := gjson.GetBytes(data, "uid").String()
 				if dashboardID != "" {
