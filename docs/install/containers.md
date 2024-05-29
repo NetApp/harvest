@@ -129,7 +129,7 @@ at `http://IP_OF_PROMETHEUS:9090/targets`.
 
 ### Customize Prometheus's Retention Time
 
-By default, `prom-stack.yml` is configured for a 1-year data retention period.
+By default, `prom-stack.yml` is configured for a one year data retention period.
 To increase this, for example, to two years, you can create a specific configuration file and make your changes there.
 This prevents your custom settings from being overwritten if you regenerate the default `prom-stack.yml` file.
 Here's the process:
@@ -228,7 +228,7 @@ To upgrade Harvest:
 
 3. Regenerate your `harvest-compose.yml` file by
    running [harvest generate](#generate-a-docker-compose-for-your-pollers).
-   This step is essential as it updates local copies of templates and dashboards, which are then mounted to the containers
+Make sure you don't skip this step. It is essential as it updates local copies of templates and dashboards, which are then mounted to the containers. If this step is skipped, Harvest will run with older templates and dashboards which will likely cause problems.
    By default, generate will use the `latest` tag. If you want to upgrade to a `nightly` build see the twisty.
 
     ??? question "I want to upgrade to a nightly build"
