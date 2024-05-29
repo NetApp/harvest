@@ -2028,8 +2028,8 @@ If you do not want their end-points exposed, add the <code>--port=false</code> o
 <p>After bringing up the <code>prom-stack.yml</code> compose file, you can check Prometheus's list of targets
 at <code>http://IP_OF_PROMETHEUS:9090/targets</code>.</p>
 <h3 id="customize-prometheuss-retention-time">Customize Prometheus's Retention Time<a class="headerlink" href="#customize-prometheuss-retention-time" title="Permanent link">&para;</a></h3>
-<p>By default, <code>prom-stack.yml</code> is configured for a 15-day data retention period.
-To increase this, for example, to one year, you can create a specific configuration file and make your changes there.
+<p>By default, <code>prom-stack.yml</code> is configured for a one year data retention period.
+To increase this, for example, to two years, you can create a specific configuration file and make your changes there.
 This prevents your custom settings from being overwritten if you regenerate the default <code>prom-stack.yml</code> file.
 Here's the process:</p>
 <ul>
@@ -2038,12 +2038,12 @@ Here's the process:</p>
 <div class="highlight"><pre><span></span><code>cp<span class="w"> </span>prom-stack.yml<span class="w"> </span>prom-stack-prod.yml
 </code></pre></div>
 <ul>
-<li>Edit <code>prom-stack-prod.yml</code> to include the extended data retention setting by adding the <code>--storage.tsdb.retention.time=1y</code> line under the <strong>Prometheus</strong> service's <code>command</code> section:</li>
+<li>Edit <code>prom-stack-prod.yml</code> to include the extended data retention setting by updating the <code>--storage.tsdb.retention.time=2y</code> line under the <strong>Prometheus</strong> service's <code>command</code> section:</li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="nt">command</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--config.file=/etc/prometheus/prometheus.yml&#39;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.path=/prometheus&#39;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.retention.time=1y&#39;</span><span class="w">       </span><span class="c1"># Sets data retention to 1 year</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--storage.tsdb.retention.time=2y&#39;</span><span class="w">       </span><span class="c1"># Sets data retention to 2 years</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.libraries=/usr/share/prometheus/console_libraries&#39;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;--web.console.templates=/usr/share/prometheus/consoles&#39;</span>
 </code></pre></div>
@@ -2103,7 +2103,8 @@ before continuing with the upgrade steps below.</p>
 </li>
 <li>
 <p>Regenerate your <code>harvest-compose.yml</code> file by
-   running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a>
+   running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a>.
+Make sure you don't skip this step. It is essential as it updates local copies of templates and dashboards, which are then mounted to the containers. If this step is skipped, Harvest will run with older templates and dashboards which will likely cause problems.
    By default, generate will use the <code>latest</code> tag. If you want to upgrade to a <code>nightly</code> build see the twisty.</p>
 <details class="question">
 <summary>I want to upgrade to a nightly build</summary>
