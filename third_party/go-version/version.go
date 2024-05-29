@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"database/sql/driver"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -357,9 +358,16 @@ func (v *Version) Prerelease() string {
 func (v *Version) Segments() []int {
 	segmentSlice := make([]int, len(v.segments))
 	for i, v := range v.segments {
-		segmentSlice[i] = int(v)
+		segmentSlice[i] = check(v)
 	}
 	return segmentSlice
+}
+
+func check(i int64) int {
+	if i > 0 && i <= math.MaxInt32 {
+		return int(i)
+	}
+	return 0
 }
 
 // Segments64 returns the numeric segments of the version as a slice of int64s.
