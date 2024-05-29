@@ -345,6 +345,22 @@ func TestOverrideMetricsExist(t *testing.T) {
 	}, allTemplatesButEms...)
 }
 
+func TestNoHyphenInMetrics(t *testing.T) {
+	visitTemplates(t, func(path string, model Model) {
+		isRest := strings.Contains(path, "rest")
+
+		if !isRest {
+			return
+		}
+
+		for _, m := range model.metrics {
+			if strings.Contains(m.left, "-") || strings.Contains(m.right, "-") {
+				t.Errorf("Metric fields 'left' and 'right' should not contain hyphens. Found in path=%s, left=%s, right=%s", shortPath(path), m.left, m.right)
+			}
+		}
+	}, allTemplatesButEms...)
+}
+
 type sorted struct {
 	got  string
 	want string
