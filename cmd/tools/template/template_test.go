@@ -347,7 +347,7 @@ func TestOverrideMetricsExist(t *testing.T) {
 
 func TestNoHyphenInMetrics(t *testing.T) {
 	visitTemplates(t, func(path string, model Model) {
-		isRest := strings.Contains(path, "rest") || strings.Contains(path, "restperf")
+		isRest := strings.Contains(path, "rest")
 
 		if !isRest {
 			return
