@@ -6,8 +6,8 @@ replace github.com/netapp/harvest/v2 => ../
 
 require (
 	github.com/carlmjohnson/requests v0.23.5
-	github.com/netapp/harvest/v2 v2.0.0-20240509061649-efa3ed2b64e0
-	github.com/rs/zerolog v1.32.0
+	github.com/netapp/harvest/v2 v2.0.0-20240529062525-2ab393d07921
+	github.com/rs/zerolog v1.33.0
 	github.com/tidwall/gjson v1.17.1
 	golang.org/x/text v0.15.0
 )
@@ -20,7 +20,7 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20240408141607-282e7b5d6b74 // indirect
+	github.com/lufia/plan9stats v0.0.0-20240513124658-fba389f38bae // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -36,7 +36,7 @@ require (
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.8.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
+	golang.org/x/exp v0.0.0-20240529005216-23cca8864a10 // indirect
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect

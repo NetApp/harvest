@@ -1063,3 +1063,19 @@ counters:
 
   - Name: volume_total_data
     Description: This metric represents the total amount of data that has been read from and written to a specific volume.
+
+  - Name: node_nvmf_data_sent
+    Description: NVMe/FC kilobytes (KB) sent per second.
+
+  - Name: node_nvmf_ops
+    Description: NVMe/FC operations per second.
+
+  - Name: node_nvmf_data_recv
+    Description: NVMe/FC kilobytes (KB) received per second.
+
+  - Name: quota_threshold
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/qtree.yaml
