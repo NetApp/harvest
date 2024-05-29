@@ -1,6 +1,11 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 24.05.1 / 2024-05-29 Release
+:pushpin: This release is the same as 24.05.0 with a fix that makes the NFS Troubleshooting dashboards load in NAbox. If you are not using NAbox or you do not use the NFS trouble shooting dashboards, you can ignore this release.
+
+---
+
 ## 24.05.0 / 2024-05-20 Release
 :pushpin: Highlights of this major release include:
 - Harvest supports consistency groups (CG) in the SnapMirror dashboard. Thanks to @Nikhita-13 for reporting this.
