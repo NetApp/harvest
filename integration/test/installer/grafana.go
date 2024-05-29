@@ -44,3 +44,8 @@ func (g *Grafana) Upgrade() bool {
 	utils.PanicIfNotNil(errors.New("not supported"))
 	return false
 }
+
+func (g *Grafana) Stop() bool {
+	utils.PanicIfNotNil(errors.New("not supported"))
+	return false
+}

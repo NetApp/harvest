@@ -52,3 +52,15 @@ func (n *Native) Upgrade() bool {
 	utils.PanicIfNotNil(errors.New("not supported"))
 	return false
 }
+
+func (n *Native) Stop() bool {
+	if utils.FileExists(HarvestHome) {
+		harvestObj := new(Harvest)
+		if utils.FileExists(HarvestHome + "/bin/harvest") {
+			if harvestObj.AllRunning() {
+				harvestObj.Stop()
+			}
+		}
+	}
+	return true
+}

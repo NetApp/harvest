@@ -80,3 +80,15 @@ func (r *RPM) Upgrade() bool {
 	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
 	return status && isValidAsup
 }
+
+func (r *RPM) Stop() bool {
+	if utils.FileExists(HarvestHome) {
+		harvestObj := new(Harvest)
+		if utils.FileExists(HarvestHome + "/bin/harvest") {
+			if harvestObj.AllRunning() {
+				harvestObj.Stop()
+			}
+		}
+	}
+	return true
+}
