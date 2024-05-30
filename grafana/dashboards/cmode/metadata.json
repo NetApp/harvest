@@ -1,4 +1,5 @@
 {
+  "__elements": [],
   "__inputs": [
     {
       "description": "",
@@ -62,10 +63,10 @@
   },
   "description": "",
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1716736312324,
+  "iteration": 1717078006497,
   "links": [
     {
       "asDropdown": true,
@@ -82,6 +83,7 @@
       "url": ""
     }
   ],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -98,7 +100,6 @@
       "type": "row"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "Number of datacenters.",
       "fieldConfig": {
@@ -155,13 +156,10 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Datacenters",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "Number of pollers.",
       "fieldConfig": {
@@ -220,7 +218,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count (count by (poller) (poller_status{hostname=~\"$Hostname\"}))",
+          "expr": "count (count by (poller) (poller_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -230,13 +228,10 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Pollers",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "Number of collectors.",
       "fieldConfig": {
@@ -296,7 +291,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count (count by (poller, name, target) (metadata_component_status{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}))",
+          "expr": "count (count by (poller, target) (metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -306,8 +301,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Collectors",
       "type": "stat"
     },
@@ -450,7 +443,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count (count by (poller, target) (metadata_component_status{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}))",
+          "expr": "count (count by (poller, target) (metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -460,13 +453,10 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Exporters",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "Data points collected last 24h.",
       "fieldConfig": {
@@ -524,7 +514,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(sum_over_time(metadata_component_count{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}[1d:60s]))",
+          "expr": "sum(sum_over_time(metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}[1d:60s]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -534,13 +524,10 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Collected/24h",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "Data points collected per minute.",
       "fieldConfig": {
@@ -599,7 +586,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(sum_over_time(metadata_component_count{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}[60s]))",
+          "expr": "sum(sum_over_time(metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}[60s]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -609,13 +596,10 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Collected/m",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
       "description": "Data points exported per minute.",
       "fieldConfig": {
@@ -674,7 +658,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(sum_over_time(metadata_component_count{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}[2m]))",
+          "expr": "sum(sum_over_time(metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -684,8 +668,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Exported/m",
       "type": "stat"
     },
@@ -965,8 +947,7 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": null
+                "id": "custom.width"
               }
             ]
           },
@@ -1073,6 +1054,13 @@
       "interval": "1m",
       "maxDataPoints": 2,
       "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "frameIndex": 2,
         "showHeader": true,
         "sortBy": [
@@ -1085,7 +1073,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "metadata_target_ping{hostname=~\"$Hostname\"}",
+          "expr": "metadata_target_ping{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1094,7 +1082,7 @@
           "refId": "A"
         },
         {
-          "expr": "metadata_target_status{hostname=~\"$Hostname\"}",
+          "expr": "metadata_target_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1103,8 +1091,6 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Target Systems",
       "transformations": [
         {
@@ -1167,7 +1153,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "status"
+              "options": "Status"
             },
             "properties": [
               {
@@ -1226,19 +1212,18 @@
               },
               {
                 "id": "custom.width",
-                "value": 456
+                "value": 93
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Host"
+              "options": "Hostname"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 200
+                "id": "custom.width"
               }
             ]
           },
@@ -1250,55 +1235,53 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 196
+                "value": 86
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "poller"
+              "options": "Poller"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 228
+                "id": "custom.width"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "hostname"
+              "options": "Hostname"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 207
+                "value": 182
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "datacenter"
+              "options": "Datacenter"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 268
+                "id": "custom.width"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "pid"
+              "options": "RSS"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 207
+                "id": "unit",
+                "value": "kbytes"
               }
             ]
           }
@@ -1314,64 +1297,115 @@
       "interval": "1m",
       "maxDataPoints": 2,
       "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "status"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "poller_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\"}",
+          "expr": "poller_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}",
           "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "expr": "poller_memory{metric=\"rss\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}",
+          "format": "table",
+          "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Pollers",
       "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "addr",
+                "datacenter",
+                "hostname",
+                "poller",
+                "promport",
+                "version",
+                "Value #A",
+                "Value #B",
+                "pid"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
         {
           "id": "organize",
           "options": {
             "excludeByName": {
               "Time": true,
-              "__name__": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Value #B": false,
+              "__name__": false,
+              "__name__ 1": true,
               "datacenter": false,
+              "datacenter 1": true,
+              "hostname 1": true,
               "instance": true,
+              "instance 1": true,
               "is_child": true,
               "job": true,
+              "job 1": true,
               "num_children": true,
               "parent_name": true,
               "parent_pid": true,
+              "pid 1": true,
+              "poller 1": false,
               "poller_name": true,
               "ps": true
             },
             "indexByName": {
-              "Time": 0,
-              "Value": 8,
-              "__name__": 1,
-              "datacenter": 4,
-              "hostname": 3,
-              "instance": 5,
-              "job": 6,
-              "pid": 7,
-              "poller": 2
+              "Value #A": 4,
+              "Value #B": 8,
+              "addr": 5,
+              "datacenter": 2,
+              "hostname": 1,
+              "pid": 3,
+              "poller": 0,
+              "promport": 6,
+              "version": 7
             },
             "renameByName": {
+              "Time": "",
               "Value": "status",
-              "hostname": "",
+              "Value #A": "Status",
+              "Value #B": "RSS",
+              "addr": "Addr",
+              "datacenter": "Datacenter",
+              "hostname": "Hostname",
+              "instance": "",
+              "job": "",
               "os": "OS",
               "parent_name": "",
-              "pid": "",
-              "poller": "",
-              "poller_name": ""
+              "pid": "PID",
+              "poller": "Poller",
+              "poller 1": "Poller",
+              "poller_name": "",
+              "promport": "PromPort",
+              "version": "Version"
             }
           }
         }
@@ -1387,7 +1421,7 @@
             "mode": "thresholds"
           },
           "custom": {
-            "align": null,
+            "align": "auto",
             "displayMode": "auto",
             "filterable": true
           },
@@ -1549,6 +1583,13 @@
       "interval": "1m",
       "maxDataPoints": 2,
       "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": [
           {
@@ -1561,7 +1602,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "metadata_component_status{poller=~\"$Poller\",type=\"collector\"}",
+          "expr": "metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"collector\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1570,8 +1611,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Collectors",
       "transformations": [
         {
@@ -1630,7 +1669,7 @@
             "mode": "thresholds"
           },
           "custom": {
-            "align": null,
+            "align": "auto",
             "displayMode": "auto",
             "filterable": true
           },
@@ -1778,6 +1817,13 @@
       "interval": "1m",
       "maxDataPoints": 2,
       "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": [
           {
@@ -1789,7 +1835,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "metadata_component_status{poller=~\"$Poller\",type=\"exporter\"}",
+          "expr": "metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1798,8 +1844,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Exporters",
       "transformations": [
         {
@@ -1923,15 +1967,13 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (poller) (metadata_collector_poll_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+          "expr": "avg by (poller) (metadata_collector_poll_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{poller}}",
           "refId": "C"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Average Poll time per Poller",
       "type": "timeseries"
     },
@@ -2014,15 +2056,13 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector) (metadata_collector_poll_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+          "expr": "avg by (collector) (metadata_collector_poll_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}}",
           "refId": "C"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Average  time per Collector",
       "type": "timeseries"
     },
@@ -2105,15 +2145,13 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum by (exporter) (metadata_exporter_time{hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+          "expr": "sum by (exporter) (metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{exporter}}",
           "refId": "C"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Average  time per Exporter",
       "type": "timeseries"
     },
@@ -2164,7 +2202,7 @@
               }
             ]
           },
-          "unit": "deckbytes"
+          "unit": "kbytes"
         },
         "overrides": []
       },
@@ -2192,7 +2230,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "poller_memory{metric=\"rss\"}",
+          "expr": "poller_memory{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"rss\"}",
           "format": "time_series",
           "interval": "",
           "legendFormat": "{{poller}}",
@@ -2254,8 +2292,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2293,7 +2330,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_poll_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (metadata_collector_poll_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2344,8 +2381,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2383,7 +2419,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_metrics{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (metadata_collector_metrics{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2434,8 +2470,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2473,7 +2508,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_api_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (metadata_collector_api_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2524,8 +2559,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2563,7 +2597,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_parse_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (metadata_collector_parse_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2614,8 +2648,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2653,7 +2686,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_calc_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (metadata_collector_calc_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2719,8 +2752,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2781,14 +2813,14 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (target, task) (metadata_exporter_time{hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+              "expr": "sum by (target, task) (metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{target}} - {{task}}",
               "refId": "C"
             },
             {
-              "expr": "sum by (target) (metadata_exporter_time{hostname=~\"$Hostname\",poller=~\"$Poller\",task!=\"info\",task!=\"render\"})",
+              "expr": "sum by (target) (metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task!=\"info\",task!=\"render\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{target}} - total",
@@ -2839,8 +2871,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2880,7 +2911,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (name, target) (metadata_component_count{hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"})",
+              "expr": "avg by (name, target) (metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{name}} - {{target}} - IN",
@@ -2888,7 +2919,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg by (exporter, target) (metadata_exporter_count{hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+              "expr": "avg by (exporter, target) (metadata_exporter_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "{{exporter}} - {{target}} - OUT",
@@ -2904,7 +2935,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 30,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -2912,11 +2943,9 @@
       {
         "current": {
           "selected": false,
-          "text": "Prometheus",
-          "value": "Prometheus"
+          "text": "prometheus",
+          "value": "prometheus"
         },
-        "description": null,
-        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -2930,15 +2959,11 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_target_status, datacenter)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Datacenter",
         "options": [],
@@ -2956,12 +2981,9 @@
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_target_status, hostname)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "",
@@ -2982,15 +3004,11 @@
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_target_status, poller)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Poller",
         "options": [],
@@ -3008,15 +3026,11 @@
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_component_status{type=\"collector\",poller=~\"$Poller\"}, name)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Collector",
         "options": [],
@@ -3034,15 +3048,11 @@
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_component_status{type=\"collector\",poller=~\"$Poller\",name=~\"$Collector\"}, target)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Object",
         "options": [],
