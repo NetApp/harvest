@@ -51,24 +51,21 @@ var _Histograms = map[string]func(*matrix.Metric, string, *matrix.Instance, *Pro
 
 // list of (scalar) metrics
 var _Metrics = map[string]func(*matrix.Metric, *matrix.Instance, *Process, *System){
-	"start_time":     setStartTime,
-	"cpu_percent":    setCPUPercent,
-	"memory_percent": setMemoryPercent,
-	"threads":        setNumThreads,
-	"fds":            setNumFds,
+	"start_time":  setStartTime,
+	"cpu_percent": setCPUPercent,
+	"threads":     setNumThreads,
+	"fds":         setNumFds,
 }
 
 var _DataTypes = map[string]string{
-	"cpu":            "float64",
-	"memory":         "uint64",
-	"io":             "uint64",
-	"net":            "uint64",
-	"ctx":            "uint64",
-	"start_time":     "float64",
-	"cpu_percent":    "float64",
-	"memory_percent": "float64",
-	"threads":        "uint64",
-	"fds":            "uint64",
+	"cpu":         "float64",
+	"io":          "uint64",
+	"net":         "uint64",
+	"ctx":         "uint64",
+	"start_time":  "float64",
+	"cpu_percent": "float64",
+	"threads":     "uint64",
+	"fds":         "uint64",
 }
 
 func init() {
@@ -263,10 +260,6 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 		}
 	}
 
-	if _, err = mat.NewMetricUint8("status"); err != nil {
-		return err
-	}
-
 	u.Logger.Debug().Msgf("initialized cache with %d metrics", len(mat.GetMetrics()))
 	return nil
 }
@@ -352,12 +345,6 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 
 	for key, instance := range mat.GetInstances() {
 
-		// assume not running
-		err = mat.LazySetValueUint8("status", key, 0)
-		if err != nil {
-			u.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
-		}
-
 		if proc, ok = u.processes[key]; ok {
 			if err = proc.Reload(); err != nil {
 				delete(u.processes, key)
@@ -388,14 +375,6 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 			u.Logger.Debug().Msgf("skip instance [%s]: PID (%d) not matched with [%s]", key, pid, cmd)
 			continue
 		}
-
-		// if we got here poller is running
-		err = mat.LazySetValueUint64("status", key, 1)
-		if err != nil {
-			u.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
-		}
-
-		u.Logger.Debug().Msgf("populating instance [%s]: PID (%d) with [%s]\n", key, pid, cmd)
 
 		// process scalar metrics
 		for key, foo := range _Metrics {
@@ -439,13 +418,6 @@ func setNumThreads(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) 
 
 func setNumFds(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numFds)
-	if err != nil {
-		logging.Get().Error().Stack().Err(err).Msg("error")
-	}
-}
-
-func setMemoryPercent(m *matrix.Metric, i *matrix.Instance, p *Process, s *System) {
-	err := m.SetValueFloat64(i, float64(p.mem["rss"])/float64(s.memTotal)*100)
 	if err != nil {
 		logging.Get().Error().Stack().Err(err).Msg("error")
 	}

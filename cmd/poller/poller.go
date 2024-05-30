@@ -54,6 +54,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/shirou/gopsutil/v3/mem"
+	"github.com/shirou/gopsutil/v3/process"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -118,7 +120,8 @@ type Poller struct {
 	exporterParams  map[string]conf.Exporter
 	params          *conf.Poller
 	metadata        *matrix.Matrix
-	status          *matrix.Matrix
+	status          *matrix.Matrix // exported as metadata_target_
+	status2         *matrix.Matrix // exported as poller_status
 	certPool        *x509.CertPool
 	client          *http.Client
 	auth            *auth.Credentials
@@ -444,15 +447,21 @@ func (p *Poller) Run() {
 			task.Start()
 			// flush metadata
 			p.status.Reset()
+			p.status2.Reset()
 			p.metadata.Reset()
 
 			// ping target system
 			if ping, ok := p.ping(); ok {
 				_ = p.status.LazySetValueUint8("status", "host", 0)
 				_ = p.status.LazySetValueFloat64("ping", "host", float64(ping))
+				_ = p.status2.LazySetValueUint8("status", "host", 1)
+				_ = p.status2.LazySetValueFloat64("ping", "host", float64(ping))
 			} else {
 				_ = p.status.LazySetValueUint8("status", "host", 1)
+				_ = p.status2.LazySetValueUint8("status", "host", 0)
 			}
+
+			p.addMemoryMetadata()
 
 			// add number of goroutines to metadata
 			// @TODO: cleanup, does not belong to "status"
@@ -511,6 +520,9 @@ func (p *Poller) Run() {
 				if _, err := ee.Export(p.status); err != nil {
 					logger.Error().Err(err).Msg("export target metadata:")
 				}
+				if _, err := ee.Export(p.status2); err != nil {
+					logger.Error().Err(err).Msg("export poller status:")
+				}
 			}
 
 			// only log when there are changes, which we expect to be infrequent
@@ -549,7 +561,7 @@ func (p *Poller) handleSignals(signalChannel chan os.Signal) {
 // and if available, response time
 func (p *Poller) ping() (float32, bool) {
 
-	cmd := exec.Command("ping", p.target, "-w", "5", "-c", "1", "-q") //nolint:gosec
+	cmd := exec.Command("ping", p.target, "-W", "5", "-c", "1", "-q") //nolint:gosec
 	output, err := cmd.Output()
 	if err != nil {
 		return 0, false
@@ -920,29 +932,58 @@ func (p *Poller) loadMetadata() {
 	}
 	p.metadata.SetExportOptions(matrix.DefaultExportOptions())
 
-	// metadata for target system
+	// metadata for the target system
 	p.status = matrix.New("poller", "metadata_target", "metadata_component")
 	_, _ = p.status.NewMetricUint8("status")
 	_, _ = p.status.NewMetricFloat64("ping")
 	_, _ = p.status.NewMetricUint64("goroutines")
 
+	// metadata for the poller itself
+	p.status2 = matrix.New("poller", "poller", "poller_target")
+	_, _ = p.status2.NewMetricUint8("status")
+	_, _ = p.status2.NewMetricFloat64("memory_percent")
+	newMemoryMetric(p.status2, "memory", "rss")
+	newMemoryMetric(p.status2, "memory", "vms")
+	newMemoryMetric(p.status2, "memory", "swap")
+
 	instance, _ := p.status.NewInstance("host")
+	pInstance, _ := p.status2.NewInstance("host")
 	instance.SetLabel("addr", p.target)
-	p.status.SetGlobalLabel("poller", p.name)
-	p.status.SetGlobalLabel("version", p.options.Version)
-	p.status.SetGlobalLabel("datacenter", p.params.Datacenter)
-	p.status.SetGlobalLabel("hostname", p.options.Hostname)
+	pInstance.SetLabel("addr", p.target)
+
+	globalKVs := []string{
+		"poller", p.name,
+		"version", p.options.Version,
+		"datacenter", p.params.Datacenter,
+		"hostname", p.options.Hostname,
+	}
+
+	for i := 0; i < len(globalKVs); i += 2 {
+		p.status.SetGlobalLabel(globalKVs[i], globalKVs[i+1])
+		p.status2.SetGlobalLabel(globalKVs[i], globalKVs[i+1])
+	}
+
 	if p.options.PromPort != 0 {
 		p.status.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
+		p.status2.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
 	}
+
 	labels := p.params.Labels
 	if labels != nil {
 		for _, labelPtr := range *labels {
 			p.metadata.SetGlobalLabels(labelPtr)
 			p.status.SetGlobalLabels(labelPtr)
+			p.status2.SetGlobalLabels(labelPtr)
 		}
 	}
 	p.status.SetExportOptions(matrix.DefaultExportOptions())
+	p.status2.SetExportOptions(matrix.DefaultExportOptions())
+}
+
+func newMemoryMetric(status *matrix.Matrix, label string, sub string) {
+	fullLabel := label + "." + sub
+	mm, _ := status.NewMetricType(fullLabel, "uint64", label)
+	mm.SetLabel("metric", sub)
 }
 
 var pollerCmd = &cobra.Command{
@@ -1197,6 +1238,35 @@ func (p *Poller) mergeConfPath() {
 		path = p.options.ConfPath
 	}
 	p.options.SetConfPath(path)
+}
+
+func (p *Poller) addMemoryMetadata() {
+
+	pid := os.Getpid()
+	proc, err := process.NewProcess(int32(pid))
+	if err != nil {
+		logger.Error().Err(err).Int("pid", pid).Msg("Failed to lookup process for poller")
+		return
+	}
+	memInfo, err := proc.MemoryInfo()
+	if err != nil {
+		logger.Error().Err(err).Int("pid", pid).Msg("Failed to get memory info for poller")
+		return
+	}
+
+	_ = p.status2.LazySetValueUint64("memory.rss", "host", memInfo.RSS)
+	_ = p.status2.LazySetValueUint64("memory.vms", "host", memInfo.VMS)
+	_ = p.status2.LazySetValueUint64("memory.swap", "host", memInfo.Swap)
+
+	// Calculate memory percentage
+	memory, err := mem.VirtualMemory()
+	if err != nil {
+		logger.Error().Err(err).Int("pid", pid).Msg("Failed to get memory for machine")
+		return
+	}
+
+	memPercentage := float64(memInfo.RSS) / float64(memory.Total) * 100
+	_ = p.status2.LazySetValueFloat64("memory_percent", "host", memPercentage)
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
