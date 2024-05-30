@@ -284,7 +284,7 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 					if attribute == "space.soft_limit" {
 						t := q.data.GetMetric("threshold")
 						if err = t.SetValueFloat64(quotaInstance, value); err != nil {
-							q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
+							q.Logger.Error().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 						} else {
 							*numMetrics++
 						}
@@ -363,7 +363,7 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, num
 					if attribute == "space.soft_limit" {
 						t := q.data.GetMetric("threshold")
 						if err = t.SetValueFloat64(quotaInstance, value); err != nil {
-							q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
+							q.Logger.Error().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
 						} else {
 							*numMetrics++
 						}
