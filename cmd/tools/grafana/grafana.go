@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/netapp/harvest/v2/cmd/harvest/version"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -25,7 +24,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -40,7 +38,6 @@ const (
 var (
 	grafanaMinVers = "7.1.0" // lowest grafana version we require
 	homePath       string
-	harvestRelease = version.VERSION
 )
 
 type options struct {
@@ -401,10 +398,10 @@ func initImportVars() {
 
 	// default behaviour
 	if opts.dir == "grafana/dashboards" && opts.serverfolder.name == "" {
-		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
-		m[filepath.Join(opts.dir, "cmode", "details")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT Details"}
-		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
-		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
+		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest - cDOT"}
+		m[filepath.Join(opts.dir, "cmode", "details")] = &Folder{name: "Harvest - cDOT Details"}
+		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest - 7mode"}
+		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest - StorageGrid"}
 	} else if opts.dir != "" && opts.serverfolder.name != "" {
 		m[opts.dir] = &Folder{name: opts.serverfolder.name}
 	}
@@ -486,35 +483,17 @@ func importFiles(dir string, folder *Folder) {
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
 
-		// If the dashboard has an uid defined, change the uid to the empty string, unless overwrite is true.
-		// We do comparison for dashboard create/update based on title
-		if !opts.overwrite {
-			// Don't change the uid of linked dashboards since that will break the links
-			linkedDashboards := []string{"volumeBySVM.json", "volumeDeepDive.json", "volume.json", "aggregate.json", "svm.json", "node.json", "datacenter.json", "cluster.json"}
-			isLinkedDashboard := slices.Contains(linkedDashboards, file.Name())
-			if !isLinkedDashboard {
-				dashboardID := gjson.GetBytes(data, "uid").String()
-				if dashboardID != "" {
-					data, err = sjson.SetBytes(data, "uid", []byte(""))
-					if err != nil {
-						fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-						continue
-					}
-				}
-			}
-		}
-
 		// If the dashboard has an id defined, change the id to empty string, unless overwrite was passed,
 		// so Grafana treats this as a new dashboard instead of an update to an existing one
-		if !opts.overwrite {
-			if dashboardID := gjson.GetBytes(data, "id").String(); dashboardID != "" {
-				data, err = sjson.SetBytes(data, "id", []byte(""))
-				if err != nil {
-					fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-					continue
-				}
-			}
-		}
+		// if !opts.overwrite {
+		//	if dashboardID := gjson.GetBytes(data, "id").String(); dashboardID != "" {
+		//		data, err = sjson.SetBytes(data, "id", []byte(""))
+		//		if err != nil {
+		//			fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
+		//			continue
+		//		}
+		//	}
+		//}
 
 		// add svm regex
 		if opts.svmRegex != "" {
@@ -1165,7 +1144,7 @@ func addImportExportFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "Address of Grafana server (IP, FQDN or hostname)")
 		cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 		cmd.PersistentFlags().BoolVarP(&opts.useHTTPS, "https", "S", false, "Use HTTPS")
-		cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", false, "Overwrite existing dashboard with same title")
+		cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", true, "Overwrite existing dashboard with same title")
 		cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 		cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
 

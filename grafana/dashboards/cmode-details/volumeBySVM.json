@@ -134,7 +134,7 @@
                   {
                     "targetBlank": true,
                     "title": "Drill Down",
-                    "url": "/d/IkXhW11Iz/ontap-volume-deep-dive?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                    "url": "/d/harvest-cdot-details-volume-deep-dive/ontap-volume-deep-dive?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
                   }
                 ]
               }
@@ -478,6 +478,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "ONTAP: Volume by SVM",
-  "uid": "bb326bd1",
+  "uid": "harvest-cdot-details-volume-by-svm",
   "version": 1
 }

@@ -762,7 +762,7 @@ func TestIDIsBlank(t *testing.T) {
 	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkUIDIsBlank(t, path, data)
+			checkUIDNonEmpty(t, path, data)
 			checkIDIsNull(t, path, data)
 		})
 }
@@ -781,19 +781,11 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 	}
 }
 
-var uidExceptions = map[string]bool{
-	"cmode-details/volumeBySVM.json":    true,
-	"cmode-details/volumeDeepDive.json": true,
-}
-
-func checkUIDIsBlank(t *testing.T, path string, data []byte) {
+func checkUIDNonEmpty(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
-	if uidExceptions[path] {
-		return
-	}
 	uid := gjson.GetBytes(data, "uid").String()
-	if uid != "" {
-		t.Errorf(`dashboard=%s uid should be "" but is %s`, path, uid)
+	if uid == "" {
+		t.Errorf(`dashboard=%s uid is "", but should not be empty`, path)
 	}
 }
 
@@ -1636,7 +1628,6 @@ func TestLinks(t *testing.T) {
 	})
 
 	// Check that the links are valid URLs and that the link points to an existing dashboard
-
 	for path, list := range hasLinks {
 		hasOrgID := false
 		for _, link := range list {

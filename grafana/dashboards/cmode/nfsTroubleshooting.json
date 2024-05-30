@@ -851,7 +851,7 @@
                   {
                     "targetBlank": true,
                     "title": "Click for volume view",
-                    "url": "/d/bb326bd1/ontap-vol-by-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                    "url": "/d/harvest-cdot-details-volume-by-svm/ontap-vol-by-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
                   }
                 ]
               }
@@ -1693,6 +1693,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "ONTAP: NFS Troubleshooting",
-  "uid": "",
+  "uid": "harvest-cdot-nfs-troubleshooting",
   "version": 1
 }
