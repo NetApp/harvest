@@ -50,7 +50,7 @@ func (q *Qtree) Init() error {
 		"files.used.hard_limit_percent => files_used_pct_file_limit",
 		"files.used.soft_limit_percent => files_used_pct_soft_file_limit",
 		"files.soft_limit => soft_file_limit",
-		// "threshold",   # deprecated
+		"threshold => threshold",
 	}
 
 	if err := q.InitAbc(); err != nil {
@@ -281,6 +281,14 @@ func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Ma
 				if attribute == "space.hard_limit" || attribute == "space.soft_limit" {
 					value = attrValue.Float() / 1024
 					quotaInstance.SetLabel("unit", "Kbyte")
+					if attribute == "space.soft_limit" {
+						t := q.data.GetMetric("threshold")
+						if err = t.SetValueFloat64(quotaInstance, value); err != nil {
+							q.Logger.Error().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
+						} else {
+							*numMetrics++
+						}
+					}
 				} else {
 					value = attrValue.Float()
 				}
@@ -352,6 +360,14 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, num
 				if attribute == "space.hard_limit" || attribute == "space.soft_limit" || attribute == "space.used.total" {
 					value = attrValue.Float() / 1024
 					quotaInstance.SetLabel("unit", "Kbyte")
+					if attribute == "space.soft_limit" {
+						t := q.data.GetMetric("threshold")
+						if err = t.SetValueFloat64(quotaInstance, value); err != nil {
+							q.Logger.Error().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
+						} else {
+							*numMetrics++
+						}
+					}
 				} else {
 					value = attrValue.Float()
 				}

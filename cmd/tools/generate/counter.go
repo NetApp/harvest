@@ -337,12 +337,13 @@ func processRestConfigCounters(path string) map[string]Counter {
 // processZAPIPerfCounters process ZapiPerf counters
 func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counter {
 	var (
-		counters           = make(map[string]Counter)
-		request, response  *node.Node
-		zapiUnitMap        = make(map[string]string)
-		zapiTypeMap        = make(map[string]string)
-		zapiDescMap        = make(map[string]string)
-		zapiBaseCounterMap = make(map[string]string)
+		counters                = make(map[string]Counter)
+		request, response       *node.Node
+		zapiUnitMap             = make(map[string]string)
+		zapiTypeMap             = make(map[string]string)
+		zapiDescMap             = make(map[string]string)
+		zapiBaseCounterMap      = make(map[string]string)
+		zapiDeprecateCounterMap = make(map[string]string)
 	)
 	t, err := tree.ImportYaml(path)
 	if t == nil || err != nil {
@@ -395,10 +396,17 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 					ty = oty
 				}
 			}
+
 			zapiUnitMap[name] = counter.GetChildContentS("unit")
 			zapiDescMap[name] = updateDescription(counter.GetChildContentS("desc"))
 			zapiTypeMap[name] = ty
 			zapiBaseCounterMap[name] = counter.GetChildContentS("base-counter")
+
+			if counter.GetChildContentS("is-deprecated") == "true" {
+				if r := counter.GetChildContentS("replaced-by"); r != "" {
+					zapiDeprecateCounterMap[name] = r
+				}
+			}
 		}
 	}
 
@@ -431,6 +439,27 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 						},
 					}
 					counters[harvestName] = co
+
+					// handle deprecate counters
+					if rName, ok := zapiDeprecateCounterMap[name]; ok {
+						hName := model.Object + "_" + rName
+						ro := Counter{
+							Name:        hName,
+							Description: zapiDescMap[rName],
+							APIs: []MetricDef{
+								{
+									API:          "ZAPI",
+									Endpoint:     "perf-object-get-instances" + " " + model.Query,
+									Template:     path,
+									ONTAPCounter: rName,
+									Unit:         zapiUnitMap[rName],
+									Type:         zapiTypeMap[rName],
+									BaseCounter:  zapiBaseCounterMap[rName],
+								},
+							},
+						}
+						counters[hName] = ro
+					}
 
 					// If the template has any MultiplierMetrics, add them
 					for _, metric := range model.MultiplierMetrics {
