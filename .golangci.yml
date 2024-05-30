@@ -58,7 +58,7 @@ issues:
 
 output:
   formats:
-  - format: github-actions
+  - format: colored-line-number
 
 linters-settings:
   thelper:

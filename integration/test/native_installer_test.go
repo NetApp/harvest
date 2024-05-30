@@ -53,3 +53,18 @@ func TestNativeInstall(t *testing.T) {
 	utils.AddPrometheusToGrafana()
 
 }
+
+func TestNativeStop(t *testing.T) {
+	utils.SkipIfMissing(t, utils.STOP)
+	var path = os.Getenv("BUILD_PATH")
+	installObject, err2 := installer.GetInstaller(installer.NATIVE, path)
+	if err2 != nil {
+		log.Println("Unable to initialize installer object")
+		panic(err2)
+	}
+	if installObject.Stop() {
+		log.Println("Stop is successful..")
+	} else {
+		panic("Stop is failed.")
+	}
+}

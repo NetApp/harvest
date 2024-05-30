@@ -14,7 +14,11 @@ import (
 	"testing"
 )
 
-var dashboards = []string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"}
+var dashboards = []string{
+	"../../../grafana/dashboards/cmode",
+	"../../../grafana/dashboards/cmode-details",
+	"../../../grafana/dashboards/storagegrid",
+}
 
 func TestThreshold(t *testing.T) {
 	VisitDashboards(dashboards, func(path string, data []byte) {
@@ -601,7 +605,7 @@ func TestVariablesIncludeAllOption(t *testing.T) {
 }
 
 var exceptionToAll = map[string]bool{
-	"cmode/details/volumeDeepDive.json": true,
+	"cmode-details/volumeDeepDive.json": true,
 }
 
 func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
@@ -778,14 +782,8 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 }
 
 var uidExceptions = map[string]bool{
-	"cmode/details/volumeBySVM.json":    true,
-	"cmode/details/volumeDeepDive.json": true,
-	"cmode/svm.json":                    true,
-	"cmode/aggregate.json":              true,
-	"cmode/volume.json":                 true,
-	"cmode/node.json":                   true,
-	"cmode/cluster.json":                true,
-	"cmode/datacenter.json":             true,
+	"cmode-details/volumeBySVM.json":    true,
+	"cmode-details/volumeDeepDive.json": true,
 }
 
 func checkUIDIsBlank(t *testing.T, path string, data []byte) {

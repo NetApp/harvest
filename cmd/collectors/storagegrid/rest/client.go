@@ -332,9 +332,9 @@ func (c *Client) SetVersion(v string) error {
 	return nil
 }
 
-func check(i int64) int {
+func check(i int) int {
 	if i > 0 && i <= math.MaxInt32 {
-		return int(i)
+		return i
 	}
 	return 0
 }

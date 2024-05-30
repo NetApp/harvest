@@ -34,6 +34,7 @@ const (
 	InstallRPM        = "INSTALL_RPM"
 	Regression        = "REGRESSION"
 	UpgradeRPM        = "UPGRADE_RPM"
+	STOP              = "STOP"
 )
 
 func Run(command string, arg ...string) (string, error) {
