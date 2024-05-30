@@ -28,17 +28,21 @@ var fileSet []string
 
 // zapiCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Zapi
 var zapiCounterMap = map[string]struct{}{
-	"net_route_labels":             {},
-	"ontaps3_labels":               {},
-	"ontaps3_logical_used_size":    {},
-	"ontaps3_size":                 {},
-	"ontaps3_object_count":         {},
-	"ontaps3_used_percent":         {},
-	"ontaps3_services_labels":      {},
-	"ontaps3_policy_labels":        {},
-	"volume_arw_status":            {},
-	"volume_num_compress_fail":     {},
-	"volume_num_compress_attempts": {},
+	"net_route_labels":                          {},
+	"ontaps3_labels":                            {},
+	"ontaps3_logical_used_size":                 {},
+	"ontaps3_size":                              {},
+	"ontaps3_object_count":                      {},
+	"ontaps3_used_percent":                      {},
+	"ontaps3_services_labels":                   {},
+	"ontaps3_policy_labels":                     {},
+	"volume_arw_status":                         {},
+	"volume_num_compress_fail":                  {},
+	"volume_num_compress_attempts":              {},
+	"volume_performance_tier_footprint":         {},
+	"volume_capacity_tier_footprint":            {},
+	"volume_capacity_tier_footprint_percent":    {},
+	"volume_performance_tier_footprint_percent": {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
