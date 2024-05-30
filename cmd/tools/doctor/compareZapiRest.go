@@ -33,8 +33,6 @@ var ignoreMissingMetrics = map[string]struct{}{
 	"aggr_hybrid_cache_size_total":     {},
 	"aggr_snapshot_inode_used_percent": {},
 	"aggr_space_reserved":              {},
-	"iscsi_lif_cmd_transfered":         {},
-	"quota_threshold":                  {},
 	"security_audit_destination_port":  {},
 	"wafl_reads_from_pmem":             {},
 	"flexcache_":                       {},
