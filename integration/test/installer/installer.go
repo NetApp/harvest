@@ -16,6 +16,7 @@ const (
 type Installer interface {
 	Install() bool
 	Upgrade() bool
+	Stop() bool
 }
 
 func GetPerfFileWithQosCounters(source string, target string) string {

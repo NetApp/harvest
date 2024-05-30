@@ -51,5 +51,19 @@ func TestRHELInstall(t *testing.T) {
 		panic(installer.PROMETHEUS + " installation is failed.")
 	}
 	utils.AddPrometheusToGrafana()
+}
 
+func TestRHELStop(t *testing.T) {
+	utils.SkipIfMissing(t, utils.STOP)
+	var path = os.Getenv("BUILD_PATH")
+	installObject, err2 := installer.GetInstaller(installer.RHEL, path)
+	if err2 != nil {
+		log.Println("Unable to initialize installer object")
+		panic(err2)
+	}
+	if installObject.Stop() {
+		log.Println("Stop is successful..")
+	} else {
+		panic("Stop is failed.")
+	}
 }

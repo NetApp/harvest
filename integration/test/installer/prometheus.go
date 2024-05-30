@@ -50,3 +50,8 @@ func (p *Prometheus) Upgrade() bool {
 	utils.PanicIfNotNil(errors.New("not supported"))
 	return false
 }
+
+func (p *Prometheus) Stop() bool {
+	utils.PanicIfNotNil(errors.New("not supported"))
+	return false
+}
