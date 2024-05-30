@@ -276,8 +276,10 @@ func shouldIgnoreCounter(counter string, flavor string) bool {
 			return true
 		}
 	} else if flavor == rest {
-		if _, ok := restCounterMap[counter]; ok {
-			return true
+		for k := range restCounterMap {
+			if strings.Contains(counter, k) {
+				return true
+			}
 		}
 	}
 
