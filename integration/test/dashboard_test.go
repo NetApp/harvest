@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/grafana"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/netapp/harvest/v2/cmd/harvest/version"
 	"github.com/rs/zerolog/log"
 	"testing"
 	"time"
@@ -37,8 +36,8 @@ func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
 	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
 		panic(errors.New("prometheus is not reachable"))
 	}
-	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
-	sevenModeFolder = "Harvest-" + version.VERSION + "-7mode"
+	cDotFolder = "Harvest-main-cDOT"
+	sevenModeFolder = "Harvest-main-7mode"
 	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
 	status, out := new(grafana.Mgr).Import("") // send empty so that it will import all dashboards
 	if !status {
