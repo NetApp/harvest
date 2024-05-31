@@ -4108,15 +4108,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iscsi_lif_cmd_transferred" class="md-nav__link">
-    <span class="md-ellipsis">
-      iscsi_lif_cmd_transferred
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#iscsi_lif_iscsi_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
       iscsi_lif_iscsi_other_ops
@@ -7108,6 +7099,33 @@
   <a href="#node_nfs_write_total" class="md-nav__link">
     <span class="md-ellipsis">
       node_nfs_write_total
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node_nvme_fc_data_recv" class="md-nav__link">
+    <span class="md-ellipsis">
+      node_nvme_fc_data_recv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node_nvme_fc_data_sent" class="md-nav__link">
+    <span class="md-ellipsis">
+      node_nvme_fc_data_sent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node_nvme_fc_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      node_nvme_fc_ops
     </span>
   </a>
   
@@ -15877,15 +15895,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iscsi_lif_cmd_transferred" class="md-nav__link">
-    <span class="md-ellipsis">
-      iscsi_lif_cmd_transferred
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#iscsi_lif_iscsi_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
       iscsi_lif_iscsi_other_ops
@@ -18877,6 +18886,33 @@
   <a href="#node_nfs_write_total" class="md-nav__link">
     <span class="md-ellipsis">
       node_nfs_write_total
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node_nvme_fc_data_recv" class="md-nav__link">
+    <span class="md-ellipsis">
+      node_nvme_fc_data_recv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node_nvme_fc_data_sent" class="md-nav__link">
+    <span class="md-ellipsis">
+      node_nvme_fc_data_sent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node_nvme_fc_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      node_nvme_fc_ops
     </span>
   </a>
   
@@ -24648,7 +24684,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-May-17
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-May-29
 ONTAP Version: 9.13.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -32365,26 +32401,6 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="iscsi_lif_cmd_transfered">iscsi_lif_cmd_transfered<a class="headerlink" href="#iscsi_lif_cmd_transfered" title="Permanent link">&para;</a></h3>
-<p>Command transfered by this iSCSI conn</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ZAPI</td>
-<td><code>perf-object-get-instances iscsi_lif</code></td>
-<td><code>cmd_transfered</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml</td>
-</tr>
-</tbody>
-</table>
-<h3 id="iscsi_lif_cmd_transferred">iscsi_lif_cmd_transferred<a class="headerlink" href="#iscsi_lif_cmd_transferred" title="Permanent link">&para;</a></h3>
 <p>Command transferred by this iSCSI connection</p>
 <table>
 <thead>
@@ -32401,6 +32417,12 @@ ONTAP Version: 9.13.1
 <td><code>api/cluster/counter/tables/iscsi_lif</code></td>
 <td><code>cmd_transferred</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/iscsi_lif.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances iscsi_lif</code></td>
+<td><code>cmd_transfered</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -43480,7 +43502,7 @@ ONTAP Version: 9.13.1
 </tr>
 </tbody>
 </table>
-<h3 id="node_nvmf_data_recv">node_nvmf_data_recv<a class="headerlink" href="#node_nvmf_data_recv" title="Permanent link">&para;</a></h3>
+<h3 id="node_nvme_fc_data_recv">node_nvme_fc_data_recv<a class="headerlink" href="#node_nvme_fc_data_recv" title="Permanent link">&para;</a></h3>
 <p>NVMe/FC kilobytes (KB) received per second</p>
 <table>
 <thead>
@@ -43501,12 +43523,12 @@ ONTAP Version: 9.13.1
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvmf_data_recv</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>nvme_fc_data_recv</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
 </tr>
 </tbody>
 </table>
-<h3 id="node_nvmf_data_sent">node_nvmf_data_sent<a class="headerlink" href="#node_nvmf_data_sent" title="Permanent link">&para;</a></h3>
+<h3 id="node_nvme_fc_data_sent">node_nvme_fc_data_sent<a class="headerlink" href="#node_nvme_fc_data_sent" title="Permanent link">&para;</a></h3>
 <p>NVMe/FC kilobytes (KB) sent per second</p>
 <table>
 <thead>
@@ -43527,12 +43549,12 @@ ONTAP Version: 9.13.1
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvmf_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>nvme_fc_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
 </tr>
 </tbody>
 </table>
-<h3 id="node_nvmf_ops">node_nvmf_ops<a class="headerlink" href="#node_nvmf_ops" title="Permanent link">&para;</a></h3>
+<h3 id="node_nvme_fc_ops">node_nvme_fc_ops<a class="headerlink" href="#node_nvme_fc_ops" title="Permanent link">&para;</a></h3>
 <p>NVMe/FC operations per second</p>
 <table>
 <thead>
@@ -43548,6 +43570,84 @@ ONTAP Version: 9.13.1
 <td>REST</td>
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>nvme_fc_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/system_node.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances system:node</code></td>
+<td><code>nvme_fc_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="node_nvmf_data_recv">node_nvmf_data_recv<a class="headerlink" href="#node_nvmf_data_recv" title="Permanent link">&para;</a></h3>
+<p>NVMe/FC kilobytes (KB) received per second.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/system:node</code></td>
+<td><code>nvme_fc_data_received, 1</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/system_node.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances system:node</code></td>
+<td><code>nvmf_data_recv</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="node_nvmf_data_sent">node_nvmf_data_sent<a class="headerlink" href="#node_nvmf_data_sent" title="Permanent link">&para;</a></h3>
+<p>NVMe/FC kilobytes (KB) sent per second.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/system:node</code></td>
+<td><code>nvme_fc_data_sent, 1</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/system_node.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances system:node</code></td>
+<td><code>nvmf_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="node_nvmf_ops">node_nvmf_ops<a class="headerlink" href="#node_nvmf_ops" title="Permanent link">&para;</a></h3>
+<p>NVMe/FC operations per second.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/system:node</code></td>
+<td><code>nvme_fc_ops, 1</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
 <tr>
@@ -50107,6 +50207,12 @@ ONTAP Version: 9.13.1
 <td><code>quota-report-iter</code></td>
 <td><code>threshold</code></td>
 <td>conf/zapi/cdot/9.8.0/qtree.yaml</td>
+</tr>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
