@@ -1,13 +1,17 @@
 package grafana
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/tidwall/gjson"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func TestCheckVersion(t *testing.T) {
@@ -275,6 +279,354 @@ func TestIsValidDatasource(t *testing.T) {
 			got := isValidDatasource(tt.result)
 			if got != tt.want {
 				t.Errorf("TestIsValidDatasource\n got=[%v]\nwant=[%v]", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestAddLabel(t *testing.T) {
+	type test struct {
+		name           string
+		json           string
+		labels         []string
+		want           string
+		customAllValue string
+	}
+	tests := []test{
+		{
+			name:           "includeAll is false",
+			labels:         []string{"nate"},
+			customAllValue: "boo",
+			json: `{
+        "allValue": "foo",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+        "includeAll": false,
+        "name": "Datacenter",
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+          "refId": "Prometheus-Datacenter-Variable-Query"
+        }
+      }`,
+			want: `{
+          "templating": {
+            "list": [
+              {
+                "allValue": "foo",
+                "definition": "label_values(cluster_new_status{system_type!=\"7mode\",nate=~\"$Nate\"},datacenter)",
+                "includeAll": false,
+                "name": "Datacenter",
+                "query": {
+                  "query": "label_values(cluster_new_status{system_type!=\"7mode\",nate=~\"$Nate\"},datacenter)",
+                  "refId": "Prometheus-Datacenter-Variable-Query"
+                }
+              },
+              {
+                "allValue": ".*",
+                "current": {
+                  "selected": false
+                },
+                "definition": "label_values(nate)",
+                "hide": 0,
+                "includeAll": true,
+                "multi": true,
+                "name": "Nate",
+                "options": [],
+                "query": {
+                  "query": "label_values(nate)",
+                  "refId": "StandardVariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 0,
+                "type": "query"
+              }
+            ]
+          }
+        }`,
+		},
+		{
+			name: "include all is true no custom all value",
+			json: `{
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }`,
+			labels: []string{"nate"},
+			want: `{
+          "templating": {
+            "list": [
+              {
+                "allValue": ".*",
+                "current": {},
+                "datasource": "${DS_PROMETHEUS}",
+                "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",nate=~\"$Nate\"},cluster)",
+                "description": null,
+                "error": null,
+                "hide": 0,
+                "includeAll": true,
+                "label": "",
+                "multi": true,
+                "name": "Cluster",
+                "options": [],
+                "query": {
+                  "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",nate=~\"$Nate\"},cluster)",
+                  "refId": "StandardVariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 1,
+                "tagValuesQuery": "",
+                "tagsQuery": "",
+                "type": "query",
+                "useTags": false
+              },
+              {
+                "allValue": ".*",
+                "current": {
+                  "selected": false
+                },
+                "definition": "label_values(nate)",
+                "hide": 0,
+                "includeAll": true,
+                "multi": true,
+                "name": "Nate",
+                "options": [],
+                "query": {
+                  "query": "label_values(nate)",
+                  "refId": "StandardVariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 0,
+                "type": "query"
+              }
+            ]
+          }
+        }`,
+		},
+		{
+			name:           "include all with null custom all value",
+			labels:         []string{"nate"},
+			customAllValue: "null",
+			json: `{
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }`,
+			want: `{
+          "templating": {
+            "list": [
+              {
+                "allValue": null,
+                "current": {},
+                "datasource": "${DS_PROMETHEUS}",
+                "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",nate=~\"$Nate\"},cluster)",
+                "description": null,
+                "error": null,
+                "hide": 0,
+                "includeAll": true,
+                "label": "",
+                "multi": true,
+                "name": "Cluster",
+                "options": [],
+                "query": {
+                  "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",nate=~\"$Nate\"},cluster)",
+                  "refId": "StandardVariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 1,
+                "tagValuesQuery": "",
+                "tagsQuery": "",
+                "type": "query",
+                "useTags": false
+              },
+              {
+                "allValue": ".*",
+                "current": {
+                  "selected": false
+                },
+                "definition": "label_values(nate)",
+                "hide": 0,
+                "includeAll": true,
+                "multi": true,
+                "name": "Nate",
+                "options": [],
+                "query": {
+                  "query": "label_values(nate)",
+                  "refId": "StandardVariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 0,
+                "type": "query"
+              }
+            ]
+          }
+        }`,
+		},
+		{
+			name:           "include all with custom all value",
+			labels:         []string{"nate"},
+			customAllValue: ".*",
+			json: `{
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }`,
+			want: `{
+          "templating": {
+            "list": [
+              {
+                "allValue": ".*",
+                "current": {},
+                "datasource": "${DS_PROMETHEUS}",
+                "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",nate=~\"$Nate\"},cluster)",
+                "description": null,
+                "error": null,
+                "hide": 0,
+                "includeAll": true,
+                "label": "",
+                "multi": true,
+                "name": "Cluster",
+                "options": [],
+                "query": {
+                  "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",nate=~\"$Nate\"},cluster)",
+                  "refId": "StandardVariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 1,
+                "tagValuesQuery": "",
+                "tagsQuery": "",
+                "type": "query",
+                "useTags": false
+              },
+              {
+                "allValue": ".*",
+                "current": {
+                  "selected": false
+                },
+                "definition": "label_values(nate)",
+                "hide": 0,
+                "includeAll": true,
+                "multi": true,
+                "name": "Nate",
+                "options": [],
+                "query": {
+                  "query": "label_values(nate)",
+                  "refId": "StandardVariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 0,
+                "type": "query"
+              }
+            ]
+          }
+        }`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			wrappedInDef := `{"templating": {"list": [` + tt.json + `]}}`
+
+			labelMap := make(map[string]string)
+			caser := cases.Title(language.Und)
+			for _, label := range tt.labels {
+				labelMap[caser.String(label)] = label
+			}
+
+			opts.customAllValue = tt.customAllValue
+
+			data := []byte(wrappedInDef)
+			for i := len(tt.labels) - 1; i >= 0; i-- {
+				data = addLabel(data, tt.labels[i], labelMap)
+			}
+
+			formattedGot, err := formatJSON(data)
+			if err != nil {
+				t.Errorf("TestAddLabel\n failed to format json %v", err)
+			}
+
+			formattedWant, err := formatJSON([]byte(tt.want))
+			if err != nil {
+				t.Errorf("TestAddLabel\n failed to format wanted json %v", err)
+			}
+
+			if !bytes.Equal(formattedGot, formattedWant) {
+				t.Errorf("TestAddLabel\n got=%v\nwant=%v", string(formattedGot), string(formattedWant))
 			}
 		})
 	}
