@@ -94,10 +94,6 @@ func (p *Process) Reload() error {
 		return err
 	}
 
-	if err := p.loadSmaps(); err != nil {
-		return err
-	}
-
 	if err := p.loadIo(); err != nil {
 		return err
 	}
@@ -222,43 +218,6 @@ func (p *Process) loadStat() error {
 	p.cpuTotal = (p.cpu["user"] + p.cpu["system"]) - prevTotal
 
 	return err
-}
-
-func (p *Process) loadSmaps() error {
-
-	var (
-		data      []byte
-		err       error
-		num       uint64
-		line, key string
-		fields    []string
-	)
-
-	// this may fail see https://github.com/NetApp/harvest/issues/249
-	// when it does, ignore so the other /proc checks are given a chance to run
-	if data, err = os.ReadFile(path.Join(p.dirpath, "smaps")); err != nil {
-		return nil //nolint:nilerr
-	}
-
-	p.mem = make(map[string]uint64)
-
-	for _, line = range strings.Split(string(data), "\n") {
-
-		if fields = strings.Fields(line); len(fields) == 3 {
-			if num, err = strconv.ParseUint(fields[1], 10, 64); err == nil {
-
-				key = strings.ToLower(strings.TrimSuffix(strings.Split(fields[0], "_")[0], ":"))
-
-				if key == "rss" || key == "swap" || key == "anonymous" || key == "shared" || key == "private" {
-					p.mem[key] += num
-				} else if key == "size" {
-					p.mem["vms"] += num
-				}
-
-			}
-		}
-	}
-	return nil
 }
 
 func (p *Process) loadIo() error {

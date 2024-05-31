@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-May-17
+Creation Date : 2024-May-29
 ONTAP Version: 9.13.1
 ```
 ## Understanding the structure
@@ -3046,20 +3046,12 @@ Average latency for write operations
 
 ### iscsi_lif_cmd_transfered
 
-Command transfered by this iSCSI conn
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZAPI | `perf-object-get-instances iscsi_lif` | `cmd_transfered`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml | 
-
-
-### iscsi_lif_cmd_transferred
-
 Command transferred by this iSCSI connection
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iscsi_lif` | `cmd_transferred`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml | 
+| ZAPI | `perf-object-get-instances iscsi_lif` | `cmd_transfered`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml | 
 
 
 ### iscsi_lif_iscsi_other_ops
@@ -6795,33 +6787,63 @@ Total number of Write procedure requests. It is the total number of write succes
 | ZAPI | `perf-object-get-instances nfsv4:node` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml | 
 
 
-### node_nvmf_data_recv
+### node_nvme_fc_data_recv
 
 NVMe/FC kilobytes (KB) received per second
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
-| ZAPI | `perf-object-get-instances system:node` | `nvmf_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
 
 
-### node_nvmf_data_sent
+### node_nvme_fc_data_sent
 
 NVMe/FC kilobytes (KB) sent per second
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
-| ZAPI | `perf-object-get-instances system:node` | `nvmf_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
 
 
-### node_nvmf_ops
+### node_nvme_fc_ops
 
 NVMe/FC operations per second
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
+
+
+### node_nvmf_data_recv
+
+NVMe/FC kilobytes (KB) received per second.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvmf_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
+
+
+### node_nvmf_data_sent
+
+NVMe/FC kilobytes (KB) sent per second.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvmf_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
+
+
+### node_nvmf_ops
+
+NVMe/FC operations per second.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
 
 
@@ -9547,6 +9569,7 @@ Disk space threshold, in kilobytes, for the quota target. The value is -1 if the
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `quota-report-iter` | `threshold` | conf/zapi/cdot/9.8.0/qtree.yaml |
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qtree.yaml |
 
 
 ### raid_disk_busy

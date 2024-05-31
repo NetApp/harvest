@@ -39,6 +39,11 @@ var zapiCounterMap = map[string]struct{}{
 	"volume_arw_status":            {},
 	"volume_num_compress_fail":     {},
 	"volume_num_compress_attempts": {},
+	// sar is experiencing high api time for ZapiPerf. The u2 cluster does not have fabricpool added for the collection of these counters. Remove the following once sar is capable of running ZapiPerf.
+	"volume_performance_tier_footprint":         {},
+	"volume_capacity_tier_footprint":            {},
+	"volume_capacity_tier_footprint_percent":    {},
+	"volume_performance_tier_footprint_percent": {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
@@ -276,8 +281,10 @@ func shouldIgnoreCounter(counter string, flavor string) bool {
 			return true
 		}
 	} else if flavor == rest {
-		if _, ok := restCounterMap[counter]; ok {
-			return true
+		for k := range restCounterMap {
+			if strings.Contains(counter, k) {
+				return true
+			}
 		}
 	}
 

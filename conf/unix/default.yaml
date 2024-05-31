@@ -9,8 +9,6 @@ counters:
   - start_time
   - cpu
   - cpu_percent
-  - memory
-  - memory_percent
   - io
   - net
   - ctx
