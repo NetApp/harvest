@@ -67,10 +67,16 @@ pipeline {
                         }
                         stage('Running Test') {
                             steps {
-                                sh """
+                                sh '''
                                 export VERSION=$VERSION
                                 REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                """
+                                '''
+                                withCredentials([string(credentialsId: 'PROMETHEUS_URL', variable: 'PROMETHEUS_URL')]) {
+                                    sh '''
+                                    cd /opt/harvest
+                                    ./bin/harvest doctor compareZRMetrics --promUrl $PROMETHEUS_URL
+                                    '''
+                                }
                             }
                             post {
                                 always {

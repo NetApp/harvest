@@ -25,6 +25,7 @@ type options struct {
 	MergeTemplate      string
 	zapiDataCenterName string
 	restDataCenterName string
+	prometheusURL      string
 	expandVar          bool
 }
 
@@ -52,15 +53,19 @@ var mergeCmd = &cobra.Command{
 	Run:    doMergeCmd,
 }
 
-var diffZapiRestCmd = &cobra.Command{
-	Use:    "diffzapirest",
+var compareZapiRestMetricsCmd = &cobra.Command{
+	Use:    "compareZRMetrics",
 	Hidden: true,
-	Short:  "diff between Zapi and Rest metrics",
-	Run:    doDiffRestZapiCmd,
+	Short:  "Compare metrics between Zapi and Rest",
+	Run:    doCompareZapiRestCmd,
 }
 
-func doDiffRestZapiCmd(_ *cobra.Command, _ []string) {
-	DoDiffRestZapi(opts.zapiDataCenterName, opts.restDataCenterName)
+func doCompareZapiRestCmd(_ *cobra.Command, _ []string) {
+	missingMetrics, err := DoCompareZapiRest(opts.zapiDataCenterName, opts.restDataCenterName, opts.prometheusURL)
+	if err != nil {
+		fmt.Println("Metrics missing (excluding those in the ignore list):", strings.Join(missingMetrics, ", "))
+		os.Exit(1)
+	}
 }
 
 func doMergeCmd(_ *cobra.Command, _ []string) {
@@ -582,15 +587,15 @@ func collectNodes(root *yaml.Node, nodes *[]*yaml.Node) {
 
 func init() {
 	Cmd.AddCommand(mergeCmd)
-	Cmd.AddCommand(diffZapiRestCmd)
-	dFlags := diffZapiRestCmd.PersistentFlags()
+	Cmd.AddCommand(compareZapiRestMetricsCmd)
+	dFlags := compareZapiRestMetricsCmd.PersistentFlags()
 	mFlags := mergeCmd.PersistentFlags()
 
-	dFlags.StringVarP(&opts.zapiDataCenterName, "zapidatacenter", "", "", "Zapi Datacenter Name ")
-	dFlags.StringVarP(&opts.restDataCenterName, "restdatacenter", "", "", "Rest Datacenter path. ")
+	dFlags.StringVarP(&opts.zapiDataCenterName, "zapiDc", "", "Zapi", "Zapi Datacenter Name ")
+	dFlags.StringVarP(&opts.restDataCenterName, "restDc", "", "Rest", "Rest Datacenter Name. ")
+	dFlags.StringVarP(&opts.prometheusURL, "promUrl", "", "", "Prometheus URL ")
 
-	_ = diffZapiRestCmd.MarkPersistentFlagRequired("zapidatacenter")
-	_ = diffZapiRestCmd.MarkPersistentFlagRequired("restdatacenter")
+	_ = compareZapiRestMetricsCmd.MarkPersistentFlagRequired("promUrl")
 
 	mFlags.StringVarP(&opts.BaseTemplate, "template", "", "", "Base template path ")
 	mFlags.StringVarP(&opts.MergeTemplate, "with", "", "", "Extended file path. ")
