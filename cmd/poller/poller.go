@@ -120,8 +120,8 @@ type Poller struct {
 	exporterParams  map[string]conf.Exporter
 	params          *conf.Poller
 	metadata        *matrix.Matrix
-	status          *matrix.Matrix // exported as metadata_target_
-	status2         *matrix.Matrix // exported as poller_status
+	metadataTarget  *matrix.Matrix // exported as metadata_target_
+	status          *matrix.Matrix // exported as poller_status
 	certPool        *x509.CertPool
 	client          *http.Client
 	auth            *auth.Credentials
@@ -382,7 +382,7 @@ func (p *Poller) firstAutoSupport() {
 	if p.collectors == nil {
 		return
 	}
-	if _, err := collector.BuildAndWriteAutoSupport(p.collectors, p.status, p.name); err != nil {
+	if _, err := collector.BuildAndWriteAutoSupport(p.collectors, p.metadataTarget, p.name); err != nil {
 		logger.Error().Err(err).
 			Str("poller", p.name).
 			Msg("First autosupport failed.")
@@ -391,7 +391,7 @@ func (p *Poller) firstAutoSupport() {
 
 func (p *Poller) startAsup() (map[string]*matrix.Matrix, error) {
 	if p.collectors != nil {
-		if err := collector.SendAutosupport(p.collectors, p.status, p.name); err != nil {
+		if err := collector.SendAutosupport(p.collectors, p.metadataTarget, p.name); err != nil {
 			logger.Error().Err(err).
 				Str("poller", p.name).
 				Msg("Start autosupport failed.")
@@ -446,26 +446,26 @@ func (p *Poller) Run() {
 		if task.IsDue() {
 			task.Start()
 			// flush metadata
+			p.metadataTarget.Reset()
 			p.status.Reset()
-			p.status2.Reset()
 			p.metadata.Reset()
 
 			// ping target system
 			if ping, ok := p.ping(); ok {
-				_ = p.status.LazySetValueUint8("status", "host", 0)
-				_ = p.status.LazySetValueFloat64("ping", "host", float64(ping))
-				_ = p.status2.LazySetValueUint8("status", "host", 1)
-				_ = p.status2.LazySetValueFloat64("ping", "host", float64(ping))
-			} else {
+				_ = p.metadataTarget.LazySetValueUint8("status", "host", 0)
+				_ = p.metadataTarget.LazySetValueFloat64("ping", "host", float64(ping))
 				_ = p.status.LazySetValueUint8("status", "host", 1)
-				_ = p.status2.LazySetValueUint8("status", "host", 0)
+				_ = p.status.LazySetValueFloat64("ping", "host", float64(ping))
+			} else {
+				_ = p.metadataTarget.LazySetValueUint8("status", "host", 1)
+				_ = p.status.LazySetValueUint8("status", "host", 0)
 			}
 
 			p.addMemoryMetadata()
 
 			// add number of goroutines to metadata
 			// @TODO: cleanup, does not belong to "status"
-			_ = p.status.LazySetValueInt64("goroutines", "host", int64(runtime.NumGoroutine()))
+			_ = p.metadataTarget.LazySetValueInt64("goroutines", "host", int64(runtime.NumGoroutine()))
 
 			upc := 0 // up collectors
 			upe := 0 // up exporters
@@ -517,10 +517,10 @@ func (p *Poller) Run() {
 				if _, err := ee.Export(p.metadata); err != nil {
 					logger.Error().Err(err).Msg("export component metadata:")
 				}
-				if _, err := ee.Export(p.status); err != nil {
+				if _, err := ee.Export(p.metadataTarget); err != nil {
 					logger.Error().Err(err).Msg("export target metadata:")
 				}
-				if _, err := ee.Export(p.status2); err != nil {
+				if _, err := ee.Export(p.status); err != nil {
 					logger.Error().Err(err).Msg("export poller status:")
 				}
 			}
@@ -933,25 +933,26 @@ func (p *Poller) loadMetadata() {
 	p.metadata.SetExportOptions(matrix.DefaultExportOptions())
 
 	// metadata for the target system
-	p.status = matrix.New("poller", "metadata_target", "metadata_component")
-	_, _ = p.status.NewMetricUint8("status")
-	_, _ = p.status.NewMetricFloat64("ping")
-	_, _ = p.status.NewMetricUint64("goroutines")
+	p.metadataTarget = matrix.New("poller", "metadata_target", "metadata_component")
+	_, _ = p.metadataTarget.NewMetricUint8("status")
+	_, _ = p.metadataTarget.NewMetricFloat64("ping")
+	_, _ = p.metadataTarget.NewMetricUint64("goroutines")
 
 	// metadata for the poller itself
-	p.status2 = matrix.New("poller", "poller", "poller_target")
-	_, _ = p.status2.NewMetricUint8("status")
-	_, _ = p.status2.NewMetricFloat64("memory_percent")
-	newMemoryMetric(p.status2, "memory", "rss")
-	newMemoryMetric(p.status2, "memory", "vms")
-	newMemoryMetric(p.status2, "memory", "swap")
+	p.status = matrix.New("poller", "poller", "poller_target")
+	_, _ = p.status.NewMetricUint8("status")
+	_, _ = p.status.NewMetricFloat64("memory_percent")
+	newMemoryMetric(p.status, "memory", "rss")
+	newMemoryMetric(p.status, "memory", "vms")
+	newMemoryMetric(p.status, "memory", "swap")
 
-	instance, _ := p.status.NewInstance("host")
-	pInstance, _ := p.status2.NewInstance("host")
+	instance, _ := p.metadataTarget.NewInstance("host")
+	pInstance, _ := p.status.NewInstance("host")
 	instance.SetLabel("addr", p.target)
 	pInstance.SetLabel("addr", p.target)
 
 	globalKVs := []string{
+		"pid", strconv.Itoa(os.Getpid()),
 		"poller", p.name,
 		"version", p.options.Version,
 		"datacenter", p.params.Datacenter,
@@ -959,25 +960,25 @@ func (p *Poller) loadMetadata() {
 	}
 
 	for i := 0; i < len(globalKVs); i += 2 {
+		p.metadataTarget.SetGlobalLabel(globalKVs[i], globalKVs[i+1])
 		p.status.SetGlobalLabel(globalKVs[i], globalKVs[i+1])
-		p.status2.SetGlobalLabel(globalKVs[i], globalKVs[i+1])
 	}
 
 	if p.options.PromPort != 0 {
+		p.metadataTarget.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
 		p.status.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
-		p.status2.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
 	}
 
 	labels := p.params.Labels
 	if labels != nil {
 		for _, labelPtr := range *labels {
 			p.metadata.SetGlobalLabels(labelPtr)
+			p.metadataTarget.SetGlobalLabels(labelPtr)
 			p.status.SetGlobalLabels(labelPtr)
-			p.status2.SetGlobalLabels(labelPtr)
 		}
 	}
+	p.metadataTarget.SetExportOptions(matrix.DefaultExportOptions())
 	p.status.SetExportOptions(matrix.DefaultExportOptions())
-	p.status2.SetExportOptions(matrix.DefaultExportOptions())
 }
 
 func newMemoryMetric(status *matrix.Matrix, label string, sub string) {
@@ -1254,9 +1255,10 @@ func (p *Poller) addMemoryMetadata() {
 		return
 	}
 
-	_ = p.status2.LazySetValueUint64("memory.rss", "host", memInfo.RSS)
-	_ = p.status2.LazySetValueUint64("memory.vms", "host", memInfo.VMS)
-	_ = p.status2.LazySetValueUint64("memory.swap", "host", memInfo.Swap)
+	// The unix poller used KB for memory so use the same here
+	_ = p.status.LazySetValueUint64("memory.rss", "host", memInfo.RSS/1024)
+	_ = p.status.LazySetValueUint64("memory.vms", "host", memInfo.VMS/1024)
+	_ = p.status.LazySetValueUint64("memory.swap", "host", memInfo.Swap/1024)
 
 	// Calculate memory percentage
 	memory, err := mem.VirtualMemory()
@@ -1266,7 +1268,7 @@ func (p *Poller) addMemoryMetadata() {
 	}
 
 	memPercentage := float64(memInfo.RSS) / float64(memory.Total) * 100
-	_ = p.status2.LazySetValueFloat64("memory_percent", "host", memPercentage)
+	_ = p.status.LazySetValueFloat64("memory_percent", "host", memPercentage)
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
