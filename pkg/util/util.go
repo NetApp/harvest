@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/rs/zerolog"
-	"github.com/shirou/gopsutil/v3/process"
+	"github.com/shirou/gopsutil/v4/process"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
