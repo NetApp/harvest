@@ -50,8 +50,8 @@ github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
 github.com/rs/zerolog/log
-# github.com/shirou/gopsutil/v3 v3.24.4
-## explicit; go 1.15
+# github.com/shirou/gopsutil/v3 v3.24.5
+## explicit; go 1.18
 github.com/shirou/gopsutil/v3/common
 github.com/shirou/gopsutil/v3/cpu
 github.com/shirou/gopsutil/v3/host
@@ -59,6 +59,8 @@ github.com/shirou/gopsutil/v3/internal/common
 github.com/shirou/gopsutil/v3/mem
 github.com/shirou/gopsutil/v3/net
 github.com/shirou/gopsutil/v3/process
+# github.com/shirou/gopsutil/v4 v4.24.5
+## explicit; go 1.18
 # github.com/shoenig/go-m1cpu v0.1.6
 ## explicit; go 1.20
 github.com/shoenig/go-m1cpu
@@ -91,7 +93,7 @@ github.com/yusufpapurcu/wmi
 github.com/zekroTJA/timedmap
 # github.com/zekroTJA/timedmap/v2 v2.0.0
 ## explicit; go 1.19
-# golang.org/x/exp v0.0.0-20240525044651-4c93da0ed11d
+# golang.org/x/exp v0.0.0-20240531132922-fd00a4e0eefc
 ## explicit; go 1.20
 golang.org/x/exp/maps
 # golang.org/x/sys v0.20.0
