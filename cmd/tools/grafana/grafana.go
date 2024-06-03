@@ -450,6 +450,12 @@ func exitIfExist(fp string, s string) {
 }
 
 func importDashboards(opts *options) {
+	if opts.overwrite {
+		fmt.Printf("warning: The overwrite flag is no longer used and will be removed in a future release. Please remove this flag from your command line invocation. When importing, dashboards are always overwritten.\n")
+	}
+	// Set overwrite flag to true, dashboards are always overwritten.
+	opts.overwrite = true
+
 	for k, v := range opts.dirGrafanaFolderMap {
 		importFiles(k, v)
 	}
@@ -482,18 +488,6 @@ func importFiles(dir string, folder *Folder) {
 		}
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
-
-		// If the dashboard has an id defined, change the id to empty string, unless overwrite was passed,
-		// so Grafana treats this as a new dashboard instead of an update to an existing one
-		// if !opts.overwrite {
-		//	if dashboardID := gjson.GetBytes(data, "id").String(); dashboardID != "" {
-		//		data, err = sjson.SetBytes(data, "id", []byte(""))
-		//		if err != nil {
-		//			fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-		//			continue
-		//		}
-		//	}
-		//}
 
 		// add svm regex
 		if opts.svmRegex != "" {
@@ -1144,7 +1138,7 @@ func addImportExportFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().StringVarP(&opts.addr, "addr", "a", "http://127.0.0.1:3000", "Address of Grafana server (IP, FQDN or hostname)")
 		cmd.PersistentFlags().StringVarP(&opts.token, "token", "t", "", "API token issued by Grafana server for authentication")
 		cmd.PersistentFlags().BoolVarP(&opts.useHTTPS, "https", "S", false, "Use HTTPS")
-		cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", true, "Overwrite existing dashboard with same title")
+		cmd.PersistentFlags().BoolVarP(&opts.overwrite, "overwrite", "o", false, "Overwrite existing dashboard with same title")
 		cmd.PersistentFlags().BoolVarP(&opts.useInsecureTLS, "insecure", "k", false, "Allow insecure server connections when using SSL")
 		cmd.PersistentFlags().StringVarP(&opts.serverfolder.name, "serverfolder", "f", "", "Grafana folder name for dashboards")
 

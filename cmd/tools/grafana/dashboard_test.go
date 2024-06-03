@@ -762,7 +762,7 @@ func TestIDIsBlank(t *testing.T) {
 	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkUIDNonEmpty(t, path, data)
+			checkUIDNotEmpty(t, path, data)
 			checkIDIsNull(t, path, data)
 		})
 }
@@ -781,7 +781,7 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 	}
 }
 
-func checkUIDNonEmpty(t *testing.T, path string, data []byte) {
+func checkUIDNotEmpty(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
 	uid := gjson.GetBytes(data, "uid").String()
 	if uid == "" {
@@ -1618,13 +1618,14 @@ func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
 }
 
 var linkPath = regexp.MustCompile(`/d/(.*?)/`)
+var supportedLinkedObjects = []string{"cluster", "datacenter", "aggr", "svm", "volume", "node", "home_node"}
 
 func TestLinks(t *testing.T) {
 	hasLinks := map[string][]string{}
 	uids := map[string]string{}
 
 	VisitDashboards(dashboards, func(path string, data []byte) {
-		checkLinks(path, data, hasLinks, uids)
+		checkLinks(t, path, data, hasLinks, uids)
 	})
 
 	// Check that the links are valid URLs and that the link points to an existing dashboard
@@ -1683,31 +1684,43 @@ func TestLinks(t *testing.T) {
 	}
 }
 
-func checkLinks(path string, data []byte, hasLinks map[string][]string, uids map[string]string) {
+func checkLinks(t *testing.T, path string, data []byte, hasLinks map[string][]string, uids map[string]string) {
 	dashPath := ShortPath(path)
 
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
-		checkPanelLinks(value, dashPath, hasLinks)
+		checkPanelLinks(t, value, dashPath, hasLinks)
 	})
 
 	uid := gjson.GetBytes(data, "uid").String()
-	if uid != "" {
-		uids[uid] = dashPath
-	}
+	uids[uid] = dashPath
 }
 
-func checkPanelLinks(value gjson.Result, path string, hasLinks map[string][]string) {
-	value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
-		anOverride.Get("properties").ForEach(func(_, propValue gjson.Result) bool {
-			propValue.Get("value").ForEach(func(_, value gjson.Result) bool {
-				link := value.Get("url").String()
-				if link != "" {
-					hasLinks[path] = append(hasLinks[path], link)
+func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map[string][]string) {
+	linkFound := false
+
+	// Testing only for volume for now, it will be covered for all later
+	supportedDashboards := []string{"cmode/volume.json"}
+
+	if slices.Contains(supportedDashboards, path) && value.Get("type").String() == "table" {
+		value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
+			if name := anOverride.Get("matcher.options").String(); slices.Contains(supportedLinkedObjects, name) {
+				linkFound = false
+				anOverride.Get("properties").ForEach(func(_, propValue gjson.Result) bool {
+					propValue.Get("value").ForEach(func(_, value gjson.Result) bool {
+						link := value.Get("url").String()
+						if link != "" {
+							linkFound = true
+							hasLinks[path] = append(hasLinks[path], link)
+						}
+						return true
+					})
+					return true
+				})
+				if !linkFound {
+					t.Errorf(`dashboard=%s panel="%s" column=%s is missing the links`, path, value.Get("title").String(), name)
 				}
-				return true
-			})
+			}
 			return true
 		})
-		return true
-	})
+	}
 }

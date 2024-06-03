@@ -3245,6 +3245,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Power",
-  "uid": "harvest-cdot-power",
+  "uid": "cdot-power",
   "version": 14
 }

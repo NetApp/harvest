@@ -1806,6 +1806,6 @@
   },
   "timezone": "",
   "title": "ONTAP: SMB",
-  "uid": "harvest-cdot-smb",
+  "uid": "cdot-smb",
   "version": 4
 }

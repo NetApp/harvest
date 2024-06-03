@@ -802,6 +802,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Quota",
-  "uid": "harvest-cdot-quota",
+  "uid": "cdot-quota",
   "version": 3
 }
