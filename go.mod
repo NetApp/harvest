@@ -6,12 +6,10 @@ require (
 	github.com/go-openapi/spec v0.21.0
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/rs/zerolog v1.33.0
-	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/shirou/gopsutil/v4 v4.24.5
 	github.com/spf13/cobra v1.8.0
 	github.com/tidwall/gjson v1.17.1
 	github.com/zekroTJA/timedmap v1.5.2
-	github.com/zekroTJA/timedmap/v2 v2.0.0
 	golang.org/x/exp v0.0.0-20240531132922-fd00a4e0eefc
 	golang.org/x/sys v0.20.0
 	golang.org/x/term v0.20.0
@@ -27,7 +25,7 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20240408141607-282e7b5d6b74 // indirect
+	github.com/lufia/plan9stats v0.0.0-20240513124658-fba389f38bae // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -35,6 +33,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
