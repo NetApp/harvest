@@ -24684,8 +24684,8 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-May-29
-ONTAP Version: 9.13.1
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Jun-03
+ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
 <p>Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the <a href="#metrics">metrics</a>.</p>
@@ -32595,6 +32595,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/iwarp</code></td>
+<td><code>average_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops</td>
+<td>conf/restperf/9.14.1/iwarp.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances iwarp</code></td>
 <td><code>iw_avg_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iw_ops</td>
@@ -32614,6 +32620,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/iwarp</code></td>
+<td><code>ops</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/iwarp.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances iwarp</code></td>
@@ -32635,9 +32647,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/iwarp</code></td>
+<td><code>read_ops</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/iwarp.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances iwarp</code></td>
-<td><code>iw_read_ops</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>iw_read_ops</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/iwarp.yaml</td>
 </tr>
 </tbody>
@@ -32655,9 +32673,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/iwarp</code></td>
+<td><code>write_ops</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/iwarp.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances iwarp</code></td>
-<td><code>iw_write_ops</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>iw_write_ops</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/iwarp.yaml</td>
 </tr>
 </tbody>
@@ -35693,7 +35717,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="node_avg_processor_busy">node_avg_processor_busy<a class="headerlink" href="#node_avg_processor_busy" title="Permanent link">&para;</a></h3>
-<p>Average processor utilization across all processors in the system</p>
+<p>Average processor utilization across active processors in the system</p>
 <table>
 <thead>
 <tr>
@@ -43520,12 +43544,6 @@ ONTAP Version: 9.13.1
 <td><code>nvme_fc_data_received</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
-<tr>
-<td>ZAPI</td>
-<td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvme_fc_data_recv</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
-</tr>
 </tbody>
 </table>
 <h3 id="node_nvme_fc_data_sent">node_nvme_fc_data_sent<a class="headerlink" href="#node_nvme_fc_data_sent" title="Permanent link">&para;</a></h3>
@@ -43546,12 +43564,6 @@ ONTAP Version: 9.13.1
 <td><code>nvme_fc_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
-<tr>
-<td>ZAPI</td>
-<td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvme_fc_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
-</tr>
 </tbody>
 </table>
 <h3 id="node_nvme_fc_ops">node_nvme_fc_ops<a class="headerlink" href="#node_nvme_fc_ops" title="Permanent link">&para;</a></h3>
@@ -43571,12 +43583,6 @@ ONTAP Version: 9.13.1
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>nvme_fc_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
-</tr>
-<tr>
-<td>ZAPI</td>
-<td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvme_fc_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -43601,7 +43607,7 @@ ONTAP Version: 9.13.1
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvmf_data_recv</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>nvmf_data_recv</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
 </tr>
 </tbody>
@@ -43627,7 +43633,7 @@ ONTAP Version: 9.13.1
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvmf_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>nvmf_data_sent</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
 </tr>
 </tbody>
@@ -43653,7 +43659,7 @@ ONTAP Version: 9.13.1
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
-<td><code>nvmf_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>nvmf_ops</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/system_node.yaml</td>
 </tr>
 </tbody>
@@ -45673,6 +45679,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>average_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops</td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
 <td><code>avg_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops</td>
@@ -45681,7 +45693,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="nvmf_rdma_port_avg_other_latency">nvmf_rdma_port_avg_other_latency<a class="headerlink" href="#nvmf_rdma_port_avg_other_latency" title="Permanent link">&para;</a></h3>
-<p>Average latency for operations other than read, write, compare or caw</p>
+<p>Average latency for operations other than read, write, compare or compare-and-write</p>
 <table>
 <thead>
 <tr>
@@ -45692,6 +45704,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>average_other_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops</td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
@@ -45713,6 +45731,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>average_read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops</td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
 <td><code>avg_read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops</td>
@@ -45733,6 +45757,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>average_write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops</td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
 <td><code>avg_write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops</td>
@@ -45741,7 +45771,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="nvmf_rdma_port_other_ops">nvmf_rdma_port_other_ops<a class="headerlink" href="#nvmf_rdma_port_other_ops" title="Permanent link">&para;</a></h3>
-<p>Number of operations that are not read, write, compare or caw.</p>
+<p>Number of operations that are not read, write, compare or compare-and-right.</p>
 <table>
 <thead>
 <tr>
@@ -45752,6 +45782,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>other_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
@@ -45773,6 +45809,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>read_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
 <td><code>read_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -45792,6 +45834,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>read_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
@@ -45813,6 +45861,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>total_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
 <td><code>total_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -45832,6 +45886,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>total_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
@@ -45853,6 +45913,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
 <td><code>write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -45872,6 +45938,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_rdma_port</code></td>
+<td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_rdma_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_rdma_port</code></td>
@@ -45893,6 +45965,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>average_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops</td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
 <td><code>avg_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops</td>
@@ -45901,7 +45979,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="nvmf_tcp_port_avg_other_latency">nvmf_tcp_port_avg_other_latency<a class="headerlink" href="#nvmf_tcp_port_avg_other_latency" title="Permanent link">&para;</a></h3>
-<p>Average latency for operations other than read, write, compare or caw</p>
+<p>Average latency for operations other than read, write, compare or compare-and-write</p>
 <table>
 <thead>
 <tr>
@@ -45912,6 +45990,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>average_other_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops</td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
@@ -45933,6 +46017,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>average_read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops</td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
 <td><code>avg_read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops</td>
@@ -45953,6 +46043,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>average_write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops</td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
 <td><code>avg_write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops</td>
@@ -45961,7 +46057,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="nvmf_tcp_port_other_ops">nvmf_tcp_port_other_ops<a class="headerlink" href="#nvmf_tcp_port_other_ops" title="Permanent link">&para;</a></h3>
-<p>Number of operations that are not read, write, compare or caw.</p>
+<p>Number of operations that are not read, write, compare or compare-and-write.</p>
 <table>
 <thead>
 <tr>
@@ -45972,6 +46068,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>other_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
@@ -45993,6 +46095,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>read_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
 <td><code>read_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -46012,6 +46120,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>read_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
@@ -46033,6 +46147,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>total_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
 <td><code>total_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -46052,6 +46172,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>total_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
@@ -46073,6 +46199,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
 <td><code>write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -46093,6 +46225,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/nvmf_tcp_port</code></td>
+<td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/nvmf_tcp_port.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances nvmf_tcp_port</code></td>
 <td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -46101,7 +46239,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_logical_used_size">ontaps3_logical_used_size<a class="headerlink" href="#ontaps3_logical_used_size" title="Permanent link">&para;</a></h3>
-<p>Specifies the bucket logical used size up to this point.</p>
+<p>Specifies the bucket logical used size up to this point. This field cannot be specified using a POST or PATCH method.</p>
 <table>
 <thead>
 <tr>
@@ -46121,7 +46259,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_size">ontaps3_size<a class="headerlink" href="#ontaps3_size" title="Permanent link">&para;</a></h3>
-<p>Specifies the bucket size in bytes; ranges from 80MB to 64TB.</p>
+<p>Specifies the bucket size in bytes; ranges from 190MB to 62PB.</p>
 <table>
 <thead>
 <tr>
@@ -46153,15 +46291,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>abort_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>abort_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>abort_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_abort_multipart_upload_failed_client_close">ontaps3_svm_abort_multipart_upload_failed_client_close<a class="headerlink" href="#ontaps3_svm_abort_multipart_upload_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times Abort Multipart Upload operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times Abort Multipart Upload operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -46173,9 +46317,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>abort_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>abort_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>abort_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46193,9 +46343,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>abort_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> abort_multipart_upload_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>abort_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> abort_multipart_upload_latency_base</td>
+<td><code>abort_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> abort_multipart_upload_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46213,9 +46369,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>abort_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>abort_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>abort_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46233,9 +46395,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>abort_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>abort_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>abort_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46252,6 +46420,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>allow_access</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46273,6 +46447,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>anonymous_access</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>anonymous_access</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -46292,6 +46472,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>anonymous_deny_access</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46313,9 +46499,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>authentication_failures</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>authentication_failures</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>authentication_failures</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46333,9 +46525,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>chunked_upload_requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>chunked_upload_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>chunked_upload_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46353,15 +46551,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>complete_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>complete_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>complete_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_complete_multipart_upload_failed_client_close">ontaps3_svm_complete_multipart_upload_failed_client_close<a class="headerlink" href="#ontaps3_svm_complete_multipart_upload_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times Complete Multipart Upload operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times Complete Multipart Upload operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -46373,9 +46577,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>complete_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>complete_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>complete_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46393,9 +46603,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>complete_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> complete_multipart_upload_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>complete_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> complete_multipart_upload_latency_base</td>
+<td><code>complete_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> complete_multipart_upload_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46413,9 +46629,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>complete_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>complete_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>complete_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46433,9 +46655,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>complete_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>complete_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>complete_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46453,9 +46681,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>connected_connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>connected_connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td><code>connected_connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46473,9 +46707,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46493,6 +46733,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>create_bucket_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>create_bucket_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -46501,7 +46747,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_svm_create_bucket_failed_client_close">ontaps3_svm_create_bucket_failed_client_close<a class="headerlink" href="#ontaps3_svm_create_bucket_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times Create Bucket operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times Create Bucket operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -46512,6 +46758,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>create_bucket_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46533,6 +46785,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>create_bucket_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_bucket_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>create_bucket_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_bucket_latency_base</td>
@@ -46552,6 +46810,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>create_bucket_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46573,6 +46837,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>create_bucket_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>create_bucket_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -46592,6 +46862,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>default_deny_access</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46613,6 +46889,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_bucket_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>delete_bucket_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -46621,7 +46903,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_svm_delete_bucket_failed_client_close">ontaps3_svm_delete_bucket_failed_client_close<a class="headerlink" href="#ontaps3_svm_delete_bucket_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times Delete Bucket operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times Delete Bucket operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -46632,6 +46914,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_bucket_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46653,6 +46941,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_bucket_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_bucket_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>delete_bucket_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_bucket_latency_base</td>
@@ -46672,6 +46966,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_bucket_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46693,6 +46993,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_bucket_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>delete_bucket_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -46713,9 +47019,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>delete_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>delete_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46733,9 +47045,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>delete_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>delete_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46753,15 +47071,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_object_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>delete_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_object_latency_base</td>
+<td><code>delete_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_object_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_delete_object_rate">ontaps3_svm_delete_object_rate<a class="headerlink" href="#ontaps3_svm_delete_object_rate" title="Permanent link">&para;</a></h3>
-<p>Number of DELETE object operations per sec</p>
+<p>Number of DELETE object operations per second</p>
 <table>
 <thead>
 <tr>
@@ -46773,9 +47097,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>delete_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>delete_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46793,6 +47123,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_tagging_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>delete_object_tagging_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -46801,7 +47137,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_svm_delete_object_tagging_failed_client_close">ontaps3_svm_delete_object_tagging_failed_client_close<a class="headerlink" href="#ontaps3_svm_delete_object_tagging_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times DELETE object tagging operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times DELETE object tagging operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -46812,6 +47148,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_tagging_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46833,6 +47175,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_tagging_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_object_tagging_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>delete_object_tagging_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_object_tagging_latency_base</td>
@@ -46841,7 +47189,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_svm_delete_object_tagging_rate">ontaps3_svm_delete_object_tagging_rate<a class="headerlink" href="#ontaps3_svm_delete_object_tagging_rate" title="Permanent link">&para;</a></h3>
-<p>Number of DELETE object tagging operations per sec.</p>
+<p>Number of DELETE object tagging operations per second.</p>
 <table>
 <thead>
 <tr>
@@ -46852,6 +47200,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_tagging_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46873,6 +47227,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_tagging_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>delete_object_tagging_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -46893,9 +47253,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>delete_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>delete_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>delete_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46912,6 +47278,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>explicit_deny_access</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -46933,9 +47305,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_bucket_acl_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_bucket_acl_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_bucket_acl_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46953,9 +47331,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_bucket_acl_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_bucket_acl_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_bucket_acl_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46973,9 +47357,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_bucket_versioning_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_bucket_versioning_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_bucket_versioning_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -46993,9 +47383,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_bucket_versioning_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_bucket_versioning_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_bucket_versioning_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47013,9 +47409,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>get_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47033,9 +47435,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_acl_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_acl_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_acl_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47053,9 +47461,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_acl_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_acl_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_acl_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47073,9 +47487,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47093,9 +47513,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47113,9 +47539,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_lastbyte_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_lastbyte_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_lastbyte_latency_base</td>
+<td><code>get_object_lastbyte_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_lastbyte_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47133,15 +47565,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_latency_base</td>
+<td><code>get_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_get_object_rate">ontaps3_svm_get_object_rate<a class="headerlink" href="#ontaps3_svm_get_object_rate" title="Permanent link">&para;</a></h3>
-<p>Number of GET object operations per sec</p>
+<p>Number of GET object operations per second</p>
 <table>
 <thead>
 <tr>
@@ -47153,9 +47591,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>get_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47173,9 +47617,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_tagging_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_tagging_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_tagging_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47193,9 +47643,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_tagging_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_tagging_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_tagging_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47213,15 +47669,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_tagging_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_tagging_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_tagging_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_tagging_latency_base</td>
+<td><code>get_object_tagging_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_tagging_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_get_object_tagging_rate">ontaps3_svm_get_object_tagging_rate<a class="headerlink" href="#ontaps3_svm_get_object_tagging_rate" title="Permanent link">&para;</a></h3>
-<p>Number of GET object tagging operations per sec</p>
+<p>Number of GET object tagging operations per second</p>
 <table>
 <thead>
 <tr>
@@ -47233,9 +47695,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_tagging_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_tagging_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>get_object_tagging_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47253,9 +47721,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_tagging_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_tagging_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_tagging_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47273,9 +47747,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>get_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>get_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>get_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47292,6 +47772,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>group_policy_evaluated</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -47313,9 +47799,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_bucket_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_bucket_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>head_bucket_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47333,9 +47825,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_bucket_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_bucket_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>head_bucket_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47353,15 +47851,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_bucket_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_bucket_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_bucket_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_bucket_latency_base</td>
+<td><code>head_bucket_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_bucket_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_head_bucket_rate">ontaps3_svm_head_bucket_rate<a class="headerlink" href="#ontaps3_svm_head_bucket_rate" title="Permanent link">&para;</a></h3>
-<p>Number of HEAD bucket operations per sec</p>
+<p>Number of HEAD bucket operations per second</p>
 <table>
 <thead>
 <tr>
@@ -47373,9 +47877,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_bucket_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_bucket_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>head_bucket_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47393,9 +47903,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_bucket_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_bucket_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>head_bucket_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47413,9 +47929,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>head_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47433,9 +47955,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>head_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47453,15 +47981,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_object_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_object_latency_base</td>
+<td><code>head_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_object_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_head_object_rate">ontaps3_svm_head_object_rate<a class="headerlink" href="#ontaps3_svm_head_object_rate" title="Permanent link">&para;</a></h3>
-<p>Number of HEAD Object operations per sec</p>
+<p>Number of HEAD Object operations per second</p>
 <table>
 <thead>
 <tr>
@@ -47473,9 +48007,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>head_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47493,9 +48033,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>head_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>head_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>head_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47513,15 +48059,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>initiate_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>initiate_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>initiate_multipart_upload_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_initiate_multipart_upload_failed_client_close">ontaps3_svm_initiate_multipart_upload_failed_client_close<a class="headerlink" href="#ontaps3_svm_initiate_multipart_upload_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times Initiate Multipart Upload operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times Initiate Multipart Upload operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -47533,9 +48085,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>initiate_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>initiate_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>initiate_multipart_upload_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47553,9 +48111,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>initiate_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> initiate_multipart_upload_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>initiate_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> initiate_multipart_upload_latency_base</td>
+<td><code>initiate_multipart_upload_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> initiate_multipart_upload_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47573,9 +48137,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>initiate_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>initiate_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>initiate_multipart_upload_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47593,9 +48163,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>initiate_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>initiate_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>initiate_multipart_upload_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47613,9 +48189,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>input_flow_control_entry</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>input_flow_control_entry</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>input_flow_control_entry</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47633,9 +48215,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>input_flow_control_exit</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>input_flow_control_exit</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>input_flow_control_exit</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47653,9 +48241,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_buckets_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_buckets_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_buckets_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47673,9 +48267,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_buckets_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_buckets_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_buckets_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47693,15 +48293,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_buckets_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_buckets_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_buckets_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_object_latency_base</td>
+<td><code>list_buckets_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_object_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_buckets_rate">ontaps3_svm_list_buckets_rate<a class="headerlink" href="#ontaps3_svm_list_buckets_rate" title="Permanent link">&para;</a></h3>
-<p>Number of LIST Buckets operations per sec</p>
+<p>Number of LIST Buckets operations per second</p>
 <table>
 <thead>
 <tr>
@@ -47713,9 +48319,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_buckets_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_buckets_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>list_buckets_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47733,9 +48345,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_buckets_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_buckets_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_buckets_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47753,9 +48371,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_object_versions_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_object_versions_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_object_versions_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47772,6 +48396,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_object_versions_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -47793,6 +48423,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_object_versions_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_object_versions_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>list_object_versions_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_object_versions_latency_base</td>
@@ -47801,7 +48437,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_object_versions_rate">ontaps3_svm_list_object_versions_rate<a class="headerlink" href="#ontaps3_svm_list_object_versions_rate" title="Permanent link">&para;</a></h3>
-<p>Number of LIST Object Versions operations per sec</p>
+<p>Number of LIST Object Versions operations per second</p>
 <table>
 <thead>
 <tr>
@@ -47812,6 +48448,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_object_versions_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -47833,9 +48475,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_object_versions_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_object_versions_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_object_versions_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47853,9 +48501,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_objects_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_objects_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_objects_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47873,9 +48527,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_objects_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_objects_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_objects_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47893,15 +48553,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_objects_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_objects_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_objects_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_objects_latency_base</td>
+<td><code>list_objects_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_objects_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_objects_rate">ontaps3_svm_list_objects_rate<a class="headerlink" href="#ontaps3_svm_list_objects_rate" title="Permanent link">&para;</a></h3>
-<p>Number of LIST Objects operations per sec</p>
+<p>Number of LIST Objects operations per second</p>
 <table>
 <thead>
 <tr>
@@ -47913,9 +48579,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_objects_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_objects_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>list_objects_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -47933,15 +48605,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_objects_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_objects_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_objects_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_uploads_failed">ontaps3_svm_list_uploads_failed<a class="headerlink" href="#ontaps3_svm_list_uploads_failed" title="Permanent link">&para;</a></h3>
-<p>Number of failed LIST Uploads operations</p>
+<p>Number of failed LIST Upload operations</p>
 <table>
 <thead>
 <tr>
@@ -47953,15 +48631,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_uploads_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_uploads_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_uploads_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_uploads_failed_client_close">ontaps3_svm_list_uploads_failed_client_close<a class="headerlink" href="#ontaps3_svm_list_uploads_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times LIST Uploads operation failed due to the case where client closed the connection while the operation was still pending on server.</p>
+<p>Number of times LIST Upload operation failed due to the case where client closed the connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -47973,15 +48657,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_uploads_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_uploads_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_uploads_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_uploads_latency">ontaps3_svm_list_uploads_latency<a class="headerlink" href="#ontaps3_svm_list_uploads_latency" title="Permanent link">&para;</a></h3>
-<p>Average latency for LIST Uploads operations</p>
+<p>Average latency for LIST Upload operations</p>
 <table>
 <thead>
 <tr>
@@ -47993,15 +48683,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_uploads_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_uploads_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_uploads_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_uploads_latency_base</td>
+<td><code>list_uploads_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_uploads_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_uploads_rate">ontaps3_svm_list_uploads_rate<a class="headerlink" href="#ontaps3_svm_list_uploads_rate" title="Permanent link">&para;</a></h3>
-<p>Number of LIST Uploads operations per sec</p>
+<p>Number of LIST Upload operations per second</p>
 <table>
 <thead>
 <tr>
@@ -48013,15 +48709,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_uploads_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_uploads_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>list_uploads_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_list_uploads_total">ontaps3_svm_list_uploads_total<a class="headerlink" href="#ontaps3_svm_list_uploads_total" title="Permanent link">&para;</a></h3>
-<p>Number of LIST Uploads operations</p>
+<p>Number of LIST Upload operations</p>
 <table>
 <thead>
 <tr>
@@ -48033,9 +48735,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>list_uploads_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>list_uploads_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>list_uploads_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48053,9 +48761,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>maximum_commands_per_connection</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>max_cmds_per_connection</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>max_cmds_per_connection</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48073,9 +48787,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>maximum_connected_connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>max_connected_connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td><code>max_connected_connections</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48093,9 +48813,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>maximum_requests_outstanding</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>max_requests_outstanding</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td><code>max_requests_outstanding</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48113,9 +48839,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>multiple_delete_requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>multi_delete_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>multi_delete_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48133,9 +48865,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>output_flow_control_entry</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>output_flow_control_entry</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>output_flow_control_entry</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48153,9 +48891,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>output_flow_control_exit</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>output_flow_control_exit</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>output_flow_control_exit</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48173,9 +48917,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>presigned_url_requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>presigned_url_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>presigned_url_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48193,9 +48943,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_bucket_versioning_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_bucket_versioning_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>put_bucket_versioning_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48213,9 +48969,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_bucket_versioning_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_bucket_versioning_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>put_bucket_versioning_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48233,9 +48995,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>put_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48253,9 +49021,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>put_object_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48273,9 +49047,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>put_object_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48293,15 +49073,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_latency_base</td>
+<td><code>put_object_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> put_object_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_put_object_rate">ontaps3_svm_put_object_rate<a class="headerlink" href="#ontaps3_svm_put_object_rate" title="Permanent link">&para;</a></h3>
-<p>Number of PUT object operations per sec</p>
+<p>Number of PUT object operations per second</p>
 <table>
 <thead>
 <tr>
@@ -48313,9 +49099,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>put_object_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48333,6 +49125,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_tagging_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>put_object_tagging_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -48341,7 +49139,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="ontaps3_svm_put_object_tagging_failed_client_close">ontaps3_svm_put_object_tagging_failed_client_close<a class="headerlink" href="#ontaps3_svm_put_object_tagging_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times PUT object tagging operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times PUT object tagging operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -48352,6 +49150,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_tagging_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -48373,6 +49177,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_tagging_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_tagging_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>put_object_tagging_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> put_object_tagging_latency_base</td>
@@ -48392,6 +49202,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_tagging_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -48413,6 +49229,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_tagging_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
 <td><code>put_object_tagging_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -48433,9 +49255,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>put_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>put_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>put_object_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48453,9 +49281,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>request_parse_errors</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>request_parse_errors</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>request_parse_errors</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48473,9 +49307,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48493,9 +49333,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>requests_outstanding</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>requests_outstanding</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span></td>
+<td><code>requests_outstanding</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48512,6 +49358,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>root_user_access</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -48533,9 +49385,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>server_connection_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>server_connection_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>server_connection_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48553,9 +49411,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>signature_v2_requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>signature_v2_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>signature_v2_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48573,9 +49437,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>signature_v4_requests</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>signature_v4_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>signature_v4_reqs</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48592,6 +49462,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>tagging</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
@@ -48613,15 +49489,21 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>upload_part_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>upload_part_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>upload_part_failed</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
 </table>
 <h3 id="ontaps3_svm_upload_part_failed_client_close">ontaps3_svm_upload_part_failed_client_close<a class="headerlink" href="#ontaps3_svm_upload_part_failed_client_close" title="Permanent link">&para;</a></h3>
-<p>Number of times Upload Part operation failed because client terminated connection for operation pending on server.</p>
+<p>Number of times Upload Part operation failed because client terminated connection while the operation was still pending on server.</p>
 <table>
 <thead>
 <tr>
@@ -48633,9 +49515,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>upload_part_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>upload_part_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>upload_part_failed_client_close</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48653,9 +49541,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>upload_part_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> upload_part_total</td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>upload_part_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> upload_part_latency_base</td>
+<td><code>upload_part_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> upload_part_latency_base</td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48673,9 +49567,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>upload_part_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>upload_part_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td><code>upload_part_rate</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -48693,9 +49593,15 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/object_store_server</code></td>
+<td><code>upload_part_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/ontap_s3_svm.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances object_store_server</code></td>
-<td><code>upload_part_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td><code>upload_part_total</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml</td>
 </tr>
 </tbody>
@@ -50799,7 +51705,7 @@ ONTAP Version: 9.13.1
 </tbody>
 </table>
 <h3 id="security_certificate_expiry_time">security_certificate_expiry_time<a class="headerlink" href="#security_certificate_expiry_time" title="Permanent link">&para;</a></h3>
-<p>Certificate expiration time. Can be provided on POST if creating self-signed certificate. The expiration time range is between 1 day to 10 years.</p>
+<p>Certificate expiration time, in ISO 8601 duration format or date and time format. Can be provided on POST if creating self-signed certificate. The expiration time range is between 1 day to 10 years.</p>
 <table>
 <thead>
 <tr>
@@ -51117,6 +52023,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>close_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>close_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close_latency_base</td>
@@ -51136,6 +52048,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>close_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51157,6 +52075,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>close_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>close_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -51176,6 +52100,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>create_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51197,6 +52127,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>create_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>create_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
@@ -51216,6 +52152,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>create_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51237,6 +52179,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>lock_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>lock_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock_latency_base</td>
@@ -51256,6 +52204,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>lock_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51277,6 +52231,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>lock_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>lock_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -51296,6 +52256,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>negotiate_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> negotiate_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51317,6 +52283,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>negotiate_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>negotiate_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -51336,6 +52308,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>oplock_break_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> oplock_break_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51357,6 +52335,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>oplock_break_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>oplock_break_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
@@ -51376,6 +52360,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>oplock_break_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51397,6 +52387,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>query_directory_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_directory_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>query_directory_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_directory_latency_base</td>
@@ -51416,6 +52412,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>query_directory_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51437,6 +52439,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>query_directory_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>query_directory_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -51456,6 +52464,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>query_info_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_info_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51477,6 +52491,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>query_info_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>query_info_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
@@ -51496,6 +52516,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>query_info_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51517,6 +52543,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops</td>
@@ -51536,6 +52568,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>read_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51557,6 +52595,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>session_setup_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> session_setup_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>session_setup_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> session_setup_latency_base</td>
@@ -51576,6 +52620,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>session_setup_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51597,6 +52647,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>session_setup_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>session_setup_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -51616,6 +52672,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>set_info_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_info_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51637,6 +52699,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>set_info_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>set_info_latency_histogram</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
@@ -51656,6 +52724,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>set_info_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51677,6 +52751,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>tree_connect_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> tree_connect_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>tree_connect_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> tree_connect_latency_base</td>
@@ -51696,6 +52776,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>tree_connect_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -51717,6 +52803,12 @@ ONTAP Version: 9.13.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops</td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
 <td><code>write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_latency_base</td>
@@ -51736,6 +52828,12 @@ ONTAP Version: 9.13.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/smb2</code></td>
+<td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.14.1/smb2.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances smb2</code></td>
@@ -60531,7 +61629,7 @@ ONTAP Version: 9.13.1
 <tr>
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
-<td><code>logical-available</code></td>
+<td><code>logical_available</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
 </tr>
 <tr>
