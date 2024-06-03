@@ -7991,9 +7991,13 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Cluster"
+                  "options": "cluster"
                 },
                 "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
                   {
                     "id": "custom.width",
                     "value": 280
@@ -8029,9 +8033,13 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Datacenter"
+                  "options": "datacenter"
                 },
                 "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
                   {
                     "id": "custom.width",
                     "value": 190
@@ -8051,9 +8059,13 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Node"
+                  "options": "node"
                 },
                 "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
                   {
                     "id": "custom.width",
                     "value": 260
@@ -8073,7 +8085,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Aggr"
+                  "options": "aggr"
                 },
                 "properties": [
                   {
@@ -8099,9 +8111,13 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "SVM"
+                  "options": "svm"
                 },
                 "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
                   {
                     "id": "custom.width",
                     "value": 260
@@ -8121,9 +8137,13 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Volume"
+                  "options": "volume"
                 },
                 "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
                   {
                     "id": "custom.width",
                     "value": 330
@@ -8245,15 +8265,10 @@
                   "Value #I": "Physical Space Used",
                   "Value #J": "Clone Split Estimate",
                   "__name__": "",
-                  "aggr": "Aggr",
                   "clone_parent_snapshot": "Clone Parent Snapshot",
                   "clone_parent_svm": "Clone Parent SVM",
                   "clone_parent_volume": "Clone Parent Volume",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
-                  "junction_path": "Junction Path",
-                  "svm": "SVM",
-                  "volume": "Volume"
+                  "junction_path": "Junction Path"
                 }
               }
             }

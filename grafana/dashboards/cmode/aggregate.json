@@ -734,36 +734,104 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Datacenter"
+              "options": "datacenter"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
               {
                 "id": "custom.width",
                 "value": 114
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Node"
+              "options": "node"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Node"
+              },
               {
                 "id": "custom.width",
                 "value": 126
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                  }
+                ]
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Cluster"
+              "options": "cluster"
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
                 "id": "custom.width",
                 "value": 121
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "aggr"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Aggregate"
+              },
+              {
+                "id": "custom.width",
+                "value": 260
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                  }
+                ]
               }
             ]
           },
@@ -1022,11 +1090,7 @@
               "Value #E": "Used",
               "Value #F": "Used %",
               "Value #H": "Available",
-              "aggr": "Aggregate",
-              "cluster": "Cluster",
-              "datacenter": "Datacenter",
-              "is_encrypted": "Encrypted",
-              "node": "Node"
+              "is_encrypted": "Encrypted"
             }
           }
         }
@@ -3237,6 +3301,16 @@
                   {
                     "id": "custom.width",
                     "value": 300
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -3253,6 +3327,16 @@
                   {
                     "id": "custom.width",
                     "value": 300
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
