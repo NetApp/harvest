@@ -61,6 +61,7 @@ type options struct {
 	addMultiSelect      bool
 	svmRegex            string
 	customizeDir        string
+	customAllValue      string
 }
 
 type Folder struct {
@@ -294,6 +295,21 @@ func addChainedVar(result gjson.Result, label string, labelMap map[string]string
 		fmt.Printf("error setting query of varName=[%s] for label=[%s], err: %+v", varName, label, err)
 		return ""
 	}
+
+	// Only rewrite allValue when a customAllValue is specified and "includeAll" is true
+	if opts.customAllValue != "" && result.Get("includeAll").Bool() {
+		if opts.customAllValue == "null" || opts.customAllValue == "nil" {
+			rString, err = sjson.Set(rString, "allValue", nil)
+		} else {
+			rString, err = sjson.Set(rString, "allValue", opts.customAllValue)
+		}
+
+		if err != nil {
+			fmt.Printf("error setting allValue of varName=[%s] for label=[%s], err: %+v", varName, label, err)
+			return ""
+		}
+	}
+
 	return rString
 }
 
@@ -397,13 +413,16 @@ func initImportVars() {
 	m := make(map[string]*Folder)
 
 	// default behaviour
-	if opts.dir == "grafana/dashboards" && opts.serverfolder.name == "" {
-		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-main-cDOT"}
+	switch {
+	case opts.dir == "grafana/dashboards" && opts.serverfolder.name == "":
+    m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-main-cDOT"}
 		m[filepath.Join(opts.dir, "cmode", "details")] = &Folder{name: "Harvest-main-cDOT Details"}
 		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-main-7mode"}
 		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-main-StorageGrid"}
-	} else if opts.dir != "" && opts.serverfolder.name != "" {
+	case opts.dir != "" && opts.serverfolder.name != "":
 		m[opts.dir] = &Folder{name: opts.serverfolder.name}
+	case opts.dir != "" && opts.customizeDir != "":
+		m[opts.dir] = &Folder{name: opts.dir}
 	}
 
 	for k, v := range m {
@@ -570,6 +589,11 @@ func writeCustomDashboard(dashboard map[string]any, dir string, file os.DirEntry
 	if err != nil {
 		return err
 	}
+
+	data, err = formatJSON(data)
+	if err != nil {
+		return err
+	}
 	sub := filepath.Base(dir)
 	fp := filepath.Join(opts.customizeDir, sub, file.Name())
 	if err := os.MkdirAll(filepath.Dir(fp), 0750); err != nil {
@@ -580,6 +604,14 @@ func writeCustomDashboard(dashboard map[string]any, dir string, file os.DirEntry
 	}
 	fmt.Printf("OK - customized [%s]\n", fp)
 	return nil
+}
+
+func formatJSON(data []byte) ([]byte, error) {
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, data, "", "  "); err != nil {
+		return nil, fmt.Errorf("failed to format json %w", err)
+	}
+	return prettyJSON.Bytes(), nil
 }
 
 // addGlobalPrefix adds the given prefix to all metric names in the
@@ -1100,23 +1132,27 @@ func init() {
 	Cmd.AddCommand(importCmd, exportCmd, customizeCmd, metricsCmd)
 	addCommonFlags(importCmd, exportCmd, customizeCmd)
 	addImportExportFlags(importCmd, exportCmd)
-	addCustomizeFlags(customizeCmd)
+	addImportCustomizeFlags(importCmd, customizeCmd)
 
-	importCmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
-		"For each label, create a variable and add as chained query to other variables")
-	importCmd.PersistentFlags().BoolVar(&opts.addMultiSelect, "multi", true,
-		"Modify the dashboards to add multi-select dropdowns for each variable")
-	importCmd.PersistentFlags().BoolVar(&opts.forceImport, "force", false,
-		"Import even if the datasource name is not defined in Grafana")
-	_ = importCmd.PersistentFlags().MarkHidden("multi")
-	_ = importCmd.PersistentFlags().MarkHidden("force")
+	customizeCmd.PersistentFlags().StringVarP(&opts.customizeDir, "output-dir", "o", "", "Write customized dashboards to the local directory. The directory must not exist")
 
 	metricsCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d",
 		"", "local directory that contains dashboards (searched recursively).")
 }
 
-func addCustomizeFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVarP(&opts.customizeDir, "output-dir", "o", "", "Write customized dashboards to the local directory. The directory must not exist")
+func addImportCustomizeFlags(commands ...*cobra.Command) {
+	for _, cmd := range commands {
+		cmd.PersistentFlags().StringSliceVar(&opts.labels, "labels", nil,
+			"For each label, create a variable and add as chained query to other variables")
+		cmd.PersistentFlags().StringVar(&opts.customAllValue, "customallvalue", "",
+			"Modify each variable to use the specified custom all value.")
+		cmd.PersistentFlags().BoolVar(&opts.addMultiSelect, "multi", true,
+			"Modify the dashboards to add multi-select dropdowns for each variable")
+		cmd.PersistentFlags().BoolVar(&opts.forceImport, "force", false,
+			"Import even if the datasource name is not defined in Grafana")
+		_ = cmd.PersistentFlags().MarkHidden("multi")
+		_ = cmd.PersistentFlags().MarkHidden("force")
+	}
 }
 
 func addCommonFlags(commands ...*cobra.Command) {
