@@ -1947,6 +1947,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "ONTAP: StorageGrid FabricPool",
-  "uid": "harvest-cdot-storagegrid-fabricpool",
+  "uid": "cdot-storagegrid-fabricpool",
   "version": 2
 }

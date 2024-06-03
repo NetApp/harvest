@@ -1602,6 +1602,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Data Protection Snapshots",
-  "uid": "harvest-cdot-data-protection-snapshots",
+  "uid": "cdot-data-protection-snapshots",
   "version": 2
 }

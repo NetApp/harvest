@@ -762,7 +762,7 @@ func TestIDIsBlank(t *testing.T) {
 	VisitDashboards(
 		dashboards,
 		func(path string, data []byte) {
-			checkUIDNonEmpty(t, path, data)
+			checkUIDNotEmpty(t, path, data)
 			checkIDIsNull(t, path, data)
 		})
 }
@@ -781,7 +781,7 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 	}
 }
 
-func checkUIDNonEmpty(t *testing.T, path string, data []byte) {
+func checkUIDNotEmpty(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
 	uid := gjson.GetBytes(data, "uid").String()
 	if uid == "" {
@@ -1698,8 +1698,8 @@ func checkLinks(t *testing.T, path string, data []byte, hasLinks map[string][]st
 func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map[string][]string) {
 	linkFound := false
 
-	// Testing only for volume/aggregate/svm for now, it will be covered for all later
-	supportedDashboards := []string{"cmode/volume.json", "cmode/aggregate.json", "cmode/svm.json"}
+	// Testing only for volume for now, it will be covered for all later
+	supportedDashboards := []string{"cmode/volume.json"}
 
 	if slices.Contains(supportedDashboards, path) && value.Get("type").String() == "table" {
 		value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {

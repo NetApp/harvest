@@ -3133,6 +3133,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Disk",
-  "uid": "harvest-cdot-disk",
+  "uid": "cdot-disk",
   "version": 32
 }

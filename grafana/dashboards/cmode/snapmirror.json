@@ -5006,6 +5006,6 @@
   },
   "timezone": "",
   "title": "ONTAP: SnapMirror",
-  "uid": "harvest-cdot-snapmirror",
+  "uid": "cdot-snapmirror",
   "version": 6
 }

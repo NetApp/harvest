@@ -576,6 +576,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "StorageGrid: Tenants",
-  "uid": "harvest-storagegrid-tenants",
+  "uid": "storagegrid-tenants",
   "version": 2
 }
