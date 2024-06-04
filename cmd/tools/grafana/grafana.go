@@ -380,7 +380,7 @@ func doImport(_ *cobra.Command, _ []string) {
 	opts.command = "import"
 	_, err := conf.LoadHarvestConfig(opts.config)
 	if err != nil {
-		return
+		printErrorAndExit(err)
 	}
 
 	adjustOptions()
@@ -390,6 +390,11 @@ func doImport(_ *cobra.Command, _ []string) {
 
 	fmt.Printf("preparing to import dashboards...\n")
 	importDashboards(opts)
+}
+
+func printErrorAndExit(err error) {
+	fmt.Println(err)
+	os.Exit(1)
 }
 
 func validateImport() {
@@ -418,7 +423,7 @@ func initImportVars() {
 	switch {
 	case opts.dir == "grafana/dashboards" && opts.serverfolder.name == "":
 		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
-		m[filepath.Join(opts.dir, "cmode", "details")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT Details"}
+		m[filepath.Join(opts.dir, "cmode-details")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT Details"}
 		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
 		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
 	case opts.dir != "" && opts.serverfolder.name != "":
@@ -431,8 +436,7 @@ func initImportVars() {
 		if opts.customizeDir == "" {
 			err := checkAndCreateServerFolder(v)
 			if err != nil {
-				fmt.Print(err)
-				os.Exit(1)
+				printErrorAndExit(err)
 			}
 		}
 		opts.dirGrafanaFolderMap[k] = v
@@ -488,8 +492,7 @@ func importFiles(dir string, folder *Folder) {
 		return
 	}
 	if files, err = os.ReadDir(dir); err != nil {
-		// TODO check for not exist
-		return
+		printErrorAndExit(err)
 	}
 
 	for _, file := range files {
