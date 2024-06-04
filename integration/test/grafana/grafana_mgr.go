@@ -12,7 +12,7 @@ import (
 type Mgr struct {
 }
 
-func (g *Mgr) Import(jsonDir string) (bool, string) {
+func (g *Mgr) Import() (bool, string) {
 	var (
 		importOutput string
 		status       bool
@@ -31,15 +31,11 @@ func (g *Mgr) Import(jsonDir string) (bool, string) {
 	if err != nil {
 		panic(err)
 	}
-	directoryOption := ""
-	if jsonDir != "" {
-		directoryOption = "--directory"
-	}
 	grafanaURL := utils.GetGrafanaURL()
 	if docker.IsDockerBasedPoller() {
 		grafanaURL = "grafana:3000"
 	}
-	importCmds := []string{"grafana", "import", "--overwrite", "--addr", grafanaURL, directoryOption, jsonDir}
+	importCmds := []string{"grafana", "import", "--overwrite", "--addr", grafanaURL}
 	if docker.IsDockerBasedPoller() {
 		params := []string{"exec", containerIDs[0].ID, "bin/harvest"}
 		params = append(params, importCmds...)
