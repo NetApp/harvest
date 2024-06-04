@@ -8,6 +8,8 @@ With the default configuration, when monitoring 10 clusters, we recommend:
 - Memory: 1 GB
 - Disk: 500 MB (mostly used by log files)
 
+**Note:** These CPU, memory, and disk requirements are just for Harvest and do not include Prometheus, InfluxDB, Grafana.
+
 Harvest is compatible with:
 
 - Prometheus: `2.33` or higher
