@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/netapp/harvest/v2/cmd/harvest/version"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -39,7 +38,6 @@ const (
 var (
 	grafanaMinVers = "7.1.0" // lowest grafana version we require
 	homePath       string
-	harvestRelease = version.VERSION
 )
 
 type options struct {
@@ -422,10 +420,10 @@ func initImportVars() {
 	// default behaviour
 	switch {
 	case opts.dir == "grafana/dashboards" && opts.serverfolder.name == "":
-		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT"}
-		m[filepath.Join(opts.dir, "cmode-details")] = &Folder{name: "Harvest-" + harvestRelease + "-cDOT Details"}
-		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-" + harvestRelease + "-7mode"}
-		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-" + harvestRelease + "-StorageGrid"}
+    m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-main-cDOT"}
+		m[filepath.Join(opts.dir, "cmode", "details")] = &Folder{name: "Harvest-main-cDOT Details"}
+		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-main-7mode"}
+		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-main-StorageGrid"}
 	case opts.dir != "" && opts.serverfolder.name != "":
 		m[opts.dir] = &Folder{name: opts.serverfolder.name}
 	case opts.dir != "" && opts.customizeDir != "":
@@ -475,6 +473,12 @@ func exitIfExist(fp string, s string) {
 }
 
 func importDashboards(opts *options) {
+	if opts.overwrite {
+		fmt.Printf("warning: The overwrite flag is no longer used and will be removed in a future release. Please remove this flag from your command line invocation. When importing, dashboards are always overwritten.\n")
+	}
+	// Set overwrite flag to true, dashboards are always overwritten.
+	opts.overwrite = true
+
 	for k, v := range opts.dirGrafanaFolderMap {
 		importFiles(k, v)
 	}
@@ -506,37 +510,6 @@ func importFiles(dir string, folder *Folder) {
 		}
 
 		data = bytes.ReplaceAll(data, []byte("${DS_PROMETHEUS}"), []byte(opts.datasource))
-
-		// If the dashboard has an uid defined, change the uid to the empty string, unless overwrite is true.
-		// We do comparison for dashboard create/update based on title
-		if !opts.overwrite {
-
-			// Don't change the uid of linked dashboards since that will break the links
-			isLinkedDashboard := file.Name() == "volumeBySVM.json" || file.Name() == "volumeDeepDive.json"
-
-			if !isLinkedDashboard {
-				dashboardID := gjson.GetBytes(data, "uid").String()
-				if dashboardID != "" {
-					data, err = sjson.SetBytes(data, "uid", []byte(""))
-					if err != nil {
-						fmt.Printf("error while updating the uid %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-						continue
-					}
-				}
-			}
-		}
-
-		// If the dashboard has an id defined, change the id to empty string, unless overwrite was passed,
-		// so Grafana treats this as a new dashboard instead of an update to an existing one
-		if !opts.overwrite {
-			if dashboardID := gjson.GetBytes(data, "id").String(); dashboardID != "" {
-				data, err = sjson.SetBytes(data, "id", []byte(""))
-				if err != nil {
-					fmt.Printf("error while updating the id %s into dashboard %s, err: %+v", dashboardID, file.Name(), err)
-					continue
-				}
-			}
-		}
 
 		// add svm regex
 		if opts.svmRegex != "" {

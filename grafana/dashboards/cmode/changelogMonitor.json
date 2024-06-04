@@ -1285,6 +1285,6 @@
   },
   "timezone": "",
   "title": "ONTAP: Changelog Monitor",
-  "uid": "",
+  "uid": "cdot-changelog-monitor",
   "version": 1
 }

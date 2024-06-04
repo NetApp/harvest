@@ -1000,7 +1000,7 @@
   },
   "timezone": "",
   "title": "ONTAP: S3 Object Storage",
-  "uid": "",
+  "uid": "cdot-s3-object-storage",
   "version": 1,
   "weekStart": ""
 }
