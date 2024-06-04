@@ -40,7 +40,7 @@ func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
 	cDotFolder = "Harvest-" + version.VERSION + "-cDOT"
 	sevenModeFolder = "Harvest-" + version.VERSION + "-7mode"
 	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
-	status, out := new(grafana.Mgr).Import("") // send empty so that it will import all dashboards
+	status, out := new(grafana.Mgr).Import()
 	if !status {
 		t.Errorf("Grafana import operation failed out=%s", out)
 	}
