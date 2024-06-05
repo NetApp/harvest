@@ -675,6 +675,10 @@
                   {
                     "id": "max",
                     "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   }
                 ]
               },
@@ -7985,6 +7989,14 @@
                   {
                     "id": "custom.displayMode",
                     "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   }
                 ]
               },
@@ -8027,6 +8039,14 @@
                   {
                     "id": "custom.displayMode",
                     "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   }
                 ]
               },

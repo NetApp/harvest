@@ -1242,6 +1242,10 @@
                     "value": 100
                   },
                   {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
                     "id": "decimals",
                     "value": 2
                   }
@@ -1436,6 +1440,10 @@
                   {
                     "id": "max",
                     "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   },
                   {
                     "id": "decimals",
@@ -1856,6 +1864,10 @@
                     "value": 100
                   },
                   {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
                     "id": "decimals",
                     "value": 2
                   }
@@ -2073,6 +2085,10 @@
                   {
                     "id": "max",
                     "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   },
                   {
                     "id": "decimals",
