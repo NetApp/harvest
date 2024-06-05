@@ -6649,7 +6649,30 @@
               },
               "unit": "locale"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 12,
@@ -6690,8 +6713,7 @@
                 "renameByName": {
                   "Value": "Avg",
                   "svm": "SVM",
-                  "type": "{{svm}} / {{volume}}",
-                  "volume": "Volume"
+                  "type": "{{svm}} / {{volume}}"
                 }
               }
             },
@@ -6701,7 +6723,7 @@
                 "include": {
                   "names": [
                     "Avg",
-                    "Volume"
+                    "volume"
                   ]
                 }
               }

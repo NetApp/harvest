@@ -713,12 +713,48 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Cluster"
+                  "options": "cluster"
                 },
                 "properties": [
                   {
                     "id": "custom.width",
                     "value": 180
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -767,10 +803,7 @@
                 "excludeByName": {},
                 "indexByName": {},
                 "renameByName": {
-                  "Value": "Current",
-                  "cluster": "Cluster",
-                  "node": "Node",
-                  "svm": "SVM"
+                  "Value": "Current"
                 }
               }
             },
@@ -780,8 +813,8 @@
                 "include": {
                   "names": [
                     "Current",
-                    "SVM",
-                    "Cluster"
+                    "svm",
+                    "cluster"
                   ]
                 }
               }
@@ -845,12 +878,48 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Cluster"
+                  "options": "cluster"
                 },
                 "properties": [
                   {
                     "id": "custom.width",
                     "value": 180
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -899,10 +968,7 @@
                 "excludeByName": {},
                 "indexByName": {},
                 "renameByName": {
-                  "Value": "Current",
-                  "cluster": "Cluster",
-                  "node": "Node",
-                  "volume": "Volume"
+                  "Value": "Current"
                 }
               }
             },
@@ -911,9 +977,9 @@
               "options": {
                 "include": {
                   "names": [
-                    "Volume",
+                    "volume",
                     "Current",
-                    "Cluster"
+                    "cluster"
                   ]
                 }
               }
@@ -977,12 +1043,48 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Cluster"
+                  "options": "cluster"
                 },
                 "properties": [
                   {
                     "id": "custom.width",
                     "value": 180
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -1040,9 +1142,7 @@
                   "node": 6
                 },
                 "renameByName": {
-                  "Value": "Current",
-                  "aggr": "Aggregate",
-                  "cluster": "Cluster"
+                  "Value": "Current"
                 }
               }
             },
@@ -1052,8 +1152,8 @@
                 "include": {
                   "names": [
                     "Current",
-                    "Aggregate",
-                    "Cluster"
+                    "aggr",
+                    "cluster"
                   ]
                 }
               }

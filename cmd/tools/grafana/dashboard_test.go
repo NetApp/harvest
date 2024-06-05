@@ -1705,8 +1705,12 @@ func checkLinks(t *testing.T, path string, data []byte, hasLinks map[string][]st
 func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map[string][]string) {
 	linkFound := false
 
-	// Testing only for volume/aggregate/svm for now, it will be covered for all later
-	supportedDashboards := []string{"cmode/volume.json", "cmode/aggregate.json", "cmode/svm.json"}
+	// Testing only for these dashboards now, it will be covered for all later
+	supportedDashboards := []string{"cmode/aggregate.json", "cmode/cdot.json",
+		"cmode/cluster.json", "comde/compliance.json", "cmode/data_protection_snapshot.json", "cmode/datacenter.json",
+		"cmode/disk.json", "cmode/external_service_op.json", "cmode/fsa.json", "cmode/headroom.json",
+		"cmode/health.json", "cmode/lun.json", "cmode/metadata.json", "cmode/svm.json", "cmode/volume.json",
+	}
 
 	if slices.Contains(supportedDashboards, path) && value.Get("type").String() == "table" {
 		value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
