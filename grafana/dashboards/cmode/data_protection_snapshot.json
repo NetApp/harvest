@@ -634,6 +634,16 @@
                   {
                     "id": "custom.width",
                     "value": 350
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -666,6 +676,16 @@
                   {
                     "id": "custom.width",
                     "value": 250
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -766,6 +786,16 @@
                   {
                     "id": "displayName",
                     "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -865,6 +895,16 @@
                   {
                     "id": "custom.width",
                     "value": 240
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -1363,6 +1403,16 @@
                   {
                     "id": "custom.width",
                     "value": 500
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -1379,6 +1429,16 @@
                   {
                     "id": "custom.width",
                     "value": 500
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -1407,6 +1467,16 @@
                   {
                     "id": "custom.width",
                     "value": 400
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }

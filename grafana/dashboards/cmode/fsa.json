@@ -653,6 +653,94 @@
                 "value": "short"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "svm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Storage VMs"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "volume"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Volume"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -707,15 +795,22 @@
           }
         },
         {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) 1$",
+            "renamePattern": "$1"
+          }
+        },
+        {
           "id": "filterFieldsByName",
           "options": {
             "include": {
               "names": [
-                "cluster 1",
-                "datacenter 1",
-                "dir_name 1",
-                "svm 1",
-                "volume 1",
+                "cluster",
+                "datacenter",
+                "dir_name",
+                "svm",
+                "volume",
                 "Value #A",
                 "Value #B",
                 "Value #C"
@@ -726,26 +821,33 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {},
+            "excludeByName": {
+              "cluster 2": true,
+              "cluster 3": true,
+              "datacenter 2": true,
+              "datacenter 3": true,
+              "dir_name 2": true,
+              "dir_name 3": true,
+              "svm 2": true,
+              "svm 3": true,
+              "volume 2": true,
+              "volume 3": true
+            },
             "indexByName": {
               "Value #A": 5,
               "Value #B": 7,
               "Value #C": 6,
-              "cluster 1": 1,
-              "datacenter 1": 0,
-              "dir_name 1": 4,
-              "svm 1": 2,
-              "volume 1": 3
+              "cluster": 1,
+              "datacenter": 0,
+              "dir_name": 4,
+              "svm": 2,
+              "volume": 3
             },
             "renameByName": {
               "Value #A": "Used",
               "Value #B": "Files",
               "Value #C": "Sub Directories",
-              "cluster 1": "Cluster",
-              "datacenter 1": "Datacenter",
-              "dir_name 1": "Directory Name",
-              "svm 1": "Storage VMs",
-              "volume 1": "Volume"
+              "dir_name": "Directory Name"
             }
           }
         },

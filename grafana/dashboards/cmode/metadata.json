@@ -1041,6 +1041,28 @@
                 "value": 182
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1265,11 +1287,25 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Datacenter"
+              "options": "datacenter"
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
                 "id": "custom.width"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
               }
             ]
           },
@@ -1394,7 +1430,6 @@
               "Value #A": "Status",
               "Value #B": "RSS",
               "addr": "Addr",
-              "datacenter": "Datacenter",
               "hostname": "Hostname",
               "instance": "",
               "job": "",
