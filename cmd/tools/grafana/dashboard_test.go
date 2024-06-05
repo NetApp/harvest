@@ -458,9 +458,16 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 	// In case of gradient-gauge and percent(0.0-1.0), we must override min and max value
 	for _, properties := range propertiesMap {
 		displayMode := properties["custom.displayMode"]
-		if properties["unit"] == "percentunit" && (displayMode == "gradient-gauge" || displayMode == "lcd-gauge" || displayMode == "basic") {
+		if (properties["unit"] == "percentunit" || defaultUnit == "percentunit") && (displayMode == "gradient-gauge" || displayMode == "lcd-gauge" || displayMode == "basic") {
 			if maxVal, exist := properties["max"]; !exist || maxVal != "1" {
 				t.Errorf("dashboard=%s, title=%s should have max value 1", sPath, title)
+			}
+			if minVal, exist := properties["min"]; !exist || minVal != "0" {
+				t.Errorf("dashboard=%s, title=%s should have min value 0", sPath, title)
+			}
+		} else if (properties["unit"] == "percent" || defaultUnit == "percent") && (displayMode == "gradient-gauge" || displayMode == "lcd-gauge" || displayMode == "basic") {
+			if maxVal, exist := properties["max"]; !exist || maxVal != "100" {
+				t.Errorf("dashboard=%s, title=%s should have max value 100", sPath, title)
 			}
 			if minVal, exist := properties["min"]; !exist || minVal != "0" {
 				t.Errorf("dashboard=%s, title=%s should have min value 0", sPath, title)

@@ -469,7 +469,6 @@
           },
           "decimals": 2,
           "mappings": [],
-          "max": 100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -519,6 +518,14 @@
               {
                 "id": "displayName",
                 "value": "capacity used"
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "min",
+                "value": 0
               }
             ]
           },
@@ -821,6 +828,10 @@
               {
                 "id": "max",
                 "value": 100
+              },
+              {
+                "id": "min",
+                "value": 0
               },
               {
                 "id": "decimals",
