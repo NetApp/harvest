@@ -2273,7 +2273,7 @@
               "expr": "clamp_max(\n  (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    qos_workload_max_throughput_iops{\n      datacenter=~\"$Datacenter\",\n      cluster=~\"$Cluster\",\n      workload=~\"$Workload\",\n      is_adaptive=\"Yes\"\n    }\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    avg_over_time(\n      qos_workload_max_throughput_iops{\n        datacenter=~\"$Datacenter\",\n        cluster=~\"$Cluster\",\n        workload=~\"$Workload\",\n        is_adaptive=\"Yes\"\n      }[3h] @ end()\n    )\n  )\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{workload}}",
+              "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
               "refId": "A"
             }
           ],
@@ -2365,7 +2365,7 @@
               "expr": "clamp_max(\n  (\n    (\n      (qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100) / (1000*1000)\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    qos_workload_max_throughput_mbps{\n      datacenter=~\"$Datacenter\",\n      cluster=~\"$Cluster\",\n      workload=~\"$Workload\",\n      is_adaptive=\"Yes\"\n    }\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    avg_over_time(\n      qos_workload_max_throughput_mbps{\n        datacenter=~\"$Datacenter\",\n        cluster=~\"$Cluster\",\n        workload=~\"$Workload\",\n        is_adaptive=\"Yes\"\n      }[3h] @ end()\n    )\n  )\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{workload}}",
+              "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
               "refId": "A"
             }
           ],
