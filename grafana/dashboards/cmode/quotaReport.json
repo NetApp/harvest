@@ -415,6 +415,94 @@
                 "value": "locale"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "svm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SVM"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "qtree"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Qtree"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-qtree/ontap-qtree?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Qtree=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -592,6 +680,7 @@
               "datacenter 6": true,
               "datacenter 7": true,
               "datacenter 8": true,
+              "group 1": true,
               "group 2": true,
               "group 3": true,
               "group 4": true,
@@ -603,6 +692,7 @@
               "instance": true,
               "isUnlimited": true,
               "job": true,
+              "qtree 1": true,
               "qtree 2": true,
               "qtree 3": true,
               "qtree 4": true,
@@ -610,6 +700,7 @@
               "qtree 6": true,
               "qtree 7": true,
               "qtree 8": true,
+              "svm 1": true,
               "svm 2": true,
               "svm 3": true,
               "svm 4": true,
@@ -620,6 +711,7 @@
               "tree 3": true,
               "tree 8": true,
               "unit": true,
+              "user 1": true,
               "user 2": true,
               "user 3": true,
               "user 4": true,
@@ -701,21 +793,9 @@
               "Value #F": "% Space Used",
               "Value #G": "% Files Used",
               "Value #H": "Files Soft Limit",
-              "cluster": "Cluster",
-              "datacenter": "Datacenter",
               "group": "Group",
-              "group 1": "Group",
-              "isUnlimited 1": "hjvhh",
-              "qtree": "Qtree",
-              "qtree 1": "Qtree",
-              "svm": "SVM",
-              "svm 1": "SVM",
-              "svm 8": "",
-              "tree": "Qtree",
               "user": "User",
-              "user 1": "User",
-              "user_name": "User",
-              "user_name 1": "User"
+              "user_name": "User"
             }
           }
         }

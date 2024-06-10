@@ -2182,8 +2182,22 @@
                 },
                 "properties": [
                   {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
                     "id": "custom.width",
                     "value": 264
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               },
