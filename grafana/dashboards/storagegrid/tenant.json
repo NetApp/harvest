@@ -152,12 +152,28 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Cluster"
+              "options": "cluster"
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
                 "id": "custom.width",
                 "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
               },
               {
                 "id": "links",
@@ -165,7 +181,29 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tenant"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Tenant"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/storagegrid-tenants/storagegrid-tenants?orgId=1&{Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Tenant=${__value.raw}"
                   }
                 ]
               }
@@ -267,8 +305,8 @@
           "options": {
             "include": {
               "names": [
-                "cluster 1",
-                "datacenter 1",
+                "cluster",
+                "datacenter",
                 "tenant",
                 "Value #B",
                 "Value #C",
@@ -282,6 +320,14 @@
           "id": "organize",
           "options": {
             "excludeByName": {
+              "cluster 2": true,
+              "cluster 3": true,
+              "cluster 4": true,
+              "cluster 5": true,
+              "datacenter 2": true,
+              "datacenter 3": true,
+              "datacenter 4": true,
+              "datacenter 5": true,
               "tenant 2": true,
               "tenant 3": true,
               "tenant 4": true,
@@ -292,24 +338,15 @@
               "Value #C": 4,
               "Value #D": 5,
               "Value #E": 6,
-              "cluster 1": 1,
-              "datacenter 1": 0,
-              "tenant 1": 2,
-              "tenant 2": 7,
-              "tenant 3": 8,
-              "tenant 4": 9,
-              "tenant 5": 10
+              "cluster": 1,
+              "datacenter": 0,
+              "tenant": 2
             },
             "renameByName": {
               "Value #B": "Logical Used",
               "Value #C": "Quota",
               "Value #D": "Used %",
-              "Value #E": "Objects",
-              "cluster": "Cluster",
-              "cluster 1": "Cluster",
-              "datacenter": "Datacenter",
-              "datacenter 1": "Datacenter",
-              "tenant 1": "Tenant"
+              "Value #E": "Objects"
             }
           }
         }
@@ -377,16 +414,6 @@
               {
                 "id": "displayName",
                 "value": "Cluster"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
-                  }
-                ]
               }
             ]
           },
@@ -407,6 +434,28 @@
                     "targetBlank": true,
                     "title": "",
                     "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tenant"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Tenant"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/storagegrid-tenants/storagegrid-tenants?orgId=1&{Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Tenant=${__value.raw}"
                   }
                 ]
               }
@@ -490,8 +539,7 @@
               "Value #A": "Space Used",
               "Value #B": "Objects",
               "bucket": "Bucket",
-              "region": "Region",
-              "tenant": "Tenant"
+              "region": "Region"
             }
           }
         }

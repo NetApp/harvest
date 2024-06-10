@@ -867,8 +867,8 @@
                 "id": "custom.width"
               },
               {
-                "id": "custom.displayMode",
-                "value": "json-view"
+                "id": "decimals",
+                "value": 1
               },
               {
                 "id": "links",
@@ -1262,7 +1262,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1271,7 +1271,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1281,7 +1281,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1291,7 +1291,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1301,7 +1301,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1311,7 +1311,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1321,7 +1321,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1331,7 +1331,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1341,7 +1341,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1351,7 +1351,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1361,7 +1361,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1371,7 +1371,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+          "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,

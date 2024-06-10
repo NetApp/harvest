@@ -770,16 +770,6 @@
               {
                 "id": "custom.width",
                 "value": 192
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
-                  }
-                ]
               }
             ]
           },
@@ -882,16 +872,6 @@
               {
                 "id": "custom.width",
                 "value": 198
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
-                  }
-                ]
               }
             ]
           }
@@ -1603,16 +1583,6 @@
               {
                 "id": "displayName",
                 "value": "Cluster"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
-                  }
-                ]
               }
             ]
           },
@@ -1633,6 +1603,28 @@
                     "targetBlank": true,
                     "title": "",
                     "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tenant"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Tenant"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/storagegrid-tenants/storagegrid-tenants?orgId=1&{Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Tenant=${__value.raw}"
                   }
                 ]
               }
@@ -1716,10 +1708,7 @@
               "Value #A": "Space Used",
               "Value #B": "Objects",
               "bucket": "Bucket",
-              "cluster": "Cluster",
-              "datacenter": "Datacenter",
-              "region": "Region",
-              "tenant": "Tenant"
+              "region": "Region"
             }
           }
         }

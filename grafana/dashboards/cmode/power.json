@@ -2698,12 +2698,12 @@
                     "value": "Shelf"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "json-view"
-                  },
-                  {
                     "id": "custom.width",
                     "value": null
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
                   },
                   {
                     "id": "links",

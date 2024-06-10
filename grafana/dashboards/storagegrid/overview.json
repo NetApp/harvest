@@ -149,16 +149,6 @@
               {
                 "id": "displayName",
                 "value": "Cluster"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
-                  }
-                ]
               }
             ]
           }
@@ -324,16 +314,6 @@
               {
                 "id": "displayName",
                 "value": "Cluster"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
-                  }
-                ]
               }
             ]
           }
