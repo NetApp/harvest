@@ -10,10 +10,11 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/tidwall/gjson v1.17.1
 	github.com/zekroTJA/timedmap v1.5.2
-	golang.org/x/exp v0.0.0-20240531132922-fd00a4e0eefc
-	golang.org/x/sys v0.20.0
-	golang.org/x/term v0.20.0
-	golang.org/x/text v0.15.0
+	github.com/zekroTJA/timedmap/v2 v2.0.0
+	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
+	golang.org/x/sys v0.21.0
+	golang.org/x/term v0.21.0
+	golang.org/x/text v0.16.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
