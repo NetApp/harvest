@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715167086280,
+  "iteration": 1718091247060,
   "links": [
     {
       "asDropdown": true,
@@ -1793,7 +1793,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 27
+            "y": 4
           },
           "id": 258,
           "options": {
@@ -1884,7 +1884,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 27
+            "y": 4
           },
           "id": 260,
           "options": {
@@ -1907,7 +1907,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())) ",
+              "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n    )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -1976,7 +1976,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 27
+            "y": 4
           },
           "id": 262,
           "options": {
@@ -2293,5 +2293,5 @@
   "timezone": "",
   "title": "ONTAP: cDOT",
   "uid": "cdot-cdot",
-  "version": 4
+  "version": 5
 }

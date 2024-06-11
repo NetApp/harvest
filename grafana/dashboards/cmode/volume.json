@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715150122091,
+  "iteration": 1718089666537,
   "links": [
     {
       "asDropdown": true,
@@ -214,7 +214,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(topk($TopResources, volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}))",
+          "exemplar": false,
+          "expr": "sum(\n    topk(\n        $TopResources, \n        volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"} \n        +\n        volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n    )\n)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -452,7 +453,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}[3h] @ end())) ",
+          "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}\n)\nand\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}[3h] @ end())\n    )\n)",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -8576,5 +8577,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "cdot-volume",
-  "version": 21
+  "version": 22
 }

@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705302811819,
+  "iteration": 1718090001920,
   "links": [
     {
       "asDropdown": true,
@@ -284,7 +284,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}[3h] @ end())) ",
+          "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}\n)\nand\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}[3h] @ end())\n    )\n)",
           "interval": "",
           "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
@@ -3110,5 +3110,5 @@
   "timezone": "",
   "title": "ONTAP: FlexGroup",
   "uid": "cdot-flexgroup",
-  "version": 54
+  "version": 55
 }
