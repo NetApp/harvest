@@ -424,6 +424,72 @@
                 "value": "ops"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "node"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Node"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -534,10 +600,7 @@
               "Value #A": "Current CPU Ops",
               "Value #B": "Optimal Point Ops",
               "Value #C": "Current CPU Util",
-              "Value #D": "Optimal Point Util",
-              "cluster": "Cluster",
-              "datacenter": "Datacenter",
-              "node": "Node"
+              "Value #D": "Optimal Point Util"
             }
           }
         },
@@ -842,9 +905,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "SVM"
+              "options": "svm"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "SVM"
+              },
               {
                 "id": "links",
                 "value": [
@@ -1048,8 +1115,7 @@
               "Value #D": "Write Ops",
               "Value #E": "Write TPut",
               "Value #F": "Other Ops",
-              "Value #G": "Read TPut",
-              "svm": "SVM"
+              "Value #G": "Read TPut"
             }
           }
         },
@@ -1374,6 +1440,72 @@
                     "value": "color-text"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -1522,10 +1654,7 @@
                   "Value #F": "Rx Errors",
                   "Value #G": "Tx Errors",
                   "Value #H": "Up to Downs",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
                   "nic": "Nic",
-                  "node": "Node",
                   "speed": "Speed"
                 }
               }

@@ -1053,6 +1053,50 @@
                 "value": "string"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1186,9 +1230,7 @@
               "Value #B": "Fan Status",
               "Value #C": "Power Status",
               "bmc_firmware_version": "BMC Firmware Version",
-              "cluster": "Cluster",
               "cpu_firmware_release": "CPU Firmware Version",
-              "datacenter": "Datacenter",
               "healthy": "Healthy",
               "location": "Location",
               "model": "Model",
