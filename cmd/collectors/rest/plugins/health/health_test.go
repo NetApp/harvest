@@ -30,11 +30,6 @@ func TestEndPoll(t *testing.T) {
 	curInstance.SetLabel("label2", "value2")
 	h.data[matName] = curMat
 
-	curMat2 := matrix.New("UUID2", "object2", "identifier2")
-	curInstance2, _ := curMat2.NewInstance("2")
-	curInstance2.SetLabel("label2", "value2")
-	h.data["testMatrix2"] = curMat
-
 	h.generateResolutionMetrics()
 
 	// Check that resolutionData has the expected values
