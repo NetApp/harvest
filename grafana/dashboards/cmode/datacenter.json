@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718093955187,
+  "iteration": 1718008746540,
   "links": [
     {
       "asDropdown": true,
@@ -1039,7 +1039,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 2
+            "y": 36
           },
           "id": 480,
           "options": {
@@ -1266,7 +1266,7 @@
             "h": 7,
             "w": 16,
             "x": 8,
-            "y": 2
+            "y": 36
           },
           "id": 528,
           "interval": "",
@@ -1377,7 +1377,7 @@
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 37
           },
           "id": 619,
           "options": {
@@ -1412,7 +1412,7 @@
             "h": 16,
             "w": 8,
             "x": 0,
-            "y": 21
+            "y": 41
           },
           "id": 621,
           "options": {
@@ -1442,7 +1442,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+              "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Broken Disk",
@@ -1450,7 +1450,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+              "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1459,7 +1459,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+              "expr": "count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1468,7 +1468,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0))",
+              "expr": "(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0))",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1477,7 +1477,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+              "expr": "count(health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1486,7 +1486,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+              "expr": "count(health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1495,7 +1495,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"}) or vector(0)",
+              "expr": "count(environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1563,7 +1563,7 @@
             "h": 16,
             "w": 8,
             "x": 8,
-            "y": 21
+            "y": 41
           },
           "id": 623,
           "options": {
@@ -1593,7 +1593,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+              "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Unassigned Disk",
@@ -1601,7 +1601,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+              "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1619,7 +1619,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_lif_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+              "expr": "count(health_lif_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1628,7 +1628,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}) or vector(0)",
+              "expr": "count(health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1637,7 +1637,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"}) or vector(0)",
+              "expr": "count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1716,7 +1716,7 @@
             "h": 16,
             "w": 8,
             "x": 16,
-            "y": 21
+            "y": 41
           },
           "id": 625,
           "options": {
@@ -4126,5 +4126,5 @@
   "timezone": "",
   "title": "ONTAP: Datacenter",
   "uid": "cdot-datacenter",
-  "version": 10
+  "version": 2
 }

@@ -40,6 +40,8 @@ type Health struct {
 	client         *rest.Client
 	data           map[string]*matrix.Matrix
 	lastFilterTime int64
+	previousData   map[string]*matrix.Matrix
+	resolutionData map[string]*matrix.Matrix
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -58,7 +60,7 @@ func (h *Health) Init() error {
 		return err
 	}
 
-	if err := h.initAllMatrix(); err != nil {
+	if err := h.InitAllMatrix(); err != nil {
 		return err
 	}
 
@@ -70,26 +72,30 @@ func (h *Health) Init() error {
 	return h.client.Init(5)
 }
 
-func (h *Health) initAllMatrix() error {
+func (h *Health) InitAllMatrix() error {
 	h.data = make(map[string]*matrix.Matrix)
+	h.resolutionData = make(map[string]*matrix.Matrix)
 	mats := []string{diskHealthMatrix, shelfHealthMatrix, supportHealthMatrix, nodeHealthMatrix,
 		networkEthernetPortHealthMatrix, networkFCPortHealthMatrix, lifHealthMatrix,
 		volumeRansomwareHealthMatrix, volumeMoveHealthMatrix, licenseHealthMatrix, haHealthMatrix}
 	for _, m := range mats {
-		if err := h.initMatrix(m); err != nil {
+		if err := h.initMatrix(m, "", h.data); err != nil {
+			return err
+		}
+		if err := h.initMatrix(m, "Resolution", h.resolutionData); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (h *Health) initMatrix(name string) error {
-	h.data[name] = matrix.New(h.Parent+name, name, name)
+func (h *Health) initMatrix(name string, prefix string, inputMat map[string]*matrix.Matrix) error {
+	inputMat[name] = matrix.New(h.Parent+name+prefix, name, name)
 	for _, v1 := range h.data {
 		v1.SetExportOptions(matrix.DefaultExportOptions())
 	}
 	for _, k := range metrics {
-		err := matrix.CreateMetric(k, h.data[name])
+		err := matrix.CreateMetric(k, inputMat[name])
 		if err != nil {
 			h.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
 			return err
@@ -124,7 +130,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	// Purge and reset data
 	// remove all metrics as analytics label may change over time
-	err = h.initAllMatrix()
+	err = h.InitAllMatrix()
 	if err != nil {
 		h.Logger.Warn().Err(err).Msg("error while init matrix")
 		return nil, nil, err
@@ -132,6 +138,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	for k := range h.data {
 		// Set all global labels if already not exist
 		h.data[k].SetGlobalLabels(data.GetGlobalLabels())
+		h.resolutionData[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
 	h.collectDiskAlerts()
@@ -146,10 +153,23 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	h.collectVolumeMoveAlerts()
 	h.collectLicenseAlerts()
 
+	h.generateResolutionMetrics()
+
 	result := make([]*matrix.Matrix, 0, len(h.data))
 
 	for _, value := range h.data {
 		result = append(result, value)
+	}
+
+	resolutionInstancesCount := 0
+	for _, value := range h.resolutionData {
+		result = append(result, value)
+		resolutionInstancesCount += len(value.GetInstances())
+	}
+
+	if resolutionInstancesCount > 0 {
+		h.Logger.Info().Int("instances", resolutionInstancesCount).
+			Msg("Collected Resolution metrics")
 	}
 	return result, h.client.Metadata, nil
 }
@@ -183,7 +203,7 @@ func (h *Health) collectLicenseAlerts() {
 		instance.SetLabel("state", state)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -217,7 +237,7 @@ func (h *Health) collectVolumeMoveAlerts() {
 		instance.SetLabel("volume", volume)
 		instance.SetLabel(severityLabel, string(warning))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -269,7 +289,7 @@ func (h *Health) collectVolumeRansomwareAlerts() {
 		instance.SetLabel("volume", volume)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -302,7 +322,7 @@ func (h *Health) collectNetworkInterfacesAlerts() {
 		instance.SetLabel("lif", lif)
 		instance.SetLabel(severityLabel, string(warning))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -335,7 +355,7 @@ func (h *Health) collectNetworkFCPortAlerts() {
 		instance.SetLabel("port", port)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -370,7 +390,7 @@ func (h *Health) collectNetworkEthernetPortAlerts() {
 		instance.SetLabel("type", portType)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -400,7 +420,7 @@ func (h *Health) collectNodeAlerts() {
 		instance.SetLabel("healthy", "false")
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -440,7 +460,7 @@ func (h *Health) collectHAAlerts() {
 		instance.SetLabel("partner_state", partnerState)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -480,7 +500,7 @@ func (h *Health) collectShelfAlerts() {
 				instance.SetLabel(severityLabel, string(warning))
 			}
 
-			h.setAlertMetric(mat, instance)
+			h.setAlertMetric(mat, instance, 1)
 		}
 	}
 }
@@ -528,7 +548,7 @@ func (h *Health) collectSupportAlerts() {
 		instance.SetLabel("correctiveAction", correctiveAction)
 		instance.SetLabel(severityLabel, string(warning))
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 	// update lastFilterTime to current cluster time
 	h.lastFilterTime = toTime
@@ -564,7 +584,7 @@ func (h *Health) collectDiskAlerts() {
 			instance.SetLabel(severityLabel, string(warning))
 		}
 
-		h.setAlertMetric(mat, instance)
+		h.setAlertMetric(mat, instance, 1)
 	}
 }
 
@@ -711,7 +731,7 @@ func (h *Health) getTimeStampFilter(clusterTime time.Time) string {
 	return fmt.Sprintf("time=>=%d", fromTime)
 }
 
-func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) {
+func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
 	var err error
 	m := mat.GetMetric("alerts")
 	if m == nil {
@@ -720,7 +740,44 @@ func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) {
 			return
 		}
 	}
-	if err = m.SetValueFloat64(instance, 1); err != nil {
+	if err = m.SetValueFloat64(instance, value); err != nil {
 		h.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
 	}
+}
+
+func (h *Health) generateResolutionMetrics() {
+	for prevKey, prevMat := range h.previousData {
+		curMat, exists := h.data[prevKey]
+		if !exists {
+			continue
+		}
+
+		prevInstances := prevMat.GetInstanceKeys()
+		curInstances := make(map[string]struct{})
+		for _, instanceKey := range curMat.GetInstanceKeys() {
+			curInstances[instanceKey] = struct{}{}
+		}
+
+		for _, pInstanceKey := range prevInstances {
+			if _, found := curInstances[pInstanceKey]; found {
+				continue
+			}
+
+			rMat := h.resolutionData[prevKey]
+			if rMat == nil {
+				h.Logger.Warn().Str("key", prevKey).Msg("empty resolution Matrix")
+				continue
+			}
+
+			rInstance, err := rMat.NewInstance(pInstanceKey)
+			if err != nil {
+				h.Logger.Warn().Str("key", pInstanceKey).Msg("error while creating instance")
+				continue
+			}
+
+			rInstance.SetLabels(prevMat.GetInstance(pInstanceKey).GetLabels())
+			h.setAlertMetric(rMat, rInstance, 0)
+		}
+	}
+	h.previousData = h.data
 }
