@@ -126,6 +126,7 @@ type Poller struct {
 	client          *http.Client
 	auth            *auth.Credentials
 	hasPromExporter bool
+	maxRssBytes     uint64
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -382,7 +383,7 @@ func (p *Poller) firstAutoSupport() {
 	if p.collectors == nil {
 		return
 	}
-	if _, err := collector.BuildAndWriteAutoSupport(p.collectors, p.metadataTarget, p.name); err != nil {
+	if _, err := collector.BuildAndWriteAutoSupport(p.collectors, p.metadataTarget, p.name, p.maxRssBytes); err != nil {
 		logger.Error().Err(err).
 			Str("poller", p.name).
 			Msg("First autosupport failed.")
@@ -391,7 +392,7 @@ func (p *Poller) firstAutoSupport() {
 
 func (p *Poller) startAsup() (map[string]*matrix.Matrix, error) {
 	if p.collectors != nil {
-		if err := collector.SendAutosupport(p.collectors, p.metadataTarget, p.name); err != nil {
+		if err := collector.SendAutosupport(p.collectors, p.metadataTarget, p.name, p.maxRssBytes); err != nil {
 			logger.Error().Err(err).
 				Str("poller", p.name).
 				Msg("Start autosupport failed.")
@@ -464,7 +465,6 @@ func (p *Poller) Run() {
 			p.addMemoryMetadata()
 
 			// add number of goroutines to metadata
-			// @TODO: cleanup, does not belong to "status"
 			_ = p.metadataTarget.LazySetValueInt64("goroutines", "host", int64(runtime.NumGoroutine()))
 
 			upc := 0 // up collectors
@@ -1269,6 +1269,9 @@ func (p *Poller) addMemoryMetadata() {
 
 	memPercentage := float64(memInfo.RSS) / float64(memory.Total) * 100
 	_ = p.status.LazySetValueFloat64("memory_percent", "host", memPercentage)
+
+	// Update maxRssBytes
+	p.maxRssBytes = max(p.maxRssBytes, memInfo.RSS)
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
