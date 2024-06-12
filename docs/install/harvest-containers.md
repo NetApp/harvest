@@ -55,7 +55,7 @@ docker run --rm \
 Bring everything up :rocket:
 
 ```
-docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+docker-compose -f harvest-compose.yml up -d --remove-orphans
 ```
 
 
@@ -112,5 +112,5 @@ To upgrade Harvest:
 4. Restart your containers using the following:
 
    ```
-   docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+   docker-compose -f harvest-compose.yml up -d --remove-orphans
    ```
