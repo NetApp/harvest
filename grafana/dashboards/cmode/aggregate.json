@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715834742006,
+  "iteration": 1718091784876,
   "links": [
     {
       "asDropdown": true,
@@ -5215,7 +5215,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 15
+            "y": 60
           },
           "id": 813,
           "options": {
@@ -5306,7 +5306,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 15
+            "y": 60
           },
           "id": 815,
           "options": {
@@ -5329,7 +5329,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end())) ",
+              "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\n)\nand\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end())\n    )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -5398,7 +5398,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 15
+            "y": 60
           },
           "id": 817,
           "options": {
@@ -5489,7 +5489,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 23
+            "y": 68
           },
           "id": 88,
           "options": {
@@ -5578,7 +5578,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 23
+            "y": 68
           },
           "id": 89,
           "options": {
@@ -5669,7 +5669,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 23
+            "y": 68
           },
           "id": 90,
           "options": {
@@ -5758,7 +5758,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 32
+            "y": 77
           },
           "id": 91,
           "options": {
@@ -5847,7 +5847,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 32
+            "y": 77
           },
           "id": 92,
           "options": {
@@ -5937,7 +5937,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 32
+            "y": 77
           },
           "id": 93,
           "options": {
@@ -6208,5 +6208,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "cdot-aggregate",
-  "version": 11
+  "version": 12
 }

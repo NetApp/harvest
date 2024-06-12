@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715581200639,
+  "iteration": 1718089133520,
   "links": [
     {
       "asDropdown": true,
@@ -658,7 +658,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+          "expr": "sum(node_volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) by (node) + sum(node_volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) by(node)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1053,6 +1053,50 @@
                 "value": "string"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1186,9 +1230,7 @@
               "Value #B": "Fan Status",
               "Value #C": "Power Status",
               "bmc_firmware_version": "BMC Firmware Version",
-              "cluster": "Cluster",
               "cpu_firmware_release": "CPU Firmware Version",
-              "datacenter": "Datacenter",
               "healthy": "Healthy",
               "location": "Location",
               "model": "Model",
@@ -1269,7 +1311,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 22
+            "y": 30
           },
           "id": 133,
           "options": {
@@ -1360,7 +1402,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 22
+            "y": 30
           },
           "id": 135,
           "options": {
@@ -1383,7 +1425,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h] @ end())) ",
+              "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}\n)\nand\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h] @ end())\n    )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -1452,7 +1494,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 22
+            "y": 30
           },
           "id": 137,
           "options": {
@@ -5947,5 +5989,5 @@
   "timezone": "",
   "title": "ONTAP: Node",
   "uid": "cdot-node",
-  "version": 14
+  "version": 15
 }

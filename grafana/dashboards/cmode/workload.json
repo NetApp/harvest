@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1717668393226,
+  "iteration": 1715178744330,
   "links": [
     {
       "asDropdown": true,
@@ -1010,493 +1010,11 @@
         "x": 0,
         "y": 58
       },
-      "id": 245,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.\n\n**Important Note:** This panel only covers policies that are shared across workloads.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 59
-          },
-          "id": 242,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group) (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)\nand\ntopk(\n  $TopResources,\n  sum by (cluster, datacenter, policy_group) (\n    (\n      avg_over_time(\n        qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n      )\n      / on(datacenter, cluster, policy_group)\n      group_left\n      avg_over_time(\n        (\n          label_replace(\n            qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n          * on(datacenter, cluster, policy_group)\n          group_left(capacity_shared)\n          label_replace(\n            qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n        )[3h:] @ end()\n      )\n    )\n  )\n)",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{cluster}} - {{policy_group}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%)",
-          "transformations": [],
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.\n\n**Important Note:** This panel specifically covers policies that are shared across workloads.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 59
-          },
-          "id": 243,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group) (\n    (\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100 / (1000 * 1000)\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)\nand\ntopk(\n  $TopResources,\n  sum by (cluster, datacenter, policy_group) (\n    (\n      avg_over_time(\n        qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n      )\n      / on(datacenter, cluster, policy_group)\n      group_left\n      avg_over_time(\n        (\n          label_replace(\n            qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n          * on(datacenter, cluster, policy_group)\n          group_left(capacity_shared)\n          label_replace(\n            qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n        )[3h:] @ end()\n      )\n    )\n  )\n)",
-              "interval": "",
-              "legendFormat": "{{cluster}} - {{policy_group}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%)",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.\n\n**Important Note:** This panel only covers policies that are shared across workloads.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "QOS Used %"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  },
-                  {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
-                  },
-                  {
-                    "id": "max",
-                    "value": 100
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
-                    "id": "min",
-                    "value": 0
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Max IOPS"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "iops"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 69
-          },
-          "id": 247,
-          "options": {
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "QOS Used %"
-              }
-            ]
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group, object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared,object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)",
-              "format": "table",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Fixed QoS Shared Policy IOPs Utilization (%)",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "cluster",
-                    "datacenter",
-                    "max_throughput_iops",
-                    "object_count",
-                    "policy_group",
-                    "Value"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "Value": 3,
-                  "cluster": 1,
-                  "datacenter": 0,
-                  "max_throughput_iops": 5,
-                  "max_throughput_mbps": 6,
-                  "object_count": 4,
-                  "policy_group": 2
-                },
-                "renameByName": {
-                  "Value": "QOS Used %",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
-                  "max_throughput_iops": "Max IOPS",
-                  "object_count": "Num Workloads",
-                  "policy_group": "Policy"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.\n\n**Important Note:** This panel specifically covers policies that are shared across workloads.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "QOS Used %"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  },
-                  {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
-                  },
-                  {
-                    "id": "max",
-                    "value": 100
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
-                    "id": "min",
-                    "value": 0
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Max Throughput"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "MBs"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 78
-          },
-          "id": 249,
-          "options": {
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "QOS Used %"
-              }
-            ]
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group,object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) (\n    (\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100 / (1000 * 1000)\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared,object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)\n",
-              "format": "table",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Fixed QoS Shared Policy Bandwidth Utilization (%)",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "cluster",
-                    "datacenter",
-                    "max_throughput_mbps",
-                    "object_count",
-                    "policy_group",
-                    "Value"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "object_count": false
-                },
-                "indexByName": {
-                  "Value": 3,
-                  "cluster": 1,
-                  "datacenter": 0,
-                  "max_throughput_mbps": 5,
-                  "object_count": 4,
-                  "policy_group": 2
-                },
-                "renameByName": {
-                  "Value": "QOS Used %",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
-                  "max_throughput_mbps": "Max Throughput",
-                  "object_count": "Num Workloads",
-                  "policy_group": "Policy"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        }
-      ],
-      "title": "Fixed QoS Shared Policy Utilization",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 59
-      },
       "id": 217,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
+          "description": "The Fixed QoS Utilized IOPs (%) panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1555,7 +1073,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 60
+            "y": 59
           },
           "id": 219,
           "options": {
@@ -1578,17 +1096,17 @@
               "expr": "clamp_max(\n  (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}\n      / on(datacenter,cluster,policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    ) * 100\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,policy_group)\n    group_left\n    avg_over_time(\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )[3h:] @ end()\n    )\n  )\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Fixed QoS Workload IOPs Utilization (%)",
+          "title": "Top $TopResources Fixed QoS Utilized IOPs (%)",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
+          "description": "The \"Fixed QoS Bandwidth Utilization (%)\" panel represents the proportion of the allocated bandwidth that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1647,7 +1165,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 60
+            "y": 59
           },
           "id": 221,
           "options": {
@@ -1669,16 +1187,16 @@
               "exemplar": false,
               "expr": "clamp_max(\n  (\n    (\n      (\n        qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100 / (1000 * 1000)\n      )\n      / on(datacenter,cluster,policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,policy_group)\n    group_left\n    avg_over_time(\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )[3h:] @ end()\n    )\n  )\n)",
               "interval": "",
-              "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Fixed QoS Workload Bandwidth Utilization (%)",
+          "title": "Top $TopResources Fixed QoS Bandwidth Utilization (%)",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
+          "description": "The Fixed QoS Utilized IOPs (%) panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1724,12 +1242,12 @@
                     "value": 100
                   },
                   {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
                     "id": "min",
                     "value": 0
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
                   }
                 ]
               },
@@ -1760,34 +1278,130 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Shared"
+                  "options": "cluster"
                 },
                 "properties": [
                   {
-                    "id": "mappings",
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
                     "value": [
                       {
-                        "options": {
-                          "false": {
-                            "index": 1,
-                            "text": "No"
-                          },
-                          "true": {
-                            "index": 0,
-                            "text": "Yes"
-                          }
-                        },
-                        "type": "value"
-                      },
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
                       {
-                        "options": {
-                          "match": "empty",
-                          "result": {
-                            "index": 2,
-                            "text": "No"
-                          }
-                        },
-                        "type": "special"
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${Volume:queryparam}&${__url_time_range}&var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Workload=${__value.raw}"
                       }
                     ]
                   }
@@ -1799,7 +1413,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 70
+            "y": 69
           },
           "id": 223,
           "options": {
@@ -1815,7 +1429,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1823,7 +1437,7 @@
               "refId": "A"
             }
           ],
-          "title": "Fixed QoS Workload IOPs Utilization (%)",
+          "title": "Fixed QoS Utilized IOPs (%)",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -1832,14 +1446,14 @@
                   "names": [
                     "cluster",
                     "datacenter",
+                    "file",
                     "lun",
                     "max_throughput_iops",
                     "policy_group",
                     "svm",
                     "volume",
                     "workload",
-                    "Value",
-                    "capacity_shared"
+                    "Value"
                   ]
                 }
               }
@@ -1882,31 +1496,24 @@
                   "Value / max_throughput_iops": true
                 },
                 "indexByName": {
-                  "QOS Used %": 6,
+                  "QOS Used %": 7,
                   "Value": 9,
                   "Value / max_throughput_iops": 11,
-                  "capacity_shared": 8,
                   "cluster": 1,
                   "datacenter": 0,
-                  "lun": 4,
+                  "file": 4,
+                  "lun": 5,
                   "max_throughput_iops": 10,
-                  "policy_group": 7,
+                  "policy_group": 8,
                   "svm": 2,
                   "volume": 3,
-                  "workload": 5
+                  "workload": 6
                 },
                 "renameByName": {
                   "Value": "IOPs",
-                  "capacity_shared": "Shared",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
                   "file": "File",
-                  "lun": "Lun",
                   "max_throughput_iops": "Max IOPS",
-                  "policy_group": "Policy",
-                  "svm": "SVM",
-                  "volume": "Volume",
-                  "workload": "Workload"
+                  "policy_group": "Policy"
                 }
               }
             }
@@ -1915,7 +1522,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
+          "description": "The Fixed QoS Bandwidth Utilization (%) represents the proportion of the allocated bandwidth that is currently being used, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1961,12 +1568,12 @@
                     "value": 100
                   },
                   {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
                     "id": "min",
                     "value": 0
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
                   }
                 ]
               },
@@ -1997,34 +1604,130 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Shared"
+                  "options": "cluster"
                 },
                 "properties": [
                   {
-                    "id": "mappings",
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
                     "value": [
                       {
-                        "options": {
-                          "false": {
-                            "index": 1,
-                            "text": "No"
-                          },
-                          "true": {
-                            "index": 0,
-                            "text": "Yes"
-                          }
-                        },
-                        "type": "value"
-                      },
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
                       {
-                        "options": {
-                          "match": "empty",
-                          "result": {
-                            "index": 2,
-                            "text": "No"
-                          }
-                        },
-                        "type": "special"
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${Volume:queryparam}&${__url_time_range}&var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Workload=${__value.raw}"
                       }
                     ]
                   }
@@ -2036,7 +1739,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 79
+            "y": 78
           },
           "id": 224,
           "options": {
@@ -2052,7 +1755,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2060,7 +1763,7 @@
               "refId": "A"
             }
           ],
-          "title": "Fixed QoS Workload Bandwidth Utilization (%)",
+          "title": "Fixed QoS Bandwidth Utilization (%)",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -2069,14 +1772,14 @@
                   "names": [
                     "cluster",
                     "datacenter",
+                    "file",
                     "lun",
                     "max_throughput_mbps",
                     "policy_group",
                     "svm",
                     "volume",
                     "workload",
-                    "Value",
-                    "capacity_shared"
+                    "Value"
                   ]
                 }
               }
@@ -2141,33 +1844,25 @@
                   "Value / max_throughput_mbps": true
                 },
                 "indexByName": {
-                  "MValue": 11,
-                  "MValue / max_throughput_mbps": 12,
-                  "QOS Used %": 6,
+                  "QOS Used %": 7,
                   "Value": 9,
-                  "capacity_shared": 8,
+                  "Value / max_throughput_iops": 11,
                   "cluster": 1,
                   "datacenter": 0,
-                  "lun": 4,
-                  "max_throughput_mbps": 10,
-                  "policy_group": 7,
+                  "file": 4,
+                  "lun": 5,
+                  "max_throughput_iops": 10,
+                  "policy_group": 8,
                   "svm": 2,
                   "volume": 3,
-                  "workload": 5
+                  "workload": 6
                 },
                 "renameByName": {
                   "Value": "Throughput",
-                  "capacity_shared": "Shared",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
                   "file": "File",
-                  "lun": "Lun",
                   "max_throughput_iops": "Max IOPS",
                   "max_throughput_mbps": "Max Throughput",
-                  "policy_group": "Policy",
-                  "svm": "SVM",
-                  "volume": "Volume",
-                  "workload": "Workload"
+                  "policy_group": "Policy"
                 }
               }
             }
@@ -2175,7 +1870,7 @@
           "type": "table"
         }
       ],
-      "title": "Fixed QoS Workload Utilization",
+      "title": "QOS Fixed Utilized %",
       "type": "row"
     },
     {
@@ -2185,13 +1880,13 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 59
       },
       "id": 226,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2250,7 +1945,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 61
+            "y": 60
           },
           "id": 228,
           "options": {
@@ -2273,17 +1968,17 @@
               "expr": "clamp_max(\n  (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    qos_workload_max_throughput_iops{\n      datacenter=~\"$Datacenter\",\n      cluster=~\"$Cluster\",\n      workload=~\"$Workload\",\n      is_adaptive=\"Yes\"\n    }\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    avg_over_time(\n      qos_workload_max_throughput_iops{\n        datacenter=~\"$Datacenter\",\n        cluster=~\"$Cluster\",\n        workload=~\"$Workload\",\n        is_adaptive=\"Yes\"\n      }[3h] @ end()\n    )\n  )\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Adaptive QoS Workload IOPs Utilization (%)",
+          "title": "Top $TopResources Adaptive QoS Utilized IOPs (%)",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
+          "description": "The Adaptive QoS Utilized Throughput (%) panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2342,7 +2037,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 61
+            "y": 60
           },
           "id": 229,
           "options": {
@@ -2365,17 +2060,17 @@
               "expr": "clamp_max(\n  (\n    (\n      (qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100) / (1000*1000)\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    qos_workload_max_throughput_mbps{\n      datacenter=~\"$Datacenter\",\n      cluster=~\"$Cluster\",\n      workload=~\"$Workload\",\n      is_adaptive=\"Yes\"\n    }\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    avg_over_time(\n      qos_workload_max_throughput_mbps{\n        datacenter=~\"$Datacenter\",\n        cluster=~\"$Cluster\",\n        workload=~\"$Workload\",\n        is_adaptive=\"Yes\"\n      }[3h] @ end()\n    )\n  )\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
+              "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%)",
+          "title": "Top $TopResources Adaptive QoS Bandwidth Utilization (%)",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "description": "The Adaptive QoS Utilized IOPs (%) panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2421,12 +2116,12 @@
                     "value": 100
                   },
                   {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
                     "id": "min",
                     "value": 0
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
                   }
                 ]
               },
@@ -2453,6 +2148,138 @@
                     "value": "iops"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${Volume:queryparam}&${__url_time_range}&var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Workload=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -2460,7 +2287,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 71
+            "y": 70
           },
           "id": 239,
           "options": {
@@ -2504,7 +2331,7 @@
               "refId": "C"
             }
           ],
-          "title": "Adaptive QoS Workload IOPs Utilization (%)",
+          "title": "Adaptive QoS Utilized IOPs (%)",
           "transformations": [
             {
               "id": "seriesToColumns",
@@ -2586,14 +2413,8 @@
                   "Value #A": "Used %",
                   "Value #B": "IOPs",
                   "Value #C": "Max IOPs",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
                   "file": "File",
-                  "lun": "Lun",
-                  "policy_group": "Policy",
-                  "svm": "SVM",
-                  "volume": "Volume",
-                  "workload": "Workload"
+                  "policy_group": "Policy"
                 }
               }
             }
@@ -2602,7 +2423,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
+          "description": "The Adaptive QoS Utilized Throughput (%) panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2644,16 +2465,16 @@
                     "value": 100
                   },
                   {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
                     "id": "decimals",
                     "value": 2
                   },
                   {
                     "id": "custom.displayMode",
                     "value": "gradient-gauge"
-                  },
-                  {
-                    "id": "min",
-                    "value": 0
                   }
                 ]
               },
@@ -2680,6 +2501,138 @@
                     "value": "MBs"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${Volume:queryparam}&${__url_time_range}&var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Workload=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -2687,7 +2640,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 80
+            "y": 79
           },
           "id": 241,
           "options": {
@@ -2731,7 +2684,7 @@
               "refId": "C"
             }
           ],
-          "title": "Adaptive QoS Workload Bandwidth Utilization (%)",
+          "title": "Adaptive QoS Bandwidth Utilization (%)",
           "transformations": [
             {
               "id": "seriesToColumns",
@@ -2812,14 +2765,8 @@
                   "Value #A": "Used %",
                   "Value #B": "Throughput",
                   "Value #C": "Max Throughput",
-                  "cluster": "Cluster",
-                  "datacenter": "Datacenter",
                   "file": "File",
-                  "lun": "Lun",
-                  "policy_group": "Policy",
-                  "svm": "SVM",
-                  "volume": "Volume",
-                  "workload": "Workload"
+                  "policy_group": "Policy"
                 }
               }
             }
@@ -2827,7 +2774,7 @@
           "type": "table"
         }
       ],
-      "title": "Adaptive QoS Workload Utilization",
+      "title": "QOS Adaptive Utilized%",
       "type": "row"
     },
     {
@@ -2837,7 +2784,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 60
       },
       "id": 175,
       "panels": [
@@ -3742,7 +3689,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 61
       },
       "id": 186,
       "panels": [
@@ -5308,7 +5255,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 62
       },
       "id": 127,
       "panels": [
@@ -6996,7 +6943,7 @@
         "type": "custom"
       },
       {
-        "allValue": ".*",
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
@@ -7134,5 +7081,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "cdot-workload",
-  "version": 10
+  "version": 9
 }

@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715071877072,
+  "iteration": 1718090119984,
   "links": [
     {
       "asDropdown": true,
@@ -710,7 +710,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1327,7 +1327,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -2768,7 +2768,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 38
       },
       "id": 97,
       "panels": [
@@ -2832,7 +2832,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 37
+            "y": 39
           },
           "id": 106,
           "options": {
@@ -2924,7 +2924,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 37
+            "y": 39
           },
           "id": 107,
           "options": {
@@ -3016,7 +3016,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 37
+            "y": 39
           },
           "id": 108,
           "options": {
@@ -3109,7 +3109,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 45
+            "y": 47
           },
           "id": 136,
           "options": {
@@ -3203,7 +3203,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 45
+            "y": 47
           },
           "id": 180,
           "options": {
@@ -3297,7 +3297,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 45
+            "y": 47
           },
           "id": 2,
           "options": {
@@ -3391,7 +3391,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 54
+            "y": 56
           },
           "id": 241,
           "options": {
@@ -3434,7 +3434,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 39
       },
       "id": 184,
       "panels": [
@@ -4121,7 +4121,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 40
       },
       "id": 214,
       "panels": [
@@ -4182,7 +4182,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 39
+            "y": 41
           },
           "id": 216,
           "options": {
@@ -4268,7 +4268,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 39
+            "y": 41
           },
           "id": 218,
           "options": {
@@ -4357,7 +4357,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 39
+            "y": 41
           },
           "id": 219,
           "options": {
@@ -4611,5 +4611,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "cdot-cluster",
-  "version": 4
+  "version": 5
 }
