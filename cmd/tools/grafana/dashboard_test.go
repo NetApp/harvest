@@ -1625,7 +1625,17 @@ func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
 }
 
 var linkPath = regexp.MustCompile(`/d/(.*?)/`)
-var supportedLinkedObjects = []string{"cluster", "datacenter", "aggr", "svm", "volume", "node", "home_node"}
+var supportedLinkedObjects = []string{"cluster", "datacenter", "aggr", "svm", "volume", "node", "qtree", "home_node", "tenant"}
+var exceptionPathPanelObject = []string{
+	"cmode/s3ObjectStorage.json-Bucket Overview-volume",                        // bucket volumes starts with fg_oss_xx and volume dashboard don't support them
+	"storagegrid/fabricpool.json-Aggregates-cluster",                           // There is no datacenter var to be passed for linking to cluster dashboard
+	"storagegrid/fabricpool.json-Aggregates-aggr",                              // There is no datacenter var to be passed for linking to aggregate dashboard
+	"storagegrid/fabricpool.json-Buckets-cluster",                              // There is no storagegrid cluster dashboard available
+	"storagegrid/overview.json-Data space usage breakdown-cluster",             // There is no storagegrid cluster dashboard available
+	"storagegrid/overview.json-Metadata allowed space usage breakdown-cluster", // There is no storagegrid cluster dashboard available
+	"storagegrid/tenant.json-Tenant Quota-cluster",                             // There is no storagegrid cluster dashboard available
+	"storagegrid/tenant.json-Buckets-cluster",                                  // There is no storagegrid cluster dashboard available
+}
 
 func TestLinks(t *testing.T) {
 	hasLinks := map[string][]string{}
@@ -1705,16 +1715,10 @@ func checkLinks(t *testing.T, path string, data []byte, hasLinks map[string][]st
 func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map[string][]string) {
 	linkFound := false
 
-	// Testing only for these dashboards now, it will be covered for all later
-	supportedDashboards := []string{"cmode/aggregate.json", "cmode/cdot.json",
-		"cmode/cluster.json", "comde/compliance.json", "cmode/data_protection_snapshot.json", "cmode/datacenter.json",
-		"cmode/disk.json", "cmode/external_service_op.json", "cmode/fsa.json", "cmode/headroom.json",
-		"cmode/health.json", "cmode/lun.json", "cmode/metadata.json", "cmode/svm.json", "cmode/volume.json",
-	}
-
-	if slices.Contains(supportedDashboards, path) && value.Get("type").String() == "table" {
+	if value.Get("type").String() == "table" {
 		value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
 			if name := anOverride.Get("matcher.options").String(); slices.Contains(supportedLinkedObjects, name) {
+				title := value.Get("title").String()
 				linkFound = false
 				anOverride.Get("properties").ForEach(func(_, propValue gjson.Result) bool {
 					propValue.Get("value").ForEach(func(_, value gjson.Result) bool {
@@ -1727,8 +1731,8 @@ func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map
 					})
 					return true
 				})
-				if !linkFound {
-					t.Errorf(`dashboard=%s panel="%s" column=%s is missing the links`, path, value.Get("title").String(), name)
+				if !linkFound && !slices.Contains(exceptionPathPanelObject, path+"-"+title+"-"+name) {
+					t.Errorf(`dashboard=%s panel="%s" column=%s is missing the links`, path, title, name)
 				}
 			}
 			return true

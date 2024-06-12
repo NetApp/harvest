@@ -732,6 +732,116 @@
                     "value": "percent"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -799,25 +909,30 @@
               "id": "organize",
               "options": {
                 "excludeByName": {
+                  "Time": true,
                   "Time 1": true,
                   "Time 2": true,
                   "Time 3": true,
                   "Time 4": true,
                   "Value #A": true,
+                  "__name__": false,
                   "__name__ 1": true,
                   "__name__ 2": true,
                   "__name__ 3": true,
+                  "__name__ 4": true,
                   "cluster 2": true,
                   "cluster 3": true,
                   "cluster 4": true,
                   "datacenter 2": true,
                   "datacenter 3": true,
                   "datacenter 4": true,
+                  "instance": true,
                   "instance 1": true,
                   "instance 2": true,
                   "instance 3": true,
                   "instance 4": true,
                   "is_read_only": true,
+                  "job": true,
                   "job 1": true,
                   "job 2": true,
                   "job 3": true,
@@ -834,67 +949,68 @@
                   "volume 4": true
                 },
                 "indexByName": {
-                  "Time 1": 1,
-                  "Time 2": 20,
-                  "Time 3": 29,
-                  "Time 4": 38,
-                  "Value #A": 19,
-                  "Value #B": 14,
-                  "Value #C": 15,
-                  "Value #D": 16,
-                  "__name__ 1": 2,
-                  "__name__ 2": 21,
-                  "__name__ 3": 30,
-                  "cluster 1": 4,
-                  "cluster 2": 22,
-                  "cluster 3": 31,
-                  "cluster 4": 39,
-                  "datacenter 1": 3,
-                  "datacenter 2": 23,
-                  "datacenter 3": 32,
-                  "datacenter 4": 40,
-                  "instance 1": 5,
-                  "instance 2": 24,
-                  "instance 3": 33,
-                  "instance 4": 41,
-                  "is_read_only": 6,
-                  "job 1": 7,
-                  "job 2": 25,
-                  "job 3": 34,
-                  "job 4": 42,
-                  "node": 8,
-                  "nsid": 13,
-                  "os_type": 18,
-                  "path 1": 9,
-                  "path 2": 26,
-                  "path 3": 35,
-                  "path 4": 43,
-                  "state": 10,
-                  "subsystem": 11,
-                  "svm 1": 12,
-                  "svm 2": 27,
-                  "svm 3": 36,
-                  "svm 4": 44,
-                  "uuid": 0,
-                  "volume 1": 17,
-                  "volume 2": 28,
-                  "volume 3": 37,
-                  "volume 4": 45
+                  "Time": 43,
+                  "Time 2": 16,
+                  "Time 3": 25,
+                  "Time 4": 35,
+                  "Value #A": 14,
+                  "Value #B": 9,
+                  "Value #C": 10,
+                  "Value #D": 11,
+                  "__name__": 13,
+                  "__name__ 2": 17,
+                  "__name__ 3": 26,
+                  "__name__ 4": 46,
+                  "cluster": 1,
+                  "cluster 2": 18,
+                  "cluster 3": 27,
+                  "cluster 4": 36,
+                  "datacenter": 0,
+                  "datacenter 2": 19,
+                  "datacenter 3": 28,
+                  "datacenter 4": 37,
+                  "instance": 44,
+                  "instance 2": 20,
+                  "instance 3": 29,
+                  "instance 4": 38,
+                  "is_read_only": 30,
+                  "job": 45,
+                  "job 2": 21,
+                  "job 3": 31,
+                  "job 4": 39,
+                  "node": 2,
+                  "nsid": 8,
+                  "os_type": 12,
+                  "path": 3,
+                  "path 2": 22,
+                  "path 3": 32,
+                  "path 4": 40,
+                  "state": 4,
+                  "subsystem": 5,
+                  "svm": 6,
+                  "svm 2": 23,
+                  "svm 3": 33,
+                  "svm 4": 41,
+                  "uuid": 15,
+                  "volume": 7,
+                  "volume 2": 24,
+                  "volume 3": 34,
+                  "volume 4": 42
                 },
                 "renameByName": {
                   "Value #B": "Used",
                   "Value #C": "Size",
                   "Value #D": "Available %",
-                  "cluster 1": "Cluster",
-                  "datacenter 1": "Datacenter",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
                   "node": "Node",
                   "nsid": "Namespace ID",
                   "os_type": "OS",
-                  "path 1": "Namespace Path",
+                  "path": "Namespace Path",
                   "state": "Status",
                   "subsystem": "NVMe Subsystem",
-                  "svm 1": "Storage VM",
-                  "volume 1": "Volume"
+                  "svm": "Storage VM",
+                  "volume": "Volume"
                 }
               }
             }

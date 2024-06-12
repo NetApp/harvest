@@ -139,6 +139,18 @@
                 "value": 1
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              }
+            ]
           }
         ]
       },
@@ -226,7 +238,6 @@
               "Value #A": "Used space",
               "Value #B": "Total space",
               "Value #C": "Usage %",
-              "cluster": "Cluster",
               "instance": "Node",
               "service": "Service",
               "site_name": "Site"
@@ -291,6 +302,18 @@
               {
                 "id": "decimals",
                 "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
               }
             ]
           }
@@ -380,7 +403,6 @@
               "Value #A": "Used space",
               "Value #B": "Allowed space",
               "Value #C": "Usage %",
-              "cluster": "Cluster",
               "instance": "Node",
               "service": "Service",
               "site_name": "Site"

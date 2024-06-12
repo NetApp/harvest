@@ -133,7 +133,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 9,
         "x": 0,
         "y": 1
@@ -193,7 +193,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 8,
         "x": 9,
         "y": 1
@@ -259,7 +259,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 14,
+        "h": 16,
         "w": 7,
         "x": 17,
         "y": 1
@@ -280,6 +280,7 @@
           "exemplar": false,
           "expr": "sum(count(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
           "format": "time_series",
+          "hide": false,
           "instant": false,
           "interval": "",
           "legendFormat": "Nodes",
@@ -387,13 +388,37 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count(qtree_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
           "format": "time_series",
           "hide": false,
           "instant": false,
           "interval": "",
-          "legendFormat": "Shelves",
+          "legendFormat": "Qtree",
           "refId": "L"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Quotas",
+          "refId": "M"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Workloads",
+          "refId": "N"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Shelves",
+          "refId": "O"
         }
       ],
       "title": "Object Count",
@@ -444,10 +469,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 9,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "id": 613,
       "options": {
@@ -502,10 +527,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 8,
         "x": 9,
-        "y": 8
+        "y": 9
       },
       "id": 611,
       "options": {
@@ -595,7 +620,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 17
       },
       "id": 655,
       "options": {
@@ -683,7 +708,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 17
       },
       "id": 656,
       "options": {
@@ -771,7 +796,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 25
+        "y": 27
       },
       "id": 657,
       "options": {
@@ -861,7 +886,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 25
+        "y": 27
       },
       "id": 658,
       "options": {
@@ -897,7 +922,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 37
       },
       "id": 482,
       "panels": [
@@ -1342,7 +1367,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 38
       },
       "id": 617,
       "panels": [
@@ -1738,7 +1763,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 39
       },
       "id": 97,
       "panels": [
@@ -2218,7 +2243,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 40
       },
       "id": 634,
       "panels": [
@@ -2845,7 +2870,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 41
       },
       "id": 627,
       "panels": [
@@ -3202,7 +3227,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 42
       },
       "id": 184,
       "panels": [
@@ -4101,5 +4126,5 @@
   "timezone": "",
   "title": "ONTAP: Datacenter",
   "uid": "cdot-datacenter",
-  "version": 3
+  "version": 2
 }

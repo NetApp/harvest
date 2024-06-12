@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705302811819,
+  "iteration": 1718090001920,
   "links": [
     {
       "asDropdown": true,
@@ -284,7 +284,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}\nand\ntopk($TopResources, avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}[3h] @ end())) ",
+          "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}\n)\nand\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$Aggregate\",volume=~\"$Constituent\",style=\"flexgroup_constituent\"}[3h] @ end())\n    )\n)",
           "interval": "",
           "legendFormat": "{{aggr}} - {{volume}}",
           "refId": "A"
@@ -574,6 +574,72 @@
                     "value": "bytes"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Constituent Name"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-flexgroup/ontap-flexgroup?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${Aggregate:queryparam}&${FlexGroup:queryparam}&${__url_time_range}&var-Constituent=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -757,10 +823,7 @@
                   "Value #G": "Total Space Saved",
                   "Value #H": "Logical Space Used",
                   "Value #I": "Physical Space Used",
-                  "aggr": "Aggr",
-                  "junction_path": "Junction Path",
-                  "node": "Node",
-                  "volume": "Constituent Name"
+                  "junction_path": "Junction Path"
                 }
               }
             }
@@ -836,6 +899,50 @@
                     "value": "color-background"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-flexgroup/ontap-flexgroup?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${Aggregate:queryparam}&${FlexGroup:queryparam}&${__url_time_range}&var-Constituent=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -880,9 +987,7 @@
                 "indexByName": {},
                 "renameByName": {
                   "Value": "Avg",
-                  "__name__": "",
-                  "aggr": "Aggr",
-                  "volume": "Volume"
+                  "__name__": ""
                 }
               }
             }
@@ -924,6 +1029,50 @@
                   {
                     "id": "unit",
                     "value": "Bps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-flexgroup/ontap-flexgroup?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${Aggregate:queryparam}&${FlexGroup:queryparam}&${__url_time_range}&var-Constituent=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -970,9 +1119,7 @@
                 "indexByName": {},
                 "renameByName": {
                   "Value": "Avg",
-                  "aggr": "Aggr",
-                  "type": "{{aggr}} / {{volume}}",
-                  "volume": "Volume"
+                  "type": "{{aggr}} / {{volume}}"
                 }
               }
             }
@@ -1014,6 +1161,50 @@
                   {
                     "id": "unit",
                     "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-flexgroup/ontap-flexgroup?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${Aggregate:queryparam}&${FlexGroup:queryparam}&${__url_time_range}&var-Constituent=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -1060,9 +1251,7 @@
                 "indexByName": {},
                 "renameByName": {
                   "Value": "Avg",
-                  "aggr": "Aggr",
-                  "type": "{{aggr}} / {{volume}}",
-                  "volume": "Volume"
+                  "type": "{{aggr}} / {{volume}}"
                 }
               }
             }
@@ -1137,6 +1326,50 @@
                     "value": "color-background"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-flexgroup/ontap-flexgroup?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${Aggregate:queryparam}&${FlexGroup:queryparam}&${__url_time_range}&var-Constituent=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -1181,11 +1414,9 @@
                 "indexByName": {},
                 "renameByName": {
                   "Value": "Avg",
-                  "aggr": "Aggr",
                   "datacenter": "",
                   "instance": "",
-                  "type": "{{aggr}} / {{volume}}",
-                  "volume": "Volume"
+                  "type": "{{aggr}} / {{volume}}"
                 }
               }
             }
@@ -1227,6 +1458,50 @@
                   {
                     "id": "unit",
                     "value": "Bps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-flexgroup/ontap-flexgroup?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${Aggregate:queryparam}&${FlexGroup:queryparam}&${__url_time_range}&var-Constituent=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -1273,10 +1548,8 @@
                 "indexByName": {},
                 "renameByName": {
                   "Value": "Avg",
-                  "aggr": "Aggr",
                   "instance": "",
-                  "type": "{{aggr}} / {{volume}}",
-                  "volume": "Volume"
+                  "type": "{{aggr}} / {{volume}}"
                 }
               }
             }
@@ -1318,6 +1591,50 @@
                   {
                     "id": "unit",
                     "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-flexgroup/ontap-flexgroup?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${Aggregate:queryparam}&${FlexGroup:queryparam}&${__url_time_range}&var-Constituent=${__value.raw}"
+                      }
+                    ]
                   }
                 ]
               }
@@ -1364,10 +1681,8 @@
                 "indexByName": {},
                 "renameByName": {
                   "Value": "Avg",
-                  "aggr": "Aggr",
                   "instance": "",
-                  "type": "{{aggr}} / {{volume}}",
-                  "volume": "Volume"
+                  "type": "{{aggr}} / {{volume}}"
                 }
               }
             }
@@ -2795,5 +3110,5 @@
   "timezone": "",
   "title": "ONTAP: FlexGroup",
   "uid": "cdot-flexgroup",
-  "version": 54
+  "version": 55
 }
