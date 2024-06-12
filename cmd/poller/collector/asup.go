@@ -92,6 +92,10 @@ type harvestInfo struct {
 	NumPollers   uint64
 	NumExporters uint64
 	NumPortRange uint64
+	Pid          int
+	RssBytes     uint64
+	MaxRssBytes  uint64
+	EpochMilli   int64 // milliseconds since the epoch, in UTC
 }
 
 type Counters struct {
@@ -127,14 +131,14 @@ func (p *Payload) AddCollectorAsup(a AsupCollector) {
 	*p.Collectors = append(*p.Collectors, a)
 }
 
-func SendAutosupport(collectors []Collector, status *matrix.Matrix, pollerName string) error {
+func SendAutosupport(collectors []Collector, status *matrix.Matrix, pollerName string, maxRss uint64) error {
 
 	var (
 		msg *Payload
 		err error
 	)
 
-	if msg, err = BuildAndWriteAutoSupport(collectors, status, pollerName); err != nil {
+	if msg, err = BuildAndWriteAutoSupport(collectors, status, pollerName, maxRss); err != nil {
 		return fmt.Errorf("failed to build ASUP message poller:%s %w", pollerName, err)
 	}
 
@@ -193,13 +197,14 @@ func sendAsupVia(msg *Payload, asupExecPath string) error {
 	return nil
 }
 
-func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pollerName string) (*Payload, error) {
+func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pollerName string, maxRss uint64) (*Payload, error) {
 
 	var (
 		msg          *Payload
 		arch         string
 		cpus         uint8
 		numPortRange uint64
+		rssBytes     uint64
 	)
 
 	// add info about the platform (where Harvest is running)
@@ -227,7 +232,24 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 			numPortRange++
 		}
 	}
+
 	hostname, _ := os.Hostname()
+
+	// Get the PID and RSS in bytes of the current process.
+	// If there is an error, rssBytes will be zero
+	pid := os.Getpid()
+	newProcess, err := process.NewProcess(int32(pid))
+	if err != nil {
+		logging.Get().Err(err).Msg("failed to get process info")
+	} else {
+		memInfo, err := newProcess.MemoryInfo()
+		if err != nil {
+			logging.Get().Err(err).Int("pid", pid).Msg("failed to get memory info")
+		} else {
+			rssBytes = memInfo.RSS
+		}
+	}
+
 	// add harvest release info
 	msg.Harvest = &harvestInfo{
 		// harvest uuid creation from sha1 of cluster uuid
@@ -241,6 +263,10 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 		NumPollers:   uint64(len(conf.Config.Pollers)),
 		NumExporters: uint64(len(conf.Config.Exporters)),
 		NumPortRange: numPortRange,
+		Pid:          pid,
+		RssBytes:     rssBytes,
+		MaxRssBytes:  max(maxRss, rssBytes),
+		EpochMilli:   time.Now().UnixMilli(),
 	}
 	payloadPath, err := writeAutoSupport(msg, pollerName)
 	if err != nil {
