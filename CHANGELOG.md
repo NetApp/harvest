@@ -2,7 +2,15 @@
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
 ## 24.05.2 / 2024-06-13 Release
-:pushpin: This release addresses an issue in version 24.05.1 where FlexGroup volume performance metrics were missing and includes a few other minor fixes. If you are currently using version 24.05.1, it is recommended that you upgrade to this release.
+:pushpin: This release is identical to 24.05.0, with the addition of two fixes:
+
+1. A fix that makes the NFS Troubleshooting dashboards load in NAbox and via `bin/harvest grafana import`.
+2. A fix for a regression introduced in 24.05.1, that causes FlexGroup volume performance metrics to be skipped.
+
+**Upgrade Recommendation**:
+You should upgrade to `24.05.2` if any of the following apply to you:
+- You want to use the NFS troubleshooting dashboards.
+- You are on version 24.05.1 and your cluster includes FlexGroup volumes.
 
 ---
 
