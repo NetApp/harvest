@@ -52,7 +52,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	fgAggrMap := make(map[string]*set.Set)
 	flexgroupAggrsMap := make(map[string]*set.Set)
-	nonExportedInstanceMap := make(map[string]bool)
 
 	// volume_aggr_labels metric is deprecated now and will be removed later.
 	metricName := "labels"
@@ -69,11 +68,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	cache.UUID += ".Volume"
 
 	// create flexgroup instance cache
-	for iKey, i := range data.GetInstances() {
-		if !i.IsExportable() {
-			nonExportedInstanceMap[iKey] = true
-			continue
-		}
+	for _, i := range data.GetInstances() {
 		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			// instance key is svm.flexgroup-volume
 			key := i.GetLabel("svm") + "." + match[1]
@@ -102,10 +97,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 			fgAggrMap[key].Add(i.GetLabel("aggr"))
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel(style, "flexgroup_constituent")
-			if !v.includeConstituents {
-				i.SetExportable(false)
-				nonExportedInstanceMap[iKey] = true
-			}
+			i.SetExportable(v.includeConstituents)
 		} else {
 			i.SetLabel(style, "flexvol")
 			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
@@ -127,11 +119,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	// cache.Reset()
 
 	// create summary
-	for iKey, i := range data.GetInstances() {
-		if nonExportedInstanceMap[iKey] {
-			continue
-		}
-
+	for _, i := range data.GetInstances() {
 		match := re.FindStringSubmatch(i.GetLabel("volume"))
 		if len(match) != 3 {
 			continue

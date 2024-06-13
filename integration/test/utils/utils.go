@@ -184,7 +184,7 @@ func IsURLReachable(url string) bool {
 		return false
 	}
 	defer response.Body.Close()
-	return response.StatusCode == 200
+	return response.StatusCode == http.StatusOK
 }
 
 func AddPrometheusToGrafana() {

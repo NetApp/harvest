@@ -30,7 +30,7 @@ counters:
   - files                                         => inode_files_total
   - files_used                                    => inode_files_used
   - filesystem_size                               => filesystem_size
-  - logical-available                             => space_logical_available
+  - logical_available                             => space_logical_available
   - logical_used                                  => space_logical_used
   - logical_used_by_afs                           => space_logical_used_by_afs
   - logical_used_by_snapshots                     => space_logical_used_by_snapshots
