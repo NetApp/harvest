@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718091784876,
+  "iteration": 1718267865021,
   "links": [
     {
       "asDropdown": true,
@@ -1181,7 +1181,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1189,7 +1189,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Physical Space Used",
+      "title": "Top $TopResources Aggregates by Physical Space Used",
       "type": "timeseries"
     },
     {
@@ -1272,7 +1272,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1280,7 +1280,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Space Available",
+      "title": "Top $TopResources Aggregates by Space Available",
       "type": "timeseries"
     },
     {
@@ -1363,7 +1363,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_capacity_tier_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1371,7 +1372,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Capacity Tier Used",
+      "title": "Top $TopResources Aggregates by  Capacity Tier Used",
       "type": "timeseries"
     },
     {
@@ -1454,7 +1455,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_space_data_compaction_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_space_data_compaction_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_data_compaction_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1462,7 +1464,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Data Compaction space saved",
+      "title": "Top $TopResources Aggregates by  Data Compaction space saved",
       "type": "timeseries"
     },
     {
@@ -1545,7 +1547,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_space_sis_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_space_sis_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_sis_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1553,7 +1556,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "SIS space saved",
+      "title": "Top $TopResources Aggregates by  SIS space saved",
       "type": "timeseries"
     },
     {
@@ -1637,13 +1640,15 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_space_data_compaction_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_space_data_compaction_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_data_compaction_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - DATA COMPACTION",
           "refId": "A"
         },
         {
-          "expr": "aggr_space_sis_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_space_sis_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_sis_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - SIS",
@@ -1652,7 +1657,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Space Saved Percentage",
+      "title": "Top $TopResources Aggregates by  Space Saved Percentage",
       "type": "timeseries"
     },
     {
@@ -1736,7 +1741,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1744,7 +1750,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Inodes Used %",
+      "title": "Top $TopResources Aggregates by  Inodes Used %",
       "type": "timeseries"
     },
     {
@@ -1825,13 +1831,15 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
           "refId": "A"
         },
         {
-          "expr": "aggr_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - TOTAL",
@@ -1840,7 +1848,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Inodes Files",
+      "title": "Top $TopResources Aggregates by  Inodes Files",
       "type": "timeseries"
     },
     {
@@ -1921,13 +1929,15 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_inode_inodefile_private_capacity{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_inode_inodefile_private_capacity{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_inode_inodefile_private_capacity{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - PRIVATE",
           "refId": "A"
         },
         {
-          "expr": "aggr_inode_inodefile_public_capacity{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_inode_inodefile_public_capacity{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_inode_inodefile_public_capacity{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - PUBLIC",
@@ -1936,7 +1946,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Inode Capacity",
+      "title": "Top $TopResources Aggregates by  Inode Capacity",
       "type": "timeseries"
     },
     {
@@ -2019,13 +2029,15 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_snapshot_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
           "refId": "A"
         },
         {
-          "expr": "aggr_snapshot_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - AVAILABLE",
@@ -2034,7 +2046,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Space Used by Snapshots",
+      "title": "Top $TopResources Aggregates by Space Used by Snapshots",
       "type": "timeseries"
     },
     {
@@ -2118,7 +2130,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_snapshot_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -2126,7 +2139,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Space Used by Snapshots %",
+      "title": "Top $TopResources Aggregates by  Space Used by Snapshots %",
       "type": "timeseries"
     },
     {
@@ -2210,7 +2223,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_snapshot_reserve_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_reserve_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_reserve_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -2218,7 +2232,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Space Reserved for Snapshots %",
+      "title": "Top $TopResources Aggregates by Space Reserved for Snapshots %",
       "type": "timeseries"
     },
     {
@@ -2302,7 +2316,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_snapshot_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -2310,7 +2325,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Snapshot Inodes Used %",
+      "title": "Top $TopResources Aggregates by Snapshot Inodes Used %",
       "type": "timeseries"
     },
     {
@@ -2392,13 +2407,15 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_snapshot_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - TOTAL",
           "refId": "A"
         },
         {
-          "expr": "aggr_snapshot_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
@@ -2407,7 +2424,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Snapshot Files",
+      "title": "Top $TopResources Aggregates by Snapshot Files",
       "type": "timeseries"
     },
     {
@@ -2489,20 +2506,23 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "aggr_snapshot_maxfiles_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_maxfiles_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_maxfiles_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - USED",
           "refId": "A"
         },
         {
-          "expr": "aggr_snapshot_maxfiles_possible{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_maxfiles_possible{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_maxfiles_possible{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - POSSIBLE",
           "refId": "B"
         },
         {
-          "expr": "aggr_snapshot_maxfiles_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+          "exemplar": false,
+          "expr": "aggr_snapshot_maxfiles_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_snapshot_maxfiles_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}} - AVAILABLE",
@@ -2511,7 +2531,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Snapshot MaxFiles",
+      "title": "Top $TopResources Aggregates by Snapshot MaxFiles",
       "type": "timeseries"
     },
     {
@@ -2770,13 +2790,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Logical Used",
+          "title": "Top $TopResources Aggregates by Logical Used",
           "type": "timeseries"
         },
         {
@@ -2855,13 +2875,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Physical Used",
+          "title": "Top $TopResources Aggregates by Physical Used",
           "type": "timeseries"
         },
         {
@@ -2940,13 +2960,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Logical Used with FlexClones",
+          "title": "Top $TopResources Aggregates by Logical Used with FlexClones",
           "type": "timeseries"
         },
         {
@@ -3025,13 +3045,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Physical Used with FlexClones",
+          "title": "Top $TopResources Aggregates by Physical Used with FlexClones",
           "type": "timeseries"
         },
         {
@@ -3110,13 +3130,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Logical Used with Snapshots & FlexClones",
+          "title": "Top $TopResources Aggregates by Logical Used with Snapshots & FlexClones",
           "type": "timeseries"
         },
         {
@@ -3195,13 +3215,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
               "refId": "A"
             }
           ],
-          "title": "Physical Used with Snapshots & FlexClones",
+          "title": "Top $TopResources Aggregates by Physical Used with Snapshots & FlexClones",
           "type": "timeseries"
         }
       ],
@@ -3350,7 +3370,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 56
+            "y": 84
           },
           "id": 61,
           "options": {
@@ -3460,7 +3480,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 56
+            "y": 84
           },
           "id": 63,
           "options": {
@@ -3602,7 +3622,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 65
+            "y": 85
           },
           "id": 67,
           "options": {
@@ -3624,7 +3644,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flashpool_read_ops_replaced_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_read_ops_replaced_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_read_ops_replaced_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "SSD Hit (%) - {{aggr}}",
@@ -3632,7 +3652,7 @@
             },
             {
               "exemplar": false,
-              "expr": "flashpool_read_ops_replaced{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_read_ops_replaced{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_read_ops_replaced{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -3641,7 +3661,7 @@
               "refId": "B"
             }
           ],
-          "title": "Flash Pool Activity",
+          "title": "Top $TopResources Aggregates by Flash Pool Activity",
           "transformations": [],
           "type": "timeseries"
         },
@@ -3700,7 +3720,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 65
+            "y": 85
           },
           "id": 70,
           "options": {
@@ -3722,7 +3742,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flashpool_hya_read_hit_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_hya_read_hit_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_hya_read_hit_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "Avg Hit Latency (SSD) - {{aggr}}",
@@ -3730,7 +3750,7 @@
             },
             {
               "exemplar": false,
-              "expr": "flashpool_hya_read_miss_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_hya_read_miss_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_hya_read_miss_latency_average{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -3739,7 +3759,7 @@
               "refId": "B"
             }
           ],
-          "title": "SSD and HDD Latency",
+          "title": "Top $TopResources Aggregates by SSD and HDD Latency",
           "transformations": [],
           "type": "timeseries"
         },
@@ -3799,7 +3819,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 65
+            "y": 85
           },
           "id": 68,
           "options": {
@@ -3821,7 +3841,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "4 * flashpool_ssd_read_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "4 * flashpool_ssd_read_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_ssd_read_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "Read Cached (GB) - {{aggr}}",
@@ -3829,7 +3849,7 @@
             },
             {
               "exemplar": false,
-              "expr": "4 * flashpool_ssd_write_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "4 * flashpool_ssd_write_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_ssd_write_cached{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -3839,14 +3859,14 @@
             },
             {
               "exemplar": false,
-              "expr": "4 * flashpool_ssd_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "4 * flashpool_ssd_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_ssd_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "Total Capacity (GB) - {{aggr}}",
               "refId": "C"
             }
           ],
-          "title": "Flash Pool Capacity Used",
+          "title": "Top $TopResources Aggregates by Flash Pool Capacity Used",
           "transformations": [],
           "type": "timeseries"
         },
@@ -3918,7 +3938,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 73
+            "y": 93
           },
           "id": 71,
           "options": {
@@ -3940,7 +3960,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flashpool_read_cache_ins_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_read_cache_ins_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_read_cache_ins_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "Read Cache Insert Rate - {{aggr}}",
@@ -3948,7 +3968,7 @@
             },
             {
               "exemplar": false,
-              "expr": "flashpool_wc_write_blks_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_wc_write_blks_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_wc_write_blks_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -3957,7 +3977,7 @@
               "refId": "B"
             }
           ],
-          "title": "Cache Inserts",
+          "title": "Top $TopResources Aggregates by Cache Inserts",
           "transformations": [],
           "type": "timeseries"
         },
@@ -4029,7 +4049,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 73
+            "y": 93
           },
           "id": 69,
           "options": {
@@ -4051,7 +4071,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flashpool_evict_destage_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_evict_destage_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_evict_destage_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "hide": false,
               "interval": "",
               "legendFormat": "Blocks Destaged - {{aggr}}",
@@ -4059,7 +4079,7 @@
             },
             {
               "exemplar": false,
-              "expr": "flashpool_evict_remove_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}",
+              "expr": "flashpool_evict_remove_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(flashpool_evict_remove_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -4068,7 +4088,7 @@
               "refId": "B"
             }
           ],
-          "title": "Cache Removals",
+          "title": "Top $TopResources Aggregates by Cache Removals",
           "transformations": [],
           "type": "timeseries"
         }
@@ -4146,7 +4166,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 66
+            "y": 102
           },
           "id": 195,
           "options": {
@@ -4242,7 +4262,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 66
+            "y": 102
           },
           "id": 197,
           "options": {
@@ -4336,7 +4356,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 78
+            "y": 114
           },
           "id": 199,
           "options": {
@@ -4441,7 +4461,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 67
+            "y": 103
           },
           "id": 83,
           "options": {
@@ -4537,7 +4557,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 67
+            "y": 103
           },
           "id": 84,
           "options": {
@@ -4631,7 +4651,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 79
+            "y": 115
           },
           "id": 87,
           "options": {
@@ -4727,7 +4747,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 79
+            "y": 115
           },
           "id": 85,
           "options": {
@@ -4821,7 +4841,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 91
+            "y": 127
           },
           "id": 95,
           "options": {
@@ -4917,7 +4937,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 91
+            "y": 127
           },
           "id": 97,
           "options": {
@@ -5011,7 +5031,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 103
+            "y": 139
           },
           "id": 99,
           "options": {
@@ -5107,7 +5127,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 103
+            "y": 139
           },
           "id": 101,
           "options": {
@@ -5215,7 +5235,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 60
+            "y": 104
           },
           "id": 813,
           "options": {
@@ -5306,7 +5326,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 60
+            "y": 104
           },
           "id": 815,
           "options": {
@@ -5398,7 +5418,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 60
+            "y": 104
           },
           "id": 817,
           "options": {
@@ -5489,7 +5509,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 68
+            "y": 112
           },
           "id": 88,
           "options": {
@@ -5578,7 +5598,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 68
+            "y": 112
           },
           "id": 89,
           "options": {
@@ -5669,7 +5689,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 68
+            "y": 112
           },
           "id": 90,
           "options": {
@@ -5758,7 +5778,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 77
+            "y": 121
           },
           "id": 91,
           "options": {
@@ -5847,7 +5867,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 77
+            "y": 121
           },
           "id": 92,
           "options": {
@@ -5937,7 +5957,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 77
+            "y": 121
           },
           "id": 93,
           "options": {
@@ -6208,5 +6228,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "cdot-aggregate",
-  "version": 12
+  "version": 13
 }
