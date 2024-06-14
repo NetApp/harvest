@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718266967775,
+  "iteration": 1718358572563,
   "links": [
     {
       "asDropdown": true,
@@ -1002,13 +1002,199 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This is the percentage of reads, performed on behalf of the workload, that were sequential.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 58
+      },
+      "id": 253,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_sequential_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}\nand\ntopk($TopResources, avg_over_time(qos_sequential_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "interval": "",
+          "legendFormat": "{{cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Sequential Reads (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This is the percentage of writes, performed on behalf of the workload, that were sequential.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 58
+      },
+      "id": 254,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_sequential_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}\nand\ntopk($TopResources, avg_over_time(qos_sequential_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "interval": "",
+          "legendFormat": "{{cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Sequential Writes (%)",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 69
       },
       "id": 243,
       "panels": [
@@ -1578,7 +1764,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 70
       },
       "id": 217,
       "panels": [
@@ -1643,7 +1829,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 38
+            "y": 60
           },
           "id": 219,
           "options": {
@@ -1735,7 +1921,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 38
+            "y": 60
           },
           "id": 221,
           "options": {
@@ -2019,7 +2205,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 70
           },
           "id": 223,
           "options": {
@@ -2380,7 +2566,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 79
           },
           "id": 224,
           "options": {
@@ -2521,7 +2707,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 71
       },
       "id": 226,
       "panels": [
@@ -3425,7 +3611,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 72
       },
       "id": 175,
       "panels": [
@@ -4330,7 +4516,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 73
       },
       "id": 186,
       "panels": [
@@ -5896,7 +6082,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 74
       },
       "id": 127,
       "panels": [
@@ -7722,5 +7908,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "cdot-workload",
-  "version": 11
+  "version": 12
 }
