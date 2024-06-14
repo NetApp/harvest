@@ -1,13 +1,16 @@
 package collectors
 
 import (
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"net/http"
 	"regexp"
 	"sort"
 	"strings"
@@ -376,6 +379,7 @@ type Sensor struct {
 	client         *rest.Client
 	instanceKeys   map[string]string
 	instanceLabels map[string]map[string]string
+	hasREST        bool
 }
 
 func (my *Sensor) Init() error {
@@ -391,7 +395,15 @@ func (my *Sensor) Init() error {
 		return err
 	}
 
+	my.hasREST = true
+
 	if err := my.client.Init(5); err != nil {
+		var re *errs.RestError
+		if errors.As(err, &re) && re.StatusCode == http.StatusNotFound {
+			my.Logger.Warn().Msg("Cluster does not support REST. Power plugin disabled")
+			my.hasREST = false
+			return nil
+		}
 		return err
 	}
 
@@ -411,6 +423,9 @@ func (my *Sensor) Init() error {
 }
 
 func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+	if !my.hasREST {
+		return nil, nil, nil
+	}
 	data := dataMap[my.Object]
 	// Purge and reset data
 	my.data.PurgeInstances()
