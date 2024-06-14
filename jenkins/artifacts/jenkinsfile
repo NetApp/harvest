@@ -160,6 +160,23 @@ pipeline {
               }
           }
       }
+
+      stage('Run Tests') {
+        when {
+            expression {
+                return params.RUN_TEST == 'true';
+            }
+        }
+        steps {
+            script {
+                dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
+                nativeBuild = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}_linux_amd64.tar.gz"
+                rpmBuild    = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}.x86_64.rpm"
+                build job: 'harvest2_0/smoke', parameters: [string(name: 'VERSION', value: "${VERSION}"), string(name: 'BRANCH', value: "${BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
+            }
+        }
+      }
+
       stage('Docker Image Publish') {
           when {
             expression {
@@ -199,22 +216,6 @@ pipeline {
              }
             }
           }
-      }
-
-      stage('Run Tests') {
-        when {
-            expression {
-                return params.RUN_TEST == 'true';
-            }
-        }
-        steps {
-            script {
-                dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
-                nativeBuild = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}_linux_amd64.tar.gz"
-                rpmBuild    = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}.x86_64.rpm"
-                build job: 'harvest2_0/smoke', parameters: [string(name: 'VERSION', value: "${VERSION}"), string(name: 'BRANCH', value: "${BRANCH}"), string(name: 'NATIVE', value: "${nativeBuild}"),  string(name: 'RPM', value: "${rpmBuild}"), string(name: 'DOCKER', value: "${dockerBuild}")]
-            }
-        }
       }
 
       stage('Publish Nightly Build to GitHub') {
