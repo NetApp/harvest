@@ -7,11 +7,11 @@ require (
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/rs/zerolog v1.33.0
 	github.com/shirou/gopsutil/v4 v4.24.5
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/gjson v1.17.1
 	github.com/zekroTJA/timedmap v1.5.2
 	github.com/zekroTJA/timedmap/v2 v2.0.0
-	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/sys v0.21.0
 	golang.org/x/term v0.21.0
 	golang.org/x/text v0.16.0
