@@ -515,6 +515,7 @@ type Poller struct {
 	LogSet            *[]string            `yaml:"log,omitempty"`
 	Password          string               `yaml:"password,omitempty"`
 	PollerSchedule    string               `yaml:"poller_schedule,omitempty"`
+	PollerLogSchedule string               `yaml:"poller_log_schedule,omitempty"`
 	SslCert           string               `yaml:"ssl_cert,omitempty"`
 	SslKey            string               `yaml:"ssl_key,omitempty"`
 	TLSMinVersion     string               `yaml:"tls_min_version,omitempty"`
