@@ -21,11 +21,13 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
-    # There are two flavors of path names
+    # There are three flavors of path names
     # /vol/volName/lunName
     # /vol/volName/lun401/lunName
+    # /lunName
       split_regex:
         - path `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` volume,lun
+        - path `^([^/]+)$` lun
 
 export_options:
   instance_keys:

@@ -156,7 +156,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(topk($TopResources, lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "avg(topk($TopResources, lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -220,7 +220,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(topk($TopResources, lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "avg(topk($TopResources, lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -276,7 +276,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -332,7 +332,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -389,7 +389,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -446,7 +446,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(topk($TopResources, lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}))",
+          "expr": "sum(topk($TopResources, lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -623,7 +623,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} @ end())",
+              "expr": "lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} @ end())",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -795,7 +795,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} @ end())",
+              "expr": "lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} @ end())",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -967,7 +967,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} @ end())",
+              "expr": "lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} @ end())",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1171,7 +1171,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \nand \ntopk($TopResources, lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} @ end())",
+              "expr": "lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \nand \ntopk($TopResources, lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} @ end())",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1343,7 +1343,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \nand \ntopk($TopResources, lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} @ end())",
+              "expr": "lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \nand \ntopk($TopResources, lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} @ end())",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1515,7 +1515,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \nand \ntopk($TopResources, lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} @ end())",
+              "expr": "lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \nand \ntopk($TopResources, lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} @ end())",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1812,7 +1812,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1822,7 +1822,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1833,7 +1833,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1844,7 +1844,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2004,7 +2004,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
               "refId": "A"
@@ -2095,7 +2095,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -2188,7 +2188,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
               "refId": "A"
@@ -2279,7 +2279,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
               "refId": "A"
@@ -2370,7 +2370,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -2463,7 +2463,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
               "refId": "A"
@@ -2569,7 +2569,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_write_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_write_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_write_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_write_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} : {{metric}}",
               "refId": "A"
@@ -2672,7 +2672,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_read_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_read_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_read_align_histo{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} : {{metric}}",
               "refId": "A"
@@ -2776,7 +2776,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_remote_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_remote_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_remote_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_remote_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
               "refId": "A"
@@ -2911,7 +2911,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"network\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"network\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"network\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"network\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3002,7 +3002,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"throttle\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"throttle\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"throttle\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"throttle\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3093,7 +3093,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"qos_min\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"qos_min\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"qos_min\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"qos_min\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3183,7 +3183,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cluster\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cluster\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"cluster\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"cluster\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3273,7 +3273,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"backend\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"backend\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"backend\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"backend\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3364,7 +3364,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cp\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cp\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"cp\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"cp\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3455,7 +3455,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"suspend\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"suspend\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"suspend\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"suspend\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
@@ -3546,7 +3546,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cloud\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"cloud\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"cloud\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"cloud\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
@@ -3636,7 +3636,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"frontend\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"frontend\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"frontend\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"frontend\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3726,7 +3726,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"nvlog\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"nvlog\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"nvlog\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"nvlog\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}} ",
               "refId": "A"
@@ -3816,7 +3816,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"disk\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",resource=\"disk\",volume!=\"\"}[3h] @ end()))",
+              "expr": "qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"disk\",volume!=\"\"} \n  and \ntopk($TopResources, avg_over_time(qos_detail_resource_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",resource=\"disk\",volume!=\"\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3924,7 +3924,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"} \n  and \ntopk($TopResources, avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -4017,7 +4017,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"} \n  and \ntopk($TopResources, avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -4110,7 +4110,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "expr": "volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"} \n  and \ntopk($TopResources, avg_over_time(volume_sis_dedup_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -4203,7 +4203,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n  and \ntopk($TopResources, avg_over_time(volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
+              "expr": "volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"} \n  and \ntopk($TopResources, avg_over_time(volume_sis_compress_saved_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -4296,7 +4296,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \ntopk($TopResources, avg_over_time(lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -4391,7 +4391,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"} \n  and \nbottomk($TopResources, avg_over_time(lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}[3h] @ end()))",
+              "expr": "lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"} \n  and \nbottomk($TopResources, avg_over_time(lun_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}[3h] @ end()))",
               "instant": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
@@ -4497,14 +4497,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -4592,14 +4592,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -4688,14 +4688,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -4796,14 +4796,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_remote_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_remote_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Remote Data",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "lun_remote_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_remote_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Remote IOPs",
@@ -4891,14 +4891,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_caw_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_caw_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "interval": "",
               "legendFormat": "Compare and Write",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "lun_unmap_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_unmap_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "Unmap",
@@ -4906,7 +4906,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_writesame_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_writesame_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "Write Same",
@@ -4914,7 +4914,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_writesame_unmap_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_writesame_unmap_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "Write Same Unmap",
@@ -4922,7 +4922,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_xcopy_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}",
+              "expr": "lun_xcopy_reqs{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "Xcopy",
@@ -5028,14 +5028,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_read_data/lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}/1024",
+              "expr": "lun_read_data/lun_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}/1024",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "lun_write_data/lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",lun=~\"$LUN\"}/1024",
+              "expr": "lun_write_data/lun_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume|\",lun=~\"$LUN\"}/1024",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}} / {{lun}} Write",
@@ -5189,7 +5189,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume\"},lun)",
+        "definition": "label_values(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume|\"},lun)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -5199,7 +5199,7 @@
         "name": "LUN",
         "options": [],
         "query": {
-          "query": "label_values(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume\"},lun)",
+          "query": "label_values(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume|\"},lun)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
