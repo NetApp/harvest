@@ -1,0 +1,24 @@
+
+name:             Certificate
+query:            api/security/certificates
+object:           certificate
+
+counters:
+  - ^^uuid
+  - ^name
+  - ^public_certificate      => certificatePEM
+  - ^scope                   => scope
+  - ^serial_number           => serial_number
+  - ^svm.name                => svm
+  - ^type                    => type
+  - expiry_time(timestamp)   => expiry_time
+
+export_options:
+  instance_keys:
+    - name
+    - svm
+    - uuid
+  instance_labels:
+    - scope
+    - serial_number
+    - type

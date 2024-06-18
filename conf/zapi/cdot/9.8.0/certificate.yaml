@@ -1,0 +1,27 @@
+
+name:       Certificate
+query:      security-certificate-get-iter
+object:     certificate
+
+counters:
+  certificate-info:
+    - ^^cert-name              => name
+    - ^^serial-number          => serial_number
+    - ^^vserver                => svm
+    - ^public-certificate      => certificatePEM
+    - ^type                    => type
+    - expiration-date          => expiry_time
+
+plugins:
+  - LabelAgent:
+      join:
+        - uuid `_` name,serial_number,svm
+
+export_options:
+  instance_keys:
+    - name
+    - svm
+    - uuid
+  instance_labels:
+    - serial_number
+    - type
