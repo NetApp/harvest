@@ -51,11 +51,6 @@ func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 		if !instance.IsExportable() {
 			continue
 		}
-		policyClass := instance.GetLabel("class")
-		if policyClass != "user_defined" {
-			instance.SetExportable(false)
-			continue
-		}
 		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", w.Logger)
 	}
 
