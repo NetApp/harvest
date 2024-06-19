@@ -1,0 +1,208 @@
+package volume_test
+
+import (
+	volume2 "github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
+	"github.com/netapp/harvest/v2/pkg/logging"
+	"testing"
+
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+)
+
+// Common test logic for RestPerf/ZapiPerf Volume plugin
+func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plugin, includeConstituents string, expectedCount int) {
+	params := node.NewS("Volume")
+	params.NewChildS("include_constituents", includeConstituents)
+	v := createVolume(params)
+
+	// Initialize the plugin
+	if err := v.Init(); err != nil {
+		t.Fatalf("failed to initialize plugin: %v", err)
+	}
+
+	// Create test data
+	data := matrix.New("volume", "volume", "volume")
+	instance1, _ := data.NewInstance("RahulTest__0001")
+	instance1.SetLabel("volume", "RahulTest__0001")
+	instance1.SetLabel("svm", "svm1")
+	instance1.SetLabel("aggr", "aggr1")
+
+	instance2, _ := data.NewInstance("RahulTest__0002")
+	instance2.SetLabel("volume", "RahulTest__0002")
+	instance2.SetLabel("svm", "svm1")
+	instance2.SetLabel("aggr", "aggr2")
+
+	instance3, _ := data.NewInstance("RahulTest__0003")
+	instance3.SetLabel("volume", "RahulTest__0003")
+	instance3.SetLabel("svm", "svm1")
+	instance3.SetLabel("aggr", "aggr3")
+
+	// Create a simple volume instance
+	simpleInstance, _ := data.NewInstance("SimpleVolume")
+	simpleInstance.SetLabel("volume", "SimpleVolume")
+	simpleInstance.SetLabel("svm", "svm1")
+	simpleInstance.SetLabel("aggr", "aggr4")
+
+	// Create latency and ops metrics
+	latencyMetric, _ := data.NewMetricFloat64("read_latency")
+	latencyMetric.SetComment("read_ops")
+	latencyMetric.SetProperty("average")
+
+	opsMetric, _ := data.NewMetricFloat64("read_ops")
+	opsMetric.SetProperty("rate")
+
+	// Set metric values for the instances
+	_ = latencyMetric.SetValueFloat64(instance1, 20)
+	_ = opsMetric.SetValueFloat64(instance1, 4)
+
+	_ = latencyMetric.SetValueFloat64(instance2, 30)
+	_ = opsMetric.SetValueFloat64(instance2, 6)
+
+	_ = latencyMetric.SetValueFloat64(instance3, 40)
+	_ = opsMetric.SetValueFloat64(instance3, 10)
+
+	// Set metric values for the simple volume instance
+	_ = latencyMetric.SetValueFloat64(simpleInstance, 50)
+	_ = opsMetric.SetValueFloat64(simpleInstance, 5)
+
+	dataMap := map[string]*matrix.Matrix{
+		"volume": data,
+	}
+
+	// Run the plugin
+	output, _, err := v.Run(dataMap)
+	if err != nil {
+		t.Fatalf("Run method failed: %v", err)
+	}
+
+	// Verify the output
+	if len(output) != 2 {
+		t.Fatalf("expected 2 output matrices, got %d", len(output))
+	}
+
+	cache := output[0]
+	volumeAggrmetric := output[1]
+
+	// Check for flexgroup instance
+	flexgroupInstance := cache.GetInstance("svm1.RahulTest")
+	if flexgroupInstance == nil {
+		t.Fatalf("expected flexgroup instance 'svm1.RahulTest' not found")
+	}
+
+	// Check for flexgroup constituents
+	if includeConstituents == "true" {
+		for _, suffix := range []string{"0001", "0002", "0003"} {
+			instance := data.GetInstance("RahulTest__" + suffix)
+			if instance == nil {
+				t.Fatalf("expected flexgroup constituent 'svm1.RahulTest__%s' not found", suffix)
+			}
+			if label := instance.GetLabel("volume"); label != "RahulTest__"+suffix {
+				t.Fatalf("expected instance label 'volume' to be 'RahulTest__%s', got '%s'", suffix, label)
+			}
+		}
+	}
+
+	// Check for aggregated metrics
+	flexgroupMetricInstance := volumeAggrmetric.GetInstance("svm1.RahulTest")
+	if flexgroupMetricInstance == nil {
+		t.Fatalf("expected flexgroup metric instance 'svm1.RahulTest' not found")
+	}
+	if label := flexgroupMetricInstance.GetLabel("volume"); label != "RahulTest" {
+		t.Fatalf("expected flexgroup metric instance label 'volume' to be 'RahulTest', got '%s'", label)
+	}
+
+	// Verify aggregated ops metric
+	if value, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance); !ok {
+		t.Error("Value [read_ops] missing")
+	} else if value != 20 {
+		t.Errorf("Value [read_ops] = (%f) incorrect", value)
+	}
+
+	// Verify aggregated latency metric (weighted average)
+	expectedLatency := (20*4 + 30*6 + 40*10) / 20.0
+	if value, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance); !ok {
+		t.Error("Value [read_latency] missing")
+	} else if value != expectedLatency {
+		t.Errorf("Value [read_latency] = (%f) incorrect, expected (%f)", value, expectedLatency)
+	}
+
+	// Check for simple volume instance
+	simpleVolumeInstance := cache.GetInstance("svm1.SimpleVolume")
+	if simpleVolumeInstance != nil {
+		t.Fatalf("expected simple volume instance 'svm1.SimpleVolume' found")
+	}
+
+	// count instances in both data and cache
+	currentCount := 0
+	for _, i := range data.GetInstances() {
+		if i.IsExportable() {
+			currentCount++
+		}
+	}
+
+	for _, i := range cache.GetInstances() {
+		if i.IsExportable() {
+			currentCount++
+		}
+	}
+
+	// Verify the number of instances in the cache
+	if currentCount != expectedCount {
+		t.Errorf("expected %d instances in the matrix, got %d", expectedCount, currentCount)
+	}
+}
+
+func TestRunForAllImplementations(t *testing.T) {
+	testCases := []struct {
+		name                string
+		createVolume        func(params *node.Node) plugin.Plugin
+		includeConstituents string
+		expectedCount       int
+	}{
+		{
+			name:                "REST include_constituents=true",
+			createVolume:        createRestVolume,
+			includeConstituents: "true",
+			expectedCount:       5, // 3 constituents + 1 flexgroup + 1 flexvol
+		},
+		{
+			name:                "REST include_constituents=false",
+			createVolume:        createRestVolume,
+			includeConstituents: "false",
+			expectedCount:       2, // Only 1 flexgroup + 1 flexvol
+		},
+		{
+			name:                "ZAPI include_constituents=true",
+			createVolume:        createZapiVolume,
+			includeConstituents: "true",
+			expectedCount:       5, // 3 constituents + 1 flexgroup + 1 flexvol
+		},
+		{
+			name:                "ZAPI include_constituents=false",
+			createVolume:        createZapiVolume,
+			includeConstituents: "false",
+			expectedCount:       2, // Only 1 flexgroup + 1 flexvol
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			runVolumeTest(t, tc.createVolume, tc.includeConstituents, tc.expectedCount)
+		})
+	}
+}
+
+func createRestVolume(params *node.Node) plugin.Plugin {
+	v := &volume2.Volume{AbstractPlugin: plugin.New("volume", nil, params, nil, "volume", nil)}
+	v.Logger = logging.Get()
+	return v
+
+}
+
+func createZapiVolume(params *node.Node) plugin.Plugin {
+	v := &volume.Volume{AbstractPlugin: plugin.New("volume", nil, params, nil, "volume", nil)}
+	v.Logger = logging.Get()
+	return v
+}
