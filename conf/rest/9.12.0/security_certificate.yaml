@@ -17,7 +17,7 @@ counters:
       - type="server"
 
 plugins:
-  - Certificate:
+  - SecurityCertificate:
       schedule:
         - data: 3m  # should be multiple of data poll duration
 

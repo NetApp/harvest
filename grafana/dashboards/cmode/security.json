@@ -1902,7 +1902,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel displays Certificate expiration time.",
+      "description": "This panel requires Harvest REST collector.\n\nThis panel displays Certificate expiration time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1933,7 +1933,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Expire"
+              "options": "Expired"
             },
             "properties": [
               {
@@ -1982,40 +1982,21 @@
           "interval": "",
           "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "certificate_expiry_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"} * 1000",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
         }
       ],
       "title": "Certificates Detail",
       "transformations": [
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "uuid",
-            "mode": "outer"
-          }
-        },
         {
           "id": "filterFieldsByName",
           "options": {
             "include": {
               "names": [
                 "cluster",
+                "expiry_time",
                 "name",
-                "scope",
                 "svm",
-                "type",
-                "Value #B"
+                "dateTime",
+                "gmt"
               ]
             }
           }
@@ -2023,29 +2004,23 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {
-              "cluster 2": true,
-              "datacenter 2": true,
-              "isEncrypted": true,
-              "isHardwareEncrypted": true,
-              "name 2": true,
-              "svm 2": true
-            },
+            "excludeByName": {},
             "includeByName": {},
             "indexByName": {
               "cluster": 0,
+              "dateTime": 3,
+              "expiry_time": 5,
+              "gmt": 4,
               "name": 2,
-              "scope": 3,
-              "svm": 1,
-              "type": 4
+              "svm": 1
             },
             "renameByName": {
-              "Value #B": "Expire",
               "cluster": "Cluster",
+              "dateTime": "Expiry Time",
+              "expiry_time": "Expired",
+              "gmt": "GMT",
               "name": "Certificate Name",
-              "scope": "Scope",
-              "svm": "SVM",
-              "type": "Type"
+              "svm": "SVM"
             }
           }
         }

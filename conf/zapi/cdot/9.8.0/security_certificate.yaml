@@ -16,7 +16,7 @@ plugins:
   - LabelAgent:
       include_equals:
         - type `server`
-  - Certificate:
+  - SecurityCertificate:
       schedule:
         - data: 3m  # should be multiple of data poll duration
 

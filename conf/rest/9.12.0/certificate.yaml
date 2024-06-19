@@ -5,13 +5,22 @@ object:           certificate
 
 counters:
   - ^^uuid
+  - ^expiry_time             => expiry_time
   - ^name
-  - ^public_certificate      => certificatePEM
-  - ^scope                   => scope
   - ^serial_number           => serial_number
   - ^svm.name                => svm
-  - ^type                    => type
-  - expiry_time(timestamp)   => expiry_time
+
+
+#plugins:
+#  - LabelAgent:
+#      split:
+#        # 2027-08-10T23:33:22+12:00 then
+#        - expiry_time `T` date,time # date:2027-08-10, time:23:33:22+12:00
+#        - time `+` newTime,gmtPlus #  newTime:23:33:22, gmtPlus: 12:00
+#        - time `-` new1Time,gmtMinus # time:23:33:22, gmtMinus: empty
+
+plugins:
+  - Certificate
 
 export_options:
   instance_keys:
@@ -19,6 +28,7 @@ export_options:
     - svm
     - uuid
   instance_labels:
-    - scope
+    - dateTime
+    - expiry_time
+    - gmt
     - serial_number
-    - type

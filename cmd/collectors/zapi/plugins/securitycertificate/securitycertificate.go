@@ -2,7 +2,7 @@
  * Copyright NetApp Inc, 2022 All rights reserved
  */
 
-package certificate
+package securitycertificate
 
 import (
 	"crypto/x509"
@@ -21,7 +21,7 @@ import (
 
 const BatchSize = "500"
 
-type Certificate struct {
+type SecurityCertificate struct {
 	*plugin.AbstractPlugin
 	currentVal int
 	batchSize  string
@@ -29,10 +29,10 @@ type Certificate struct {
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Certificate{AbstractPlugin: p}
+	return &SecurityCertificate{AbstractPlugin: p}
 }
 
-func (my *Certificate) Init() error {
+func (my *SecurityCertificate) Init() error {
 
 	var err error
 
@@ -62,7 +62,7 @@ func (my *Certificate) Init() error {
 	return nil
 }
 
-func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (my *SecurityCertificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		adminVserver       string
@@ -116,7 +116,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 	return nil, my.client.Metadata, nil
 }
 
-func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance, certificateInstanceKey string) {
+func (my *SecurityCertificate) setCertificateIssuerType(instance *matrix.Instance, certificateInstanceKey string) {
 	var (
 		cert *x509.Certificate
 		err  error
@@ -155,7 +155,7 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance, certi
 	}
 }
 
-func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *matrix.Instance) {
+func (my *SecurityCertificate) setCertificateValidity(data *matrix.Matrix, instance *matrix.Instance) {
 	var (
 		expiryTimeMetric *matrix.Metric
 	)
@@ -186,7 +186,7 @@ func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *mat
 
 }
 
-func (my *Certificate) GetAdminVserver() (string, error) {
+func (my *SecurityCertificate) GetAdminVserver() (string, error) {
 	var (
 		result       []*node.Node
 		request      *node.Node
@@ -217,7 +217,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	return adminVserver, nil
 }
 
-func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
+func (my *SecurityCertificate) GetSecuritySsl(adminSvm string) (string, error) {
 	var (
 		result            []*node.Node
 		request           *node.Node
