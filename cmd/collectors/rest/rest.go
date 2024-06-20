@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificateexpiry"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/metroclustercheck"
@@ -14,7 +15,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securitycertificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
@@ -499,8 +499,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return volume.New(abc)
 	case "VolumeAnalytics":
 		return volumeanalytics.New(abc)
-	case "SecurityCertificate":
-		return securitycertificate.New(abc)
+	case "Certificate":
+		return certificate.New(abc)
 	case "SVM":
 		return svm.New(abc)
 	case "Sensor":
@@ -521,8 +521,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return systemnode.New(abc)
 	case "Workload":
 		return workload.New(abc)
-	case "Certificate":
-		return certificate.New(abc)
+	case "CertificateExpiry":
+		return certificateexpiry.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}

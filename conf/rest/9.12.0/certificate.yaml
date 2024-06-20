@@ -10,17 +10,8 @@ counters:
   - ^serial_number           => serial_number
   - ^svm.name                => svm
 
-
-#plugins:
-#  - LabelAgent:
-#      split:
-#        # 2027-08-10T23:33:22+12:00 then
-#        - expiry_time `T` date,time # date:2027-08-10, time:23:33:22+12:00
-#        - time `+` newTime,gmtPlus #  newTime:23:33:22, gmtPlus: 12:00
-#        - time `-` new1Time,gmtMinus # time:23:33:22, gmtMinus: empty
-
 plugins:
-  - Certificate
+  - CertificateExpiry
 
 export_options:
   instance_keys:
