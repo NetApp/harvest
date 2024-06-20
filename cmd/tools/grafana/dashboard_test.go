@@ -955,6 +955,7 @@ func ensureLookBack(text string) string {
 		}
 		function := text[space:openIndex]
 		// Ignore special case where code filter has been applied as `code=~"[45].*"`, which cause the match[1] to be 45.
+		// This pattern is used in the StorageGRID Overview dashboard to check HTTP StatusCodes.
 		if strings.Contains(text, "code=~\"[45].*\"") {
 			continue
 		}
