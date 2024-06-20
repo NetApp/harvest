@@ -7,11 +7,7 @@ counters:
   - ^^uuid
   - ^expiry_time             => expiry_time
   - ^name
-  - ^serial_number           => serial_number
   - ^svm.name                => svm
-
-plugins:
-  - CertificateExpiry
 
 export_options:
   instance_keys:
@@ -19,7 +15,4 @@ export_options:
     - svm
     - uuid
   instance_labels:
-    - dateTime
     - expiry_time
-    - gmt
-    - serial_number

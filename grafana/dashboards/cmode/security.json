@@ -1933,12 +1933,56 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Expired"
+              "options": "Expires In"
             },
             "properties": [
               {
                 "id": "unit",
                 "value": "dateTimeFromNow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "svm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SVM"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                  }
+                ]
               }
             ]
           }
@@ -1961,13 +2005,7 @@
           ],
           "show": false
         },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Value #B"
-          }
-        ]
+        "showHeader": true
       },
       "pluginVersion": "10.3.1",
       "targets": [
@@ -1994,10 +2032,21 @@
                 "cluster",
                 "expiry_time",
                 "name",
-                "svm",
-                "dateTime",
-                "gmt"
+                "svm"
               ]
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Expiry Date",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "expiry_time"
+              ],
+              "reducer": "last"
             }
           }
         },
@@ -2007,20 +2056,15 @@
             "excludeByName": {},
             "includeByName": {},
             "indexByName": {
+              "Expiry Date": 3,
               "cluster": 0,
-              "dateTime": 3,
-              "expiry_time": 5,
-              "gmt": 4,
+              "expiry_time": 4,
               "name": 2,
               "svm": 1
             },
             "renameByName": {
-              "cluster": "Cluster",
-              "dateTime": "Expiry Time",
-              "expiry_time": "Expired",
-              "gmt": "GMT",
-              "name": "Certificate Name",
-              "svm": "SVM"
+              "expiry_time": "Expires In",
+              "name": "Certificate Name"
             }
           }
         }

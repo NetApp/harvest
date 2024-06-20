@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificateexpiry"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/metroclustercheck"
@@ -521,8 +520,6 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return systemnode.New(abc)
 	case "Workload":
 		return workload.New(abc)
-	case "CertificateExpiry":
-		return certificateexpiry.New(abc)
 	default:
 		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
 	}
