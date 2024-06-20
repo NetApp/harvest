@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718361627040,
+  "iteration": 1718876789738,
   "links": [
     {
       "asDropdown": true,
@@ -5076,7 +5076,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 18
+            "y": 19
           },
           "id": 83,
           "options": {
@@ -5165,7 +5165,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 18
+            "y": 19
           },
           "id": 84,
           "options": {
@@ -5254,7 +5254,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 30
+            "y": 31
           },
           "id": 85,
           "options": {
@@ -5343,7 +5343,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 30
+            "y": 31
           },
           "id": 86,
           "options": {
@@ -5436,7 +5436,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 42
+            "y": 43
           },
           "id": 87,
           "options": {
@@ -5529,7 +5529,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 42
+            "y": 43
           },
           "id": 128,
           "options": {
@@ -5622,7 +5622,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 54
+            "y": 55
           },
           "id": 129,
           "options": {
@@ -5715,7 +5715,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 54
+            "y": 55
           },
           "id": 130,
           "options": {
@@ -5746,6 +5746,99 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "Top $TopResources Volumes Per Snapshot Size Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 67
+          },
+          "id": 150,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_space_performance_tier_inactive_user_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}\nand\ntopk($TopResources, avg_over_time(volume_space_performance_tier_inactive_user_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}[3h] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes by Inactive Data",
           "transformations": [],
           "type": "timeseries"
         }
@@ -6235,6 +6328,101 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "Top $TopResources Volumes Per Snapshot Reserve Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "%",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 44
+          },
+          "id": 151,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_space_performance_tier_inactive_user_data_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}\nand\ntopk($TopResources, avg_over_time(volume_space_performance_tier_inactive_user_data_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",style!=\"flexgroup_constituent\"}[3h] @ end()))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}}",
+              "refId": "C"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Volumes by Inactive Data",
           "transformations": [],
           "type": "timeseries"
         }
@@ -8577,5 +8765,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "cdot-volume",
-  "version": 23
+  "version": 24
 }

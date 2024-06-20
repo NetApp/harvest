@@ -40,6 +40,8 @@ counters:
   - overwrite_reserve_used                        => overwrite_reserve_used
   - percent_snapshot_space                        => snapshot_reserve_percent
   - percent_used                                  => size_used_percent
+  - performance_tier_inactive_user_data           => space_performance_tier_inactive_user_data
+  - performance_tier_inactive_user_data_percent   => space_performance_tier_inactive_user_data_percent
   - physical_used                                 => space_physical_used
   - physical_used_percent                         => space_physical_used_percent
   - sis_space_saved                               => sis_total_saved
