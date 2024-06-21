@@ -7,12 +7,17 @@ counters:
   - ^^uuid
   - ^expiry_time             => expiry_time
   - ^name
+  - ^scope                   => scope
   - ^svm.name                => svm
+  - ^type                    => type
+  - expiry_time(timestamp)   => expiry_time
 
 export_options:
   instance_keys:
+    - expiry_time
     - name
-    - svm
     - uuid
   instance_labels:
-    - expiry_time
+    - scope
+    - svm
+    - type

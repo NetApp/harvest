@@ -2013,7 +2013,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}",
+          "expr": "certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2022,7 +2022,7 @@
           "refId": "A"
         }
       ],
-      "title": "Certificates Detail",
+      "title": "SSL Certificates Expiration",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -2032,7 +2032,9 @@
                 "cluster",
                 "expiry_time",
                 "name",
-                "svm"
+                "scope",
+                "svm",
+                "type"
               ]
             }
           }
@@ -2056,15 +2058,19 @@
             "excludeByName": {},
             "includeByName": {},
             "indexByName": {
-              "Expiry Date": 3,
+              "Expiry Date": 5,
               "cluster": 0,
-              "expiry_time": 4,
+              "expiry_time": 6,
               "name": 2,
-              "svm": 1
+              "scope": 4,
+              "svm": 1,
+              "type": 3
             },
             "renameByName": {
               "expiry_time": "Expires In",
-              "name": "Certificate Name"
+              "name": "Certificate Name",
+              "type": "Type",
+              "scope": "Scope"
             }
           }
         }
