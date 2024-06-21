@@ -4,14 +4,14 @@ query:              api/storage/aggregates
 object:             aggr
 
 counters:
-  - ^^uuid                                                         => uuid
+  - ^^name                                                         => aggr
   - ^block_storage.primary.disk_type                               => type
   - ^block_storage.primary.raid_type                               => raid_type
   - ^cloud_storage.stores.#.cloud_store.name                       => cloud_stores
   - ^data_encryption.software_encryption_enabled                   => is_encrypted
   - ^home_node.name                                                => node
-  - ^name                                                          => aggr
   - ^state                                                         => state
+  - ^uuid                                                          => uuid
   - block_storage.hybrid_cache.size                                => hybrid_cache_size_total
   - block_storage.plexes.#                                         => raid_plex_count
   - block_storage.primary.disk_count                               => primary_disk_count
@@ -50,6 +50,13 @@ counters:
   - volume_count                                                   => volume_count
   - hidden_fields:
       - space
+
+endpoints:
+  - query: api/private/cli/aggr/show-space
+    counters:
+      - ^^aggregate_name                                           => aggr
+      - object_store_logical_used                                  => object_store_logical_used
+      - object_store_physical_used                                 => object_store_physical_used
 
 plugins:
   - LabelAgent:

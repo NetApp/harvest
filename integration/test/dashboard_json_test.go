@@ -44,6 +44,9 @@ var zapiCounterMap = map[string]struct{}{
 	"volume_capacity_tier_footprint":            {},
 	"volume_capacity_tier_footprint_percent":    {},
 	"volume_performance_tier_footprint_percent": {},
+	// Below are not available in ZAPI
+	"aggr_object_store_logical_used":  {},
+	"aggr_object_store_physical_used": {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
