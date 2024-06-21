@@ -1397,7 +1397,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "8 * sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$TopPolicyRx\"}[$__interval]))",
+          "expr": "8 * (sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]))))",
           "hide": false,
           "instant": false,
           "interval": "3m",
@@ -1407,7 +1407,7 @@
         },
         {
           "exemplar": false,
-          "expr": "8 * sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$TopPolicyTx\"}[$__interval]))",
+          "expr": "8 * (sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]))))",
           "hide": false,
           "interval": "3m",
           "intervalFactor": 1,
@@ -1497,7 +1497,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$TopPolicyRequestCount\"}[$__interval])) > 0",
+          "expr": "sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) > 0 and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h])))",
           "hide": false,
           "instant": false,
           "interval": "3m",
@@ -1507,7 +1507,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$TopPolicyRequestCount\"}[$__interval])) > 0",
+          "expr": "sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) > 0 and on (cluster, policy, method) topk($TopResources, sum by (cluster,policy,method) (avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h])))",
           "hide": false,
           "interval": "3m",
           "intervalFactor": 1,
@@ -1934,75 +1934,6 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopPolicyRx",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*policy=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopPolicyTx",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*policy=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
-        "description": null,
-        "error": null,
-        "hide": 2,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "TopPolicyRequestCount",
-        "options": [],
-        "query": {
-          "query": "query_result(topk($TopResources, avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[${__range}])))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": ".*policy=\\\"(.*?)\\\".*",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
