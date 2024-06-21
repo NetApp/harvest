@@ -2069,8 +2069,8 @@
             "renameByName": {
               "expiry_time": "Expires In",
               "name": "Certificate Name",
-              "type": "Type",
-              "scope": "Scope"
+              "scope": "Scope",
+              "type": "Type"
             }
           }
         }
