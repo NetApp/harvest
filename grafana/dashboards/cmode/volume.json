@@ -5751,7 +5751,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.",
+          "description": "The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to an object store or could be attached to an object store.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -6333,7 +6333,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.",
+          "description": "The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to an object store or could be attached to an object store.",
           "fieldConfig": {
             "defaults": {
               "color": {
