@@ -3,7 +3,7 @@ package collectors
 import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"golang.org/x/exp/maps"
+	"maps"
 	"regexp"
 	"strings"
 )
