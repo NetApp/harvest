@@ -112,3 +112,12 @@ groups:
     annotations:
       summary: "Certificate [{{ $labels.name }}] will be expiring on [{{ $labels.expiry_time }}]"
       description: "Certificate [{{ $labels.name }}] will be expiring on [{{ $labels.expiry_time }}]"
+
+    # Certificates expired
+  - alert: Certificates expired
+    expr: (certificate_expiry_time{} - time()) < 0
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Certificate [{{ $labels.name }}] has been expired on [{{ $labels.expiry_time }}]"
+      description: "Certificate [{{ $labels.name }}] has been expired on [{{ $labels.expiry_time }}]"
