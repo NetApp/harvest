@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718358572563,
+  "iteration": 1718893624466,
   "links": [
     {
       "asDropdown": true,
@@ -1259,7 +1259,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 9
+            "y": 70
           },
           "id": 245,
           "options": {
@@ -1351,7 +1351,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 9
+            "y": 70
           },
           "id": 247,
           "options": {
@@ -1499,7 +1499,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 80
           },
           "id": 249,
           "options": {
@@ -1515,7 +1515,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group, object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared,object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)",
+              "expr": "avg_over_time(\n  clamp_max(\n    sum by (cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n      (\n        qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100\n        / on(datacenter, cluster, policy_group)\n        group_left\n        label_replace(\n          qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n      )\n      * on(datacenter, cluster, policy_group)\n      group_left(capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n      label_replace(\n        qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    ), 100\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1685,7 +1685,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 28
+            "y": 89
           },
           "id": 251,
           "options": {
@@ -1701,7 +1701,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group,object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps) (\n    (\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100 / (1000 * 1000)\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared,object_count,max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)\n",
+              "expr": "avg_over_time(\n  clamp_max(\n    sum by (cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n      (\n        qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100 / (1000 * 1000)\n        / on(datacenter, cluster, policy_group)\n        group_left\n        label_replace(\n          qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n      )\n      * on(datacenter, cluster, policy_group)\n      group_left(capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n      label_replace(\n        qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    ), 100\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1829,7 +1829,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 60
+            "y": 99
           },
           "id": 219,
           "options": {
@@ -1921,7 +1921,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 60
+            "y": 99
           },
           "id": 221,
           "options": {
@@ -2205,7 +2205,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 70
+            "y": 109
           },
           "id": 223,
           "options": {
@@ -2221,7 +2221,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "avg_over_time(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h]) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2566,7 +2566,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 79
+            "y": 118
           },
           "id": 224,
           "options": {
@@ -2582,7 +2582,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "avg_over_time(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h]) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2772,7 +2772,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 39
+            "y": 100
           },
           "id": 228,
           "options": {
@@ -2864,7 +2864,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 100
           },
           "id": 229,
           "options": {
@@ -3114,7 +3114,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 49
+            "y": 110
           },
           "id": 239,
           "options": {
@@ -3130,7 +3130,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "label_join(\nclamp_max(\n  (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    qos_workload_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n  ),\n  100\n)\n, \"unique_id\", \"-\", \"datacenter\", \"cluster\", \"workload\")",
+              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n        (\n          qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100\n        )\n        / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n        qos_workload_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n      ),\n      100\n    ),\n    \"unique_id\", \"-\", \"datacenter\", \"cluster\", \"workload\"\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3467,7 +3467,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 119
           },
           "id": 241,
           "options": {
@@ -3483,7 +3483,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "label_join(\n  clamp_max(\n    (\n      (\n        (qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100)\n        / (1000 * 1000)\n      )\n      / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n      qos_workload_max_throughput_mbps{\n        datacenter=~\"$Datacenter\",\n        cluster=~\"$Cluster\",\n        workload=~\"$Workload\",\n        is_adaptive=\"Yes\"\n      }\n    ),\n    100\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n        (\n          (qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100)\n          / (1000 * 1000)\n        )\n        / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n        qos_workload_max_throughput_mbps{\n          datacenter=~\"$Datacenter\",\n          cluster=~\"$Cluster\",\n          workload=~\"$Workload\",\n          is_adaptive=\"Yes\"\n        }\n      ),\n      100\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3492,7 +3492,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  (\n    qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}\n    * on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    (\n      qos_workload_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n      and\n      qos_workload_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n    )\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "avg_over_time(\n  label_join(\n    (\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}\n      * on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n      (\n        qos_workload_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n        and\n        qos_workload_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n      )\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )[3h:]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -7770,7 +7770,7 @@
         "type": "custom"
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
@@ -7908,5 +7908,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "cdot-workload",
-  "version": 12
+  "version": 13
 }
