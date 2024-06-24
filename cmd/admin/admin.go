@@ -11,7 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/zekroTJA/timedmap"
+	"github.com/zekroTJA/timedmap/v2"
 	"net/http"
 	"os"
 	"os/signal"
@@ -22,7 +22,7 @@ type Admin struct {
 	listen           string
 	logger           zerolog.Logger
 	localIP          string
-	pollerToPromAddr *timedmap.TimedMap
+	pollerToPromAddr *timedmap.TimedMap[string, pollerDetails]
 	httpSD           conf.Httpsd
 	expireAfter      time.Duration
 }
@@ -150,10 +150,9 @@ type sdTarget struct {
 func (a *Admin) makeTargets() []byte {
 	targets := make([]sdTarget, 0)
 	for _, details := range a.pollerToPromAddr.Snapshot() {
-		pd := details.(pollerDetails)
 		target := sdTarget{
-			Targets: []string{fmt.Sprintf(`%s:%d`, pd.IP, pd.Port)},
-			Labels:  labels{MetaPoller: pd.Name},
+			Targets: []string{fmt.Sprintf(`%s:%d`, details.IP, details.Port)},
+			Labels:  labels{MetaPoller: details.Name},
 		}
 		targets = append(targets, target)
 	}
@@ -251,7 +250,7 @@ func newAdmin(configPath string) Admin {
 
 	a.localIP, _ = util.FindLocalIP()
 	a.expireAfter = a.setDuration(a.httpSD.ExpireAfter, 1*time.Minute, "expire_after")
-	a.pollerToPromAddr = timedmap.New(a.expireAfter)
+	a.pollerToPromAddr = timedmap.New[string, pollerDetails](a.expireAfter)
 	a.logger.Debug().
 		Str("expireAfter", a.expireAfter.String()).
 		Str("localIP", a.localIP).

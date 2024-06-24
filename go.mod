@@ -9,7 +9,6 @@ require (
 	github.com/shirou/gopsutil/v4 v4.24.5
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/gjson v1.17.1
-	github.com/zekroTJA/timedmap v1.5.2
 	github.com/zekroTJA/timedmap/v2 v2.0.0
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/sys v0.21.0
@@ -34,7 +33,6 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
