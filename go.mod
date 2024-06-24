@@ -9,7 +9,7 @@ require (
 	github.com/shirou/gopsutil/v4 v4.24.5
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/gjson v1.17.1
-	github.com/zekroTJA/timedmap v1.5.2
+	github.com/zekroTJA/timedmap/v2 v2.0.0
 	github.com/zekroTJA/timedmap/v2 v2.0.0
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/sys v0.21.0
