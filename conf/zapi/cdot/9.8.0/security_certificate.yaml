@@ -13,9 +13,6 @@ counters:
     - expiration-date          => expiry_time
 
 plugins:
-  - LabelAgent:
-      include_equals:
-        - type `server`
   - Certificate:
       schedule:
         - data: 3m  # should be multiple of data poll duration
@@ -28,4 +25,5 @@ export_options:
   instance_labels:
     - certificateExpiryStatus
     - certificateIssuerType
+    - expiry_time
     - type

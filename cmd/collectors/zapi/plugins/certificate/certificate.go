@@ -99,11 +99,9 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 		// update certificate instance based on admin vaserver serial
 		for certificateInstanceKey, certificateInstance := range data.GetInstances() {
 			if certificateInstance.IsExportable() {
-				certificateInstance.SetExportable(false)
 				serialNumber := certificateInstance.GetLabel("serial_number")
 
 				if serialNumber == adminVserverSerial {
-					certificateInstance.SetExportable(true)
 					my.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
 					my.setCertificateValidity(data, certificateInstance)
 				}
