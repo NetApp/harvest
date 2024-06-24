@@ -2059,7 +2059,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}",
+          "expr": "security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", expiry_time!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2070,7 +2070,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "security_certificate_expiry_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}-time()",
+          "expr": "security_certificate_expiry_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", expiry_time!=\"\"}-time()",
           "format": "table",
           "hide": false,
           "instant": true,
