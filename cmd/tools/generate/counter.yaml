@@ -70,27 +70,12 @@ counters:
 
   - Name: disk_stats_io_kbps
     Description: Total Disk Throughput in KBPS Across All Active Paths
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/disk
-        ONTAPCounter: disk_io_kbps_total
-        Template: conf/rest/9.12.0/disk.yaml
 
   - Name: disk_stats_sectors_read
     Description: Number of Sectors Read
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/disk
-        ONTAPCounter: sectors_read
-        Template: conf/rest/9.12.0/disk.yaml
 
   - Name: disk_stats_sectors_written
     Description: Number of Sectors Written
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/disk
-        ONTAPCounter: sectors_written
-        Template: conf/rest/9.12.0/disk.yaml
 
   - Name: disk_uptime
     Description: Number of seconds the drive has been powered on
@@ -1079,3 +1064,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/qtree.yaml
+
+  - Name: volume_space_performance_tier_inactive_user_data
+    Description: The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
+
+  - Name: volume_space_performance_tier_inactive_user_data_percent
+    Description: The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
+
+  - Name: aggr_object_store_logical_used
+    Description: Logical space usage of aggregates in the attached object store.
+
+  - Name: aggr_object_store_physical_used
+    Description: Physical space usage of aggregates in the attached object store.
+
