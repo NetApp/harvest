@@ -19,11 +19,12 @@ plugins:
 
 export_options:
   instance_keys:
-    - name
-    - serial_number
-    - svm
+    - uuid
   instance_labels:
     - certificateExpiryStatus
     - certificateIssuerType
     - expiry_time
+    - name
+    - serial_number
+    - svm
     - type

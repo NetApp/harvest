@@ -5,7 +5,6 @@ object:           security_certificate
 
 counters:
   - ^^uuid
-  - ^expiry_time             => expiry_time
   - ^name
   - ^public_certificate      => certificatePEM
   - ^scope                   => scope
@@ -21,11 +20,11 @@ plugins:
 
 export_options:
   instance_keys:
-    - expiry_time
     - uuid
   instance_labels:
     - certificateExpiryStatus
     - certificateIssuerType
+    - expiry_time
     - name
     - scope
     - serial_number

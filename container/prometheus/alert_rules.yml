@@ -105,7 +105,7 @@ groups:
 
     # Certificates expiring within 1 month
   - alert: Certificates expiring within 1 month
-    expr: 0 < (certificate_expiry_time{} - time()) < (30*24*3600)
+    expr: 0 < (security_certificate_expiry_time{} - time()) < (30*24*3600)
     for: 1m
     labels:
       severity: "warning"
@@ -115,7 +115,7 @@ groups:
 
     # Certificates expired
   - alert: Certificates expired
-    expr: (certificate_expiry_time{} - time()) < 0
+    expr: (security_certificate_expiry_time{} - time()) < 0
     labels:
       severity: "critical"
     annotations:

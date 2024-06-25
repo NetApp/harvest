@@ -57,6 +57,8 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 	var (
 		adminVserver       string
 		adminVserverSerial string
+		expiryTimeMetric   *matrix.Metric
+		unixTime           time.Time
 		err                error
 	)
 	data := dataMap[my.Object]
@@ -87,18 +89,31 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 
 		// update certificate instance based on admin vaserver serial
 		for _, certificateInstance := range data.GetInstances() {
+			unixTime = time.Now()
 			if certificateInstance.IsExportable() {
 				serialNumber := certificateInstance.GetLabel("serial_number")
+				scope := certificateInstance.GetLabel("scope")
+				CertType := certificateInstance.GetLabel("type")
 
-				if serialNumber == adminVserverSerial {
+				if expiryTimeMetric = data.GetMetric("expiry_time"); expiryTimeMetric == nil {
+					my.Logger.Error().Stack().Msg("missing expiry time metric")
+					continue
+				}
+
+				if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
+					// convert expiryTime from float64 to int64 and then to unix Time
+					unixTime = time.Unix(int64(expiryTime), 0)
+					certificateInstance.SetLabel("expiry_time", unixTime.UTC().String())
+				}
+
+				if serialNumber == adminVserverSerial && scope == "cluster" && CertType == "server" {
 					// Admin SVM certificate is cluster scoped, but the REST API does not return the SVM name in its response. Add here for ZAPI parity
 					certificateInstance.SetLabel("svm", adminVserver)
 					my.setCertificateIssuerType(certificateInstance)
-					my.setCertificateValidity(data, certificateInstance)
+					my.setCertificateValidity(unixTime, certificateInstance)
 				}
 			}
 		}
-
 	}
 
 	my.currentVal++
@@ -145,36 +160,23 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	}
 }
 
-func (my *Certificate) setCertificateValidity(data *matrix.Matrix, instance *matrix.Instance) {
-	var (
-		expiryTimeMetric *matrix.Metric
-	)
-
+func (my *Certificate) setCertificateValidity(unixTime time.Time, instance *matrix.Instance) {
 	instance.SetLabel("certificateExpiryStatus", "unknown")
 
-	if expiryTimeMetric = data.GetMetric("expiry_time"); expiryTimeMetric == nil {
-		my.Logger.Error().Stack().Msg("missing expiry time metric")
-		return
-	}
+	// find difference from unix Time
+	timestampDiff := time.Until(unixTime).Hours()
 
-	if expiryTime, ok := expiryTimeMetric.GetValueFloat64(instance); ok {
-		// convert expiryTime from float64 to int64 and find difference
-
-		timestampDiff := time.Until(time.Unix(int64(expiryTime), 0)).Hours()
-
-		if timestampDiff <= 0 {
-			instance.SetLabel("certificateExpiryStatus", "expired")
+	if timestampDiff <= 0 {
+		instance.SetLabel("certificateExpiryStatus", "expired")
+	} else {
+		// daysRemaining will be more than 0 if it has reached this point, convert to days
+		daysRemaining := timestampDiff / 24
+		if daysRemaining < 60 {
+			instance.SetLabel("certificateExpiryStatus", "expiring")
 		} else {
-			// daysRemaining will be more than 0 if it has reached this point, convert to days
-			daysRemaining := timestampDiff / 24
-			if daysRemaining < 60 {
-				instance.SetLabel("certificateExpiryStatus", "expiring")
-			} else {
-				instance.SetLabel("certificateExpiryStatus", "active")
-			}
+			instance.SetLabel("certificateExpiryStatus", "active")
 		}
 	}
-
 }
 
 func (my *Certificate) GetAdminVserver() (string, error) {

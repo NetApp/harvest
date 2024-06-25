@@ -1968,6 +1968,50 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "Expiry"
             },
             "properties": [
@@ -1992,15 +2036,15 @@
                       "result": {
                         "color": "orange",
                         "index": 1,
-                        "text": "This Month"
+                        "text": "Within 2 Months"
                       },
-                      "to": 2678400
+                      "to": 5184000
                     },
                     "type": "range"
                   },
                   {
                     "options": {
-                      "from": 2678400,
+                      "from": 5184000,
                       "result": {
                         "color": "green",
                         "index": 2,
@@ -2070,7 +2114,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "security_certificate_expiry_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", expiry_time!=\"\"}-time()",
+          "expr": "security_certificate_expiry_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}-time()",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2084,7 +2128,14 @@
         {
           "id": "seriesToColumns",
           "options": {
-            "byField": "expiry_time"
+            "byField": "uuid"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) 1$",
+            "renamePattern": "$1"
           }
         },
         {
@@ -2092,11 +2143,14 @@
           "options": {
             "include": {
               "names": [
+                "cluster",
+                "datacenter",
                 "expiry_time",
                 "scope",
                 "svm",
                 "type",
-                "Value #B"
+                "Value #B",
+                "name"
               ]
             }
           }
@@ -2118,16 +2172,23 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Value #B": false
+              "Value #B": false,
+              "cluster 2": true,
+              "datacenter 2": true
             },
             "includeByName": {},
             "indexByName": {
-              "Expiry Date": 3,
-              "Value #B": 4,
-              "expiry_time": 5,
-              "scope": 2,
-              "svm": 0,
-              "type": 1
+              "Expiry Date": 6,
+              "Value #B": 7,
+              "cluster": 1,
+              "cluster 2": 9,
+              "datacenter": 0,
+              "datacenter 2": 10,
+              "expiry_time": 8,
+              "name": 5,
+              "scope": 4,
+              "svm": 2,
+              "type": 3
             },
             "renameByName": {
               "Expiry Date": "",
