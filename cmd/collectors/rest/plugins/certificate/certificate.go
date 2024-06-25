@@ -87,31 +87,34 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			return nil, nil, nil
 		}
 
-		// update certificate instance based on admin vaserver serial
+		// update certificate instance based on admin vserver serial
 		for _, certificateInstance := range data.GetInstances() {
-			unixTime = time.Now()
-			if certificateInstance.IsExportable() {
-				serialNumber := certificateInstance.GetLabel("serial_number")
-				scope := certificateInstance.GetLabel("scope")
-				CertType := certificateInstance.GetLabel("type")
+			if !certificateInstance.IsExportable() {
+				continue
+			}
+			serialNumber := certificateInstance.GetLabel("serial_number")
+			scope := certificateInstance.GetLabel("scope")
+			CertType := certificateInstance.GetLabel("type")
 
-				if expiryTimeMetric = data.GetMetric("expiry_time"); expiryTimeMetric == nil {
-					my.Logger.Error().Stack().Msg("missing expiry time metric")
-					continue
-				}
+			if expiryTimeMetric = data.GetMetric("expiry_time"); expiryTimeMetric == nil {
+				my.Logger.Error().Stack().Msg("missing expiry time metric")
+				continue
+			}
 
-				if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
-					// convert expiryTime from float64 to int64 and then to unix Time
-					unixTime = time.Unix(int64(expiryTime), 0)
-					certificateInstance.SetLabel("expiry_time", unixTime.UTC().String())
-				}
+			if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
+				// convert expiryTime from float64 to int64 and then to unix Time
+				unixTime = time.Unix(int64(expiryTime), 0)
+				certificateInstance.SetLabel("expiry_time", unixTime.UTC().Format(time.RFC3339))
+			} else {
+				// This is fail-safe case
+				unixTime = time.Now()
+			}
 
-				if serialNumber == adminVserverSerial && scope == "cluster" && CertType == "server" {
-					// Admin SVM certificate is cluster scoped, but the REST API does not return the SVM name in its response. Add here for ZAPI parity
-					certificateInstance.SetLabel("svm", adminVserver)
-					my.setCertificateIssuerType(certificateInstance)
-					my.setCertificateValidity(unixTime, certificateInstance)
-				}
+			if serialNumber == adminVserverSerial && scope == "cluster" && CertType == "server" {
+				// Admin SVM certificate is cluster scoped, but the REST API does not return the SVM name in its response. Add here for ZAPI parity
+				certificateInstance.SetLabel("svm", adminVserver)
+				my.setCertificateIssuerType(certificateInstance)
+				my.setCertificateValidity(unixTime, certificateInstance)
 			}
 		}
 	}

@@ -98,30 +98,33 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			return nil, nil, nil
 		}
 
-		// update certificate instance based on admin vaserver serial
+		// update certificate instance based on admin vserver serial
 		for certificateInstanceKey, certificateInstance := range data.GetInstances() {
-			unixTime = time.Now()
-			if certificateInstance.IsExportable() {
-				name := certificateInstance.GetLabel("name")
-				serialNumber := certificateInstance.GetLabel("serial_number")
-				svm := certificateInstance.GetLabel("svm")
-				CertType := certificateInstance.GetLabel("type")
-				certificateInstance.SetLabel("uuid", name+serialNumber+svm)
+			if !certificateInstance.IsExportable() {
+				continue
+			}
+			name := certificateInstance.GetLabel("name")
+			serialNumber := certificateInstance.GetLabel("serial_number")
+			svm := certificateInstance.GetLabel("svm")
+			CertType := certificateInstance.GetLabel("type")
+			certificateInstance.SetLabel("uuid", name+serialNumber+svm)
 
-				if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
-					my.Logger.Error().Msg("missing expiry time metric")
-					continue
-				}
-				if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
-					// convert expiryTime from float64 to int64 and then to unix Time
-					unixTime = time.Unix(int64(expiryTime), 0)
-					certificateInstance.SetLabel("expiry_time", unixTime.UTC().String())
-				}
+			if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
+				my.Logger.Error().Msg("missing expiry time metric")
+				continue
+			}
+			if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
+				// convert expiryTime from float64 to int64 and then to unix Time
+				unixTime = time.Unix(int64(expiryTime), 0)
+				certificateInstance.SetLabel("expiry_time", unixTime.UTC().Format(time.RFC3339))
+			} else {
+				// This is fail-safe case
+				unixTime = time.Now()
+			}
 
-				if serialNumber == adminVserverSerial && CertType == "server" {
-					my.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
-					my.setCertificateValidity(unixTime, certificateInstance)
-				}
+			if serialNumber == adminVserverSerial && CertType == "server" {
+				my.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
+				my.setCertificateValidity(unixTime, certificateInstance)
 			}
 		}
 	}
