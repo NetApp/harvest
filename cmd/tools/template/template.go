@@ -362,17 +362,21 @@ func findCustomPlugins(path string, template *node.Node, model *Model) error {
 		goPluginName := strings.ToLower(name)
 		pluginGo := toPluginPath(path, goPluginName)
 
-		err2 := readPlugin(pluginGo, model)
-		if err2 != nil {
-			return err2
+		if err := readPlugin(pluginGo, model); err != nil {
+			return err
 		}
 
 		// special case for labels added outside normal per-object plugin
 		if strings.Contains(path, "snapmirror.yaml") || strings.Contains(path, "svm.yaml") {
 			pluginGo2 := toPluginPath(path, "commonutils")
-			err2 = readPlugin(pluginGo2, model)
-			if err2 != nil {
-				return err2
+			if err := readPlugin(pluginGo2, model); err != nil {
+				return err
+			}
+		}
+		if strings.Contains(path, "volume.yaml") && strings.Contains(path, "perf") {
+			pluginGo2 := toPluginPath(path, "volume")
+			if err := readPlugin(pluginGo2, model); err != nil {
+				return err
 			}
 		}
 	}
@@ -388,6 +392,11 @@ func toPluginPath(path string, pluginName string) string {
 	// Both Zapi and REST sensor.yaml templates uses a single plugin defined in power.go
 	if strings.Contains(path, "sensor.yaml") {
 		return before + "cmd/collectors/power.go"
+	}
+
+	// Both Zapi and REST volume.yaml templates uses a single plugin defined in volume.go
+	if strings.Contains(path, "volume.yaml") && strings.Contains(path, "perf") {
+		return before + "cmd/collectors/volume.go"
 	}
 
 	base := strings.Split(after, "/")
