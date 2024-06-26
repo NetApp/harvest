@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718876789738,
+  "iteration": 1719377525654,
   "links": [
     {
       "asDropdown": true,
@@ -4000,7 +4000,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 18
           },
           "id": 103,
           "options": {
@@ -4013,7 +4013,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "`Note:` Typically these latencies only apply to SAN not NAS.\n\nRepresents the wait time of I/O requests by the external networking protocols on the cluster. The wait time is time spent waiting for transfer ready transactions to finish before the cluster can respond to an I/O request. If the network component is in contention, it means high wait time at the protocol layer is impacting the latency of one or more workloads.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4069,7 +4069,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 22
+            "y": 23
           },
           "id": 48,
           "options": {
@@ -4103,7 +4103,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents the throughput maximum (ceiling) setting of the storage Quality of Service (QoS) policy group assigned to the workload. If the policy group component is in contention, it means all workloads in the policy group are being throttled by the set throughput limit, which is impacting the latency of one or more of those workloads.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4160,7 +4160,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 22
+            "y": 23
           },
           "id": 50,
           "options": {
@@ -4194,7 +4194,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents the latency to a workload that is being caused by QoS throughput floor (expected) setting assigned to other workloads. If the QoS floor set on certain workloads use the majority of the bandwidth to guarantee the promised throughput, other workloads will be throttled and see more latency.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4251,7 +4251,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 22
+            "y": 23
           },
           "id": 88,
           "options": {
@@ -4285,7 +4285,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents delays caused by the cluster switches, cables, and adapters which physically connect clustered nodes. \n\nIf the cluster interconnect component is in contention, it means high wait time for I/O requests at the cluster interconnect is impacting the latency of one or more workloads.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4341,7 +4341,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 34
           },
           "id": 54,
           "options": {
@@ -4375,7 +4375,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents the delays in the data/WAFL layer of ONTAP.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4431,7 +4431,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 33
+            "y": 34
           },
           "id": 56,
           "options": {
@@ -4465,7 +4465,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents delays due to buffered write flushes, called consistency points (cp).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4522,7 +4522,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 33
+            "y": 34
           },
           "id": 89,
           "options": {
@@ -4556,7 +4556,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents delays due to operations suspending on a delay mechanism. Typically this is diagnosed by NetApp Support.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4612,7 +4612,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 44
+            "y": 45
           },
           "id": 60,
           "options": {
@@ -4647,7 +4647,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents the software component in the cluster involved with I/O processing between the cluster and the cloud tier on which user data is stored. If the cloud latency component is in contention, it means that a large amount of reads from volumes that are hosted on the cloud tier are impacting the latency of one or more workloads.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4704,7 +4704,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 44
+            "y": 45
           },
           "id": 62,
           "options": {
@@ -4738,7 +4738,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents the delays in the network layer of ONTAP.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4794,7 +4794,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 44
+            "y": 45
           },
           "id": 52,
           "options": {
@@ -4828,7 +4828,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents delays due to mirroring writes to the NVRAM/NVLOG memory and to the HA partner NVRAM/NVLOG memory.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4884,7 +4884,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 55
+            "y": 56
           },
           "id": 64,
           "options": {
@@ -4918,7 +4918,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "average latency for workload on Data ONTAP subsystems.",
+          "description": "Represents slowness due to attached hard drives or solid state drives.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4974,7 +4974,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 55
+            "y": 56
           },
           "id": 58,
           "options": {
@@ -8765,5 +8765,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "cdot-volume",
-  "version": 24
+  "version": 25
 }
