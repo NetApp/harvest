@@ -1,17 +1,22 @@
 
 name:             SecurityCert
-query:            api/security/certificates
+query:            api/private/cli/security/certificate
 object:           security_certificate
 
 counters:
   - ^^uuid
-  - ^name
-  - ^public_certificate      => certificatePEM
-  - ^scope                   => scope
-  - ^serial_number           => serial_number
-  - ^svm.name                => svm
+  - ^cert_name               => name
+  - ^public_cert             => certificatePEM
+  - ^serial                  => serial_number
   - ^type                    => type
-  - expiry_time(timestamp)   => expiry_time
+  - ^vserver                 => svm
+  - expiration(timestamp)    => expiry_time
+
+#endpoints:
+#  - query: api/security/certificates
+#    counters:
+#      - ^^uuid
+#      - ^scope               => scope
 
 plugins:
   - Certificate:
@@ -26,7 +31,7 @@ export_options:
     - certificateIssuerType
     - expiry_time
     - name
-    - scope
+#    - scope
     - serial_number
     - svm
     - type

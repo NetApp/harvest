@@ -96,7 +96,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			scope := certificateInstance.GetLabel("scope")
 			CertType := certificateInstance.GetLabel("type")
 
-			if expiryTimeMetric = data.GetMetric("expiry_time"); expiryTimeMetric == nil {
+			if expiryTimeMetric = data.GetMetric("expiration"); expiryTimeMetric == nil {
 				my.Logger.Error().Stack().Msg("missing expiry time metric")
 				continue
 			}

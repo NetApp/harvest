@@ -1902,7 +1902,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires Harvest REST collector.\n\nThis panel displays Certificate expiration time.",
+      "description": "This panel displays SSL Certificate expiration time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2146,7 +2146,6 @@
                 "cluster",
                 "datacenter",
                 "expiry_time",
-                "scope",
                 "svm",
                 "type",
                 "Value #B",
@@ -2178,15 +2177,14 @@
             },
             "includeByName": {},
             "indexByName": {
-              "Expiry Date": 6,
-              "Value #B": 7,
+              "Expiry Date": 5,
+              "Value #B": 6,
               "cluster": 1,
-              "cluster 2": 9,
+              "cluster 2": 8,
               "datacenter": 0,
-              "datacenter 2": 10,
-              "expiry_time": 8,
-              "name": 5,
-              "scope": 4,
+              "datacenter 2": 9,
+              "expiry_time": 7,
+              "name": 4,
               "svm": 2,
               "type": 3
             },
@@ -2195,7 +2193,6 @@
               "Value #B": "Expiry",
               "expiry_time": "Expires In",
               "name": "Certificate Name",
-              "scope": "Scope",
               "type": "Type"
             }
           }
