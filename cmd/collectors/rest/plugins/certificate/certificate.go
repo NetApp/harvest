@@ -93,7 +93,6 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 				continue
 			}
 			serialNumber := certificateInstance.GetLabel("serial_number")
-			scope := certificateInstance.GetLabel("scope")
 			CertType := certificateInstance.GetLabel("type")
 
 			if expiryTimeMetric = data.GetMetric("expiration"); expiryTimeMetric == nil {
@@ -110,9 +109,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 				unixTime = time.Now()
 			}
 
-			if serialNumber == adminVserverSerial && scope == "cluster" && CertType == "server" {
-				// Admin SVM certificate is cluster scoped, but the REST API does not return the SVM name in its response. Add here for ZAPI parity
-				certificateInstance.SetLabel("svm", adminVserver)
+			if serialNumber == adminVserverSerial && CertType == "server" {
 				my.setCertificateIssuerType(certificateInstance)
 				my.setCertificateValidity(unixTime, certificateInstance)
 			}
