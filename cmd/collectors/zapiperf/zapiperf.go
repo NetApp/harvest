@@ -69,7 +69,7 @@ const (
 	BILLION                 = 1_000_000_000
 )
 
-var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
+var workloadDetailMetrics = []string{"resource_latency"}
 
 type ZapiPerf struct {
 	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -119,7 +119,24 @@ func (z *ZapiPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	if err := z.InitQOS(); err != nil {
+		return err
+	}
 	z.Logger.Debug().Msg("initialized")
+	return nil
+}
+
+func (z *ZapiPerf) InitQOS() error {
+	counters := z.Params.GetChildS("counters")
+	if counters != nil {
+		refine := counters.GetChildS("refine")
+		if refine != nil {
+			withServiceLatency := refine.GetChildContentS("with_service_latency")
+			if withServiceLatency != "false" {
+				workloadDetailMetrics = append(workloadDetailMetrics, "service_time_latency")
+			}
+		}
+	}
 	return nil
 }
 

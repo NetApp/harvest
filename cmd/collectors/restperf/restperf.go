@@ -50,7 +50,7 @@ var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
 var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
 var qosWorkloadQuery = "api/storage/qos/workloads"
 
-var workloadDetailMetrics = []string{"resource_latency", "service_time_latency"}
+var workloadDetailMetrics = []string{"resource_latency"}
 
 var qosQueries = map[string]string{
 	qosQuery:       qosQuery,
@@ -170,6 +170,10 @@ func (r *RestPerf) InitQOS() error {
 			withConstituents := refine.GetChildContentS("with_constituents")
 			if withConstituents == "false" {
 				r.perfProp.disableConstituents = true
+			}
+			withServiceLatency := refine.GetChildContentS("with_service_latency")
+			if withServiceLatency != "false" {
+				workloadDetailMetrics = append(workloadDetailMetrics, "service_time_latency")
 			}
 		}
 	}
