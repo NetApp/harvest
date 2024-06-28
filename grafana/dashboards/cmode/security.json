@@ -1405,7 +1405,7 @@
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
-      "title": "Certificates",
+      "title": "Admin Certificates",
       "type": "text"
     },
     {
@@ -1901,13 +1901,313 @@
       "type": "stat"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel displays SSL Certificate expiration time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "color-background-solid",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": ""
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Expires In"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeFromNow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "svm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SVM"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Expiry"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": -100000000000000000000,
+                      "result": {
+                        "color": "red",
+                        "index": 0,
+                        "text": "Expired"
+                      },
+                      "to": 0
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "orange",
+                        "index": 1,
+                        "text": "Within 2 Months"
+                      },
+                      "to": 5184000
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 5184000,
+                      "result": {
+                        "color": "green",
+                        "index": 2,
+                        "text": "OK"
+                      },
+                      "to": 100000000000000000000
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Expiry Date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 204
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 228,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Expiry"
+          }
+        ]
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "security_certificate_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", expiry_time!=\"\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "security_certificate_expiry_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}-time()",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "title": "SSL Certificates Expiration",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "uuid"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) 1$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cluster",
+                "datacenter",
+                "expiry_time",
+                "svm",
+                "type",
+                "Value #B",
+                "name"
+              ]
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Expiry Date",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "expiry_time"
+              ],
+              "reducer": "last"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #B": false,
+              "cluster 2": true,
+              "datacenter 2": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Expiry Date": 5,
+              "Value #B": 6,
+              "cluster": 1,
+              "cluster 2": 8,
+              "datacenter": 0,
+              "datacenter 2": 9,
+              "expiry_time": 7,
+              "name": 4,
+              "svm": 2,
+              "type": 3
+            },
+            "renameByName": {
+              "Expiry Date": "",
+              "Value #B": "Expiry",
+              "expiry_time": "Expires In",
+              "name": "Certificate Name",
+              "type": "Type"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 33
       },
       "id": 12,
       "panels": [
@@ -2253,7 +2553,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 36
       },
       "id": 223,
       "panels": [
@@ -3587,7 +3887,7 @@
             },
             {
               "exemplar": false,
-              "expr": "security_certificate_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "security_certificate_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",certificateExpiryStatus!=\"\",certificateIssuerType!=\"\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3830,7 +4130,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 37
       },
       "id": 227,
       "panels": [
