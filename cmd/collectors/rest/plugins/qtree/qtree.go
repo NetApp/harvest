@@ -139,9 +139,11 @@ func (q *Qtree) Init() error {
 
 func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
-		result     []gjson.Result
-		err        error
-		numMetrics int
+		result       []gjson.Result
+		apiD, parseD time.Duration
+		startTime    time.Time
+		err          error
+		numMetrics   int
 	)
 	data := dataMap[q.Object]
 	q.client.Metadata.Reset()
@@ -164,6 +166,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		filter = []string{"return_unmatched_nested_array_objects=true", "show_default_records=true", "type=" + strings.Join(q.quotaType, "|")}
 	}
 
+	startTime = time.Now()
 	href := rest.NewHrefBuilder().
 		APIPath(q.query).
 		Fields([]string{"*"}).
@@ -173,6 +176,8 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	if result, err = collectors.InvokeRestCall(q.client, href, q.Logger); err != nil {
 		return nil, nil, err
 	}
+	apiD = time.Since(startTime)
+	startTime = time.Now()
 
 	quotaCount := 0
 	cluster := data.GetGlobalLabels()["cluster"]
@@ -188,10 +193,18 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	if err != nil {
 		return nil, nil, err
 	}
+	parseD = time.Since(startTime)
+
+	q.client.Metadata.PluginObjects = uint64(quotaCount)
+	q.client.Metadata.PluginMetrics = uint64(numMetrics)
+	q.client.Metadata.PluginAPID = uint64(apiD.Round(time.Millisecond).Milliseconds())
+	q.client.Metadata.PluginParseD = uint64(parseD.Round(time.Millisecond).Milliseconds())
 
 	q.Logger.Info().
 		Int("numQuotas", quotaCount).
 		Int("metrics", numMetrics).
+		Str("apiD", apiD.Round(time.Millisecond).String()).
+		Str("parseD", parseD.Round(time.Millisecond).String()).
 		Msg("Collected")
 
 	if q.qtreeMetrics || q.historicalLabels {

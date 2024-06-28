@@ -729,7 +729,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		InstanceInfo:  &info,
 	})
 
-	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node")) || r.Name == "Ems" {
+	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node" || r.Object == "Qtree")) || r.Name == "Ems" {
 		version := r.Client.Cluster().Version
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
@@ -762,6 +762,10 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		if r.Object == "Volume" {
 			p.Volumes = &info
 		}
+		if r.Object == "Qtree" {
+			info = r.getQuotas(md)
+			p.Quotas = &info
+		}
 	}
 }
 
@@ -793,6 +797,15 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 		return infos[i].SerialNumber < infos[j].SerialNumber
 	})
 	return infos, nil
+}
+
+func (r *Rest) getQuotas(md *matrix.Matrix) collector.InstanceInfo {
+	return collector.InstanceInfo{
+		Count:      md.LazyValueInt64("pluginObjects", "data"),
+		DataPoints: md.LazyValueInt64("pluginMetrics", "data"),
+		APITime:    md.LazyValueInt64("pluginApiD", "data"),
+		ParseTime:  md.LazyValueInt64("pluginParseD", "data"),
+	}
 }
 
 func (r *Rest) InitProp() {

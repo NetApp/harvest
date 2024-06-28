@@ -465,7 +465,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		InstanceInfo:  &info,
 	})
 
-	if z.Name == "Zapi" && (z.Object == "Volume" || z.Object == "Node") {
+	if z.Name == "Zapi" && (z.Object == "Volume" || z.Object == "Node" || z.Object == "Qtree") {
 		p.Target.Version = z.GetHostVersion()
 		p.Target.Model = z.GetHostModel()
 		if p.Target.Serial == "" {
@@ -473,7 +473,8 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		}
 		p.Target.ClusterUUID = z.Client.ClusterUUID()
 
-		if z.Object == "Node" {
+		switch z.Object {
+		case "Node":
 			var (
 				nodeIDs []collector.ID
 				err     error
@@ -494,8 +495,11 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 					p.Target.Serial = nodeIDs[0].SerialNumber
 				}
 			}
-		} else if z.Object == "Volume" {
+		case "Volume":
 			p.Volumes = &info
+		case "Qtree":
+			info = z.getQuotas(md)
+			p.Quotas = &info
 		}
 	}
 }
@@ -536,6 +540,15 @@ func (z *Zapi) getNodeUuids() ([]collector.ID, error) {
 		return infos[i].SerialNumber < infos[j].SerialNumber
 	})
 	return infos, nil
+}
+
+func (z *Zapi) getQuotas(md *matrix.Matrix) collector.InstanceInfo {
+	return collector.InstanceInfo{
+		Count:      md.LazyValueInt64("pluginObjects", "data"),
+		DataPoints: md.LazyValueInt64("pluginMetrics", "data"),
+		APITime:    md.LazyValueInt64("pluginApiD", "data"),
+		ParseTime:  md.LazyValueInt64("pluginParseD", "data"),
+	}
 }
 
 // Interface guards

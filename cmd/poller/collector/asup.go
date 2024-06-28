@@ -30,6 +30,7 @@ type Payload struct {
 	Platform   *platformInfo
 	Nodes      *InstanceInfo `json:"Nodes,omitempty"`
 	Volumes    *InstanceInfo `json:"Volumes,omitempty"`
+	Quotas     *InstanceInfo `json:"Quotas,omitempty"`
 	Tenants    *InstanceInfo `json:"Tenants,omitempty"`
 	Collectors *[]AsupCollector
 	path       string
