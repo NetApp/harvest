@@ -93,7 +93,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 				continue
 			}
 			serialNumber := certificateInstance.GetLabel("serial_number")
-			CertType := certificateInstance.GetLabel("type")
+			certType := certificateInstance.GetLabel("type")
 
 			if expiryTimeMetric = data.GetMetric("expiration"); expiryTimeMetric == nil {
 				my.Logger.Error().Stack().Msg("missing expiry time metric")
@@ -109,7 +109,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 				unixTime = time.Now()
 			}
 
-			if serialNumber == adminVserverSerial && CertType == "server" {
+			if serialNumber == adminVserverSerial && certType == "server" {
 				my.setCertificateIssuerType(certificateInstance)
 				my.setCertificateValidity(unixTime, certificateInstance)
 			}

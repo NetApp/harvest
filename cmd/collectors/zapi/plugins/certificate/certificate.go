@@ -106,7 +106,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			name := certificateInstance.GetLabel("name")
 			serialNumber := certificateInstance.GetLabel("serial_number")
 			svm := certificateInstance.GetLabel("svm")
-			CertType := certificateInstance.GetLabel("type")
+			certType := certificateInstance.GetLabel("type")
 			certificateInstance.SetLabel("uuid", name+serialNumber+svm)
 
 			if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
@@ -122,7 +122,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 				unixTime = time.Now()
 			}
 
-			if serialNumber == adminVserverSerial && CertType == "server" {
+			if serialNumber == adminVserverSerial && certType == "server" {
 				my.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
 				my.setCertificateValidity(unixTime, certificateInstance)
 			}
