@@ -4,11 +4,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"maps"
-	"regexp"
 	"strings"
 )
-
-var re = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object string, opName string, includeConstituents bool, l *logging.Logger) (*matrix.Matrix, error) {
 	var (
@@ -34,7 +31,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		if !i.IsExportable() {
 			continue
 		}
-		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
+		if match := flexgroupRegex.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			key := i.GetLabel("svm") + "." + match[1] + i.GetLabel("cloud_target")
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
@@ -49,7 +46,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 	// create summary
 	for _, i := range data.GetInstances() {
-		if match := re.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
+		if match := flexgroupRegex.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
 			// instance key is svm.flexgroup-volume.cloud-target-name
 			key := i.GetLabel("svm") + "." + match[1] + i.GetLabel("cloud_target")
 

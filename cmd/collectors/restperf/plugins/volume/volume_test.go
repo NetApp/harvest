@@ -12,7 +12,7 @@ import (
 )
 
 // Common test logic for RestPerf/ZapiPerf Volume plugin
-func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plugin, includeConstituents string, expectedCount int) {
+func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plugin, includeConstituents string, expectedCount int, setMetricNaN bool) {
 	params := node.NewS("Volume")
 	params.NewChildS("include_constituents", includeConstituents)
 	v := createVolume(params)
@@ -62,6 +62,12 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 
 	_ = latencyMetric.SetValueFloat64(instance3, 40)
 	_ = opsMetric.SetValueFloat64(instance3, 10)
+
+	// Optionally set one metric value to NaN
+	if setMetricNaN {
+		latencyMetric.SetValueNAN(instance2)
+		opsMetric.SetValueNAN(instance2)
+	}
 
 	// Set metric values for the simple volume instance
 	_ = latencyMetric.SetValueFloat64(simpleInstance, 50)
@@ -114,18 +120,28 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	}
 
 	// Verify aggregated ops metric
-	if value, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance); !ok {
+	if setMetricNaN {
+		if _, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance); ok {
+			t.Errorf("expected metric 'read_ops' for flexgroup instance 'svm1.RahulTest' to be NaN")
+		}
+	} else if value, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance); !ok {
 		t.Error("Value [read_ops] missing")
 	} else if value != 20 {
 		t.Errorf("Value [read_ops] = (%f) incorrect", value)
 	}
 
 	// Verify aggregated latency metric (weighted average)
-	expectedLatency := (20*4 + 30*6 + 40*10) / 20.0
-	if value, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance); !ok {
-		t.Error("Value [read_latency] missing")
-	} else if value != expectedLatency {
-		t.Errorf("Value [read_latency] = (%f) incorrect, expected (%f)", value, expectedLatency)
+	if setMetricNaN {
+		if _, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance); ok {
+			t.Errorf("expected metric 'read_latency' for flexgroup instance 'svm1.RahulTest' to be NaN")
+		}
+	} else {
+		expectedLatency := (20*4 + 30*6 + 40*10) / 20.0
+		if value, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance); !ok {
+			t.Error("Value [read_latency] missing")
+		} else if value != expectedLatency {
+			t.Errorf("Value [read_latency] = (%f) incorrect, expected (%f)", value, expectedLatency)
+		}
 	}
 
 	// Check for simple volume instance
@@ -160,36 +176,55 @@ func TestRunForAllImplementations(t *testing.T) {
 		createVolume        func(params *node.Node) plugin.Plugin
 		includeConstituents string
 		expectedCount       int
+		setMetricNaN        bool
 	}{
 		{
 			name:                "REST include_constituents=true",
 			createVolume:        createRestVolume,
 			includeConstituents: "true",
 			expectedCount:       5, // 3 constituents + 1 flexgroup + 1 flexvol
+			setMetricNaN:        false,
 		},
 		{
 			name:                "REST include_constituents=false",
 			createVolume:        createRestVolume,
 			includeConstituents: "false",
 			expectedCount:       2, // Only 1 flexgroup + 1 flexvol
+			setMetricNaN:        false,
 		},
 		{
 			name:                "ZAPI include_constituents=true",
 			createVolume:        createZapiVolume,
 			includeConstituents: "true",
 			expectedCount:       5, // 3 constituents + 1 flexgroup + 1 flexvol
+			setMetricNaN:        false,
 		},
 		{
 			name:                "ZAPI include_constituents=false",
 			createVolume:        createZapiVolume,
 			includeConstituents: "false",
 			expectedCount:       2, // Only 1 flexgroup + 1 flexvol
+			setMetricNaN:        false,
+		},
+		{
+			name:                "REST include_constituents=true with NaN metric",
+			createVolume:        createRestVolume,
+			includeConstituents: "true",
+			expectedCount:       5, // 3 constituents + 1 flexgroup + 1 flexvol
+			setMetricNaN:        true,
+		},
+		{
+			name:                "ZAPI include_constituents=true with NaN metric",
+			createVolume:        createZapiVolume,
+			includeConstituents: "true",
+			expectedCount:       5, // 3 constituents + 1 flexgroup + 1 flexvol
+			setMetricNaN:        true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			runVolumeTest(t, tc.createVolume, tc.includeConstituents, tc.expectedCount)
+			runVolumeTest(t, tc.createVolume, tc.includeConstituents, tc.expectedCount, tc.setMetricNaN)
 		})
 	}
 }
@@ -198,7 +233,6 @@ func createRestVolume(params *node.Node) plugin.Plugin {
 	v := &volume2.Volume{AbstractPlugin: plugin.New("volume", nil, params, nil, "volume", nil)}
 	v.Logger = logging.Get()
 	return v
-
 }
 
 func createZapiVolume(params *node.Node) plugin.Plugin {
