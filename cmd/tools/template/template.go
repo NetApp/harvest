@@ -153,7 +153,8 @@ func readNameQueryObject(tm *Model, root *y3.Node) error {
 	if tm.Query == "" {
 		return errors.New("template has no query")
 	}
-	if tm.Object == "" {
+	// A template with query=prometheus is allowed to have no object
+	if tm.Object == "" && tm.Query != "prometheus" {
 		return errors.New("template has no object")
 	}
 	return nil
