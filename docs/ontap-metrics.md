@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Jun-03
+Creation Date : 2024-Jun-26
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -531,6 +531,24 @@ Logical used
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots_flexclones.logical_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-logical-used-wo-snapshots-flexclones` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
+
+
+### aggr_object_store_logical_used
+
+Logical space usage of aggregates in the attached object store.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/aggr/show-space` | `object_store_logical_used` | conf/rest/9.12.0/aggr.yaml |
+
+
+### aggr_object_store_physical_used
+
+Physical space usage of aggregates in the attached object store.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/aggr/show-space` | `object_store_physical_used` | conf/rest/9.12.0/aggr.yaml |
 
 
 ### aggr_physical_used_wo_snapshots
@@ -1133,8 +1151,8 @@ Total Disk Throughput in KBPS Across All Active Paths
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.disk-io-kbps` | conf/zapi/cdot/9.8.0/disk.yaml |
 | REST | `api/private/cli/disk` | `disk_io_kbps_total` | conf/rest/9.12.0/disk.yaml |
+| ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.disk-io-kbps` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
 ### disk_stats_sectors_read
@@ -1143,8 +1161,8 @@ Number of Sectors Read
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.sectors-read` | conf/zapi/cdot/9.8.0/disk.yaml |
 | REST | `api/private/cli/disk` | `sectors_read` | conf/rest/9.12.0/disk.yaml |
+| ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.sectors-read` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
 ### disk_stats_sectors_written
@@ -1153,8 +1171,8 @@ Number of Sectors Written
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.sectors-written` | conf/zapi/cdot/9.8.0/disk.yaml |
 | REST | `api/private/cli/disk` | `sectors_written` | conf/rest/9.12.0/disk.yaml |
+| ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.sectors-written` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
 ### disk_total_data
@@ -4475,8 +4493,8 @@ The time (in hundredths of a second) that the CPU has been doing useful work sin
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| ZAPI | `system-node-get-iter` | `node-details-info.cpu-busytime` | conf/zapi/cdot/9.8.0/node.yaml |
 | REST | `api/private/cli/node` | `cpu_busy_time` | conf/rest/9.12.0/node.yaml |
+| ZAPI | `system-node-get-iter` | `node-details-info.cpu-busytime` | conf/zapi/cdot/9.8.0/node.yaml |
 
 
 ### node_cpu_domain_busy
@@ -7847,6 +7865,15 @@ Specifies the bucket logical used size up to this point. This field cannot be sp
 | REST | `api/protocols/s3/buckets` | `logical_used_size` | conf/rest/9.7.0/ontap_s3.yaml |
 
 
+### ontaps3_object_count
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/vserver/object-store-server/bucket` | `object_count` | conf/rest/9.7.0/ontap_s3.yaml |
+
+
 ### ontaps3_size
 
 Specifies the bucket size in bytes; ranges from 190MB to 62PB.
@@ -9407,7 +9434,20 @@ This is the average number of concurrent requests for the workload.
 
 ### qos_detail_resource_latency
 
-This refers to the average latency for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem.
+This refers to the average latency for workloads within the subsystems of Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem. Below is the description of subsystems' latency.
+
+* **frontend**: Represents the delays in the network layer of ONTAP.
+* **backend**: Represents the delays in the data/WAFL layer of ONTAP.
+* **cluster**: Represents delays caused by the cluster switches, cables, and adapters which physically connect clustered nodes.If the cluster interconnect component is in contention, it means high wait time for I/O requests at the cluster interconnect is impacting the latency of one or more workloads.
+* **cp**: Represents delays due to buffered write flushes, called consistency points (cp).
+* **disk**: Represents slowness due to attached hard drives or solid state drives.
+* **network**: `Note:` Typically these latencies only apply to SAN not NAS. Represents the wait time of I/O requests by the external networking protocols on the cluster. The wait time is time spent waiting for transfer ready transactions to finish before the cluster can respond to an I/O request. If the network component is in contention, it means high wait time at the protocol layer is impacting the latency of one or more workloads.
+* **nvlog**: Represents delays due to mirroring writes to the NVRAM/NVLOG memory and to the HA partner NVRAM/NVLOG memory.
+* **suspend**: Represents delays due to operations suspending on a delay mechanism. Typically this is diagnosed by NetApp Support.
+* **throttle**: Represents the throughput maximum (ceiling) setting of the storage Quality of Service (QoS) policy group assigned to the workload. If the policy group component is in contention, it means all workloads in the policy group are being throttled by the set throughput limit, which is impacting the latency of one or more of those workloads.
+* **qos_min**: Represents the latency to a workload that is being caused by QoS throughput floor (expected) setting assigned to other workloads. If the QoS floor set on certain workloads use the majority of the bandwidth to guarantee the promised throughput, other workloads will be throttled and see more latency.
+* **cloud**: Represents the software component in the cluster involved with I/O processing between the cluster and the cloud tier on which user data is stored. If the cloud latency component is in contention, it means that a large amount of reads from volumes that are hosted on the cloud tier are impacting the latency of one or more workloads.
+
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12727,6 +12767,24 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 
+### volume_capacity_tier_footprint
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_capacity_tier_footprint_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1_percent` | conf/rest/9.12.0/volume.yaml |
+
+
 ### volume_filesystem_size
 
 Filesystem size (in bytes) of the volume.  This is the total usable size of the volume, not including WAFL reserve.  This value is the same as Size except for certain SnapMirror destination volumes.  It is possible for destination volumes to have a different filesystem-size because the filesystem-size is sent across from the source volume.  This field is valid only when the volume is online.
@@ -12937,6 +12995,24 @@ Number of NFS write operations per second to the volume
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 
+### volume_num_compress_attempts
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/efficiency/stat` | `num_compress_attempts` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_num_compress_fail
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/efficiency/stat` | `num_compress_fail` | conf/rest/9.12.0/volume.yaml |
+
+
 ### volume_other_latency
 
 Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time
@@ -12985,6 +13061,24 @@ The reserved size (in bytes) that is not available for new overwrites. The numbe
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `overwrite_reserve_used` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.overwrite-reserve-used` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_performance_tier_footprint
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_performance_tier_footprint_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0_percent` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_read_data
@@ -13265,6 +13359,26 @@ Percentage of the logical used size of the volume.This parameter is not supporte
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `logical_used_percent` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_space_performance_tier_inactive_user_data
+
+The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume` | `performance_tier_inactive_user_data` | conf/rest/9.12.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_space_performance_tier_inactive_user_data_percent
+
+The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume` | `performance_tier_inactive_user_data_percent` | conf/rest/9.12.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_space_physical_used

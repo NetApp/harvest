@@ -277,40 +277,21 @@ func processRestConfigCounters(path string) map[string]Counter {
 		return nil
 	}
 
-	if templateCounters == nil {
-		return nil
+	if templateCounters != nil {
+		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters)
 	}
 
-	for _, c := range templateCounters.GetAllChildContentS() {
-		if c == "" {
-			continue
-		}
-		name, display, m, _ := util.ParseMetric(c)
-		if _, ok := excludeCounters[name]; ok {
-			continue
-		}
-		description := searchDescriptionSwagger(model.Object, name)
-		harvestName := model.Object + "_" + display
-		if m == "float" {
-			co := Counter{
-				Name:        harvestName,
-				Description: description,
-				APIs: []MetricDef{
-					{
-						API:          "REST",
-						Endpoint:     model.Query,
-						Template:     path,
-						ONTAPCounter: name,
-					},
-				},
-			}
-			counters[harvestName] = co
-
-			// If the template has any MultiplierMetrics, add them
-			for _, metric := range model.MultiplierMetrics {
-				mc := co
-				addAggregatedCounter(&mc, metric, harvestName, display)
-				counters[mc.Name] = mc
+	endpoints := t.GetChildS("endpoints")
+	if endpoints != nil {
+		for _, endpoint := range endpoints.GetChildren() {
+			var query string
+			for _, line := range endpoint.GetChildren() {
+				if line.GetNameS() == "query" {
+					query = line.GetContentS()
+				}
+				if line.GetNameS() == "counters" {
+					processCounters(line.GetAllChildContentS(), &model, path, query, counters)
+				}
 			}
 		}
 	}
@@ -332,6 +313,42 @@ func processRestConfigCounters(path string) map[string]Counter {
 	}
 
 	return counters
+}
+
+func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter) {
+	for _, c := range counterContents {
+		if c == "" {
+			continue
+		}
+		name, display, m, _ := util.ParseMetric(c)
+		if _, ok := excludeCounters[name]; ok {
+			continue
+		}
+		description := searchDescriptionSwagger(model.Object, name)
+		harvestName := model.Object + "_" + display
+		if m == "float" {
+			co := Counter{
+				Name:        harvestName,
+				Description: description,
+				APIs: []MetricDef{
+					{
+						API:          "REST",
+						Endpoint:     query,
+						Template:     path,
+						ONTAPCounter: name,
+					},
+				},
+			}
+			counters[harvestName] = co
+
+			// If the template has any MultiplierMetrics, add them
+			for _, metric := range model.MultiplierMetrics {
+				mc := co
+				addAggregatedCounter(&mc, metric, harvestName, display)
+				counters[mc.Name] = mc
+			}
+		}
+	}
 }
 
 // processZAPIPerfCounters process ZapiPerf counters

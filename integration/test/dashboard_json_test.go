@@ -44,6 +44,9 @@ var zapiCounterMap = map[string]struct{}{
 	"volume_capacity_tier_footprint":            {},
 	"volume_capacity_tier_footprint_percent":    {},
 	"volume_performance_tier_footprint_percent": {},
+	// Below are not available in ZAPI
+	"aggr_object_store_logical_used":  {},
+	"aggr_object_store_physical_used": {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
@@ -106,6 +109,10 @@ var excludeCounters = []string{
 var flakyCounters = []string{
 	"namespace",
 	"flexcache",
+}
+
+var validateQueries = []string{
+	`volume_read_ops{style="flexgroup"}`,
 }
 
 func TestMain(m *testing.M) {
@@ -250,6 +257,13 @@ func TestJsonExpression(t *testing.T) {
 		Int("zapiMiss", zapiFails).
 		Int("zapiFlaky", zapiFlaky).
 		Msg("Dashboard Json validated")
+
+	// Add checks for queries in Prometheus
+	for _, query := range validateQueries {
+		if !hasDataInDB(query, 0) {
+			t.Errorf("No records for Prometheus query: %s", query)
+		}
+	}
 }
 
 func counterIsFlaky(counter string) bool {

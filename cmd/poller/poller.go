@@ -76,14 +76,15 @@ import (
 
 // default params
 var (
-	pollerSchedule  = "1m"
-	logFileName     = ""
-	logMaxMegaBytes = logging.DefaultLogMaxMegaBytes
-	logMaxBackups   = logging.DefaultLogMaxBackups
-	logMaxAge       = logging.DefaultLogMaxAge
-	asupSchedule    = "24h" // send every 24 hours
-	asupFirstWrite  = "4m"  // after this time, write 1st autosupport payload (for testing)
-	opts            *options.Options
+	pollerSchedule    = "1m"
+	pollerLogSchedule = "1h"
+	logFileName       = ""
+	logMaxMegaBytes   = logging.DefaultLogMaxMegaBytes
+	logMaxBackups     = logging.DefaultLogMaxBackups
+	logMaxAge         = logging.DefaultLogMaxAge
+	asupSchedule      = "24h" // send every 24 hours
+	asupFirstWrite    = "4m"  // after this time, write 1st autosupport payload (for testing)
+	opts              *options.Options
 )
 
 const (
@@ -335,10 +336,22 @@ func (p *Poller) Init() error {
 	}
 	p.schedule = schedule.New()
 	if err = p.schedule.NewTaskString("poller", pollerSchedule, 0, nil, true, "poller_"+p.name); err != nil {
-		logger.Error().Stack().Err(err).Msg("set schedule:")
+		logger.Error().Err(err).Msg("set schedule:")
 		return err
 	}
-	logger.Debug().Msgf("set poller schedule with %s frequency", pollerSchedule)
+
+	if p.params.PollerLogSchedule != "" {
+		pollerLogSchedule = p.params.PollerLogSchedule
+	}
+	if err = p.schedule.NewTaskString("log", pollerLogSchedule, 0, p.logPollerMetadata, true, "poller_log_"+p.name); err != nil {
+		logger.Error().Err(err).Msg("set schedule:")
+		return err
+	}
+
+	logger.Debug().
+		Str("pollerSchedule", pollerSchedule).
+		Str("pollerLogSchedule", pollerLogSchedule).
+		Msg("set poller schedule")
 
 	// Check if autosupport is enabled
 	tools := conf.Config.Tools
@@ -437,7 +450,8 @@ func (p *Poller) Run() {
 
 	// poller schedule has the poller and asup task (when enabled)
 	task := p.schedule.GetTask("poller")
-	asuptask := p.schedule.GetTask("asup")
+	asupTask := p.schedule.GetTask("asup")
+	logTask := p.schedule.GetTask("log")
 
 	// number of collectors/exporters that are still up
 	upCollectors := 0
@@ -534,8 +548,12 @@ func (p *Poller) Run() {
 		}
 
 		// asup task will be nil when autosupport is disabled
-		if asuptask != nil && asuptask.IsDue() {
-			_, _ = asuptask.Run()
+		if asupTask != nil && asupTask.IsDue() {
+			_, _ = asupTask.Run()
+		}
+
+		if logTask.IsDue() {
+			_, _ = logTask.Run()
 		}
 
 		p.schedule.Sleep()
@@ -1272,6 +1290,17 @@ func (p *Poller) addMemoryMetadata() {
 
 	// Update maxRssBytes
 	p.maxRssBytes = max(p.maxRssBytes, memInfo.RSS)
+}
+
+func (p *Poller) logPollerMetadata() (map[string]*matrix.Matrix, error) {
+	rss, _ := p.status.LazyGetValueFloat64("memory.rss", "host")
+	logger.Info().
+		Float64("rssKB", rss).
+		Uint64("maxRssKB", p.maxRssBytes/1024).
+		Str("version", strings.TrimSpace(version.String())).
+		Msg("Metadata")
+
+	return nil, nil
 }
 
 func startPoller(_ *cobra.Command, _ []string) {

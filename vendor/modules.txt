@@ -68,8 +68,6 @@ github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/stretchr/objx v0.5.2
-## explicit; go 1.20
 # github.com/tidwall/gjson v1.17.1
 ## explicit; go 1.12
 github.com/tidwall/gjson
@@ -88,11 +86,9 @@ github.com/tklauser/numcpus
 # github.com/yusufpapurcu/wmi v1.2.4
 ## explicit; go 1.16
 github.com/yusufpapurcu/wmi
-# github.com/zekroTJA/timedmap v1.5.2
-## explicit; go 1.13
-github.com/zekroTJA/timedmap
 # github.com/zekroTJA/timedmap/v2 v2.0.0
 ## explicit; go 1.19
+github.com/zekroTJA/timedmap/v2
 # golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 ## explicit; go 1.20
 golang.org/x/exp/maps

@@ -7,65 +7,67 @@ client_timeout:           2m
 
 counters:
   volume-attributes:
-    - ^encrypt                                  => isEncrypted
+    - ^encrypt                                        => isEncrypted
     - volume-autosize-attributes:
         - grow-threshold-percent
         - maximum-size
     - volume-id-attributes:
-        - ^^instance-uuid                       => uuid
-        - ^containing-aggregate-uuid            => aggrUuid
-        - ^junction-path                        => junction_path
-        - ^name                                 => volume
-        - ^owning-vserver-name                  => svm
-        - ^style-extended                       => style
-        - ^type                                 => type
+        - ^^instance-uuid                             => uuid
+        - ^containing-aggregate-uuid                  => aggrUuid
+        - ^junction-path                              => junction_path
+        - ^name                                       => volume
+        - ^owning-vserver-name                        => svm
+        - ^style-extended                             => style
+        - ^type                                       => type
         - aggr-list:
-            - ^aggr-name                        => aggr
+            - ^aggr-name                              => aggr
         - nodes:
-            - ^node-name                        => node
+            - ^node-name                              => node
     - volume-inode-attributes:
         - files-total
         - files-used
     - volume-sis-attributes:
-        - ^is-sis-volume                        => is_sis_volume
-        - compression-space-saved               => sis_compress_saved
-        - deduplication-space-saved             => sis_dedup_saved
-        - percentage-compression-space-saved    => sis_compress_saved_percent
-        - percentage-deduplication-space-saved  => sis_dedup_saved_percent
-        - percentage-total-space-saved          => sis_total_saved_percent
-        - total-space-saved                     => sis_total_saved
+        - ^is-sis-volume                              => is_sis_volume
+        - compression-space-saved                     => sis_compress_saved
+        - deduplication-space-saved                   => sis_dedup_saved
+        - percentage-compression-space-saved          => sis_compress_saved_percent
+        - percentage-deduplication-space-saved        => sis_dedup_saved_percent
+        - percentage-total-space-saved                => sis_total_saved_percent
+        - total-space-saved                           => sis_total_saved
     - volume-snapshot-attributes:
-        - ^auto-snapshots-enabled               => auto_snapshots_enabled
+        - ^auto-snapshots-enabled                     => auto_snapshots_enabled
         - ^snapshot-policy
         - snapshot-count
     - volume-snapshot-autodelete-attributes:
-        - ^is-autodelete-enabled                => snapshot_autodelete
+        - ^is-autodelete-enabled                      => snapshot_autodelete
     - volume-space-attributes:
         - expected-available
-        - filesystem-size                       => filesystem_size
+        - filesystem-size                             => filesystem_size
         - logical-available
         - logical-used
         - logical-used-by-afs
         - logical-used-by-snapshots
         - logical-used-percent
-        - overwrite-reserve                     => overwrite_reserve_total
-        - overwrite-reserve-used                => overwrite_reserve_used
-        - percentage-size-used                  => size_used_percent
-        - percentage-snapshot-reserve           => snapshot_reserve_percent
-        - percentage-snapshot-reserve-used      => snapshot_reserve_used_percent
+        - overwrite-reserve                           => overwrite_reserve_total
+        - overwrite-reserve-used                      => overwrite_reserve_used
+        - percentage-size-used                        => size_used_percent
+        - percentage-snapshot-reserve                 => snapshot_reserve_percent
+        - percentage-snapshot-reserve-used            => snapshot_reserve_used_percent
+        - performance-tier-inactive-user-data         => space_performance_tier_inactive_user_data
+        - performance-tier-inactive-user-data-percent => space_performance_tier_inactive_user_data_percent
         - physical-used
         - physical-used-percent
-        - size                                  => size
-        - size-available                        => size_available
-        - size-available-for-snapshots          => snapshots_size_available
-        - size-total                            => size_total
-        - size-used                             => size_used
-        - size-used-by-snapshots                => snapshots_size_used
-        - snapshot-reserve-available            => snapshot_reserve_available
-        - snapshot-reserve-size                 => snapshot_reserve_size
+        - size                                        => size
+        - size-available                              => size_available
+        - size-available-for-snapshots                => snapshots_size_available
+        - size-total                                  => size_total
+        - size-used                                   => size_used
+        - size-used-by-snapshots                      => snapshots_size_used
+        - snapshot-reserve-available                  => snapshot_reserve_available
+        - snapshot-reserve-size                       => snapshot_reserve_size
     - volume-state-attributes:
-        - ^is-node-root                         => node_root
-        - ^is-vserver-root                      => svm_root
+        - ^is-node-root                               => node_root
+        - ^is-vserver-root                            => svm_root
         - ^state
         - ^status
 
