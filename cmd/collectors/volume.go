@@ -156,17 +156,21 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 							logger.Error().Err(err).Msg("error")
 						}
 					} else {
-						if recordFGFalse[key] == nil {
-							recordFGFalse[key] = set.New()
+						s, ok := recordFGFalse[key]
+						if !ok {
+							s = set.New()
+							recordFGFalse[key] = s
 						}
-						recordFGFalse[key].Add(fgm.GetName())
+						s.Add(fgm.GetName())
 					}
 				}
 			} else {
-				if recordFGFalse[key] == nil {
-					recordFGFalse[key] = set.New()
+				s, ok := recordFGFalse[key]
+				if !ok {
+					s = set.New()
+					recordFGFalse[key] = s
 				}
-				recordFGFalse[key].Add(fgm.GetName())
+				s.Add(fgm.GetName())
 			}
 		}
 	}
