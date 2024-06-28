@@ -105,10 +105,10 @@ func (s *StorageGrid) InitCache() error {
 		counters *node.Node
 	)
 
+	// Unlike other collectors, the storagegrid collector allows a blank object property
+	// so that metrics can be exported without a prefix
 	if x := s.Params.GetChildContentS("object"); x != "" {
 		s.Props.Object = x
-	} else {
-		s.Props.Object = strings.ToLower(s.Object)
 	}
 
 	if e := s.Params.GetChildS("export_options"); e != nil {

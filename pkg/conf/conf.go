@@ -660,6 +660,8 @@ type Exporter struct {
 	Precision     *string `yaml:"precision,omitempty"`
 	ClientTimeout *string `yaml:"client_timeout,omitempty"`
 	Version       *string `yaml:"version,omitempty"`
+
+	IsTest bool // true when run from unit tests
 }
 
 type Pollers struct {

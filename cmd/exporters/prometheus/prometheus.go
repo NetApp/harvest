@@ -180,7 +180,10 @@ func (p *Prometheus) Init() error {
 	if addr != "" {
 		p.Logger.Debug().Str("addr", addr).Msg("Using custom local addr")
 	}
-	go p.startHTTPD(addr, port)
+
+	if !p.Params.IsTest {
+		go p.startHTTPD(addr, port)
+	}
 
 	// @TODO: implement error checking to enter failed state if HTTPd failed
 	// (like we did in Alpha)
@@ -457,7 +460,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					rendered = append(rendered, []byte(x))
 					// scalar metric
 				} else {
-					x := fmt.Sprintf("%s_%s{%s} %s", prefix, metric.GetName(), strings.Join(instanceKeys, ","), value)
+					x := metric.GetName() + "{" + strings.Join(instanceKeys, ",") + "} " + value
+					if prefix != "" {
+						x = prefix + "_" + x
+					}
 
 					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())

@@ -6,6 +6,12 @@ package prometheus
 
 import (
 	"bytes"
+	"github.com/netapp/harvest/v2/cmd/poller/exporter"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"slices"
+	"strings"
 	"testing"
 )
 
@@ -39,7 +45,7 @@ func TestFilterMetaTags(t *testing.T) {
 		t.Fatalf("filtered data should have %d, but got %d lines", len(expected), len(output))
 	}
 
-	// output should have exact same lines in same order
+	// output should have exact same lines in the same order
 	for i := range output {
 		if !bytes.Equal(output[i], expected[i]) {
 			t.Fatalf("line:%d - output = [%s], expected = [%s]", i, string(output[i]), string(expected[i]))
@@ -80,4 +86,71 @@ func BenchmarkEscape(b *testing.B) {
 	for range b.N {
 		escape(replacer, "abc", `a\c"foo"\ndef`)
 	}
+}
+
+func setUpMatrix(object string) *matrix.Matrix {
+	m := matrix.New("bike", object, "bike")
+	speed, _ := m.NewMetricUint64("max_speed")
+	instanceNames := []string{"A", "B"}
+	for _, instanceName := range instanceNames {
+		instance, _ := m.NewInstance(instanceName)
+		_ = speed.SetValueInt64(instance, 3)
+	}
+	return m
+}
+
+func TestRender(t *testing.T) {
+
+	type test struct {
+		prefix string
+		want   string
+	}
+
+	tests := []test{
+		{"bike", `bike_max_speed{} 3
+bike_max_speed{} 3`},
+		{"", `max_speed{} 3
+max_speed{} 3`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.prefix, func(t *testing.T) {
+			p, err := setupPrometheusExporter()
+			if err != nil {
+				t.Errorf("expected nil, got %v", err)
+			}
+			m := setUpMatrix(tt.prefix)
+
+			_, err = p.Export(m)
+			if err != nil {
+				t.Errorf("expected nil, got %v", err)
+			}
+
+			prom := p.(*Prometheus)
+			var lines []string
+			for _, metrics := range prom.cache.Get() {
+				for _, metric := range metrics {
+					lines = append(lines, string(metric))
+				}
+			}
+
+			slices.Sort(lines)
+			if strings.Join(lines, "\n") != tt.want {
+				t.Errorf("got = [%s], want = [%s]", strings.Join(lines, "\n"), tt.want)
+			}
+		})
+	}
+}
+
+func setupPrometheusExporter() (exporter.Exporter, error) {
+	absExp := exporter.New(
+		"Prometheus",
+		"prom1",
+		&options.Options{PromPort: 1},
+		conf.Exporter{IsTest: true},
+		nil,
+	)
+	p := New(absExp)
+	err := p.Init()
+	return p, err
 }
