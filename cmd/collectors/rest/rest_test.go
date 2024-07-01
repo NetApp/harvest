@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
@@ -8,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
 	"os"
-	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -431,8 +431,9 @@ func TestFields(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := tt.r.Fields(tt.p)
-			if !reflect.DeepEqual(result, tt.expectedResult) {
-				t.Errorf("Expected %v, got %v", tt.expectedResult, result)
+			diff := cmp.Diff(result, tt.expectedResult)
+			if diff != "" {
+				t.Errorf("Mismatch (-got +want):\n%s", diff)
 			}
 		})
 	}

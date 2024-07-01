@@ -1,9 +1,9 @@
 package conf
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
-	"reflect"
 	"slices"
 	"sort"
 	"strconv"
@@ -66,9 +66,9 @@ func TestPollerStructDefaults(t *testing.T) {
 		if len(poller.Exporters) != 1 {
 			t.Fatalf(`expected 1 exporter but got %v`, poller.Exporters)
 		}
-		expected := []string{"prometheusrange"}
-		if !reflect.DeepEqual(poller.Exporters, expected) {
-			t.Fatalf(`expected collectors to be %v but was %v`, expected, poller.Exporters)
+		diff := cmp.Diff(poller.Exporters, []string{"prometheusrange"})
+		if diff != "" {
+			t.Errorf("Mismatch (-got +want):\n%s", diff)
 		}
 	})
 
@@ -85,9 +85,10 @@ func TestPollerStructDefaults(t *testing.T) {
 			t.Fatalf(`expected 2 collectors but got %v`, poller.Collectors)
 		}
 		defaultT := []string{"default.yaml", "custom.yaml"}
-		expected := []Collector{{Name: "Zapi", Templates: &defaultT}, {Name: "ZapiPerf", Templates: &defaultT}}
-		if !reflect.DeepEqual(poller.Collectors, expected) {
-			t.Fatalf(`expected collectors to be %v but was %v`, expected, poller.Collectors)
+		want := []Collector{{Name: "Zapi", Templates: &defaultT}, {Name: "ZapiPerf", Templates: &defaultT}}
+		diff := cmp.Diff(poller.Collectors, want)
+		if diff != "" {
+			t.Errorf("Mismatch (-got +want):\n%s", diff)
 		}
 	})
 
@@ -197,9 +198,9 @@ func TestUniqueExportersByType(t *testing.T) {
 	t.Run("Exporters are unique by type", func(t *testing.T) {
 		exporters := GetUniqueExporters(poller2.Exporters)
 		sort.Strings(exporters)
-		want := []string{"foo1", "foo2", "influxy", "influxz", "prometheus"}
-		if !reflect.DeepEqual(want, exporters) {
-			t.Fatalf(`expected %v but got %v`, want, exporters)
+		diff := cmp.Diff([]string{"foo1", "foo2", "influxy", "influxz", "prometheus"}, exporters)
+		if diff != "" {
+			t.Errorf("Mismatch (-got +want):\n%s", diff)
 		}
 	})
 }

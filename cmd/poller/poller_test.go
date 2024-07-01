@@ -2,10 +2,10 @@ package main
 
 import (
 	"errors"
+	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
-	"reflect"
 	"testing"
 )
 
@@ -194,8 +194,10 @@ func Test_nonOverlappingCollectors(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := nonOverlappingCollectors(tt.args); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("got=[%v], want=[%v]", got, tt.want)
+			got := nonOverlappingCollectors(tt.args)
+			diff := cmp.Diff(got, tt.want, cmp.AllowUnexported(objectCollector{}))
+			if diff != "" {
+				t.Errorf("Mismatch (-got +want):\n%s", diff)
 			}
 		})
 	}

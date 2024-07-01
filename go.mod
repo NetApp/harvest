@@ -4,9 +4,10 @@ go 1.22
 
 require (
 	github.com/go-openapi/spec v0.21.0
+	github.com/google/go-cmp v0.6.0
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/rs/zerolog v1.33.0
-	github.com/shirou/gopsutil/v4 v4.24.5
+	github.com/shirou/gopsutil/v4 v4.24.6
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/gjson v1.17.1
 	github.com/zekroTJA/timedmap/v2 v2.0.0

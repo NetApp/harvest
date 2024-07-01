@@ -1,10 +1,10 @@
 package auth
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"os"
-	"reflect"
 	"testing"
 )
 
@@ -587,11 +587,13 @@ Pollers:
 					tt.want.HasCredentialScript,
 				)
 			}
-			if !reflect.DeepEqual(tt.want.PemCert, got.PemCert) {
-				t.Errorf("got PemCert=[%s], want PemCert=[%s]", got.PemCert, tt.want.PemCert)
+			diff1 := cmp.Diff(tt.want.PemCert, got.PemCert)
+			if diff1 != "" {
+				t.Errorf("Mismatch (-got +want):\n%s", diff1)
 			}
-			if !reflect.DeepEqual(tt.want.PemKey, got.PemKey) {
-				t.Errorf("got PemKey=[%s], want PemKey=[%s]", got.PemKey, tt.want.PemKey)
+			diff2 := cmp.Diff(tt.want.PemKey, got.PemKey)
+			if diff2 != "" {
+				t.Errorf("Mismatch (-got +want):\n%s", diff2)
 			}
 			if tt.want.CertPath != got.CertPath && got.CertPath != hostCertPath {
 				t.Errorf("got CertPath=[%s], want CertPath=[%s]", got.CertPath, tt.want.CertPath)
