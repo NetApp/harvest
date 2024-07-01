@@ -16,6 +16,7 @@ counters:
   - wait_time
   - refine:
       - with_constituents: false # The possible values are true or false. Setting this to true will include constituents in the results, while false will exclude them.
+      - with_service_latency: false # The possible values are true or false. Setting this to true will generate metric qos_detail_service_time_latency which is average service time for workload within the subsystems. This latency is the processing time within the subsystem.
 
 resource_map:
   CPU_dblade : backend
