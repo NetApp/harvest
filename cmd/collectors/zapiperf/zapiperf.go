@@ -119,14 +119,13 @@ func (z *ZapiPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err := z.InitQOS(); err != nil {
-		return err
-	}
+	z.InitQOS()
+
 	z.Logger.Debug().Msg("initialized")
 	return nil
 }
 
-func (z *ZapiPerf) InitQOS() error {
+func (z *ZapiPerf) InitQOS() {
 	counters := z.Params.GetChildS("counters")
 	if counters != nil {
 		refine := counters.GetChildS("refine")
@@ -137,7 +136,6 @@ func (z *ZapiPerf) InitQOS() error {
 			}
 		}
 	}
-	return nil
 }
 
 func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
