@@ -498,7 +498,9 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		case "Volume":
 			p.Volumes = &info
 		case "Qtree":
-			info = z.getQuotas(md)
+			info = collector.InstanceInfo{
+				PluginInstances: md.LazyValueInt64("pluginInstances", "data"),
+			}
 			p.Quotas = &info
 		}
 	}
@@ -540,15 +542,6 @@ func (z *Zapi) getNodeUuids() ([]collector.ID, error) {
 		return infos[i].SerialNumber < infos[j].SerialNumber
 	})
 	return infos, nil
-}
-
-func (z *Zapi) getQuotas(md *matrix.Matrix) collector.InstanceInfo {
-	return collector.InstanceInfo{
-		Count:      md.LazyValueInt64("pluginObjects", "data"),
-		DataPoints: md.LazyValueInt64("pluginMetrics", "data"),
-		APITime:    md.LazyValueInt64("pluginApiD", "data"),
-		ParseTime:  md.LazyValueInt64("pluginParseD", "data"),
-	}
 }
 
 // Interface guards

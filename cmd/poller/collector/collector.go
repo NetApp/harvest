@@ -256,10 +256,7 @@ func Init(c Collector) error {
 	_, _ = md.NewMetricUint64("instances")
 	_, _ = md.NewMetricUint64("bytesRx")
 	_, _ = md.NewMetricUint64("numCalls")
-	_, _ = md.NewMetricUint64("pluginObjects")
-	_, _ = md.NewMetricUint64("pluginMetrics")
-	_, _ = md.NewMetricUint64("pluginApiD")
-	_, _ = md.NewMetricUint64("pluginParseD")
+	_, _ = md.NewMetricUint64("pluginInstances")
 
 	// Used by collector logging but not exported
 	loggingOnly := []string{begin, "export_time"}
@@ -463,10 +460,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 							if pluginMetadata != nil {
 								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
 								_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls)
-								_ = c.Metadata.LazySetValueUint64("pluginObjects", task.Name, pluginMetadata.PluginObjects)
-								_ = c.Metadata.LazySetValueUint64("pluginMetrics", task.Name, pluginMetadata.PluginMetrics)
-								_ = c.Metadata.LazySetValueUint64("pluginApiD", task.Name, pluginMetadata.PluginAPID)
-								_ = c.Metadata.LazySetValueUint64("pluginParseD", task.Name, pluginMetadata.PluginParseD)
+								_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances)
 							}
 						}
 					}

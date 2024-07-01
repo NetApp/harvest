@@ -50,13 +50,14 @@ type ID struct {
 }
 
 type InstanceInfo struct {
-	Count      int64
-	DataPoints int64
-	PollTime   int64
-	APITime    int64
-	ParseTime  int64
-	PluginTime int64
-	Ids        []ID `json:"Ids,omitempty"` // revive:disable-line var-naming
+	Count           int64
+	DataPoints      int64
+	PollTime        int64
+	APITime         int64
+	ParseTime       int64
+	PluginTime      int64
+	PluginInstances int64
+	Ids             []ID `json:"Ids,omitempty"` // revive:disable-line var-naming
 }
 
 type Process struct {

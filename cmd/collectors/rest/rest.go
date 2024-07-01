@@ -763,7 +763,9 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			p.Volumes = &info
 		}
 		if r.Object == "Qtree" {
-			info = r.getQuotas(md)
+			info = collector.InstanceInfo{
+				PluginInstances: md.LazyValueInt64("pluginInstances", "data"),
+			}
 			p.Quotas = &info
 		}
 	}
@@ -797,15 +799,6 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 		return infos[i].SerialNumber < infos[j].SerialNumber
 	})
 	return infos, nil
-}
-
-func (r *Rest) getQuotas(md *matrix.Matrix) collector.InstanceInfo {
-	return collector.InstanceInfo{
-		Count:      md.LazyValueInt64("pluginObjects", "data"),
-		DataPoints: md.LazyValueInt64("pluginMetrics", "data"),
-		APITime:    md.LazyValueInt64("pluginApiD", "data"),
-		ParseTime:  md.LazyValueInt64("pluginParseD", "data"),
-	}
 }
 
 func (r *Rest) InitProp() {
