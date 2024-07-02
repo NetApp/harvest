@@ -184,9 +184,12 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						}
 					}
 				}
-				if len(mtBytesUsedValues) == len(mtBytesUsedPercentages) && len(mtBytesUsedValues) == len(mtBytesUsedLabels) { //nolint:gocritic
+				if len(mtBytesUsedValues) > 0 && len(mtBytesUsedValues) == len(mtBytesUsedPercentages) && len(mtBytesUsedValues) == len(mtBytesUsedLabels) {
 
 					for i, mv := range mtBytesUsedValues {
+						if mv == "" {
+							continue
+						}
 						key := "modified_value_" + mtBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
@@ -203,6 +206,9 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 
 					}
 					for i, mp := range mtBytesUsedPercentages {
+						if mp == "" {
+							continue
+						}
 						key := "modified_percent_" + mtBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
@@ -223,6 +229,9 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 				if len(atBytesUsedValues) == len(atBytesUsedPercentages) && len(atBytesUsedValues) == len(atBytesUsedLabels) { //nolint:gocritic
 
 					for i, av := range atBytesUsedValues {
+						if av == "" {
+							continue
+						}
 						key := "access_value_" + atBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
@@ -239,6 +248,9 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 
 					}
 					for i, ap := range atBytesUsedPercentages {
+						if ap == "" {
+							continue
+						}
 						key := "access_percent_" + atBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
