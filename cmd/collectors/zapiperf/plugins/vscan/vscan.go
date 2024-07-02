@@ -44,17 +44,35 @@ func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
 			continue
 		}
 		ontapName := instance.GetLabel("instance_uuid")
-		// colon separated list of fields
-		// vs_test4   :    2.2.2.2   :    umeng-aff300-05
-		//  svm       :     scanner  :    node
-		if split := strings.Split(ontapName, ":"); len(split) >= 3 {
-			instance.SetLabel("svm", split[0])
-			instance.SetLabel("scanner", split[1])
-			instance.SetLabel("node", split[2])
-		} else {
+		svm, scanner, node, ok := splitOntapName(ontapName)
+		if !ok {
 			v.Logger.Warn().Str("ontapName", ontapName).Msg("Failed to parse svm and scanner labels")
+			continue
 		}
+		instance.SetLabel("svm", svm)
+		instance.SetLabel("scanner", scanner)
+		instance.SetLabel("node", node)
 	}
+}
+
+func splitOntapName(ontapName string) (string, string, string, bool) {
+	// colon separated list of fields
+	// svm      : scanner                  : node
+	// vs_test4 : 2.2.2.2                  : umeng-aff300-05
+	// moon-ad  : 2a03:1e80:a15:60c::1:2a5 : moon-02
+
+	firstColon := strings.Index(ontapName, ":")
+	if firstColon == -1 {
+		return "", "", "", false
+	}
+	lastColon := strings.LastIndex(ontapName, ":")
+	if lastColon == -1 {
+		return "", "", "", false
+	}
+	if firstColon == lastColon {
+		return "", "", "", false
+	}
+	return ontapName[:firstColon], ontapName[firstColon+1 : lastColon], ontapName[lastColon+1:], true
 }
 
 func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
