@@ -2,6 +2,7 @@ package restperf
 
 import (
 	"fmt"
+	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -13,7 +14,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
 	"os"
-	"reflect"
 	"sort"
 	"testing"
 	"time"
@@ -59,8 +59,9 @@ func Test_parseMetricResponse(t *testing.T) {
 			}
 			metricResponses := parseMetricResponses(tt.args.instanceData, metrics)
 			got := metricResponses[tt.args.metric]
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("\ngot  %v\nwant %v", got, tt.want)
+			diff := cmp.Diff(got, tt.want, cmp.AllowUnexported(metricResponse{}))
+			if diff != "" {
+				t.Errorf("Mismatch (-got +want):\n%s", diff)
 			}
 		})
 	}
