@@ -729,7 +729,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		InstanceInfo:  &info,
 	})
 
-	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node")) || r.Name == "Ems" {
+	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node" || r.Object == "Qtree")) || r.Name == "Ems" {
 		version := r.Client.Cluster().Version
 		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
 		p.Target.Model = "cdot"
@@ -761,6 +761,12 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		}
 		if r.Object == "Volume" {
 			p.Volumes = &info
+		}
+		if r.Object == "Qtree" {
+			info = collector.InstanceInfo{
+				PluginInstances: md.LazyValueInt64("pluginInstances", "data"),
+			}
+			p.Quotas = &info
 		}
 	}
 }

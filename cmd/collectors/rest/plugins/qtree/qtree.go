@@ -189,6 +189,8 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		return nil, nil, err
 	}
 
+	q.client.Metadata.PluginInstances = uint64(quotaCount)
+
 	q.Logger.Info().
 		Int("numQuotas", quotaCount).
 		Int("metrics", numMetrics).
