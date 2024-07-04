@@ -1,6 +1,7 @@
 package vscan
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -41,16 +42,14 @@ func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
 	for _, instance := range data.GetInstances() {
 		ontapName := instance.GetLabel("id")
-		// colon separated list of fields
-		// A900-node1  :     vs0    :    2.2.2.2
-		// node       :     svm    :    scanner
-		if split := strings.Split(ontapName, ":"); len(split) >= 3 {
-			instance.SetLabel("node", split[0])
-			instance.SetLabel("svm", split[1])
-			instance.SetLabel("scanner", split[2])
-		} else {
+		svm, scanner, node, ok := collectors.SplitVscanName(ontapName)
+		if !ok {
 			v.Logger.Warn().Str("ontapName", ontapName).Msg("Failed to parse svm and scanner labels")
+			continue
 		}
+		instance.SetLabel("svm", svm)
+		instance.SetLabel("scanner", scanner)
+		instance.SetLabel("node", node)
 	}
 }
 
