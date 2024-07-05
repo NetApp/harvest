@@ -155,16 +155,6 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 		os.Exit(0)
 	}
 
-	table := tw.NewWriter(os.Stdout)
-	table.SetBorder(false)
-	table.SetAutoFormatHeaders(false)
-	if opts.longStatus {
-		table.SetHeader([]string{"Datacenter", "Poller", "PID", "PromPort", "Profiling", "Status"})
-	} else {
-		table.SetHeader([]string{"Datacenter", "Poller", "PID", "PromPort", "Status"})
-	}
-	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
-
 	statusesByName := getPollersStatus()
 	switch opts.command {
 	case "restart":
