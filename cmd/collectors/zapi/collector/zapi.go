@@ -405,7 +405,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	z.AddCollectCount(count)
 
 	if numInstances == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "")
+		return z.Matrix, errs.New(errs.ErrNoInstance, "")
 	}
 
 	return z.Matrix, nil

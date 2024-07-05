@@ -399,7 +399,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	if len(records) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+		return r.Matrix, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	return r.pollData(startTime, records, func(e *endPoint) ([]gjson.Result, time.Duration, error) {

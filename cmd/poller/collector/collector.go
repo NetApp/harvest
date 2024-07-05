@@ -377,7 +377,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Msg("target unreachable, entering standby mode and retry")
 					c.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					c.SetStatus(1, errs.ErrConnection.Error())
-
+					continue
 				case errs.IsRestErr(err, errs.CMReject):
 					// Try again in 30 to 60 seconds
 					retryAfter := 30 + rand.Int63n(30) //nolint:gosec
@@ -387,6 +387,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Str("task", task.Name).
 						Int64("retryAfterSecs", retryAfter).
 						Msg("CM reject, entering standby mode and retry")
+					continue
 				// there are no instances to collect
 				case errors.Is(err, errs.ErrNoInstance):
 					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
@@ -402,6 +403,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Str("task", task.Name).
 						Str("object", c.Object).
 						Msg("no metrics of object on system, entering standby mode")
+					continue
 				// not an error we are expecting, so enter failed or standby state
 				default:
 					switch {
@@ -425,8 +427,8 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 
 					c.SetStatus(2, errMsg)
+					continue
 				}
-				continue
 			case c.Schedule.IsStandBy():
 				c.Schedule.Recover()
 				retryDelay = 1
@@ -436,38 +438,33 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				c.SetStatus(0, "running")
 			}
 
-			if data != nil {
+			for _, value := range data {
+				results = append(results, value)
+			}
 
-				for _, value := range data {
-					results = append(results, value)
-				}
-
-				// run plugins after data poll
-				if task.Name == "data" {
-
-					pluginStart = time.Now()
-
-					for _, v := range c.Plugins {
-						for _, plg := range v {
-							pluginData, pluginMetadata, err := plg.Run(data)
-							if err != nil {
-								c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
-								continue
-							}
-							if pluginData != nil {
-								results = append(results, pluginData...)
-							}
-							if pluginMetadata != nil {
-								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
-								_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls)
-								_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances)
-							}
+			// run plugins after data poll
+			if task.Name == "data" && data != nil {
+				pluginStart = time.Now()
+				for _, v := range c.Plugins {
+					for _, plg := range v {
+						pluginData, pluginMetadata, err := plg.Run(data)
+						if err != nil {
+							c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
+							continue
+						}
+						if pluginData != nil {
+							results = append(results, pluginData...)
+						}
+						if pluginMetadata != nil {
+							_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
+							_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls)
+							_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances)
 						}
 					}
-
-					pluginTime = time.Since(pluginStart)
-					_ = c.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
 				}
+
+				pluginTime = time.Since(pluginStart)
+				_ = c.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
 			}
 
 			// update task metadata
