@@ -438,33 +438,35 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				c.SetStatus(0, "running")
 			}
 
-			for _, value := range data {
-				results = append(results, value)
-			}
-
-			// run plugins after data poll
-			if task.Name == "data" && data != nil {
-				pluginStart = time.Now()
-				for _, v := range c.Plugins {
-					for _, plg := range v {
-						pluginData, pluginMetadata, err := plg.Run(data)
-						if err != nil {
-							c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
-							continue
-						}
-						if pluginData != nil {
-							results = append(results, pluginData...)
-						}
-						if pluginMetadata != nil {
-							_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
-							_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls)
-							_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances)
-						}
-					}
+			if data != nil {
+				for _, value := range data {
+					results = append(results, value)
 				}
 
-				pluginTime = time.Since(pluginStart)
-				_ = c.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
+				// run plugins after data poll
+				if task.Name == "data" {
+					pluginStart = time.Now()
+					for _, v := range c.Plugins {
+						for _, plg := range v {
+							pluginData, pluginMetadata, err := plg.Run(data)
+							if err != nil {
+								c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
+								continue
+							}
+							if pluginData != nil {
+								results = append(results, pluginData...)
+							}
+							if pluginMetadata != nil {
+								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
+								_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls)
+								_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances)
+							}
+						}
+					}
+
+					pluginTime = time.Since(pluginStart)
+					_ = c.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
+				}
 			}
 
 			// update task metadata
