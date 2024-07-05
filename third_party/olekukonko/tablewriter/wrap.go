@@ -8,10 +8,9 @@
 package tablewriter
 
 import (
+	"github.com/rivo/uniseg"
 	"math"
 	"strings"
-
-	"github.com/mattn/go-runewidth"
 )
 
 var (
@@ -28,7 +27,7 @@ func WrapString(s string, lim int) ([]string, int) {
 	var lines []string
 	max := 0
 	for _, v := range words {
-		max = runewidth.StringWidth(v)
+		max = uniseg.StringWidth(v)
 		if max > lim {
 			lim = max
 		}
@@ -56,9 +55,9 @@ func WrapWords(words []string, spc, lim, pen int) [][]string {
 	length := make([][]int, n)
 	for i := 0; i < n; i++ {
 		length[i] = make([]int, n)
-		length[i][i] = runewidth.StringWidth(words[i])
+		length[i][i] = uniseg.StringWidth(words[i])
 		for j := i + 1; j < n; j++ {
-			length[i][j] = length[i][j-1] + spc + runewidth.StringWidth(words[j])
+			length[i][j] = length[i][j-1] + spc + uniseg.StringWidth(words[j])
 		}
 	}
 	nbrk := make([]int, n)
