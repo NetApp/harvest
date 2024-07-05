@@ -12,6 +12,7 @@ some panels may be missing information.
 
 The dashboards that work with FSx are tagged with `fsx` and listed below:
 
+* ONTAP: cDOT
 * ONTAP: Cluster
 * ONTAP: Compliance
 * ONTAP: Data Protection Snapshots
@@ -19,9 +20,9 @@ The dashboards that work with FSx are tagged with `fsx` and listed below:
 * ONTAP: FlexGroup
 * ONTAP: LUN
 * ONTAP: NFS Troubleshooting
-* ONTAP: SVM
+* ONTAP: Quota
 * ONTAP: Security
+* ONTAP: SVM
 * ONTAP: Volume
-* ONTAP: Volume Deep Dive
 * ONTAP: Volume by SVM
-* ONTAP: cDOT
+* ONTAP: Volume Deep Dive
