@@ -50,6 +50,7 @@ type Zapi struct {
 	instanceKeyPaths   [][]string
 	instanceLabelPaths map[string]string
 	shortestPathPrefix []string
+	RunPluginsIfNoData bool
 }
 
 func init() {
@@ -146,6 +147,12 @@ func (z *Zapi) InitVars() error {
 	// if the object template includes a client_timeout, use it
 	if timeout := z.Params.GetChildContentS("client_timeout"); timeout != "" {
 		z.Client.SetTimeout(timeout)
+	}
+
+	// if the object template includes a run_plugins_if_no_data, then honour that
+	z.RunPluginsIfNoData = false
+	if z.Params.HasChildS("run_plugins_if_no_data") {
+		z.RunPluginsIfNoData = true
 	}
 	return nil
 }
@@ -405,7 +412,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	z.AddCollectCount(count)
 
 	if numInstances == 0 {
-		if z.Object == "Qtree" {
+		if z.RunPluginsIfNoData {
 			return z.Matrix, errs.New(errs.ErrNoInstance, "")
 		}
 		return nil, errs.New(errs.ErrNoInstance, "")

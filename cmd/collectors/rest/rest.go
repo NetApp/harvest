@@ -52,6 +52,7 @@ type Rest struct {
 	Prop                         *prop
 	endpoints                    []*endPoint
 	isIgnoreUnknownFieldsEnabled bool
+	RunPluginsIfNoData           bool
 }
 
 type endPoint struct {
@@ -191,6 +192,12 @@ func (r *Rest) InitVars(config *node.Node) {
 		r.Client.Timeout = duration
 	} else {
 		r.Logger.Info().Str("timeout", rest.DefaultTimeout).Msg("Using default timeout")
+	}
+
+	// if the object template includes a run_plugins_if_no_data, then honour that
+	r.RunPluginsIfNoData = false
+	if r.Params.HasChildS("run_plugins_if_no_data") {
+		r.RunPluginsIfNoData = true
 	}
 }
 
@@ -399,7 +406,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	if len(records) == 0 {
-		if r.Object == "Qtree" {
+		if r.RunPluginsIfNoData {
 			return r.Matrix, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 		}
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
