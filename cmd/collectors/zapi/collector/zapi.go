@@ -405,7 +405,10 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	z.AddCollectCount(count)
 
 	if numInstances == 0 {
-		return z.Matrix, errs.New(errs.ErrNoInstance, "")
+		if z.Object == "Qtree" {
+			return z.Matrix, errs.New(errs.ErrNoInstance, "")
+		}
+		return nil, errs.New(errs.ErrNoInstance, "")
 	}
 
 	return z.Matrix, nil
