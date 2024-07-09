@@ -195,10 +195,7 @@ func (r *Rest) InitVars(config *node.Node) {
 	}
 
 	// if the object template includes a run_plugins_if_no_data, then honour that
-	r.RunPluginsIfNoData = false
-	if r.Params.HasChildS("run_plugins_if_no_data") {
-		r.RunPluginsIfNoData = true
-	}
+	r.RunPluginsIfNoData = r.Params.HasChildS("run_plugins_if_no_data")
 }
 
 func (r *Rest) InitClient() error {
@@ -402,14 +399,13 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 
 	if records, err = r.GetRestData(r.Prop.Href); err != nil {
-		return nil, err
+		r.Logger.Warn().Msgf("error while fetching " + r.Object + " records on cluster")
+		return collectors.RunPlugin(r.RunPluginsIfNoData, r.Matrix, err)
 	}
 
 	if len(records) == 0 {
-		if r.RunPluginsIfNoData {
-			return r.Matrix, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
-		}
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+		r.Logger.Warn().Msgf("no " + r.Object + " instances on cluster")
+		return collectors.RunPlugin(r.RunPluginsIfNoData, r.Matrix, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster"))
 	}
 
 	return r.pollData(startTime, records, func(e *endPoint) ([]gjson.Result, time.Duration, error) {

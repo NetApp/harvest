@@ -150,10 +150,7 @@ func (z *Zapi) InitVars() error {
 	}
 
 	// if the object template includes a run_plugins_if_no_data, then honour that
-	z.RunPluginsIfNoData = false
-	if z.Params.HasChildS("run_plugins_if_no_data") {
-		z.RunPluginsIfNoData = true
-	}
+	z.RunPluginsIfNoData = z.Params.HasChildS("run_plugins_if_no_data")
 	return nil
 }
 
@@ -343,7 +340,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		response, tag, ad, pd, err = z.Client.InvokeBatchWithTimers(request, tag)
 
 		if err != nil {
-			return nil, err
+			z.Logger.Warn().Msgf("error while fetching " + z.Object + " records on cluster")
+			return collectors.RunPlugin(z.RunPluginsIfNoData, z.Matrix, err)
 		}
 
 		if response == nil {
@@ -363,7 +361,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 			instance := mat.GetInstance("cluster")
 			if instance == nil {
 				if instance, err = mat.NewInstance("cluster"); err != nil {
-					return nil, err
+					z.Logger.Warn().Msgf("error while creating " + z.Object + " instances on cluster")
+					return collectors.RunPlugin(z.RunPluginsIfNoData, z.Matrix, err)
 				}
 			}
 			fetch(instance, instances[0], make([]string, 0), false)
@@ -412,10 +411,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	z.AddCollectCount(count)
 
 	if numInstances == 0 {
-		if z.RunPluginsIfNoData {
-			return z.Matrix, errs.New(errs.ErrNoInstance, "")
-		}
-		return nil, errs.New(errs.ErrNoInstance, "")
+		z.Logger.Warn().Msgf("no " + z.Object + " instances on cluster")
+		return collectors.RunPlugin(z.RunPluginsIfNoData, z.Matrix, errs.New(errs.ErrNoInstance, ""))
 	}
 
 	return z.Matrix, nil

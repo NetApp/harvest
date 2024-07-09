@@ -245,3 +245,10 @@ func ReadPluginKey(param *node.Node, key string) bool {
 	}
 	return false
 }
+
+func RunPlugin(runPluginIfNoData bool, mat map[string]*matrix.Matrix, err error) (map[string]*matrix.Matrix, error) {
+	if runPluginIfNoData {
+		return mat, nil
+	}
+	return nil, err
+}

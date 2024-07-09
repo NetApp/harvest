@@ -377,7 +377,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Msg("target unreachable, entering standby mode and retry")
 					c.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					c.SetStatus(1, errs.ErrConnection.Error())
-					continue
 				case errs.IsRestErr(err, errs.CMReject):
 					// Try again in 30 to 60 seconds
 					retryAfter := 30 + rand.Int63n(30) //nolint:gosec
@@ -387,7 +386,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Str("task", task.Name).
 						Int64("retryAfterSecs", retryAfter).
 						Msg("CM reject, entering standby mode and retry")
-					continue
 				// there are no instances to collect
 				case errors.Is(err, errs.ErrNoInstance):
 					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
@@ -403,7 +401,6 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						Str("task", task.Name).
 						Str("object", c.Object).
 						Msg("no metrics of object on system, entering standby mode")
-					continue
 				// not an error we are expecting, so enter failed or standby state
 				default:
 					switch {
@@ -427,8 +424,8 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 
 					c.SetStatus(2, errMsg)
-					continue
 				}
+				continue
 			case c.Schedule.IsStandBy():
 				c.Schedule.Recover()
 				retryDelay = 1
