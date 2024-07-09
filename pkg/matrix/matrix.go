@@ -140,6 +140,13 @@ func (m *Matrix) DisplayMetric(name string) *Metric {
 	return nil
 }
 
+func (m *Matrix) DisplayMetricKey(name string) string {
+	if metricKey, has := m.displayMetrics[name]; has {
+		return metricKey
+	}
+	return ""
+}
+
 func (m *Matrix) GetMetric(key string) *Metric {
 	if metric, has := m.metrics[key]; has {
 		return metric

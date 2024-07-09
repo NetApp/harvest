@@ -301,15 +301,19 @@ func (c *ChangeLog) copyPreviousData(cur *matrix.Matrix) {
 	labels := c.changeLogConfig.PublishLabels
 	var met []string
 	for _, t := range c.changeLogConfig.Track {
-		_, ok := cur.GetMetrics()[t]
-		if ok {
-			met = append(met, t)
+		mKey := cur.DisplayMetricKey(t)
+		if mKey != "" {
+			met = append(met, mKey)
 		} else {
 			labels = append(labels, t)
 		}
 	}
 	labels = append(labels, "uuid")
-	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: false, Labels: labels, MetricsNames: met})
+	withMetrics := false
+	if len(met) > 0 {
+		withMetrics = true
+	}
+	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: withMetrics, Instances: true, ExportInstances: false, Labels: labels, MetricsNames: met})
 }
 
 // createChangeLogInstance creates a new ChangeLog instance with the given change data
