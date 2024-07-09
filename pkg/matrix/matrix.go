@@ -38,6 +38,7 @@ type With struct {
 	ExportInstances  bool
 	PartialInstances bool
 	Labels           []string
+	MetricsNames     []string
 }
 
 func New(uuid, object string, identifier string) *Matrix {
@@ -99,11 +100,23 @@ func (m *Matrix) Clone(with With) *Matrix {
 	}
 
 	if with.Metrics {
-		clone.metrics = make(map[string]*Metric, len(m.GetMetrics()))
-		for key, metric := range m.GetMetrics() {
-			c := metric.Clone(with.Data)
-			clone.metrics[key] = c
-			clone.displayMetrics[c.GetName()] = key
+		if len(with.MetricsNames) > 0 {
+			clone.metrics = make(map[string]*Metric, len(with.MetricsNames))
+			for _, metricName := range with.MetricsNames {
+				metric, ok := m.GetMetrics()[metricName]
+				if ok {
+					c := metric.Clone(with.Data)
+					clone.metrics[metricName] = c
+					clone.displayMetrics[c.GetName()] = metricName
+				}
+			}
+		} else {
+			clone.metrics = make(map[string]*Metric, len(m.GetMetrics()))
+			for key, metric := range m.GetMetrics() {
+				c := metric.Clone(with.Data)
+				clone.metrics[key] = c
+				clone.displayMetrics[c.GetName()] = key
+			}
 		}
 	} else {
 		clone.metrics = make(map[string]*Metric)

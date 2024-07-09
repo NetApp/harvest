@@ -637,7 +637,7 @@ The ChangeLog plugin is a feature of Harvest, designed to detect and track chang
 
 Please note that the ChangeLog plugin requires the `uuid` label, which is unique, to be collected by the template. Without the `uuid` label, the plugin will not function.
 
-The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values.
+The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values by default, but it can be configured to do so.
 
 ## Enabling the Plugin
 
@@ -735,7 +735,6 @@ change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="
 
 When an object is deleted, the ChangeLog plugin will publish a metric with the following labels:
 
-
 | Label        | Description                                                                 |
 |--------------|-----------------------------------------------------------------------------|
 | object       | name of the ONTAP object that was changed                                   |
@@ -746,6 +745,23 @@ Example of metric shape for object deletion:
 
 ```
 change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="2", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="delete", style="flexvol", svm="harvest", volume="harvest_demo"} 1698735708
+```
+
+### Metric Value Changes
+
+When a metric value changes, the ChangeLog plugin will publish a metric with the following labels. Note that old and new values are not tracked to avoid impacting cardinality in Prometheus:
+
+| Label        | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| object       | name of the ONTAP object that was changed                                   |
+| op           | type of change that was made                                                |
+| track        | property of the object which was modified                                   |
+| metric value | timestamp when Harvest captured the change. 1698735800 in the example below |
+
+Example of metric shape for metric value change:
+
+```
+change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="3", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="metric_change", track="read_latency", svm="harvest", volume="harvest_demo"} 1698735800
 ```
 
 ## Viewing the Metrics

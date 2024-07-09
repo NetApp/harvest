@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/netapp/harvest/v2/pkg/util"
+	maps2 "golang.org/x/exp/maps"
 	"maps"
 	"strconv"
 	"time"
@@ -110,7 +111,6 @@ func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
 
 // Run processes the data and generates ChangeLog instances
 func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
-
 	data := dataMap[c.Object]
 	changeLogMap, err := c.initMatrix()
 	if err != nil {
@@ -128,7 +128,6 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	}
 
 	changeMat := changeLogMap[c.matrixName]
-
 	changeMat.SetGlobalLabels(data.GetGlobalLabels())
 	object := data.Object
 	if c.changeLogConfig.Object == "" {
@@ -179,7 +178,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 			c.updateChangeLogLabels(object, instance, change)
 			c.createChangeLogInstance(changeMat, change)
 		} else {
-			// check for any modification
+			// check for any label modification
 			cur, old := instance.CompareDiffs(prevInstance, c.changeLogConfig.Track)
 			if len(cur) > 0 {
 				for currentLabel, nVal := range cur {
@@ -201,8 +200,33 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 					c.createChangeLogInstance(changeMat, change)
 				}
 			}
+
+			// check for any metric modification
+			metricChanges := c.CompareMetrics(data)
+			if changes, ok := metricChanges[key]; ok {
+				for metricName := range changes {
+					change := &Change{
+						key:    uuid + "_" + object + "_" + metricName,
+						object: object,
+						op:     update,
+						labels: make(map[string]string),
+						track:  metricName,
+						// Enabling tracking of both old and new values results in the creation of a new time series each time the pair of values changes. For metrics tracking, it is not suitable.
+						//oldValue: strconv.FormatFloat(values[0], 'f', -1, 64),
+						//newValue: strconv.FormatFloat(values[1], 'f', -1, 64),
+						time: currentTime,
+					}
+					c.updateChangeLogLabels(object, instance, change)
+					// add changed track and its old, new value
+					change.labels[track] = metricName
+					change.labels[oldValue] = change.oldValue
+					change.labels[newValue] = change.newValue
+					c.createChangeLogInstance(changeMat, change)
+				}
+			}
 		}
 	}
+
 	// create deleted instances change_log
 	for key := range oldInstances.Iter() {
 		prevInstance := prevMat.GetInstance(key)
@@ -243,12 +267,49 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	return matricesArray, nil, nil
 }
 
+// CompareMetrics compares the metrics of the current and previous instances
+func (c *ChangeLog) CompareMetrics(curMat *matrix.Matrix) map[string]map[string][2]float64 {
+	metricChanges := make(map[string]map[string][2]float64)
+	prevMat := c.previousData
+
+	met := maps2.Keys(c.previousData.GetMetrics())
+
+	for _, metricKey := range met {
+		prevMetric := prevMat.GetMetric(metricKey)
+		curMetric := curMat.GetMetric(metricKey)
+		for key, currInstance := range curMat.GetInstances() {
+			prevInstance := prevMat.GetInstance(key)
+			prevIndex := prevInstance.GetIndex()
+			currIndex := currInstance.GetIndex()
+			curVal := curMetric.GetValues()[currIndex]
+			prevVal := prevMetric.GetValues()[prevIndex]
+			if prevInstance != nil {
+				if curVal != prevVal {
+					if _, ok := metricChanges[key]; !ok {
+						metricChanges[key] = make(map[string][2]float64)
+					}
+					metricChanges[key][metricKey] = [2]float64{prevVal, curVal}
+				}
+			}
+		}
+	}
+	return metricChanges
+}
+
 // copyPreviousData creates a copy of the previous data for comparison
 func (c *ChangeLog) copyPreviousData(cur *matrix.Matrix) {
 	labels := c.changeLogConfig.PublishLabels
-	labels = append(labels, c.changeLogConfig.Track...)
+	var met []string
+	for _, t := range c.changeLogConfig.Track {
+		_, ok := cur.GetMetrics()[t]
+		if ok {
+			met = append(met, t)
+		} else {
+			labels = append(labels, t)
+		}
+	}
 	labels = append(labels, "uuid")
-	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: false, Instances: true, ExportInstances: false, Labels: labels})
+	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: false, Labels: labels, MetricsNames: met})
 }
 
 // createChangeLogInstance creates a new ChangeLog instance with the given change data

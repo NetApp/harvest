@@ -146,6 +146,10 @@ func (m *Metric) SetValueNAN(i *Instance) {
 	m.record[i.index] = false
 }
 
+func (m *Metric) GetValues() []float64 {
+	return m.values
+}
+
 // Storage resizing methods
 
 func (m *Metric) Reset(size int) {
