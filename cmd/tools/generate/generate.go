@@ -287,12 +287,12 @@ func generateDocker(kind int) {
 	if kind == harvest {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
-				color.Colorize("docker-compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+				color.Colorize("docker compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	}
 	if kind == full {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"Start containers with:\n"+
-				color.Colorize("docker-compose -f prom-stack.yml -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+				color.Colorize("docker compose -f prom-stack.yml -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
 	}
 }
 

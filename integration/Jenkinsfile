@@ -175,7 +175,7 @@ pipeline {
                                   ghcr.io/netapp/harvest \
                                   generate docker full \
                                   --output harvest-compose.yml
-                                docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+                                docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 sleep 1m
                                 INSTALL_DOCKER=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''

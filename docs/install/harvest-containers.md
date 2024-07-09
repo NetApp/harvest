@@ -55,7 +55,7 @@ docker run --rm \
 Bring everything up :rocket:
 
 ```
-docker-compose -f harvest-compose.yml up -d --remove-orphans
+docker compose -f harvest-compose.yml up -d --remove-orphans
 ```
 
 
@@ -68,13 +68,13 @@ docker-compose -f harvest-compose.yml up -d --remove-orphans
 3. Run [docker compose up](#start-everything), for example,
 
 ```bash
-docker-compose -f harvest-compose.yml up -d --remove-orphans
+docker compose -f harvest-compose.yml up -d --remove-orphans
 ```
 
 ### Stop all containers
 
 ```
-docker-compose-f harvest-compose.yml down
+docker compose-f harvest-compose.yml down
 ```
 
 ### Upgrade Harvest
@@ -112,5 +112,5 @@ To upgrade Harvest:
 4. Restart your containers using the following:
 
    ```
-   docker-compose -f harvest-compose.yml up -d --remove-orphans
+   docker compose -f harvest-compose.yml up -d --remove-orphans
    ```
