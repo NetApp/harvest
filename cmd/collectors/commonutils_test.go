@@ -1,8 +1,6 @@
 package collectors
 
 import (
-	"errors"
-	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -337,33 +335,63 @@ func populateInstance(data *matrix.Matrix, instanceName, healthy, schedule, last
 	return instance
 }
 
-func TestRunPlugin(t *testing.T) {
-	type test struct {
-		name              string
-		runPluginIfNoData bool
-		mat               map[string]*matrix.Matrix
-		err               error
-		wantMatrix        bool
-		wantErr           error
-	}
-
-	testMat := make(map[string]*matrix.Matrix)
-	err := errs.New(errs.ErrConfig, "test Error")
-
-	tests := []test{
-		{"runPluginIfNoData_false", false, testMat, err, false, err},
-		{"runPluginIfNoData_true", true, testMat, err, true, nil},
+func Test_SplitVscanName(t *testing.T) {
+	tests := []struct {
+		name      string
+		ontapName string
+		svm       string
+		scanner   string
+		node      string
+		isValid   bool
+	}{
+		{
+			name:      "valid",
+			ontapName: "svm:scanner:node",
+			svm:       "svm",
+			scanner:   "scanner",
+			node:      "node",
+			isValid:   true,
+		},
+		{
+			name:      "ipv6",
+			ontapName: "moon-ad:2a03:1e80:a15:60c::1:2a5:moon-02",
+			svm:       "moon-ad",
+			scanner:   "2a03:1e80:a15:60c::1:2a5",
+			node:      "moon-02",
+			isValid:   true,
+		},
+		{
+			name:      "invalid zero colon",
+			ontapName: "svm",
+			svm:       "",
+			scanner:   "",
+			node:      "",
+			isValid:   false,
+		},
+		{
+			name:      "invalid one colon",
+			ontapName: "svm:scanner",
+			svm:       "",
+			scanner:   "",
+			node:      "",
+			isValid:   false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := RunPlugin(tt.runPluginIfNoData, tt.mat, tt.err)
-			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("RunPlugin() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			gotSVM, gotScanner, gotNode, ok := SplitVscanName(tt.ontapName)
+			if gotSVM != tt.svm {
+				t.Errorf("splitOntapName() got = %v, want %v", gotSVM, tt.svm)
 			}
-			if (got != nil) != tt.wantMatrix {
-				t.Errorf("RunPlugin() got = %v, wantMatrix %v", got, tt.wantMatrix)
+			if gotScanner != tt.scanner {
+				t.Errorf("splitOntapName() got = %v, want %v", gotScanner, tt.scanner)
+			}
+			if gotNode != tt.node {
+				t.Errorf("splitOntapName() got = %v, want %v", gotNode, tt.node)
+			}
+			if ok != tt.isValid {
+				t.Errorf("splitOntapName() got = %v, want %v", ok, tt.isValid)
 			}
 		})
 	}

@@ -8,7 +8,7 @@
 package tablewriter
 
 import (
-	"github.com/mattn/go-runewidth"
+	"github.com/rivo/uniseg"
 	"math"
 	"regexp"
 	"strings"
@@ -17,7 +17,7 @@ import (
 var ansi = regexp.MustCompile("\033\\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]")
 
 func DisplayWidth(str string) int {
-	return runewidth.StringWidth(ansi.ReplaceAllLiteralString(str, ""))
+	return uniseg.StringWidth(ansi.ReplaceAllLiteralString(str, ""))
 }
 
 // Simple Condition for string

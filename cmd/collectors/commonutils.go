@@ -246,9 +246,22 @@ func ReadPluginKey(param *node.Node, key string) bool {
 	return false
 }
 
-func RunPlugin(runPluginIfNoData bool, mat map[string]*matrix.Matrix, err error) (map[string]*matrix.Matrix, error) {
-	if runPluginIfNoData {
-		return mat, nil
+func SplitVscanName(ontapName string) (string, string, string, bool) {
+	// colon separated list of fields
+	// svm      : scanner                  : node
+	// vs_test4 : 2.2.2.2                  : umeng-aff300-05
+	// moon-ad  : 2a03:1e80:a15:60c::1:2a5 : moon-02
+
+	firstColon := strings.Index(ontapName, ":")
+	if firstColon == -1 {
+		return "", "", "", false
 	}
-	return nil, err
+	lastColon := strings.LastIndex(ontapName, ":")
+	if lastColon == -1 {
+		return "", "", "", false
+	}
+	if firstColon == lastColon {
+		return "", "", "", false
+	}
+	return ontapName[:firstColon], ontapName[firstColon+1 : lastColon], ontapName[lastColon+1:], true
 }

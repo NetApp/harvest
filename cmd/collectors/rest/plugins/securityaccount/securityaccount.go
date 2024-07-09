@@ -35,12 +35,12 @@ func (s *SecurityAccount) Init() error {
 	}
 
 	clientTimeout := s.ParentParams.GetChildContentS("client_timeout")
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	duration, err := time.ParseDuration(clientTimeout)
-	if err == nil {
-		timeout = duration
-	} else {
-		s.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
+	if clientTimeout == "" {
+		clientTimeout = rest.DefaultTimeout
+	}
+	timeout, err := time.ParseDuration(clientTimeout)
+	if err != nil {
+		s.Logger.Info().Str("timeout", rest.DefaultTimeout).Msg("Using default timeout")
 	}
 	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
 		return fmt.Errorf("failed to connect err=%w", err)

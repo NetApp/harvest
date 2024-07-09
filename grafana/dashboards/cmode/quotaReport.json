@@ -809,7 +809,8 @@
   "tags": [
     "harvest",
     "ontap",
-    "cdot"
+    "cdot",
+    "fsx"
   ],
   "templating": {
     "list": [

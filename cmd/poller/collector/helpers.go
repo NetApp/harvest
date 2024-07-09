@@ -59,6 +59,7 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename, jitter string, ve
 		customTemplateErr             error
 		finalTemplate                 *node.Node
 		customTemplate                *node.Node
+		importErrs                    []error
 	)
 
 	if filename == "" {
@@ -100,6 +101,7 @@ nextFile:
 					finalTemplate.PreprocessTemplate()
 					continue nextFile
 				}
+				importErrs = append(importErrs, fmt.Errorf("failed to import template: %s file: %w", templatePath, err))
 			} else {
 				// any errors w.r.t customTemplate are warnings and should not be returned to caller
 				customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
@@ -119,7 +121,8 @@ nextFile:
 			if c.Object == "Status_7mode" && model == "cdot" {
 				return nil, "", errs.New(errs.ErrWrongTemplate, "unable to load status_7.yaml on cdot")
 			}
-			return nil, "", fmt.Errorf("no best-fit template for %s on %s", filename, c.Options.ConfPath)
+			return nil, "", fmt.Errorf("no best-fit template for %s on confPath %s %w",
+				filename, c.Options.ConfPath, errors.Join(importErrs...))
 		}
 	}
 
