@@ -106,7 +106,7 @@ By default, the above command uses the harvest configuration file(`harvest.yml`)
 Bring everything up :rocket:
 
 ```
-docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```
 
 ### Note on Docker Logging Configuration
@@ -158,7 +158,7 @@ you can start your Docker containers with the updated configuration
 that includes the 1-year data retention period by executing the command below:
 
 ```sh
-docker-compose -f prom-stack-prod.yml -f harvest-compose.yml up -d --remove-orphans
+docker compose -f prom-stack-prod.yml -f harvest-compose.yml up -d --remove-orphans
 ```
 
 ### Grafana
@@ -181,13 +181,13 @@ password: admin
 3. Run [docker compose up](#start-everything), for example,
 
 ```bash
-docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```
 
 ### Stop all containers
 
 ```
-docker-compose -f prom-stack.yml -f harvest-compose.yml down
+docker compose -f prom-stack.yml -f harvest-compose.yml down
 ```
 
 If you encounter the following error message while attempting to stop your Docker containers using `docker-compose down`
@@ -250,7 +250,7 @@ Make sure you don't skip this step. It is essential as it updates local copies o
 4. Restart your containers using the following:
 
 ```
-docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ```
 
 ## Building Harvest Docker Image
