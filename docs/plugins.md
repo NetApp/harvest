@@ -735,7 +735,7 @@ change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="
 Example of metric shape for metric value change:
 
 ```
-change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="3", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="metric_change", track="size_total", svm="harvest", volume="harvest_demo"} 1698735800
+change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="3", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="metric_change", track="volume_size_total", svm="harvest", volume="harvest_demo"} 1698735800
 ```
 
 ### Object Deletion

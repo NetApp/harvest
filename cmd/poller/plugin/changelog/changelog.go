@@ -286,7 +286,8 @@ func (c *ChangeLog) CompareMetrics(curMat *matrix.Matrix) map[string]map[string]
 					if _, ok := metricChanges[key]; !ok {
 						metricChanges[key] = make(map[string][2]float64)
 					}
-					metricChanges[key][curMetric.GetName()] = [2]float64{prevVal, curVal}
+					metName := curMat.Object + "_" + curMetric.GetName()
+					metricChanges[key][metName] = [2]float64{prevVal, curVal}
 				}
 			}
 		}
