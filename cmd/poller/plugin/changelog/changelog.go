@@ -150,6 +150,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	currentTime := time.Now().Unix()
 
+	metricChanges := c.CompareMetrics(data)
 	// loop over current instances
 	for key, instance := range data.GetInstances() {
 		uuid := instance.GetLabel("uuid")
@@ -202,7 +203,6 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 			}
 
 			// check for any metric modification
-			metricChanges := c.CompareMetrics(data)
 			if changes, ok := metricChanges[key]; ok {
 				for metricName := range changes {
 					change := &Change{
@@ -212,8 +212,6 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 						labels: make(map[string]string),
 						track:  metricName,
 						// Enabling tracking of both old and new values results in the creation of a new time series each time the pair of values changes. For metrics tracking, it is not suitable.
-						//oldValue: strconv.FormatFloat(values[0], 'f', -1, 64),
-						//newValue: strconv.FormatFloat(values[1], 'f', -1, 64),
 						time: currentTime,
 					}
 					c.updateChangeLogLabels(object, instance, change)
@@ -288,7 +286,7 @@ func (c *ChangeLog) CompareMetrics(curMat *matrix.Matrix) map[string]map[string]
 					if _, ok := metricChanges[key]; !ok {
 						metricChanges[key] = make(map[string][2]float64)
 					}
-					metricChanges[key][metricKey] = [2]float64{prevVal, curVal}
+					metricChanges[key][curMetric.GetName()] = [2]float64{prevVal, curVal}
 				}
 			}
 		}
@@ -302,17 +300,14 @@ func (c *ChangeLog) copyPreviousData(cur *matrix.Matrix) {
 	var met []string
 	for _, t := range c.changeLogConfig.Track {
 		mKey := cur.DisplayMetricKey(t)
-		if mKey != "" {
-			met = append(met, mKey)
-		} else {
+		if mKey == "" {
 			labels = append(labels, t)
+		} else {
+			met = append(met, mKey)
 		}
 	}
 	labels = append(labels, "uuid")
-	withMetrics := false
-	if len(met) > 0 {
-		withMetrics = true
-	}
+	withMetrics := len(met) > 0
 	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: withMetrics, Instances: true, ExportInstances: false, Labels: labels, MetricsNames: met})
 }
 
