@@ -22,7 +22,7 @@ import (
 type Options struct {
 	Poller     string   // name of the Poller
 	Daemon     bool     // if true, Poller is started as daemon
-	Debug      bool     // if true, Poller is started in debug mode, which means data will not be exported
+	Debug      bool     // if true, Poller is started with debug logging (same as -loglevel 1)
 	PromPort   int      // HTTP port that is assigned to Poller and can be used by the Prometheus exporter
 	Config     string   // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
@@ -67,11 +67,9 @@ func (o *Options) MarshalZerologObject(e *zerolog.Event) {
 	e.Str("config", o.Config)
 	e.Str("confPath", o.ConfPath)
 	e.Bool("daemon", o.Daemon)
-	e.Bool("debug", o.Debug)
 	e.Int("profiling", o.Profiling)
 	e.Int("promPort", o.PromPort)
 	e.Str("homePath", o.HomePath)
-	e.Str("logPath", o.LogPath)
 	e.Str("logPath", o.LogPath)
 	e.Str("hostname", o.Hostname)
 	e.Bool("asup", o.Asup)
@@ -85,6 +83,11 @@ func (o *Options) SetDefaults() *Options {
 	o.HomePath = conf.Path("")
 	o.LogPath = conf.GetHarvestLogPath()
 	o.SetConfPath(o.ConfPath)
+
+	// If both debug and loglevel are set, loglevel wins
+	if o.Debug && o.LogLevel == 2 {
+		o.LogLevel = 1
+	}
 
 	return o
 }

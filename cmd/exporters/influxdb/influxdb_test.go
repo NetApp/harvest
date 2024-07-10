@@ -13,7 +13,7 @@ import (
 
 func setupInfluxDB(t *testing.T, exporterName string) *InfluxDB {
 	opts := options.New()
-	opts.Debug = true
+	opts.IsTest = true
 
 	_, err := conf.LoadHarvestConfig("../../tools/doctor/testdata/testConfig.yml")
 	if err != nil {

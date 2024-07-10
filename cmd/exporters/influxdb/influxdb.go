@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
-	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/requests"
@@ -165,12 +164,8 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
 			e.Logger.Error().Err(err).Msg("metadata render time")
 		}
-		// in debug mode, don't actually export but write to log
-		if e.Options.Debug {
-			e.Logger.Debug().Msg("simulating export since in debug mode")
-			for _, m := range metrics {
-				e.Logger.Debug().Msgf("M= [%s%s%s]", color.Blue, m, color.End)
-			}
+		// in test mode, don't emit metrics
+		if e.Options.IsTest {
 			return stats, nil
 			// otherwise, to the actual export: send to the DB
 		} else if err = e.Emit(metrics); err != nil {
