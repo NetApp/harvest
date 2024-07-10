@@ -1678,7 +1678,7 @@ Pollers:
 </code></pre></div>
 <h3 id="start-everything">Start everything<a class="headerlink" href="#start-everything" title="Permanent link">&para;</a></h3>
 <p>Bring everything up <img alt="🚀" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/1f680.svg" title=":rocket:" /></p>
-<div class="highlight"><pre><span></span><code>docker-compose -f harvest-compose.yml up -d --remove-orphans
+<div class="highlight"><pre><span></span><code>docker compose -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
 <h2 id="manage-pollers">Manage pollers<a class="headerlink" href="#manage-pollers" title="Permanent link">&para;</a></h2>
 <h3 id="how-do-i-add-a-new-poller">How do I add a new poller?<a class="headerlink" href="#how-do-i-add-a-new-poller" title="Permanent link">&para;</a></h3>
@@ -1687,10 +1687,10 @@ Pollers:
 <li>Regenerate compose file by running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a></li>
 <li>Run <a href="#start-everything">docker compose up</a>, for example,</li>
 </ol>
-<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>-f<span class="w"> </span>harvest-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--remove-orphans
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>harvest-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--remove-orphans
 </code></pre></div>
 <h3 id="stop-all-containers">Stop all containers<a class="headerlink" href="#stop-all-containers" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>docker-compose-f harvest-compose.yml down
+<div class="highlight"><pre><span></span><code>docker compose-f harvest-compose.yml down
 </code></pre></div>
 <h3 id="upgrade-harvest">Upgrade Harvest<a class="headerlink" href="#upgrade-harvest" title="Permanent link">&para;</a></h3>
 <p>To upgrade Harvest:</p>
@@ -1727,7 +1727,7 @@ Pollers:
 <p>Restart your containers using the following:</p>
 </li>
 </ol>
-<div class="highlight"><pre><span></span><code>docker-compose -f harvest-compose.yml up -d --remove-orphans
+<div class="highlight"><pre><span></span><code>docker compose -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
 
 
