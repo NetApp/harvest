@@ -58,14 +58,23 @@ harvest.yml
 
 ## How do I start Harvest in debug mode?
 
-Use the `--debug` flag when starting a poller. In debug mode, the poller will only collect metrics, but not write to databases. Another useful flag is `--foreground`, in which case all log messages are written to the terminal. Note that you can only start one poller in foreground mode.
+Use the `--debug` flag when starting a poller to enable debug logging (`--debug` is shorthand for `--loglevel 1`).
+Another useful flag is `--foreground`, which causes all log messages to be written to the terminal. 
+Note that you can only start one poller in foreground mode.
 
-Finally, you can use `--loglevel=1` or `--verbose`, if you want to see a lot of log messages. For even more, you can use `--loglevel=0` or `--trace`.
+The amount of logged information can be controlled with the `--loglevel` flag followed by an integer value.
+The integer values are as follows:
+- 0: Trace
+- 1: Debug
+- 2: Info (default)
+- 3: Warning
+- 4: Error
+- 5: Critical
 
 Examples:
 
 ```
-bin/harvest start $POLLER_NAME --foreground --debug --loglevel=0
+bin/harvest start $POLLER_NAME --foreground --debug
 or
 bin/harvest start $POLLER_NAME --loglevel=1 --collectors Zapi --objects Qtree
 ```

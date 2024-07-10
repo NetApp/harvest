@@ -90,11 +90,6 @@ func (p *Prometheus) Init() error {
 		p.globalPrefix = globalPrefix
 	}
 
-	if p.Options.Debug {
-		p.Logger.Debug().Msg("initialized without HTTP server since in debug mode")
-		return nil
-	}
-
 	// add HELP and TYPE tags to exported metrics if requested
 	if p.Params.ShouldAddMetaTags != nil && *p.Params.ShouldAddMetaTags {
 		p.addMetaTags = true
@@ -224,15 +219,6 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	// fix render time for metadata
 	d := time.Since(start)
-
-	// simulate export in debug mode
-	if p.Options.Debug {
-		p.Logger.Debug().Msg("no export since in debug mode")
-		for _, m := range metrics {
-			p.Logger.Debug().Msgf("M= %s", string(m))
-		}
-		return stats, nil
-	}
 
 	// store metrics in cache
 	key := data.UUID + "." + data.Object + "." + data.Identifier
