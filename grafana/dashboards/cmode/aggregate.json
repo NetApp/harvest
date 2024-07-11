@@ -1734,7 +1734,7 @@
           "exemplar": false,
           "expr": "aggr_object_store_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_object_store_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggr}}",
+          "legendFormat": "{{node}} - {{aggr}} - {{tier}}",
           "refId": "A"
         }
       ],
@@ -1826,7 +1826,7 @@
           "exemplar": false,
           "expr": "aggr_object_store_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}\nand\ntopk($TopResources, avg_over_time(aggr_object_store_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}[3h] @ end()))",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggr}}",
+          "legendFormat": "{{node}} - {{aggr}} - {{tier}}",
           "refId": "A"
         }
       ],
