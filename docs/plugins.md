@@ -725,17 +725,18 @@ When an existing object is modified, the ChangeLog plugin will publish a metric 
 | `new_value`  | New value of the object after the change (only available for label changes and not for metric changes) |
 | `old_value`  | Previous value of the object before the change (only available for label changes and not for metric changes) |
 | `metric value` | Timestamp when Harvest captured the change. `1698735677` in the example below |
+| `category`   | Type of the change, indicating whether it is a `metric` or a `label` change     |
 
 Example of metric shape for object modification for label:
 
 ```
-change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="1", instance="localhost:12993", job="prometheus", new_value="offline", node="umeng-aff300-01", object="volume", old_value="online", op="update", style="flexvol", svm="harvest", track="state", volume="harvest_demo"} 1698735677
+change_log{aggr="umeng_aff300_aggr2", category="label", cluster="umeng-aff300-01-02", datacenter="u2", index="1", instance="localhost:12993", job="prometheus", new_value="offline", node="umeng-aff300-01", object="volume", old_value="online", op="update", style="flexvol", svm="harvest", track="state", volume="harvest_demo"} 1698735677
 ```
 
 Example of metric shape for metric value change:
 
 ```
-change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="3", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="metric_change", track="volume_size_total", svm="harvest", volume="harvest_demo"} 1698735800
+change_log{aggr="umeng_aff300_aggr2", category="metric", cluster="umeng-aff300-01-02", datacenter="u2", index="3", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="metric_change", track="volume_size_total", svm="harvest", volume="harvest_demo"} 1698735800
 ```
 
 ### Object Deletion

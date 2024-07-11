@@ -24,6 +24,7 @@ package prometheus
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -336,6 +337,24 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		instanceKeysOk := false
 		instanceLabels := make([]string, 0)
 		instanceLabelsSet := make(map[string]struct{})
+
+		// The ChangeLog plugin tracks metric values and publishes the names of metrics that have changed.
+		// For example, it might indicate that 'volume_size_total' has been updated.
+		// If a global prefix for the exporter is defined, we need to amend the metric name with this prefix.
+		if p.globalPrefix != "" && data.Object == changelog.ObjectChangeLog {
+			categoryIsMetric := false
+			for label, value := range instance.GetLabels() {
+				if label == changelog.Category && value == changelog.Metric {
+					categoryIsMetric = true
+					break
+				}
+			}
+			if categoryIsMetric {
+				if value, ok := instance.GetLabels()[changelog.Track]; ok {
+					instance.GetLabels()[changelog.Track] = p.globalPrefix + value
+				}
+			}
+		}
 
 		if includeAllLabels {
 			for label, value := range instance.GetLabels() {

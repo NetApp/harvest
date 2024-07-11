@@ -105,7 +105,7 @@ func TestChangeLogModified(t *testing.T) {
 
 	o, _, _ := p.Run(data1)
 
-	checkChangeLogInstances(t, o, 2, 9, update, opLabel)
+	checkChangeLogInstances(t, o, 2, 10, update, opLabel)
 }
 
 func TestChangeLogModifiedWithMetrics(t *testing.T) {
@@ -140,7 +140,7 @@ func TestChangeLogModifiedWithMetrics(t *testing.T) {
 
 	o, _, _ := p.Run(data1)
 
-	checkChangeLogInstances(t, o, 3, 7, update, opLabel)
+	checkChangeLogInstances(t, o, 3, 8, update, opLabel)
 }
 
 func TestChangeLogCreated(t *testing.T) {
