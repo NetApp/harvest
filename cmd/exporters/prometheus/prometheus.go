@@ -342,16 +342,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		// For example, it might indicate that 'volume_size_total' has been updated.
 		// If a global prefix for the exporter is defined, we need to amend the metric name with this prefix.
 		if p.globalPrefix != "" && data.Object == changelog.ObjectChangeLog {
-			categoryIsMetric := false
-			for label, value := range instance.GetLabels() {
-				if label == changelog.Category && value == changelog.Metric {
-					categoryIsMetric = true
-					break
-				}
-			}
-			if categoryIsMetric {
-				if value, ok := instance.GetLabels()[changelog.Track]; ok {
-					instance.GetLabels()[changelog.Track] = p.globalPrefix + value
+			if categoryValue, ok := instance.GetLabels()[changelog.Category]; ok {
+				if categoryValue == changelog.Metric {
+					if tracked, ok := instance.GetLabels()[changelog.Track]; ok {
+						instance.GetLabels()[changelog.Track] = p.globalPrefix + tracked
+					}
 				}
 			}
 		}
