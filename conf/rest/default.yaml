@@ -40,6 +40,7 @@ objects:
   QosPolicyFixed:              qos_policy_fixed.yaml
   QosWorkload:                 qos_workload.yaml
   Qtree:                       qtree.yaml
+  Quota:                       quota.yaml
   Security:                    security.yaml
   SecurityAccount:             security_account.yaml
   SecurityAuditDestination:    security_audit_dest.yaml

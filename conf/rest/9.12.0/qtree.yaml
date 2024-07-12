@@ -26,8 +26,6 @@ endpoints:
       - filter:
           - qtree=!""
 
-run_plugins_if_no_data: true
-
 plugins:
   - Qtree:
       quotaType:
