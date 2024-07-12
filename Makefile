@@ -165,7 +165,7 @@ endif
 	@if [ "$(ci)" != "harvest.yml" ]; then cp $(ci) harvest.yml; else echo "Source and destination files are the same, skipping copy"; fi
 	@./bin/harvest generate docker full --port --output harvest-compose.yml
 	@docker build -f container/onePollerPerContainer/Dockerfile -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=${VERSION}
-	@docker-compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+	@docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 	@cp harvest.yml integration/test/
 	VERSION=${VERSION} INSTALL_DOCKER=1 ./integration/test/test.sh
 	VERSION=${VERSION} REGRESSION=1 ./integration/test/test.sh

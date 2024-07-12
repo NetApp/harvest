@@ -5,7 +5,11 @@ NetApp Harvest : the swiss-army-knife for datacenter monitoring
 
 Authors:
 
-	Georg Mey & Vachagan Gratian
+	Chris Grindstaff
+	Georg Mey
+	Hardik Leuva
+	Rahul Gupta
+	Vachagan Gratian
 
 Contact:
 
@@ -538,7 +542,7 @@ Feedback
 		"debug",
 		"d",
 		false,
-		"debug mode collects data, but no HTTP daemons and no writes to DBs",
+		"enable debug logging (same as -loglevel 1). If both debug and loglevel are specified, loglevel wins",
 	)
 	startCmd.PersistentFlags().BoolVarP(
 		&opts.verbose,
@@ -559,7 +563,7 @@ Feedback
 		"foreground",
 		"f",
 		false,
-		"start poller in foreground (only one poller, implies debug mode)",
+		"start single poller in foreground",
 	)
 	startCmd.PersistentFlags().BoolVar(
 		&opts.daemon,
@@ -607,6 +611,8 @@ Feedback
 		"only start these objects (overrides collector config)",
 	)
 	_ = startCmd.PersistentFlags().MarkHidden("logtofile")
+	_ = startCmd.PersistentFlags().MarkHidden("verbose")
+	_ = startCmd.PersistentFlags().MarkHidden("trace")
 }
 
 // The management commands: start|status|stop|restart|kill

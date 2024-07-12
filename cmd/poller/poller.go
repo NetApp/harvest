@@ -1321,7 +1321,7 @@ func init() {
 
 	var flags = pollerCmd.Flags()
 	flags.StringVarP(&opts.Poller, "poller", "p", "", "Poller name as defined in config")
-	flags.BoolVarP(&opts.Debug, "debug", "d", false, "Debug mode, no data will be exported")
+	flags.BoolVarP(&opts.Debug, "debug", "d", false, "Enable debug logging (same as -loglevel 1). If both debug and loglevel are specified, loglevel wins")
 	flags.BoolVar(&opts.Daemon, "daemon", false, "Start as daemon")
 	flags.IntVarP(&opts.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
 	flags.BoolVar(&opts.LogToFile, "logtofile", false, "When running in the foreground, log to file instead of stdout")
