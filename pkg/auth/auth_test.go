@@ -540,6 +540,22 @@ Pollers:
       path: testdata/get_credentials_yaml_heredoc
 `,
 		},
+
+		{
+			name:       "credentials_script returns authToken",
+			pollerName: "test",
+			want: PollerAuth{
+				AuthToken:           "abcd",
+				HasCredentialScript: true,
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_credentials_authToken
+`,
+		},
 	}
 
 	hostname, err := os.Hostname()
@@ -576,6 +592,9 @@ Pollers:
 			}
 			if tt.want.Password != got.Password {
 				t.Errorf("got password=[%s], want password=[%s]", got.Password, tt.want.Password)
+			}
+			if tt.want.AuthToken != got.AuthToken {
+				t.Errorf("got authToken=[%s], want authToken=[%s]", got.AuthToken, tt.want.AuthToken)
 			}
 			if tt.want.IsCert != got.IsCert {
 				t.Errorf("got IsCert=[%t], want IsCert=[%t]", got.IsCert, tt.want.IsCert)
