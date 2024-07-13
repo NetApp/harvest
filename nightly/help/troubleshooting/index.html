@@ -1988,10 +1988,19 @@ If you do not have yamllint installed, look <a href="https://yamllint.readthedoc
 <li>Check file ownership (user/group) and file permissions of your templates, executable, etc in your Harvest home directory (<code>ls -la /opt/harvest/</code>) <a href="https://github.com/NetApp/harvest/issues/931#issuecomment-1083305441">See also</a>.</li>
 </ul>
 <h2 id="how-do-i-start-harvest-in-debug-mode">How do I start Harvest in debug mode?<a class="headerlink" href="#how-do-i-start-harvest-in-debug-mode" title="Permanent link">&para;</a></h2>
-<p>Use the <code>--debug</code> flag when starting a poller. In debug mode, the poller will only collect metrics, but not write to databases. Another useful flag is <code>--foreground</code>, in which case all log messages are written to the terminal. Note that you can only start one poller in foreground mode.</p>
-<p>Finally, you can use <code>--loglevel=1</code> or <code>--verbose</code>, if you want to see a lot of log messages. For even more, you can use <code>--loglevel=0</code> or <code>--trace</code>.</p>
+<p>Use the <code>--debug</code> flag when starting a poller to enable debug logging (<code>--debug</code> is shorthand for <code>--loglevel 1</code>).
+Another useful flag is <code>--foreground</code>, which causes all log messages to be written to the terminal. 
+Note that you can only start one poller in foreground mode.</p>
+<p>The amount of logged information can be controlled with the <code>--loglevel</code> flag followed by an integer value.
+The integer values are as follows:
+- 0: Trace
+- 1: Debug
+- 2: Info (default)
+- 3: Warning
+- 4: Error
+- 5: Critical</p>
 <p>Examples:</p>
-<div class="highlight"><pre><span></span><code>bin/harvest start $POLLER_NAME --foreground --debug --loglevel=0
+<div class="highlight"><pre><span></span><code>bin/harvest start $POLLER_NAME --foreground --debug
 or
 bin/harvest start $POLLER_NAME --loglevel=1 --collectors Zapi --objects Qtree
 </code></pre></div>
