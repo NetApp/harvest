@@ -123,8 +123,9 @@ func (c *Credentials) fetchCerts(p *conf.Poller) (string, error) {
 }
 
 type ScriptResponse struct {
-	Username string `yaml:"username"`
-	Data     string `yaml:"password"`
+	Username  string `yaml:"username"`
+	Data      string `yaml:"password"`
+	AuthToken string `yaml:"authToken"`
 }
 
 func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e func(ctx context.Context, path string) *exec.Cmd) (ScriptResponse, error) {
@@ -195,7 +196,7 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 			Msg("Failed to parse YAML output. Treating as plain text.")
 	}
 
-	if err == nil && response.Data != "" {
+	if err == nil && (response.Data != "" || response.AuthToken != "") {
 		// If parsing is successful and data is not empty, return the response.
 		// Username is optional, so it's okay if it's not present.
 		return response, nil
@@ -229,6 +230,7 @@ func (c *Credentials) setNextUpdate() {
 type PollerAuth struct {
 	Username             string
 	Password             string
+	AuthToken            string
 	IsCert               bool
 	HasCredentialScript  bool
 	HasCertificateScript bool
@@ -332,6 +334,7 @@ func getPollerAuth(c *Credentials, poller *conf.Poller) (PollerAuth, error) {
 		return PollerAuth{
 			Username:            response.Username,
 			Password:            response.Data,
+			AuthToken:           response.AuthToken,
 			HasCredentialScript: true,
 			Schedule:            poller.CredentialsScript.Schedule,
 			insecureTLS:         insecureTLS,
