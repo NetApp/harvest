@@ -220,3 +220,11 @@ func TestCheckCollectorName(t *testing.T) {
 		})
 	}
 }
+
+func TestExportersExist(t *testing.T) {
+	conf.TestLoadHarvestConfig("testdata/noExporters.yml")
+	valid := checkExportersExist(conf.Config)
+	if valid.isValid {
+		t.Errorf(`got isValid=true, want isValid=false since there is no exporters section`)
+	}
+}
