@@ -101,7 +101,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		}
 	}
 
-	quotaCount := 0
+	qtreeCount := 0
 	if q.historicalLabels {
 		// In 22.05, populate metrics with qtree prefix and old labels
 		filter := []string{"qtree=!\"\""}
@@ -115,20 +115,20 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		if result, err = collectors.InvokeRestCall(q.client, href, q.Logger); err != nil {
 			return nil, nil, err
 		}
-		err = q.handlingHistoricalMetrics(result, instanceMap, metricsMap, data, &quotaCount, &numMetrics)
+		err = q.handlingHistoricalMetrics(result, instanceMap, metricsMap, data, &qtreeCount, &numMetrics)
 	} else {
 		// Populate metrics with quota prefix and current labels
-		err = q.handlingQuotaMetrics(instanceMap, metricsMap, data, &quotaCount, &numMetrics)
+		err = q.handlingQuotaMetrics(instanceMap, metricsMap, data, &numMetrics)
 	}
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	q.client.Metadata.PluginInstances = uint64(quotaCount)
+	q.client.Metadata.PluginInstances = uint64(qtreeCount)
 
 	q.Logger.Info().
-		Int("numQuotas", quotaCount).
+		Int("numQtrees", qtreeCount).
 		Int("metrics", numMetrics).
 		Msg("Collected")
 
@@ -143,7 +143,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	return nil, q.client.Metadata, nil
 }
 
-func (q *Quota) handlingHistoricalMetrics(result []gjson.Result, instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, quotaCount *int, numMetrics *int) error {
+func (q *Quota) handlingHistoricalMetrics(result []gjson.Result, instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, qtreeCount *int, numMetrics *int) error {
 	qtreeMap := make(map[string]QtreeData)
 	for _, qtree := range result {
 		if !qtree.IsObject() {
@@ -162,6 +162,7 @@ func (q *Quota) handlingHistoricalMetrics(result []gjson.Result, instanceMap map
 		// Ex. InstanceKey: vserver1vol1qtree31
 		qtreeInstanceKey := svm + volume + qtreeName
 		qtreeMap[qtreeInstanceKey] = QtreeData{oplocks: oplockMode, status: status, exportPolicy: exportPolicy, securityStyle: securityStyle}
+		*qtreeCount++
 	}
 
 	for _, quota := range instanceMap {
@@ -171,7 +172,6 @@ func (q *Quota) handlingHistoricalMetrics(result []gjson.Result, instanceMap map
 		volume := quota.GetLabel("volume")
 		qtreeInstanceKey := svm + volume + qtreeName
 		qtreeInstance := qtreeMap[qtreeInstanceKey]
-		*quotaCount++
 
 		for metricName, m := range metricMap {
 			// set 0 for unlimited
@@ -223,7 +223,7 @@ func (q *Quota) handlingHistoricalMetrics(result []gjson.Result, instanceMap map
 	return nil
 }
 
-func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, quotaCount *int, numMetrics *int) error {
+func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, numMetrics *int) error {
 	for _, quota := range instanceMap {
 		index := quota.GetLabel("index")
 		uName := quota.GetLabel("userName")
@@ -244,7 +244,6 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 				quota.SetLabel("group", uid)
 			}
 		}
-		*quotaCount++
 
 		for metricName, m := range metricMap {
 			// set -1 for unlimited

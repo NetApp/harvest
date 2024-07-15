@@ -1,0 +1,49 @@
+
+name:                 Quota
+query:                quota-report-iter
+object:               quota
+
+client_timeout: 2m
+
+counters:
+  quota:
+    - ^^tree                         => qtree
+    - ^^volume
+    - ^^vserver                      => svm
+    - ^quota-type                    => type
+    - disk-limit
+    - disk-used
+    - disk-used-pct-disk-limit       => disk_used_pct_disk_limit
+    - disk-used-pct-soft-disk-limit  => disk_used_pct_soft_disk_limit
+    - disk-used-pct-threshold
+    - file-limit
+    - files-used
+    - files-used-pct-file-limit
+    - files-used-pct-soft-file-limit
+    - soft-disk-limit
+    - soft-file-limit
+    - threshold
+    - quota-users:
+        - quota-user-id              => userId
+        - quota-user-name            => userName
+
+
+plugins:
+  - Quota:
+      batch_size: "500"
+  - LabelAgent:
+      include_equals:
+        - type `tree`
+#        - type `user`
+#        - type `group`
+
+
+export_options:
+  instance_keys:
+    - group
+    - qtree
+    - svm
+    - type
+    - unit
+    - user
+    - volume

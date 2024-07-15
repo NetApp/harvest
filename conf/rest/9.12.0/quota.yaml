@@ -30,7 +30,6 @@ counters:
 
 plugins:
   - Quota:
-      qtreeMetrics: true
 
 
 export_options:

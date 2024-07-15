@@ -1,0 +1,37 @@
+
+name:                       Quota
+query:                      quota-report
+object:                     quota
+
+global_labels:
+  - system_type: 7mode
+
+counters:
+  qtree-info:
+    - ^^qtree         => qtree
+    - ^^volume
+    - ^export-policy
+    - ^oplocks
+    - ^owning-vfiler  => svm
+    - ^security-style
+    - ^status
+    - id
+
+plugins:
+  Qtree:
+    objects:
+      - disk-limit
+      - disk-used
+      - file-limit
+      - files-used
+      - soft-disk-limit
+      - soft-file-limit
+      - threshold
+
+export_options:
+  instance_keys:
+    - qtree
+    - volume
+
+  instance_labels:
+    - svm

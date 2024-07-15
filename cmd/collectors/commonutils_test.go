@@ -1,8 +1,6 @@
 package collectors
 
 import (
-	"errors"
-	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -394,38 +392,6 @@ func Test_SplitVscanName(t *testing.T) {
 			}
 			if ok != tt.isValid {
 				t.Errorf("splitOntapName() got = %v, want %v", ok, tt.isValid)
-			}
-		})
-	}
-}
-
-func TestRunPlugin(t *testing.T) {
-	type test struct {
-		name              string
-		runPluginIfNoData bool
-		mat               map[string]*matrix.Matrix
-		err               error
-		wantMatrix        bool
-		wantErr           error
-	}
-
-	testMat := make(map[string]*matrix.Matrix)
-	err := errs.New(errs.ErrConfig, "test Error")
-
-	tests := []test{
-		{"runPluginIfNoData_false", false, testMat, err, false, err},
-		{"runPluginIfNoData_true", true, testMat, err, true, nil},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := RunPlugin(tt.runPluginIfNoData, tt.mat, tt.err)
-			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("RunPlugin() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if (got != nil) != tt.wantMatrix {
-				t.Errorf("RunPlugin() got = %v, wantMatrix %v", got, tt.wantMatrix)
 			}
 		})
 	}

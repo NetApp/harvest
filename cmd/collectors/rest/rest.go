@@ -53,7 +53,6 @@ type Rest struct {
 	Prop                         *prop
 	endpoints                    []*endPoint
 	isIgnoreUnknownFieldsEnabled bool
-	RunPluginsIfNoData           bool
 }
 
 type endPoint struct {
@@ -194,9 +193,6 @@ func (r *Rest) InitVars(config *node.Node) {
 	} else {
 		r.Logger.Info().Str("timeout", rest.DefaultTimeout).Msg("Using default timeout")
 	}
-
-	// if the object template includes a run_plugins_if_no_data, then honour that
-	r.RunPluginsIfNoData = r.Params.HasChildS("run_plugins_if_no_data")
 }
 
 func (r *Rest) InitClient() error {
@@ -401,12 +397,12 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	if records, err = r.GetRestData(r.Prop.Href); err != nil {
 		r.Logger.Warn().Msgf("error while fetching " + r.Object + " records on cluster")
-		return collectors.RunPlugin(r.RunPluginsIfNoData, r.Matrix, err)
+		return nil, err
 	}
 
 	if len(records) == 0 {
 		r.Logger.Warn().Msgf("no " + r.Object + " instances on cluster")
-		return collectors.RunPlugin(r.RunPluginsIfNoData, r.Matrix, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster"))
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	return r.pollData(startTime, records, func(e *endPoint) ([]gjson.Result, time.Duration, error) {

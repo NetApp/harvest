@@ -16,7 +16,6 @@ counters:
     - ^status
 
 collect_only_labels: true
-run_plugins_if_no_data: true
 
 plugins:
   - LabelAgent:

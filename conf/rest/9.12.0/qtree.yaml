@@ -27,11 +27,6 @@ endpoints:
           - qtree=!""
 
 plugins:
-  - Qtree:
-      quotaType:
-        - tree
-#        - user
-#        - group
   - LabelAgent:
       replace:
         - oplocks oplocks `enable` `enabled`

@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qtree"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/quota"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/security"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapmirror"
@@ -50,7 +51,6 @@ type Zapi struct {
 	instanceKeyPaths   [][]string
 	instanceLabelPaths map[string]string
 	shortestPathPrefix []string
-	RunPluginsIfNoData bool
 }
 
 func init() {
@@ -149,8 +149,6 @@ func (z *Zapi) InitVars() error {
 		z.Client.SetTimeout(timeout)
 	}
 
-	// if the object template includes a run_plugins_if_no_data, then honour that
-	z.RunPluginsIfNoData = z.Params.HasChildS("run_plugins_if_no_data")
 	return nil
 }
 
@@ -162,6 +160,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return shelf.New(abc)
 	case "Qtree":
 		return qtree.New(abc)
+	case "Quota":
+		return quota.New(abc)
 	case "Volume":
 		return volume.New(abc)
 	case "Sensor":
@@ -295,6 +295,9 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				}
 				count++
 			} else if metric := mat.GetMetric(key); metric != nil {
+				if value == "-" && z.Object == "Quota" {
+					value = "-1"
+				}
 				if err := metric.SetValueString(instance, value); err != nil {
 					z.Logger.Error().Msgf("%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
 					skipped++
@@ -341,7 +344,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 		if err != nil {
 			z.Logger.Warn().Msgf("error while fetching " + z.Object + " records on cluster")
-			return collectors.RunPlugin(z.RunPluginsIfNoData, z.Matrix, err)
+			return nil, err
 		}
 
 		if response == nil {
@@ -362,7 +365,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 			if instance == nil {
 				if instance, err = mat.NewInstance("cluster"); err != nil {
 					z.Logger.Warn().Msgf("error while creating " + z.Object + " instances on cluster")
-					return collectors.RunPlugin(z.RunPluginsIfNoData, z.Matrix, err)
+					return nil, err
 				}
 			}
 			fetch(instance, instances[0], make([]string, 0), false)
@@ -412,7 +415,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 	if numInstances == 0 {
 		z.Logger.Warn().Msgf("no " + z.Object + " instances on cluster")
-		return collectors.RunPlugin(z.RunPluginsIfNoData, z.Matrix, errs.New(errs.ErrNoInstance, ""))
+		return nil, errs.New(errs.ErrNoInstance, "")
 	}
 
 	return z.Matrix, nil
