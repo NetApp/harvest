@@ -1,0 +1,8 @@
+Pollers:
+  sg-cluster1:
+    datacenter: rtp
+    addr: 10.1.1.1
+    credentials_script:
+      path: ./ssotest
+    collectors:
+      - StorageGrid

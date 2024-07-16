@@ -227,7 +227,8 @@ func checkAll(aPath string, confPath string) {
 	cfg := conf.Config
 	confPaths := filepath.SplitList(confPath)
 	var anyFailed bool
-	anyFailed = !checkUniquePromPorts(cfg).isValid
+	anyFailed = !checkExportersExist(cfg).isValid
+	anyFailed = !checkUniquePromPorts(cfg).isValid || anyFailed
 	anyFailed = !checkPollersExportToUniquePromPorts(cfg).isValid || anyFailed
 	anyFailed = !checkExporterTypes(cfg).isValid || anyFailed
 	anyFailed = !checkConfTemplates(confPaths).isValid || anyFailed
@@ -408,6 +409,16 @@ func checkExporterTypes(config conf.HarvestConfig) validation {
 		}
 		fmt.Println()
 	}
+	return valid
+}
+
+func checkExportersExist(config conf.HarvestConfig) validation {
+	if config.Exporters == nil {
+		fmt.Printf("%s: No Exporters section defined. No metrics will be exported.\n", color.Colorize("Error", color.Red))
+		return validation{}
+	}
+	valid := validation{isValid: true}
+
 	return valid
 }
 

@@ -146,6 +146,92 @@ Replace `$ADMIN_VSERVER` with your SVM admin name.
 security login rest-role create -role harvest2-rest-role -access readonly -api /api -vserver $ADMIN_VSERVER
 ```
 
+??? "Least-privilege approach for REST"
+
+    If you are on ONTAP version 9.14.X or later,
+    instead of the above command,
+    you can use the following commands to create a REST role with read-only access to a limited set of objects.
+    
+    Since REST roles are defined in terms of legacy roles, if you have already created a legacy role with the same name, 
+    you will need to delete it first or use a different name. 
+
+    ```bash
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cloud/targets
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster/counter/tables
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster/mediators
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster/metrocluster/diagnostics
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster/nodes
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster/ntp/servers
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster/peers
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster/sensors
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/name-services/ldap
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/name-services/nis
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ethernet/ports
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/network/fc/ports
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/interfaces
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/ports
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/routes
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/support/alerts
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/services
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/sessions
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/shares
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/locks
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/ndmp/sessions
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/nfs/connected-clients
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/nfs/export-policies
+    # s3 is buggy in 9.15, use protocols endpoint instead. See https://mysupport.netapp.com/site/bugs-online/product/ONTAP/JiraNgage/CONTAP-210232
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols
+    # security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/s3/buckets
+    # security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/s3/services
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/security
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/security/accounts
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/security/audit/destinations
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/security/certificates
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/security/login/messages
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/security/ssh
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/snapmirror/relationships
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/aggregates
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/disks
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/flexcache/flexcaches
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/luns
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/namespaces
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/qtrees
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/qos/policies
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/qos/workloads
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/quota/reports
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/shelves
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/volumes
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/support/auto-update
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/support/autosupport
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/support/ems/destinations
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/support/ems/events
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/svm/peers
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/svm/svms
+
+    # Private CLI endpoints
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/aggr
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/cluster/date
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/disk
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/interface
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/node
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/adaptive-policy-group
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/policy-group
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/workload
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/snapmirror
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/snapshot/policy
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/failover
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/shelf
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/chassis/fru
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/health/subsystem
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/volume
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver/object-store-server/bucket/policy
+    ```
+
+    See [#2991](https://github.com/NetApp/harvest/issues/2991) for more information.
+
 #### Associate REST role with harvest user
 
 Using password authentication

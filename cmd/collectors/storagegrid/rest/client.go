@@ -360,6 +360,13 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 		if err != nil {
 			return err
 		}
+		// If the credential script returns an authToken, use it without re-fetching
+		if pollerAuth.AuthToken != "" {
+			c.token = pollerAuth.AuthToken
+			c.request.Header.Set("Authorization", "Bearer "+c.token)
+			c.Logger.Debug().Msg("Using authToken from credential script")
+			return nil
+		}
 		authB := authBody{
 			Username: pollerAuth.Username,
 			Password: pollerAuth.Password,
