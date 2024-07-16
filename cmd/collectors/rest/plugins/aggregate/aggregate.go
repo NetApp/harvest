@@ -72,7 +72,6 @@ func (a *Aggregate) initMatrix(name string, data *matrix.Matrix) (*matrix.Matrix
 
 	for _, k := range metrics {
 		if err := matrix.CreateMetric(k, mat); err != nil {
-			a.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
 			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
 		}
 	}
@@ -86,7 +85,6 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	aggrSpaceMat, err := a.initMatrix(aggrObjectStoreMatrix, data)
 	if err != nil {
-		a.Logger.Warn().Err(err).Msg("error while initializing matrix")
 		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
 	}
 
@@ -131,7 +129,7 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		tierName := record.Get("tier_name").String()
 		logicalUsed := record.Get("object_store_logical_used").String()
 		physicalUsed := record.Get("object_store_physical_used").String()
-		instanceKey := fmt.Sprintf("%s_%s_%s", aggrName, tierName, binNum)
+		instanceKey := aggrName + "_" + tierName + "_" + binNum
 
 		instance, err := aggrSpaceMat.NewInstance(instanceKey)
 		if err != nil {
@@ -162,7 +160,7 @@ func (a *Aggregate) getObjectStoreData() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(apiQuery).
 		Fields(fields).
-		Filter([]string{"tier_name=!\" \"|\"\""}).
+		Filter([]string{`tier_name=!" "|""`}).
 		Build()
 
 	return collectors.InvokeRestCall(a.client, href, a.Logger)
