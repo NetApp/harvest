@@ -20,6 +20,38 @@ var dashboards = []string{
 	"../../../grafana/dashboards/storagegrid",
 }
 
+var throughputPattern = regexp.MustCompile(`(throughput|read_data|write_data|total_data)`)
+var aggregationThroughputPattern = regexp.MustCompile(`(?i)(\w+)\(`)
+
+func TestThroughput(t *testing.T) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
+		checkThroughput(t, path, data)
+	})
+}
+
+func checkThroughput(t *testing.T, path string, data []byte) {
+	path = ShortPath(path)
+	// visit all panels for datasource test
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
+		panelTitle := value.Get("title").String()
+		kind := value.Get("type").String()
+		targetsSlice := value.Get("targets").Array()
+		for _, targetN := range targetsSlice {
+			expr := targetN.Get("expr").String()
+			if !throughputPattern.MatchString(expr) {
+				continue
+			}
+			matches := aggregationThroughputPattern.FindStringSubmatch(expr)
+			if len(matches) > 1 {
+				aggregation := matches[1]
+				if strings.EqualFold(aggregation, "avg") {
+					t.Errorf("dashboard=%s panel=%s kind=%s expr=%s should use sum for throughput", path, panelTitle, kind, expr)
+				}
+			}
+		}
+	})
+}
+
 func TestThreshold(t *testing.T) {
 	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkThreshold(t, path, data)
