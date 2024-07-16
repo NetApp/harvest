@@ -131,7 +131,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	}
 
 	tag := "initial"
-	qtreeIndex := 0
+	qtreeCount := 0
 
 	cluster := data.GetGlobalLabels()["cluster"]
 
@@ -159,7 +159,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 			}
 
 			if len(qtrees) == 0 {
-				q.Logger.Info().Msg("no qtree instances found")
+				q.Logger.Debug().Msg("no qtree instances found")
 				return nil, q.client.Metadata, nil
 			}
 
@@ -167,7 +167,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		}
 
 		// In 22.05, populate metrics with qtree prefix and old labels
-		if err := q.handlingHistoricalMetrics(qtrees, instanceMap, metricsMap, data, cluster, &qtreeIndex, &numMetrics); err != nil {
+		if err := q.handlingHistoricalMetrics(qtrees, instanceMap, metricsMap, data, cluster, &qtreeCount, &numMetrics); err != nil {
 			return nil, nil, err
 		}
 	} else {
@@ -177,10 +177,10 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		}
 	}
 
-	q.client.Metadata.PluginInstances = uint64(qtreeIndex)
+	q.client.Metadata.PluginInstances = uint64(qtreeCount)
 
 	q.Logger.Info().
-		Int("numQtrees", qtreeIndex).
+		Int("numQtrees", qtreeCount).
 		Int("metrics", numMetrics).
 		Str("apiD", apiT.Round(time.Millisecond).String()).
 		Str("parseD", parseT.Round(time.Millisecond).String()).
@@ -200,7 +200,6 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 
 func (q *Quota) handlingHistoricalMetrics(qtrees []*node.Node, instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, cluster string, qtreeCount *int, numMetrics *int) error {
 	qtreeMap := make(map[string]QtreeData)
-	q.Logger.Info().Msgf("%d %d", len(qtrees), len(instanceMap))
 	for _, qtree := range qtrees {
 		var svm string
 		qtreeName := qtree.GetChildContentS("tree")
@@ -222,8 +221,11 @@ func (q *Quota) handlingHistoricalMetrics(qtrees []*node.Node, instanceMap map[s
 
 	quotaIndex := 0
 	for _, quota := range instanceMap {
+		if !quota.IsExportable() {
+			continue
+		}
 		var svm, quotaInstanceKey string
-		qtreeName := quota.GetLabel("tree")
+		qtreeName := quota.GetLabel("qtree")
 		volume := quota.GetLabel("volume")
 		if q.client.IsClustered() {
 			svm = quota.GetLabel("svm")
@@ -294,6 +296,9 @@ func (q *Quota) handlingHistoricalMetrics(qtrees []*node.Node, instanceMap map[s
 
 func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, numMetrics *int) error {
 	for _, quota := range instanceMap {
+		if !quota.IsExportable() {
+			continue
+		}
 		var svm, quotaInstanceKey string
 		quotaType := quota.GetLabel("type")
 		tree := quota.GetLabel("qtree")
@@ -330,7 +335,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 			}
 			quotaInstance, err := data.NewInstance(quotaInstanceKey)
 			if err != nil {
-				q.Logger.Info().Msgf("add (%s) instance: %v", metricName, err)
+				q.Logger.Debug().Msgf("add (%s) instance: %v", metricName, err)
 				return err
 			}
 			// set labels

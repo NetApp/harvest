@@ -29,13 +29,13 @@ counters:
 
 
 plugins:
-  - Quota:
-      batch_size: "500"
   - LabelAgent:
       include_equals:
         - type `tree`
 #        - type `user`
 #        - type `group`
+  - Quota:
+      batch_size: "500"
 
 
 export_options:

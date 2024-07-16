@@ -166,6 +166,9 @@ func (q *Quota) handlingHistoricalMetrics(result []gjson.Result, instanceMap map
 	}
 
 	for _, quota := range instanceMap {
+		if !quota.IsExportable() {
+			continue
+		}
 		index := quota.GetLabel("index")
 		qtreeName := quota.GetLabel("qtree")
 		svm := quota.GetLabel("svm")
@@ -225,6 +228,9 @@ func (q *Quota) handlingHistoricalMetrics(result []gjson.Result, instanceMap map
 
 func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, numMetrics *int) error {
 	for _, quota := range instanceMap {
+		if !quota.IsExportable() {
+			continue
+		}
 		index := quota.GetLabel("index")
 		uName := quota.GetLabel("userName")
 		uid := quota.GetLabel("userId")
