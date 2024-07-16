@@ -77,6 +77,7 @@ func (q *Quota) Init() error {
 				parentKeys.NewChildS("", "security_style")
 				parentKeys.NewChildS("", "status")
 				parentKeys.NewChildS("", "index")
+				parentKeys.NewChildS("", "unit")
 			}
 		}
 
@@ -155,7 +156,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 					qtrees = append(qtrees, x.GetChildren()...)
 				}
 			} else {
-				qtrees = append(qtrees, response.SearchChildren([]string{"quota"})...)
+				qtrees = append(qtrees, response.SearchChildren([]string{"qtree-info"})...)
 			}
 
 			if len(qtrees) == 0 {
@@ -201,20 +202,22 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 func (q *Quota) handlingHistoricalMetrics(qtrees []*node.Node, instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix, cluster string, qtreeCount *int, numMetrics *int) error {
 	qtreeMap := make(map[string]QtreeData)
 	for _, qtree := range qtrees {
-		var svm string
+		var svm, qtreeInstanceKey string
 		qtreeName := qtree.GetChildContentS("tree")
 		volume := qtree.GetChildContentS("volume")
 		if q.client.IsClustered() {
 			svm = qtree.GetChildContentS("vserver")
+			// Ex. InstanceKey: vserver1vol1qtree31
+			qtreeInstanceKey = svm + volume + qtreeName
+		} else {
+			// Ex. InstanceKey: vol1qtree31
+			qtreeInstanceKey = volume + qtreeName
 		}
 
 		oplockMode := qtree.GetChildContentS("oplocks")
 		status := qtree.GetChildContentS("status")
 		exportPolicy := qtree.GetChildContentS("export-policy")
 		securityStyle := qtree.GetChildContentS("security-style")
-
-		// Ex. InstanceKey: vserver1vol1qtree31
-		qtreeInstanceKey := svm + volume + qtreeName
 		qtreeMap[qtreeInstanceKey] = QtreeData{oplocks: oplockMode, status: status, exportPolicy: exportPolicy, securityStyle: securityStyle}
 		*qtreeCount++
 	}
@@ -225,14 +228,15 @@ func (q *Quota) handlingHistoricalMetrics(qtrees []*node.Node, instanceMap map[s
 			continue
 		}
 		var svm, quotaInstanceKey string
+		var qtreeInstance QtreeData
 		qtreeName := quota.GetLabel("qtree")
 		volume := quota.GetLabel("volume")
 		if q.client.IsClustered() {
 			svm = quota.GetLabel("svm")
+			qtreeInstance = qtreeMap[svm+volume+qtreeName]
+		} else {
+			qtreeInstance = qtreeMap[volume+qtreeName]
 		}
-
-		qtreeInstanceKey := svm + volume + qtreeName
-		qtreeInstance := qtreeMap[qtreeInstanceKey]
 
 		for metricName, m := range metricMap {
 			v, ok := m.GetValueString(quota)

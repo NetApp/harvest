@@ -7,31 +7,27 @@ global_labels:
   - system_type: 7mode
 
 counters:
-  qtree-info:
-    - ^^qtree         => qtree
+  quota:
+    - ^^tree                         => qtree
     - ^^volume
-    - ^export-policy
-    - ^oplocks
-    - ^owning-vfiler  => svm
-    - ^security-style
-    - ^status
-    - id
+    - ^quota-type                    => type
+    - disk-limit
+    - disk-used
+    - file-limit
+    - files-used
+    - soft-disk-limit
+    - soft-file-limit
+    - threshold
 
 plugins:
-  Qtree:
-    objects:
-      - disk-limit
-      - disk-used
-      - file-limit
-      - files-used
-      - soft-disk-limit
-      - soft-file-limit
-      - threshold
+  - LabelAgent:
+      include_equals:
+        - type `tree`
+  #        - type `user`
+  #        - type `group`
 
 export_options:
   instance_keys:
     - qtree
+    - type
     - volume
-
-  instance_labels:
-    - svm

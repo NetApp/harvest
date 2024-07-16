@@ -71,6 +71,7 @@ func (q *Quota) Init() error {
 				parentKeys.NewChildS("", "oplocks")
 				parentKeys.NewChildS("", "security_style")
 				parentKeys.NewChildS("", "status")
+				parentKeys.NewChildS("", "unit")
 			}
 		}
 
