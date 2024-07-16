@@ -637,7 +637,7 @@ The ChangeLog plugin is a feature of Harvest, designed to detect and track chang
 
 Please note that the ChangeLog plugin requires the `uuid` label, which is unique, to be collected by the template. Without the `uuid` label, the plugin will not function.
 
-The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values.
+The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values by default, but it can be configured to do so.
 
 ## Enabling the Plugin
 
@@ -675,7 +675,7 @@ By default, the plugin tracks changes in the following labels for svm, node, and
 
 Other objects are not tracked by default.
 
-These default settings can be overwritten as needed in the relevant templates. For instance, if you want to track `junction_path` labels for Volume, you can overwrite this in the volume template.
+These default settings can be overwritten as needed in the relevant templates. For instance, if you want to track `junction_path` label and `size_total` metric for Volume, you can overwrite this in the volume template.
 
 ```yaml
 plugins:
@@ -690,6 +690,7 @@ plugins:
         - state
         - status
         - junction_path
+        - size_total
 ```
 
 ## Change Types and Metrics
@@ -718,23 +719,29 @@ When an existing object is modified, the ChangeLog plugin will publish a metric 
 
 | Label        | Description                                                                 |
 |--------------|-----------------------------------------------------------------------------|
-| object       | name of the ONTAP object that was changed                                   |
-| op           | type of change that was made                                                |
-| track        | property of the object which was modified                                   |
-| new_value    | new value of the object after the change                                    |
-| old_value    | previous value of the object before the change                              |
-| metric value | timestamp when Harvest captured the change. 1698735677 in the example below |
+| `object`     | Name of the ONTAP object that was changed                                   |
+| `op`         | Type of change that was made                                                |
+| `track`      | Property of the object which was modified                                   |
+| `new_value`  | New value of the object after the change (only available for label changes and not for metric changes) |
+| `old_value`  | Previous value of the object before the change (only available for label changes and not for metric changes) |
+| `metric value` | Timestamp when Harvest captured the change. `1698735677` in the example below |
+| `category`   | Type of the change, indicating whether it is a `metric` or a `label` change     |
 
-Example of metric shape for object modification:
+Example of metric shape for object modification for label:
 
 ```
-change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="u2", index="1", instance="localhost:12993", job="prometheus", new_value="offline", node="umeng-aff300-01", object="volume", old_value="online", op="update", style="flexvol", svm="harvest", track="state", volume="harvest_demo"} 1698735677
+change_log{aggr="umeng_aff300_aggr2", category="label", cluster="umeng-aff300-01-02", datacenter="u2", index="1", instance="localhost:12993", job="prometheus", new_value="offline", node="umeng-aff300-01", object="volume", old_value="online", op="update", style="flexvol", svm="harvest", track="state", volume="harvest_demo"} 1698735677
+```
+
+Example of metric shape for metric value change:
+
+```
+change_log{aggr="umeng_aff300_aggr2", category="metric", cluster="umeng-aff300-01-02", datacenter="u2", index="3", instance="localhost:12993", job="prometheus", node="umeng-aff300-01", object="volume", op="metric_change", track="volume_size_total", svm="harvest", volume="harvest_demo"} 1698735800
 ```
 
 ### Object Deletion
 
 When an object is deleted, the ChangeLog plugin will publish a metric with the following labels:
-
 
 | Label        | Description                                                                 |
 |--------------|-----------------------------------------------------------------------------|

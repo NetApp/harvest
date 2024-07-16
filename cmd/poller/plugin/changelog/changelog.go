@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/netapp/harvest/v2/pkg/util"
+	maps2 "golang.org/x/exp/maps"
 	"maps"
 	"strconv"
 	"time"
@@ -18,16 +19,19 @@ The shape of the change_log is specific to each label change and is only applica
 
 // Constants for ChangeLog metrics and labels
 const (
-	changeLog   = "change"
-	objectLabel = "object"
-	opLabel     = "op"
-	create      = "create"
-	update      = "update"
-	del         = "delete"
-	track       = "track"
-	oldValue    = "old_value"
-	newValue    = "new_value"
-	indexLabel  = "index"
+	ObjectChangeLog = "change"
+	objectLabel     = "object"
+	opLabel         = "op"
+	create          = "create"
+	update          = "update"
+	del             = "delete"
+	Track           = "track"
+	oldValue        = "old_value"
+	newValue        = "new_value"
+	indexLabel      = "index"
+	Metric          = "metric"
+	Label           = "label"
+	Category        = "category"
 )
 
 // Metrics to be used in ChangeLog
@@ -55,6 +59,7 @@ type Change struct {
 	oldValue string
 	newValue string
 	time     int64
+	category string
 }
 
 // New initializes a new instance of the ChangeLog plugin
@@ -71,7 +76,7 @@ func (c *ChangeLog) Init() error {
 	}
 
 	object := c.ParentParams.GetChildS("object")
-	c.matrixName = object.GetContentS() + "_" + changeLog
+	c.matrixName = object.GetContentS() + "_" + ObjectChangeLog
 
 	return c.populateChangeLogConfig()
 }
@@ -94,7 +99,7 @@ func (c *ChangeLog) populateChangeLogConfig() error {
 // initMatrix initializes a new matrix with the given name
 func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
 	changeLogMap := make(map[string]*matrix.Matrix)
-	changeLogMap[c.matrixName] = matrix.New(c.Parent+c.matrixName, changeLog, c.matrixName)
+	changeLogMap[c.matrixName] = matrix.New(c.Parent+c.matrixName, ObjectChangeLog, c.matrixName)
 	for _, changeLogMatrix := range changeLogMap {
 		changeLogMatrix.SetExportOptions(matrix.DefaultExportOptions())
 	}
@@ -110,7 +115,6 @@ func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
 
 // Run processes the data and generates ChangeLog instances
 func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
-
 	data := dataMap[c.Object]
 	changeLogMap, err := c.initMatrix()
 	if err != nil {
@@ -128,7 +132,6 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	}
 
 	changeMat := changeLogMap[c.matrixName]
-
 	changeMat.SetGlobalLabels(data.GetGlobalLabels())
 	object := data.Object
 	if c.changeLogConfig.Object == "" {
@@ -151,6 +154,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	currentTime := time.Now().Unix()
 
+	metricChanges := c.CompareMetrics(data)
 	// loop over current instances
 	for key, instance := range data.GetInstances() {
 		uuid := instance.GetLabel("uuid")
@@ -179,7 +183,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 			c.updateChangeLogLabels(object, instance, change)
 			c.createChangeLogInstance(changeMat, change)
 		} else {
-			// check for any modification
+			// check for any label modification
 			cur, old := instance.CompareDiffs(prevInstance, c.changeLogConfig.Track)
 			if len(cur) > 0 {
 				for currentLabel, nVal := range cur {
@@ -189,20 +193,46 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 						op:       update,
 						labels:   make(map[string]string),
 						track:    currentLabel,
+						category: Label,
 						oldValue: old[currentLabel],
 						newValue: nVal,
 						time:     currentTime,
 					}
 					c.updateChangeLogLabels(object, instance, change)
-					// add changed track and its old, new value
-					change.labels[track] = currentLabel
+					// add changed Track and its old, new value
+					change.labels[Category] = change.category
+					change.labels[Track] = currentLabel
 					change.labels[oldValue] = change.oldValue
 					change.labels[newValue] = nVal
 					c.createChangeLogInstance(changeMat, change)
 				}
 			}
+
+			// check for any metric modification
+			if changes, ok := metricChanges[key]; ok {
+				for metricName := range changes {
+					change := &Change{
+						key:      uuid + "_" + object + "_" + metricName,
+						object:   object,
+						op:       update,
+						labels:   make(map[string]string),
+						track:    metricName,
+						category: Metric,
+						// Enabling tracking of both old and new values results in the creation of a new time series each time the pair of values changes. For metrics tracking, it is not suitable.
+						time: currentTime,
+					}
+					c.updateChangeLogLabels(object, instance, change)
+					// add changed Track and its old, new value
+					change.labels[Category] = change.category
+					change.labels[Track] = metricName
+					change.labels[oldValue] = change.oldValue
+					change.labels[newValue] = change.newValue
+					c.createChangeLogInstance(changeMat, change)
+				}
+			}
 		}
 	}
+
 	// create deleted instances change_log
 	for key := range oldInstances.Iter() {
 		prevInstance := prevMat.GetInstance(key)
@@ -243,12 +273,51 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	return matricesArray, nil, nil
 }
 
+// CompareMetrics compares the metrics of the current and previous instances
+func (c *ChangeLog) CompareMetrics(curMat *matrix.Matrix) map[string]map[string]struct{} {
+	metricChanges := make(map[string]map[string]struct{})
+	prevMat := c.previousData
+	met := maps2.Keys(c.previousData.GetMetrics())
+
+	for _, metricKey := range met {
+		prevMetric := prevMat.GetMetric(metricKey)
+		curMetric := curMat.GetMetric(metricKey)
+		for key, currInstance := range curMat.GetInstances() {
+			prevInstance := prevMat.GetInstance(key)
+			if prevInstance == nil {
+				continue
+			}
+			prevIndex := prevInstance.GetIndex()
+			currIndex := currInstance.GetIndex()
+			curVal := curMetric.GetValues()[currIndex]
+			prevVal := prevMetric.GetValues()[prevIndex]
+			if curVal != prevVal {
+				if _, ok := metricChanges[key]; !ok {
+					metricChanges[key] = make(map[string]struct{})
+				}
+				metName := curMat.Object + "_" + curMetric.GetName()
+				metricChanges[key][metName] = struct{}{}
+			}
+		}
+	}
+	return metricChanges
+}
+
 // copyPreviousData creates a copy of the previous data for comparison
 func (c *ChangeLog) copyPreviousData(cur *matrix.Matrix) {
 	labels := c.changeLogConfig.PublishLabels
-	labels = append(labels, c.changeLogConfig.Track...)
+	var met []string
+	for _, t := range c.changeLogConfig.Track {
+		mKey := cur.DisplayMetricKey(t)
+		if mKey == "" {
+			labels = append(labels, t)
+		} else {
+			met = append(met, mKey)
+		}
+	}
 	labels = append(labels, "uuid")
-	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: false, Instances: true, ExportInstances: false, Labels: labels})
+	withMetrics := len(met) > 0
+	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: withMetrics, Instances: true, ExportInstances: false, Labels: labels, MetricsNames: met})
 }
 
 // createChangeLogInstance creates a new ChangeLog instance with the given change data
