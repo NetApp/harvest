@@ -2709,7 +2709,7 @@ value of a given metric, perform the requested mathematical operation, and store
 <h1 id="changelog">ChangeLog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
 <p>The ChangeLog plugin is a feature of Harvest, designed to detect and track changes related to the creation, modification, and deletion of an object. By default, it supports volume, svm, and node objects. Its functionality can be extended to track changes in other objects by making relevant changes in the template.</p>
 <p>Please note that the ChangeLog plugin requires the <code>uuid</code> label, which is unique, to be collected by the template. Without the <code>uuid</code> label, the plugin will not function.</p>
-<p>The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values.</p>
+<p>The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values by default, but it can be configured to do so.</p>
 <h2 id="enabling-the-plugin">Enabling the Plugin<a class="headerlink" href="#enabling-the-plugin" title="Permanent link">&para;</a></h2>
 <p>The plugin can be enabled in the templates under the plugins section.</p>
 <p>For volume, svm, and node objects, you can enable the plugin with the following configuration:</p>
@@ -2734,7 +2734,7 @@ value of a given metric, perform the requested mathematical operation, and store
 <li>volume: node, volume, svm, style, type, aggr, state, status</li>
 </ul>
 <p>Other objects are not tracked by default.</p>
-<p>These default settings can be overwritten as needed in the relevant templates. For instance, if you want to track <code>junction_path</code> labels for Volume, you can overwrite this in the volume template.</p>
+<p>These default settings can be overwritten as needed in the relevant templates. For instance, if you want to track <code>junction_path</code> label and <code>size_total</code> metric for Volume, you can overwrite this in the volume template.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">plugins</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ChangeLog</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">track</span><span class="p">:</span>
@@ -2747,6 +2747,7 @@ value of a given metric, perform the requested mathematical operation, and store
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">junction_path</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">size_total</span>
 </code></pre></div>
 <h2 id="change-types-and-metrics">Change Types and Metrics<a class="headerlink" href="#change-types-and-metrics" title="Permanent link">&para;</a></h2>
 <p>The ChangeLog plugin publishes a metric with various labels providing detailed information about the change when an object is created, modified, or deleted.</p>
@@ -2788,33 +2789,40 @@ value of a given metric, perform the requested mathematical operation, and store
 </thead>
 <tbody>
 <tr>
-<td>object</td>
-<td>name of the ONTAP object that was changed</td>
+<td><code>object</code></td>
+<td>Name of the ONTAP object that was changed</td>
 </tr>
 <tr>
-<td>op</td>
-<td>type of change that was made</td>
+<td><code>op</code></td>
+<td>Type of change that was made</td>
 </tr>
 <tr>
-<td>track</td>
-<td>property of the object which was modified</td>
+<td><code>track</code></td>
+<td>Property of the object which was modified</td>
 </tr>
 <tr>
-<td>new_value</td>
-<td>new value of the object after the change</td>
+<td><code>new_value</code></td>
+<td>New value of the object after the change (only available for label changes and not for metric changes)</td>
 </tr>
 <tr>
-<td>old_value</td>
-<td>previous value of the object before the change</td>
+<td><code>old_value</code></td>
+<td>Previous value of the object before the change (only available for label changes and not for metric changes)</td>
 </tr>
 <tr>
-<td>metric value</td>
-<td>timestamp when Harvest captured the change. 1698735677 in the example below</td>
+<td><code>metric value</code></td>
+<td>Timestamp when Harvest captured the change. <code>1698735677</code> in the example below</td>
+</tr>
+<tr>
+<td><code>category</code></td>
+<td>Type of the change, indicating whether it is a <code>metric</code> or a <code>label</code> change</td>
 </tr>
 </tbody>
 </table>
-<p>Example of metric shape for object modification:</p>
-<div class="highlight"><pre><span></span><code>change_log{aggr=&quot;umeng_aff300_aggr2&quot;, cluster=&quot;umeng-aff300-01-02&quot;, datacenter=&quot;u2&quot;, index=&quot;1&quot;, instance=&quot;localhost:12993&quot;, job=&quot;prometheus&quot;, new_value=&quot;offline&quot;, node=&quot;umeng-aff300-01&quot;, object=&quot;volume&quot;, old_value=&quot;online&quot;, op=&quot;update&quot;, style=&quot;flexvol&quot;, svm=&quot;harvest&quot;, track=&quot;state&quot;, volume=&quot;harvest_demo&quot;} 1698735677
+<p>Example of metric shape for object modification for label:</p>
+<div class="highlight"><pre><span></span><code>change_log{aggr=&quot;umeng_aff300_aggr2&quot;, category=&quot;label&quot;, cluster=&quot;umeng-aff300-01-02&quot;, datacenter=&quot;u2&quot;, index=&quot;1&quot;, instance=&quot;localhost:12993&quot;, job=&quot;prometheus&quot;, new_value=&quot;offline&quot;, node=&quot;umeng-aff300-01&quot;, object=&quot;volume&quot;, old_value=&quot;online&quot;, op=&quot;update&quot;, style=&quot;flexvol&quot;, svm=&quot;harvest&quot;, track=&quot;state&quot;, volume=&quot;harvest_demo&quot;} 1698735677
+</code></pre></div>
+<p>Example of metric shape for metric value change:</p>
+<div class="highlight"><pre><span></span><code>change_log{aggr=&quot;umeng_aff300_aggr2&quot;, category=&quot;metric&quot;, cluster=&quot;umeng-aff300-01-02&quot;, datacenter=&quot;u2&quot;, index=&quot;3&quot;, instance=&quot;localhost:12993&quot;, job=&quot;prometheus&quot;, node=&quot;umeng-aff300-01&quot;, object=&quot;volume&quot;, op=&quot;metric_change&quot;, track=&quot;volume_size_total&quot;, svm=&quot;harvest&quot;, volume=&quot;harvest_demo&quot;} 1698735800
 </code></pre></div>
 <h3 id="object-deletion">Object Deletion<a class="headerlink" href="#object-deletion" title="Permanent link">&para;</a></h3>
 <p>When an object is deleted, the ChangeLog plugin will publish a metric with the following labels:</p>
