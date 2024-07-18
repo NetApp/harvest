@@ -1,5 +1,5 @@
-# If you need to collect quotas from a cluster that has no qtrees, comment out 16-17 and 28-29 lines. See https://github.com/NetApp/harvest/discussions/3024 for more details.
-
+# If you need to collect quotas from a cluster that has no qtrees, remove the filter lines below.
+# See https://github.com/NetApp/harvest/discussions/3024 for more details.
 name:                       Qtree
 query:                      api/storage/qtrees
 object:                     qtree
@@ -13,7 +13,7 @@ counters:
   - ^export_policy.name   => export_policy
   - ^security_style       => security_style
   - id                    => id
-  - filter:
+  - filter: # If you need to collect quotas from a cluster with no qtrees, remove this line and the next one.
       - name=!""
 
 
@@ -25,7 +25,7 @@ endpoints:
       - ^^vserver         => svm
       - ^oplock_mode      => oplocks
       - ^status           => status
-      - filter:
+      - filter: # If you need to collect quotas from a cluster with no qtrees, remove this line and the next one.
           - qtree=!""
 plugins:
   - Qtree:
