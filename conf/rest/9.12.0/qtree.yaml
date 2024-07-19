@@ -1,5 +1,5 @@
 # If you need to collect quotas from a cluster that has no qtrees, remove the filter lines below.
-# See https://github.com/NetApp/harvest/discussions/3024 for more details.
+# Refer https://github.com/NetApp/harvest/discussions/3057 for more details.
 name:                       Qtree
 query:                      api/storage/qtrees
 object:                     qtree
