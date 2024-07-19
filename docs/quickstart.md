@@ -1,4 +1,6 @@
-Welcome to the NetApp Harvest Getting Started Guide. This tutorial will guide you through the steps required to deploy a basic instance of NetApp Harvest on a Linux platform to monitor an ONTAP cluster.
+Welcome to the NetApp Harvest Getting Started Guide. This tutorial will guide you through the steps required to deploy an instance of NetApp Harvest, Prometheus, and Grafana on a Linux platform to monitor an ONTAP cluster.
+
+This tutorial uses systemd to manage Harvest, Prometheus, and Grafana. If you would rather, run the processes directly, feel free to ignore the sections of the tutorial that setup systemd service files.
 
 ### 1. Set Installation Path
 
@@ -11,12 +13,14 @@ mkdir -p ${HARVEST_INSTALL_PATH}
 
 ### 2. Install Harvest
 
-Harvest is distributed as a container, tarball, and RPM and Debs. Pick the one that works best for you.
+Harvest is distributed as a container, native tarball, and RPM and Debs. Pick the one that works best for you.
 More details can be found in the [installation](https://netapp.github.io/harvest/latest/install/overview/) documentation.
 
 For this guide, we'll use the tarball package as an example.
 
-Visit the [Releases page](https://github.com/NetApp/harvest/releases) and copy the `tar.gz` link for the latest release. For example, to download the `24.05.2` release:
+Visit the releases page and take note of the latest release. Update the `HARVEST_VERSION` environment variable with the latest release in the script below. For example, to download the `24.05.2` release you would use `HARVEST_VERSION=24.05.2`
+
+After updating the `HARVEST_VERSION` environment variable run the bash script to download Harvest and untar it into your `HARVEST_INSTALL_PATH` directory.
 
 ```bash
 HARVEST_VERSION=24.05.2
@@ -27,7 +31,7 @@ tar -xvf harvest-${HARVEST_VERSION}-1_linux_amd64.tar.gz
 
 ### 3. Install Prometheus
 
-To install Prometheus, follow these steps:
+To install Prometheus, follow these steps. For more details see [Prometheus installation](https://prometheus.io/docs/prometheus/latest/installation/).
 
 ```bash
 PROMETHEUS_VERSION=2.49.1
@@ -36,34 +40,28 @@ wget https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VE
 tar -xvf prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz
 mv prometheus-${PROMETHEUS_VERSION}.linux-amd64 prometheus-${PROMETHEUS_VERSION}
 ```
+If you want to manage Prometheus with `systemd`, you can create a service file for Prometheus like so. This step is optional.
+A service file will attempt to restart Prometheus automatically when the machine is restarted.
 
 Create a service file for Prometheus:
 
 ```bash
-sudo vi /etc/systemd/system/prometheus.service
-```
-
-Add the following content:
-
-```ini
+cat << EOF | sudo tee /etc/systemd/system/prometheus.service
 [Unit]
 Description=Prometheus Server
 Documentation=https://prometheus.io/docs/introduction/overview/
 After=network-online.target
 
 [Service]
+Environment="HARVEST_INSTALL_PATH=$HARVEST_INSTALL_PATH"
+Environment="PROMETHEUS_VERSION=$PROMETHEUS_VERSION"
 User=root
 Restart=on-failure
-ExecStart=<HARVEST_INSTALL_PATH>/prometheus-<PROMETHEUS_VERSION>/prometheus --config.file=<HARVEST_INSTALL_PATH>/prometheus-<PROMETHEUS_VERSION>/prometheus.yml
+ExecStart=/bin/bash -c '\${HARVEST_INSTALL_PATH}/prometheus-\${PROMETHEUS_VERSION}/prometheus --config.file=\${HARVEST_INSTALL_PATH}/prometheus-\${PROMETHEUS_VERSION}/prometheus.yml'
 
 [Install]
 WantedBy=multi-user.target
-```
-
-For example, if `HARVEST_INSTALL_PATH` is `/opt/netapp/harvest` and `PROMETHEUS_VERSION` is `2.49.1`, the `ExecStart` line would be:
-
-```ini
-ExecStart=/opt/netapp/harvest/prometheus-2.49.1/prometheus --config.file=/opt/netapp/harvest/prometheus-2.49.1/prometheus.yml
+EOF
 ```
 
 Reload the systemd configuration and start Prometheus:
@@ -82,6 +80,19 @@ sudo systemctl status prometheus
 
 You should see output indicating that the Prometheus service is active and running.
 
+<details>
+  <summary>Alternative: Start Prometheus Directly</summary>
+
+  If you would rather start Prometheus directly and kick the tires before creating a service file, you can run the following command to start Prometheus in the background:
+
+  ```bash
+  nohup ${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus --config.file=${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus.yml > prometheus.log 2>&1 &
+  ```
+
+  This command uses <code>nohup</code> to run Prometheus in the background and redirects the output to <code>prometheus.log</code>.
+
+</details>
+
 ### 4. Install Grafana
 
 To install Grafana, follow these steps:
@@ -93,33 +104,28 @@ wget https://dl.grafana.com/oss/release/grafana-${GRAFANA_VERSION}.linux-amd64.t
 tar -xvf grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz
 ```
 
+If you want to manage Grafana with `systemd`, you can create a service file for Grafana like so. This step is optional.
+A service file will attempt to restart Grafana automatically when the machine is restarted.
+
 Create a service file for Grafana:
 
 ```bash
-sudo vi /etc/systemd/system/grafana.service
-```
-
-Add the following content:
-
-```ini
+cat << EOF | sudo tee /etc/systemd/system/grafana.service
 [Unit]
 Description=Grafana Server
 Documentation=https://grafana.com/docs/grafana/latest/setup-grafana/installation/
 After=network-online.target
 
 [Service]
+Environment="HARVEST_INSTALL_PATH=$HARVEST_INSTALL_PATH"
+Environment="GRAFANA_VERSION=$GRAFANA_VERSION"
 User=root
 Restart=on-failure
-ExecStart=<HARVEST_INSTALL_PATH>/grafana-v<GRAFANA_VERSION>/bin/grafana-server --config=<HARVEST_INSTALL_PATH>/grafana-v<GRAFANA_VERSION>/conf/defaults.ini --homepath=<HARVEST_INSTALL_PATH>/grafana-v<GRAFANA_VERSION>
+ExecStart=/bin/bash -c '\${HARVEST_INSTALL_PATH}/grafana-v\${GRAFANA_VERSION}/bin/grafana-server --config=\${HARVEST_INSTALL_PATH}/grafana-v\${GRAFANA_VERSION}/conf/defaults.ini --homepath=\${HARVEST_INSTALL_PATH}/grafana-v\${GRAFANA_VERSION}'
 
 [Install]
 WantedBy=multi-user.target
-```
-
-For example, if `HARVEST_INSTALL_PATH` is `/opt/netapp/harvest` and `GRAFANA_VERSION` is `10.4.5`, the `ExecStart` line would be:
-
-```ini
-ExecStart=/opt/netapp/harvest/grafana-v10.4.5/bin/grafana-server --config=/opt/netapp/harvest/grafana-v10.4.5/conf/defaults.ini --homepath=/opt/netapp/harvest/grafana-v10.4.5
+EOF
 ```
 
 Reload the systemd configuration and start Grafana:
@@ -138,15 +144,26 @@ sudo systemctl status grafana
 
 You should see output indicating that the Grafana service is active and running.
 
+<details>
+  <summary>Alternative: Start Grafana Directly</summary>
+
+  If you would rather start Grafana directly and kick the tires before creating a service file, you can run the following command to start Grafana in the background:
+
+  ```bash
+  nohup ${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION} > grafana.log 2>&1 &
+  ```
+
+  This command uses <code>nohup</code> to run Grafana in the background and redirects the output to <code>grafana.log</code>.
+
+</details>
+
+
 ### 5. Configuration File
 
-Harvest's configuration information is defined in `harvest.yml`. There are a few ways to tell Harvest how to load this file:
-
-- If you don't use the `--config` flag, the `harvest.yml` file located in the current working directory will be used.
-- If you specify the `--config` flag like so `harvest status --config /opt/harvest/harvest.yml`, Harvest will use that file.
+By default, Harvest loads its configuration information from the `./harvest.yml` file.
+If you would rather use a different file, use the `--config` command line argument flag to specify the path to your config file.
 
 To start collecting metrics, you need to define at least one `poller` and one `exporter` in your configuration file.
-The default configuration comes with a pre-configured poller named `unix` which collects metrics from the local system.
 This is useful if you want to monitor resource usage by Harvest and serves as a good example. Feel free to delete it if you want.
 
 The next step is to add pollers for your ONTAP clusters in the [Pollers](configure-harvest-basic.md#pollers) section of the Harvest configuration file, `harvest.yml`.
@@ -155,10 +172,10 @@ Edit the Harvest configuration file:
 
 ```sh
 cd ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64
-sudo vi harvest.yml
+vi harvest.yml
 ```
 
-Make the necessary changes to monitor your ONTAP system. Example configuration:
+Copy and paste the following YAML configuration into your editor and update the `$cluster-management-ip`, `$username`, and `$password` sections to match your ONTAP system.
 
 ```yaml
 Exporters:
@@ -178,15 +195,15 @@ Defaults:
 Pollers:
   jamaica:
     datacenter: DC-01
-    addr: ClusterManagementIP
+    addr: $cluster-management-ip
     auth_style: basic_auth
-    username: YourUsername
-    password: YourPassword
+    username: $username
+    password: $password
     exporters:
       - prometheus1
 ```
 
-**Note:** The ONTAP user specified in this configuration must have the appropriate permissions as outlined in the [Prepare cDot Clusters](/prepare-cdot-clusters/#least-privilege-approach) documentation.
+**Note:** The ONTAP user specified in this configuration must have the appropriate permissions as outlined in the [Prepare cDot Clusters](prepare-cdot-clusters.md) documentation.
 
 ### 6. Edit Prometheus Config File
 
@@ -194,10 +211,10 @@ Edit the Prometheus configuration file:
 
 ```sh
 cd ${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}
-sudo vi prometheus.yml
+vi prometheus.yml
 ```
 
-Add the following lines to the existing `scrape_configs` block:
+Add the following under the `scrape_configs` section. The targets you are adding should match the range of ports you specified in your `harvest.yml` file (in the example above, we use the port_range `13000-13100`).
 
 ```yaml
   - job_name: 'harvest'
@@ -221,69 +238,107 @@ sudo systemctl status prometheus
 
 ### 7. Start Harvest
 
-To start the Harvest pollers, follow these steps:
+To start the Harvest pollers, follow these steps. For more details see [Harvest service](https://github.com/NetApp/harvest/blob/main/service/contrib/README.md).
+
+Create a systemd service file for Harvest pollers:
+
+```bash
+cat << EOF | sudo tee /etc/systemd/system/poller@.service
+[Unit]
+Description="NetApp Harvest Poller instance %I"
+PartOf=harvest.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment="HARVEST_INSTALL_PATH=$HARVEST_INSTALL_PATH"
+Environment="HARVEST_VERSION=$HARVEST_VERSION"
+User=harvest
+Group=harvest
+Type=simple
+Restart=on-failure
+ExecStart=/bin/bash -c 'cd \${HARVEST_INSTALL_PATH}/harvest-\${HARVEST_VERSION}-1_linux_amd64 && \${HARVEST_INSTALL_PATH}/harvest-\${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config \${HARVEST_INSTALL_PATH}/harvest-\${HARVEST_VERSION}-1_linux_amd64/harvest.yml start -f %i'
+
+[Install]
+WantedBy=harvest.target
+EOF
+```
+
+Create a target file for Harvest:
 
 ```bash
 cd ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64
-bin/harvest start
+bin/harvest generate systemd | sudo tee /etc/systemd/system/harvest.target
+```
+
+Reload the systemd configuration and start Harvest:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable harvest.target
+sudo systemctl start harvest.target
 ```
 
 Verify that the pollers have started successfully by checking their status:
 
 ```bash
-bin/harvest status
+systemctl status "poller*"
 ```
 
-The output should look similar to this:
+<details>
+  <summary>Alternative: Start Harvest Directly</summary>
 
-```
-Datacenter | Poller  |   PID   | PromPort | Status
--------------+---------+---------+----------+----------
-DC-01      | jamaica | 1280145 |    13000 | running
-```
+  If you would rather start Harvest directly and kick the tires before creating a service file, you can run the following command to start Harvest:
 
-The logs of each poller can be found in `/var/log/harvest/`.
+  ```bash
+  cd ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64
+  bin/harvest start
+  ```
+
+  Verify that the pollers have started successfully by checking their status:
+
+  ```bash
+  bin/harvest status
+  ```
+
+  The output should look similar to this:
+
+  ```
+  Datacenter | Poller  |   PID   | PromPort | Status
+  -----------+---------+---------+----------+----------
+  DC-01      | jamaica | 1280145 |    13000 | running
+  ```
+
+    <p>The <a href="https://netapp.github.io/harvest/latest/help/log-collection/">logs</a> of each poller can be found in <code>/var/log/harvest/</code>.</p>
+</details>
 
 ### 8. Add Prometheus Datasource in Grafana
 
 To add a Prometheus datasource in Grafana, follow these steps:
 
-1. Open your web browser and navigate to Grafana, which is running on port 3000. You can access it by entering one of the following URLs in your browser's address bar:
-    - If you are accessing Grafana from the same machine where it is installed, use:
-
-        ```bash
-        http://localhost:3000
-        ```
-
-    - If you are accessing Grafana from a different machine, replace `localhost` with the IP address of the machine where Grafana is running. For example:
-
-        ```bash
-        http://<machine-ip>:3000
-        ```
-
-2. From the "three lines" button (also known as the hamburger menu) at the top left, navigate to **Connections** and then **Data Sources**.
+1. Open your web browser and navigate to Grafana ([http://localhost:3000](http://localhost:3000)). When prompted for credentials, use Grafana defaults admin/admin. You should change the default credentials once you log in.
+2. Navigate to the data sources section by visiting [http://localhost:3000/connections/datasources](http://localhost:3000/connections/datasources) or by clicking the hamburger menu (three horizontal lines) at the top-left of the page and navigate to **Connections** and then **Data Sources**.
 3. Click on **Add data source**.
 4. Select **Prometheus** from the list of available data sources.
-5. In the **Prometheus server URL** field, enter `http://localhost:9090`
+5. In the **Prometheus server URL** field, enter ([http://localhost:9090](http://localhost:9090)).
 6. Click on **Save and test**.
 7. At the bottom of the page, you should see the message 'Successfully queried the Prometheus API.'
-For detailed instructions, please refer to the [Configure Prometheus Data Source documentation](https://grafana.com/docs/grafana/latest/datasources/prometheus/configure-prometheus-data-source/).
+For detailed instructions, please refer to the [configure Prometheus Data Source documentation](https://grafana.com/docs/grafana/latest/datasources/prometheus/configure-prometheus-data-source/).
 
 ### 9. Generate Grafana API Token
 
 To import Grafana dashboards using the `bin/harvest grafana import` command, you need a Grafana API token. Follow these steps to generate it:
 
-1. Log in to Grafana at `http://localhost:3000` or `http://<machine-ip>:3000`.
-2. Click on the "three lines" button at the top left of the screen to open the menu.
-3. Navigate to **Administration** -> **Users and access** and then select **Service Account**.
-4. Click on **Add Service Account**.
-5. Enter the display name **Harvest**.
-6. Set the role to **Editor**.
-7. Click on **Create**. The service account will appear in the dashboard.
-8. Navigate back to **Service Account**.
-9. Click on **Add service account token** for the Harvest service account.
-10. Click on **Generate Token**.
-11. Click on **Copy to clipboard and close**.
+1. Open your web browser and navigate to Grafana ([http://localhost:3000](http://localhost:3000)). Enter your Grafana credentials to log in. The default username and password are `admin`.
+2. Click the hamburger menu (three horizontal lines) at the top-left of the page and Navigate to **Administration** -> **Users and access** and then select **Service Account**.
+3. Click on **Add Service Account**.
+4. Enter the display name **Harvest**.
+5. Set the role to **Editor**.
+6. Click on **Create**. The service account will appear in the dashboard.
+7. Navigate back to **Service Account**.
+8. Click on **Add service account token** for the Harvest service account.
+9. Click on **Generate Token**.
+10. Click on **Copy to clipboard and close**.
 
 **IMPORTANT:** This is the only opportunity to save the token. Immediately paste it into a text file and save it. The token will be needed by Harvest later on.
 
@@ -295,34 +350,22 @@ To import Grafana dashboards, use the following command:
 
 ```bash
 cd ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64
-bin/harvest grafana import --addr localhost:3000
+bin/harvest grafana import --token YOUR_TOKEN_HERE
 ```
 
-You will be prompted to enter the Grafana API token. Paste the token you generated in the previous step.
+Replace `YOUR_TOKEN_HERE` with the token obtained in step 10.
 
-```bash
-#### You will be requested to 'Enter API Token'
-#### Enter the token saved before
-#### You will be asked to save token for later use, enter 'Y'
+You will be prompted to save your API key (token) for later use. Press `n` to not save the token in your harvest.yml file.
 
-### If you have removed and re-installed Grafana, you will get an error telling that current API Key is not valid any more
-### You need to enter the new API Key
-
-using API token from config
-.error connect: (401 - 401 Unauthorized) Unauthorized
-enter API token:
-```
-
-It will take a few seconds, but at the end, all dashboards will be imported.
+After a few seconds, all the dashboards will be imported into Grafana.
 
 ### 9. Verify Dashboards in Grafana
 
 After adding the Prometheus datasource, you can verify that your dashboards are correctly displaying data. Follow these steps:
 
-1. Open your web browser and navigate to `http://localhost:3000` or `http://<machine-ip>:3000`
-2. Enter your Grafana credentials to log in. The default username is `admin` and the default password is also `admin` (you may have changed this during setup).
-3. Click on the "three lines" button (also known as the hamburger menu) in the top left corner of the Grafana interface. From the menu, select **Dashboards**.
-4. In the Dashboards section, find and click on the **Volume Dashboard**. This dashboard should have been pre-configured or imported as part of your setup. Once the Volume Dashboard is open, you should see various panels displaying data
+1. Open your web browser and navigate to Grafana ([http://localhost:3000](http://localhost:3000)). Enter your Grafana credentials to log in. The default username and password are `admin`.
+2. Click on the "three lines" button (also known as the hamburger menu) in the top left corner of the Grafana interface. From the menu, select **Dashboards**.
+3. Open the [Volume](http://localhost:3000/d/cdot-volume/ontap3a-volume?orgId=1) dashboard. Once the dashboard opens, you should see volume data displayed.
 
 ### Troubleshooting
 
@@ -331,4 +374,5 @@ You can also reach out for help on [Discord](https://github.com/NetApp/harvest/b
 
 ### Conclusion
 
-Congratulations! You have successfully set up NetApp Harvest along with Prometheus and Grafana. Enjoy monitoring your systems and feel free to provide feedback.
+🎊 Congratulations! You have successfully set up NetApp Harvest, Prometheus, and Grafana.
+Enjoy monitoring your systems and feel free to reach out on [Discord, GitHub, or email](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help).
