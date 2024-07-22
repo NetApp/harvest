@@ -89,8 +89,9 @@ func (q *Qtree) Init() error {
 		}
 
 		instanceKeys.NewChildS("", "type")
-		instanceKeys.NewChildS("", "index")
 		instanceKeys.NewChildS("", "unit")
+		instanceKeys.NewChildS("", "user")
+		instanceKeys.NewChildS("", "group")
 
 		q.data.SetExportOptions(exportOptions)
 		q.historicalLabels = true
@@ -177,8 +178,6 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		}
 	}
 
-	cluster := data.GetGlobalLabels()["cluster"]
-
 	for {
 		response, tag, ad, pd, err = q.client.InvokeBatchWithTimers(request, tag)
 
@@ -210,7 +209,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 
 		if q.historicalLabels {
 			// In 22.05, populate metrics with qtree prefix and old labels
-			err = q.handlingHistoricalMetrics(quotas, data, cluster, &quotaIndex, &numMetrics)
+			err = q.handlingHistoricalMetrics(quotas, data, &quotaIndex, &numMetrics)
 		} else {
 			// Populate metrics with quota prefix and current labels
 			err = q.handlingQuotaMetrics(quotas, &quotaIndex, &numMetrics)
@@ -242,9 +241,9 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	return []*matrix.Matrix{q.data}, q.client.Metadata, nil
 }
 
-func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
-	for qIndex, quota := range quotas {
-		var vserver, quotaInstanceKey string
+func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matrix, quotaIndex *int, numMetrics *int) error {
+	for _, quota := range quotas {
+		var vserver, quotaInstanceKey, uid, uName string
 		var qtreeInstance *matrix.Instance
 
 		quotaType := quota.GetChildContentS("quota-type")
@@ -252,6 +251,32 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 		volume := quota.GetChildContentS("volume")
 		if q.client.IsClustered() {
 			vserver = quota.GetChildContentS("vserver")
+		}
+
+		users := quota.GetChildS("quota-users")
+		if users != nil {
+			quotaUser := users.GetChildS("quota-user")
+			if quotaUser != nil {
+				uid = quotaUser.GetChildContentS("quota-user-id")
+				uName = quotaUser.GetChildContentS("quota-user-name")
+			}
+		}
+
+		// ignore default quotas and set user/group
+		// Rest uses service side filtering to remove default records
+		switch {
+		case quotaType == "user":
+			if (uName == "*" && uid == "*") || (uName == "" && uid == "") {
+				continue
+			}
+		case quotaType == "group":
+			if uName == "*" || uName == "" {
+				continue
+			}
+		case quotaType == "tree":
+			if tree == "" {
+				continue
+			}
 		}
 
 		*quotaIndex++
@@ -281,9 +306,9 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 				}
 				// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 				if q.client.IsClustered() {
-					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + strconv.Itoa(qIndex) + "." + attribute
+					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + uName + "." + attribute + "." + quotaType
 				} else {
-					quotaInstanceKey = volume + "." + tree + "." + strconv.Itoa(qIndex) + "." + attribute
+					quotaInstanceKey = volume + "." + tree + "." + uName + "." + attribute
 				}
 				quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 
@@ -303,7 +328,20 @@ func (q *Qtree) handlingHistoricalMetrics(quotas []*node.Node, data *matrix.Matr
 				quotaInstance.SetLabel("qtree", tree)
 				quotaInstance.SetLabel("volume", volume)
 				quotaInstance.SetLabel("svm", vserver)
-				quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(*quotaIndex))
+
+				if quotaType == "user" {
+					if uName != "" {
+						quotaInstance.SetLabel("user", uName)
+					} else if uid != "" {
+						quotaInstance.SetLabel("user", uid)
+					}
+				} else if quotaType == "group" {
+					if uName != "" {
+						quotaInstance.SetLabel("group", uName)
+					} else if uid != "" {
+						quotaInstance.SetLabel("group", uid)
+					}
+				}
 
 				// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
 				if tree == "" {
