@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#1-install-harvest" class="md-skip">
+        <a href="#1-set-installation-path" class="md-skip">
           Skip to content
         </a>
       
@@ -347,54 +347,117 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-install-harvest" class="md-nav__link">
+  <a href="#1-set-installation-path" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Install Harvest
+      1. Set Installation Path
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-configuration-file" class="md-nav__link">
+  <a href="#2-install-harvest" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Configuration file
+      2. Install Harvest
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-start-harvest" class="md-nav__link">
+  <a href="#3-install-prometheus" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Start Harvest
+      3. Install Prometheus
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-import-grafana-dashboards" class="md-nav__link">
+  <a href="#4-install-grafana" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Import Grafana dashboards
+      4. Install Grafana
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-verify-the-metrics" class="md-nav__link">
+  <a href="#5-configuration-file" class="md-nav__link">
     <span class="md-ellipsis">
-      5. Verify the metrics
+      5. Configuration File
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-optional-setup-systemd-service-files" class="md-nav__link">
+  <a href="#6-edit-prometheus-config-file" class="md-nav__link">
     <span class="md-ellipsis">
-      6. (Optional) Setup Systemd service files
+      6. Edit Prometheus Config File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-start-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Start Harvest
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-add-prometheus-datasource-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Add Prometheus Datasource in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-generate-grafana-api-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Generate Grafana API Token
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-import-grafana-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Import Grafana Dashboards
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-verify-dashboards-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Verify Dashboards in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
     </span>
   </a>
   
@@ -1639,54 +1702,117 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-install-harvest" class="md-nav__link">
+  <a href="#1-set-installation-path" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Install Harvest
+      1. Set Installation Path
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-configuration-file" class="md-nav__link">
+  <a href="#2-install-harvest" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Configuration file
+      2. Install Harvest
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-start-harvest" class="md-nav__link">
+  <a href="#3-install-prometheus" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Start Harvest
+      3. Install Prometheus
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-import-grafana-dashboards" class="md-nav__link">
+  <a href="#4-install-grafana" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Import Grafana dashboards
+      4. Install Grafana
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-verify-the-metrics" class="md-nav__link">
+  <a href="#5-configuration-file" class="md-nav__link">
     <span class="md-ellipsis">
-      5. Verify the metrics
+      5. Configuration File
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-optional-setup-systemd-service-files" class="md-nav__link">
+  <a href="#6-edit-prometheus-config-file" class="md-nav__link">
     <span class="md-ellipsis">
-      6. (Optional) Setup Systemd service files
+      6. Edit Prometheus Config File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-start-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Start Harvest
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-add-prometheus-datasource-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Add Prometheus Datasource in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-generate-grafana-api-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Generate Grafana API Token
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-import-grafana-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Import Grafana Dashboards
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-verify-dashboards-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Verify Dashboards in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
     </span>
   </a>
   
@@ -1709,55 +1835,276 @@
 
   <h1>Quickstart</h1>
 
-<h2 id="1-install-harvest">1. Install Harvest<a class="headerlink" href="#1-install-harvest" title="Permanent link">&para;</a></h2>
-<p>Harvest is distributed as a container, tarball, and RPM and Debs.
-Pick the one that works best for you.
-More details can be found in the <a href="../install/overview/">installation</a> documentation.</p>
-<h2 id="2-configuration-file">2. Configuration file<a class="headerlink" href="#2-configuration-file" title="Permanent link">&para;</a></h2>
-<p>Harvest's configuration information is defined in <code>harvest.yml</code>. There are a few ways to tell Harvest how to load this file:</p>
-<ul>
-<li>
-<p>If you don't use the <code>--config</code> flag, the <code>harvest.yml</code> file located in the current working directory will be used</p>
-</li>
-<li>
-<p>If you specify the <code>--config</code> flag like so <code>harvest status --config /opt/harvest/harvest.yml</code>, Harvest will use that file</p>
-</li>
-</ul>
-<p>To start collecting metrics, you need to define at least one <code>poller</code> and one <code>exporter</code> in your  configuration file.
-The default configuration comes with a pre-configured poller named <code>unix</code> which collects metrics from the local system. 
-This is useful if you want to monitor resource usage by Harvest and serves as a good example. 
-Feel free to delete it if you want.</p>
-<p>The next step is to add pollers for your ONTAP clusters in the <a href="../configure-harvest-basic/#pollers">Pollers</a> 
-section of the Harvest configuration file, <code>harvest.yml</code>.</p>
-<h2 id="3-start-harvest">3. Start Harvest<a class="headerlink" href="#3-start-harvest" title="Permanent link">&para;</a></h2>
-<p>Start all Harvest pollers as daemons:</p>
-<div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>start
+<p>Welcome to the NetApp Harvest Getting Started Guide. This tutorial will guide you through the steps required to deploy an instance of NetApp Harvest, Prometheus, and Grafana on a Linux platform to monitor an ONTAP cluster.</p>
+<p>This tutorial uses <code>systemd</code> to manage Harvest, Prometheus, and Grafana. If you would rather, run the processes directly, feel free to ignore the sections of the tutorial that setup <code>systemd</code> service files.</p>
+<h3 id="1-set-installation-path">1. Set Installation Path<a class="headerlink" href="#1-set-installation-path" title="Permanent link">&para;</a></h3>
+<p>First, set the installation path as an environment variable. For example, we'll use <code>/opt/netapp/harvest</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">HARVEST_INSTALL_PATH</span><span class="o">=</span>/opt/netapp/harvest
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
 </code></pre></div>
-<p>Or start a specific poller(s). In this case, we're staring two pollers named <code>jamaica</code> and <code>grenada</code>.</p>
-<div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>start<span class="w"> </span>jamaica<span class="w"> </span>grenada
+<h3 id="2-install-harvest">2. Install Harvest<a class="headerlink" href="#2-install-harvest" title="Permanent link">&para;</a></h3>
+<p>Harvest is distributed as a container, native tarball, and RPM and Debs. Pick the one that works best for you.
+More details can be found in the <a href="https://netapp.github.io/harvest/latest/install/overview/">installation</a> documentation.</p>
+<p>For this guide, we'll use the tarball package as an example.</p>
+<p>Visit the releases page and take note of the latest release. Update the <code>HARVEST_VERSION</code> environment variable with the latest release in the script below. For example, to download the <code>24.05.2</code> release you would use <code>HARVEST_VERSION=24.05.2</code></p>
+<p>After updating the <code>HARVEST_VERSION</code> environment variable run the bash script to download Harvest and untar it into your <code>HARVEST_INSTALL_PATH</code> directory.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">HARVEST_VERSION</span><span class="o">=</span><span class="m">24</span>.05.2
+<span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+wget<span class="w"> </span>https://github.com/NetApp/harvest/releases/download/v<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
 </code></pre></div>
-<p>Replace <code>jamaica</code> and <code>grenada</code> with the poller names you defined in <code>harvest.yml</code>. 
-The logs of each poller can be found in <code>/var/log/harvest/</code>.</p>
-<h2 id="4-import-grafana-dashboards">4. Import Grafana dashboards<a class="headerlink" href="#4-import-grafana-dashboards" title="Permanent link">&para;</a></h2>
-<p>The Grafana dashboards are located in the <code>$HARVEST_HOME/grafana</code> directory. 
-You can manually import the dashboards or use the <code>bin/harvest grafana</code> command
-(<a href="../dashboards/">more documentation</a>).</p>
-<p>Note: the current dashboards specify Prometheus as the datasource. 
-If you use the InfluxDB exporter, you will need to create your own dashboards.</p>
-<h2 id="5-verify-the-metrics">5. Verify the metrics<a class="headerlink" href="#5-verify-the-metrics" title="Permanent link">&para;</a></h2>
-<p>If you use a Prometheus Exporter, open a browser and navigate to <a href="http://0.0.0.0:12990/">http://0.0.0.0:12990/</a>
-(replace <code>12990</code> with the port number of your poller). 
-This is the Harvest created HTTP end-point for your Prometheus exporter. 
-This page provides a real-time generated list of running collectors and names of exported metrics.</p>
-<p>The metric data that is exported for Prometheus to scrap is 
-available at <a href="http://0.0.0.0:12990/metrics/">http://0.0.0.0:12990/metrics/</a>. </p>
-<p>More information on configuring the exporter can be found in the
-<a href="../prometheus-exporter/">Prometheus exporter</a> documentation.</p>
-<p>If you can't access the URL, check the logs of your pollers. These are located in <code>/var/log/harvest/</code>.</p>
-<h2 id="6-optional-setup-systemd-service-files">6. (Optional) Setup Systemd service files<a class="headerlink" href="#6-optional-setup-systemd-service-files" title="Permanent link">&para;</a></h2>
-<p>If you're running Harvest on a system with Systemd, you may want 
-to <a href="https://github.com/NetApp/harvest/tree/main/service/contrib">take advantage of systemd instantiated units</a> 
-to manage your pollers.  </p>
+<h3 id="3-install-prometheus">3. Install Prometheus<a class="headerlink" href="#3-install-prometheus" title="Permanent link">&para;</a></h3>
+<p>To install Prometheus, follow these steps. For more details see <a href="https://prometheus.io/docs/prometheus/latest/installation/">Prometheus installation</a>.</p>
+<p><div class="highlight"><pre><span></span><code><span class="nv">PROMETHEUS_VERSION</span><span class="o">=</span><span class="m">2</span>.49.1
+<span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+wget<span class="w"> </span>https://github.com/prometheus/prometheus/releases/download/v<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+mv<span class="w"> </span>prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64<span class="w"> </span>prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>
+</code></pre></div>
+If you want to manage Prometheus with <code>systemd</code>, you can create a service file for Prometheus like so. This step is optional.
+A service file will attempt to restart Prometheus automatically when the machine is restarted.</p>
+<p>Create a service file for Prometheus:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/prometheus.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Prometheus Server</span>
+<span class="s">Documentation=https://prometheus.io/docs/introduction/overview/</span>
+<span class="s">After=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=root</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus --config.file=${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus.yml</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Reload the systemd configuration and start Prometheus:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>prometheus
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>prometheus
+</code></pre></div>
+<p>Check if Prometheus is up and running:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>prometheus
+</code></pre></div>
+<p>You should see output indicating that the Prometheus service is active and running.</p>
+<details>
+  <summary>Alternative: Start Prometheus Directly</summary>
+
+  If you would rather start Prometheus directly and kick the tires before creating a service file, you can run the following command to start Prometheus in the background:
+
+  <div class="highlight"><pre><span></span><code>nohup<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>/prometheus<span class="w"> </span>--config.file<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>/prometheus.yml<span class="w"> </span>&gt;<span class="w"> </span>prometheus.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+
+  This command uses <code>nohup</code> to run Prometheus in the background and redirects the output to <code>prometheus.log</code>.
+
+</details>
+
+<h3 id="4-install-grafana">4. Install Grafana<a class="headerlink" href="#4-install-grafana" title="Permanent link">&para;</a></h3>
+<p>To install Grafana, follow these steps:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">GRAFANA_VERSION</span><span class="o">=</span><span class="m">10</span>.4.5
+<span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+wget<span class="w"> </span>https://dl.grafana.com/oss/release/grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+</code></pre></div>
+<p>If you want to manage Grafana with <code>systemd</code>, you can create a service file for Grafana like so. This step is optional.
+A service file will attempt to restart Grafana automatically when the machine is restarted.</p>
+<p>Create a service file for Grafana:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/grafana.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Grafana Server</span>
+<span class="s">Documentation=https://grafana.com/docs/grafana/latest/setup-grafana/installation/</span>
+<span class="s">After=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=root</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Reload the systemd configuration and start Grafana:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>grafana
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>grafana
+</code></pre></div>
+<p>Check if Grafana is up and running:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>grafana
+</code></pre></div>
+<p>You should see output indicating that the Grafana service is active and running.</p>
+<details>
+  <summary>Alternative: Start Grafana Directly</summary>
+
+  If you would rather start Grafana directly and kick the tires before creating a service file, you can run the following command to start Grafana in the background:
+
+  <div class="highlight"><pre><span></span><code>nohup<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/bin/grafana-server<span class="w"> </span>--config<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/conf/defaults.ini<span class="w"> </span>--homepath<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span>grafana.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+
+  This command uses <code>nohup</code> to run Grafana in the background and redirects the output to <code>grafana.log</code>.
+
+</details>
+
+<h3 id="5-configuration-file">5. Configuration File<a class="headerlink" href="#5-configuration-file" title="Permanent link">&para;</a></h3>
+<p>By default, Harvest loads its configuration information from the <code>./harvest.yml</code> file.
+If you would rather use a different file, use the <code>--config</code> command line argument flag to specify the path to your config file.</p>
+<p>To start collecting metrics, you need to define at least one <code>poller</code> and one <code>exporter</code> in your configuration file.
+This is useful if you want to monitor resource usage by Harvest and serves as a good example. Feel free to delete it if you want.</p>
+<p>The next step is to add pollers for your ONTAP clusters in the <a href="../configure-harvest-basic/#pollers">Pollers</a> section of the Harvest configuration file, <code>harvest.yml</code>.</p>
+<p>Edit the Harvest configuration file:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+vi<span class="w"> </span>harvest.yml
+</code></pre></div>
+<p>Copy and paste the following YAML configuration into your editor and update the <code>$cluster-management-ip</code>, <code>$username</code>, and <code>$password</code> sections to match your ONTAP system.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prometheus1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13000-13100</span>
+
+<span class="nt">Defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">collectors</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Zapi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZapiPerf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ems</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rest</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RestPerf</span>
+<span class="w">  </span><span class="nt">use_insecure_tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">jamaica</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DC-01</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$cluster-management-ip</span>
+<span class="w">    </span><span class="nt">auth_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic_auth</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$username</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$password</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prometheus1</span>
+</code></pre></div>
+<p><strong>Note:</strong> The ONTAP user specified in this configuration must have the appropriate permissions as outlined in the <a href="../prepare-cdot-clusters/">Prepare cDot Clusters</a> documentation.</p>
+<h3 id="6-edit-prometheus-config-file">6. Edit Prometheus Config File<a class="headerlink" href="#6-edit-prometheus-config-file" title="Permanent link">&para;</a></h3>
+<p>Edit the Prometheus configuration file:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>
+vi<span class="w"> </span>prometheus.yml
+</code></pre></div>
+<p>Add the following under the <code>scrape_configs</code> section. The targets you are adding should match the range of ports you specified in your <code>harvest.yml</code> file (in the example above, we use the port_range <code>13000-13100</code>).</p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;harvest&#39;</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;localhost:13000&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;localhost:13001&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;localhost:13002&#39;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Add ports as defined in the port range</span>
+</code></pre></div>
+<p>For example, if your port range in the Harvest configuration is <code>13000-13100</code>, you should add the ports within this range that you plan to use.</p>
+<p>Restart Prometheus to apply the changes:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>prometheus
+</code></pre></div>
+<p>Check if Prometheus is up and running:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>prometheus
+</code></pre></div>
+<h3 id="7-start-harvest">7. Start Harvest<a class="headerlink" href="#7-start-harvest" title="Permanent link">&para;</a></h3>
+<p>To start the Harvest pollers, follow these steps. For more details see <a href="https://github.com/NetApp/harvest/blob/main/service/contrib/README.md">Harvest service</a>.</p>
+<p>Create a systemd service file for Harvest pollers:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/poller@.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=&quot;NetApp Harvest Poller instance %I&quot;</span>
+<span class="s">PartOf=harvest.target</span>
+<span class="s">After=network-online.target</span>
+<span class="s">Wants=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=harvest</span>
+<span class="s">Group=harvest</span>
+<span class="s">Type=simple</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start -f %i</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=harvest.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Create a target file for Harvest:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+bin/harvest<span class="w"> </span>generate<span class="w"> </span>systemd<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/harvest.target
+</code></pre></div>
+<p>Reload the systemd configuration and start Harvest:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>harvest.target
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>harvest.target
+</code></pre></div>
+<p>Verify that the pollers have started successfully by checking their status:</p>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span><span class="s2">&quot;poller*&quot;</span>
+</code></pre></div>
+<details>
+  <summary>Alternative: Start Harvest Directly</summary>
+
+  If you would rather start Harvest directly and kick the tires before creating a service file, you can run the following command to start Harvest:
+
+  <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+bin/harvest<span class="w"> </span>start
+</code></pre></div>
+
+  Verify that the pollers have started successfully by checking their status:
+
+  <div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>status
+</code></pre></div>
+
+  The output should look similar to this:
+
+  <div class="highlight"><pre><span></span><code>Datacenter | Poller  |   PID   | PromPort | Status
+-----------+---------+---------+----------+----------
+DC-01      | jamaica | 1280145 |    13000 | running
+</code></pre></div>
+
+    <p>The <a href="https://netapp.github.io/harvest/latest/help/log-collection/">logs</a> of each poller can be found in <code>/var/log/harvest/</code>.</p>
+</details>
+
+<h3 id="8-add-prometheus-datasource-in-grafana">8. Add Prometheus Datasource in Grafana<a class="headerlink" href="#8-add-prometheus-datasource-in-grafana" title="Permanent link">&para;</a></h3>
+<p>To add a Prometheus datasource in Grafana, follow these steps:</p>
+<ol>
+<li>Open your web browser and navigate to Grafana (<a href="http://localhost:3000">http://localhost:3000</a>). When prompted for credentials, use Grafana defaults admin/admin. You should change the default credentials once you log in.</li>
+<li>Navigate to the data sources section by visiting <a href="http://localhost:3000/connections/datasources">http://localhost:3000/connections/datasources</a> or by clicking the hamburger menu (three horizontal lines) at the top-left of the page and navigate to <strong>Connections</strong> and then <strong>Data Sources</strong>.</li>
+<li>Click on <strong>Add data source</strong>.</li>
+<li>Select <strong>Prometheus</strong> from the list of available data sources.</li>
+<li>In the <strong>Prometheus server URL</strong> field, enter (<a href="http://localhost:9090">http://localhost:9090</a>).</li>
+<li>Click on <strong>Save and test</strong>.</li>
+<li>At the bottom of the page, you should see the message 'Successfully queried the Prometheus API.'
+For detailed instructions, please refer to the <a href="https://grafana.com/docs/grafana/latest/datasources/prometheus/configure-prometheus-data-source/">configure Prometheus Data Source documentation</a>.</li>
+</ol>
+<h3 id="9-generate-grafana-api-token">9. Generate Grafana API Token<a class="headerlink" href="#9-generate-grafana-api-token" title="Permanent link">&para;</a></h3>
+<p>To import Grafana dashboards using the <code>bin/harvest grafana import</code> command, you need a Grafana API token. Follow these steps to generate it:</p>
+<ol>
+<li>Open your web browser and navigate to Grafana (<a href="http://localhost:3000">http://localhost:3000</a>). Enter your Grafana credentials to log in. The default username and password are <code>admin</code>.</li>
+<li>Click the hamburger menu (three horizontal lines) at the top-left of the page and Navigate to <strong>Administration</strong> -&gt; <strong>Users and access</strong> and then select <strong>Service Account</strong>.</li>
+<li>Click on <strong>Add Service Account</strong>.</li>
+<li>Enter the display name <strong>Harvest</strong>.</li>
+<li>Set the role to <strong>Editor</strong>.</li>
+<li>Click on <strong>Create</strong>. The service account will appear in the dashboard.</li>
+<li>Navigate back to <strong>Service Account</strong>.</li>
+<li>Click on <strong>Add service account token</strong> for the Harvest service account.</li>
+<li>Click on <strong>Generate Token</strong>.</li>
+<li>Click on <strong>Copy to clipboard and close</strong>.</li>
+</ol>
+<p><strong>IMPORTANT:</strong> This is the only opportunity to save the token. Immediately paste it into a text file and save it. The token will be needed by Harvest later on.</p>
+<p>For detailed instructions, please refer to the <a href="https://grafana.com/docs/grafana/latest/administration/api-keys/">Grafana API Keys documentation</a>.</p>
+<h3 id="10-import-grafana-dashboards">10. Import Grafana Dashboards<a class="headerlink" href="#10-import-grafana-dashboards" title="Permanent link">&para;</a></h3>
+<p>To import Grafana dashboards, use the following command:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+bin/harvest<span class="w"> </span>grafana<span class="w"> </span>import<span class="w"> </span>--token<span class="w"> </span>YOUR_TOKEN_HERE
+</code></pre></div>
+<p>Replace <code>YOUR_TOKEN_HERE</code> with the token obtained in step 10.</p>
+<p>You will be prompted to save your API key (token) for later use. Press <code>n</code> to not save the token in your harvest.yml file.</p>
+<p>After a few seconds, all the dashboards will be imported into Grafana.</p>
+<h3 id="9-verify-dashboards-in-grafana">9. Verify Dashboards in Grafana<a class="headerlink" href="#9-verify-dashboards-in-grafana" title="Permanent link">&para;</a></h3>
+<p>After adding the Prometheus datasource, you can verify that your dashboards are correctly displaying data. Follow these steps:</p>
+<ol>
+<li>Open your web browser and navigate to Grafana (<a href="http://localhost:3000">http://localhost:3000</a>). Enter your Grafana credentials to log in. The default username and password are <code>admin</code>.</li>
+<li>Click on the "three lines" button (also known as the hamburger menu) in the top left corner of the Grafana interface. From the menu, select <strong>Dashboards</strong>.</li>
+<li>Open the <a href="http://localhost:3000/d/cdot-volume/ontap3a-volume?orgId=1">Volume</a> dashboard. Once the dashboard opens, you should see volume data displayed.</li>
+</ol>
+<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
+<p>If you encounter issues, check the logs in <code>/var/log/harvest</code> and refer to the <a href="https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest">troubleshooting</a> section on the wiki.
+You can also reach out for help on <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help">Discord</a> or via email at ng-harvest-files@netapp.com.</p>
+<h3 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h3>
+<p>🎊 Congratulations! You have successfully set up NetApp Harvest, Prometheus, and Grafana.
+Enjoy monitoring your systems and feel free to reach out on <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help">Discord, GitHub, or email</a>.</p>
 
 
 
