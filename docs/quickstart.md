@@ -1,6 +1,6 @@
 Welcome to the NetApp Harvest Getting Started Guide. This tutorial will guide you through the steps required to deploy an instance of NetApp Harvest, Prometheus, and Grafana on a Linux platform to monitor an ONTAP cluster.
 
-This tutorial uses systemd to manage Harvest, Prometheus, and Grafana. If you would rather, run the processes directly, feel free to ignore the sections of the tutorial that setup systemd service files.
+This tutorial uses `systemd` to manage Harvest, Prometheus, and Grafana. If you would rather, run the processes directly, feel free to ignore the sections of the tutorial that setup `systemd` service files.
 
 ### 1. Set Installation Path
 
@@ -53,11 +53,9 @@ Documentation=https://prometheus.io/docs/introduction/overview/
 After=network-online.target
 
 [Service]
-Environment="HARVEST_INSTALL_PATH=$HARVEST_INSTALL_PATH"
-Environment="PROMETHEUS_VERSION=$PROMETHEUS_VERSION"
 User=root
 Restart=on-failure
-ExecStart=/bin/bash -c '\${HARVEST_INSTALL_PATH}/prometheus-\${PROMETHEUS_VERSION}/prometheus --config.file=\${HARVEST_INSTALL_PATH}/prometheus-\${PROMETHEUS_VERSION}/prometheus.yml'
+ExecStart=${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus --config.file=${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus.yml
 
 [Install]
 WantedBy=multi-user.target
@@ -117,11 +115,9 @@ Documentation=https://grafana.com/docs/grafana/latest/setup-grafana/installation
 After=network-online.target
 
 [Service]
-Environment="HARVEST_INSTALL_PATH=$HARVEST_INSTALL_PATH"
-Environment="GRAFANA_VERSION=$GRAFANA_VERSION"
 User=root
 Restart=on-failure
-ExecStart=/bin/bash -c '\${HARVEST_INSTALL_PATH}/grafana-v\${GRAFANA_VERSION}/bin/grafana-server --config=\${HARVEST_INSTALL_PATH}/grafana-v\${GRAFANA_VERSION}/conf/defaults.ini --homepath=\${HARVEST_INSTALL_PATH}/grafana-v\${GRAFANA_VERSION}'
+ExecStart=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}
 
 [Install]
 WantedBy=multi-user.target
@@ -251,13 +247,11 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-Environment="HARVEST_INSTALL_PATH=$HARVEST_INSTALL_PATH"
-Environment="HARVEST_VERSION=$HARVEST_VERSION"
 User=harvest
 Group=harvest
 Type=simple
 Restart=on-failure
-ExecStart=/bin/bash -c 'cd \${HARVEST_INSTALL_PATH}/harvest-\${HARVEST_VERSION}-1_linux_amd64 && \${HARVEST_INSTALL_PATH}/harvest-\${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config \${HARVEST_INSTALL_PATH}/harvest-\${HARVEST_VERSION}-1_linux_amd64/harvest.yml start -f %i'
+ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start -f %i
 
 [Install]
 WantedBy=harvest.target
