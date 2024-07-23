@@ -45,7 +45,7 @@ func TestHandlingQuotaMetrics(t *testing.T) {
 	// Case 1: with historicalLabels = false
 	q1 := NewQtree()
 	q1.historicalLabels = false
-	testLabels(t, q1, quotas, nil, "astra_300"+"."+"trident_qtree_pool_trident_TIXRBILLKA"+"."+"trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9"+"."+""+"."+"disk-limit"+"."+"tree", 3, 6, 5)
+	testLabels(t, q1, quotas, nil, "astra_300.trident_qtree_pool_trident_TIXRBILLKA.trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9..disk-limit.tree", 3, 6, 5)
 
 	// Case 2: with historicalLabels = true
 	q2 := NewQtree()
@@ -65,7 +65,7 @@ func TestHandlingQuotaMetrics(t *testing.T) {
 	}
 	q2.data.SetExportOptions(exportOptions)
 	q2.historicalLabels = true
-	testLabels(t, q2, quotas, data, "abcde"+"."+"abcd_root"+"."+""+"."+"root"+"."+"disk-used"+"."+"user", 3, 4, 10)
+	testLabels(t, q2, quotas, data, "abcde.abcd_root..root.disk-used.user", 3, 4, 10)
 }
 
 func testLabels(t *testing.T, q *Qtree, quotas []*node.Node, data *matrix.Matrix, quotaInstanceKey string, expectedQuotaCount int, expectedQuotaMetricCount int, expectedQuotaLabels int) {

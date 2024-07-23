@@ -30,7 +30,7 @@ func TestHandlingQuotaMetrics(t *testing.T) {
 	// Case 1: with historicalLabels = false
 	q1 := NewQtree()
 	q1.historicalLabels = false
-	testLabels(t, q1, result, nil, "astra_300"+"."+"trident_qtree_pool_trident_TIXRBILLKA"+"."+"trident_pvc_19913841_a29f_4a54_8bc0_a3c1c4155826"+"."+""+"."+""+"."+"space.hard_limit", 3, 6, 5)
+	testLabels(t, q1, result, nil, "astra_300.trident_qtree_pool_trident_TIXRBILLKA.trident_pvc_19913841_a29f_4a54_8bc0_a3c1c4155826...space.hard_limit", 3, 6, 5)
 
 	// Case 2: with historicalLabels = true
 	q2 := NewQtree()
@@ -50,7 +50,7 @@ func TestHandlingQuotaMetrics(t *testing.T) {
 	}
 	q2.data.SetExportOptions(exportOptions)
 	q2.historicalLabels = true
-	testLabels(t, q2, result, data, "abcde"+"."+"abcd_root"+"."+""+"."+""+"."+"root"+"."+"space.used.total", 3, 4, 10)
+	testLabels(t, q2, result, data, "abcde.abcd_root...root.space.used.total", 3, 4, 10)
 }
 
 func testLabels(t *testing.T, q *Qtree, quotas []gjson.Result, data *matrix.Matrix, quotaInstanceKey string, expectedQuotaCount int, expectedQuotaMetricCount int, expectedQuotaLabels int) {

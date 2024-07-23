@@ -314,6 +314,12 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 					return err
 				}
 
+				// set labels
+				quotaInstance.SetLabel("type", quotaType)
+				quotaInstance.SetLabel("qtree", tree)
+				quotaInstance.SetLabel("volume", volume)
+				quotaInstance.SetLabel("svm", vserver)
+
 				// In 22.05, populate metrics with qtree labels
 				if q.historicalLabels {
 					for _, label := range q.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
@@ -321,13 +327,11 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 							quotaInstance.SetLabel(label, value)
 						}
 					}
+					// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
+					if tree == "" {
+						quotaInstance.SetLabel("qtree", volume)
+					}
 				}
-
-				// set labels
-				quotaInstance.SetLabel("type", quotaType)
-				quotaInstance.SetLabel("qtree", tree)
-				quotaInstance.SetLabel("volume", volume)
-				quotaInstance.SetLabel("svm", vserver)
 
 				if quotaType == "user" {
 					if uName != "" {
@@ -341,11 +345,6 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 					} else if uid != "" {
 						quotaInstance.SetLabel("group", uid)
 					}
-				}
-
-				// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
-				if tree == "" {
-					quotaInstance.SetLabel("qtree", volume)
 				}
 
 				// populate numeric data
