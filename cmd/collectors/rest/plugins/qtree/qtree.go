@@ -14,7 +14,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -106,7 +105,6 @@ func (q *Qtree) Init() error {
 		}
 
 		instanceKeys.NewChildS("", "type")
-		instanceKeys.NewChildS("", "index")
 		instanceKeys.NewChildS("", "unit")
 
 		q.data.SetExportOptions(exportOptions)
@@ -175,15 +173,9 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	}
 
 	quotaCount := 0
-	cluster := data.GetGlobalLabels()["cluster"]
 
-	if q.historicalLabels {
-		// In 22.05, populate metrics with qtree prefix and old labels
-		err = q.handlingHistoricalMetrics(result, data, cluster, &quotaCount, &numMetrics)
-	} else {
-		// Populate metrics with quota prefix and current labels
-		err = q.handlingQuotaMetrics(result, &quotaCount, &numMetrics)
-	}
+	// Populate metrics with quota prefix
+	err = q.handlingQuotaMetrics(result, data, &quotaCount, &numMetrics)
 
 	if err != nil {
 		return nil, nil, err
@@ -207,109 +199,11 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	return []*matrix.Matrix{q.data}, q.client.Metadata, nil
 }
 
-func (q *Qtree) handlingHistoricalMetrics(result []gjson.Result, data *matrix.Matrix, cluster string, quotaIndex *int, numMetrics *int) error {
+func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, data *matrix.Matrix, quotaCount *int, numMetrics *int) error {
 	for _, quota := range result {
 		var tree string
-		var quotaInstance *matrix.Instance
-		var err error
-
-		if !quota.IsObject() {
-			q.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
-			return errs.New(errs.ErrNoInstance, "quota is not an object")
-		}
-
-		if quota.Get("qtree.name").Exists() {
-			tree = quota.Get("qtree.name").String()
-		}
-		volume := quota.Get("volume.name").String()
-		vserver := quota.Get("svm.name").String()
-		qIndex := quota.Get("index").String()
-		quotaType := quota.Get("type").String()
-
-		// If quota-type is not a tree, then skip
-		if quotaType != "tree" {
-			continue
-		}
-
-		// Ex. InstanceKey: vserver1vol1qtree15989279
-		quotaInstanceKey := vserver + volume + tree + qIndex
-
-		if quotaInstance = q.data.GetInstance(quotaInstanceKey); quotaInstance == nil {
-			if quotaInstance, err = q.data.NewInstance(quotaInstanceKey); err != nil {
-				q.Logger.Error().Stack().Err(err).Str("quotaInstanceKey", quotaInstanceKey).Msg("Failed to create quota instance")
-				return err
-			}
-		}
-
-		// qtree instancekey would be qtree, svm and volume(sorted keys)
-		qtreeInstance := data.GetInstance(tree + vserver + volume)
-		if qtreeInstance == nil {
-			q.Logger.Warn().
-				Str("tree", tree).
-				Str("volume", volume).
-				Str("vserver", vserver).
-				Msg("No instance matching tree.vserver.volume")
-			continue
-		}
-
-		if !qtreeInstance.IsExportable() {
-			continue
-		}
-
-		for _, label := range q.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
-			if value := qtreeInstance.GetLabel(label); value != "" {
-				quotaInstance.SetLabel(label, value)
-			}
-		}
-
-		// set labels
-		quotaInstance.SetLabel("type", quotaType)
-		quotaInstance.SetLabel("qtree", tree)
-		quotaInstance.SetLabel("volume", volume)
-		quotaInstance.SetLabel("svm", vserver)
-		quotaInstance.SetLabel("index", cluster+"_"+strconv.Itoa(*quotaIndex))
-
-		// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
-		if tree == "" {
-			quotaInstance.SetLabel("qtree", volume)
-		}
-
-		*quotaIndex++
-		for attribute, m := range q.data.GetMetrics() {
-			value := 0.0
-
-			if attrValue := quota.Get(attribute); attrValue.Exists() {
-				// space limits are in bytes, converted to kilobytes
-				if attribute == "space.hard_limit" || attribute == "space.soft_limit" {
-					value = attrValue.Float() / 1024
-					quotaInstance.SetLabel("unit", "Kbyte")
-					if attribute == "space.soft_limit" {
-						t := q.data.GetMetric("threshold")
-						if err = t.SetValueFloat64(quotaInstance, value); err != nil {
-							q.Logger.Error().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
-						} else {
-							*numMetrics++
-						}
-					}
-				} else {
-					value = attrValue.Float()
-				}
-			}
-
-			// populate numeric data
-			if err = m.SetValueFloat64(quotaInstance, value); err != nil {
-				q.Logger.Error().Stack().Err(err).Str("attribute", attribute).Float64("value", value).Msg("Failed to parse value")
-			} else {
-				*numMetrics++
-			}
-		}
-	}
-	return nil
-}
-
-func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, numMetrics *int) error {
-	for _, quota := range result {
-		var tree string
+		var qtreeInstance *matrix.Instance
+		var value float64
 
 		if !quota.IsObject() {
 			q.Logger.Error().Str("type", quota.Type.String()).Msg("Quota is not an object, skipping")
@@ -327,9 +221,31 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, num
 		group := quota.Get("group.name").String()
 		*quotaCount++
 
+		// In 22.05, populate metrics with qtree labels
+		if q.historicalLabels {
+			// qtree instancekey would be qtree, svm and volume(sorted keys)
+			qtreeInstance = data.GetInstance(tree + vserver + volume)
+			if qtreeInstance == nil {
+				q.Logger.Warn().
+					Str("tree", tree).
+					Str("volume", volume).
+					Str("vserver", vserver).
+					Msg("No instance matching tree.vserver.volume")
+				continue
+			}
+			if !qtreeInstance.IsExportable() {
+				continue
+			}
+		}
+
 		for attribute, m := range q.data.GetMetrics() {
-			// set -1 for unlimited
-			value := -1.0
+			// In 22.05, populate metrics value with 0
+			if q.historicalLabels {
+				value = 0.0
+			} else {
+				// set -1 for unlimited
+				value = -1.0
+			}
 
 			quotaInstanceKey := vserver + "." + volume + "." + tree + "." + group + "." + uName + "." + attribute
 
@@ -338,11 +254,26 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, num
 				q.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
 				return err
 			}
+
+			// In 22.05, populate metrics with qtree labels
+			if q.historicalLabels {
+				for _, label := range q.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
+					if val := qtreeInstance.GetLabel(label); val != "" {
+						quotaInstance.SetLabel(label, val)
+					}
+				}
+			}
+
 			// set labels
 			quotaInstance.SetLabel("type", quotaType)
 			quotaInstance.SetLabel("qtree", tree)
 			quotaInstance.SetLabel("volume", volume)
 			quotaInstance.SetLabel("svm", vserver)
+
+			// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.
+			if tree == "" {
+				quotaInstance.SetLabel("qtree", volume)
+			}
 
 			if quotaType == "user" {
 				if uName != "" {
@@ -357,6 +288,7 @@ func (q *Qtree) handlingQuotaMetrics(result []gjson.Result, quotaCount *int, num
 					quotaInstance.SetLabel("group", uid)
 				}
 			}
+
 			if attrValue := quota.Get(attribute); attrValue.Exists() {
 				// space limits are in bytes, converted to kilobytes to match ZAPI
 				if attribute == "space.hard_limit" || attribute == "space.soft_limit" || attribute == "space.used.total" {
