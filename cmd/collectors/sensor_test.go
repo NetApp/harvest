@@ -7,8 +7,10 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/tidwall/gjson"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -161,4 +163,52 @@ func TestSensor_Run(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestPowerRegex(t *testing.T) {
+	tests := []struct {
+		name        string
+		path        string
+		wantPower   int
+		wantCurrent int
+		wantVoltage int
+	}{
+		{name: "a1000", path: "testdata/rest-sensors-a1000.json", wantPower: 4, wantCurrent: 4, wantVoltage: 4},
+		{name: "a900", path: "testdata/rest-sensors-a900.json", wantPower: 0, wantCurrent: 4, wantVoltage: 4},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data, err := os.ReadFile(tt.path)
+			if err != nil {
+				panic(err)
+			}
+			powerMatches := countMatches(powerInRegex, data)
+			if powerMatches != tt.wantPower {
+				t.Errorf("power regex\ngot=%v\nwant=%v", powerMatches, tt.wantPower)
+			}
+
+			currentMatches := countMatches(currentRegex, data)
+			if currentMatches != tt.wantCurrent {
+				t.Errorf("current regex\ngot=%v\nwant=%v", currentMatches, tt.wantCurrent)
+			}
+
+			voltageMatches := countMatches(voltageRegex, data)
+			if voltageMatches != tt.wantVoltage {
+				t.Errorf("voltage regex\ngot=%v\nwant=%v", voltageMatches, tt.wantVoltage)
+			}
+		})
+	}
+}
+
+func countMatches(sensorRegex *regexp.Regexp, data []byte) int {
+	names := gjson.GetBytes(data, "records.#.name").Array()
+	matches := 0
+	for _, name := range names {
+		if sensorRegex.MatchString(name.String()) {
+			matches++
+		}
+	}
+
+	return matches
 }

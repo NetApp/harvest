@@ -1,0 +1,200 @@
+{
+  "records": [
+    {
+      "node": {
+        "uuid": "2a094823-3352-11ef-bdec-d039ea48b049",
+        "name": "a900-1-01",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/2a094823-3352-11ef-bdec-d039ea48b049"
+          }
+        }
+      },
+      "index": 73,
+      "name": "PSU2 AC In Volt",
+      "type": "voltage",
+      "value": 213000,
+      "value_units": "mV",
+      "threshold_state": "normal",
+      "critical_low_threshold": 88000,
+      "warning_low_threshold": 90000,
+      "critical_high_threshold": 255000,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/2a094823-3352-11ef-bdec-d039ea48b049/73"
+        }
+      }
+    }
+    {
+      "node": {
+        "uuid": "2a094823-3352-11ef-bdec-d039ea48b049",
+        "name": "a900-1-01",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/2a094823-3352-11ef-bdec-d039ea48b049"
+          }
+        }
+      },
+      "index": 74,
+      "name": "PSU2 AC In Curr",
+      "type": "current",
+      "value": 2450,
+      "value_units": "mA",
+      "threshold_state": "normal",
+      "warning_high_threshold": 14000,
+      "critical_high_threshold": 14980,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/2a094823-3352-11ef-bdec-d039ea48b049/74"
+        }
+      }
+    }
+    {
+      "node": {
+        "uuid": "2a094823-3352-11ef-bdec-d039ea48b049",
+        "name": "a900-1-01",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/2a094823-3352-11ef-bdec-d039ea48b049"
+          }
+        }
+      },
+      "index": 78,
+      "name": "PSU4 AC In Volt",
+      "type": "voltage",
+      "value": 213000,
+      "value_units": "mV",
+      "threshold_state": "normal",
+      "critical_low_threshold": 88000,
+      "warning_low_threshold": 90000,
+      "critical_high_threshold": 255000,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/2a094823-3352-11ef-bdec-d039ea48b049/78"
+        }
+      }
+    }
+    {
+      "node": {
+        "uuid": "2a094823-3352-11ef-bdec-d039ea48b049",
+        "name": "a900-1-01",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/2a094823-3352-11ef-bdec-d039ea48b049"
+          }
+        }
+      },
+      "index": 79,
+      "name": "PSU4 AC In Curr",
+      "type": "current",
+      "value": 2240,
+      "value_units": "mA",
+      "threshold_state": "normal",
+      "warning_high_threshold": 14000,
+      "critical_high_threshold": 14980,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/2a094823-3352-11ef-bdec-d039ea48b049/79"
+        }
+      }
+    }
+    {
+      "node": {
+        "uuid": "853459cb-3352-11ef-bd03-d039ea482ffa",
+        "name": "a900-1-02",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/853459cb-3352-11ef-bd03-d039ea482ffa"
+          }
+        }
+      },
+      "index": 73,
+      "name": "PSU1 AC In Volt",
+      "type": "voltage",
+      "value": 213000,
+      "value_units": "mV",
+      "threshold_state": "normal",
+      "critical_low_threshold": 88000,
+      "warning_low_threshold": 90000,
+      "critical_high_threshold": 255000,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/853459cb-3352-11ef-bd03-d039ea482ffa/73"
+        }
+      }
+    }
+    {
+      "node": {
+        "uuid": "853459cb-3352-11ef-bd03-d039ea482ffa",
+        "name": "a900-1-02",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/853459cb-3352-11ef-bd03-d039ea482ffa"
+          }
+        }
+      },
+      "index": 74,
+      "name": "PSU1 AC In Curr",
+      "type": "current",
+      "value": 2450,
+      "value_units": "mA",
+      "threshold_state": "normal",
+      "warning_high_threshold": 14000,
+      "critical_high_threshold": 14980,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/853459cb-3352-11ef-bd03-d039ea482ffa/74"
+        }
+      }
+    }
+    {
+      "node": {
+        "uuid": "853459cb-3352-11ef-bd03-d039ea482ffa",
+        "name": "a900-1-02",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/853459cb-3352-11ef-bd03-d039ea482ffa"
+          }
+        }
+      },
+      "index": 78,
+      "name": "PSU3 AC In Volt",
+      "type": "voltage",
+      "value": 213000,
+      "value_units": "mV",
+      "threshold_state": "normal",
+      "critical_low_threshold": 88000,
+      "warning_low_threshold": 90000,
+      "critical_high_threshold": 255000,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/853459cb-3352-11ef-bd03-d039ea482ffa/78"
+        }
+      }
+    }
+    {
+      "node": {
+        "uuid": "853459cb-3352-11ef-bd03-d039ea482ffa",
+        "name": "a900-1-02",
+        "_links": {
+          "self": {
+            "href": "/api/cluster/nodes/853459cb-3352-11ef-bd03-d039ea482ffa"
+          }
+        }
+      },
+      "index": 79,
+      "name": "PSU3 AC In Curr",
+      "type": "current",
+      "value": 2240,
+      "value_units": "mA",
+      "threshold_state": "normal",
+      "warning_high_threshold": 14000,
+      "critical_high_threshold": 14980,
+      "_links": {
+        "self": {
+          "href": "/api/cluster/sensors/853459cb-3352-11ef-bd03-d039ea482ffa/79"
+        }
+      }
+    }
+  ]
+}

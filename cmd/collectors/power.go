@@ -79,11 +79,11 @@ type environmentMetric struct {
 
 var ambientRegex = regexp.MustCompile(`^(Ambient Temp|Ambient Temp \d|PSU\d AmbTemp|PSU\d Inlet|PSU\d Inlet Temp|In Flow Temp|Front Temp|Bat_Ambient \d|Riser Inlet Temp)$`)
 
-var powerInRegex = regexp.MustCompile(`^PSU\d (InPwr Monitor|InPower|PIN|Power In)$`)
+var powerInRegex = regexp.MustCompile(`^PSU\d (InPwr Monitor|InPower|PIN|Power In|In Pwr)$`)
 
-var voltageRegex = regexp.MustCompile(`^PSU\d (\d+V|InVoltage|VIN|AC In Volt)$`)
+var voltageRegex = regexp.MustCompile(`^PSU\d (\d+V|InVoltage|VIN|AC In Volt|In Volt)$`)
 
-var CurrentRegex = regexp.MustCompile(`^PSU\d (\d+V Curr|Curr|InCurrent|Curr IIN|AC In Curr)$`)
+var currentRegex = regexp.MustCompile(`^PSU\d (\d+V Curr|Curr|InCurrent|Curr IIN|AC In Curr|In Curr)$`)
 
 var eMetrics = []string{
 	"average_ambient_temperature",
@@ -128,7 +128,7 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 			isAmbientMatch := ambientRegex.MatchString(sensorName)
 			isPowerMatch := powerInRegex.MatchString(sensorName)
 			isVoltageMatch := voltageRegex.MatchString(sensorName)
-			isCurrentMatch := CurrentRegex.MatchString(sensorName)
+			isCurrentMatch := currentRegex.MatchString(sensorName)
 
 			if sensorType == "thermal" && isAmbientMatch {
 				if value, ok := metric.GetValueFloat64(instance); ok {
