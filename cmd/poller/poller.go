@@ -67,6 +67,7 @@ import (
 	"os/signal"
 	"regexp"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -301,10 +302,7 @@ func (p *Poller) Init() error {
 	}
 
 	// for each object, only allow one of config & perf collectors to start
-	uniqueOCs := make([]objectCollector, 0, len(objectsToCollectors))
-	for _, collectors := range objectsToCollectors {
-		uniqueOCs = append(uniqueOCs, nonOverlappingCollectors(collectors)...)
-	}
+	uniqueOCs := uniquifyObjectCollectors(objectsToCollectors)
 
 	// start the uniqueified collectors
 	err = p.loadCollectorObject(uniqueOCs)
@@ -390,6 +388,59 @@ func (p *Poller) Init() error {
 
 	return nil
 
+}
+
+func uniquifyObjectCollectors(objectsToCollectors map[string][]objectCollector) []objectCollector {
+	uniqueOCs := make([]objectCollector, 0, len(objectsToCollectors))
+
+	specialCaseQtree(objectsToCollectors)
+
+	for _, collectors := range objectsToCollectors {
+		uniqueOCs = append(uniqueOCs, nonOverlappingCollectors(collectors)...)
+	}
+
+	return uniqueOCs
+}
+
+func specialCaseQtree(objectsToCollectors map[string][]objectCollector) {
+	// ZAPI Qtree also publishes quota metrics. This means that if ZAPI Qtree
+	// appears earlier in the slice than REST Qtree, REST Quota should be
+	// disabled to prevent both ZAPI Qtree and REST Quota from publishing
+	// quota metrics simultaneously.
+
+	qtreeCollectors := objectsToCollectors["Qtree"]
+	quotaCollectors := objectsToCollectors["Quota"]
+	zapiQtreeWillRun := false
+
+	if len(quotaCollectors) == 0 {
+		return
+	}
+
+	qtreeNoOverlaps := nonOverlappingCollectors(qtreeCollectors)
+	for _, oc := range qtreeNoOverlaps {
+		if oc.class == "Zapi" {
+			zapiQtreeWillRun = true
+			break
+		}
+	}
+
+	if !zapiQtreeWillRun {
+		return
+	}
+
+	// Disable REST Quota, if it is enabled
+	quotaNoOverlaps := nonOverlappingCollectors(quotaCollectors)
+	deleteIndex := -1
+	for i, oc := range quotaNoOverlaps {
+		if oc.class == "Rest" {
+			deleteIndex = i
+			break
+		}
+	}
+	if deleteIndex != -1 {
+		quotaNoOverlaps = slices.Delete(quotaNoOverlaps, deleteIndex, deleteIndex+1)
+		objectsToCollectors["Quota"] = quotaNoOverlaps
+	}
 }
 
 func (p *Poller) firstAutoSupport() {
