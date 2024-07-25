@@ -3,9 +3,11 @@ package main
 import (
 	"errors"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -209,4 +211,51 @@ func ocs(names ...string) []objectCollector {
 		collectors = append(collectors, objectCollector{class: n})
 	}
 	return collectors
+}
+
+func Test_uniquifyObjectCollectors(t *testing.T) {
+	tests := []struct {
+		name string
+		args map[string][]objectCollector
+		want []objectCollector
+	}{
+		{name: "empty", args: make(map[string][]objectCollector), want: []objectCollector{}},
+		{name: "volume-rest", args: objectCollectorMap("Volume: Rest, Zapi"), want: []objectCollector{{class: "Rest", object: "Volume"}}},
+		{name: "qtree-rest", args: objectCollectorMap("Qtree: Rest, Zapi"), want: []objectCollector{{class: "Rest", object: "Qtree"}}},
+		{name: "qtree-zapi", args: objectCollectorMap("Qtree: Zapi, Rest"), want: []objectCollector{{class: "Zapi", object: "Qtree"}}},
+		{name: "qtree-rest-quota", args: objectCollectorMap("Qtree: Rest, Zapi", "Quota: Rest"),
+			want: []objectCollector{{class: "Rest", object: "Qtree"}, {class: "Rest", object: "Quota"}}},
+		{name: "qtree-zapi-disable-quota", args: objectCollectorMap("Qtree: Zapi, Rest", "Quota: Rest"),
+			want: []objectCollector{{class: "Zapi", object: "Qtree"}}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := uniquifyObjectCollectors(tt.args)
+
+			diff := cmp.Diff(got, tt.want, cmp.AllowUnexported(objectCollector{}), cmpopts.SortSlices(func(a, b objectCollector) bool {
+				return a.class+a.object < b.class+b.object
+			}))
+
+			if diff != "" {
+				t.Errorf("Mismatch (-got +want):\n%s", diff)
+			}
+		})
+	}
+}
+
+func objectCollectorMap(constructors ...string) map[string][]objectCollector {
+	objectsToCollectors := make(map[string][]objectCollector)
+
+	for _, template := range constructors {
+		before, after, _ := strings.Cut(template, ":")
+		object := before
+		classes := strings.Split(after, ",")
+		for _, class := range classes {
+			class := strings.TrimSpace(class)
+			objectsToCollectors[object] = append(objectsToCollectors[object], objectCollector{class: class, object: object})
+		}
+	}
+
+	return objectsToCollectors
 }
