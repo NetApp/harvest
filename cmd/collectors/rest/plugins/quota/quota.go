@@ -2,16 +2,12 @@ package quota
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"time"
 )
 
 type Quota struct {
 	*plugin.AbstractPlugin
-	client       *rest.Client
 	qtreeMetrics bool // supports quota metrics with qtree prefix
 }
 
@@ -20,26 +16,6 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (q *Quota) Init() error {
-	if err := q.InitAbc(); err != nil {
-		return err
-	}
-
-	clientTimeout := q.ParentParams.GetChildContentS("client_timeout")
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	duration, err := time.ParseDuration(clientTimeout)
-	if err == nil {
-		timeout = duration
-	} else {
-		q.Logger.Info().Str("timeout", timeout.String()).Msg("Using default timeout")
-	}
-	if q.client, err = rest.New(conf.ZapiPoller(q.ParentParams), timeout, q.Auth); err != nil {
-		q.Logger.Error().Stack().Err(err).Msg("connecting")
-		return err
-	}
-
-	if err := q.client.Init(5); err != nil {
-		return err
-	}
 	if q.Params.HasChildS("qtreeMetrics") {
 		q.qtreeMetrics = true
 	}
@@ -48,7 +24,6 @@ func (q *Quota) Init() error {
 
 func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[q.Object]
-	q.client.Metadata.Reset()
 
 	// Purge and reset data
 	instanceMap := data.GetInstances()
@@ -73,9 +48,9 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		qtreePluginData.UUID = q.Parent + ".Qtree"
 		qtreePluginData.Object = "qtree"
 		qtreePluginData.Identifier = "qtree"
-		return []*matrix.Matrix{qtreePluginData}, q.client.Metadata, nil
+		return []*matrix.Matrix{qtreePluginData}, nil, nil
 	}
-	return nil, q.client.Metadata, nil
+	return nil, nil, nil
 }
 
 func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix) error {
