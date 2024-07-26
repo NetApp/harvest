@@ -5,6 +5,9 @@ Follow the instructions specific to your platform.
 If you would like to share the collected logs with the Harvest team,
 please email them to [ng-harvest-files@netapp.com](mailto:ng-harvest-files@netapp.com).
 
+If the files are too large to email, let us know at the address above or on [Discord](https://github.com/NetApp/harvest/blob/main/SUPPORT.md#discord), 
+and we'll send you a file sharing link to upload your files.
+
 ## RPM, DEB, and Native Installations
 
 For RPM, DEB, and native installations, use the following command to create a compressed tar file containing the logs:
@@ -25,7 +28,12 @@ docker logs <container_id> &> harvest_logs.txt && tar -czvf harvest_logs.tar.gz 
 
 This command will create a file named `harvest_logs.tar.gz` containing the logs from the specified container.
 
-## NABox
+## NABox 4
+
+Collect a support bundle from the NABox web interface by clicking the `About` button in the left gutter and
+then clicking the `Download Support Bundle` button. 
+
+## NABox 3
 
 For NABox installations,
 [ssh](https://nabox.org/documentation/configuration/) into your nabox instance,
