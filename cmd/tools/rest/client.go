@@ -41,6 +41,7 @@ type Client struct {
 	Logger   *logging.Logger
 	baseURL  string
 	cluster  Cluster
+	token    string
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
 	auth     *auth.Credentials
@@ -133,9 +134,13 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if pollerAuth.Username != "" {
+	if pollerAuth.AuthToken != "" {
+		c.request.Header.Set("Authorization", "Bearer "+pollerAuth.AuthToken)
+		c.Logger.Debug().Msg("Using authToken from credential script")
+	} else if pollerAuth.Username != "" {
 		c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 	}
+
 	// ensure that we can change body dynamically
 	c.request.GetBody = func() (io.ReadCloser, error) {
 		r := bytes.NewReader(c.buffer.Bytes())
@@ -252,6 +257,13 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 					pollerAuth2, err2 := c.auth.GetPollerAuth()
 					if err2 != nil {
 						return nil, err2
+					}
+					// If the credential script returns an authToken, use it without re-fetching
+					if pollerAuth.AuthToken != "" {
+						c.token = pollerAuth.AuthToken
+						c.request.Header.Set("Authorization", "Bearer "+c.token)
+						c.Logger.Debug().Msg("Using authToken from credential script")
+						return doInvoke()
 					}
 					c.request.SetBasicAuth(pollerAuth2.Username, pollerAuth2.Password)
 					return doInvoke()
