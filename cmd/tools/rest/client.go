@@ -129,6 +129,7 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	c.request.Header.Set("Accept", "application/json")
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
 		return nil, err
@@ -136,11 +137,8 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	if pollerAuth.AuthToken != "" {
 		c.request.Header.Set("Authorization", "Bearer "+pollerAuth.AuthToken)
 		c.Logger.Debug().Msg("Using authToken from credential script")
-	} else {
-		c.request.Header.Set("Accept", "application/json")
-		if pollerAuth.Username != "" {
-			c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
-		}
+	} else if pollerAuth.Username != "" {
+		c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 	}
 
 	// ensure that we can change body dynamically
