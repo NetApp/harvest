@@ -1229,9 +1229,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nabox" class="md-nav__link">
+  <a href="#nabox-4" class="md-nav__link">
     <span class="md-ellipsis">
-      NABox
+      NABox 4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nabox-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      NABox 3
     </span>
   </a>
   
@@ -1638,9 +1647,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nabox" class="md-nav__link">
+  <a href="#nabox-4" class="md-nav__link">
     <span class="md-ellipsis">
-      NABox
+      NABox 4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nabox-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      NABox 3
     </span>
   </a>
   
@@ -1666,6 +1684,8 @@
 Follow the instructions specific to your platform.
 If you would like to share the collected logs with the Harvest team,
 please email them to <a href="mailto:ng-harvest-files@netapp.com">ng-harvest-files@netapp.com</a>.</p>
+<p>If the files are too large to email, let us know at the address above or on <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#discord">Discord</a>, 
+and we'll send you a file sharing link to upload your files.</p>
 <h2 id="rpm-deb-and-native-installations">RPM, DEB, and Native Installations<a class="headerlink" href="#rpm-deb-and-native-installations" title="Permanent link">&para;</a></h2>
 <p>For RPM, DEB, and native installations, use the following command to create a compressed tar file containing the logs:</p>
 <div class="highlight"><pre><span></span><code>tar<span class="w"> </span>-czvf<span class="w"> </span>harvest_logs.tar.gz<span class="w"> </span>-C<span class="w"> </span>/var/log<span class="w"> </span>harvest
@@ -1676,7 +1696,10 @@ please email them to <a href="mailto:ng-harvest-files@netapp.com">ng-harvest-fil
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>logs<span class="w"> </span>&lt;container_id&gt;<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>harvest_logs.txt<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>tar<span class="w"> </span>-czvf<span class="w"> </span>harvest_logs.tar.gz<span class="w"> </span>harvest_logs.txt
 </code></pre></div>
 <p>This command will create a file named <code>harvest_logs.tar.gz</code> containing the logs from the specified container.</p>
-<h2 id="nabox">NABox<a class="headerlink" href="#nabox" title="Permanent link">&para;</a></h2>
+<h2 id="nabox-4">NABox 4<a class="headerlink" href="#nabox-4" title="Permanent link">&para;</a></h2>
+<p>Collect a support bundle from the NABox web interface by clicking the <code>About</code> button in the left gutter and
+then clicking the <code>Download Support Bundle</code> button. </p>
+<h2 id="nabox-3">NABox 3<a class="headerlink" href="#nabox-3" title="Permanent link">&para;</a></h2>
 <p>For NABox installations,
 <a href="https://nabox.org/documentation/configuration/">ssh</a> into your nabox instance,
 and use the following command to create a compressed tar file containing the logs:</p>
