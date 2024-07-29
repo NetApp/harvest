@@ -276,13 +276,20 @@ At runtime, Harvest will invoke the script specified in the `credentials_script`
 
 The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:
 
-1. **YAML format:** If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
+1. **YAML format:**
+- If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
    ```yaml
    username: myuser
    password: mypassword
    ```
    If only the `password` is provided, Harvest will use the `username` from the `harvest.yml` file, if available. If your username or password contains spaces, `#`, or other characters with special meaning in YAML, make sure you quote the value like so:
    `password: "my password with spaces"`
+
+
+- If the script outputs a YAML object with `authToken`, Harvest will use `authToken` from the output. For example, if the script writes the following, Harvest will use below token for the poller's credentials.
+   ```yaml
+   authToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0.eyJleHAiOjE3MjE4Mj
+   ```
 
 2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the `harvest.yml` and `mypassword` for the poller's credentials.
    ```
@@ -318,9 +325,9 @@ Pollers:
       timeout: 10s
 ```
 
-In this example, the `get_credentials` script should be located in the same directory as the `harvest.yml` file and should be executable. It should output the credentials in either YAML or plain text format. Here are two example scripts:
+In this example, the `get_credentials` script should be located in the same directory as the `harvest.yml` file and should be executable. It should output the credentials in either YAML or plain text format. Here are three example scripts:
 
-`get_credentials` that outputs YAML:
+`get_credentials` that outputs username and password in YAML format:
 ```bash
 #!/bin/bash
 cat << EOF
@@ -329,7 +336,15 @@ password: mypassword
 EOF
 ```
 
-`get_credentials` that outputs only the password in plain text:
+`get_credentials` that outputs authToken in YAML format:
+```bash
+#!/bin/bash
+cat << EOF
+authToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0
+EOF
+```
+
+`get_credentials` that outputs only the password in plain text format:
 ```bash
 #!/bin/bash
 echo "mypassword"
