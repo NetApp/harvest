@@ -13,7 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/ontaps3service"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qospolicyfixed"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/qtree"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/quota"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
@@ -493,8 +493,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return health.New(abc)
 	case "NetRoute":
 		return netroute.New(abc)
-	case "Qtree":
-		return qtree.New(abc)
+	case "Quota":
+		return quota.New(abc)
 	case "Snapmirror":
 		return snapmirror.New(abc)
 	case "Volume":
