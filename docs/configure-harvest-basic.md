@@ -286,7 +286,7 @@ The script should  communicate the credentials to Harvest by writing the respons
    `password: "my password with spaces"`
 
 
-- If the script outputs a YAML object with `authToken`, Harvest will use `authToken` from the output. For example, if the script writes the following, Harvest will use below token for the poller's credentials.
+- If the script outputs a YAML object containing an `authToken`, Harvest will use this `authToken` when communicating with ONTAP or StorageGRID clusters. Harvest will include the `authToken` in the HTTP request's authorization header using the Bearer authentication scheme.
    ```yaml
    authToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0.eyJleHAiOjE3MjE4Mj
    ```
@@ -339,9 +339,36 @@ EOF
 `get_credentials` that outputs authToken in YAML format:
 ```bash
 #!/bin/bash
+# script requests an access token from the authorization server
+# authorization returns an access token to the script
+# script writes the YAML formatted authToken like so:
 cat << EOF
-authToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0
+authToken: $authToken
 EOF
+```
+
+`get_credentials` that outputs authToken in YAML format for interacting with Keycloak auth provider:
+```bash
+#!/bin/sh
+curl "http://{KEYCLOAK_IP:PORT}/realms/{REAlM_NAME}/protocol/openid-connect/token" \
+  -X POST \
+  --header "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "grant_type=password" \
+  --data-urlencode "username={USERNAME}" \
+  --data-urlencode "password={PASSWORD}" \
+  --data-urlencode "client_id={CLIENT_ID}" \
+  --data-urlencode "client_secret={CLIENT_SECRET}" | jq | grep access_token | tr -d '"' | tr -d ',' | sed 's/access_token/authToken/'
+```
+
+`get_credentials` that outputs authToken in YAML format for interacting with Auth0 auth provider:
+```bash
+#!/bin/bash
+response=$(curl --silent --request POST \
+  --url https://{AUTH0_TENANT_URL}/oauth/token \
+  --header 'content-type: application/json' \
+  --data '{"client_id":"{CLIENT_ID}","client_secret":"{CLIENT_SECRET}","audience":"{ONTAP_CLUSTER_IP}","grant_type":"client_credentials"}')
+
+echo $response | jq | grep access_token | tr -d '"' | tr -d ',' | sed 's/access_token/authToken/'
 ```
 
 `get_credentials` that outputs only the password in plain text format:
