@@ -347,29 +347,44 @@ authToken: $authToken
 EOF
 ```
 
-`get_credentials` that outputs authToken in YAML format for interacting with Keycloak auth provider:
-```bash
-#!/bin/sh
-curl "http://{KEYCLOAK_IP:PORT}/realms/{REAlM_NAME}/protocol/openid-connect/token" \
-  -X POST \
-  --header "Content-Type: application/x-www-form-urlencoded" \
-  --data-urlencode "grant_type=password" \
-  --data-urlencode "username={USERNAME}" \
-  --data-urlencode "password={PASSWORD}" \
-  --data-urlencode "client_id={CLIENT_ID}" \
-  --data-urlencode "client_secret={CLIENT_SECRET}" | jq | grep access_token | tr -d '"' | tr -d ',' | sed 's/access_token/authToken/'
-```
+Below are a couple of examples of how to create a credentials script that uses an OAuth2 workflow to authenticate with ONTAP or StorageGRID OAuth-enabled clusters.
 
-`get_credentials` that outputs authToken in YAML format for interacting with Auth0 auth provider:
-```bash
-#!/bin/bash
-response=$(curl --silent --request POST \
-  --url https://{AUTH0_TENANT_URL}/oauth/token \
-  --header 'content-type: application/json' \
-  --data '{"client_id":"{CLIENT_ID}","client_secret":"{CLIENT_SECRET}","audience":"{ONTAP_CLUSTER_IP}","grant_type":"client_credentials"}')
+??? note "These are examples that you will need to adapt to your environment."
 
-echo $response | jq | grep access_token | tr -d '"' | tr -d ',' | sed 's/access_token/authToken/'
-```
+    Example OAuth2 script authenticating with the Keycloak auth provider via `curl`. Uses [jq](https://github.com/jqlang/jq) to extract the token. This script outputs the authToken in YAML format.
+
+    ```bash
+    #!/bin/bash
+
+    response=$(curl --silent "http://{KEYCLOAK_IP:PORT}/realms/{REALM_NAME}/protocol/openid-connect/token" \
+      --header "Content-Type: application/x-www-form-urlencoded" \
+      --data-urlencode "grant_type=password" \
+      --data-urlencode "username={USERNAME}" \
+      --data-urlencode "password={PASSWORD}" \
+      --data-urlencode "client_id={CLIENT_ID}" \
+      --data-urlencode "client_secret={CLIENT_SECRET}")
+
+    access_token=$(echo "$response" | jq -r '.access_token')
+
+    cat << EOF
+    authToken: $access_token
+    EOF
+    ```
+
+    Example OAuth2 script authenticating with the Auth0 auth provider via `curl`. Uses [jq](https://github.com/jqlang/jq) to extract the token. This script outputs the authToken in YAML format.
+
+    ```bash
+    #!/bin/bash
+    response=$(curl --silent https://{AUTH0_TENANT_URL}/oauth/token \
+      --header 'content-type: application/json' \
+      --data '{"client_id":"{CLIENT_ID}","client_secret":"{CLIENT_SECRET}","audience":"{ONTAP_CLUSTER_IP}","grant_type":"client_credentials"')
+
+    access_token=$(echo "$response" | jq -r '.access_token')
+
+    cat << EOF
+    authToken: $access_token
+    EOF
+    ```
 
 `get_credentials` that outputs only the password in plain text format:
 ```bash
