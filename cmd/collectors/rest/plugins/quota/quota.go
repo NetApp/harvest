@@ -93,7 +93,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 			}
 
 			if v, ok := m.GetValueFloat64(quota); ok {
-				// space limits are in bytes, converted to kilobytes to match ZAPI
+				// space limits are in bytes, converted to kibibytes to match ZAPI
 				if metricName == "space.hard_limit" || metricName == "space.soft_limit" || metricName == "space.used.total" {
 					value = v / 1024
 					quotaInstance.SetLabel("unit", "Kbyte")
