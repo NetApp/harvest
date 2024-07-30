@@ -276,13 +276,20 @@ At runtime, Harvest will invoke the script specified in the `credentials_script`
 
 The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:
 
-1. **YAML format:** If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
+1. **YAML format:**
+- If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
    ```yaml
    username: myuser
    password: mypassword
    ```
    If only the `password` is provided, Harvest will use the `username` from the `harvest.yml` file, if available. If your username or password contains spaces, `#`, or other characters with special meaning in YAML, make sure you quote the value like so:
    `password: "my password with spaces"`
+
+
+- If the script outputs a YAML object containing an `authToken`, Harvest will use this `authToken` when communicating with ONTAP or StorageGRID clusters. Harvest will include the `authToken` in the HTTP request's authorization header using the Bearer authentication scheme.
+   ```yaml
+   authToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0.eyJleHAiOjE3MjE4Mj
+   ```
 
 2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the `harvest.yml` and `mypassword` for the poller's credentials.
    ```
@@ -318,9 +325,9 @@ Pollers:
       timeout: 10s
 ```
 
-In this example, the `get_credentials` script should be located in the same directory as the `harvest.yml` file and should be executable. It should output the credentials in either YAML or plain text format. Here are two example scripts:
+In this example, the `get_credentials` script should be located in the same directory as the `harvest.yml` file and should be executable. It should output the credentials in either YAML or plain text format. Here are three example scripts:
 
-`get_credentials` that outputs YAML:
+`get_credentials` that outputs username and password in YAML format:
 ```bash
 #!/bin/bash
 cat << EOF
@@ -329,7 +336,57 @@ password: mypassword
 EOF
 ```
 
-`get_credentials` that outputs only the password in plain text:
+`get_credentials` that outputs authToken in YAML format:
+```bash
+#!/bin/bash
+# script requests an access token from the authorization server
+# authorization returns an access token to the script
+# script writes the YAML formatted authToken like so:
+cat << EOF
+authToken: $authToken
+EOF
+```
+
+Below are a couple of OAuth2 credential script examples for authenticating with ONTAP or StorageGRID OAuth2-enabled clusters.
+
+??? note "These are examples that you will need to adapt to your environment."
+
+    Example OAuth2 script authenticating with the Keycloak auth provider via `curl`. Uses [jq](https://github.com/jqlang/jq) to extract the token. This script outputs the authToken in YAML format.
+
+    ```bash
+    #!/bin/bash
+
+    response=$(curl --silent "http://{KEYCLOAK_IP:PORT}/realms/{REALM_NAME}/protocol/openid-connect/token" \
+      --header "Content-Type: application/x-www-form-urlencoded" \
+      --data-urlencode "grant_type=password" \
+      --data-urlencode "username={USERNAME}" \
+      --data-urlencode "password={PASSWORD}" \
+      --data-urlencode "client_id={CLIENT_ID}" \
+      --data-urlencode "client_secret={CLIENT_SECRET}")
+
+    access_token=$(echo "$response" | jq -r '.access_token')
+
+    cat << EOF
+    authToken: $access_token
+    EOF
+    ```
+
+    Example OAuth2 script authenticating with the Auth0 auth provider via `curl`. Uses [jq](https://github.com/jqlang/jq) to extract the token. This script outputs the authToken in YAML format.
+
+    ```bash
+    #!/bin/bash
+    response=$(curl --silent https://{AUTH0_TENANT_URL}/oauth/token \
+      --header 'content-type: application/json' \
+      --data '{"client_id":"{CLIENT_ID}","client_secret":"{CLIENT_SECRET}","audience":"{ONTAP_CLUSTER_IP}","grant_type":"client_credentials"')
+
+    access_token=$(echo "$response" | jq -r '.access_token')
+
+    cat << EOF
+    authToken: $access_token
+    EOF
+    ```
+
+`get_credentials` that outputs only the password in plain text format:
 ```bash
 #!/bin/bash
 echo "mypassword"
