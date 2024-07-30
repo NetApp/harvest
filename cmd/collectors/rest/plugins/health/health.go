@@ -141,19 +141,19 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		h.resolutionData[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
-	h.collectDiskAlerts()
-	h.collectShelfAlerts()
-	h.collectSupportAlerts()
-	h.collectNodeAlerts()
-	h.collectHAAlerts()
-	h.collectNetworkEthernetPortAlerts()
-	h.collectNetworkFCPortAlerts()
-	h.collectNetworkInterfacesAlerts()
-	h.collectVolumeRansomwareAlerts()
-	h.collectVolumeMoveAlerts()
-	h.collectLicenseAlerts()
+	diskAlertCount := h.collectDiskAlerts()
+	shelfAlertCount := h.collectShelfAlerts()
+	supportAlertCount := h.collectSupportAlerts()
+	nodeAlertCount := h.collectNodeAlerts()
+	HAAlertCount := h.collectHAAlerts()
+	networkEthernetPortAlertCount := h.collectNetworkEthernetPortAlerts()
+	networkFcpPortAlertCount := h.collectNetworkFCPortAlerts()
+	networkInterfaceAlertCount := h.collectNetworkInterfacesAlerts()
+	volumeRansomwareAlertCount := h.collectVolumeRansomwareAlerts()
+	volumeMoveAlertCount := h.collectVolumeMoveAlerts()
+	licenseAlertCount := h.collectLicenseAlerts()
 
-	h.generateResolutionMetrics()
+	resolutionInstancesCount := h.generateResolutionMetrics()
 
 	result := make([]*matrix.Matrix, 0, len(h.data))
 
@@ -164,14 +164,30 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	for _, value := range h.resolutionData {
 		result = append(result, value)
 	}
+	h.Logger.Info().
+		Int("numLicenseAlerts", licenseAlertCount).
+		Int("numVolumeMoveAlerts", volumeMoveAlertCount).
+		Int("numVolumeRansomwareAlerts", volumeRansomwareAlertCount).
+		Int("numNetworkInterfaceAlerts", networkInterfaceAlertCount).
+		Int("numNetworkFcpPortAlerts", networkFcpPortAlertCount).
+		Int("numNetworkEthernetPortAlerts", networkEthernetPortAlertCount).
+		Int("numHAAlerts", HAAlertCount).
+		Int("numNodeAlerts", nodeAlertCount).
+		Int("numSupportAlerts", supportAlertCount).
+		Int("numShelfAlerts", shelfAlertCount).
+		Int("numDiskAlerts", diskAlertCount).
+		Int("numResolutionInstanceCount", resolutionInstancesCount).
+		Msg("Collected")
+
+	h.client.Metadata.PluginInstances = uint64(diskAlertCount + shelfAlertCount + supportAlertCount + nodeAlertCount + HAAlertCount + networkEthernetPortAlertCount + networkFcpPortAlertCount +
+		networkInterfaceAlertCount + volumeRansomwareAlertCount + volumeMoveAlertCount + licenseAlertCount + resolutionInstancesCount)
 
 	return result, h.client.Metadata, nil
 }
 
-func (h *Health) collectLicenseAlerts() {
+func (h *Health) collectLicenseAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	licenseAlertCount := 0
 	records, err := h.getNonCompliantLicense()
@@ -181,7 +197,7 @@ func (h *Health) collectLicenseAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[licenseHealthMatrix]
 	for _, record := range records {
@@ -199,18 +215,15 @@ func (h *Health) collectLicenseAlerts() {
 		instance.SetLabel("state", state)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numLicenseAlerts", licenseAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+
+	return licenseAlertCount
 }
 
-func (h *Health) collectVolumeMoveAlerts() {
+func (h *Health) collectVolumeMoveAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	volumeMoveAlertCount := 0
 	records, err := h.getMoveFailedVolumes()
@@ -220,7 +233,7 @@ func (h *Health) collectVolumeMoveAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[volumeMoveHealthMatrix]
 	for _, record := range records {
@@ -239,18 +252,14 @@ func (h *Health) collectVolumeMoveAlerts() {
 		instance.SetLabel("volume", volume)
 		instance.SetLabel(severityLabel, string(warning))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numVolumeMoveAlerts", volumeMoveAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return volumeMoveAlertCount
 }
 
-func (h *Health) collectVolumeRansomwareAlerts() {
+func (h *Health) collectVolumeRansomwareAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	volumeRansomwareAlertCount := 0
 	clusterVersion := h.client.Cluster().GetVersion()
@@ -259,7 +268,7 @@ func (h *Health) collectVolumeRansomwareAlerts() {
 		h.Logger.Error().Err(err).
 			Str("version", clusterVersion).
 			Msg("Failed to parse version")
-		return
+		return 0
 	}
 	version910 := "9.10"
 	version910After, err := goversion.NewVersion(version910)
@@ -267,11 +276,11 @@ func (h *Health) collectVolumeRansomwareAlerts() {
 		h.Logger.Error().Err(err).
 			Str("version", version910).
 			Msg("Failed to parse version")
-		return
+		return 0
 	}
 
 	if ontapVersion.LessThan(version910After) {
-		return
+		return 0
 	}
 	records, err := h.getRansomwareVolumes()
 	if err != nil {
@@ -280,7 +289,7 @@ func (h *Health) collectVolumeRansomwareAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[volumeRansomwareHealthMatrix]
 	for _, record := range records {
@@ -298,18 +307,14 @@ func (h *Health) collectVolumeRansomwareAlerts() {
 		instance.SetLabel("volume", volume)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numVolumeRansomwareAlerts", volumeRansomwareAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return volumeRansomwareAlertCount
 }
 
-func (h *Health) collectNetworkInterfacesAlerts() {
+func (h *Health) collectNetworkInterfacesAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	networkInterfaceAlertCount := 0
 	records, err := h.getNonHomeLIFs()
@@ -319,7 +324,7 @@ func (h *Health) collectNetworkInterfacesAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[lifHealthMatrix]
 	for _, record := range records {
@@ -338,18 +343,14 @@ func (h *Health) collectNetworkInterfacesAlerts() {
 		instance.SetLabel("lif", lif)
 		instance.SetLabel(severityLabel, string(warning))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numNetworkInterfaceAlerts", networkInterfaceAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return networkInterfaceAlertCount
 }
 
-func (h *Health) collectNetworkFCPortAlerts() {
+func (h *Health) collectNetworkFCPortAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	networkFcpPortAlertCount := 0
 	records, err := h.getFCPorts()
@@ -359,7 +360,7 @@ func (h *Health) collectNetworkFCPortAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[networkFCPortHealthMatrix]
 	for _, record := range records {
@@ -378,18 +379,14 @@ func (h *Health) collectNetworkFCPortAlerts() {
 		instance.SetLabel("port", port)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numNetworkFcpPortAlerts", networkFcpPortAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return networkFcpPortAlertCount
 }
 
-func (h *Health) collectNetworkEthernetPortAlerts() {
+func (h *Health) collectNetworkEthernetPortAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	networkEthernetPortAlertCount := 0
 	records, err := h.getEthernetPorts()
@@ -399,7 +396,7 @@ func (h *Health) collectNetworkEthernetPortAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[networkEthernetPortHealthMatrix]
 	for _, record := range records {
@@ -420,18 +417,14 @@ func (h *Health) collectNetworkEthernetPortAlerts() {
 		instance.SetLabel("type", portType)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numNetworkEthernetPortAlerts", networkEthernetPortAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return networkEthernetPortAlertCount
 }
 
-func (h *Health) collectNodeAlerts() {
+func (h *Health) collectNodeAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	nodeAlertCount := 0
 	records, err := h.getNodes()
@@ -441,7 +434,7 @@ func (h *Health) collectNodeAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[nodeHealthMatrix]
 	for _, record := range records {
@@ -457,18 +450,14 @@ func (h *Health) collectNodeAlerts() {
 		instance.SetLabel("healthy", "false")
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numNodeAlerts", nodeAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return nodeAlertCount
 }
 
-func (h *Health) collectHAAlerts() {
+func (h *Health) collectHAAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	HAAlertCount := 0
 	records, err := h.getHADown()
@@ -478,7 +467,7 @@ func (h *Health) collectHAAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[haHealthMatrix]
 	for _, record := range records {
@@ -504,18 +493,14 @@ func (h *Health) collectHAAlerts() {
 		instance.SetLabel("partner_state", partnerState)
 		instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numHAAlerts", HAAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return HAAlertCount
 }
 
-func (h *Health) collectShelfAlerts() {
+func (h *Health) collectShelfAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	shelfAlertCount := 0
 	records, err := h.getShelves()
@@ -525,7 +510,7 @@ func (h *Health) collectShelfAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[shelfHealthMatrix]
 	for _, record := range records {
@@ -551,25 +536,21 @@ func (h *Health) collectShelfAlerts() {
 				instance.SetLabel(severityLabel, string(warning))
 			}
 
-			h.setAlertMetric(mat, instance, 1, &numMetrics)
+			h.setAlertMetric(mat, instance, 1)
 		}
 	}
-	h.Logger.Info().
-		Int("numShelfAlerts", shelfAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return shelfAlertCount
 }
 
-func (h *Health) collectSupportAlerts() {
+func (h *Health) collectSupportAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	supportAlertCount := 0
 	clusterTime, err := collectors.GetClusterTime(h.client, nil, h.Logger)
 	if err != nil {
 		h.Logger.Error().Err(err).Msg("Failed to collect cluster time")
-		return
+		return 0
 	}
 	toTime := clusterTime.Unix()
 	timeFilter := h.getTimeStampFilter(clusterTime)
@@ -582,7 +563,7 @@ func (h *Health) collectSupportAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[supportHealthMatrix]
 	for index, record := range records {
@@ -606,20 +587,16 @@ func (h *Health) collectSupportAlerts() {
 		instance.SetLabel("correctiveAction", correctiveAction)
 		instance.SetLabel(severityLabel, string(warning))
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-	h.Logger.Info().
-		Int("numSupportAlerts", supportAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
 	// update lastFilterTime to current cluster time
 	h.lastFilterTime = toTime
+	return supportAlertCount
 }
 
-func (h *Health) collectDiskAlerts() {
+func (h *Health) collectDiskAlerts() int {
 	var (
-		instance   *matrix.Instance
-		numMetrics int
+		instance *matrix.Instance
 	)
 	diskAlertCount := 0
 	records, err := h.getDisks()
@@ -629,7 +606,7 @@ func (h *Health) collectDiskAlerts() {
 		} else {
 			h.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 		}
-		return
+		return 0
 	}
 	mat := h.data[diskHealthMatrix]
 	for _, record := range records {
@@ -649,13 +626,9 @@ func (h *Health) collectDiskAlerts() {
 			instance.SetLabel(severityLabel, string(warning))
 		}
 
-		h.setAlertMetric(mat, instance, 1, &numMetrics)
+		h.setAlertMetric(mat, instance, 1)
 	}
-
-	h.Logger.Info().
-		Int("numDiskAlerts", diskAlertCount).
-		Int("metrics", numMetrics).
-		Msg("Collected")
+	return diskAlertCount
 }
 
 func (h *Health) getDisks() ([]gjson.Result, error) {
@@ -801,7 +774,7 @@ func (h *Health) getTimeStampFilter(clusterTime time.Time) string {
 	return fmt.Sprintf("time=>=%d", fromTime)
 }
 
-func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64, numMetrics *int) {
+func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
 	var err error
 	m := mat.GetMetric("alerts")
 	if m == nil {
@@ -812,13 +785,10 @@ func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, v
 	}
 	if err = m.SetValueFloat64(instance, value); err != nil {
 		h.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
-	} else {
-		*numMetrics++
 	}
 }
 
-func (h *Health) generateResolutionMetrics() {
-	var numMetrics int
+func (h *Health) generateResolutionMetrics() int {
 	resolutionInstancesCount := 0
 	for prevKey, prevMat := range h.previousData {
 		curMat, exists := h.data[prevKey]
@@ -851,15 +821,9 @@ func (h *Health) generateResolutionMetrics() {
 			resolutionInstancesCount++
 
 			rInstance.SetLabels(prevMat.GetInstance(pInstanceKey).GetLabels())
-			h.setAlertMetric(rMat, rInstance, 0, &numMetrics)
+			h.setAlertMetric(rMat, rInstance, 0)
 		}
 	}
-
-	if resolutionInstancesCount > 0 {
-		h.Logger.Info().
-			Int("numResolutionInstanceCount", resolutionInstancesCount).
-			Int("Resolution metrics", numMetrics).
-			Msg("Collected")
-	}
 	h.previousData = h.data
+	return resolutionInstancesCount
 }
