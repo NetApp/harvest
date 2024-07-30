@@ -347,7 +347,7 @@ authToken: $authToken
 EOF
 ```
 
-Below are a couple of examples of how to create a credentials script that uses an OAuth2 workflow to authenticate with ONTAP or StorageGRID OAuth-enabled clusters.
+Below are a couple of OAuth2 credential script examples for authenticating with ONTAP or StorageGRID OAuth2-enabled clusters.
 
 ??? note "These are examples that you will need to adapt to your environment."
 
