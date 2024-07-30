@@ -172,7 +172,7 @@
           "exemplar": false,
           "expr": "namespace_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"} \n  and \ntopk($TopResources, avg_over_time(namespace_avg_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[3h] @ end()))",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{svm}} - {{path}}}",
+          "legendFormat": "{{cluster}} - {{svm}} - {{path}}",
           "refId": "A"
         }
       ],
@@ -264,7 +264,7 @@
           "expr": "namespace_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"} \n  and \ntopk($TopResources, avg_over_time(namespace_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[3h] @ end()))",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{cluster}} - {{svm}} - {{path}}}",
+          "legendFormat": "{{cluster}} - {{svm}} - {{path}}",
           "refId": "A"
         }
       ],
@@ -356,7 +356,7 @@
           "exemplar": false,
           "expr": "namespace_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"} \n  and \ntopk($TopResources, avg_over_time(namespace_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[3h] @ end()))",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{svm}} - {{path}}}",
+          "legendFormat": "{{cluster}} - {{svm}} - {{path}}",
           "refId": "A"
         }
       ],
@@ -447,7 +447,7 @@
           "exemplar": false,
           "expr": "namespace_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"} \n  and \ntopk($TopResources, avg_over_time(namespace_avg_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[3h] @ end()))",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{svm}} - {{path}}}",
+          "legendFormat": "{{cluster}} - {{svm}} - {{path}}",
           "refId": "A"
         }
       ],
@@ -539,7 +539,7 @@
           "expr": "namespace_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"} \n  and \ntopk($TopResources, avg_over_time(namespace_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[3h] @ end()))",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{cluster}} - {{svm}} - {{path}}}",
+          "legendFormat": "{{cluster}} - {{svm}} - {{path}}",
           "refId": "A"
         }
       ],
@@ -631,7 +631,7 @@
           "exemplar": false,
           "expr": "namespace_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"} \n  and \ntopk($TopResources, avg_over_time(namespace_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",path=~\"$Path\"}[3h] @ end()))",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{svm}} - {{path}}}",
+          "legendFormat": "{{cluster}} - {{svm}} - {{path}}",
           "refId": "A"
         }
       ],
