@@ -545,7 +545,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector.",
+      "description": "Percentage of volumes which are anti-ransomware enabled.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1181,7 +1181,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector. \n\nThis panel shows volume anti ransomware detail.",
+      "description": "This panel requires a cluster with ONTAP 9.10+ and the Harvest REST collector. \n\nThis panel shows volume anti ransomware detail. \n\nMake sure that autonomous ransomware protection has been enabled.",
       "fieldConfig": {
         "defaults": {
           "color": {
