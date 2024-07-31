@@ -621,7 +621,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		// If the `statistics.status` is not OK, then set `partial` to true.
 		if mat.UUID == "KeyPerfMetrics" {
 			status := instanceData.Get("statistics.status")
-			if status.Exists() && status.String() != "ok" {
+			if status.String() != "ok" {
 				instance.SetPartial(true)
 				numPartials++
 			}
