@@ -842,7 +842,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, cachedData, prevMat, z.Logger)
+				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, cachedData, prevMat, "timestamp", z.Logger)
 			} else {
 				skips, err = curMat.Divide(key, metric.GetComment())
 			}

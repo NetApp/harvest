@@ -38,6 +38,7 @@ const (
 	arrayKeyToken          = "#"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
+	timestampMetricName    = "timestamp"
 )
 
 var (
@@ -389,8 +390,8 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
-	if mat.GetMetric("timestamp") == nil {
-		m, err := mat.NewMetricFloat64("timestamp")
+	if mat.GetMetric(timestampMetricName) == nil {
+		m, err := mat.NewMetricFloat64(timestampMetricName)
 		if err != nil {
 			r.Logger.Error().Err(err).Msg("add timestamp metric")
 		}
@@ -694,7 +695,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances fetched in PollInstance")
 	}
 
-	timestamp := r.Matrix[r.Object].GetMetric("timestamp")
+	timestamp := r.Matrix[r.Object].GetMetric(timestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
@@ -1069,7 +1070,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
 				}
 			}
-			if err = curMat.GetMetric("timestamp").SetValueFloat64(instance, ts); err != nil {
+			if err = curMat.GetMetric(timestampMetricName).SetValueFloat64(instance, ts); err != nil {
 				r.Logger.Error().Err(err).Msg("Failed to set timestamp")
 			}
 
@@ -1115,7 +1116,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetName() != "timestamp" && metric.Buckets() == nil {
+		if metric.GetName() != timestampMetricName && metric.Buckets() == nil {
 			counter := r.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
@@ -1215,7 +1216,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, cachedData, prevMat, r.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, cachedData, prevMat, timestampMetricName, r.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator)
 			}
@@ -1254,7 +1255,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if skips, err = curMat.Divide(orderedKeys[i], "timestamp"); err != nil {
+				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
 					r.Logger.Error().Err(err).
 						Int("i", i).
 						Str("metric", metric.GetName()).

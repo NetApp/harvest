@@ -51,11 +51,11 @@ type Rest struct {
 	*collector.AbstractCollector
 	Client                       *rest.Client
 	Prop                         *prop
-	endpoints                    []*endPoint
-	isIgnoreUnknownFieldsEnabled bool
+	endpoints                    []*EndPoint
+	IsIgnoreUnknownFieldsEnabled bool
 }
 
-type endPoint struct {
+type EndPoint struct {
 	prop *prop
 	name string
 }
@@ -94,7 +94,7 @@ func (r *Rest) HarvestModule() plugin.ModuleInfo {
 	}
 }
 
-func (r *Rest) query(p *endPoint) string {
+func (r *Rest) query(p *EndPoint) string {
 	return p.prop.Query
 }
 
@@ -111,7 +111,7 @@ func (r *Rest) Fields(prop *prop) []string {
 	fields := prop.Fields
 	if prop.IsPublic {
 		// applicable for public API only
-		if !r.isIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
+		if !r.IsIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
 			fields = []string{"*"}
 		}
 	}
@@ -132,7 +132,7 @@ func (r *Rest) Fields(prop *prop) []string {
 	return fields
 }
 
-func (r *Rest) filter(p *endPoint) []string {
+func (r *Rest) filter(p *EndPoint) []string {
 	return p.prop.Filter
 }
 
@@ -154,7 +154,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 
 	r.InitVars(a.Params)
 
-	if err := r.initEndPoints(); err != nil {
+	if err := r.InitEndPoints(); err != nil {
 		return err
 	}
 
@@ -258,14 +258,14 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 	return client, err
 }
 
-func (r *Rest) initEndPoints() error {
+func (r *Rest) InitEndPoints() error {
 
 	endpoints := r.Params.GetChildS("endpoints")
 	if endpoints != nil {
 		for _, line := range endpoints.GetChildren() {
 
 			n := line.GetNameS()
-			e := endPoint{name: n}
+			e := EndPoint{name: n}
 
 			p := prop{}
 
@@ -349,9 +349,9 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 	}
 	// Check the version if it is 9.11.1 then pass relevant fields and not *
 	if v {
-		r.isIgnoreUnknownFieldsEnabled = true
+		r.IsIgnoreUnknownFieldsEnabled = true
 	} else {
-		r.isIgnoreUnknownFieldsEnabled = false
+		r.IsIgnoreUnknownFieldsEnabled = false
 	}
 	r.updateHref()
 	parseD := time.Since(startTime)
@@ -368,7 +368,7 @@ func (r *Rest) updateHref() {
 		Fields(r.Fields(r.Prop)).
 		Filter(r.Prop.Filter).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
-		IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
+		IsIgnoreUnknownFieldsEnabled(r.IsIgnoreUnknownFieldsEnabled).
 		Build()
 
 	for _, e := range r.endpoints {
@@ -377,7 +377,7 @@ func (r *Rest) updateHref() {
 			Fields(r.Fields(e.prop)).
 			Filter(r.filter(e)).
 			ReturnTimeout(r.Prop.ReturnTimeOut).
-			IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
+			IsIgnoreUnknownFieldsEnabled(r.IsIgnoreUnknownFieldsEnabled).
 			Build()
 	}
 }
@@ -403,15 +403,15 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
-	return r.pollData(startTime, records, func(e *endPoint) ([]gjson.Result, time.Duration, error) {
-		return r.processEndPoint(e)
+	return r.pollData(startTime, records, func(e *EndPoint) ([]gjson.Result, time.Duration, error) {
+		return r.ProcessEndPoint(e)
 	})
 }
 
 func (r *Rest) pollData(
 	startTime time.Time,
 	records []gjson.Result,
-	endpointFunc func(e *endPoint) ([]gjson.Result, time.Duration, error),
+	endpointFunc func(e *EndPoint) ([]gjson.Result, time.Duration, error),
 ) (map[string]*matrix.Matrix, error) {
 
 	var (
@@ -421,11 +421,12 @@ func (r *Rest) pollData(
 
 	apiD = time.Since(startTime)
 	startTime = time.Now()
+	mat := r.Matrix[r.Object]
 
-	count = r.HandleResults(records, r.Prop, false)
+	count, _ = r.HandleResults(mat, records, r.Prop, false)
 
 	// process endpoints
-	eCount, endpointAPID := r.processEndPoints(endpointFunc)
+	eCount, endpointAPID := r.ProcessEndPoints(mat, endpointFunc)
 	count += eCount
 	parseD = time.Since(startTime)
 
@@ -443,7 +444,7 @@ func (r *Rest) pollData(
 	return r.Matrix, nil
 }
 
-func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, time.Duration, error) {
+func (r *Rest) ProcessEndPoint(e *EndPoint) ([]gjson.Result, time.Duration, error) {
 	now := time.Now()
 	data, err := r.GetRestData(e.prop.Href)
 	if err != nil {
@@ -452,7 +453,7 @@ func (r *Rest) processEndPoint(e *endPoint) ([]gjson.Result, time.Duration, erro
 	return data, time.Since(now), nil
 }
 
-func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, time.Duration, error)) (uint64, time.Duration) {
+func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoint) ([]gjson.Result, time.Duration, error)) (uint64, time.Duration) {
 	var (
 		err       error
 		count     uint64
@@ -477,7 +478,7 @@ func (r *Rest) processEndPoints(endpointFunc func(e *endPoint) ([]gjson.Result, 
 			r.Logger.Debug().Str("APIPath", endpoint.prop.Query).Msg("no instances on cluster")
 			continue
 		}
-		count = r.HandleResults(records, endpoint.prop, true)
+		count, _ = r.HandleResults(mat, records, endpoint.prop, true)
 	}
 
 	return count, totalAPID
@@ -531,15 +532,15 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 // isEndPoint would be true only for the endpoint call, and it can't create/delete instance.
-func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool) uint64 {
+func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isEndPoint bool) (uint64, uint64) {
 	var (
-		err   error
-		count uint64
+		err         error
+		count       uint64
+		numPartials uint64
 	)
 
 	oldInstances := set.New()
 	currentInstances := set.New()
-	mat := r.Matrix[r.Object]
 
 	// copy keys of current instances. This is used to remove deleted instances from matrix later
 	for key := range mat.GetInstances() {
@@ -616,6 +617,16 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 			}
 		}
 
+		// This is relevant for the KeyPerfMetrics collector.
+		// If the `statistics.status` is not OK, then set `partial` to true.
+		if mat.UUID == "KeyPerfMetrics" {
+			status := instanceData.Get("statistics.status")
+			if status.Exists() && status.String() != "ok" {
+				instance.SetPartial(true)
+				numPartials++
+			}
+		}
+
 		for _, metric := range prop.Metrics {
 			metr, ok := mat.GetMetrics()[metric.Name]
 			if !ok {
@@ -661,7 +672,7 @@ func (r *Rest) HandleResults(result []gjson.Result, prop *prop, isEndPoint bool)
 		}
 	}
 
-	return count
+	return count, numPartials
 }
 
 func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {

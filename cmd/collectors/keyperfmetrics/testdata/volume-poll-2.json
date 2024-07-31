@@ -1,0 +1,212 @@
+{
+  "records": [
+    {
+      "uuid": "03613247-54ac-4127-a512-afb331f1c207",
+      "name": "osc_vol01",
+      "aggregates": [
+        {
+          "name": "umeng_aff300_aggr2",
+          "uuid": "3e59547d-298a-4967-bd0f-8ae96cead08c"
+        }
+      ],
+      "svm": {
+        "name": "osc"
+      },
+      "statistics": {
+        "timestamp": "2024-07-29T16:17:17Z",
+        "status": "ok",
+        "latency_raw": {
+          "other": 1683283363,
+          "total": 1806048040887,
+          "read": 1792850352683,
+          "write": 11514404841
+        },
+        "iops_raw": {
+          "read": 422149966,
+          "write": 23781083,
+          "other": 7756970,
+          "total": 453688019
+        },
+        "throughput_raw": {
+          "read": 27638505460121,
+          "write": 16878899187,
+          "other": 0,
+          "total": 27655384359308
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207"
+        }
+      }
+    },
+    {
+      "uuid": "82f334bb-8b7a-11ed-86dd-00a098d390f2",
+      "name": "RahulTest",
+      "aggregates": [
+        {
+          "name": "test1",
+          "uuid": "c1931ba8-bb35-4b12-84dc-1e0643487144"
+        },
+        {
+          "name": "umeng_aff300_aggr2",
+          "uuid": "3e59547d-298a-4967-bd0f-8ae96cead08c"
+        }
+      ],
+      "svm": {
+        "name": "osc"
+      },
+      "statistics": {
+        "timestamp": "2024-07-29T16:17:17Z",
+        "status": "ok",
+        "latency_raw": {
+          "other": 39071916,
+          "total": 4392539949486,
+          "read": 4392500877570,
+          "write": 0
+        },
+        "iops_raw": {
+          "read": 13112828242,
+          "write": 0,
+          "other": 80387,
+          "total": 13112908629
+        },
+        "throughput_raw": {
+          "read": 859360898048009,
+          "write": 0,
+          "other": 0,
+          "total": 859360898048009
+        },
+        "cloud": {
+          "timestamp": "2024-07-29T16:17:17Z",
+          "status": "ok",
+          "iops_raw": {
+            "read": 0,
+            "write": 0,
+            "other": 0,
+            "total": 0
+          },
+          "latency_raw": {
+            "read": 0,
+            "write": 0,
+            "other": 0,
+            "total": 0
+          }
+        },
+        "flexcache_raw": {
+          "timestamp": "2024-07-29T16:17:17Z",
+          "status": "ok",
+          "cache_miss_blocks": 20020,
+          "client_requested_blocks": 219548327119
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/volumes/82f334bb-8b7a-11ed-86dd-00a098d390f2"
+        }
+      }
+    },
+    {
+      "uuid": "90456bbd-48c9-44d9-8d56-6958d3703a6f",
+      "name": "osc_iscsi_vol01",
+      "aggregates": [
+        {
+          "name": "umeng_aff300_aggr2",
+          "uuid": "3e59547d-298a-4967-bd0f-8ae96cead08c"
+        }
+      ],
+      "svm": {
+        "name": "osc"
+      },
+      "statistics": {
+        "timestamp": "2024-07-29T16:17:17Z",
+        "status": "ok",
+        "latency_raw": {
+          "other": 3074454451,
+          "total": 581135207905,
+          "read": 23294807146,
+          "write": 554765946308
+        },
+        "iops_raw": {
+          "read": 51002589,
+          "write": 696252014,
+          "other": 9018644,
+          "total": 756273247
+        },
+        "throughput_raw": {
+          "read": 5227527713280,
+          "write": 5364426738176,
+          "other": 8458447916,
+          "total": 10600412899372
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/volumes/90456bbd-48c9-44d9-8d56-6958d3703a6f"
+        }
+      }
+    },
+    {
+      "uuid": "d31cc5e3-fb3f-11ee-be42-00a098d390f2",
+      "name": "h_test",
+      "aggregates": [
+        {
+          "name": "test1",
+          "uuid": "c1931ba8-bb35-4b12-84dc-1e0643487144"
+        }
+      ],
+      "svm": {
+        "name": "osc"
+      },
+      "statistics": {
+        "timestamp": "2024-07-29T16:17:17Z",
+        "status": "ok",
+        "latency_raw": {
+          "other": 493,
+          "total": 3281220636912,
+          "read": 3281220395338,
+          "write": 241081
+        },
+        "iops_raw": {
+          "read": 7573381119,
+          "write": 507,
+          "other": 10,
+          "total": 7573381636
+        },
+        "throughput_raw": {
+          "read": 359808936796160,
+          "write": 2768896,
+          "other": 684,
+          "total": 359808939565740
+        },
+        "cloud": {
+          "timestamp": "2024-07-29T16:17:17Z",
+          "status": "ok",
+          "iops_raw": {
+            "read": 0,
+            "write": 0,
+            "other": 0,
+            "total": 0
+          },
+          "latency_raw": {
+            "read": 0,
+            "write": 0,
+            "other": 0,
+            "total": 0
+          }
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/volumes/d31cc5e3-fb3f-11ee-be42-00a098d390f2"
+        }
+      }
+    }
+  ],
+  "num_records": 4,
+  "_links": {
+    "self": {
+      "href": "/api/storage/volumes?return_records=true&fields=uuid,statistics,svm.name,aggregates&max_records=10&statistics.iops_raw.read=%3E0"
+    }
+  }
+}

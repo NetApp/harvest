@@ -284,7 +284,7 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 				}
 			}
 
-			skips, err := curMat.DivideWithThreshold(latency, "total_ops", tt.threshold, cachedData, prevMat, logging.Get())
+			skips, err := curMat.DivideWithThreshold(latency, "total_ops", tt.threshold, cachedData, prevMat, "timestamp", logging.Get())
 			matrixTestAdv(t, tt, curMat, skips, err, latency)
 		})
 	}
