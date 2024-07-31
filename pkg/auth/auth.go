@@ -451,15 +451,16 @@ func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) 
 			},
 		}
 	} else {
-		password := pollerAuth.Password
-		if pollerAuth.Username == "" {
-			return nil, errs.New(errs.ErrMissingParam, "username")
-		} else if password == "" {
-			return nil, errs.New(errs.ErrMissingParam, "password")
+		if !pollerAuth.HasCredentialScript {
+			if pollerAuth.Username == "" {
+				return nil, errs.New(errs.ErrMissingParam, "username")
+			} else if pollerAuth.Password == "" {
+				return nil, errs.New(errs.ErrMissingParam, "password")
+			}
 		}
 
 		if request != nil {
-			request.SetBasicAuth(pollerAuth.Username, password)
+			request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 		}
 		transport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
