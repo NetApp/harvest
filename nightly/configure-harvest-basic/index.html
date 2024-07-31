@@ -2407,13 +2407,19 @@ See <a href="https://github.com/NetApp/harvest/discussions/884">#884</a> for exa
 </ul>
 <p>The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:</p>
 <ol>
+<li><strong>YAML format:</strong></li>
 <li>
-<p><strong>YAML format:</strong> If the script outputs a YAML object with <code>username</code> and <code>password</code> keys, Harvest will use both the <code>username</code> and <code>password</code> from the output. For example, if the script writes the following, Harvest will use <code>myuser</code> and <code>mypassword</code> for the poller's credentials.
+<p>If the script outputs a YAML object with <code>username</code> and <code>password</code> keys, Harvest will use both the <code>username</code> and <code>password</code> from the output. For example, if the script writes the following, Harvest will use <code>myuser</code> and <code>mypassword</code> for the poller's credentials.
    <div class="highlight"><pre><span></span><code><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myuser</span>
 <span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypassword</span>
 </code></pre></div>
    If only the <code>password</code> is provided, Harvest will use the <code>username</code> from the <code>harvest.yml</code> file, if available. If your username or password contains spaces, <code>#</code>, or other characters with special meaning in YAML, make sure you quote the value like so:
    <code>password: "my password with spaces"</code></p>
+</li>
+<li>
+<p>If the script outputs a YAML object containing an <code>authToken</code>, Harvest will use this <code>authToken</code> when communicating with ONTAP or StorageGRID clusters. Harvest will include the <code>authToken</code> in the HTTP request's authorization header using the Bearer authentication scheme.
+   <div class="highlight"><pre><span></span><code><span class="nt">authToken</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0.eyJleHAiOjE3MjE4Mj</span>
+</code></pre></div></p>
 </li>
 <li>
 <p><strong>Plain text format:</strong> If the script outputs plain text, Harvest will use the output as the password. The <code>username</code> will be taken from the <code>harvest.yml</code> file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the <code>harvest.yml</code> and <code>mypassword</code> for the poller's credentials.
@@ -2468,15 +2474,57 @@ See <a href="https://github.com/NetApp/harvest/discussions/884">#884</a> for exa
 <span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3h</span>
 <span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
 </code></pre></div>
-<p>In this example, the <code>get_credentials</code> script should be located in the same directory as the <code>harvest.yml</code> file and should be executable. It should output the credentials in either YAML or plain text format. Here are two example scripts:</p>
-<p><code>get_credentials</code> that outputs YAML:
+<p>In this example, the <code>get_credentials</code> script should be located in the same directory as the <code>harvest.yml</code> file and should be executable. It should output the credentials in either YAML or plain text format. Here are three example scripts:</p>
+<p><code>get_credentials</code> that outputs username and password in YAML format:
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
 <span class="s">username: myuser</span>
 <span class="s">password: mypassword</span>
 <span class="s">EOF</span>
 </code></pre></div></p>
-<p><code>get_credentials</code> that outputs only the password in plain text:
+<p><code>get_credentials</code> that outputs authToken in YAML format:
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># script requests an access token from the authorization server</span>
+<span class="c1"># authorization returns an access token to the script</span>
+<span class="c1"># script writes the YAML formatted authToken like so:</span>
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">authToken: $authToken</span>
+<span class="s">EOF</span>
+</code></pre></div></p>
+<p>Below are a couple of OAuth2 credential script examples for authenticating with ONTAP or StorageGRID OAuth2-enabled clusters.</p>
+<details class="note">
+<summary>These are examples that you will need to adapt to your environment.</summary>
+<p>Example OAuth2 script authenticating with the Keycloak auth provider via <code>curl</code>. Uses <a href="https://github.com/jqlang/jq">jq</a> to extract the token. This script outputs the authToken in YAML format.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="nv">response</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span><span class="s2">&quot;http://{KEYCLOAK_IP:PORT}/realms/{REALM_NAME}/protocol/openid-connect/token&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--header<span class="w"> </span><span class="s2">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;grant_type=password&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;username={USERNAME}&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;password={PASSWORD}&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;client_id={CLIENT_ID}&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;client_secret={CLIENT_SECRET}&quot;</span><span class="k">)</span>
+
+<span class="nv">access_token</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$response</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.access_token&#39;</span><span class="k">)</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">authToken: $access_token</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Example OAuth2 script authenticating with the Auth0 auth provider via <code>curl</code>. Uses <a href="https://github.com/jqlang/jq">jq</a> to extract the token. This script outputs the authToken in YAML format.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">response</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span>https://<span class="o">{</span>AUTH0_TENANT_URL<span class="o">}</span>/oauth/token<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--header<span class="w"> </span><span class="s1">&#39;content-type: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data<span class="w"> </span><span class="s1">&#39;{&quot;client_id&quot;:&quot;{CLIENT_ID}&quot;,&quot;client_secret&quot;:&quot;{CLIENT_SECRET}&quot;,&quot;audience&quot;:&quot;{ONTAP_CLUSTER_IP}&quot;,&quot;grant_type&quot;:&quot;client_credentials&quot;&#39;</span><span class="k">)</span>
+
+<span class="nv">access_token</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$response</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.access_token&#39;</span><span class="k">)</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">authToken: $access_token</span>
+<span class="s">EOF</span>
+</code></pre></div>
+</details>
+<p><code>get_credentials</code> that outputs only the password in plain text format:
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;mypassword&quot;</span>
 </code></pre></div></p>
