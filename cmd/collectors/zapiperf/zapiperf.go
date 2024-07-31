@@ -67,6 +67,7 @@ const (
 	objWorkloadClass        = "user_defined|system_defined"
 	objWorkloadVolumeClass  = "autovolume"
 	BILLION                 = 1_000_000_000
+	timestampMetricName     = "timestamp"
 )
 
 var workloadDetailMetrics = []string{"resource_latency"}
@@ -396,7 +397,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: false})
 	curMat.Reset()
 
-	timestamp := curMat.GetMetric("timestamp")
+	timestamp := curMat.GetMetric(timestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric") // @TODO errconfig??
 	}
@@ -775,7 +776,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta("timestamp", prevMat, z.Logger); err != nil {
+	if _, err = curMat.Delta(timestampMetricName, prevMat, z.Logger); err != nil {
 		z.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -842,7 +843,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, cachedData, prevMat, "timestamp", z.Logger)
+				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, cachedData, prevMat, timestampMetricName, z.Logger)
 			} else {
 				skips, err = curMat.Divide(key, metric.GetComment())
 			}
@@ -874,7 +875,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if skips, err = curMat.Divide(orderedKeys[i], "timestamp"); err != nil {
+			if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
 				z.Logger.Error().Err(err).
 					Int("i", i).
 					Str("key", orderedKeys[i]).
@@ -1185,8 +1186,8 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
-	if !oldMetrics.Has("timestamp") {
-		m, err := mat.NewMetricFloat64("timestamp")
+	if !oldMetrics.Has(timestampMetricName) {
+		m, err := mat.NewMetricFloat64(timestampMetricName)
 		if err != nil {
 			z.Logger.Error().Err(err).Msg("add timestamp metric")
 		}
@@ -1275,7 +1276,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	for key := range oldMetrics.Iter() {
 		// temporary fix: prevent removing array counters
 		// @TODO
-		if key != "timestamp" && !strings.Contains(key, ".") {
+		if key != timestampMetricName && !strings.Contains(key, ".") {
 			mat.RemoveMetric(key)
 			z.Logger.Debug().Msgf("removed metric [%s]", key)
 		}

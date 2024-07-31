@@ -269,7 +269,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with valid fields and no hidden fields",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: true,
+				isIgnoreUnknownFieldsEnabled: true,
 			},
 			p: &prop{
 				Fields: []string{
@@ -288,7 +288,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with invalid fields and no hidden fields",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: true,
+				isIgnoreUnknownFieldsEnabled: true,
 			},
 			p: &prop{
 				Fields: []string{
@@ -303,7 +303,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with valid fields and hidden fields",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: true,
+				isIgnoreUnknownFieldsEnabled: true,
 			},
 			p: &prop{
 				Fields: []string{
@@ -328,7 +328,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with valid fields and hidden fields and prior versions to 9.11.1",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: false,
+				isIgnoreUnknownFieldsEnabled: false,
 			},
 			p: &prop{
 				Fields: []string{
@@ -351,7 +351,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with valid fields and no hidden fields for private API",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: false,
+				isIgnoreUnknownFieldsEnabled: false,
 			},
 			p: &prop{
 				Fields: []string{
@@ -370,7 +370,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with invalid fields and no hidden fields, ignore unknown fields disabled",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: false,
+				isIgnoreUnknownFieldsEnabled: false,
 			},
 			p: &prop{
 				Fields: []string{
@@ -385,7 +385,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with invalid fields and no hidden fields for private API",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: true,
+				isIgnoreUnknownFieldsEnabled: true,
 			},
 			p: &prop{
 				Fields: []string{
@@ -404,7 +404,7 @@ func TestFields(t *testing.T) {
 		{
 			name: "Test with valid fields and hidden fields for private API",
 			r: &Rest{
-				IsIgnoreUnknownFieldsEnabled: true,
+				isIgnoreUnknownFieldsEnabled: true,
 			},
 			p: &prop{
 				Fields: []string{

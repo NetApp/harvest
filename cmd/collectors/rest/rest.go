@@ -52,7 +52,7 @@ type Rest struct {
 	Client                       *rest.Client
 	Prop                         *prop
 	endpoints                    []*EndPoint
-	IsIgnoreUnknownFieldsEnabled bool
+	isIgnoreUnknownFieldsEnabled bool
 }
 
 type EndPoint struct {
@@ -111,7 +111,7 @@ func (r *Rest) Fields(prop *prop) []string {
 	fields := prop.Fields
 	if prop.IsPublic {
 		// applicable for public API only
-		if !r.IsIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
+		if !r.isIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
 			fields = []string{"*"}
 		}
 	}
@@ -349,9 +349,9 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 	}
 	// Check the version if it is 9.11.1 then pass relevant fields and not *
 	if v {
-		r.IsIgnoreUnknownFieldsEnabled = true
+		r.isIgnoreUnknownFieldsEnabled = true
 	} else {
-		r.IsIgnoreUnknownFieldsEnabled = false
+		r.isIgnoreUnknownFieldsEnabled = false
 	}
 	r.updateHref()
 	parseD := time.Since(startTime)
@@ -368,7 +368,7 @@ func (r *Rest) updateHref() {
 		Fields(r.Fields(r.Prop)).
 		Filter(r.Prop.Filter).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
-		IsIgnoreUnknownFieldsEnabled(r.IsIgnoreUnknownFieldsEnabled).
+		IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
 		Build()
 
 	for _, e := range r.endpoints {
@@ -377,7 +377,7 @@ func (r *Rest) updateHref() {
 			Fields(r.Fields(e.prop)).
 			Filter(r.filter(e)).
 			ReturnTimeout(r.Prop.ReturnTimeOut).
-			IsIgnoreUnknownFieldsEnabled(r.IsIgnoreUnknownFieldsEnabled).
+			IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
 			Build()
 	}
 }
