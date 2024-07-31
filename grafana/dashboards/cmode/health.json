@@ -106,14 +106,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 3,
+        "h": 5,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 241,
       "options": {
-        "content": "This dashboard requires ONTAP 9.6+ and the REST collector. Two actions are required to use this dashboard: <br>1. Enable the REST collector in your harvest.yml config<br>2. Enable the EMS collector in your harvest.yml config for EMS events<br>",
+        "content": "This dashboard requires ONTAP 9.6+ and the REST collector. Two actions are required to use this dashboard:\n1. Enable the REST collector in your harvest.yml config\n2. Enable the EMS collector in your harvest.yml config for EMS events\n\nHarvest only detects Health and EMS events that are generated after the two collectors are enabled. By default, Harvest collects a focused set of [EMS events](https://github.com/NetApp/harvest/blob/main/conf/ems/9.6.0/ems.yaml) and this dashboard only shows the emergency level events.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -126,7 +126,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 6
       },
       "id": 225,
       "panels": [],
@@ -191,7 +191,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 5
+        "y": 7
       },
       "id": 277,
       "options": {
@@ -282,7 +282,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 5
+        "y": 7
       },
       "id": 278,
       "options": {
@@ -358,7 +358,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 5
+        "y": 7
       },
       "id": 270,
       "options": {
@@ -416,7 +416,7 @@
         "h": 16,
         "w": 8,
         "x": 0,
-        "y": 11
+        "y": 13
       },
       "id": 268,
       "options": {
@@ -567,7 +567,7 @@
         "h": 16,
         "w": 8,
         "x": 8,
-        "y": 11
+        "y": 13
       },
       "id": 269,
       "options": {
@@ -668,6 +668,7 @@
           },
           "decimals": 0,
           "mappings": [],
+          "noValue": "No events detected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -720,7 +721,7 @@
         "h": 16,
         "w": 8,
         "x": 16,
-        "y": 11
+        "y": 13
       },
       "id": 272,
       "options": {
@@ -763,7 +764,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 29
       },
       "id": 251,
       "panels": [
@@ -780,6 +781,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -966,6 +968,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1218,6 +1221,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1406,6 +1410,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1577,6 +1582,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2275,6 +2281,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -2753,6 +2760,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3299,6 +3307,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3443,6 +3452,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3715,6 +3725,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -3868,6 +3879,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -4037,6 +4049,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -4201,6 +4214,7 @@
                 "filterable": true
               },
               "mappings": [],
+              "noValue": "No events detected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
