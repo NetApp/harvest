@@ -126,10 +126,10 @@ func (kp *KeyPerfMetrics) loadParamInt(name string, defaultValue int) int {
 
 	if x = kp.Params.GetChildContentS(name); x != "" {
 		if n, e = strconv.Atoi(x); e == nil {
-			kp.Logger.Debug().Msgf("using %s = [%d]", name, n)
+			kp.Logger.Debug().Str("name", name).Int("n", n).Send()
 			return n
 		}
-		kp.Logger.Warn().Msgf("invalid parameter %s = [%s] (expected integer)", name, x)
+		kp.Logger.Warn().Str("parameter", name).Str("x", x).Msg("invalid parameter")
 	}
 
 	kp.Logger.Debug().Str("name", name).Str("defaultValue", strconv.Itoa(defaultValue)).Msg("using values")
@@ -286,8 +286,10 @@ func (kp *KeyPerfMetrics) pollData(
 	orderedDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
+	counterMap := kp.perfProp.counterInfo
+
 	for key, metric := range curMat.GetMetrics() {
-		counter := kp.counterLookup(key)
+		counter := counterMap[key]
 		if counter != nil {
 			if counter.denominator == "" {
 				// does not require base counter
@@ -323,7 +325,7 @@ func (kp *KeyPerfMetrics) pollData(
 
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
-		counter := kp.counterLookup(key)
+		counter := counterMap[key]
 		if counter == nil {
 			kp.Logger.Error().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
 			continue
@@ -416,24 +418,23 @@ func (kp *KeyPerfMetrics) pollData(
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
-		counter := kp.counterLookup(key)
-		if counter != nil {
-			property := counter.counterType
-			if property == "rate" {
-				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
-					kp.Logger.Error().Err(err).
-						Int("i", i).
-						Str("metric", metric.GetName()).
-						Str("key", orderedKeys[i]).
-						Int("instIndex", instIndex).
-						Msg("Calculate rate")
-					continue
-				}
-				totalSkips += skips
-			}
-		} else {
+		counter := counterMap[key]
+		if counter == nil {
 			kp.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse ")
 			continue
+		}
+		property := counter.counterType
+		if property == "rate" {
+			if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
+				kp.Logger.Error().Err(err).
+					Int("i", i).
+					Str("metric", metric.GetName()).
+					Str("key", orderedKeys[i]).
+					Int("instIndex", instIndex).
+					Msg("Calculate rate")
+				continue
+			}
+			totalSkips += skips
 		}
 	}
 
@@ -448,11 +449,6 @@ func (kp *KeyPerfMetrics) pollData(
 	newDataMap := make(map[string]*matrix.Matrix)
 	newDataMap[kp.Object] = curMat
 	return newDataMap, nil
-}
-
-func (kp *KeyPerfMetrics) counterLookup(metricKey string) *counter {
-	c := kp.perfProp.counterInfo[metricKey]
-	return c
 }
 
 // Interface guards
