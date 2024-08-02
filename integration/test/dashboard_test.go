@@ -83,7 +83,6 @@ func TestCModeDashboardCount(t *testing.T) {
 		"ONTAP: Data Protection Snapshots",
 		"ONTAP: Qtree",
 		"ONTAP: Security",
-		"ONTAP: Compliance",
 		"ONTAP: Power",
 		"ONTAP: cDOT",
 	}
