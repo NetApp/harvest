@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718090119984,
+  "iteration": 1722598083639,
   "links": [
     {
       "asDropdown": true,
@@ -1628,9 +1628,13 @@
                       {
                         "options": {
                           "0": {
+                            "color": "red",
+                            "index": 1,
                             "text": "not healthy"
                           },
                           "1": {
+                            "color": "green",
+                            "index": 0,
                             "text": "OK"
                           }
                         },
@@ -2149,9 +2153,13 @@
                       {
                         "options": {
                           "0": {
+                            "color": "red",
+                            "index": 1,
                             "text": "not healthy"
                           },
                           "1": {
+                            "color": "green",
+                            "index": 0,
                             "text": "OK"
                           }
                         },
@@ -2768,7 +2776,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 35
       },
       "id": 97,
       "panels": [
@@ -3434,7 +3442,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 36
       },
       "id": 184,
       "panels": [
@@ -4121,7 +4129,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 37
       },
       "id": 214,
       "panels": [
@@ -4611,5 +4619,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "cdot-cluster",
-  "version": 5
+  "version": 6
 }

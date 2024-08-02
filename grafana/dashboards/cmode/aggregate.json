@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1721125645502,
+  "iteration": 1722596631356,
   "links": [
     {
       "asDropdown": true,
@@ -618,39 +618,20 @@
                 "value": [
                   {
                     "options": {
+                      "0": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "offline/error"
+                      },
                       "1": {
+                        "color": "green",
+                        "index": 0,
                         "text": "online"
                       }
                     },
                     "type": "value"
-                  },
-                  {
-                    "options": {
-                      "from": 0,
-                      "result": {
-                        "text": "offline/error"
-                      },
-                      "to": 0.999
-                    },
-                    "type": "range"
                   }
                 ]
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgb(199, 48, 66)",
-                      "value": null
-                    },
-                    {
-                      "color": "rgb(74, 163, 52)",
-                      "value": 1
-                    }
-                  ]
-                }
               },
               {
                 "id": "custom.displayMode",
@@ -6795,5 +6776,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "cdot-aggregate",
-  "version": 14
+  "version": 15
 }
