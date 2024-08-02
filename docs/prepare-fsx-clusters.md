@@ -14,7 +14,6 @@ The dashboards that work with FSx are tagged with `fsx` and listed below:
 
 * ONTAP: cDOT
 * ONTAP: Cluster
-* ONTAP: Compliance
 * ONTAP: Data Protection Snapshots
 * ONTAP: Datacenter
 * ONTAP: FlexGroup
