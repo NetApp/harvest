@@ -1,0 +1,28 @@
+{
+  "records": [
+    {
+      "uuid": "02d42517-2777-11ed-8553-00a098d390f2",
+      "name": "astra_302_m1",
+      "aggregates": [
+        {
+          "name": "test1",
+          "uuid": "c1931ba8-bb35-4b12-84dc-1e0643487144"
+        }
+      ],
+      "svm": {
+        "name": "astra_302"
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/volumes/02d42517-2777-11ed-8553-00a098d390f2"
+        }
+      }
+    }
+  ],
+  "num_records": 1,
+  "_links": {
+    "self": {
+      "href": "/api/storage/volumes?return_records=true&fields=uuid,statistics,svm.name,aggregates&name=astra_302_m1"
+    }
+  }
+}

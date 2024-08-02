@@ -441,7 +441,7 @@ func (m *Matrix) Divide(metricKey string, baseKey string) (int, error) {
 }
 
 // DivideWithThreshold applicable for latency counters
-func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold int, curRawMat *Matrix, prevRawMat *Matrix, logger *logging.Logger) (int, error) {
+func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold int, curRawMat *Matrix, prevRawMat *Matrix, timestampMetricName string, logger *logging.Logger) (int, error) {
 	var skips int
 	x := float64(threshold)
 	curRawMetric := curRawMat.GetMetric(metricKey)
@@ -450,7 +450,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 	prevBaseRawMetric := prevRawMat.GetMetric(baseKey)
 	metric := m.GetMetric(metricKey)
 	base := m.GetMetric(baseKey)
-	time := m.GetMetric("timestamp")
+	time := m.GetMetric(timestampMetricName)
 	var tValues []float64
 	if time != nil {
 		tValues = time.values

@@ -31,6 +31,7 @@ import (
 	"errors"
 	"fmt"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/simple"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/storagegrid"

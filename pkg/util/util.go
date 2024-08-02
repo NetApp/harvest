@@ -31,6 +31,7 @@ var IsCollector = map[string]struct{}{
 	"Zapi":        {},
 	"Rest":        {},
 	"RestPerf":    {},
+	"KeyPerf":     {},
 	"Ems":         {},
 	"StorageGrid": {},
 	"Unix":        {},

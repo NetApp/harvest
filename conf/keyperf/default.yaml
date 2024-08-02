@@ -1,0 +1,9 @@
+collector:          KeyPerf
+
+# Order here matters!
+schedule:
+  - counter:  24h
+  - data:      1m
+
+objects:
+  Volume:          volume.yaml
