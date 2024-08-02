@@ -27,15 +27,15 @@ import (
 var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
 
 var IsCollector = map[string]struct{}{
-	"ZapiPerf":       {},
-	"Zapi":           {},
-	"Rest":           {},
-	"RestPerf":       {},
-	"KeyPerfMetrics": {},
-	"Ems":            {},
-	"StorageGrid":    {},
-	"Unix":           {},
-	"Simple":         {},
+	"ZapiPerf":    {},
+	"Zapi":        {},
+	"Rest":        {},
+	"RestPerf":    {},
+	"KeyPerf":     {},
+	"Ems":         {},
+	"StorageGrid": {},
+	"Unix":        {},
+	"Simple":      {},
 }
 
 func GetCollectorSlice() []string {

@@ -617,9 +617,9 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			}
 		}
 
-		// This is relevant for the KeyPerfMetrics collector.
+		// This is relevant for the KeyPerf collector.
 		// If the `statistics.status` is not OK, then set `partial` to true.
-		if mat.UUID == "KeyPerfMetrics" {
+		if mat.UUID == "KeyPerf" {
 			status := instanceData.Get("statistics.status")
 			if status.Exists() && status.String() != "ok" {
 				instance.SetPartial(true)

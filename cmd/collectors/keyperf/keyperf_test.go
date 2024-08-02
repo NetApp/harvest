@@ -1,4 +1,4 @@
-package keyperfmetrics
+package keyperf
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ const (
 
 func TestPartialAggregationSequence(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
-	kp := newKeyPerfMetrics("Volume", "volume.yaml")
+	kp := newKeyPerf("Volume", "volume.yaml")
 
 	// First Poll
 	t.Log("Running First Poll")
@@ -63,7 +63,7 @@ func TestPartialAggregationSequence(t *testing.T) {
 	}
 }
 
-func (kp *KeyPerfMetrics) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile string, expectedExportedInst, expectedExportedMetrics int) *matrix.Matrix {
+func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile string, expectedExportedInst, expectedExportedMetrics int) *matrix.Matrix {
 	// Additional logic to count metrics
 	pollData := collectors.JSONToGson(pollDataFile, true)
 	now := time.Now().Truncate(time.Second)
@@ -105,7 +105,7 @@ func (kp *KeyPerfMetrics) testPollInstanceAndDataWithMetrics(t *testing.T, pollD
 	return mat
 }
 
-func TestKeyPerfMetrics_pollData(t *testing.T) {
+func TestKeyPerf_pollData(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 	tests := []struct {
 		name          string
@@ -152,7 +152,7 @@ func TestKeyPerfMetrics_pollData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			kp := newKeyPerfMetrics("Volume", "volume.yaml")
+			kp := newKeyPerf("Volume", "volume.yaml")
 			// First poll data
 			kp.testPollInstanceAndDataWithMetrics(t, tt.pollDataPath1, 0, 0)
 			// Complete Poll
@@ -180,15 +180,15 @@ func TestKeyPerfMetrics_pollData(t *testing.T) {
 	}
 }
 
-func newKeyPerfMetrics(object string, path string) *KeyPerfMetrics {
+func newKeyPerf(object string, path string) *KeyPerf {
 	var err error
 	opts := options.New(options.WithConfPath("testdata/conf"))
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true
 
-	ac := collector.New("KeyPerfMetrics", object, opts, params(object, path), nil)
-	kp := KeyPerfMetrics{}
+	ac := collector.New("KeyPerf", object, opts, params(object, path), nil)
+	kp := KeyPerf{}
 	err = kp.Init(ac)
 	if err != nil {
 		panic(err)

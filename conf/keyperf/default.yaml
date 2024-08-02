@@ -1,4 +1,4 @@
-collector:          KeyPerfMetrics
+collector:          KeyPerf
 
 # Order here matters!
 schedule:

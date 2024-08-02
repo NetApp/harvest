@@ -1,4 +1,4 @@
-package keyperfmetrics
+package keyperf
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ const (
 	timestampMetricName = "statistics.timestamp"
 )
 
-type KeyPerfMetrics struct {
+type KeyPerf struct {
 	*rest.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	perfProp   *perfProp
 }
@@ -37,17 +37,17 @@ type perfProp struct {
 }
 
 func init() {
-	plugin.RegisterModule(&KeyPerfMetrics{})
+	plugin.RegisterModule(&KeyPerf{})
 }
 
-func (kp *KeyPerfMetrics) HarvestModule() plugin.ModuleInfo {
+func (kp *KeyPerf) HarvestModule() plugin.ModuleInfo {
 	return plugin.ModuleInfo{
-		ID:  "harvest.collector.keyperfmetrics",
-		New: func() plugin.Module { return new(KeyPerfMetrics) },
+		ID:  "harvest.collector.keyperf",
+		New: func() plugin.Module { return new(KeyPerf) },
 	}
 }
 
-func (kp *KeyPerfMetrics) Init(a *collector.AbstractCollector) error {
+func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 
 	var err error
 
@@ -94,7 +94,7 @@ func (kp *KeyPerfMetrics) Init(a *collector.AbstractCollector) error {
 	return nil
 }
 
-func (kp *KeyPerfMetrics) InitMatrix() error {
+func (kp *KeyPerf) InitMatrix() error {
 	mat := kp.Matrix[kp.Object]
 	// init perf properties
 	kp.perfProp.latencyIoReqd = kp.loadParamInt("latency_io_reqd", latencyIoReqd)
@@ -116,7 +116,7 @@ func (kp *KeyPerfMetrics) InitMatrix() error {
 }
 
 // load an int parameter or use defaultValue
-func (kp *KeyPerfMetrics) loadParamInt(name string, defaultValue int) int {
+func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
 
 	var (
 		x string
@@ -136,7 +136,7 @@ func (kp *KeyPerfMetrics) loadParamInt(name string, defaultValue int) int {
 	return defaultValue
 }
 
-func (kp *KeyPerfMetrics) buildCounters() {
+func (kp *KeyPerf) buildCounters() {
 	for k := range kp.Prop.Metrics {
 		if _, exists := kp.perfProp.counterInfo[k]; !exists {
 			var ctr *counter
@@ -176,7 +176,7 @@ func (kp *KeyPerfMetrics) buildCounters() {
 	}
 }
 
-func (kp *KeyPerfMetrics) PollData() (map[string]*matrix.Matrix, error) {
+func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var (
 		err         error
 		perfRecords []gjson.Result
@@ -208,7 +208,7 @@ func (kp *KeyPerfMetrics) PollData() (map[string]*matrix.Matrix, error) {
 // The function iterates over all the metrics in curMat and checks if each metric exists in prevMat. If a metric from curMat
 // does not exist in prevMat, it is created in prevMat as a new float64 metric. This prevents potential panics or errors
 // when attempting to perform calculations with metrics that are missing in prevMat.
-func (kp *KeyPerfMetrics) validateMatrix(prevMat *matrix.Matrix, curMat *matrix.Matrix) error {
+func (kp *KeyPerf) validateMatrix(prevMat *matrix.Matrix, curMat *matrix.Matrix) error {
 	var err error
 	for k := range curMat.GetMetrics() {
 		if prevMat.GetMetric(k) == nil {
@@ -221,7 +221,7 @@ func (kp *KeyPerfMetrics) validateMatrix(prevMat *matrix.Matrix, curMat *matrix.
 	return nil
 }
 
-func (kp *KeyPerfMetrics) pollData(
+func (kp *KeyPerf) pollData(
 	startTime time.Time,
 	perfRecords []gjson.Result,
 	endpointFunc func(e *rest.EndPoint) ([]gjson.Result, time.Duration, error),
@@ -453,5 +453,5 @@ func (kp *KeyPerfMetrics) pollData(
 
 // Interface guards
 var (
-	_ collector.Collector = (*KeyPerfMetrics)(nil)
+	_ collector.Collector = (*KeyPerf)(nil)
 )

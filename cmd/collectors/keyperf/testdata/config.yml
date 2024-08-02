@@ -5,7 +5,7 @@ Exporters:
 
 Defaults:
   collectors:
-    - KeyPerfMetrics
+    - KeyPerf
   exporters:
     - prometheus
 
