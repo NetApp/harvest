@@ -42,20 +42,6 @@ func TestHandlingQuotaMetrics(t *testing.T) {
 		quotas = x.GetChildren()
 	}
 
-	// Case 1: with historicalLabels = false
-	q1 := NewQtree()
-	q1.historicalLabels = false
-	testLabels(t, q1, quotas, nil, "astra_300.trident_qtree_pool_trident_TIXRBILLKA.trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9..disk-limit.tree", 3, 6, 5)
-
-	// Case 2: with historicalLabels = true
-	q2 := NewQtree()
-	data := matrix.New(q2.Parent+".Qtree", "qtree", "qtree")
-	qtreeInstance, _ := data.NewInstance("" + "." + "abcd_root" + "." + "abcde")
-	qtreeInstance.SetLabel("export_policy", "default")
-	qtreeInstance.SetLabel("oplocks", "enabled")
-	qtreeInstance.SetLabel("security_style", "unix")
-	qtreeInstance.SetLabel("status", "normal")
-
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	// apply all instance keys, instance labels from qtree.yaml to all quota metrics
@@ -63,17 +49,49 @@ func TestHandlingQuotaMetrics(t *testing.T) {
 	for _, key := range keys {
 		instanceKeys.NewChildS("", key)
 	}
+
+	// Case 1: with historicalLabels = false
+	q1 := NewQtree()
+	q1.historicalLabels = false
+	testLabels(t, q1, quotas, nil, "astra_300.trident_qtree_pool_trident_TIXRBILLKA.trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9..disk-limit.tree", 3, 6, 5)
+
+	// Case 2: with historicalLabels = true, only 1 qtree with 2 quotas exist
+	q2 := NewQtree()
+	data := matrix.New(q2.Parent+".Qtree", "qtree", "qtree")
+	qtreeInstance, _ := data.NewInstance("" + "." + "abcd_root" + "." + "abcde")
+	qtreeInstance.SetLabel("export_policy", "default")
+	qtreeInstance.SetLabel("oplocks", "enabled")
+	qtreeInstance.SetLabel("security_style", "unix")
+	qtreeInstance.SetLabel("status", "normal")
 	q2.data.SetExportOptions(exportOptions)
 	q2.historicalLabels = true
-	testLabels(t, q2, quotas, data, "abcde.abcd_root..root.disk-used.user", 3, 4, 10)
+	testLabels(t, q2, quotas, data, "abcde.abcd_root..root.disk-used.user", 2, 4, 10)
+
+	// Case 3: with historicalLabels = true and only 1 qtree with 2 quotas exist, but it's not exported
+	q3 := NewQtree()
+	data3 := matrix.New(q3.Parent+".Qtree", "qtree", "qtree")
+	qtreeInstance3, _ := data3.NewInstance("" + "." + "abcd_root" + "." + "abcde")
+	qtreeInstance3.SetLabel("export_policy", "default")
+	qtreeInstance3.SetLabel("oplocks", "enabled")
+	qtreeInstance3.SetLabel("security_style", "unix")
+	qtreeInstance3.SetLabel("status", "normal")
+	qtreeInstance3.SetExportable(false)
+	q3.data.SetExportOptions(exportOptions)
+	q3.historicalLabels = true
+	testLabels(t, q3, quotas, data3, "abcde.abcd_root..root.disk-used.user", 0, 0, 0)
 }
 
 func testLabels(t *testing.T, q *Qtree, quotas []*node.Node, data *matrix.Matrix, quotaInstanceKey string, expectedQuotaCount int, expectedQuotaMetricCount int, expectedQuotaLabels int) {
 	quotaCount := 0
 	numMetrics := 0
+	quotaLabels := 0
 	err := q.handlingQuotaMetrics(quotas, data, &quotaCount, &numMetrics)
 	if err != nil {
 		t.Errorf("handlingQuotaMetrics returned an error: %v", err)
+	}
+
+	if quotaInstance := q.data.GetInstance(quotaInstanceKey); quotaInstance != nil {
+		quotaLabels = len(quotaInstance.GetLabels())
 	}
 
 	if quotaCount != expectedQuotaCount {
@@ -83,8 +101,7 @@ func testLabels(t *testing.T, q *Qtree, quotas []*node.Node, data *matrix.Matrix
 		t.Errorf("numMetrics = %d; want %d", numMetrics, expectedQuotaMetricCount)
 	}
 
-	quotaInstance := q.data.GetInstance(quotaInstanceKey)
-	if len(quotaInstance.GetLabels()) != expectedQuotaLabels {
-		t.Errorf("labels = %d; want %d", len(quotaInstance.GetLabels()), expectedQuotaLabels)
+	if quotaLabels != expectedQuotaLabels {
+		t.Errorf("labels = %d; want %d", quotaLabels, expectedQuotaLabels)
 	}
 }
