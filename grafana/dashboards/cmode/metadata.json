@@ -2279,7 +2279,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "poller_memory{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"rss\"}",
+          "expr": "sum(poller_memory{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"rss\"}) without (pid)",
           "format": "time_series",
           "interval": "",
           "legendFormat": "{{poller}}",
