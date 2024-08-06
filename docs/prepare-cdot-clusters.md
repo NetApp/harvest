@@ -207,6 +207,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/support/autosupport
     security login rest-role create -role harvest-rest-role -access readonly -api /api/support/ems/destinations
     security login rest-role create -role harvest-rest-role -access readonly -api /api/support/ems/events
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/support/ems/messages
     security login rest-role create -role harvest-rest-role -access readonly -api /api/svm/peers
     security login rest-role create -role harvest-rest-role -access readonly -api /api/svm/svms
 
