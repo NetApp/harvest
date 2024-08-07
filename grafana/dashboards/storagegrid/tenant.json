@@ -81,7 +81,17 @@
             "displayMode": "auto",
             "filterable": true
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "NaN": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "percentage",
             "steps": [
@@ -220,6 +230,18 @@
                 "value": "locale"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Size per Object"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
           }
         ]
       },
@@ -347,6 +369,21 @@
               "Value #C": "Quota",
               "Value #D": "Used %",
               "Value #E": "Objects"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Avg Size per Object",
+            "binary": {
+              "left": "Logical Used",
+              "operator": "/",
+              "right": "Objects"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
             }
           }
         }
@@ -677,5 +714,5 @@
   "timezone": "",
   "title": "StorageGrid: Tenants",
   "uid": "storagegrid-tenants",
-  "version": 2
+  "version": 3
 }
