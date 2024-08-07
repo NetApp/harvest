@@ -59,7 +59,6 @@ func TestHandlingQuotaMetrics(t *testing.T) {
 	// 1 empty tree quota will be skipped and 6 labels[qtree, svm, type, unit, user, volume] would be exported for user/group quota.
 	q2 := NewQtree()
 	testLabels(t, q2, false, quotas, nil, "abcde.abcd_root..root.disk-used.user", 3, 6, 6)
-	//testLabels(t, q2, false, quotas, data3, "abcde.abcd_root..1.disk-used", 3, 6, 10)
 
 	// Case 3: with historicalLabels = true, total 4 quotas, 2 user/group quota, 1 empty qtree tree quota and 1 non-empty tree quota,
 	// all quotas with 9 labels [export_policy, oplocks, qtree, security_style, status, svm, type, unit, volume] would be exported.
@@ -86,12 +85,9 @@ func testLabels(t *testing.T, q *Qtree, historicalLabels bool, quotas []*node.No
 	quotaCount := 0
 	numMetrics := 0
 	quotaLabels := 0
-	var err error
 
 	q.historicalLabels = historicalLabels
-	err = q.handlingQuotaMetrics(quotas, data, &quotaCount, &numMetrics)
-
-	if err != nil {
+	if err := q.handlingQuotaMetrics(quotas, data, &quotaCount, &numMetrics); err != nil {
 		t.Errorf("handlingQuotaMetrics returned an error: %v", err)
 	}
 
@@ -105,7 +101,6 @@ func testLabels(t *testing.T, q *Qtree, historicalLabels bool, quotas []*node.No
 	if numMetrics != expectedQuotaMetricCount {
 		t.Errorf("numMetrics = %d; want %d", numMetrics, expectedQuotaMetricCount)
 	}
-
 	if quotaLabels != expectedQuotaLabels {
 		t.Errorf("labels = %d; want %d", quotaLabels, expectedQuotaLabels)
 	}
