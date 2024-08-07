@@ -269,7 +269,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				continue
 			}
 		case quotaType == "tree":
-			if tree == "" {
+			if !q.historicalLabels && tree == "" {
 				continue
 			}
 		}
