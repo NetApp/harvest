@@ -4,7 +4,6 @@
 <netapp xmlns="http://www.netapp.com/filer/admin" version="1.231">
     <results status="passed">
         <attributes-list>
-
             <quota>
                 <disk-limit>8388608</disk-limit>
                 <disk-used>198532</disk-used>
@@ -62,7 +61,21 @@
                 <volume>abcd_root</volume>
                 <vserver>abcde</vserver>
             </quota>
+            <quota>
+                <disk-limit>1024000</disk-limit>
+                <disk-used>198532</disk-used>
+                <file-limit>-</file-limit>
+                <files-used>6</files-used>
+                <quota-target />
+                <quota-type>tree</quota-type>
+                <soft-disk-limit>-</soft-disk-limit>
+                <soft-file-limit>-</soft-file-limit>
+                <threshold>-</threshold>
+                <tree />
+                <volume>volume1</volume>
+                <vserver>svm1</vserver>
+            </quota>
         </attributes-list>
-        <num-records>3</num-records>
+        <num-records>4</num-records>
     </results>
 </netapp>

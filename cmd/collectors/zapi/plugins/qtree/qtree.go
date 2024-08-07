@@ -269,11 +269,10 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				continue
 			}
 		case quotaType == "tree":
-			if tree == "" {
+			if !q.historicalLabels && tree == "" {
 				continue
 			}
 		}
-		*quotaCount++
 
 		// In 22.05, populate metrics with qtree labels
 		if q.historicalLabels {
@@ -294,6 +293,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				continue
 			}
 		}
+		*quotaCount++
 
 		for attribute, m := range q.data.GetMetrics() {
 			objectElem := quota.GetChildS(attribute)
