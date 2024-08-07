@@ -81,7 +81,17 @@
             "displayMode": "auto",
             "filterable": true
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "NaN": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "percentage",
             "steps": [
