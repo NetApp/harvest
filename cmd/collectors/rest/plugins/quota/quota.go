@@ -16,6 +16,10 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (q *Quota) Init() error {
+	if err := q.InitAbc(); err != nil {
+		return err
+	}
+
 	if q.Params.HasChildS("qtreeMetrics") {
 		q.qtreeMetrics = true
 	}
@@ -24,6 +28,14 @@ func (q *Quota) Init() error {
 
 func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[q.Object]
+
+	// Adding threshold metric once as it's not available from quota template
+	if data.GetMetric("threshold") == nil {
+		_, err := data.NewMetricFloat64("threshold", "threshold")
+		if err != nil {
+			q.Logger.Error().Stack().Err(err).Msg("add metric")
+		}
+	}
 
 	// Purge and reset data
 	instanceMap := data.GetInstances()
