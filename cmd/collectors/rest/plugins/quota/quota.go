@@ -29,7 +29,7 @@ func (q *Quota) Init() error {
 func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[q.Object]
 
-	// Adding threshold metric once as it's not available from quota template
+	// The threshold metric does not exist in REST quota template, we are adding it to maintain parity with exported ZAPI metrics
 	if data.GetMetric("threshold") == nil {
 		_, err := data.NewMetricFloat64("threshold", "threshold")
 		if err != nil {
