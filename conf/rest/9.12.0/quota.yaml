@@ -23,7 +23,6 @@ counters:
   - space.used.hard_limit_percent => disk_used_pct_disk_limit
   - space.used.soft_limit_percent => disk_used_pct_soft_disk_limit
   - space.used.total              => disk_used
-  - threshold                     => threshold
   - filter:
       - show_default_records=false
       - type=tree #|user|group
