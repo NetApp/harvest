@@ -33,7 +33,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	if data.GetMetric("threshold") == nil {
 		_, err := data.NewMetricFloat64("threshold", "threshold")
 		if err != nil {
-			q.Logger.Error().Stack().Err(err).Msg("add metric")
+			q.Logger.Error().Err(err).Msg("add metric")
 		}
 	}
 
