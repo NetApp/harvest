@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1710438455635,
+  "iteration": 1723188904112,
   "links": [
     {
       "asDropdown": true,
@@ -806,6 +806,50 @@
                     "value": "gradient-gauge"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -885,12 +929,14 @@
                   "names": [
                     "nic",
                     "node",
+                    "speed",
                     "type",
                     "Value #B",
                     "Value #C",
                     "Value #D",
                     "Value #E",
-                    "speed"
+                    "cluster",
+                    "datacenter"
                   ]
                 }
               }
@@ -906,24 +952,28 @@
                   "Time": true,
                   "Value": true,
                   "__name__": true,
-                  "cluster": true,
-                  "datacenter": true,
+                  "cluster": false,
+                  "datacenter": false,
                   "instance": true,
                   "job": true,
                   "speed": false,
                   "state": true
                 },
                 "indexByName": {
-                  "Value #B": 4,
-                  "Value #C": 5,
-                  "Value #D": 6,
-                  "Value #E": 7,
-                  "nic": 0,
-                  "node": 1,
-                  "speed": 2,
-                  "type": 3
+                  "Value #B": 6,
+                  "Value #C": 7,
+                  "Value #D": 8,
+                  "Value #E": 9,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "nic": 2,
+                  "node": 3,
+                  "speed": 4,
+                  "type": 5
                 },
-                "renameByName": {}
+                "renameByName": {
+                  "datacenter": ""
+                }
               }
             }
           ],
@@ -1569,6 +1619,50 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -1663,7 +1757,9 @@
                     "Value #C",
                     "Value #D",
                     "Value #E",
-                    "Value #F"
+                    "Value #F",
+                    "cluster",
+                    "datacenter"
                   ]
                 }
               }
@@ -1676,7 +1772,17 @@
               "id": "organize",
               "options": {
                 "excludeByName": {},
-                "indexByName": {},
+                "indexByName": {
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "Value #D": 6,
+                  "Value #E": 7,
+                  "Value #F": 8,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "nic": 2,
+                  "node": 3
+                },
                 "renameByName": {
                   "Value #A": "",
                   "Value #B": "Rx CRC Err",
@@ -1684,7 +1790,7 @@
                   "Value #D": "Rx Total Err",
                   "Value #E": "Tx Total Err",
                   "Value #F": "Up to Downs",
-                  "cluster": "Cluster",
+                  "cluster": "",
                   "nic": "Nic"
                 }
               }
@@ -1884,6 +1990,50 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -1891,7 +2041,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 3
           },
           "id": 71,
           "interval": "",
@@ -1942,23 +2092,40 @@
           "title": "FC ports",
           "transformations": [
             {
+              "id": "merge",
+              "options": {}
+            },
+            {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
                   "names": [
+                    "datacenter",
                     "node",
                     "port",
                     "speed",
-                    "Value #C",
+                    "Value #B",
                     "Value #A",
-                    "Value #B"
+                    "cluster"
                   ]
                 }
               }
             },
             {
-              "id": "merge",
-              "options": {}
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #A": 6,
+                  "Value #B": 5,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "node": 2,
+                  "port": 3,
+                  "speed": 4
+                },
+                "renameByName": {}
+              }
             }
           ],
           "type": "table"
@@ -1969,7 +2136,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 14
           },
           "id": 117,
           "options": {
@@ -2103,6 +2270,50 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -2110,7 +2321,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 26
+            "y": 16
           },
           "id": 115,
           "interval": "",
@@ -2159,8 +2370,9 @@
               "options": {
                 "include": {
                   "names": [
+                    "enabled",
                     "fabric_connected",
-                    "fabric_name",
+                    "fabric_port_address",
                     "fabric_switch_port",
                     "node",
                     "physical_protocol",
@@ -2170,8 +2382,8 @@
                     "supported_protocols",
                     "Value #B",
                     "Value #A",
-                    "fabric_port_address",
-                    "enabled"
+                    "cluster",
+                    "datacenter"
                   ]
                 }
               }
@@ -2185,23 +2397,25 @@
               "options": {
                 "excludeByName": {},
                 "indexByName": {
-                  "Value #A": 12,
-                  "Value #B": 11,
-                  "enabled": 2,
-                  "fabric_connected": 3,
-                  "fabric_name": 4,
-                  "fabric_port_address": 5,
-                  "fabric_switch_port": 6,
-                  "node": 1,
-                  "physical_protocol": 7,
-                  "port": 0,
-                  "speed_configured": 8,
-                  "state": 9,
-                  "supported_protocols": 10
+                  "Value #A": 13,
+                  "Value #B": 12,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "enabled": 4,
+                  "fabric_connected": 5,
+                  "fabric_port_address": 6,
+                  "fabric_switch_port": 7,
+                  "node": 3,
+                  "physical_protocol": 8,
+                  "port": 2,
+                  "speed_configured": 9,
+                  "state": 10,
+                  "supported_protocols": 11
                 },
                 "renameByName": {
                   "Value #A": "Connected Speed",
                   "Value #B": "Max Speed",
+                  "datacenter": "",
                   "enabled": "Enabled",
                   "fabric_connected": "Fabric Connected",
                   "fabric_name": "Fabric Name",
@@ -2278,7 +2492,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 37
+            "y": 27
           },
           "id": 67,
           "options": {
@@ -2371,7 +2585,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 37
+            "y": 27
           },
           "id": 69,
           "options": {
@@ -2463,7 +2677,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 47
+            "y": 37
           },
           "id": 77,
           "options": {
@@ -2556,7 +2770,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 47
+            "y": 37
           },
           "id": 78,
           "options": {
@@ -2649,7 +2863,7 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 57
+            "y": 47
           },
           "id": 75,
           "options": {
@@ -2769,7 +2983,7 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 57
+            "y": 47
           },
           "id": 76,
           "options": {
@@ -2895,7 +3109,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 57
+            "y": 47
           },
           "id": 73,
           "options": {
@@ -2987,7 +3201,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 57
+            "y": 47
           },
           "id": 74,
           "options": {
@@ -3155,6 +3369,50 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -3162,7 +3420,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 14
+            "y": 58
           },
           "id": 98,
           "interval": "",
@@ -3210,8 +3468,10 @@
                     "node",
                     "port",
                     "speed",
+                    "Value #B",
                     "Value #A",
-                    "Value #B"
+                    "cluster",
+                    "datacenter"
                   ]
                 }
               }
@@ -3219,6 +3479,22 @@
             {
               "id": "merge",
               "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #A": 6,
+                  "Value #B": 5,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "node": 2,
+                  "port": 3,
+                  "speed": 4
+                },
+                "renameByName": {}
+              }
             }
           ],
           "type": "table"
@@ -3283,7 +3559,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 25
+            "y": 69
           },
           "id": 100,
           "options": {
@@ -3376,7 +3652,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 25
+            "y": 69
           },
           "id": 102,
           "options": {
@@ -3468,7 +3744,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 79
           },
           "id": 104,
           "options": {
@@ -3561,7 +3837,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 79
           },
           "id": 106,
           "options": {
@@ -3616,7 +3892,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 15
+            "y": 90
           },
           "id": 114,
           "options": {
@@ -3727,7 +4003,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 92
           },
           "id": 112,
           "options": {
@@ -3762,8 +4038,8 @@
                   "Time": 0,
                   "Value": 14,
                   "__name__": 1,
-                  "cluster": 2,
-                  "datacenter": 3,
+                  "cluster": 3,
+                  "datacenter": 2,
                   "destination": 6,
                   "family": 7,
                   "gateway": 8,
@@ -4073,5 +4349,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "cdot-network",
-  "version": 9
+  "version": 10
 }

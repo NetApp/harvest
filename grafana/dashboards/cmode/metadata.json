@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718968539143,
+  "iteration": 1723188161723,
   "links": [
     {
       "asDropdown": true,
@@ -1129,6 +1129,10 @@
       "title": "Target Systems",
       "transformations": [
         {
+          "id": "merge",
+          "options": {}
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
@@ -1139,22 +1143,25 @@
               "version": true
             },
             "indexByName": {
-              "Time": 0,
-              "Value": 8,
-              "__name__": 1,
+              "Time": 1,
+              "Value #A": 11,
+              "Value #B": 12,
+              "__name__": 2,
               "addr": 4,
-              "host": 3,
+              "datacenter": 0,
+              "hostname": 8,
               "instance": 5,
               "job": 6,
-              "poller": 2,
+              "pid": 9,
+              "poller": 3,
+              "promport": 10,
               "version": 7
             },
-            "renameByName": {}
+            "renameByName": {
+              "addr": "",
+              "poller": ""
+            }
           }
-        },
-        {
-          "id": "merge",
-          "options": {}
         }
       ],
       "type": "table"
@@ -1430,10 +1437,10 @@
               "Value #A": 4,
               "Value #B": 8,
               "addr": 5,
-              "datacenter": 2,
-              "hostname": 1,
+              "datacenter": 0,
+              "hostname": 2,
               "pid": 3,
-              "poller": 0,
+              "poller": 1,
               "promport": 6,
               "version": 7
             },
@@ -1618,6 +1625,28 @@
                 "value": 160
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1667,7 +1696,7 @@
             "excludeByName": {
               "Time": true,
               "__name__": true,
-              "datacenter": true,
+              "datacenter": false,
               "harvest_version": true,
               "instance": true,
               "job": true,
@@ -1675,18 +1704,20 @@
               "version": true
             },
             "indexByName": {
-              "Time": 0,
-              "Value": 7,
-              "__name__": 1,
-              "hostname": 3,
-              "instance": 8,
-              "job": 9,
-              "name": 4,
-              "poller": 2,
-              "reason": 6,
-              "target": 5,
-              "type": 10,
-              "version": 11
+              "Time": 1,
+              "Value": 8,
+              "__name__": 2,
+              "datacenter": 0,
+              "hostname": 4,
+              "instance": 9,
+              "job": 10,
+              "name": 5,
+              "poller": 3,
+              "promport": 13,
+              "reason": 7,
+              "target": 6,
+              "type": 11,
+              "version": 12
             },
             "renameByName": {
               "Value": "status",
@@ -1852,6 +1883,28 @@
                 "value": 214
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1900,7 +1953,7 @@
             "excludeByName": {
               "Time": true,
               "__name__": true,
-              "datacenter": true,
+              "datacenter": false,
               "harvest_version": true,
               "instance": true,
               "job": true,
@@ -1908,21 +1961,24 @@
               "version": true
             },
             "indexByName": {
-              "Time": 0,
-              "Value": 9,
-              "__name__": 1,
-              "hostname": 3,
-              "instance": 6,
-              "job": 7,
-              "name": 4,
-              "poller": 2,
-              "reason": 8,
-              "target": 5,
-              "type": 10,
-              "version": 11
+              "Time": 1,
+              "Value": 10,
+              "__name__": 2,
+              "datacenter": 0,
+              "hostname": 4,
+              "instance": 7,
+              "job": 8,
+              "name": 5,
+              "poller": 3,
+              "promport": 13,
+              "reason": 9,
+              "target": 6,
+              "type": 11,
+              "version": 12
             },
             "renameByName": {
               "Value": "status",
+              "datacenter": "",
               "exporter": "Exporter Class",
               "harvest_version": "",
               "hostname": "",
@@ -3169,5 +3225,5 @@
   "timezone": "",
   "title": "Harvest Metadata",
   "uid": "cdot-metadata",
-  "version": 9
+  "version": 10
 }
