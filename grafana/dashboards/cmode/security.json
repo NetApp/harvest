@@ -11,16 +11,16 @@
   ],
   "__requires": [
     {
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "type": "panel",
-      "version": ""
-    },
-    {
       "id": "grafana",
       "name": "Grafana",
       "type": "grafana",
-      "version": "7.5.4"
+      "version": "8.1.8"
+    },
+    {
+      "id": "piechart",
+      "name": "Pie chart",
+      "type": "panel",
+      "version": ""
     },
     {
       "id": "prometheus",
@@ -37,6 +37,12 @@
     {
       "id": "table",
       "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
       "type": "panel",
       "version": ""
     }
@@ -64,8 +70,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": "",
-  "iteration": 1648624965825,
+  "id": null,
+  "iteration": 1723188912823,
   "links": [
     {
       "asDropdown": true,
@@ -2097,7 +2103,7 @@
           }
         ]
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -2450,6 +2456,28 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -2457,7 +2485,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 34
           },
           "id": 155,
           "options": {
@@ -2490,7 +2518,8 @@
                     "state",
                     "svm",
                     "volume",
-                    "antiRansomwareState"
+                    "datacenter",
+                    "cluster"
                   ]
                 }
               }
@@ -2524,12 +2553,16 @@
                   "isHardwareEncrypted": true
                 },
                 "indexByName": {
-                  "Encryption Type": 4,
-                  "aggr": 2,
-                  "antiRansomwareState": 5,
-                  "node": 3,
-                  "svm": 1,
-                  "volume": 0
+                  "Encryption Type": 6,
+                  "aggr": 4,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "isEncrypted": 7,
+                  "isHardwareEncrypted": 8,
+                  "node": 5,
+                  "state": 9,
+                  "svm": 3,
+                  "volume": 2
                 },
                 "renameByName": {
                   "antiRansomwareState": "Anti-ransomware Status",
@@ -2553,7 +2586,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 34
       },
       "id": 223,
       "panels": [
@@ -3740,7 +3773,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 35
           },
           "id": 219,
           "options": {
@@ -4130,7 +4163,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 35
       },
       "id": 227,
       "panels": [
@@ -4788,7 +4821,7 @@
             "h": 13,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 51
           },
           "id": 225,
           "options": {
@@ -5125,5 +5158,5 @@
   "timezone": "",
   "title": "ONTAP: Security",
   "uid": "cdot-security",
-  "version": 4
+  "version": 5
 }
