@@ -1,6 +1,82 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 24.05.8 / 2024-08-12 Release
+
+- :gem: Harvest dashboards now include links to other relevant dashboards. This makes it easier to navigate relationships between cluster objects.
+
+- :star: Several of the existing dashboards include new panels in this release:
+  - The Security dashboard shows SSL certificate expiration dates and warns if certificates are expiring soon. Prometheus alerts are created for expired certificates and certificates that will expire within the next month. Thanks to @timstiller for the suggestion.
+  - The Volume and Aggregate dashboards include new panels showing inactive data trends. Thanks to @razaahmed for the suggestion.
+  - The Workload dashboard includes panels showing the QoS percentage utilization at the policy level for shared QoS policies. Thanks to Rusty Brown for the suggestion.
+  - The Datacenter dashboard includes the number of Qtrees, Quotas, and Workloads in the Object Count panel.
+  - The Aggregate dashboard now includes topk timeseries.
+  - The Metadata dashboard now includes a stats panel showing the number of failed collectors. Thanks to @mamoep for the suggestion.
+  - The Metadata dashboard Pollers table includes the resident set size of each poller process.
+  - The StorageGRID Tenant dashboard now includes an "average size per object" column in the Tenant Quota panel. Thanks to @ofu48167 for the contribution.
+
+- :ear_of_rice: Quotas and Qtrees templates are separated into individual templates instead of being combined as in earlier versions of Harvest.
+
+- The ChangeLog plugin monitors metric value changes in addition to label changes. Thanks to @pilot7777 for the suggestion.
+
+- Harvest collects quotas even when there are no qtrees. Thanks to @qrm1982 for reporting.
+
+- The StorageGRID collector supports single sign-on via a credential script auth token. Thanks to @santosh725 for suggesting.
+
+- Harvest supports OAuth 2.0 ONTAP collectors via a credential script auth token.
+
+- Harvest handles lun and namespace metrics with simple names.
+
+- Harvest collects `virtual_used` and `virtual_used_percent` metrics from volumes via REST on ONTAP versions 9.14.1+
+
+- Prometheus metrics retention has been increased to one year in the Docker compose workflow.
+
+- Harvest creates resolution metrics for health alerts. Thanks to @faguayot for suggesting.
+
+- Pollers report their status as the `poller_status` in native and container environments.
+
+- Grafana import allows you to specify a custom all value when importing. Thanks to ChrisGautcher for the suggestion.
+
+- Harvest includes remediation steps for EMS active sync events in the [EMS alert runbook](https://netapp.github.io/harvest/latest/resources/ems-alert-runbook/). Thanks to @Nikhita-13 for the contribution.
+
+- `bin/harvest doctor` reports when exporters are missing
+
+- Harvest allows exporting metrics without a prefix. This can be handy when collecting from a StorageGRID Prometheus instance. See the [storagegrid_metrics.yaml](https://github.com/NetApp/harvest/blob/4e3945c1f299f0f5e9cd0fff899c25121fd3599d/conf/storagegrid/11.6.0/storagegrid_metrics.yaml#L3) template for an example. Thanks to @Bhagyasri-Dolly for suggesting.
+
+- :closed_book: Documentation Additions:
+  - Harvest includes a new "Getting Started" tutorial. Thanks to MichelePardini for the suggestion.
+
+## Announcements
+
+:bangbang: **IMPORTANT** Harvest removed the Service Center row from the Workload dashboard and disabled collection of `qos_detail_service_time_latency` metrics. The metrics can be reenabled by setting `with_service_latency: true` in the WorkloadDetailVolume template file. See [#3015](https://github.com/NetApp/harvest/issues/3015) for details.
+
+:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please
+read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
+this release:
+
+- @timstiller
+- @razaahmed
+- @mamoep
+- @ofu48167
+- @pilot7777
+- @qrm1982
+- @santosh725
+- @faguayot
+- @Nikhita
+- @Bhagyasri
+- @Falcon667
+- RustyBrown
+- ChrisGautcher
+- MichelePardini
+
+---
+
 ## 24.05.2 / 2024-06-13 Release
 :pushpin: This release is identical to 24.05.0, with the addition of two fixes:
 
