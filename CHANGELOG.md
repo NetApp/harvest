@@ -1,6 +1,214 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 24.05.8 / 2024-08-12 Release
+
+- :gem: Harvest dashboards now include links to other relevant dashboards. This makes it easier to navigate relationships between cluster objects.
+
+- :star: Several of the existing dashboards include new panels in this release:
+  - The Security dashboard shows SSL certificate expiration dates and warns if certificates are expiring soon. Prometheus alerts are created for expired certificates and certificates that will expire within the next month. Thanks to @timstiller for the suggestion.
+  - The Volume and Aggregate dashboards include new panels showing inactive data trends. Thanks to @razaahmed for the suggestion.
+  - The Workload dashboard includes panels showing the QoS percentage utilization at the policy level for shared QoS policies. Thanks to Rusty Brown for the suggestion.
+  - The Datacenter dashboard includes the number of Qtrees, Quotas, and Workloads in the Object Count panel.
+  - The Aggregate dashboard now includes topk timeseries.
+  - The Metadata dashboard now includes a stats panel showing the number of failed collectors. Thanks to @mamoep for the suggestion.
+  - The Metadata dashboard Pollers table includes the resident set size of each poller process.
+  - The StorageGRID Tenant dashboard now includes an "average size per object" column in the Tenant Quota panel. Thanks to @ofu48167 for the contribution.
+
+- :ear_of_rice: Quotas and Qtrees templates are separated into individual templates instead of being combined as in earlier versions of Harvest.
+
+- The ChangeLog plugin monitors metric value changes in addition to label changes. Thanks to @pilot7777 for the suggestion.
+
+- Harvest collects quotas even when there are no qtrees. Thanks to @qrm1982 for reporting.
+
+- The StorageGRID collector supports single sign-on via a credential script auth token. Thanks to @santosh725 for suggesting.
+
+- Harvest supports OAuth 2.0 ONTAP collectors via a credential script auth token.
+
+- Harvest handles lun and namespace metrics with simple names.
+
+- Harvest collects `virtual_used` and `virtual_used_percent` metrics from volumes via REST on ONTAP versions 9.14.1+
+
+- Prometheus metrics retention has been increased to one year in the Docker compose workflow.
+
+- Harvest creates resolution metrics for health alerts. Thanks to @faguayot for suggesting.
+
+- Pollers report their status as the `poller_status` in native and container environments.
+
+- Grafana import allows you to specify a custom all value when importing. Thanks to ChrisGautcher for the suggestion.
+
+- Harvest includes remediation steps for EMS active sync events in the [EMS alert runbook](https://netapp.github.io/harvest/latest/resources/ems-alert-runbook/). Thanks to @Nikhita-13 for the contribution.
+
+- `bin/harvest doctor` reports when exporters are missing
+
+- Harvest allows exporting metrics without a prefix. This can be handy when collecting from a StorageGRID Prometheus instance. See the [storagegrid_metrics.yaml](https://github.com/NetApp/harvest/blob/4e3945c1f299f0f5e9cd0fff899c25121fd3599d/conf/storagegrid/11.6.0/storagegrid_metrics.yaml#L3) template for an example. Thanks to @Bhagyasri-Dolly for suggesting.
+
+- :closed_book: Documentation Additions:
+  - Harvest includes a new "Getting Started" tutorial. Thanks to MichelePardini for the suggestion.
+
+## Announcements
+
+:bangbang: **IMPORTANT** Harvest removed the Service Center row from the Workload dashboard and disabled collection of `qos_detail_service_time_latency` metrics. The metrics can be reenabled by setting `with_service_latency: true` in the WorkloadDetailVolume template file. See [#3015](https://github.com/NetApp/harvest/issues/3015) for details.
+
+:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please
+read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
+this release:
+
+- @timstiller
+- @razaahmed
+- @mamoep
+- @ofu48167
+- @pilot7777
+- @qrm1982
+- @santosh725
+- @faguayot
+- @Nikhita
+- @Bhagyasri
+- @Falcon667
+- RustyBrown
+- ChrisGautcher
+- MichelePardini
+
+:seedling:
+This release includes 40 features, 28 bug fixes, 13 documentation, 1 performance,
+2 testing, 5 refactoring, 12 miscellaneous, and 11 ci pull requests.
+
+### :rocket: Features
+- Prometheus Should Retain Data For Up To One Year ([#2919](https://github.com/NetApp/harvest/pull/2919))
+- Log Jitter During Best-Fit Template Loading ([#2920](https://github.com/NetApp/harvest/pull/2920))
+- Add Failed Collectors Stats In Metadata Dashboard ([#2929](https://github.com/NetApp/harvest/pull/2929))
+- Linking Dashboard Part-1 ([#2931](https://github.com/NetApp/harvest/pull/2931))
+- Poller's Should Collect And Export Their Status And Memory ([#2944](https://github.com/NetApp/harvest/pull/2944))
+- Include Rss In Poller Table Of Metadata Dashboard ([#2948](https://github.com/NetApp/harvest/pull/2948))
+- Grafana Import Should Allow You To Specify A Custom All Value ([#2953](https://github.com/NetApp/harvest/pull/2953))
+- Harvest Should Include Remediation Steps For Ems Active Sync Ev… ([#2963](https://github.com/NetApp/harvest/pull/2963))
+- Linking Dashboards Part-2 ([#2968](https://github.com/NetApp/harvest/pull/2968))
+- Support For Qos Percentage Utilization At Policy Level For Shared Qos Policies ([#2972](https://github.com/NetApp/harvest/pull/2972))
+- Linking Dashboards Part-3 ([#2976](https://github.com/NetApp/harvest/pull/2976))
+- Create Resolution Metrics For Health Alerts ([#2977](https://github.com/NetApp/harvest/pull/2977))
+- Add Qtree,Quota,Workload Counts To Datacenter Dashboard ([#2978](https://github.com/NetApp/harvest/pull/2978))
+- Harvest Should Track Poller Maxrss In Auto-Support ([#2982](https://github.com/NetApp/harvest/pull/2982))
+- Add Topk To Aggregate Dashboard Timeseries Panels ([#2987](https://github.com/NetApp/harvest/pull/2987))
+- Harvest Should Handle Lun And Namespace Metrics With Simple Names ([#2998](https://github.com/NetApp/harvest/pull/2998))
+- Harvest Should Log Rss And Maxrss Every Hour ([#2999](https://github.com/NetApp/harvest/pull/2999))
+- Implementing Certificate Expiry Detail In Security Dashboard ([#3000](https://github.com/NetApp/harvest/pull/3000))
+- Remove Topk Vars From Storagegrid Dashboards ([#3002](https://github.com/NetApp/harvest/pull/3002))
+- Add Inactive Data Metrics For Aggregate And Volume ([#3003](https://github.com/NetApp/harvest/pull/3003))
+- Harvest Should Remove Service Center Metrics ([#3019](https://github.com/NetApp/harvest/pull/3019))
+- Adding Quotas Detail In Asup ([#3020](https://github.com/NetApp/harvest/pull/3020))
+- Harvest Should Allow Exporting Metrics Without A Prefix ([#3022](https://github.com/NetApp/harvest/pull/3022))
+- Remove Service_time_latency Counter From Tests ([#3027](https://github.com/NetApp/harvest/pull/3027))
+- Harvest Should Collect Virtual_used And Virtual_used_percent ([#3031](https://github.com/NetApp/harvest/pull/3031))
+- Harvest Should Log Template Loading Errors ([#3036](https://github.com/NetApp/harvest/pull/3036))
+- Enable Changelog Plugin To Monitor Metric Value Change ([#3041](https://github.com/NetApp/harvest/pull/3041))
+- `--Debug` Cli Argument Should Enable Debug Logging ([#3043](https://github.com/NetApp/harvest/pull/3043))
+- Harvest Should Support Storagegrid Credentials Script With Auth… ([#3048](https://github.com/NetApp/harvest/pull/3048))
+- Harvest Doctor Should Report When Exporters Are Missing ([#3049](https://github.com/NetApp/harvest/pull/3049))
+- Update Qtree Template Doc -  Collect Quotas When No Qtrees ([#3056](https://github.com/NetApp/harvest/pull/3056))
+- Handled User/Group Quota In Historicallabels ([#3060](https://github.com/NetApp/harvest/pull/3060))
+- Support Oauth2.0 Via Credential Script - Phase1 ([#3066](https://github.com/NetApp/harvest/pull/3066))
+- Harvest Should Not Simultaneously Publish Quota Metrics From Qt… ([#3067](https://github.com/NetApp/harvest/pull/3067))
+- Split Qtree/Quota Rest Templates ([#3068](https://github.com/NetApp/harvest/pull/3068))
+- Adding Generated Instances/Metrics Count In Health Plugin Log ([#3074](https://github.com/NetApp/harvest/pull/3074))
+- Health Dashboard Should Indicate When There Are No Events ([#3077](https://github.com/NetApp/harvest/pull/3077))
+- Keyperfmetrics Collector Infrastructure ([#3078](https://github.com/NetApp/harvest/pull/3078))
+- Adding Ut For Qtree Non Exported Case ([#3085](https://github.com/NetApp/harvest/pull/3085))
+- Tenant Dashboard Should Include An `Average Size Per Object` Co… ([#3091](https://github.com/NetApp/harvest/pull/3091))
+
+### :bug: Bug Fixes
+- Zapi Rest Parity ([#2934](https://github.com/NetApp/harvest/pull/2934))
+- Rest Templates Should Not Have Hyphon ([#2943](https://github.com/NetApp/harvest/pull/2943))
+- Restore The Svm, Qtree, User, And Group Columns To The Quota Das… ([#2950](https://github.com/NetApp/harvest/pull/2950))
+- Harvest Should Log Errors When Grafana Import Fails ([#2962](https://github.com/NetApp/harvest/pull/2962))
+- Correct Details Folder Name While Import ([#2966](https://github.com/NetApp/harvest/pull/2966))
+- Handling Min-Max In Gradient ([#2969](https://github.com/NetApp/harvest/pull/2969))
+- Use Read/Write Data Due To Missing Historical Data In Dashboards ([#2979](https://github.com/NetApp/harvest/pull/2979))
+- Fixing Non-Exported Flexgroup Instances Error ([#2980](https://github.com/NetApp/harvest/pull/2980))
+- Add Shared Column For Workload Used % Tables ([#2986](https://github.com/NetApp/harvest/pull/2986))
+- Qos Sequential Reads And Writes % Panels ([#2992](https://github.com/NetApp/harvest/pull/2992))
+- Power Plugin Should Not Fail ([#2993](https://github.com/NetApp/harvest/pull/2993))
+- Use Avg_over_time For Qos Used % ([#3004](https://github.com/NetApp/harvest/pull/3004))
+- Add Missing Filtering For Metadata Dashboard ([#3005](https://github.com/NetApp/harvest/pull/3005))
+- Handle Endpoints In Metric Doc ([#3011](https://github.com/NetApp/harvest/pull/3011))
+- Handle Partial Aggregation For Flexgroup Perf Metrics ([#3018](https://github.com/NetApp/harvest/pull/3018))
+- Handle Volume Analytics Error Logging ([#3026](https://github.com/NetApp/harvest/pull/3026))
+- Vscan Plugin Should Handle Ipv6 Scanners ([#3028](https://github.com/NetApp/harvest/pull/3028))
+- Vscan Plugin Should Handle Ipv6 Scanners ([#3034](https://github.com/NetApp/harvest/pull/3034))
+- Object Store Metrics Collection For Aggregate ([#3045](https://github.com/NetApp/harvest/pull/3045))
+- Throughput Should Use Sum Aggregation ([#3052](https://github.com/NetApp/harvest/pull/3052))
+- Harvest Should Collect Power Metrics From A1000 And A900 Clusters ([#3063](https://github.com/NetApp/harvest/pull/3063))
+- Quota Dashboard Should Use Kibibytes Instead Of Kilobytes ([#3072](https://github.com/NetApp/harvest/pull/3072))
+- Namespace Dashboard Legends Have A Dangling } ([#3075](https://github.com/NetApp/harvest/pull/3075))
+- Add Color To Relevant Value Mapping Columns In Dashboards ([#3080](https://github.com/NetApp/harvest/pull/3080))
+- Poller Rss Panel Should Ignore Pid ([#3083](https://github.com/NetApp/harvest/pull/3083))
+- Remove Quota Asup From Rest ([#3087](https://github.com/NetApp/harvest/pull/3087))
+- Remove Threshold From Quota Rest Template ([#3093](https://github.com/NetApp/harvest/pull/3093))
+- Add Datacenter, Cluster Columns In Tables With Links ([#3094](https://github.com/NetApp/harvest/pull/3094))
+
+### :closed_book: Documentation
+- Update Docker Instructions ([#2940](https://github.com/NetApp/harvest/pull/2940))
+- Update Metric Docs For 9.15 ([#2957](https://github.com/NetApp/harvest/pull/2957))
+- Add Note For Hardware Requirement For Harvest ([#2964](https://github.com/NetApp/harvest/pull/2964))
+- Fix Standalone Harvest Container Deployment Steps ([#2981](https://github.com/NetApp/harvest/pull/2981))
+- Release Notes For 24.05.2 ([#2985](https://github.com/NetApp/harvest/pull/2985))
+- Add Description In Subsystem Latency Panels ([#3017](https://github.com/NetApp/harvest/pull/3017))
+- Update List Of Supported Fsx Dashboards ([#3037](https://github.com/NetApp/harvest/pull/3037))
+- Harvest Should Document The Least-Privilege Approach For Rest ([#3047](https://github.com/NetApp/harvest/pull/3047))
+- Harvest Getting Started Tutorial ([#3054](https://github.com/NetApp/harvest/pull/3054))
+- Describe How To Collect Support Bundle From Nabox4 ([#3071](https://github.com/NetApp/harvest/pull/3071))
+- Doc Update For Oauth 2.0 Support In Harvest ([#3073](https://github.com/NetApp/harvest/pull/3073))
+- Add Ems Permissions For Rest Least Privilege Approach ([#3088](https://github.com/NetApp/harvest/pull/3088))
+- Add container troubleshooting steps ([#3097](https://github.com/NetApp/harvest/pull/3097))
+ 
+### :zap: Performance
+- Improve Prometheus Render Escaping By 23% ([#2922](https://github.com/NetApp/harvest/pull/2922))
+
+### :wrench: Testing
+- Quota Tests ([#2924](https://github.com/NetApp/harvest/pull/2924))
+- Harvest Should Use Go-Cmp Instead Of Reflect.deepequal ([#3025](https://github.com/NetApp/harvest/pull/3025))
+
+### Refactoring
+- Use Builtin Maps Instead Of 3Rd Party ([#3009](https://github.com/NetApp/harvest/pull/3009))
+- Remove Dead Code And Reduce 3Rd Party Dependencies ([#3039](https://github.com/NetApp/harvest/pull/3039))
+- Remove Obsolete `Version` From Compose Files ([#3042](https://github.com/NetApp/harvest/pull/3042))
+- Update Description For Volume Arw Panel ([#3076](https://github.com/NetApp/harvest/pull/3076))
+- Remove Deprecated Compliance Dashboard ([#3081](https://github.com/NetApp/harvest/pull/3081))
+
+### Miscellaneous
+- Update Module Github.com/Zekrotja/Timedmap To V2 ([#2910](https://github.com/NetApp/harvest/pull/2910))
+- Update All Dependencies ([#2926](https://github.com/NetApp/harvest/pull/2926))
+- Bump Hashicorp Go-Version ([#2933](https://github.com/NetApp/harvest/pull/2933))
+- Update All Dependencies ([#2955](https://github.com/NetApp/harvest/pull/2955))
+- Move Gopsutil To V4 ([#2961](https://github.com/NetApp/harvest/pull/2961))
+- Update All Dependencies ([#2975](https://github.com/NetApp/harvest/pull/2975))
+- Update All Dependencies ([#2995](https://github.com/NetApp/harvest/pull/2995))
+- Update Module Github.com/Zekrotja/Timedmap To V2 ([#3010](https://github.com/NetApp/harvest/pull/3010))
+- Remove Unused Code ([#3016](https://github.com/NetApp/harvest/pull/3016))
+- Update All Dependencies ([#3040](https://github.com/NetApp/harvest/pull/3040))
+- Update Golang.org/X/Exp Digest To 8A7402a ([#3058](https://github.com/NetApp/harvest/pull/3058))
+- Update All Dependencies ([#3084](https://github.com/NetApp/harvest/pull/3084))
+
+### :hammer: CI
+- Fix Flaky Test For Expression ([#2927](https://github.com/NetApp/harvest/pull/2927))
+- Update To Use Colored-Line-Number For Linter ([#2930](https://github.com/NetApp/harvest/pull/2930))
+- Stop Pollers After Tests In Ci ([#2939](https://github.com/NetApp/harvest/pull/2939))
+- Add Zapi Rest Comparison To Ci ([#2945](https://github.com/NetApp/harvest/pull/2945))
+- Fix Container Stop In Ci ([#2946](https://github.com/NetApp/harvest/pull/2946))
+- Stop Containers After Tests ([#2958](https://github.com/NetApp/harvest/pull/2958))
+- Bump Go ([#2965](https://github.com/NetApp/harvest/pull/2965))
+- Run Tests Before Docker Publish ([#2990](https://github.com/NetApp/harvest/pull/2990))
+- Add Flexgroup Tests ([#3001](https://github.com/NetApp/harvest/pull/3001))
+- Bump Go ([#3032](https://github.com/NetApp/harvest/pull/3032))
+- Bump Go ([#3089](https://github.com/NetApp/harvest/pull/3089))
+
+---
+
 ## 24.05.2 / 2024-06-13 Release
 :pushpin: This release is identical to 24.05.0, with the addition of two fixes:
 
