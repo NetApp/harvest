@@ -84,12 +84,13 @@
           "mappings": [
             {
               "options": {
-                "NaN": {
-                  "index": 0,
+                "match": "null+nan",
+                "result": {
+                  "index": 1,
                   "text": "N/A"
                 }
               },
-              "type": "value"
+              "type": "special"
             }
           ],
           "thresholds": {
@@ -402,7 +403,18 @@
             "displayMode": "auto",
             "filterable": true
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "match": "null+nan",
+                "result": {
+                  "index": 1,
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -497,6 +509,18 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Size per Object"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
           }
         ]
       },
@@ -577,6 +601,21 @@
               "Value #B": "Objects",
               "bucket": "Bucket",
               "region": "Region"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Avg Size per Object",
+            "binary": {
+              "left": "Space Used",
+              "operator": "/",
+              "right": "Objects"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
             }
           }
         }
@@ -714,5 +753,5 @@
   "timezone": "",
   "title": "StorageGrid: Tenants",
   "uid": "storagegrid-tenants",
-  "version": 3
+  "version": 4
 }
