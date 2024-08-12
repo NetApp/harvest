@@ -187,7 +187,7 @@ docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ### Stop all containers
 
 ```
-docker compose -f prom-stack.yml -f harvest-compose.yml down
+docker compose -f prom-stack.yml -f harvest-compose.yml down && docker network rm harvest_backend harvest_frontend
 ```
 
 If you encounter the following error message while attempting to stop your Docker containers using `docker-compose down`
@@ -249,9 +249,25 @@ Make sure you don't skip this step. It is essential as it updates local copies o
 
 4. Restart your containers using the following:
 
-```
-docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
-```
+    ```
+    docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+    ```
+
+    ??? question "Troubleshooting"
+
+        If you encounter the following error:
+
+        ```
+        network harvest_backend was found but has incorrect label com.docker.compose.network set to "harvest_backend"
+        ```
+
+        Remove the conflicting networks:
+
+        ```sh
+        docker network rm harvest_backend harvest_frontend
+        ```
+
+        Then, restart your containers again using the command above.
 
 ## Building Harvest Docker Image
 
