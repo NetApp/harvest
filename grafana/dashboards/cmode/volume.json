@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1722588891575,
+  "iteration": 1723191406415,
   "links": [
     {
       "asDropdown": true,
@@ -842,6 +842,50 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -995,7 +1039,9 @@
                     "Value #G",
                     "Value #H",
                     "Value #I",
-                    "Value #J"
+                    "Value #J",
+                    "datacenter",
+                    "cluster"
                   ]
                 }
               }
@@ -1012,29 +1058,32 @@
                   "Value": true,
                   "Value #C": false,
                   "__name__": true,
-                  "cluster": true,
-                  "datacenter": true,
+                  "cluster": false,
+                  "datacenter": false,
                   "instance": true,
                   "job": true,
                   "state": true
                 },
                 "indexByName": {
-                  "Value #A": 4,
-                  "Value #C": 5,
-                  "Value #D": 6,
-                  "Value #E": 9,
-                  "Value #F": 10,
-                  "Value #G": 11,
-                  "Value #H": 7,
-                  "Value #I": 8,
-                  "aggr": 3,
-                  "clone_parent_snapshot": 15,
-                  "clone_parent_svm": 13,
-                  "clone_parent_volume": 14,
-                  "junction_path": 12,
-                  "node": 2,
-                  "svm": 0,
-                  "volume": 1
+                  "Value #A": 6,
+                  "Value #C": 7,
+                  "Value #D": 8,
+                  "Value #E": 11,
+                  "Value #F": 12,
+                  "Value #G": 13,
+                  "Value #H": 9,
+                  "Value #I": 10,
+                  "Value #J": 18,
+                  "aggr": 5,
+                  "clone_parent_snapshot": 17,
+                  "clone_parent_svm": 15,
+                  "clone_parent_volume": 16,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "junction_path": 14,
+                  "node": 4,
+                  "svm": 2,
+                  "volume": 3
                 },
                 "renameByName": {
                   "Value #C": "Size",
@@ -2129,7 +2178,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 38
+            "y": 15
           },
           "id": 30,
           "options": {
@@ -2220,7 +2269,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 38
+            "y": 15
           },
           "id": 33,
           "options": {
@@ -2311,7 +2360,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 38
+            "y": 15
           },
           "id": 116,
           "options": {
@@ -2403,7 +2452,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 24
           },
           "id": 32,
           "options": {
@@ -2495,7 +2544,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 47
+            "y": 24
           },
           "id": 35,
           "options": {
@@ -2587,7 +2636,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 47
+            "y": 24
           },
           "id": 115,
           "options": {
@@ -2678,7 +2727,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 56
+            "y": 33
           },
           "id": 31,
           "options": {
@@ -2770,7 +2819,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 56
+            "y": 33
           },
           "id": 34,
           "options": {
@@ -2858,7 +2907,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 65
+            "y": 42
           },
           "id": 112,
           "options": {
@@ -2955,7 +3004,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 65
+            "y": 42
           },
           "id": 114,
           "options": {
@@ -8746,5 +8795,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "cdot-volume",
-  "version": 26
+  "version": 27
 }

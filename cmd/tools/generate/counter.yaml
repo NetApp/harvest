@@ -1,5 +1,21 @@
 counters:
 
+  - Name: aggr_object_store_logical_used
+    Description: Logical space usage of aggregates in the attached object store.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/aggr/show-space
+        ONTAPCounter: object_store_logical_used
+        Template: conf/rest/9.12.0/aggr.yaml
+
+  - Name: aggr_object_store_physical_used
+    Description: Physical space usage of aggregates in the attached object store.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/aggr/show-space
+        ONTAPCounter: object_store_physical_used
+        Template: conf/rest/9.12.0/aggr.yaml
+
   - Name: aggr_physical_used_wo_snapshots
     Description: Total Data Reduction Physical Used Without Snapshots
 

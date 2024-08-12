@@ -66,7 +66,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1705066872201,
+  "iteration": 1723188912328,
   "links": [
     {
       "asDropdown": true,
@@ -311,6 +311,38 @@
               {
                 "id": "displayName",
                 "value": "Volume"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
               }
             ]
           }
@@ -406,19 +438,20 @@
                 "aggr",
                 "bucket",
                 "cluster",
+                "encryption_enabled",
+                "is_protected",
+                "protected_in_cloud",
+                "protected_in_ontap",
+                "qos_policy_group",
                 "svm",
+                "url",
+                "volume",
                 "Value #B",
                 "Value #C",
                 "Value #D",
-                "volume",
-                "encryption_enabled",
                 "Value #E",
                 "Value #F",
-                "url",
-                "qos_policy_group",
-                "is_protected",
-                "protected_in_cloud",
-                "protected_in_ontap"
+                "datacenter"
               ]
             }
           }
@@ -437,19 +470,23 @@
               "job": true
             },
             "indexByName": {
-              "Value #B": 5,
-              "Value #C": 6,
-              "Value #D": 7,
-              "Value #E": 8,
-              "Value #F": 11,
-              "aggr": 4,
-              "bucket": 3,
-              "cluster": 0,
-              "encryption_enabled": 10,
-              "qos_policy_group": 12,
-              "svm": 1,
-              "url": 9,
-              "volume": 2
+              "Value #B": 6,
+              "Value #C": 7,
+              "Value #D": 8,
+              "Value #E": 9,
+              "Value #F": 12,
+              "aggr": 5,
+              "bucket": 4,
+              "cluster": 1,
+              "datacenter": 0,
+              "encryption_enabled": 11,
+              "is_protected": 14,
+              "protected_in_cloud": 15,
+              "protected_in_ontap": 16,
+              "qos_policy_group": 13,
+              "svm": 2,
+              "url": 10,
+              "volume": 3
             },
             "renameByName": {
               "Value #A": "",
@@ -772,6 +809,28 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -816,10 +875,11 @@
                 "allowed_resource",
                 "bucket",
                 "cluster",
-                "permission_type",
                 "permission",
+                "permission_type",
                 "svm",
-                "user"
+                "user",
+                "datacenter"
               ]
             }
           }
@@ -829,13 +889,14 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
-              "allowed_resource": 6,
-              "bucket": 2,
-              "cluster": 0,
-              "permission": 5,
-              "permission_type": 4,
-              "svm": 1,
-              "user": 3
+              "allowed_resource": 7,
+              "bucket": 3,
+              "cluster": 1,
+              "datacenter": 0,
+              "permission": 6,
+              "permission_type": 5,
+              "svm": 2,
+              "user": 4
             },
             "renameByName": {
               "allowed_resource": "Allowed Resource",
@@ -1096,6 +1157,5 @@
   "timezone": "",
   "title": "ONTAP: S3 Object Storage",
   "uid": "cdot-s3-object-storage",
-  "version": 1,
-  "weekStart": ""
+  "version": 2
 }

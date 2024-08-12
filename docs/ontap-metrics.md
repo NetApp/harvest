@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Jun-26
+Creation Date : 2024-Aug-12
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -9998,11 +9998,11 @@ The destination port used to forward the message.
 
 ### security_certificate_expiry_time
 
-Certificate expiration time, in ISO 8601 duration format or date and time format. Can be provided on POST if creating self-signed certificate. The expiration time range is between 1 day to 10 years.
+
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/security/certificates` | `expiry_time` | conf/rest/9.12.0/security_certificate.yaml |
+| REST | `api/private/cli/security/certificate` | `expiration` | conf/rest/9.12.0/security_certificate.yaml |
 | ZAPI | `security-certificate-get-iter` | `certificate-info.expiration-date` | conf/zapi/cdot/9.8.0/security_certificate.yaml |
 
 
@@ -12743,7 +12743,7 @@ Used space threshold which triggers autogrow. When the size-used is greater than
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `autosize_grow_threshold_percent` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `autosize_grow_threshold_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.grow-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -12753,7 +12753,7 @@ The maximum size (in bytes) to which the volume would be grown automatically. Th
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `max_autosize` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `max_autosize` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.maximum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -12773,7 +12773,7 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1` | conf/rest/9.14.0/volume.yaml |
 
 
 ### volume_capacity_tier_footprint_percent
@@ -12782,7 +12782,7 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1_percent` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1_percent` | conf/rest/9.14.0/volume.yaml |
 
 
 ### volume_filesystem_size
@@ -12791,7 +12791,7 @@ Filesystem size (in bytes) of the volume.  This is the total usable size of the 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `filesystem_size` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `filesystem_size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.filesystem-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -12821,7 +12821,7 @@ volume_inode_files_used / volume_inode_total
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `inode_files_used, inode_files_total` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `inode_files_used, inode_files_total` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `inode_files_used, inode_files_total` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13001,7 +13001,7 @@ Number of NFS write operations per second to the volume
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume/efficiency/stat` | `num_compress_attempts` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume/efficiency/stat` | `num_compress_attempts` | conf/rest/9.14.0/volume.yaml |
 
 
 ### volume_num_compress_fail
@@ -13010,7 +13010,7 @@ Number of NFS write operations per second to the volume
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume/efficiency/stat` | `num_compress_fail` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume/efficiency/stat` | `num_compress_fail` | conf/rest/9.14.0/volume.yaml |
 
 
 ### volume_other_latency
@@ -13039,7 +13039,7 @@ amount of storage space that is currently available for overwrites, calculated b
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `overwrite_reserve_total, overwrite_reserve_used` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `overwrite_reserve_total, overwrite_reserve_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `overwrite_reserve_total, overwrite_reserve_used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13049,7 +13049,7 @@ The size (in bytes) that is reserved for overwriting snapshotted data in an othe
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `overwrite_reserve` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `overwrite_reserve` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.overwrite-reserve` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13059,7 +13059,7 @@ The reserved size (in bytes) that is not available for new overwrites. The numbe
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `overwrite_reserve_used` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `overwrite_reserve_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.overwrite-reserve-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13069,7 +13069,7 @@ The reserved size (in bytes) that is not available for new overwrites. The numbe
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0` | conf/rest/9.14.0/volume.yaml |
 
 
 ### volume_performance_tier_footprint_percent
@@ -13078,7 +13078,7 @@ The reserved size (in bytes) that is not available for new overwrites. The numbe
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0_percent` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0_percent` | conf/rest/9.14.0/volume.yaml |
 
 
 ### volume_read_data
@@ -13177,7 +13177,7 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `size` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13187,7 +13187,7 @@ The size (in bytes) that is still available in the volume. This field is valid o
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `available` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13197,7 +13197,7 @@ Total usable size (in bytes) of the volume, not including WAFL reserve or volume
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `total` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `total` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-total` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13207,7 +13207,7 @@ Number of bytes used in the volume.  If the volume is restricted or offline, a v
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `used` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13217,7 +13217,7 @@ percentage of utilized storage space in a volume relative to its total capacity
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `percent_used` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `percent_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-size-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13227,7 +13227,7 @@ Number of Snapshot copies in the volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `snapshot_count` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `snapshot_count` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-snapshot-attributes.snapshot-count` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13237,7 +13237,7 @@ The size (in bytes) that is available for Snapshot copies inside the Snapshot re
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `snapshot_reserve_available` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `snapshot_reserve_available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.snapshot-reserve-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13247,7 +13247,7 @@ The percentage of volume disk space that has been set aside as reserve for snaps
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `percent_snapshot_space` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `percent_snapshot_space` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-snapshot-reserve` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13257,7 +13257,7 @@ The size (in bytes) in the volume that has been set aside as reserve for snapsho
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `snapshot_reserve_size` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `snapshot_reserve_size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.snapshot-reserve-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13267,7 +13267,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `snapshot_reserve_size, snapshot_reserve_available` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `snapshot_reserve_size, snapshot_reserve_available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `snapshot_reserve_size, snapshot_reserve_available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13277,7 +13277,7 @@ Percentage of the volume reserved for snapshots that has been used. Note that in
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `snapshot_space_used` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `snapshot_space_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-snapshot-reserve-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13287,7 +13287,7 @@ Total free space (in bytes) available in the volume and the snapshot reserve. If
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `size_available_for_snapshots` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `size_available_for_snapshots` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-available-for-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13297,7 +13297,7 @@ The size (in bytes) that is used by snapshots in the volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `size_used_by_snapshots` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `size_used_by_snapshots` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-used-by-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13307,7 +13307,7 @@ The size (in bytes) that should be available for the volume irrespective of avai
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `expected_available` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `expected_available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.expected-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13317,7 +13317,7 @@ The size (in bytes) that is logically available in the volume.This is the amount
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `logical_available` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `logical_available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13327,7 +13327,7 @@ The size (in bytes) that is logically used in the volume.This value includes all
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `logical_used` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `logical_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13337,7 +13337,7 @@ The size (in bytes) that is logically used by the active filesystem of the volum
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `logical_used_by_afs` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `logical_used_by_afs` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-by-afs` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13347,7 +13347,7 @@ The size (in bytes) that is logically used across all Snapshot copies in the vol
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `logical_used_by_snapshots` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `logical_used_by_snapshots` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-by-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13357,7 +13357,7 @@ Percentage of the logical used size of the volume.This parameter is not supporte
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `logical_used_percent` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `logical_used_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13367,7 +13367,7 @@ The size that is physically used in the performance tier of the volume and has a
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `performance_tier_inactive_user_data` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `performance_tier_inactive_user_data` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13377,7 +13377,7 @@ The size (in percent) that is physically used in the performance tier of the vol
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `performance_tier_inactive_user_data_percent` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `performance_tier_inactive_user_data_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13387,7 +13387,7 @@ The size (in bytes) that is physically used in the volume.This differs from 'tot
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `physical_used` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `virtual_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
@@ -13397,7 +13397,7 @@ The size (in percent) that is physically used in the volume.The percentage is ba
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `physical_used_percent` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/private/cli/volume` | `virtual_used_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
