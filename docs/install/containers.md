@@ -187,7 +187,7 @@ docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 ### Stop all containers
 
 ```
-docker compose -f prom-stack.yml -f harvest-compose.yml down && docker network rm harvest_backend harvest_frontend
+docker compose -f prom-stack.yml -f harvest-compose.yml down
 ```
 
 If you encounter the following error message while attempting to stop your Docker containers using `docker-compose down`
