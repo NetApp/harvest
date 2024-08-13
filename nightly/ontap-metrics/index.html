@@ -24882,7 +24882,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-Jun-26
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Aug-12
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -51975,7 +51975,6 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="security_certificate_expiry_time">security_certificate_expiry_time<a class="headerlink" href="#security_certificate_expiry_time" title="Permanent link">&para;</a></h3>
-<p>Certificate expiration time, in ISO 8601 duration format or date and time format. Can be provided on POST if creating self-signed certificate. The expiration time range is between 1 day to 10 years.</p>
 <table>
 <thead>
 <tr>
@@ -51988,8 +51987,8 @@ ONTAP Version: 9.15.1
 <tbody>
 <tr>
 <td>REST</td>
-<td><code>api/security/certificates</code></td>
-<td><code>expiry_time</code></td>
+<td><code>api/private/cli/security/certificate</code></td>
+<td><code>expiration</code></td>
 <td>conf/rest/9.12.0/security_certificate.yaml</td>
 </tr>
 <tr>
@@ -60548,7 +60547,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>autosize_grow_threshold_percent</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -60574,7 +60573,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>max_autosize</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -60625,7 +60624,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume/footprint</code></td>
 <td><code>volume_blocks_footprint_bin1</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -60644,7 +60643,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume/footprint</code></td>
 <td><code>volume_blocks_footprint_bin1_percent</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -60664,7 +60663,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>filesystem_size</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -60742,7 +60741,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>inode_files_used, inode_files_total</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61209,7 +61208,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume/efficiency/stat</code></td>
 <td><code>num_compress_attempts</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -61228,7 +61227,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume/efficiency/stat</code></td>
 <td><code>num_compress_fail</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -61300,7 +61299,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>overwrite_reserve_total, overwrite_reserve_used</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61326,7 +61325,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>overwrite_reserve</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61352,7 +61351,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>overwrite_reserve_used</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61377,7 +61376,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume/footprint</code></td>
 <td><code>volume_blocks_footprint_bin0</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -61396,7 +61395,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume/footprint</code></td>
 <td><code>volume_blocks_footprint_bin0_percent</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -61650,7 +61649,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>size</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61676,7 +61675,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>available</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61702,7 +61701,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>total</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61728,7 +61727,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>used</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61754,7 +61753,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>percent_used</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61780,7 +61779,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>snapshot_count</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61806,7 +61805,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>snapshot_reserve_available</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61832,7 +61831,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>percent_snapshot_space</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61858,7 +61857,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>snapshot_reserve_size</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61884,7 +61883,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>snapshot_reserve_size, snapshot_reserve_available</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61910,7 +61909,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>snapshot_space_used</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61936,7 +61935,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>size_available_for_snapshots</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61962,7 +61961,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>size_used_by_snapshots</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -61988,7 +61987,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>expected_available</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62014,7 +62013,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>logical_available</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62040,7 +62039,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>logical_used</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62066,7 +62065,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>logical_used_by_afs</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62092,7 +62091,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>logical_used_by_snapshots</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62118,7 +62117,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>logical_used_percent</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62144,7 +62143,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>performance_tier_inactive_user_data</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62170,7 +62169,7 @@ ONTAP Version: 9.15.1
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
 <td><code>performance_tier_inactive_user_data_percent</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62195,8 +62194,8 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
-<td><code>physical_used</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td><code>virtual_used</code></td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -62221,8 +62220,8 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/private/cli/volume</code></td>
-<td><code>physical_used_percent</code></td>
-<td>conf/rest/9.12.0/volume.yaml</td>
+<td><code>virtual_used_percent</code></td>
+<td>conf/rest/9.14.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>

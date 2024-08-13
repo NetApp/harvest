@@ -2123,10 +2123,20 @@ Make sure you don't skip this step. It is essential as it updates local copies o
 </li>
 <li>
 <p>Restart your containers using the following:</p>
-</li>
-</ol>
 <div class="highlight"><pre><span></span><code>docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
 </code></pre></div>
+<details class="question">
+<summary>Troubleshooting</summary>
+<p>If you encounter the following error:</p>
+<div class="highlight"><pre><span></span><code>network harvest_backend was found but has incorrect label com.docker.compose.network set to &quot;harvest_backend&quot;
+</code></pre></div>
+<p>Remove the conflicting networks:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>network<span class="w"> </span>rm<span class="w"> </span>harvest_backend<span class="w"> </span>harvest_frontend
+</code></pre></div>
+<p>Then, restart your containers again using the command above.</p>
+</details>
+</li>
+</ol>
 <h2 id="building-harvest-docker-image">Building Harvest Docker Image<a class="headerlink" href="#building-harvest-docker-image" title="Permanent link">&para;</a></h2>
 <p>Building a custom Harvest Docker image is only necessary if you require a tailored solution. If your intention is to run Harvest using Docker without any customizations, please refer to the <a href="#docker-compose">Overview</a> section above.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>.harvest.env
