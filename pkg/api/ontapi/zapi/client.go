@@ -338,7 +338,7 @@ func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath
 		if err != nil {
 			return Response{}, err
 		}
-		return Response{Result: testData, Tag: "", Rd: time.Second, Pd: time.Second}, err
+		return Response{Result: testData, Tag: "", Rd: time.Second, Pd: time.Second}, nil
 	}
 	// wasteful of course, need to rewrite later @TODO
 	results, tag, rd, pd, err := c.InvokeBatchWithTimers(request, tag)
