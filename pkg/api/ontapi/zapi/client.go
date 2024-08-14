@@ -47,7 +47,6 @@ type Response struct {
 	Tag    string
 	Rd     time.Duration
 	Pd     time.Duration
-	Err    error
 }
 
 func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
@@ -264,8 +263,8 @@ func (c *Client) invokeZapi(request *node.Node, handle func([]*node.Node) error)
 			err      error
 		)
 
-		responseData := c.InvokeBatchRequest(request, tag, "")
-		if responseData.Err != nil {
+		responseData, err := c.InvokeBatchRequest(request, tag, "")
+		if err != nil {
 			return err
 		}
 		result = responseData.Result
@@ -333,17 +332,17 @@ func (c *Client) Invoke(testFilePath string) (*node.Node, error) {
 // Else -> will issue API requests in series, once there
 // are no more instances returned by the server, returned results will be nil
 // Use the returned tag for subsequent calls to this method
-func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string) Response {
+func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string) (Response, error) {
 	if testFilePath != "" && tag != "" {
 		testData, err := tree.ImportXML(testFilePath)
 		if err != nil {
-			return Response{Result: nil, Tag: "", Rd: time.Second, Pd: time.Second, Err: err}
+			return Response{}, err
 		}
-		return Response{Result: testData, Tag: "", Rd: time.Second, Pd: time.Second, Err: nil}
+		return Response{Result: testData, Tag: "", Rd: time.Second, Pd: time.Second}, err
 	}
 	// wasteful of course, need to rewrite later @TODO
 	results, tag, rd, pd, err := c.InvokeBatchWithTimers(request, tag)
-	return Response{Result: results, Tag: tag, Rd: rd, Pd: pd, Err: err}
+	return Response{Result: results, Tag: tag, Rd: rd, Pd: pd}, err
 }
 
 // InvokeBatchWithTimers does the same as InvokeBatchRequest, but it also

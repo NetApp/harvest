@@ -38,7 +38,6 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	var (
 		result  *node.Node
 		volumes []*node.Node
-		err     error
 	)
 
 	data := dataMap[v.Object]
@@ -58,8 +57,8 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	request.AddChild(desired)
 
 	for {
-		responseData := v.client.InvokeBatchRequest(request, tag, "")
-		if responseData.Err != nil {
+		responseData, err := v.client.InvokeBatchRequest(request, tag, "")
+		if err != nil {
 			return nil, nil, err
 		}
 		result = responseData.Result
