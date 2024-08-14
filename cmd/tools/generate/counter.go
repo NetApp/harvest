@@ -11,9 +11,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/tidwall/gjson"
-	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 	"log"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -737,7 +737,7 @@ var reRemove = regexp.MustCompile(`NFSv\d+\.\d+`)
 
 func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Counter) map[string]Counter {
 	// handle special counters
-	restKeys := sortedKeys(restCounters)
+	restKeys := slices.Sorted(maps.Keys(restCounters))
 	for _, k := range restKeys {
 		v := restCounters[k]
 		hashIndex := strings.Index(k, "#")
@@ -755,7 +755,7 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 		}
 	}
 
-	zapiKeys := sortedKeys(zapiCounters)
+	zapiKeys := slices.Sorted(maps.Keys(zapiCounters))
 	for _, k := range zapiKeys {
 		v := zapiCounters[k]
 		hashIndex := strings.Index(k, "#")
@@ -774,7 +774,7 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 	}
 
 	// special keys are deleted hence sort again
-	zapiKeys = sortedKeys(zapiCounters)
+	zapiKeys = slices.Sorted(maps.Keys(zapiCounters))
 	for _, k := range zapiKeys {
 		v := zapiCounters[k]
 		if v1, ok := restCounters[k]; ok {
@@ -794,12 +794,6 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 		}
 	}
 	return restCounters
-}
-
-func sortedKeys(m map[string]Counter) []string {
-	keys := maps.Keys(m)
-	slices.Sort(keys)
-	return keys
 }
 
 func processRestPerfCounters(path string, client *rest.Client) map[string]Counter {

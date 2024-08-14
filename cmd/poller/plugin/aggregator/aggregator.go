@@ -10,8 +10,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"golang.org/x/exp/maps"
+	"maps"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -162,7 +163,8 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 			switch {
 			case rule.allLabels:
-				objKey = strings.Join(maps.Values(instance.GetLabels()), ".")
+				values := slices.Collect(maps.Keys(instance.GetLabels()))
+				objKey = strings.Join(values, ".")
 			case len(rule.includeLabels) != 0:
 				objKey = objName
 				for _, k := range rule.includeLabels {

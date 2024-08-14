@@ -11,13 +11,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/third_party/bbrks/wrap/v2"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
-	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 	"html"
 	"io"
+	"maps"
 	"net/url"
 	"os"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -79,7 +80,7 @@ func showModels(a Args, ontapSwag ontap) {
 	}
 	seen := map[string]interface{}{}
 	var collected []model
-	for _, name := range sortApis(ontapSwag.collectionsApis) {
+	for _, name := range slices.Sorted(maps.Keys(ontapSwag.collectionsApis)) {
 		pathItem := ontapSwag.collectionsApis[name]
 		if compile.MatchString(name) {
 			if pathItem.Get.OperationProps.Responses != nil {
@@ -203,12 +204,6 @@ func printProperty(args propArgs) {
 	}
 }
 
-func sortApis(schema map[string]spec.PathItem) []string {
-	keys := maps.Keys(schema)
-	sort.Strings(keys)
-	return keys
-}
-
 func showParams(a Args, ontapSwag ontap) {
 	compile, err := regexp.Compile(a.API)
 	if err != nil {
@@ -217,7 +212,7 @@ func showParams(a Args, ontapSwag ontap) {
 	}
 	w := wrap.NewWrapper()
 	w.StripTrailingNewline = true
-	for _, name := range sortApis(ontapSwag.collectionsApis) {
+	for _, name := range slices.Sorted(maps.Keys(ontapSwag.collectionsApis)) {
 		pathItem := ontapSwag.collectionsApis[name]
 		table := newTable("  ", "type", "field", "description")
 		table.SetColMinWidth(3, descriptionWidth)
@@ -340,7 +335,7 @@ func readSwagger(args Args) (ontap, error) {
 			}
 		}
 	}
-	names := sortApis(collectionsApis)
+	names := slices.Sorted(maps.Keys(collectionsApis))
 	return ontap{apis: names, swagger: ontapSwag, collectionsApis: collectionsApis}, nil
 }
 

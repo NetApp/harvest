@@ -15,7 +15,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"golang.org/x/exp/maps"
+	"maps"
+	"slices"
 	"strings"
 )
 
@@ -256,7 +257,7 @@ func (m *Matrix) PurgeInstances() {
 }
 
 func (m *Matrix) GetInstanceKeys() []string {
-	return maps.Keys(m.instances)
+	return slices.Collect(maps.Keys(m.instances))
 }
 
 func (m *Matrix) NewInstance(key string) (*Instance, error) {

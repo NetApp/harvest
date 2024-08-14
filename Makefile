@@ -41,7 +41,7 @@ ifneq (,$(wildcard $(HARVEST_ENV)))
 endif
 
 help:  ## Display this help
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-11s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
 header:
 	@echo "    _  _                     _     ___   __   "
@@ -65,22 +65,22 @@ clean: ## Cleanup the project binary (bin) folders
 		find ./bin -type f -not -name "*asup*" -exec rm -f {} +; \
 	fi
 
-test: ## run tests
+test: ## Run tests
 	@echo "Testing"
 	@# The ldflags force the old Apple linker to suppress ld warning messages on MacOS
 	@# See https://github.com/golang/go/issues/61229#issuecomment-1988965927
 	@go test -ldflags=-extldflags=-Wl,-ld_classic -race -shuffle=on ./...
 
-fmt: ## format the go source files
+fmt: ## Format the go source files
 	@echo "Formatting"
 	@go fmt ./...
 
-lint: ## run golangci-lint on the source files
+lint: ## Run golangci-lint on the source files
 	@echo "Linting"
 	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
 	@cd integration && go mod tidy && go run github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
 
-govulncheck: ## run govulncheck on the source files
+govulncheck: ## Run govulncheck on the source files
 	@echo "Govulnchecking"
 	@go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
 	@cd integration && go mod tidy && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...

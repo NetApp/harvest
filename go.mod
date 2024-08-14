@@ -1,6 +1,6 @@
 module github.com/netapp/harvest/v2
 
-go 1.22
+go 1.23
 
 require (
 	github.com/go-openapi/spec v0.21.0
@@ -11,7 +11,6 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/gjson v1.17.3
 	github.com/zekroTJA/timedmap/v2 v2.0.0
-	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
 	golang.org/x/sys v0.24.0
 	golang.org/x/term v0.23.0
 	golang.org/x/text v0.17.0

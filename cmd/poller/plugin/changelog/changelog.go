@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/netapp/harvest/v2/pkg/util"
-	maps2 "golang.org/x/exp/maps"
 	"maps"
 	"strconv"
 	"time"
@@ -277,9 +276,9 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 func (c *ChangeLog) CompareMetrics(curMat *matrix.Matrix) map[string]map[string]struct{} {
 	metricChanges := make(map[string]map[string]struct{})
 	prevMat := c.previousData
-	met := maps2.Keys(c.previousData.GetMetrics())
+	met := maps.Keys(c.previousData.GetMetrics())
 
-	for _, metricKey := range met {
+	for metricKey := range met {
 		prevMetric := prevMat.GetMetric(metricKey)
 		curMetric := curMat.GetMetric(metricKey)
 		for key, currInstance := range curMat.GetInstances() {

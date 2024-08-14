@@ -23,7 +23,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
-	"golang.org/x/exp/maps"
+	"maps"
 	"path"
 	"regexp"
 	"slices"
@@ -707,8 +707,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var filter []string
 	// Sort filters so that the href is deterministic
-	metrics := maps.Keys(r.Prop.Metrics)
-	slices.Sort(metrics)
+	metrics := slices.Sorted(maps.Keys(r.Prop.Metrics))
 
 	filter = append(filter, "counters.name="+strings.Join(metrics, "|"))
 

@@ -49,7 +49,7 @@ func Cmd() *cobra.Command {
 }
 
 func doVersion(cmd *cobra.Command, _ []string) {
-	fmt.Printf(cmd.Root().Version)
+	fmt.Print(cmd.Root().Version)
 	checkLatest()
 }
 

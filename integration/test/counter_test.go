@@ -51,7 +51,7 @@ func TestCounters(t *testing.T) {
 
 	pollerName := "dc1"
 	if poller, err = conf.PollerNamed(pollerName); err != nil {
-		log.Fatal().Err(err).Str("poller", pollerName).Msgf("")
+		log.Fatal().Err(err).Str("poller", pollerName).Send()
 	}
 	if poller.Addr == "" {
 		log.Fatal().Str("poller", pollerName).Msg("Address is empty")
@@ -131,7 +131,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 	})
 
 	if err != nil {
-		log.Fatal().Err(err).Msgf("failed to walk directory: %s", dir)
+		log.Fatal().Err(err).Str("dir", dir).Msg("failed to walk directory: %s")
 	}
 
 	return result
