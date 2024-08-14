@@ -1556,7 +1556,9 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	for {
 		apiT = time.Now()
-		if results, batchTag, err = z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath); err != nil {
+		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath)
+
+		if err != nil {
 			if errors.Is(err, errs.ErrAPIRequestRejected) {
 				z.Logger.Info().
 					Str("request", request.GetNameS()).
@@ -1572,6 +1574,8 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 			break
 		}
 
+		results = responseData.Result
+		batchTag = responseData.Tag
 		apiD += time.Since(apiT)
 		parseT = time.Now()
 

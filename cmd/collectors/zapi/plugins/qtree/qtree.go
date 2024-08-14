@@ -27,8 +27,9 @@ type Qtree struct {
 	client           *zapi.Client
 	query            string
 	quotaType        []string
-	historicalLabels bool // supports labels, metrics for 22.05
-	qtreeMetrics     bool // supports quota metrics with qtree prefix
+	historicalLabels bool   // supports labels, metrics for 22.05
+	qtreeMetrics     bool   // supports quota metrics with qtree prefix
+	testFilePath     string // Used only from unit test
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -41,6 +42,10 @@ func (q *Qtree) Init() error {
 
 	if err := q.InitAbc(); err != nil {
 		return err
+	}
+
+	if q.Options.IsTest {
+		return nil
 	}
 
 	if q.client, err = zapi.New(conf.ZapiPoller(q.ParentParams), q.Auth); err != nil {
@@ -141,7 +146,6 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		request, response *node.Node
 		quotas            []*node.Node
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
-		err               error
 		numMetrics        int
 	)
 
@@ -171,19 +175,15 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	tag := "initial"
 	quotaIndex := 0
 
-	// In 22.05, all qtrees were exported
-	if q.historicalLabels {
-		for _, qtreeInstance := range data.GetInstances() {
-			qtreeInstance.SetExportable(true)
-		}
-	}
-
 	for {
-		response, tag, ad, pd, err = q.client.InvokeBatchWithTimers(request, tag)
-
+		responseData, err := q.client.InvokeBatchRequest(request, tag, q.testFilePath)
 		if err != nil {
 			return nil, nil, err
 		}
+		response = responseData.Result
+		tag = responseData.Tag
+		ad = responseData.Rd
+		pd = responseData.Pd
 
 		if response == nil {
 			break
