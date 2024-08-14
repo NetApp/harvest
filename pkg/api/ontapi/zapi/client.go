@@ -256,7 +256,7 @@ func (c *Client) invokeZapi(request *node.Node, handle func([]*node.Node) error)
 			err      error
 		)
 
-		if result, tag, err = c.InvokeBatchRequest(request, tag, ""); err != nil {
+		if result, tag, _, _, err = c.InvokeBatchRequest(request, tag, ""); err != nil {
 			return err
 		}
 
@@ -322,17 +322,17 @@ func (c *Client) Invoke(testFilePath string) (*node.Node, error) {
 // Else -> will issue API requests in series, once there
 // are no more instances returned by the server, returned results will be nil
 // Use the returned tag for subsequent calls to this method
-func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string) (*node.Node, string, error) {
+func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string) (*node.Node, string, time.Duration, time.Duration, error) {
 	if testFilePath != "" && tag != "" {
 		testData, err := tree.ImportXML(testFilePath)
 		if err != nil {
-			return nil, "", err
+			return nil, "", time.Second, time.Second, err
 		}
-		return testData, "", nil
+		return testData, "", time.Second, time.Second, nil
 	}
 	// wasteful of course, need to rewrite later @TODO
-	results, tag, _, _, err := c.InvokeBatchWithTimers(request, tag)
-	return results, tag, err
+	results, tag, rd, pd, err := c.InvokeBatchWithTimers(request, tag)
+	return results, tag, rd, pd, err
 }
 
 // InvokeBatchWithTimers does the same as InvokeBatchRequest, but it also

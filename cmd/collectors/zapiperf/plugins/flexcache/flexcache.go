@@ -87,7 +87,7 @@ func (f *FlexCache) getFlexCaches() (*set.Set, error) {
 	request.AddChild(desired)
 
 	for {
-		if result, tag, err = f.client.InvokeBatchRequest(request, tag, ""); err != nil {
+		if result, tag, _, _, err = f.client.InvokeBatchRequest(request, tag, ""); err != nil {
 			return nil, err
 		}
 
