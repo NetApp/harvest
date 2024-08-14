@@ -146,7 +146,6 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		request, response *node.Node
 		quotas            []*node.Node
 		ad, pd            time.Duration // Request/API time, Parse time, Fetch time
-		err               error
 		numMetrics        int
 	)
 
@@ -177,8 +176,8 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	quotaIndex := 0
 
 	for {
-		responseData := q.client.InvokeBatchRequest(request, tag, q.testFilePath)
-		if responseData.Err != nil {
+		responseData, err := q.client.InvokeBatchRequest(request, tag, q.testFilePath)
+		if err != nil {
 			return nil, nil, err
 		}
 		response = responseData.Result

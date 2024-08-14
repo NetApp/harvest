@@ -431,7 +431,6 @@ func (d *Disk) getDisks() error {
 	var (
 		result *node.Node
 		disks  []*node.Node
-		err    error
 	)
 
 	query := "storage-disk-get-iter"
@@ -456,8 +455,8 @@ func (d *Disk) getDisks() error {
 	request.AddChild(desired)
 
 	for {
-		responseData := d.client.InvokeBatchRequest(request, tag, "")
-		if responseData.Err != nil {
+		responseData, err := d.client.InvokeBatchRequest(request, tag, "")
+		if err != nil {
 			return err
 		}
 		result = responseData.Result
@@ -530,7 +529,6 @@ func (d *Disk) getAggregates() error {
 	var (
 		result *node.Node
 		aggrs  []*node.Node
-		err    error
 	)
 
 	query := "aggr-get-iter"
@@ -551,8 +549,8 @@ func (d *Disk) getAggregates() error {
 	request.AddChild(desired)
 
 	for {
-		responseData := d.client.InvokeBatchRequest(request, tag, "")
-		if responseData.Err != nil {
+		responseData, err := d.client.InvokeBatchRequest(request, tag, "")
+		if err != nil {
 			return err
 		}
 		result = responseData.Result

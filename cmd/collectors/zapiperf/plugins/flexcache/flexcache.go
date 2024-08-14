@@ -71,7 +71,6 @@ func (f *FlexCache) getFlexCaches() (*set.Set, error) {
 		result       *node.Node
 		flexCaches   []*node.Node
 		flexCacheSet *set.Set
-		err          error
 	)
 
 	flexCacheSet = set.New()
@@ -87,8 +86,8 @@ func (f *FlexCache) getFlexCaches() (*set.Set, error) {
 	request.AddChild(desired)
 
 	for {
-		responseData := f.client.InvokeBatchRequest(request, tag, "")
-		if responseData.Err != nil {
+		responseData, err := f.client.InvokeBatchRequest(request, tag, "")
+		if err != nil {
 			return nil, err
 		}
 		result = responseData.Result
