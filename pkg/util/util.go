@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v4/process"
-	"golang.org/x/exp/maps"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 	"net"
@@ -19,7 +18,6 @@ import (
 	"os"
 	"regexp"
 	"slices"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -415,12 +413,6 @@ func HasDuplicates(slice []string) bool {
 	}
 
 	return false
-}
-
-func GetSortedKeys(m map[string]string) []string {
-	keys := maps.Keys(m)
-	sort.Strings(keys)
-	return keys
 }
 
 func GetURLWithoutHost(r *http.Request) string {

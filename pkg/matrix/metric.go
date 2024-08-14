@@ -135,7 +135,7 @@ func (m *Metric) GetLabels() map[string]string {
 
 }
 func (m *Metric) HasLabels() bool {
-	return m.labels != nil && len(m.labels) > 0
+	return len(m.labels) > 0
 }
 
 func (m *Metric) GetRecords() []bool {

@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"golang.org/x/exp/maps"
+	"maps"
 	"slices"
 	"strconv"
 	"strings"
@@ -882,8 +882,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 	}
 
 	if len(noSet) > 0 {
-		attributes := maps.Keys(noSet)
-		slices.Sort(attributes)
+		attributes := slices.Sorted(maps.Keys(noSet))
 		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
 

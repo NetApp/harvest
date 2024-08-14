@@ -35,7 +35,7 @@ func TestEndPoll(t *testing.T) {
 	// Check that resolutionData has the expected values
 	resMat, ok := h.resolutionData[matName]
 	if !ok {
-		t.Fatalf("expected resolutionData to have key " + matName)
+		t.Fatal("expected resolutionData to have key " + matName)
 	}
 
 	// Check the count of instances in the resolution matrix

@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"golang.org/x/exp/maps"
+	"maps"
 	"slices"
 	"strings"
 	"time"
@@ -331,8 +331,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	}
 
 	if len(noSet) > 0 {
-		attributes := maps.Keys(noSet)
-		slices.Sort(attributes)
+		attributes := slices.Sorted(maps.Keys(noSet))
 		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
 	}
 

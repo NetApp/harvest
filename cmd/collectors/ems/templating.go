@@ -4,6 +4,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"maps"
+	"slices"
 	"time"
 )
 
@@ -91,7 +93,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 
 	// For bookend case, instanceKeys are replaced with bookendKeys
 	if len(bookendKeys) > 0 {
-		sortedBookendKeys := util.GetSortedKeys(bookendKeys)
+		sortedBookendKeys := slices.Sorted(maps.Keys(bookendKeys))
 		// Append instance keys to ems prop
 		for _, k := range sortedBookendKeys {
 			prop.InstanceKeys = append(prop.InstanceKeys, bookendKeys[k])

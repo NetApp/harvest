@@ -96,7 +96,7 @@ func TestPollerMetrics(t *testing.T) {
 	}
 	sort.Strings(duplicateMetrics)
 	for _, dupMetric := range duplicateMetrics {
-		t.Errorf(dupMetric)
+		t.Error(dupMetric)
 	}
 }
 
