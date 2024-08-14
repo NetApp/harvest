@@ -40,6 +40,9 @@ ifneq (,$(wildcard $(HARVEST_ENV)))
 	export $(shell sed '/^\#/d; s/=.*//' $(HARVEST_ENV))
 endif
 
+# FIPS flag
+FIPS ?= 0
+
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
@@ -101,7 +104,12 @@ harvest: deps
 	@mkdir -p bin
 	@# Build the harvest and poller cli
 	@echo "Building"
+ifeq ($(FIPS), 1)
+	@echo "Building with systemcrypto (FIPS compliance) using Microsoft Go SDK"
+	GOEXPERIMENT=systemcrypto GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=1 go build -trimpath -tags=requirefips -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
+else
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
+endif
 
 	@cp service/contrib/grafana bin; chmod +x bin/grafana
 
@@ -170,4 +178,3 @@ endif
 	VERSION=${VERSION} INSTALL_DOCKER=1 ./integration/test/test.sh
 	VERSION=${VERSION} REGRESSION=1 ./integration/test/test.sh
 	VERSION=${VERSION} ANALYZE_DOCKER_LOGS=1 ./integration/test/test.sh
-
