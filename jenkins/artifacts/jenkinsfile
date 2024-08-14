@@ -140,18 +140,26 @@ pipeline {
             }
       }
 
-        stage('Build Docker Image ') {
-                steps {
-                  withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
-                    sh '''
-                    targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-                    docker login
-                    docker build -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
-                    docker save -o ${targetLocation}/docker_harvest.tar ${ghcrImage}:latest
-                    '''
-                  }
+        stage('Build Docker Image') {
+            steps {
+                withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GIT_TOKEN')]) {
+                    script {
+                        // Write the GIT_TOKEN to a temporary file
+                        def gitTokenFile = "${env.WORKSPACE}/git_token"
+                        writeFile file: gitTokenFile, text: env.GIT_TOKEN
+
+                        withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+                            sh '''
+                            targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+                            docker login
+                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
+                            docker save -o ${targetLocation}/docker_harvest.tar ${ghcrImage}:latest
+                            '''
+                        }
+                    }
                 }
-              }
+            }
+        }
 
          stage('Publish builds locally'){
           steps {
@@ -219,46 +227,55 @@ pipeline {
       }
 
       stage('Publish Nightly Build to GitHub') {
-        when {
-            expression {
-                return params.RELEASE == 'nightly' && env.BRANCH == 'main' && params.ASUP_MAKE_TARGET == 'production'
-            }
-        }
-        steps {
-           sh '''
-           targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-           wget -q -O /opt/home/gh.tar.gz "https://github.com/cli/cli/releases/download/v2.8.0/gh_2.8.0_linux_386.tar.gz"
-           tar -C /opt/home -xzf /opt/home/gh.tar.gz
-           echo $GIT_TOKEN > mytoken.txt
-           /opt/home/gh_2.8.0_linux_386/bin/gh auth login --with-token < mytoken.txt
-           /opt/home/gh_2.8.0_linux_386/bin/gh release view nightly && /opt/home/gh_2.8.0_linux_386/bin/gh release delete nightly || true
-           if [ $(git tag -l nightly) ]; then
-               git push https://$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
-           fi
-           /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
-           docker build -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GIT_TOKEN=$GIT_TOKEN  -t ${imageName}:latest -t ${imageName}:nightly -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
-           echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
-           docker push ${ghcrImage}:nightly
-           # Add a dummy user/email for mike deploy to work
-           git config user.name harvest
-           git config user.email harvest
-           git fetch origin gh-pages:gh-pages
-           mike deploy -r https://$GIT_TOKEN@github.com/NetApp/harvest.git --push --update-aliases nightly
-            '''
-          withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
-            sh '''
-            docker login
-            docker push ${imageName}:nightly
-            '''
+          when {
+              expression {
+                  return params.RELEASE == 'nightly' && env.BRANCH == 'main' && params.ASUP_MAKE_TARGET == 'production'
+              }
           }
-          withCredentials([usernamePassword(credentialsId: 'Jfrog', passwordVariable: 'password', usernameVariable: 'username')]) {
-            sh '''
-            docker login --username=$username --password=$password ${jfrogRepo}
-            docker push ${jfrogImagePrefix}:nightly
-            '''
+          steps {
+              withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GIT_TOKEN')]) {
+                  script {
+                      // Write the GIT_TOKEN to a temporary file
+                      def gitTokenFile = "${env.WORKSPACE}/git_token"
+                      writeFile file: gitTokenFile, text: env.GIT_TOKEN
+
+                      sh '''
+                      targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+                      wget -q -O /opt/home/gh.tar.gz "https://github.com/cli/cli/releases/download/v2.8.0/gh_2.8.0_linux_386.tar.gz"
+                      tar -C /opt/home -xzf /opt/home/gh.tar.gz
+                      echo $GIT_TOKEN > mytoken.txt
+                      /opt/home/gh_2.8.0_linux_386/bin/gh auth login --with-token < mytoken.txt
+                      /opt/home/gh_2.8.0_linux_386/bin/gh release view nightly && /opt/home/gh_2.8.0_linux_386/bin/gh release delete nightly || true
+                      if [ $(git tag -l nightly) ]; then
+                          git push https://$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
+                      fi
+                      /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
+                      docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:nightly -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
+                      echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
+                      docker push ${ghcrImage}:nightly
+                      # Add a dummy user/email for mike deploy to work
+                      git config user.name harvest
+                      git config user.email harvest
+                      git fetch origin gh-pages:gh-pages
+                      mike deploy -r https://$GIT_TOKEN@github.com/NetApp/harvest.git --push --update-aliases nightly
+                      '''
+                      withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+                          sh '''
+                          docker login
+                          docker push ${imageName}:nightly
+                          '''
+                      }
+                      withCredentials([usernamePassword(credentialsId: 'Jfrog', passwordVariable: 'password', usernameVariable: 'username')]) {
+                          sh '''
+                          docker login --username=$username --password=$password ${jfrogRepo}
+                          docker push ${jfrogImagePrefix}:nightly
+                          '''
+                      }
+                  }
+              }
           }
-            }
-        }
+      }
+
     }
 
 
