@@ -456,9 +456,12 @@ func (d *Disk) getDisks() error {
 	request.AddChild(desired)
 
 	for {
-		if result, tag, _, _, err = d.client.InvokeBatchRequest(request, tag, ""); err != nil {
+		responseData := d.client.InvokeBatchRequest(request, tag, "")
+		if responseData.Err != nil {
 			return err
 		}
+		result = responseData.Result
+		tag = responseData.Tag
 
 		if result == nil {
 			break
@@ -548,9 +551,12 @@ func (d *Disk) getAggregates() error {
 	request.AddChild(desired)
 
 	for {
-		if result, tag, _, _, err = d.client.InvokeBatchRequest(request, tag, ""); err != nil {
+		responseData := d.client.InvokeBatchRequest(request, tag, "")
+		if responseData.Err != nil {
 			return err
 		}
+		result = responseData.Result
+		tag = responseData.Tag
 
 		if result == nil {
 			break

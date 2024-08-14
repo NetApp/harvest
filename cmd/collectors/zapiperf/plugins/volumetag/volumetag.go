@@ -58,9 +58,12 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	request.AddChild(desired)
 
 	for {
-		if result, tag, _, _, err = v.client.InvokeBatchRequest(request, tag, ""); err != nil {
+		responseData := v.client.InvokeBatchRequest(request, tag, "")
+		if responseData.Err != nil {
 			return nil, nil, err
 		}
+		result = responseData.Result
+		tag = responseData.Tag
 
 		if result == nil {
 			break

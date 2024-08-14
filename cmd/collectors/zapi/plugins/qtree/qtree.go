@@ -177,11 +177,14 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	quotaIndex := 0
 
 	for {
-		response, tag, ad, pd, err = q.client.InvokeBatchRequest(request, tag, q.testFilePath)
-
-		if err != nil {
+		responseData := q.client.InvokeBatchRequest(request, tag, q.testFilePath)
+		if responseData.Err != nil {
 			return nil, nil, err
 		}
+		response = responseData.Result
+		tag = responseData.Tag
+		ad = responseData.Rd
+		pd = responseData.Pd
 
 		if response == nil {
 			break
