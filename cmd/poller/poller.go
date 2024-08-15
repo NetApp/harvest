@@ -205,7 +205,8 @@ func (p *Poller) Init() error {
 
 	logger = logging.Configure(logConfig)
 
-	// if profiling port > 0 start profiling service
+	// If profiling port > 0 start profiling service on that port.
+	// Otherwise, the profiling endpoints will be setup in cmd/exporters/prometheus/httpd.go
 	if p.options.Profiling > 0 {
 		addr := fmt.Sprintf("localhost:%d", p.options.Profiling)
 		logger.Info().Msgf("profiling enabled on [%s]", addr)
