@@ -14,6 +14,7 @@ package options
 
 import (
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/rs/zerolog"
 	"os"
 	"path/filepath"
@@ -81,7 +82,7 @@ func (o *Options) SetDefaults() *Options {
 	}
 
 	o.HomePath = conf.Path("")
-	o.LogPath = conf.GetHarvestLogPath()
+	o.LogPath = logging.GetLogPath()
 	o.SetConfPath(o.ConfPath)
 
 	// If both debug and loglevel are set, loglevel wins
