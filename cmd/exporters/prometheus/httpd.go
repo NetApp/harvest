@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"net"
 	"net/http"
+	"net/http/pprof"
 	"strconv"
 	"strings"
 	"time"
@@ -23,6 +24,11 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", p.ServeInfo)
 	mux.HandleFunc("/metrics", p.ServeMetrics)
+	mux.HandleFunc("localhost/debug/pprof/", pprof.Index)
+	mux.HandleFunc("localhost/debug/pprof/cmdline", pprof.Cmdline)
+	mux.HandleFunc("localhost/debug/pprof/profile", pprof.Profile)
+	mux.HandleFunc("localhost/debug/pprof/symbol", pprof.Symbol)
+	mux.HandleFunc("localhost/debug/pprof/trace", pprof.Trace)
 
 	server := &http.Server{
 		Addr:              addr + ":" + strconv.Itoa(port),
