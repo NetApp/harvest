@@ -1,7 +1,7 @@
 package logging
 
 import (
-	"github.com/netapp/harvest/v2/pkg/conf"
+	"cmp"
 	"io"
 	"os"
 	"path"
@@ -67,7 +67,7 @@ func Get() *Logger {
 				PrefixValue:        defaultPrefixValue,
 				LogLevel:           defaultLogLevel,
 				FileLoggingEnabled: defaultFileLoggingEnabled,
-				Directory:          conf.GetHarvestLogPath(),
+				Directory:          GetLogPath(),
 				Filename:           defaultLogFileName,
 				MaxSize:            DefaultLogMaxMegaBytes,
 				MaxBackups:         DefaultLogMaxBackups,
@@ -76,6 +76,10 @@ func Get() *Logger {
 		}
 	})
 	return logger
+}
+
+func GetLogPath() string {
+	return cmp.Or(os.Getenv("HARVEST_LOGS"), "/var/log/harvest/")
 }
 
 // SubLogger adds the field key with val as a string to the logger context and returns sublogger

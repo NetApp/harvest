@@ -5,10 +5,10 @@
 package conf
 
 import (
-	"cmp"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/mergo"
@@ -20,10 +20,16 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 )
 
-var Config = HarvestConfig{}
-var configRead = false
+var (
+	Config            = HarvestConfig{}
+	configRead        = false
+	readMu            = sync.Mutex{}
+	credentialModTime = int64(0)
+	credConfig        HarvestConfig
+)
 
 const (
 	DefaultAPIVersion = "1.3"
@@ -222,21 +228,27 @@ func DecodeConfig(contents []byte) error {
 }
 
 func ReadCredentialFile(credPath string, p *Poller) error {
-	contents, err := os.ReadFile(credPath)
+	fileChanged, err := hasFileChanged(credPath)
 	if err != nil {
-		abs, err2 := filepath.Abs(credPath)
-		if err2 != nil {
-			abs = credPath
+		return err
+	}
+	if fileChanged {
+		logging.Get().Info().Str("credPath", credPath).Msg("reading credentials")
+		contents, err := os.ReadFile(credPath)
+		if err != nil {
+			abs, err2 := filepath.Abs(credPath)
+			if err2 != nil {
+				abs = credPath
+			}
+			return fmt.Errorf("failed to read file=%s error: %w", abs, err)
 		}
-		return fmt.Errorf("failed to read file=%s error: %w", abs, err)
+		err = yaml.Unmarshal(contents, &credConfig)
+		if err != nil {
+			return err
+		}
 	}
 	if p == nil {
 		return nil
-	}
-	var credConfig HarvestConfig
-	err = yaml.Unmarshal(contents, &credConfig)
-	if err != nil {
-		return err
 	}
 
 	credPoller := credConfig.Pollers[p.Name]
@@ -272,6 +284,20 @@ func ReadCredentialFile(credPath string, p *Poller) error {
 	return nil
 }
 
+func hasFileChanged(path string) (bool, error) {
+	readMu.Lock()
+	defer readMu.Unlock()
+	stat, err := os.Stat(path)
+	if err != nil {
+		return false, fmt.Errorf("failed to stat file=%s error: %w", path, err)
+	}
+	if stat.ModTime().Unix() > credentialModTime {
+		credentialModTime = stat.ModTime().Unix()
+		return true, nil
+	}
+	return false, nil
+}
+
 func PollerNamed(name string) (*Poller, error) {
 	poller, ok := Config.Pollers[name]
 	if !ok {
@@ -297,10 +323,6 @@ func Path(aPath string) string {
 		return aPath
 	}
 	return filepath.Join(confDir, aPath)
-}
-
-func GetHarvestLogPath() string {
-	return cmp.Or(os.Getenv("HARVEST_LOGS"), "/var/log/harvest/")
 }
 
 // GetLastPromPort returns the Prometheus port for the given poller
