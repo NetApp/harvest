@@ -4,7 +4,7 @@
 
     The information below describes how to setup Harvest's Prometheus exporter. 
     If you need help installing or setting up Prometheus, check 
-    out [their documention](https://prometheus.io/docs/prometheus/latest/getting_started/).
+    out [their documentation](https://prometheus.io/docs/prometheus/latest/getting_started/).
 
 ## Overview
 

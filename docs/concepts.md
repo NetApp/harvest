@@ -74,7 +74,7 @@ None of the [pollers](#poller) know anything about Prometheus. That's because Pr
 
 !!! note
 
-    Harvest includes a subset of dashboards for InfluxDB. There is a richer set of dashboards avaiable for Prometheus. 
+    Harvest includes a subset of dashboards for InfluxDB. There is a richer set of dashboards available for Prometheus.
 
 **More information:**
 
@@ -114,7 +114,7 @@ Harvest runs natively in containers. The [Harvest container](https://github.com/
 
 ## NABox
 
-NABox is a separate virtual applicance (.ova) that acts as a front-end to Harvest and includes Promethus and Grafana setup to use with Harvest. NABox is a great option for customers that prefer a virtual appliance over containers.
+NABox is a separate virtual appliance (.ova) that acts as a front-end to Harvest and includes Promethus and Grafana setup to use with Harvest. NABox is a great option for customers that prefer a virtual appliance over containers.
 
 **More information:**
 

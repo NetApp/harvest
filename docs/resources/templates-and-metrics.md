@@ -263,7 +263,7 @@ curl -s 'http://localhost:14002/metrics' | grep ^disk | cut -d'{' -f1 | sort | u
 # sum = ((7 + 1 + 1) * 24 = 216 rows)
 ```
 
-Here's a `disk_labels` for one instance, reformated to make it easier to read.
+Here's a `disk_labels` for one instance, reformatted to make it easier to read.
 
 ```
 curl -s 'http://localhost:14002/metrics' | grep ^disk_labels | head -1

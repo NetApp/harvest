@@ -2,7 +2,7 @@ This document describes implementation details about ONTAP's REST performance me
 
 !!! warning
 
-    These are implemenation details about ONTAP's REST performance metrics. You do not need to understand any of this to use Harvest. If you want to know how to **use** or **configure** Harvest's REST collectors, checkout the [Rest Collector](../configure-rest.md) documentation instead. If you're interested in the gory details. Read on. 
+    These are implementation details about ONTAP's REST performance metrics. You do not need to understand any of this to use Harvest. If you want to know how to **use** or **configure** Harvest's REST collectors, checkout the [Rest Collector](../configure-rest.md) documentation instead. If you're interested in the gory details. Read on.
 
 ## Introduction
 

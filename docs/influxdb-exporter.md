@@ -4,7 +4,7 @@
 
     The information below describes how to setup Harvest's InfluxDB exporter. 
     If you need help installing or setting up InfluxDB, check 
-    out [their documention](https://docs.influxdata.com/).
+    out [their documentation](https://docs.influxdata.com/).
 
 ## Overview
 

@@ -252,7 +252,7 @@ Example:
 split_pairs:
   - comment ` ` `:`
 # will split pairs using a single space and split key-values using colon
-# e.g. if comment="owner:jack contact:some@email", the result wll be
+# e.g. if comment="owner:jack contact:some@email", the result will be
 # two new labels: owner="jack" and contact="some@email"
 ```
 
