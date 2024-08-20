@@ -12,6 +12,7 @@ pipeline {
         string(name: 'VERSION', defaultValue: '', description: 'Version')
         string(name: 'BRANCH',  defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
         string(name: 'DOCKER',  defaultValue: '', description: 'http url of docker tar build or docker image')
+        string(name: 'DOCKER_FIPS',  defaultValue: '', description: 'http url of fips complaint docker tar build or docker image')
         string(name: 'RPM',     defaultValue: '', description: 'http url of rpm file')
         string(name: 'NATIVE',  defaultValue: '', description: 'http url of native tar file')
     }
@@ -19,7 +20,7 @@ pipeline {
         BUILD_ID="dontKillMe"
         JENKINS_NODE_COOKIE="dontKillMe"
     }
-    
+
     stages {
         stage('Setup') {
             agent {
@@ -150,7 +151,7 @@ pipeline {
                     agent {
                         label "docker"
                     }
-                    stages('Test on docker Pkg') {
+                    stages('Test on Docker Pkg') {
                         stage('Setup') {
                             steps {
                                 printNodeInfo()
@@ -162,7 +163,7 @@ pipeline {
                         stage('Install Docker') {
                             steps {
                                 sh '''
-                                echo "Installing"
+                                echo "Installing Docker"
                                 curl -O $DOCKER && docker load -i docker_harvest.tar
                                 rm -rf $WORKSPACE/docker
                                 mkdir $WORKSPACE/docker
@@ -172,9 +173,10 @@ pipeline {
                                   --entrypoint "bin/harvest" \
                                   --volume "$(pwd):/opt/temp" \
                                   --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
-                                  ghcr.io/netapp/harvest \
+                                  ghcr.io/netapp/harvest:latest \
                                   generate docker full \
-                                  --output harvest-compose.yml
+                                  --output harvest-compose.yml \
+                                  --image ghcr.io/netapp/harvest:latest
                                 docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 sleep 1m
                                 INSTALL_DOCKER=1 bash $WORKSPACE/harvest/integration/test/test.sh
@@ -200,6 +202,66 @@ pipeline {
                                         docker ps -q | xargs docker stop | xargs docker rm --force
                                     """
                                     archiveArtifacts artifacts: "docker_logs.zip", fingerprint: true
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('DOCKER_FIPS') {
+                    agent {
+                        label "docker"
+                    }
+                    stages('Test on Docker FIPS Pkg') {
+                        stage('Setup') {
+                            steps {
+                                printNodeInfo()
+                                cleanWs()
+                                stopAndRemoveDockers()
+                                setupWorkspace()
+                            }
+                        }
+                        stage('Install Docker FIPS') {
+                            steps {
+                                sh '''
+                                echo "Installing Docker FIPS"
+                                curl -O $DOCKER_FIPS && docker load -i docker_harvest_fips.tar
+                                rm -rf $WORKSPACE/docker
+                                mkdir $WORKSPACE/docker
+                                cd $WORKSPACE/docker
+                                cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
+                                docker run --rm \
+                                  --entrypoint "bin/harvest" \
+                                  --volume "$(pwd):/opt/temp" \
+                                  --volume "$(pwd)/harvest.yml:/opt/harvest/harvest.yml" \
+                                  ghcr.io/netapp/harvest:latest-fips \
+                                  generate docker full \
+                                  --output harvest-compose.yml \
+                                  --image ghcr.io/netapp/harvest:latest-fips
+                                docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
+                                sleep 1m
+                                INSTALL_DOCKER=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                '''
+                            }
+                        }
+                        stage('Running Test') {
+                            steps {
+                                sh """
+                                export VERSION=$VERSION
+                                REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                """
+
+                            }
+                            post {
+                                always {
+                                    sh """
+                                        COPY_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                        rm -f docker_fips_logs.zip
+                                        zip -r docker_fips_logs.zip /var/log/harvest
+                                        cd $WORKSPACE/docker
+                                        ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                        docker ps -q | xargs docker stop | xargs docker rm --force
+                                    """
+                                    archiveArtifacts artifacts: "docker_fips_logs.zip", fingerprint: true
                                 }
                             }
                         }
