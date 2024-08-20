@@ -49,7 +49,6 @@ RUN mkdir -p /temp_libs/x86_64-linux-gnu /temp_libs/lib64 && \
     cp /lib/x86_64-linux-gnu/libresolv.so.2 /temp_libs/x86_64-linux-gnu/ && \
     cp /lib/x86_64-linux-gnu/libpthread.so.0 /temp_libs/x86_64-linux-gnu/ && \
     cp /lib/x86_64-linux-gnu/libc.so.6 /temp_libs/x86_64-linux-gnu/ && \
-    cp /lib/x86_64-linux-gnu/libdl.so.2 /temp_libs/x86_64-linux-gnu/ && \
     cp /lib64/ld-linux-x86-64.so.2 /temp_libs/lib64/; \
     fi
 
