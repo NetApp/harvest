@@ -4,7 +4,6 @@ FROM golang:${GO_VERSION} AS builder
 
 SHELL ["/bin/bash", "-c"]
 
-ARG ZIG_VERSION=0.13.0
 ARG INSTALL_DIR=/opt/harvest
 ARG BUILD_DIR=/opt/home
 ARG VERSION=2.0
@@ -15,23 +14,11 @@ ARG FIPS=0
 # Set the Current Working Directory inside the container
 WORKDIR $BUILD_DIR
 
-RUN apt-get update && apt-get install -y xz-utils
-
-# Install Zig if FIPS is enabled
-RUN if [ "$FIPS" -eq "1" ]; then \
-    wget https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz \
-    && tar -xf zig-linux-x86_64-${ZIG_VERSION}.tar.xz \
-    && mv zig-linux-x86_64-${ZIG_VERSION} /usr/local/zig; \
-    fi
-
 RUN mkdir -p $INSTALL_DIR $INSTALL_DIR/container/onePollerPerContainer $INSTALL_DIR/container/prometheus $INSTALL_DIR/cert
 
 COPY . .
 
 RUN --mount=type=secret,id=git_token \
-    if [ "$FIPS" -eq "1" ]; then \
-    export PATH="/usr/local/zig:${PATH}"; \
-    fi && \
     if [[ -n "$ASUP_MAKE_TARGET" && -f "/run/secrets/git_token" ]]; then \
     make build asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$(cat /run/secrets/git_token) FIPS=$FIPS ; \
     else \
