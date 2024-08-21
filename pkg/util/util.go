@@ -12,6 +12,7 @@ import (
 	"github.com/shirou/gopsutil/v4/process"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
+	"math"
 	"net"
 	"net/http"
 	"net/url"
@@ -452,4 +453,11 @@ func HandleArrayFormat(name string) string {
 		return matches[1]
 	}
 	return name
+}
+
+func SafeConvertToInt32(in int) (int32, error) {
+	if in > math.MaxInt32 {
+		return 0, fmt.Errorf("input %d is too large to convert to int32", in)
+	}
+	return int32(in), nil // #nosec G115
 }

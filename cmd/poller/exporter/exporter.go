@@ -155,7 +155,7 @@ func (e *AbstractExporter) GetStatus() (uint8, string, string) {
 // SetStatus sets the current state of exporter
 func (e *AbstractExporter) SetStatus(code uint8, msg string) {
 	if code >= uint8(len(status)) {
-		panic("invalid status code " + strconv.Itoa(int(code)))
+		panic("invalid status code " + strconv.FormatUint(uint64(code), 10))
 	}
 	e.Status = code
 	e.Message = msg

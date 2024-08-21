@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/host"
 	"github.com/shirou/gopsutil/v4/mem"
@@ -240,15 +241,20 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	// Get the PID and RSS in bytes of the current process.
 	// If there is an error, rssBytes will be zero
 	pid := os.Getpid()
-	newProcess, err := process.NewProcess(int32(pid))
+	pid32, err := util.SafeConvertToInt32(pid)
 	if err != nil {
-		logging.Get().Err(err).Msg("failed to get process info")
+		logging.Get().Err(err).Int("pid", pid).Send()
 	} else {
-		memInfo, err := newProcess.MemoryInfo()
+		newProcess, err := process.NewProcess(pid32)
 		if err != nil {
-			logging.Get().Err(err).Int("pid", pid).Msg("failed to get memory info")
+			logging.Get().Err(err).Msg("failed to get process info")
 		} else {
-			rssBytes = memInfo.RSS
+			memInfo, err := newProcess.MemoryInfo()
+			if err != nil {
+				logging.Get().Err(err).Int("pid", pid).Msg("failed to get memory info")
+			} else {
+				rssBytes = memInfo.RSS
+			}
 		}
 	}
 

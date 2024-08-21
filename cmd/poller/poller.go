@@ -1316,7 +1316,13 @@ func (p *Poller) mergeConfPath() {
 func (p *Poller) addMemoryMetadata() {
 
 	pid := os.Getpid()
-	proc, err := process.NewProcess(int32(pid))
+	pid32, err := util.SafeConvertToInt32(pid)
+	if err != nil {
+		logger.Warn().Int("pid", pid).Msg(err.Error())
+		return
+	}
+
+	proc, err := process.NewProcess(pid32)
 	if err != nil {
 		logger.Error().Err(err).Int("pid", pid).Msg("Failed to lookup process for poller")
 		return

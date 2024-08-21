@@ -637,7 +637,7 @@ func (c *AbstractCollector) GetStatus() (uint8, string, string) {
 // of the values defined by CollectorStatus
 func (c *AbstractCollector) SetStatus(status uint8, msg string) {
 	if status >= uint8(len(Status)) {
-		panic("invalid status code " + strconv.Itoa(int(status)))
+		panic("invalid status code " + strconv.FormatUint(uint64(status), 10))
 	}
 	c.Status = status
 	c.Message = msg
