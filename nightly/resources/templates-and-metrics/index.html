@@ -2047,7 +2047,7 @@ metrics + one disk_labels + one plugin-created metric, <code>disk_new_status</co
   24 disk_uptime                     # metric
 # sum = ((7 + 1 + 1) * 24 = 216 rows)
 </code></pre></div>
-<p>Here's a <code>disk_labels</code> for one instance, reformated to make it easier to read.</p>
+<p>Here's a <code>disk_labels</code> for one instance, reformatted to make it easier to read.</p>
 <div class="highlight"><pre><span></span><code>curl -s &#39;http://localhost:14002/metrics&#39; | grep ^disk_labels | head -1
 
 disk_labels{
