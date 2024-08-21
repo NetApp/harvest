@@ -4,7 +4,7 @@
 .PHONY: help deps clean build test fmt lint package asup dev fetch-asup ci
 
 SHELL := /bin/bash
-REQUIRED_GO_VERSION := 1.22
+REQUIRED_GO_VERSION := 1.23
 GOLANGCI_LINT_VERSION := latest
 GOVULNCHECK_VERSION := latest
 ifneq (, $(shell which go))
@@ -39,6 +39,9 @@ ifneq (,$(wildcard $(HARVEST_ENV)))
     include $(HARVEST_ENV)
 	export $(shell sed '/^\#/d; s/=.*//' $(HARVEST_ENV))
 endif
+
+# FIPS flag
+FIPS ?= 0
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-11s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -100,9 +103,13 @@ all: package ## Build, Test, Package
 harvest: deps
 	@mkdir -p bin
 	@# Build the harvest and poller cli
+ifeq ($(FIPS), 1)
+	@echo "Building with BoringCrypto (FIPS compliance)"
+	GOEXPERIMENT=boringcrypto GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=1 go build -trimpath -tags boringcrypto -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
+else
 	@echo "Building"
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -o bin -ldflags=$(LD_FLAGS) ./cmd/harvest ./cmd/poller
-
+endif
 	@cp service/contrib/grafana bin; chmod +x bin/grafana
 
 ###############################################################################
@@ -131,7 +138,7 @@ asup:
 	else\
 		git clone -b ${BRANCH} https://${GIT_TOKEN}@github.com/NetApp/harvest-private.git ${ASUP_TMP};\
 	fi
-	@cd ${ASUP_TMP}/harvest-asup && CGO_ENABLED=0 make ${ASUP_MAKE_TARGET} VERSION=${VERSION} RELEASE=${RELEASE}
+	@cd ${ASUP_TMP}/harvest-asup && make ${ASUP_MAKE_TARGET} VERSION=${VERSION} RELEASE=${RELEASE} FIPS=${FIPS}
 	@mkdir -p ${CURRENT_DIR}/autosupport
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
 

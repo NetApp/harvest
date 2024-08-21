@@ -9,6 +9,7 @@ ARG BUILD_DIR=/opt/home
 ARG VERSION=2.0
 ARG RELEASE=nightly
 ARG ASUP_MAKE_TARGET=build
+ARG FIPS=0
 
 # Set the Current Working Directory inside the container
 WORKDIR $BUILD_DIR
@@ -19,25 +20,35 @@ COPY . .
 
 RUN --mount=type=secret,id=git_token \
     if [[ -n "$ASUP_MAKE_TARGET" && -f "/run/secrets/git_token" ]]; then \
-    GIT_TOKEN=$(cat /run/secrets/git_token) && \
-    make build asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN ; \
+    make build asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$(cat /run/secrets/git_token) FIPS=$FIPS ; \
     else \
-    make build VERSION=$VERSION RELEASE=$RELEASE BIN_PLATFORM=linux ;\
+    make build VERSION=$VERSION RELEASE=$RELEASE BIN_PLATFORM=linux FIPS=$FIPS ;\
     fi
 
-RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml.example
+RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml.example \
+    && cp -aR bin $BUILD_DIR/conf $BUILD_DIR/grafana $BUILD_DIR/autosupport $BUILD_DIR/prom-stack.tmpl $INSTALL_DIR \
+    && cp -a $BUILD_DIR/container/onePollerPerContainer/docker-compose.tmpl $INSTALL_DIR/container/onePollerPerContainer \
+    && cp -aR $BUILD_DIR/container/prometheus $INSTALL_DIR/container/
 
-RUN cp -aR bin $BUILD_DIR/conf $BUILD_DIR/grafana $BUILD_DIR/autosupport $BUILD_DIR/prom-stack.tmpl $INSTALL_DIR
-
-RUN cp -a $BUILD_DIR/container/onePollerPerContainer/docker-compose.tmpl $INSTALL_DIR/container/onePollerPerContainer
-
-RUN cp -aR $BUILD_DIR/container/prometheus $INSTALL_DIR/container/
+# Create directories and conditionally copy .so files if FIPS is enabled
+RUN mkdir -p /temp_libs/x86_64-linux-gnu /temp_libs/lib64 && \
+    if [ "$FIPS" -eq "1" ]; then \
+    cp /lib/x86_64-linux-gnu/libresolv.so.2 /temp_libs/x86_64-linux-gnu/ && \
+    cp /lib/x86_64-linux-gnu/libpthread.so.0 /temp_libs/x86_64-linux-gnu/ && \
+    cp /lib/x86_64-linux-gnu/libc.so.6 /temp_libs/x86_64-linux-gnu/ && \
+    cp /lib64/ld-linux-x86-64.so.2 /temp_libs/lib64/; \
+    fi
 
 FROM gcr.io/distroless/static-debian12:debug
 
 ARG INSTALL_DIR=/opt/harvest
 ENV HARVEST_DOCKER=yes
 COPY --from=builder $INSTALL_DIR $INSTALL_DIR
+
+# Conditionally copy .so files from builder stage if they exist
+COPY --from=builder /temp_libs/x86_64-linux-gnu/ /lib/x86_64-linux-gnu/
+COPY --from=builder /temp_libs/lib64/ /lib64/
+
 WORKDIR $INSTALL_DIR
 
 ENTRYPOINT ["bin/poller"]
