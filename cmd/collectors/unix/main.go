@@ -160,7 +160,7 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 	// load list of counters from template
 	if counters := u.Params.GetChildS("counters"); counters != nil {
 		if err = u.loadMetrics(counters); err != nil {
-			u.Logger.Error().Stack().Err(err).Msg("load metrics")
+			u.Logger.Error().Err(err).Msg("load metrics")
 			return err
 		}
 	} else {
@@ -169,7 +169,7 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 
 	getClockTicks()
 	if u.system, err = NewSystem(); err != nil {
-		u.Logger.Error().Stack().Err(err).Msg("load system")
+		u.Logger.Error().Err(err).Msg("load system")
 		return err
 	}
 
@@ -405,21 +405,21 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 func setStartTime(m *matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	err := m.SetValueFloat64(i, p.startTime+s.bootTime)
 	if err != nil {
-		logging.Get().Error().Stack().Err(err).Msg("error")
+		logging.Get().Error().Err(err).Msg("error")
 	}
 }
 
 func setNumThreads(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numThreads)
 	if err != nil {
-		logging.Get().Error().Stack().Err(err).Msg("error")
+		logging.Get().Error().Err(err).Msg("error")
 	}
 }
 
 func setNumFds(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numFds)
 	if err != nil {
-		logging.Get().Error().Stack().Err(err).Msg("error")
+		logging.Get().Error().Err(err).Msg("error")
 	}
 }
 
@@ -427,12 +427,12 @@ func setCPUPercent(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) 
 	if p.elapsedTime != 0 {
 		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 		if err != nil {
-			logging.Get().Error().Stack().Err(err).Msg("error")
+			logging.Get().Error().Err(err).Msg("error")
 		}
 	} else {
 		err := m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
 		if err != nil {
-			logging.Get().Error().Stack().Err(err).Msg("error")
+			logging.Get().Error().Err(err).Msg("error")
 		}
 	}
 }
@@ -441,7 +441,7 @@ func setCPU(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.cpu[l]; ok {
 		err := m.SetValueFloat64(i, value)
 		if err != nil {
-			logging.Get().Error().Stack().Err(err).Msg("error")
+			logging.Get().Error().Err(err).Msg("error")
 		}
 	}
 }
@@ -450,7 +450,7 @@ func setMemory(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.mem[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Stack().Err(err).Msg("error")
+			logging.Get().Error().Err(err).Msg("error")
 		}
 	}
 }
@@ -459,7 +459,7 @@ func setIo(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.io[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Stack().Err(err).Msg("error")
+			logging.Get().Error().Err(err).Msg("error")
 		}
 	}
 }
@@ -468,7 +468,7 @@ func setNet(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.net[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Stack().Err(err).Msg("error")
+			logging.Get().Error().Err(err).Msg("error")
 		}
 	}
 }
@@ -477,7 +477,7 @@ func setCtx(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.ctx[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Stack().Err(err).Msg("error")
+			logging.Get().Error().Err(err).Msg("error")
 		}
 	}
 }

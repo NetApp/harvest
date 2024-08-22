@@ -115,7 +115,7 @@ func (d *Disk) Init() error {
 	}
 
 	if d.client, err = zapi.New(conf.ZapiPoller(d.ParentParams), d.Auth); err != nil {
-		d.Logger.Error().Stack().Err(err).Msg("connecting")
+		d.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -178,7 +178,7 @@ func (d *Disk) Init() error {
 				case "float":
 					_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
 					if err != nil {
-						d.Logger.Error().Stack().Err(err).Msg("add metric")
+						d.Logger.Error().Err(err).Msg("add metric")
 						return err
 					}
 				}

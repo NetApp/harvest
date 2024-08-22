@@ -90,7 +90,7 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				rxPercent = rxBytes / float64(speed)
 				err := rx.SetValueFloat64(instance, rxPercent)
 				if err != nil {
-					f.Logger.Error().Stack().Err(err).Msg("error")
+					f.Logger.Error().Err(err).Msg("error")
 				}
 			}
 
@@ -98,14 +98,14 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				txPercent = txBytes / float64(speed)
 				err := tx.SetValueFloat64(instance, txPercent)
 				if err != nil {
-					f.Logger.Error().Stack().Err(err).Msg("error")
+					f.Logger.Error().Err(err).Msg("error")
 				}
 			}
 
 			if rxOk || txOk {
 				err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
-					f.Logger.Error().Stack().Err(err).Msg("error")
+					f.Logger.Error().Err(err).Msg("error")
 				}
 			}
 		}

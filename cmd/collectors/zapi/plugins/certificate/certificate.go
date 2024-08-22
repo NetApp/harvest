@@ -41,7 +41,7 @@ func (my *Certificate) Init() error {
 	}
 
 	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
-		my.Logger.Error().Stack().Err(err).Msg("connecting")
+		my.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 

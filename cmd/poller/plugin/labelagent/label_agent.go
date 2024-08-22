@@ -277,7 +277,7 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
-				a.Logger.Error().Stack().Err(err).Msgf("valueToNumMapping: new metric [%s]:", r.metric)
+				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("valueToNumMapping")
 				return err
 			}
 			metric.SetProperty("value_to_num mapping")
@@ -305,7 +305,7 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 	for _, r := range a.valueToNumRegexRules {
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
-				a.Logger.Error().Stack().Err(err).Msgf("valueToNumRegexMapping: new metric [%s]:", r.metric)
+				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("valueToNumRegexMapping")
 				return err
 			}
 			metric.SetProperty("value_to_num_regex mapping")

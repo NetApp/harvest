@@ -33,7 +33,7 @@ func (f *FlexCache) Init() error {
 	}
 
 	if f.client, err = zapi.New(conf.ZapiPoller(f.ParentParams), f.Auth); err != nil {
-		f.Logger.Error().Stack().Err(err).Msg("connecting")
+		f.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 

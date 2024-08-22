@@ -236,13 +236,13 @@ func (a *LabelAgent) parseSplitRegexRule(rule string) {
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
 			var err error
 			if r.reg, err = regexp.Compile(fields[0]); err != nil {
-				a.Logger.Error().Stack().Err(err).Msg("(split_regex) invalid regex")
+				a.Logger.Error().Err(err).Msg("(split_regex) invalid regex")
 				return
 			}
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
 				a.splitRegexRules = append(a.splitRegexRules, r)
 				a.addNewLabels(r.targets)
-				a.Logger.Debug().Msgf("(split_regex) parsed rule [%v]", r)
+				a.Logger.Debug().Str("r", r.source).Msg("(split_regex) parsed rule")
 				return
 			}
 		}
@@ -366,7 +366,7 @@ func (a *LabelAgent) parseReplaceRegexRule(rule string) {
 				}
 			}
 			if errPos != -1 {
-				a.Logger.Error().Stack().Err(nil).Msgf("(replace_regex) invalid char in substitution string at pos %d (%s)", errPos, string(fields[2][errPos]))
+				a.Logger.Error().Int("errPos", errPos).Str("sub", string(fields[2][errPos])).Msg("(replace_regex) invalid char in substitution string")
 				return
 			}
 			a.replaceRegexRules = append(a.replaceRegexRules, r)
@@ -527,7 +527,7 @@ func (a *LabelAgent) parseValueToNumRule(rule string) {
 
 			v, err := strconv.ParseUint(fields[4], 10, 8)
 			if err != nil {
-				a.Logger.Error().Stack().Err(err).Msgf("(value_to_num) parse default value (%s): ", fields[4])
+				a.Logger.Error().Err(err).Str("default", fields[4]).Msg("(value_to_num) parse")
 				return
 			}
 			r.hasDefault = true
@@ -562,18 +562,18 @@ func (a *LabelAgent) parseValueToNumRegexRule(rule string) {
 	if fields := strings.Fields(rule); len(fields) == 4 || len(fields) == 5 {
 		r := valueToNumRegexRule{metric: fields[0], label: fields[1], reg: make([]*regexp.Regexp, 2)}
 		if r.reg[0], err = regexp.Compile(fields[2]); err != nil {
-			a.Logger.Error().Stack().Err(err).Str("regex", r.reg[0].String()).Str("value", fields[2]).Msg("(value_to_num_regex) compile regex:")
+			a.Logger.Error().Err(err).Str("regex", r.reg[0].String()).Str("value", fields[2]).Msg("(value_to_num_regex) compile regex:")
 		}
 
 		if r.reg[1], err = regexp.Compile(fields[3]); err != nil {
-			a.Logger.Error().Stack().Err(err).Str("regex", r.reg[1].String()).Str("value", fields[3]).Msg("(value_to_num_regex) compile regex:")
+			a.Logger.Error().Err(err).Str("regex", r.reg[1].String()).Str("value", fields[3]).Msg("(value_to_num_regex) compile regex:")
 		}
 
 		if len(fields) == 5 {
 			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
 			v, err := strconv.ParseUint(fields[4], 10, 8)
 			if err != nil {
-				a.Logger.Error().Stack().Err(err).Msgf("(value_to_num_regex) parse default value (%s): ", fields[4])
+				a.Logger.Error().Err(err).Str("regex", fields[4]).Msg("(value_to_num_regex) parse default value")
 				return
 			}
 			r.hasDefault = true

@@ -102,7 +102,7 @@ func (p *Prometheus) Init() error {
 			p.Logger.Debug().Msgf("using cache_max_keep [%s]", *x)
 			p.cache = newCache(d)
 		} else {
-			p.Logger.Error().Stack().Err(err).Msgf("cache_max_keep [%s]", *x)
+			p.Logger.Error().Err(err).Str("x", *x).Msg("cache_max_keep")
 		}
 	}
 
@@ -119,7 +119,7 @@ func (p *Prometheus) Init() error {
 	if x := p.Params.AllowedAddrs; x != nil {
 		p.allowAddrs = *x
 		if len(p.allowAddrs) == 0 {
-			p.Logger.Error().Stack().Err(nil).Msg("allow_addrs without any")
+			p.Logger.Error().Err(nil).Msg("allow_addrs without any")
 			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
@@ -134,12 +134,12 @@ func (p *Prometheus) Init() error {
 			if reg, err := regexp.Compile(r); err == nil {
 				p.allowAddrsRegex = append(p.allowAddrsRegex, reg)
 			} else {
-				p.Logger.Error().Stack().Err(err).Msg("parse regex")
+				p.Logger.Error().Err(err).Msg("parse regex")
 				return errs.New(errs.ErrInvalidParam, "allow_addrs_regex")
 			}
 		}
 		if len(p.allowAddrsRegex) == 0 {
-			p.Logger.Error().Stack().Err(nil).Msg("allow_addrs_regex without any")
+			p.Logger.Error().Err(nil).Msg("allow_addrs_regex without any")
 			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
@@ -156,7 +156,7 @@ func (p *Prometheus) Init() error {
 	port := p.Options.PromPort
 	if port == 0 {
 		if promPort := p.Params.Port; promPort == nil {
-			p.Logger.Error().Stack().Err(nil).Msg("Issue while reading prometheus port")
+			p.Logger.Error().Err(nil).Msg("Issue while reading prometheus port")
 		} else {
 			port = *promPort
 		}
@@ -295,13 +295,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 	if x := options.GetChildContentS("include_all_labels"); x != "" {
 		if includeAllLabels, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error().Stack().Err(err).Msg("parameter: include_all_labels")
+			p.Logger.Error().Err(err).Msg("parameter: include_all_labels")
 		}
 	}
 
 	if x := options.GetChildContentS("require_instance_keys"); x != "" {
 		if requireInstanceKeys, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error().Stack().Err(err).Msg("parameter: require_instance_keys")
+			p.Logger.Error().Err(err).Msg("parameter: require_instance_keys")
 		}
 	}
 
