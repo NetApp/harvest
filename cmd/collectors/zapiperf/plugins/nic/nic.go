@@ -16,20 +16,77 @@ package nic
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"math"
 	"strconv"
 	"strings"
 )
 
+const batchSize = "500"
+
 type Nic struct {
 	*plugin.AbstractPlugin
+	data   *matrix.Matrix
+	client *zapi.Client
+}
+
+type PortData struct {
+	node  string
+	port  string
+	read  float64
+	write float64
+	speed float64
+}
+
+var ifgrpMetrics = []string{
+	"rx_bytes",
+	"tx_bytes",
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Nic{AbstractPlugin: p}
+}
+
+func (n *Nic) Init() error {
+	var err error
+	if err := n.InitAbc(); err != nil {
+		return err
+	}
+
+	if n.client, err = zapi.New(conf.ZapiPoller(n.ParentParams), n.Auth); err != nil {
+		n.Logger.Error().Stack().Err(err).Msg("connecting")
+		return err
+	}
+
+	if err := n.client.Init(5); err != nil {
+		return err
+	}
+
+	n.data = matrix.New(n.Parent+".NicCommon", "nic_ifgrp", "nic_ifgrp")
+
+	exportOptions := node.NewS("export_options")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+	instanceKeys.NewChildS("", "node")
+	instanceKeys.NewChildS("", "ifgroup")
+	instanceKeys.NewChildS("", "ports")
+	n.data.SetExportOptions(exportOptions)
+
+	for _, obj := range ifgrpMetrics {
+		metricName, display, _, _ := util.ParseMetric(obj)
+		_, err := n.data.NewMetricFloat64(metricName, display)
+		if err != nil {
+			n.Logger.Error().Stack().Err(err).Msg("add metric")
+			return err
+		}
+	}
+
+	n.Logger.Debug().Msgf("added data with %d metrics", len(n.data.GetMetrics()))
+	return nil
 }
 
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
@@ -37,8 +94,18 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 	var read, write, rx, tx, utilPercent *matrix.Metric
 	var err error
+	portDataMap := make(map[string]PortData)
 
 	data := dataMap[n.Object]
+	n.client.Metadata.Reset()
+
+	// Purge and reset data
+	n.data.PurgeInstances()
+	n.data.Reset()
+
+	// Set all global labels from zapi.go if already not exist
+	n.data.SetGlobalLabels(data.GetGlobalLabels())
+
 	if read = data.GetMetric("rx_bytes"); read == nil {
 		return nil, nil, errs.New(errs.ErrNoMetric, "rx_bytes")
 	}
@@ -77,10 +144,12 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		}
 
 		var speed, base int
-		var s string
+		var s, port, nodeName string
 		var err error
 
 		s = instance.GetLabel("speed")
+		port = instance.GetLabel("nic")
+		nodeName = instance.GetLabel("node")
 
 		if s != "" {
 			if strings.HasSuffix(s, "M") {
@@ -96,6 +165,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			}
 
 			if speed != 0 {
+
 				var rxBytes, txBytes, rxPercent, txPercent float64
 				var rxOk, txOk bool
 
@@ -114,6 +184,8 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 						n.Logger.Error().Stack().Err(err).Msg("error")
 					}
 				}
+
+				portDataMap[nodeName+port] = PortData{node: nodeName, port: port, read: rxBytes, write: txBytes, speed: float64(speed)}
 
 				if rxOk || txOk {
 					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
@@ -142,5 +214,109 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 	}
 
-	return nil, nil, nil
+	// populate ifgrp metrics
+	portIfgroupMap := n.getIfgroupInfo()
+	if err := n.populateIfgroupMetrics(portIfgroupMap, portDataMap); err != nil {
+		return nil, nil, err
+	}
+
+	return []*matrix.Matrix{n.data}, n.client.Metadata, nil
+}
+
+func (n *Nic) getIfgroupInfo() map[string]string {
+	var (
+		result         *node.Node
+		ifgroups       []*node.Node
+		ifgroupsData   []*node.Node
+		portIfgroupMap map[string]string // Node+port to ifgroup mapping map
+	)
+
+	portIfgroupMap = make(map[string]string)
+	query := "net-port-get-iter"
+	tag := "initial"
+	request := node.NewXMLS(query)
+	request.NewChildS("max-records", batchSize)
+	desired := node.NewXMLS("desired-attributes")
+	ifgroupAttributes := node.NewXMLS("desired-attributes")
+	ifgroupInfoAttributes := node.NewXMLS("net-port-info")
+	ifgroupInfoAttributes.NewChildS("node", "")
+	ifgroupInfoAttributes.NewChildS("port", "")
+	ifgroupInfoAttributes.NewChildS("ifgrp-port", "")
+	ifgroupAttributes.AddChild(ifgroupInfoAttributes)
+	desired.AddChild(ifgroupAttributes)
+	request.AddChild(desired)
+
+	for {
+		responseData, err := n.client.InvokeBatchRequest(request, tag, "")
+		if err != nil {
+			n.Logger.Error().Err(err).Msg("Failed to invoke batch zapi call")
+			return portIfgroupMap
+		}
+		result = responseData.Result
+		tag = responseData.Tag
+
+		if result == nil {
+			break
+		}
+
+		if x := result.GetChildS("attributes-list"); x != nil {
+			ifgroups = x.GetChildren()
+		}
+		if len(ifgroups) == 0 {
+			break
+		}
+		ifgroupsData = append(ifgroupsData, ifgroups...)
+	}
+	for _, ifgroup := range ifgroupsData {
+		nodeName := ifgroup.GetChildContentS("node")
+		port := ifgroup.GetChildContentS("port")
+		if ifgrpPort := ifgroup.GetChildContentS("ifgrp-port"); ifgrpPort != "" {
+			portIfgroupMap[nodeName+port] = ifgrpPort
+		}
+	}
+	return portIfgroupMap
+}
+
+func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData) error {
+	var err error
+	for portKey, ifgroupName := range portIfgroupMap {
+		portInfo := portDataMap[portKey]
+		nodeName := portInfo.node
+		port := portInfo.port
+		readBytes := portInfo.read
+		WriteBytes := portInfo.write
+
+		ifgrpupInstanceKey := nodeName + ifgroupName
+		ifgroupInstance := n.data.GetInstance(ifgrpupInstanceKey)
+		if ifgroupInstance == nil {
+			ifgroupInstance, err = n.data.NewInstance(ifgrpupInstanceKey)
+			if err != nil {
+				n.Logger.Debug().Msgf("add (%s) instance: %v", ifgrpupInstanceKey, err)
+				return err
+			}
+		}
+
+		// set labels
+		ifgroupInstance.SetLabel("node", nodeName)
+		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
+		if ifgroupInstance.GetLabel("ports") != "" {
+			ifgroupInstance.SetLabel("ports", ifgroupInstance.GetLabel("ports")+","+port)
+		} else {
+			ifgroupInstance.SetLabel("ports", port)
+		}
+
+		rx := n.data.GetMetric("rx_bytes")
+		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
+		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
+			n.Logger.Debug().Msgf("failed to parse value (%f): %v", readBytes, err)
+		}
+
+		tx := n.data.GetMetric("tx_bytes")
+		txv, _ := tx.GetValueFloat64(ifgroupInstance)
+		if err = tx.SetValueFloat64(ifgroupInstance, WriteBytes+txv); err != nil {
+			n.Logger.Debug().Msgf("failed to parse value (%f): %v", WriteBytes, err)
+		}
+
+	}
+	return nil
 }
