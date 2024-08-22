@@ -59,7 +59,7 @@ func (n *Nic) Init() error {
 	}
 
 	if n.client, err = zapi.New(conf.ZapiPoller(n.ParentParams), n.Auth); err != nil {
-		n.Logger.Error().Stack().Err(err).Msg("connecting")
+		n.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -80,12 +80,11 @@ func (n *Nic) Init() error {
 		metricName, display, _, _ := util.ParseMetric(obj)
 		_, err := n.data.NewMetricFloat64(metricName, display)
 		if err != nil {
-			n.Logger.Error().Stack().Err(err).Msg("add metric")
+			n.Logger.Error().Err(err).Msg("add metric")
 			return err
 		}
 	}
 
-	n.Logger.Debug().Msgf("added data with %d metrics", len(n.data.GetMetrics()))
 	return nil
 }
 
@@ -155,13 +154,13 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			if strings.HasSuffix(s, "M") {
 				base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
 				if err != nil {
-					n.Logger.Warn().Msgf("convert speed [%s]", s)
+					n.Logger.Warn().Str("speed", s).Msg("convert")
 				} else {
 					// NIC speed value converted from Mbps to Bps(bytes per second)
 					speed = base * 125000
 				}
 			} else if speed, err = strconv.Atoi(s); err != nil {
-				n.Logger.Warn().Msgf("convert speed [%s]", s)
+				n.Logger.Warn().Str("speed", s).Msg("convert")
 			}
 
 			if speed != 0 {
@@ -173,7 +172,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					rxPercent = rxBytes / float64(speed)
 					err := rx.SetValueFloat64(instance, rxPercent)
 					if err != nil {
-						n.Logger.Error().Stack().Err(err).Msg("error")
+						n.Logger.Error().Err(err).Msg("error")
 					}
 				}
 
@@ -181,7 +180,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					txPercent = txBytes / float64(speed)
 					err := tx.SetValueFloat64(instance, txPercent)
 					if err != nil {
-						n.Logger.Error().Stack().Err(err).Msg("error")
+						n.Logger.Error().Err(err).Msg("error")
 					}
 				}
 
@@ -190,7 +189,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				if rxOk || txOk {
 					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 					if err != nil {
-						n.Logger.Error().Stack().Err(err).Msg("error")
+						n.Logger.Error().Err(err).Msg("error")
 					}
 				}
 			}
@@ -199,7 +198,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		if s = instance.GetLabel("speed"); strings.HasSuffix(s, "M") {
 			base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
 			if err != nil {
-				n.Logger.Warn().Msgf("convert speed [%s]", s)
+				n.Logger.Warn().Str("speed", s).Msg("convert")
 			} else {
 				// NIC speed value converted from Mbps to bps(bits per second)
 				speed = base * 1_000_000
@@ -268,9 +267,9 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 		ifgroupsData = append(ifgroupsData, ifgroups...)
 	}
 	for _, ifgroup := range ifgroupsData {
-		nodeName := ifgroup.GetChildContentS("node")
-		port := ifgroup.GetChildContentS("port")
 		if ifgrpPort := ifgroup.GetChildContentS("ifgrp-port"); ifgrpPort != "" {
+			nodeName := ifgroup.GetChildContentS("node")
+			port := ifgroup.GetChildContentS("port")
 			portIfgroupMap[nodeName+port] = ifgrpPort
 		}
 	}
@@ -284,14 +283,14 @@ func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataM
 		nodeName := portInfo.node
 		port := portInfo.port
 		readBytes := portInfo.read
-		WriteBytes := portInfo.write
+		writeBytes := portInfo.write
 
 		ifgrpupInstanceKey := nodeName + ifgroupName
 		ifgroupInstance := n.data.GetInstance(ifgrpupInstanceKey)
 		if ifgroupInstance == nil {
 			ifgroupInstance, err = n.data.NewInstance(ifgrpupInstanceKey)
 			if err != nil {
-				n.Logger.Debug().Msgf("add (%s) instance: %v", ifgrpupInstanceKey, err)
+				n.Logger.Debug().Str("ifgrpupInstanceKey", ifgrpupInstanceKey).Err(err).Msg("Failed to add instance")
 				return err
 			}
 		}
@@ -308,13 +307,13 @@ func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataM
 		rx := n.data.GetMetric("rx_bytes")
 		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
 		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
-			n.Logger.Debug().Msgf("failed to parse value (%f): %v", readBytes, err)
+			n.Logger.Debug().Float64("value", readBytes).Err(err).Msg("Failed to parse value")
 		}
 
 		tx := n.data.GetMetric("tx_bytes")
 		txv, _ := tx.GetValueFloat64(ifgroupInstance)
-		if err = tx.SetValueFloat64(ifgroupInstance, WriteBytes+txv); err != nil {
-			n.Logger.Debug().Msgf("failed to parse value (%f): %v", WriteBytes, err)
+		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
+			n.Logger.Debug().Float64("value", writeBytes).Err(err).Msg("Failed to parse value")
 		}
 
 	}
