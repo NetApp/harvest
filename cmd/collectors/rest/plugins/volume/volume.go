@@ -63,7 +63,7 @@ func (v *Volume) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
-		v.Logger.Error().Stack().Err(err).Msg("connecting")
+		v.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -78,7 +78,7 @@ func (v *Volume) Init() error {
 	v.arw.SetExportOptions(exportOptions)
 	_, err = v.arw.NewMetricFloat64("status", "status")
 	if err != nil {
-		v.Logger.Error().Stack().Err(err).Msg("add metric")
+		v.Logger.Error().Err(err).Msg("add metric")
 		return err
 	}
 
@@ -230,7 +230,7 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	// populate numeric data
 	value := 1.0
 	if err = m.SetValueFloat64(arwInstance, value); err != nil {
-		v.Logger.Error().Stack().Err(err).Float64("value", value).Msg("Failed to parse value")
+		v.Logger.Error().Err(err).Float64("value", value).Msg("Failed to parse value")
 	} else {
 		v.Logger.Debug().Float64("value", value).Msg("added value")
 	}

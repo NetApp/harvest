@@ -28,7 +28,7 @@ func (s *SystemNode) Init() error {
 	}
 
 	if s.client, err = zapi.New(conf.ZapiPoller(s.ParentParams), s.Auth); err != nil {
-		s.Logger.Error().Stack().Err(err).Msg("connecting")
+		s.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 

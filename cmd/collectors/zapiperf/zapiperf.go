@@ -620,7 +620,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					if len(labels) != len(values) {
 						// warn & skip
 						z.Logger.Error().
-							Stack().
 							Str("labels", name).
 							Str("value", value).
 							Int("instIndex", instIndex).
@@ -632,7 +631,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 						if metric := curMat.GetMetric(name + "." + label); metric != nil {
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								z.Logger.Error().
-									Stack().
 									Err(err).
 									Str("name", name).
 									Str("label", label).

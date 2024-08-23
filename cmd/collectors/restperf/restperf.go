@@ -933,7 +933,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							case wm == "resource_latency" && (name == "wait_time" || name == "service_time"):
 								if err := wMetric.AddValueString(instance, f.value); err != nil {
 									r.Logger.Error().
-										Stack().
 										Err(err).
 										Str("name", name).
 										Str("value", f.value).
@@ -945,7 +944,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							case wm == "service_time_latency" && name == "service_time":
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
 									r.Logger.Error().
-										Stack().
 										Err(err).
 										Str("name", name).
 										Str("value", f.value).
@@ -956,7 +954,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							case wm == "wait_time_latency" && name == "wait_time":
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
 									r.Logger.Error().
-										Stack().
 										Err(err).
 										Str("name", name).
 										Str("value", f.value).

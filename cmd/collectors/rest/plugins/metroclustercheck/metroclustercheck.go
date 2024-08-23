@@ -119,7 +119,7 @@ func (m *MetroclusterCheck) update(objectInfo string, object string) {
 
 func (m *MetroclusterCheck) createMetric(metricName string) error {
 	if _, err := m.data.NewMetricFloat64(metricName, metricName); err != nil {
-		m.Logger.Error().Stack().Err(err).Msg("add metric")
+		m.Logger.Error().Err(err).Msg("add metric")
 		return err
 	}
 	return nil
@@ -133,7 +133,7 @@ func (m *MetroclusterCheck) setValue(metricName string, newDetailInstance *matri
 
 	met := m.data.GetMetric(metricName)
 	if err := met.SetValueFloat64(newDetailInstance, value); err != nil {
-		m.Logger.Error().Stack().Err(err).Float64("value", value).Msg("Failed to parse value")
+		m.Logger.Error().Err(err).Float64("value", value).Msg("Failed to parse value")
 	} else {
 		m.Logger.Debug().Float64("value", value).Msg("added value")
 	}

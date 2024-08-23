@@ -49,7 +49,7 @@ func (q *Qtree) Init() error {
 	}
 
 	if q.client, err = zapi.New(conf.ZapiPoller(q.ParentParams), q.Auth); err != nil {
-		q.Logger.Error().Stack().Err(err).Msg("connecting")
+		q.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 
@@ -121,7 +121,7 @@ func (q *Qtree) Init() error {
 
 		_, err := q.data.NewMetricFloat64(metricName, display)
 		if err != nil {
-			q.Logger.Error().Stack().Err(err).Msg("add metric")
+			q.Logger.Error().Err(err).Msg("add metric")
 			return err
 		}
 	}

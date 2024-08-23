@@ -81,7 +81,7 @@ func (m *Max) parseRules() error {
 				if strings.HasPrefix(value, "`") {
 					value = strings.TrimPrefix(strings.TrimSuffix(value, "`"), "`")
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
-						m.Logger.Error().Stack().Err(err).Msgf("rule [%s]: compile regex:", line)
+						m.Logger.Error().Err(err).Str("line", line).Msgf("rule compile regex")
 						return err
 					}
 				} else if value != "" {
@@ -197,7 +197,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 				if value > v {
 					if err = objMetric.SetValueFloat64(objInstance, value); err != nil {
-						m.Logger.Error().Stack().Err(err).Msgf("add value [%s] [%s]:", key, objName)
+						m.Logger.Error().Err(err).Str("key", key).Str("objName", objName).Msg("add value")
 					} else {
 						switch {
 						case rule.allLabels:

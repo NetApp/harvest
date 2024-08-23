@@ -43,7 +43,7 @@ func (n *NodeMon) Init(a *collector.AbstractCollector) error {
 	// load list of counters from template
 	if counters := n.Params.GetChildS("counters"); counters != nil {
 		if err = n.loadMetrics(counters); err != nil {
-			n.Logger.Error().Stack().Err(err).Msg("load metrics")
+			n.Logger.Error().Err(err).Msg("load metrics")
 			return err
 		}
 	} else {
@@ -125,7 +125,7 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 	for key, instance := range mat.GetInstances() {
 		err := mat.LazySetValueUint64("status", key, 0)
 		if err != nil {
-			n.Logger.Error().Stack().Err(err).Msgf("error while parsing metric key [%s]", key)
+			n.Logger.Error().Err(err).Str("key", key).Msg("error while parsing metric")
 		}
 		for _, key2 := range toQuery {
 			if metric := mat.GetMetric(key2); metric != nil {

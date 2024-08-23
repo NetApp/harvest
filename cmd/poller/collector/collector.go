@@ -304,8 +304,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer func() {
 		if r := recover(); r != nil {
-			c.Logger.Error().Stack().Err(errs.New(errs.ErrPanic, "")).
-				Msgf("Collector panicked %s", r)
+			c.Logger.Error().Stack().Err(errs.New(errs.ErrPanic, "")).Any("err", r).Msg("Collector panicked")
 		}
 	}()
 
@@ -715,7 +714,7 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, 
 		}
 
 		if err := p.Init(); err != nil {
-			c.Logger.Error().Stack().Err(err).Msgf("init plugin [%s]:", name)
+			c.Logger.Error().Err(err).Str("name", name).Msgf("init plugin")
 			return err
 		}
 		plugins = append(plugins, p)

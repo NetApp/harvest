@@ -106,7 +106,7 @@ func (p *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	_, err := w.Write([]byte("403 Forbidden"))
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("error")
+		p.Logger.Error().Err(err).Msg("error")
 	}
 }
 
@@ -157,11 +157,11 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	p.Metadata.Reset()
 	err = p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("error")
+		p.Logger.Error().Err(err).Msg("error")
 	}
 	err = p.Metadata.LazySetValueInt64("count", "http", int64(count))
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("error")
+		p.Logger.Error().Err(err).Msg("error")
 	}
 }
 
@@ -282,11 +282,11 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	_, err := w.Write([]byte(bodyFlat))
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("error")
+		p.Logger.Error().Err(err).Msg("error")
 	}
 
 	err = p.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error().Stack().Err(err).Msg("error")
+		p.Logger.Error().Err(err).Msg("error")
 	}
 }

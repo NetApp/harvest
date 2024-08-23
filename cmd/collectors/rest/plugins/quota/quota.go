@@ -46,7 +46,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	for metricName, m := range metricsMap {
 		_, err := data.NewMetricFloat64(metricName, m.GetName())
 		if err != nil {
-			q.Logger.Error().Stack().Err(err).Msg("add metric")
+			q.Logger.Error().Err(err).Msg("add metric")
 		}
 	}
 
@@ -123,7 +123,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 			// populate numeric data
 			t := data.GetMetric(metricName)
 			if err = t.SetValueFloat64(quotaInstance, value); err != nil {
-				q.Logger.Error().Stack().Err(err).Str("metricName", metricName).Float64("value", value).Msg("Failed to parse value")
+				q.Logger.Error().Err(err).Str("metricName", metricName).Float64("value", value).Msg("Failed to parse value")
 			}
 		}
 	}

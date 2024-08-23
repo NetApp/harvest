@@ -34,7 +34,7 @@ func (a *Aggregate) Init() error {
 	}
 
 	if a.client, err = zapi.New(conf.ZapiPoller(a.ParentParams), a.Auth); err != nil {
-		a.Logger.Error().Stack().Err(err).Msg("connecting")
+		a.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 

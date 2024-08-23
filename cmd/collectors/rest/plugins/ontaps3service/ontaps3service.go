@@ -43,7 +43,7 @@ func (o *OntapS3Service) Init() error {
 		o.Logger.Debug().Str("timeout", timeout.String()).Msg("Using default timeout")
 	}
 	if o.client, err = rest.New(conf.ZapiPoller(o.ParentParams), timeout, o.Auth); err != nil {
-		o.Logger.Error().Stack().Err(err).Msg("connecting")
+		o.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 

@@ -343,7 +343,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 	// update metadata
 	e.AddExportCount(count)
 	if err := e.Metadata.LazySetValueUint64("count", "export", count); err != nil {
-		e.Logger.Error().Stack().Err(err).Msg("metadata export count")
+		e.Logger.Error().Err(err).Msg("metadata export count")
 	}
 	return rendered, exporter.Stats{InstancesExported: instancesExported, MetricsExported: count}, nil
 }

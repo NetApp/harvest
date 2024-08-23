@@ -234,7 +234,7 @@ func (e *Ems) InitCache() error {
 			}
 			if line1.GetNameS() == "plugins" {
 				if err := e.LoadPlugins(line1, e, prop.Name); err != nil {
-					e.Logger.Error().Stack().Err(err).Msg("Failed to load plugin")
+					e.Logger.Error().Err(err).Msg("Failed to load plugin")
 				}
 			}
 			if line1.GetNameS() == "resolve_when_ems" {

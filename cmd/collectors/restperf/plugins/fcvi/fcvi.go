@@ -26,7 +26,7 @@ func (f *FCVI) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if f.client, err = rest.New(conf.ZapiPoller(f.ParentParams), timeout, f.Auth); err != nil {
-		f.Logger.Error().Stack().Err(err).Msg("connecting")
+		f.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 
