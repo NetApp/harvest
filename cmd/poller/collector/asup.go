@@ -418,7 +418,7 @@ func getCPUInfo() (string, uint8) {
 		}
 	}
 
-	return arch, uint8(cpuCount)
+	return arch, uint8(cpuCount) // #nosec G115
 }
 
 func getOSName() string {

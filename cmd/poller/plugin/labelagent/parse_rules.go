@@ -531,7 +531,7 @@ func (a *LabelAgent) parseValueToNumRule(rule string) {
 				return
 			}
 			r.hasDefault = true
-			r.defaultValue = uint8(v)
+			r.defaultValue = uint8(v) // #nosec G115
 		}
 
 		a.valueToNumRules = append(a.valueToNumRules, r)
@@ -577,7 +577,7 @@ func (a *LabelAgent) parseValueToNumRegexRule(rule string) {
 				return
 			}
 			r.hasDefault = true
-			r.defaultValue = uint8(v)
+			r.defaultValue = uint8(v) // #nosec G115
 		}
 
 		a.valueToNumRegexRules = append(a.valueToNumRegexRules, r)
