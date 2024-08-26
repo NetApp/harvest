@@ -42,14 +42,14 @@ func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
 	for _, instance := range data.GetInstances() {
 		ontapName := instance.GetLabel("id")
-		svm, scanner, node, ok := collectors.SplitVscanName(ontapName)
+		names, ok := collectors.SplitVscanName(ontapName, false)
 		if !ok {
 			v.Logger.Warn().Str("ontapName", ontapName).Msg("Failed to parse svm and scanner labels")
 			continue
 		}
-		instance.SetLabel("svm", svm)
-		instance.SetLabel("scanner", scanner)
-		instance.SetLabel("node", node)
+		instance.SetLabel("svm", names.Svm)
+		instance.SetLabel("scanner", names.Scanner)
+		instance.SetLabel("node", names.Node)
 	}
 }
 
@@ -63,10 +63,14 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *uti
 	// 		scanner_stats_pct_network_used
 	// These counters need to be summed:
 	// 		scan_request_dispatched_rate
+	// These counters need weighted averages:
+	// 		scan_latency
 
 	// create per scanner instance cache
 	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+	var err error
 	cache.UUID += ".Vscan"
+	opsKeyPrefix := "temp_"
 
 	for _, i := range data.GetInstances() {
 		scanner := i.GetLabel("scanner")
@@ -104,6 +108,42 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *uti
 			if value, ok := m.GetValueFloat64(i); ok {
 				fv, _ := psm.GetValueFloat64(ps)
 
+				if mKey == "scan.latency" {
+					// weighted average for scan.latency
+					opsKey := m.GetComment()
+
+					if ops := data.GetMetric(opsKey); ops != nil {
+						if opsValue, ok := ops.GetValueFloat64(i); ok {
+							var tempOpsV float64
+
+							prod := value * opsValue
+							tempOpsKey := opsKeyPrefix + opsKey
+							tempOps := cache.GetMetric(tempOpsKey)
+
+							if tempOps == nil {
+								if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
+									return nil, nil, err
+								}
+								tempOps.SetExportable(false)
+							} else {
+								tempOpsV, _ = tempOps.GetValueFloat64(ps)
+							}
+
+							if value != 0 {
+								err = tempOps.SetValueFloat64(ps, tempOpsV+opsValue)
+								if err != nil {
+									v.Logger.Error().Err(err).Msg("error")
+								}
+							}
+							err = psm.SetValueFloat64(ps, fv+prod)
+							if err != nil {
+								v.Logger.Error().Err(err).Msg("error")
+							}
+						}
+					}
+
+					continue
+				}
 				// sum for scan_request_dispatched_rate
 				if mKey == "scan.request_dispatched_rate" {
 					err := psm.SetValueFloat64(ps, fv+value)
@@ -127,10 +167,13 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *uti
 		}
 	}
 
-	// cook averaged values
+	// cook averaged values and latencies
 	for scanner, i := range cache.GetInstances() {
 		for mKey, m := range cache.GetMetrics() {
-			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_used") {
+			if !m.IsExportable() {
+				continue
+			}
+			if strings.HasSuffix(m.GetName(), "_used") {
 				count := counts[scanner][mKey]
 				value, ok := m.GetValueFloat64(i)
 				if !ok {
@@ -142,6 +185,22 @@ func (v *Vscan) aggregatePerScanner(data *matrix.Matrix) ([]*matrix.Matrix, *uti
 						Str("name", m.GetName()).
 						Msg("Unable to set average")
 				}
+			} else if strings.HasSuffix(m.GetName(), "_latency") {
+				if value, ok := m.GetValueFloat64(i); ok {
+					opsKey := m.GetComment()
+
+					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
+						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
+							err := m.SetValueFloat64(i, value/opsValue)
+							if err != nil {
+								v.Logger.Error().Err(err).Msg("error")
+							}
+						} else {
+							m.SetValueNAN(i)
+						}
+					}
+				}
+
 			}
 		}
 	}

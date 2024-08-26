@@ -1618,8 +1618,10 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 				}
 			}
 		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
-			// Few panels have description text from variable, which would be ignored and description must end with period(.)
-			t.Errorf(`dashboard=%s panel="%s" description hasn't ended with period`, dashPath, title)
+			// A few panels take their description text from a variable.
+			// Those can be ignored.
+			// Descriptions must end with a period (.)
+			t.Errorf(`dashboard=%s panel="%s" description should end with a period`, dashPath, title)
 		}
 	})
 }

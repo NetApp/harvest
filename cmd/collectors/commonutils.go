@@ -246,22 +246,41 @@ func ReadPluginKey(param *node.Node, key string) bool {
 	return false
 }
 
-func SplitVscanName(ontapName string) (string, string, string, bool) {
+type VscanNames struct {
+	Svm     string
+	Scanner string
+	Node    string
+}
+
+// SplitVscanName splits the vscan name into three parts and returns them as a VscanNames
+func SplitVscanName(ontapName string, isZapi bool) (VscanNames, bool) {
 	// colon separated list of fields
+	// ZapiPerf uses this format: svm:scanner:node
+	// RestPerf uses this format: node:svm:scanner
+
+	// ZapiPerf examples:
 	// svm      : scanner                  : node
 	// vs_test4 : 2.2.2.2                  : umeng-aff300-05
 	// moon-ad  : 2a03:1e80:a15:60c::1:2a5 : moon-02
 
+	// RestPerf examples:
+	// node                 : svm      : scanner
+	// sti46-vsim-ucs519d   : vs0      : 172.29.120.57
+
 	firstColon := strings.Index(ontapName, ":")
 	if firstColon == -1 {
-		return "", "", "", false
+		return VscanNames{}, false
 	}
 	lastColon := strings.LastIndex(ontapName, ":")
 	if lastColon == -1 {
-		return "", "", "", false
+		return VscanNames{}, false
 	}
 	if firstColon == lastColon {
-		return "", "", "", false
+		return VscanNames{}, false
 	}
-	return ontapName[:firstColon], ontapName[firstColon+1 : lastColon], ontapName[lastColon+1:], true
+
+	if isZapi {
+		return VscanNames{Svm: ontapName[:firstColon], Scanner: ontapName[firstColon+1 : lastColon], Node: ontapName[lastColon+1:]}, true
+	}
+	return VscanNames{Node: ontapName[:firstColon], Svm: ontapName[firstColon+1 : lastColon], Scanner: ontapName[lastColon+1:]}, true
 }
