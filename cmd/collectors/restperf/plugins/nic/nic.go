@@ -13,21 +13,79 @@ Package Description:
 package nic
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/tidwall/gjson"
 	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Nic struct {
 	*plugin.AbstractPlugin
+	data   *matrix.Matrix
+	client *rest.Client
+}
+
+type PortData struct {
+	node  string
+	port  string
+	read  float64
+	write float64
+	speed float64
+}
+
+var ifgrpMetrics = []string{
+	"rx_bytes",
+	"tx_bytes",
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Nic{AbstractPlugin: p}
+}
+
+func (n *Nic) Init() error {
+	err := n.InitAbc()
+	if err != nil {
+		return err
+	}
+
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	if n.client, err = rest.New(conf.ZapiPoller(n.ParentParams), timeout, n.Auth); err != nil {
+		n.Logger.Error().Stack().Err(err).Msg("connecting")
+		return err
+	}
+
+	if err := n.client.Init(5); err != nil {
+		return err
+	}
+
+	n.data = matrix.New(n.Parent+".NicCommon", "nic_ifgrp", "nic_ifgrp")
+
+	exportOptions := node.NewS("export_options")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+	instanceKeys.NewChildS("", "node")
+	instanceKeys.NewChildS("", "ifgroup")
+	instanceKeys.NewChildS("", "ports")
+	n.data.SetExportOptions(exportOptions)
+
+	for _, obj := range ifgrpMetrics {
+		metricName, display, _, _ := util.ParseMetric(obj)
+		_, err := n.data.NewMetricFloat64(metricName, display)
+		if err != nil {
+			n.Logger.Error().Err(err).Msg("add metric")
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
@@ -35,7 +93,17 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 	var read, write, rx, tx, utilPercent *matrix.Metric
 	var err error
+	portDataMap := make(map[string]PortData)
 	data := dataMap[n.Object]
+
+	n.client.Metadata.Reset()
+
+	// Purge and reset data
+	n.data.PurgeInstances()
+	n.data.Reset()
+
+	// Set all global labels from zapi.go if already not exist
+	n.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	if read = data.GetMetric("receive_bytes"); read == nil {
 		return nil, nil, errs.New(errs.ErrNoMetric, "receive_bytes")
@@ -72,9 +140,20 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 	for _, instance := range data.GetInstances() {
 
 		var speed, base int
-		var s string
+		var s, port, nodeName string
 		var err error
 		s = instance.GetLabel("speed")
+		nodeName = instance.GetLabel("node")
+
+		// example name = cluster_name:e0a
+		// nic          = e0a
+		if i := instance.GetLabel("id"); i != "" {
+			if split := strings.Split(instance.GetLabel("id"), ":"); len(split) >= 2 {
+				instance.SetLabel("nic", split[1])
+				port = instance.GetLabel("nic")
+			}
+		}
+
 		if s != "" {
 			if strings.HasSuffix(s, "M") {
 				base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
@@ -109,6 +188,8 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					}
 				}
 
+				portDataMap[nodeName+port] = PortData{node: nodeName, port: port, read: rxBytes, write: txBytes, speed: float64(speed)}
+
 				if rxOk || txOk {
 					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 					if err != nil {
@@ -133,16 +214,88 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		if t := instance.GetLabel("type"); strings.HasPrefix(t, "nic_") {
 			instance.SetLabel("type", strings.TrimPrefix(t, "nic_"))
 		}
-		// example name = cluster_name:e0a
-		// nic          = e0a
-
-		if i := instance.GetLabel("id"); i != "" {
-			if split := strings.Split(instance.GetLabel("id"), ":"); len(split) >= 2 {
-				instance.SetLabel("nic", split[1])
-			}
-		}
 
 	}
 
-	return nil, nil, nil
+	// populate ifgrp metrics
+	portIfgroupMap := n.getIfgroupInfo()
+	if err := n.populateIfgroupMetrics(portIfgroupMap, portDataMap); err != nil {
+		return nil, nil, err
+	}
+
+	return []*matrix.Matrix{n.data}, n.client.Metadata, nil
+}
+
+func (n *Nic) getIfgroupInfo() map[string]string {
+	var (
+		err            error
+		ifgroupsData   []gjson.Result
+		portIfgroupMap map[string]string // Node+port to ifgroup mapping map
+	)
+
+	portIfgroupMap = make(map[string]string)
+	query := "api/private/cli/network/port/ifgrp"
+	fields := []string{"ifgrp", "node", "ports"}
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		Build()
+
+	if ifgroupsData, err = collectors.InvokeRestCall(n.client, href, n.Logger); err != nil {
+		return portIfgroupMap
+	}
+
+	for _, ifgroup := range ifgroupsData {
+		nodeName := ifgroup.Get("node").String()
+		ifgrp := ifgroup.Get("ifgrp").String()
+		ports := ifgroup.Get("ports").Array()
+		for _, portName := range ports {
+			portIfgroupMap[nodeName+portName.String()] = ifgrp
+		}
+	}
+	return portIfgroupMap
+}
+
+func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData) error {
+	var err error
+	for portKey, ifgroupName := range portIfgroupMap {
+		portInfo := portDataMap[portKey]
+		nodeName := portInfo.node
+		port := portInfo.port
+		readBytes := portInfo.read
+		writeBytes := portInfo.write
+
+		ifgrpupInstanceKey := nodeName + ifgroupName
+		ifgroupInstance := n.data.GetInstance(ifgrpupInstanceKey)
+		if ifgroupInstance == nil {
+			ifgroupInstance, err = n.data.NewInstance(ifgrpupInstanceKey)
+			if err != nil {
+				n.Logger.Debug().Str("ifgrpupInstanceKey", ifgrpupInstanceKey).Err(err).Msg("Failed to add instance")
+				return err
+			}
+		}
+
+		// set labels
+		ifgroupInstance.SetLabel("node", nodeName)
+		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
+		if ifgroupInstance.GetLabel("ports") != "" {
+			ifgroupInstance.SetLabel("ports", ifgroupInstance.GetLabel("ports")+","+port)
+		} else {
+			ifgroupInstance.SetLabel("ports", port)
+		}
+
+		rx := n.data.GetMetric("rx_bytes")
+		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
+		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
+			n.Logger.Debug().Float64("value", readBytes).Err(err).Msg("Failed to parse value")
+		}
+
+		tx := n.data.GetMetric("tx_bytes")
+		txv, _ := tx.GetValueFloat64(ifgroupInstance)
+		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
+			n.Logger.Debug().Float64("value", writeBytes).Err(err).Msg("Failed to parse value")
+		}
+
+	}
+	return nil
 }
