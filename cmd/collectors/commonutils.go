@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -46,6 +47,18 @@ func IsEmbedShelf(model string, moduleType string) bool {
 	}
 
 	return combinations[embedShelf{model, moduleType}]
+}
+
+func InvokeRestCallWithTestFile(client *rest.Client, href string, logger *logging.Logger, testFilePath string) ([]gjson.Result, error) {
+	if testFilePath != "" {
+		b, err := os.ReadFile(testFilePath)
+		if err != nil {
+			return []gjson.Result{}, err
+		}
+		testData := gjson.Result{Type: gjson.JSON, Raw: string(b)}
+		return testData.Get("records").Array(), nil
+	}
+	return InvokeRestCall(client, href, logger)
 }
 
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {

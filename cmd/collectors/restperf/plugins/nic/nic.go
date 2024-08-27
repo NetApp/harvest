@@ -23,6 +23,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"math"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -30,8 +31,9 @@ import (
 
 type Nic struct {
 	*plugin.AbstractPlugin
-	data   *matrix.Matrix
-	client *rest.Client
+	data         *matrix.Matrix
+	client       *rest.Client
+	testFilePath string // Used only from unit test
 }
 
 type PortData struct {
@@ -57,16 +59,6 @@ func (n *Nic) Init() error {
 		return err
 	}
 
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if n.client, err = rest.New(conf.ZapiPoller(n.ParentParams), timeout, n.Auth); err != nil {
-		n.Logger.Error().Stack().Err(err).Msg("connecting")
-		return err
-	}
-
-	if err := n.client.Init(5); err != nil {
-		return err
-	}
-
 	n.data = matrix.New(n.Parent+".NicCommon", "nic_ifgrp", "nic_ifgrp")
 
 	exportOptions := node.NewS("export_options")
@@ -83,6 +75,20 @@ func (n *Nic) Init() error {
 			n.Logger.Error().Err(err).Msg("add metric")
 			return err
 		}
+	}
+
+	if n.Options.IsTest {
+		return nil
+	}
+
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	if n.client, err = rest.New(conf.ZapiPoller(n.ParentParams), timeout, n.Auth); err != nil {
+		n.Logger.Error().Stack().Err(err).Msg("connecting")
+		return err
+	}
+
+	if err := n.client.Init(5); err != nil {
+		return err
 	}
 
 	return nil
@@ -241,7 +247,7 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 		Fields(fields).
 		Build()
 
-	if ifgroupsData, err = collectors.InvokeRestCall(n.client, href, n.Logger); err != nil {
+	if ifgroupsData, err = collectors.InvokeRestCallWithTestFile(n.client, href, n.Logger, n.testFilePath); err != nil {
 		return portIfgroupMap
 	}
 
@@ -259,7 +265,10 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData) error {
 	var err error
 	for portKey, ifgroupName := range portIfgroupMap {
-		portInfo := portDataMap[portKey]
+		portInfo, ok := portDataMap[portKey]
+		if !ok {
+			continue
+		}
 		nodeName := portInfo.node
 		port := portInfo.port
 		readBytes := portInfo.read
@@ -279,7 +288,9 @@ func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataM
 		ifgroupInstance.SetLabel("node", nodeName)
 		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
 		if ifgroupInstance.GetLabel("ports") != "" {
-			ifgroupInstance.SetLabel("ports", ifgroupInstance.GetLabel("ports")+","+port)
+			portSlice := []string{ifgroupInstance.GetLabel("ports"), port}
+			sort.Strings(portSlice)
+			ifgroupInstance.SetLabel("ports", strings.Join(portSlice, ","))
 		} else {
 			ifgroupInstance.SetLabel("ports", port)
 		}
@@ -295,7 +306,6 @@ func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataM
 		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
 			n.Logger.Debug().Float64("value", writeBytes).Err(err).Msg("Failed to parse value")
 		}
-
 	}
 	return nil
 }
