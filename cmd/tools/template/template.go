@@ -4,6 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
+	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf"
+	zapi "github.com/netapp/harvest/v2/cmd/collectors/zapi/collector"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf"
+	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
@@ -18,6 +24,8 @@ import (
 	"strings"
 )
 
+var collectorsCache = make(map[string]collector.Collector)
+
 type Model struct {
 	Name          string      `yaml:"name"`
 	Query         string      `yaml:"query"`
@@ -29,11 +37,12 @@ type Model struct {
 		InstanceLabels   []string `yaml:"instance_labels"`
 		IncludeAllLabels bool     `yaml:"include_all_labels"`
 	} `yaml:"export_options"`
-	Override          map[string]string `yaml:"override"`
-	metrics           []Metric
-	pluginLabels      []string
-	PluginMetrics     []plugin.DerivedMetric
-	MultiplierMetrics []plugin.DerivedMetric
+	Override            map[string]string `yaml:"override"`
+	metrics             []Metric
+	pluginLabels        []string
+	PluginMetrics       []plugin.DerivedMetric
+	MultiplierMetrics   []plugin.DerivedMetric
+	PluginCustomMetrics []plugin.CustomMetric
 }
 
 type Metric struct {
@@ -363,6 +372,10 @@ func findCustomPlugins(path string, template *node.Node, model *Model) error {
 		goPluginName := strings.ToLower(name)
 		pluginGo := toPluginPath(path, goPluginName)
 
+		if err := handlePluginMetrics(path, name, model); err != nil {
+			return fmt.Errorf("error handling plugin %s: %w", pluginGo, err)
+		}
+
 		if err := readPlugin(pluginGo, model); err != nil {
 			return err
 		}
@@ -428,4 +441,79 @@ func readPlugin(fileName string, model *Model) error {
 	}
 	_ = file.Close()
 	return nil
+}
+
+func handlePluginMetrics(path, pluginName string, model *Model) error {
+	c, err := getCollector(path)
+	if err != nil {
+		return err
+	}
+
+	abc := &plugin.AbstractPlugin{}
+	loadedPlugin := c.LoadPlugin(pluginName, abc)
+	if loadedPlugin == nil {
+		return fmt.Errorf("failed to load plugin: %s", pluginName)
+	}
+
+	// check if the loaded plugin implements MetricGenerator
+	if metricGenerator, ok := loadedPlugin.(plugin.MetricGenerator); ok {
+		customMetrics := metricGenerator.GetGeneratedMetrics()
+		model.PluginCustomMetrics = append(model.PluginCustomMetrics, customMetrics...)
+	}
+	return nil
+}
+
+func extractCollectorType(templatePath string) string {
+	// Extract the collector type from the template path
+	// Example: "conf/restperf/9.12.0/disk.yaml" -> "restperf"
+	parts := strings.Split(templatePath, "/")
+	if len(parts) > 1 {
+		return parts[1]
+	}
+	return ""
+}
+
+func getCollector(templatePath string) (collector.Collector, error) {
+	collectorType := extractCollectorType(templatePath)
+	if c, exists := collectorsCache[collectorType]; exists {
+		return c, nil
+	}
+	var c collector.Collector
+	switch collectorType {
+	case "rest":
+		c = newRest()
+	case "restperf":
+		c = newRestPerf()
+	case "zapi":
+		c = newZapi()
+	case "zapiperf":
+		c = newZapiPerf()
+	case "keyperf":
+		c = newKeyPerf()
+	default:
+		return nil, fmt.Errorf("unknown c type: %s", collectorType)
+	}
+
+	collectorsCache[collectorType] = c
+	return c, nil
+}
+
+func newRest() *rest2.Rest {
+	return &rest2.Rest{}
+}
+
+func newRestPerf() *restperf.RestPerf {
+	return &restperf.RestPerf{}
+}
+
+func newZapi() *zapi.Zapi {
+	return &zapi.Zapi{}
+}
+
+func newZapiPerf() *zapiperf.ZapiPerf {
+	return &zapiperf.ZapiPerf{}
+}
+
+func newKeyPerf() *keyperf.KeyPerf {
+	return &keyperf.KeyPerf{}
 }

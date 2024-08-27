@@ -271,7 +271,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
 		return nil
 	}
-	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
+	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0 && len(model.PluginCustomMetrics) == 0
 	templateCounters := t.GetChildS("counters")
 	if model.ExportData == "false" && noExtraMetrics {
 		return nil
@@ -306,6 +306,22 @@ func processRestConfigCounters(path string) map[string]Counter {
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
+	}
+
+	for _, metric := range model.PluginCustomMetrics {
+		co := Counter{
+			Name:        model.Object + "_" + metric.Name,
+			Description: metric.Description,
+			APIs: []MetricDef{
+				{
+					API:          "REST",
+					Endpoint:     metric.Endpoint,
+					Template:     path,
+					ONTAPCounter: metric.ONTAPCounter,
 				},
 			},
 		}
@@ -373,7 +389,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		return nil
 	}
 
-	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
+	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0 && len(model.PluginCustomMetrics) == 0
 	templateCounters := t.GetChildS("counters")
 	override := t.GetChildS("override")
 
@@ -504,6 +520,23 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		}
 		counters[co.Name] = co
 	}
+
+	for _, metric := range model.PluginCustomMetrics {
+		co := Counter{
+			Name:        model.Object + "_" + metric.Name,
+			Description: metric.Description,
+			APIs: []MetricDef{
+				{
+					API:          "ZAPI",
+					Endpoint:     metric.Endpoint,
+					Template:     path,
+					ONTAPCounter: metric.ONTAPCounter,
+				},
+			},
+		}
+		counters[co.Name] = co
+	}
+
 	// handling for templates with common object names
 	if specialPerfObjects[model.Object] {
 		return specialHandlingPerfCounters(counters, model)
@@ -575,6 +608,22 @@ func processZapiConfigCounters(path string) map[string]Counter {
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
+	}
+
+	for _, metric := range model.PluginCustomMetrics {
+		co := Counter{
+			Name:        model.Object + "_" + metric.Name,
+			Description: metric.Description,
+			APIs: []MetricDef{
+				{
+					API:          "ZAPI",
+					Endpoint:     metric.Endpoint,
+					Template:     path,
+					ONTAPCounter: metric.ONTAPCounter,
 				},
 			},
 		}
@@ -905,6 +954,22 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
+	}
+
+	for _, metric := range model.PluginCustomMetrics {
+		co := Counter{
+			Name:        model.Object + "_" + metric.Name,
+			Description: metric.Description,
+			APIs: []MetricDef{
+				{
+					API:          "REST",
+					Endpoint:     metric.Endpoint,
+					Template:     path,
+					ONTAPCounter: metric.ONTAPCounter,
 				},
 			},
 		}

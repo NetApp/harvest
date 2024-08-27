@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	constant "github.com/netapp/harvest/v2/pkg/const"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -451,4 +452,64 @@ func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *uti
 	metrics := calculateEnvironmentMetrics(data, my.Logger, valueKey, my.data, nodeToNumNode)
 
 	return metrics, my.client.Metadata, nil
+}
+
+func (my *Sensor) GetGeneratedMetrics() []plugin.CustomMetric {
+
+	return []plugin.CustomMetric{
+		{
+			Name:         "power",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Power consumed by a node in Watts.",
+		},
+		{
+			Name:         "min_temperature",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Minimum temperature of all non-ambient sensors for node in Celsius.",
+		},
+		{
+			Name:         "average_ambient_temperature",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Average temperature of all ambient sensors for node in Celsius.",
+		},
+		{
+			Name:         "average_fan_speed",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Average fan speed for node in rpm.",
+		},
+		{
+			Name:         "average_temperature",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Average temperature of all non-ambient sensors for node in Celsius.",
+		},
+		{
+			Name:         "max_fan_speed",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Maximum fan speed for node in rpm.",
+		},
+		{
+			Name:         "max_temperature",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Maximum temperature of all non-ambient sensors for node in Celsius.",
+		},
+		{
+			Name:         "min_ambient_temperature",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Minimum temperature of all ambient sensors for node in Celsius.",
+		},
+		{
+			Name:         "min_fan_speed",
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Minimum fan speed for node in rpm.",
+		},
+	}
 }
