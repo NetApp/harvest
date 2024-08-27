@@ -174,29 +174,29 @@ func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]Nsswitch, error)
 
 	var (
 		vserverNsswitchMap map[string]Nsswitch
-		ns                 Nsswitch
 		ok                 bool
 	)
 
 	vserverNsswitchMap = make(map[string]Nsswitch)
+	replaceStr := strings.NewReplacer("[", "", "]", "", "\"", "", "\n", "", " ", "")
 
 	for _, svmInstance := range data.GetInstances() {
+		var ns Nsswitch
 		svmName := svmInstance.GetLabel("svm")
-		nsswitchConfig := svmInstance.GetLabel("nameservice_switch")
-
-		config := gjson.Result{Type: gjson.JSON, Raw: nsswitchConfig}
-		replaceStr := strings.NewReplacer("[", "", "]", "", "\"", "", "\n", "", " ", "")
-
-		for nsdb, nssource := range config.Map() {
-			nssourcelist := strings.Split(replaceStr.Replace(nssource.String()), ",")
-
-			if ns, ok = vserverNsswitchMap[svmName]; ok {
-				ns.nsdb = append(ns.nsdb, nsdb)
-				ns.nssource = append(ns.nssource, nssourcelist...)
-			} else {
-				ns = Nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
+		if nsswitchConfig := svmInstance.GetLabel("nameservice_switch"); nsswitchConfig != "" {
+			config := gjson.Result{Type: gjson.JSON, Raw: nsswitchConfig}
+			for nsdb, nssource := range config.Map() {
+				if nssource.Exists() {
+					nssourcelist := strings.Split(replaceStr.Replace(nssource.String()), ",")
+					if ns, ok = vserverNsswitchMap[svmName]; ok {
+						ns.nsdb = append(ns.nsdb, nsdb)
+						ns.nssource = append(ns.nssource, nssourcelist...)
+					} else {
+						ns = Nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
+					}
+				}
+				vserverNsswitchMap[svmName] = ns
 			}
-			vserverNsswitchMap[svmName] = ns
 		}
 	}
 	return vserverNsswitchMap, nil
