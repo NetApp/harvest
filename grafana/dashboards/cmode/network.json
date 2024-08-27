@@ -981,6 +981,214 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "If-Group port details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(80, 220, 20)",
+                    "value": null
+                  },
+                  {
+                    "color": "light-yellow",
+                    "value": 1000000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 10000000
+                  },
+                  {
+                    "color": "semi-dark-red",
+                    "value": 100000000
+                  }
+                ]
+              },
+              "unit": "Bps",
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 184
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Send"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #E"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Receive"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 13
+          },
+          "id": 120,
+          "interval": "",
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Send"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "editorMode": "code",
+              "expr": "nic_ifgrp_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",ports!=\"\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "editorMode": "code",
+              "expr": "nic_ifgrp_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",ports!=\"\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "If-Groups",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "node",
+                    "Value #D",
+                    "Value #E",
+                    "ifgroup",
+                    "ports"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "cluster": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "speed": false,
+                  "state": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Value #D": 3,
+                  "Value #E": 4,
+                  "ifgroup": 1,
+                  "node": 0,
+                  "ports": 2
+                },
+                "renameByName": {
+                  "ifgroup": "Ifgroup",
+                  "ports": "Ports"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
@@ -1039,7 +1247,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 13
+            "y": 22
           },
           "id": 12,
           "options": {
@@ -1132,7 +1340,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 13
+            "y": 22
           },
           "id": 28,
           "options": {
@@ -1226,7 +1434,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 23
+            "y": 32
           },
           "id": 61,
           "options": {
@@ -1318,7 +1526,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 23
+            "y": 32
           },
           "id": 29,
           "options": {
@@ -1415,7 +1623,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 23
+            "y": 32
           },
           "id": 30,
           "options": {
@@ -1670,7 +1878,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 40
           },
           "id": 119,
           "options": {
@@ -4349,5 +4557,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "cdot-network",
-  "version": 10
+  "version": 11
 }
