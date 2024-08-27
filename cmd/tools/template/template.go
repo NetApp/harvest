@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf"
+	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid"
 	zapi "github.com/netapp/harvest/v2/cmd/collectors/zapi/collector"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -464,6 +465,10 @@ func handlePluginMetrics(path, pluginName string, model *Model) error {
 }
 
 func extractCollectorType(templatePath string) string {
+	// Normalize the path by removing any leading relative path components
+	for strings.HasPrefix(templatePath, "../") {
+		templatePath = strings.TrimPrefix(templatePath, "../")
+	}
 	// Extract the collector type from the template path
 	// Example: "conf/restperf/9.12.0/disk.yaml" -> "restperf"
 	parts := strings.Split(templatePath, "/")
@@ -490,6 +495,8 @@ func getCollector(templatePath string) (collector.Collector, error) {
 		c = newZapiPerf()
 	case "keyperf":
 		c = newKeyPerf()
+	case "storagegrid":
+		c = newStorageGrid()
 	default:
 		return nil, fmt.Errorf("unknown c type: %s", collectorType)
 	}
@@ -516,4 +523,8 @@ func newZapiPerf() *zapiperf.ZapiPerf {
 
 func newKeyPerf() *keyperf.KeyPerf {
 	return &keyperf.KeyPerf{}
+}
+
+func newStorageGrid() *storagegrid.StorageGrid {
+	return &storagegrid.StorageGrid{}
 }
