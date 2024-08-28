@@ -343,6 +343,7 @@ func Test_SplitVscanName(t *testing.T) {
 		scanner   string
 		node      string
 		isValid   bool
+		isZapi    bool
 	}{
 		{
 			name:      "valid",
@@ -351,6 +352,7 @@ func Test_SplitVscanName(t *testing.T) {
 			scanner:   "scanner",
 			node:      "node",
 			isValid:   true,
+			isZapi:    true,
 		},
 		{
 			name:      "ipv6",
@@ -359,6 +361,7 @@ func Test_SplitVscanName(t *testing.T) {
 			scanner:   "2a03:1e80:a15:60c::1:2a5",
 			node:      "moon-02",
 			isValid:   true,
+			isZapi:    true,
 		},
 		{
 			name:      "invalid zero colon",
@@ -367,6 +370,7 @@ func Test_SplitVscanName(t *testing.T) {
 			scanner:   "",
 			node:      "",
 			isValid:   false,
+			isZapi:    true,
 		},
 		{
 			name:      "invalid one colon",
@@ -375,20 +379,31 @@ func Test_SplitVscanName(t *testing.T) {
 			scanner:   "",
 			node:      "",
 			isValid:   false,
+			isZapi:    true,
+		},
+		{
+			name:      "rest",
+			ontapName: "node:svm:scanner",
+			svm:       "svm",
+			scanner:   "scanner",
+			node:      "node",
+			isValid:   true,
+			isZapi:    false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotSVM, gotScanner, gotNode, ok := SplitVscanName(tt.ontapName)
-			if gotSVM != tt.svm {
-				t.Errorf("splitOntapName() got = %v, want %v", gotSVM, tt.svm)
+			scanerNames, ok := SplitVscanName(tt.ontapName, tt.isZapi)
+
+			if scanerNames.Svm != tt.svm {
+				t.Errorf("splitOntapName() got = %v, want %v", scanerNames.Svm, tt.svm)
 			}
-			if gotScanner != tt.scanner {
-				t.Errorf("splitOntapName() got = %v, want %v", gotScanner, tt.scanner)
+			if scanerNames.Scanner != tt.scanner {
+				t.Errorf("splitOntapName() got = %v, want %v", scanerNames.Scanner, tt.scanner)
 			}
-			if gotNode != tt.node {
-				t.Errorf("splitOntapName() got = %v, want %v", gotNode, tt.node)
+			if scanerNames.Node != tt.node {
+				t.Errorf("splitOntapName() got = %v, want %v", scanerNames.Node, tt.node)
 			}
 			if ok != tt.isValid {
 				t.Errorf("splitOntapName() got = %v, want %v", ok, tt.isValid)
