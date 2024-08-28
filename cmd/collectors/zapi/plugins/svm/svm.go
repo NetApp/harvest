@@ -352,7 +352,6 @@ func (my *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
 		result             []*node.Node
 		request            *node.Node
 		vserverNsswitchMap map[string]Nsswitch
-		ns                 Nsswitch
 		ok                 bool
 		err                error
 	)
@@ -371,18 +370,19 @@ func (my *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
 	}
 
 	for _, nsswitchConfig := range result {
-		nsdb := nsswitchConfig.GetChildContentS("nameservice-database")
+		var ns Nsswitch
 		svmName := nsswitchConfig.GetChildContentS("vserver-name")
-		nssource := nsswitchConfig.GetChildS("nameservice-sources")
-		nssourcelist := nssource.GetAllChildContentS()
-
-		if ns, ok = vserverNsswitchMap[svmName]; ok {
-			ns.nsdb = append(ns.nsdb, nsdb)
-			ns.nssource = append(ns.nssource, nssourcelist...)
-		} else {
-			ns = Nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
+		if nssource := nsswitchConfig.GetChildS("nameservice-sources"); nssource != nil {
+			nssourcelist := nssource.GetAllChildContentS()
+			nsdb := nsswitchConfig.GetChildContentS("nameservice-database")
+			if ns, ok = vserverNsswitchMap[svmName]; ok {
+				ns.nsdb = append(ns.nsdb, nsdb)
+				ns.nssource = append(ns.nssource, nssourcelist...)
+			} else {
+				ns = Nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
+			}
+			vserverNsswitchMap[svmName] = ns
 		}
-		vserverNsswitchMap[svmName] = ns
 	}
 	return vserverNsswitchMap, nil
 }
