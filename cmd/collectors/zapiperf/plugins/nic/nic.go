@@ -15,6 +15,7 @@ Package Description:
 package nic
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -33,14 +34,6 @@ type Nic struct {
 	*plugin.AbstractPlugin
 	data   *matrix.Matrix
 	client *zapi.Client
-}
-
-type PortData struct {
-	node  string
-	port  string
-	read  float64
-	write float64
-	speed float64
 }
 
 var ifgrpMetrics = []string{
@@ -93,7 +86,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 	var read, write, rx, tx, utilPercent *matrix.Metric
 	var err error
-	portDataMap := make(map[string]PortData)
+	portDataMap := make(map[string]collectors.PortData)
 
 	data := dataMap[n.Object]
 	n.client.Metadata.Reset()
@@ -184,7 +177,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					}
 				}
 
-				portDataMap[nodeName+port] = PortData{node: nodeName, port: port, read: rxBytes, write: txBytes, speed: float64(speed)}
+				portDataMap[nodeName+port] = collectors.PortData{Node: nodeName, Port: port, Read: rxBytes, Write: txBytes}
 
 				if rxOk || txOk {
 					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
@@ -215,7 +208,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 	// populate ifgrp metrics
 	portIfgroupMap := n.getIfgroupInfo()
-	if err := n.populateIfgroupMetrics(portIfgroupMap, portDataMap); err != nil {
+	if err := collectors.PopulateIfgroupMetrics(portIfgroupMap, portDataMap, n.data, n.Logger); err != nil {
 		return nil, nil, err
 	}
 
@@ -274,48 +267,4 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 		}
 	}
 	return portIfgroupMap
-}
-
-func (n *Nic) populateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData) error {
-	var err error
-	for portKey, ifgroupName := range portIfgroupMap {
-		portInfo := portDataMap[portKey]
-		nodeName := portInfo.node
-		port := portInfo.port
-		readBytes := portInfo.read
-		writeBytes := portInfo.write
-
-		ifgrpupInstanceKey := nodeName + ifgroupName
-		ifgroupInstance := n.data.GetInstance(ifgrpupInstanceKey)
-		if ifgroupInstance == nil {
-			ifgroupInstance, err = n.data.NewInstance(ifgrpupInstanceKey)
-			if err != nil {
-				n.Logger.Debug().Str("ifgrpupInstanceKey", ifgrpupInstanceKey).Err(err).Msg("Failed to add instance")
-				return err
-			}
-		}
-
-		// set labels
-		ifgroupInstance.SetLabel("node", nodeName)
-		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
-		if ifgroupInstance.GetLabel("ports") != "" {
-			ifgroupInstance.SetLabel("ports", ifgroupInstance.GetLabel("ports")+","+port)
-		} else {
-			ifgroupInstance.SetLabel("ports", port)
-		}
-
-		rx := n.data.GetMetric("rx_bytes")
-		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
-		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
-			n.Logger.Debug().Float64("value", readBytes).Err(err).Msg("Failed to parse value")
-		}
-
-		tx := n.data.GetMetric("tx_bytes")
-		txv, _ := tx.GetValueFloat64(ifgroupInstance)
-		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
-			n.Logger.Debug().Float64("value", writeBytes).Err(err).Msg("Failed to parse value")
-		}
-
-	}
-	return nil
 }

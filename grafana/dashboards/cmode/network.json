@@ -981,7 +981,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "If-Group port details.",
+          "description": "Detail of interface group, also known as a Link Aggregation Group (LAG), created by combining two or more physical ports on the same node into a single logical port.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1136,7 +1136,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "If-Groups",
+          "title": "Link Aggregation Groups",
           "transformations": [
             {
               "id": "filterFieldsByName",
