@@ -21,6 +21,7 @@ import (
 )
 
 var weakCiphers = regexp.MustCompile("(.*)_cbc.*")
+var replaceStr = strings.NewReplacer("[", "", "]", "", "\"", "", "\n", "", " ", "")
 
 type SVM struct {
 	*plugin.AbstractPlugin
@@ -178,7 +179,6 @@ func (my *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]Nsswitch, error)
 	)
 
 	vserverNsswitchMap = make(map[string]Nsswitch)
-	replaceStr := strings.NewReplacer("[", "", "]", "", "\"", "", "\n", "", " ", "")
 
 	for _, svmInstance := range data.GetInstances() {
 		var ns Nsswitch
