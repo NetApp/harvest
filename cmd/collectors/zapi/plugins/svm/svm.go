@@ -381,8 +381,8 @@ func (my *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
 			} else {
 				ns = Nsswitch{nsdb: []string{nsdb}, nssource: nssourcelist}
 			}
+			vserverNsswitchMap[svmName] = ns
 		}
-		vserverNsswitchMap[svmName] = ns
 	}
 	return vserverNsswitchMap, nil
 }
