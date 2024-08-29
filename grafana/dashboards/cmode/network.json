@@ -1882,6 +1882,50 @@
               {
                 "matcher": {
                   "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
                   "options": "Value #D"
                 },
                 "properties": [
@@ -1979,7 +2023,9 @@
                     "Value #D",
                     "Value #E",
                     "ifgroup",
-                    "ports"
+                    "ports",
+                    "datacenter",
+                    "cluster"
                   ]
                 }
               }
@@ -1995,8 +2041,6 @@
                   "Time": true,
                   "Value": true,
                   "__name__": true,
-                  "cluster": true,
-                  "datacenter": true,
                   "instance": true,
                   "job": true,
                   "speed": false,
@@ -2004,11 +2048,13 @@
                 },
                 "includeByName": {},
                 "indexByName": {
-                  "Value #D": 3,
-                  "Value #E": 4,
-                  "ifgroup": 1,
-                  "node": 0,
-                  "ports": 2
+                  "Value #D": 5,
+                  "Value #E": 6,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "ifgroup": 3,
+                  "node": 2,
+                  "ports": 4
                 },
                 "renameByName": {
                   "ifgroup": "LAG",
@@ -2224,7 +2270,7 @@
           "refId": "A"
         }
       ],
-      "title": "Link Aggregation Group",
+      "title": "Link Aggregation Group (LAG)",
       "type": "row"
     },
     {
