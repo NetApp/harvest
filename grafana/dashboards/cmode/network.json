@@ -1934,11 +1934,8 @@
                     "value": "Send"
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
                   }
                 ]
               },
@@ -1953,11 +1950,8 @@
                     "value": "Receive"
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
                   }
                 ]
               }
