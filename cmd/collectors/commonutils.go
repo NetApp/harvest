@@ -8,6 +8,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -29,6 +31,13 @@ type embedShelf struct {
 	model, moduleType string
 }
 
+type PortData struct {
+	Node  string
+	Port  string
+	Read  float64
+	Write float64
+}
+
 // Reference https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage
 // There are two ways to identify embedded disk shelves:
 // 1. The shelf's module type ends with E
@@ -47,6 +56,18 @@ func IsEmbedShelf(model string, moduleType string) bool {
 	}
 
 	return combinations[embedShelf{model, moduleType}]
+}
+
+func InvokeRestCallWithTestFile(client *rest.Client, href string, logger *logging.Logger, testFilePath string) ([]gjson.Result, error) {
+	if testFilePath != "" {
+		b, err := os.ReadFile(testFilePath)
+		if err != nil {
+			return []gjson.Result{}, err
+		}
+		testData := gjson.Result{Type: gjson.JSON, Raw: string(b)}
+		return testData.Get("records").Array(), nil
+	}
+	return InvokeRestCall(client, href, logger)
 }
 
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
@@ -443,4 +464,53 @@ func AggregatePerScanner(logger *logging.Logger, data *matrix.Matrix, latencyKey
 	}
 
 	return []*matrix.Matrix{cache}, nil, nil
+}
+
+func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData, nData *matrix.Matrix, logger *logging.Logger) error {
+	var err error
+	for portKey, ifgroupName := range portIfgroupMap {
+		portInfo, ok := portDataMap[portKey]
+		if !ok {
+			continue
+		}
+		nodeName := portInfo.Node
+		port := portInfo.Port
+		readBytes := portInfo.Read
+		writeBytes := portInfo.Write
+
+		ifgrpupInstanceKey := nodeName + ifgroupName
+		ifgroupInstance := nData.GetInstance(ifgrpupInstanceKey)
+		if ifgroupInstance == nil {
+			ifgroupInstance, err = nData.NewInstance(ifgrpupInstanceKey)
+			if err != nil {
+				logger.Debug().Str("ifgrpupInstanceKey", ifgrpupInstanceKey).Err(err).Msg("Failed to add instance")
+				return err
+			}
+		}
+
+		// set labels
+		ifgroupInstance.SetLabel("node", nodeName)
+		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
+		if ifgroupInstance.GetLabel("ports") != "" {
+			portSlice := []string{ifgroupInstance.GetLabel("ports"), port}
+			// make sure ports are always in sorted order
+			sort.Strings(portSlice)
+			ifgroupInstance.SetLabel("ports", strings.Join(portSlice, ","))
+		} else {
+			ifgroupInstance.SetLabel("ports", port)
+		}
+
+		rx := nData.GetMetric("rx_bytes")
+		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
+		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
+			logger.Debug().Float64("value", readBytes).Err(err).Msg("Failed to parse value")
+		}
+
+		tx := nData.GetMetric("tx_bytes")
+		txv, _ := tx.GetValueFloat64(ifgroupInstance)
+		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
+			logger.Debug().Float64("value", writeBytes).Err(err).Msg("Failed to parse value")
+		}
+	}
+	return nil
 }

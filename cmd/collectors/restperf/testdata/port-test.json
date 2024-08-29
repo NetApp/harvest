@@ -1,0 +1,21 @@
+{
+  "records": [
+    {
+      "node": "rtp-a700s-01",
+      "ifgrp": "a0a",
+      "ports": [
+        "e5c",
+        "e5d"
+      ]
+    },
+    {
+      "node": "rtp-a700s-02",
+      "ifgrp": "a0b",
+      "ports": [
+        "e5a",
+        "e5b"
+      ]
+    }
+  ],
+  "num_records": 2
+}
