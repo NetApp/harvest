@@ -166,7 +166,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Disks by Node(s)",
+      "title": "Total Disks",
       "type": "stat"
     },
     {
