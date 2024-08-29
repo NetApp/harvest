@@ -24,12 +24,6 @@
       "version": "1.0.0"
     },
     {
-      "id": "stat",
-      "name": "Stat",
-      "type": "panel",
-      "version": ""
-    },
-    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -120,25 +114,25 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 10,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 597,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
-            "lastNotNull"
+            "mean",
+            "lastNotNull",
+            "max"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "table",
+          "placement": "bottom"
         },
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single"
+        }
       },
       "pluginVersion": "8.3.4",
       "targets": [
@@ -147,12 +141,12 @@
           "exemplar": false,
           "expr": "svm_vscan_connections_active{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "{{svm}}",
           "refId": "A"
         }
       ],
       "title": "Active Connections",
-      "type": "stat"
+      "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -212,7 +206,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 7
+        "y": 11
       },
       "id": 593,
       "options": {
@@ -234,13 +228,13 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "avg(svm_vscan_scan_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster,svm)",
+          "expr": "avg by (cluster, svm) (\\n    svm_vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
         }
       ],
-      "title": "Scan Latency",
+      "title": "Top $TopResources SVMs by Scan Latency",
       "type": "timeseries"
     },
     {
@@ -301,7 +295,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 7
+        "y": 11
       },
       "id": 592,
       "options": {
@@ -323,13 +317,13 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "avg(svm_vscan_dispatch_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster,svm)",
+          "expr": "avg by (cluster, svm) (\\n    svm_vscan_dispatch_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_dispatch_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))\\n",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
         }
       ],
-      "title": "Dispatch Latency",
+      "title": "Top $TopResources SVM by Dispatch Latency",
       "type": "timeseries"
     },
     {
@@ -415,7 +409,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 19
+        "y": 23
       },
       "id": 595,
       "options": {
@@ -437,13 +431,13 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster,svm) (rate(svm_vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3m]))",
+          "expr": "sum by (cluster, svm) (\\n    rate(svm_vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[4m])\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))\\n",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
         }
       ],
-      "title": "Scan Requests Sent to Vscanner Throughput",
+      "title": "Top $TopResources SVMs by Scan Requests Sent to Vscanner Throughput",
       "type": "timeseries"
     },
     {
@@ -529,7 +523,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 19
+        "y": 23
       },
       "id": 594,
       "options": {
@@ -551,13 +545,13 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster,svm) (rate(svm_vscan_scan_noti_received_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3m]))",
+          "expr": "sum by (cluster, svm) (\\n    rate(svm_vscan_scan_noti_received_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[4m])\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_scan_noti_received_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
         }
       ],
-      "title": "Scan Notifications Received Throughput",
+      "title": "Top $TopResources SVMs by Scan Notifications Received Throughput",
       "type": "timeseries"
     },
     {
@@ -567,7 +561,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 35
       },
       "id": 68,
       "panels": [
@@ -629,7 +623,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 2
+            "y": 36
           },
           "id": 591,
           "options": {
@@ -651,13 +645,13 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "avg(vscan_scan_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",scanner=~\"$Scanner\"}) by (cluster,svm,scanner)",
+              "expr": "avg by (cluster, svm, scanner) (\\n    vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\", scanner=~\\\"$Scanner\\\"}\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm, scanner) (\\n        avg_over_time(\\n            vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\", scanner=~\\\"$Scanner\\\"}[3h]\\n        @ end()\\n    )\\n))",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
             }
           ],
-          "title": "Scanner Latency",
+          "title": "Top $TopResources Scanners by Scanner Latency",
           "type": "timeseries"
         },
         {
@@ -743,7 +737,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 2
+            "y": 36
           },
           "id": 75,
           "options": {
@@ -765,13 +759,13 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "sum by (cluster,scanner,svm) (rate(vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",scanner=~\"$Scanner\"}[3m]))",
+              "expr": "sum by (cluster, scanner, svm) (\\n    rate(vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", scanner=~\\\"$Scanner\\\"}[4m])\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, scanner, svm) (\\n        avg_over_time(\\n            vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", scanner=~\\\"$Scanner\\\"}[3h]\\n        @ end()\\n    )\\n))",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
             }
           ],
-          "title": "Scanner Requests Throughput",
+          "title": "Top $TopResources Scanners by Scanner Requests Throughput",
           "type": "timeseries"
         }
       ],
@@ -785,7 +779,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 36
       },
       "id": 79,
       "panels": [
@@ -850,7 +844,7 @@
             "h": 11,
             "w": 8,
             "x": 0,
-            "y": 3
+            "y": 37
           },
           "id": 442,
           "options": {
@@ -942,7 +936,7 @@
             "h": 11,
             "w": 8,
             "x": 8,
-            "y": 3
+            "y": 37
           },
           "id": 586,
           "options": {
@@ -1034,7 +1028,7 @@
             "h": 11,
             "w": 8,
             "x": 16,
-            "y": 3
+            "y": 37
           },
           "id": 587,
           "options": {
@@ -1143,14 +1137,14 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(vscan_scanner_stats_pct_cpu_used{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, svm)",
+        "definition": "label_values(svm_vscan_scan_latency{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, svm)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(vscan_scanner_stats_pct_cpu_used{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, svm)",
+          "query": "label_values(svm_vscan_scan_latency{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1178,6 +1172,93 @@
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
