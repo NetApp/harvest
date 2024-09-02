@@ -54,7 +54,6 @@ var restCounterMap = map[string]struct{}{
 	"aggr_snapshot_inode_used_percent": {},
 	"flexcache_":                       {},
 	"rw_ctx_":                          {},
-	"volume_top_clients_":              {},
 }
 
 // excludeCounters consists of counters which should be excluded from both Zapi/Rest in CI test
@@ -105,6 +104,7 @@ var excludeCounters = []string{
 	"nfs_clients_",
 	"ndmp_session_",
 	"metrocluster_check_",
+	"volume_top_clients_",
 }
 
 var flakyCounters = []string{
