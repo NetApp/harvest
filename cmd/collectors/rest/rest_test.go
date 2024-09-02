@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"os"
 	"strings"
@@ -70,7 +71,7 @@ var (
 func TestMain(m *testing.M) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 
-	benchRest = newRest("Volume", "volume.yaml")
+	benchRest = newRest("Volume", "volume.yaml", "testdata/conf")
 	fullPollData = collectors.JSONToGson("testdata/volume-1.json.gz", true)
 	now := time.Now().Truncate(time.Second)
 	_, _ = benchRest.pollData(now, fullPollData, volumeEndpoints)
@@ -119,7 +120,7 @@ func Test_pollDataVolume(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			r := newRest("Volume", "volume.yaml")
+			r := newRest("Volume", "volume.yaml", "testdata/conf")
 			now := time.Now().Truncate(time.Second)
 			pollData := collectors.JSONToGson(tt.pollDataPath1, true)
 
@@ -148,9 +149,9 @@ func volumeEndpoints(e *EndPoint) ([]gjson.Result, time.Duration, error) {
 	return gson, 0, nil
 }
 
-func newRest(object string, path string) *Rest {
+func newRest(object string, path string, confPath string) *Rest {
 	var err error
-	opts := options.New(options.WithConfPath("testdata/conf"))
+	opts := options.New(options.WithConfPath(confPath))
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true
@@ -436,5 +437,36 @@ func TestFields(t *testing.T) {
 				t.Errorf("Mismatch (-got +want):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestQuotas(t *testing.T) {
+	r := newRest("Quota", "quota.yaml", "../../../conf")
+	var instanceKeys []string
+	result, err := collectors.InvokeRestCallWithTestFile(r.Client, "", r.Logger, "testdata/quota.json")
+	if err != nil {
+		t.Errorf("Error while invoking quota rest api call")
+	}
+
+	for _, quotaInstanceData := range result {
+		var instanceKey string
+		if len(r.Prop.InstanceKeys) != 0 {
+			// extract instance key(s)
+			for _, k := range r.Prop.InstanceKeys {
+				value := quotaInstanceData.Get(k)
+				if value.Exists() {
+					instanceKey += value.String()
+				}
+			}
+
+			if instanceKey == "" {
+				continue
+			}
+			instanceKeys = append(instanceKeys, instanceKey)
+		}
+	}
+
+	if util.HasDuplicates(instanceKeys) {
+		t.Errorf("Duplicate instanceKeys found for quota rest api")
 	}
 }

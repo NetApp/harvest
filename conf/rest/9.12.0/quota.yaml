@@ -6,6 +6,7 @@ client_timeout: 2m
 
 counters:
   - ^^index                       => index
+  - ^^volume.uuid                 => volume_uuid
   - ^group.name                   => groupName
   - ^qtree.name                   => qtree
   - ^svm.name                     => svm

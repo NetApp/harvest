@@ -1,0 +1,533 @@
+{
+  "poller": "dc-poller",
+  "addr": "a.b.c.d",
+  "api": "storage/quota/reports",
+  "version": "9.14.1",
+  "cluster_name": "cluster-1",
+  "records": [
+    {
+      "files": {
+        "used": {
+          "total": 333
+        }
+      },
+      "index": 2305843013508661000,
+      "qtree": {
+        "id": 1,
+        "name": "qtree1"
+      },
+      "space": {
+        "used": {
+          "total": 2548334592
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843017803628500,
+      "qtree": {
+        "id": 2,
+        "name": "qtree2"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 281
+        }
+      },
+      "index": 2305843022098596000,
+      "qtree": {
+        "id": 3,
+        "name": "qtree3"
+      },
+      "space": {
+        "used": {
+          "total": 16154624
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843026393563000,
+      "qtree": {
+        "id": 4,
+        "name": "qtree4"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843030688530400,
+      "qtree": {
+        "id": 5,
+        "name": "qtree5"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 275
+        }
+      },
+      "index": 2305843034983497700,
+      "qtree": {
+        "id": 6,
+        "name": "qtree6"
+      },
+      "space": {
+        "used": {
+          "total": 22171648
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 2
+        }
+      },
+      "index": 2305843039278465000,
+      "qtree": {
+        "id": 7,
+        "name": "qtree7"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843043573432300,
+      "qtree": {
+        "id": 8,
+        "name": "qtree8"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843047868399600,
+      "qtree": {
+        "id": 9,
+        "name": "qtree9"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843052163367000,
+      "qtree": {
+        "id": 10,
+        "name": "qtree10"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 354
+        }
+      },
+      "index": 2305843056458334000,
+      "qtree": {
+        "id": 11,
+        "name": "qtree11"
+      },
+      "space": {
+        "used": {
+          "total": 1832361984
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843060753301500,
+      "qtree": {
+        "id": 12,
+        "name": "qtree12"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 355
+        }
+      },
+      "index": 2305843065048269000,
+      "qtree": {
+        "id": 13,
+        "name": "qtree13"
+      },
+      "space": {
+        "used": {
+          "total": 3335729152
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843069343236000,
+      "qtree": {
+        "id": 14,
+        "name": "qtree14"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843073638203400,
+      "qtree": {
+        "id": 15,
+        "name": "qtree15"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 324
+        }
+      },
+      "index": 2305843077933170700,
+      "qtree": {
+        "id": 16,
+        "name": "qtree16"
+      },
+      "space": {
+        "used": {
+          "total": 13094912
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 1
+        }
+      },
+      "index": 2305843082228138000,
+      "qtree": {
+        "id": 17,
+        "name": "qtree17"
+      },
+      "space": {
+        "used": {
+          "total": 0
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 406347
+        }
+      },
+      "index": 2305843013508661000,
+      "qtree": {
+        "id": 1,
+        "name": "qtree_test1"
+      },
+      "space": {
+        "used": {
+          "total": 993389953024
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol2",
+        "uuid": "7613ad7f-442b-4779-8eec-e44dbbf9f548"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 583
+        }
+      },
+      "index": 2305843090818072600,
+      "qtree": {
+        "id": 19,
+        "name": "qtree19"
+      },
+      "space": {
+        "used": {
+          "total": 10350592
+        }
+      },
+      "svm": {
+        "name": "svm1",
+        "uuid": "50ce9f53-d7eb-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol1",
+        "uuid": "973db798-7773-4672-a6c5-b307f8f0f3e3"
+      }
+    },
+    {
+      "files": {
+        "used": {
+          "total": 163
+        }
+      },
+      "index": 2305843013508661000,
+      "qtree": {
+        "id": 1,
+        "name": "web-qtree"
+      },
+      "space": {
+        "hard_limit": 80530636800,
+        "used": {
+          "hard_limit_percent": 3,
+          "total": 2588848128
+        }
+      },
+      "svm": {
+        "name": "svm2",
+        "uuid": "87178809-d740-11e5-9203-00a0986e012c"
+      },
+      "type": "tree",
+      "volume": {
+        "name": "vol3",
+        "uuid": "ff79da46-0d1d-4cb4-b103-d80afdba64dd"
+      }
+    }
+  ],
+  "num_records": 20,
+  "poll_ms": 234
+}
