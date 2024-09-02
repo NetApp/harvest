@@ -101,7 +101,8 @@ func (f *FlexCache) getFlexCaches() (*set.Set, error) {
 			flexCaches = x.GetChildren()
 		}
 		if len(flexCaches) == 0 {
-			return nil, nil
+			// Handles the case where Perf call has records but Config call doesn't.
+			break
 		}
 
 		for _, flexCache := range flexCaches {

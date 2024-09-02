@@ -7,7 +7,7 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/rivo/uniseg v0.4.7
 	github.com/rs/zerolog v1.33.0
-	github.com/shirou/gopsutil/v4 v4.24.7
+	github.com/shirou/gopsutil/v4 v4.24.8
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/gjson v1.17.3
 	github.com/zekroTJA/timedmap/v2 v2.0.0

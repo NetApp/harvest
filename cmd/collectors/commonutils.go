@@ -6,7 +6,10 @@ import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -28,6 +31,13 @@ type embedShelf struct {
 	model, moduleType string
 }
 
+type PortData struct {
+	Node  string
+	Port  string
+	Read  float64
+	Write float64
+}
+
 // Reference https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage
 // There are two ways to identify embedded disk shelves:
 // 1. The shelf's module type ends with E
@@ -46,6 +56,18 @@ func IsEmbedShelf(model string, moduleType string) bool {
 	}
 
 	return combinations[embedShelf{model, moduleType}]
+}
+
+func InvokeRestCallWithTestFile(client *rest.Client, href string, logger *logging.Logger, testFilePath string) ([]gjson.Result, error) {
+	if testFilePath != "" {
+		b, err := os.ReadFile(testFilePath)
+		if err != nil {
+			return []gjson.Result{}, err
+		}
+		testData := gjson.Result{Type: gjson.JSON, Raw: string(b)}
+		return testData.Get("records").Array(), nil
+	}
+	return InvokeRestCall(client, href, logger)
 }
 
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
@@ -246,22 +268,249 @@ func ReadPluginKey(param *node.Node, key string) bool {
 	return false
 }
 
-func SplitVscanName(ontapName string) (string, string, string, bool) {
+type VscanNames struct {
+	Svm     string
+	Scanner string
+	Node    string
+}
+
+// SplitVscanName splits the vscan name into three parts and returns them as a VscanNames
+func SplitVscanName(ontapName string, isZapi bool) (VscanNames, bool) {
 	// colon separated list of fields
+	// ZapiPerf uses this format: svm:scanner:node
+	// RestPerf uses this format: node:svm:scanner
+
+	// ZapiPerf examples:
 	// svm      : scanner                  : node
 	// vs_test4 : 2.2.2.2                  : umeng-aff300-05
 	// moon-ad  : 2a03:1e80:a15:60c::1:2a5 : moon-02
 
+	// RestPerf examples:
+	// node                 : svm      : scanner
+	// sti46-vsim-ucs519d   : vs0      : 172.29.120.57
+
 	firstColon := strings.Index(ontapName, ":")
 	if firstColon == -1 {
-		return "", "", "", false
+		return VscanNames{}, false
 	}
 	lastColon := strings.LastIndex(ontapName, ":")
 	if lastColon == -1 {
-		return "", "", "", false
+		return VscanNames{}, false
 	}
 	if firstColon == lastColon {
-		return "", "", "", false
+		return VscanNames{}, false
 	}
-	return ontapName[:firstColon], ontapName[firstColon+1 : lastColon], ontapName[lastColon+1:], true
+
+	if isZapi {
+		return VscanNames{Svm: ontapName[:firstColon], Scanner: ontapName[firstColon+1 : lastColon], Node: ontapName[lastColon+1:]}, true
+	}
+	return VscanNames{Node: ontapName[:firstColon], Svm: ontapName[firstColon+1 : lastColon], Scanner: ontapName[lastColon+1:]}, true
+}
+
+func AggregatePerScanner(logger *logging.Logger, data *matrix.Matrix, latencyKey string, rateKey string) ([]*matrix.Matrix, *util.Metadata, error) {
+	// When isPerScanner=true, Harvest 1.6 uses this form:
+	// netapp.perf.dev.nltl-fas2520.vscan.scanner.10_64_30_62.scanner_stats_pct_mem_used 18 1501765640
+
+	// These counters are per scanner and need averaging:
+	// 		scanner_stats_pct_cpu_used
+	// 		scanner_stats_pct_mem_used
+	// 		scanner_stats_pct_network_used
+	// These counters need to be summed:
+	// 		scan_request_dispatched_rate
+	// These counters need weighted averages:
+	// 		scan_latency
+
+	// create per scanner instance cache
+	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+	var err error
+	cache.UUID += ".Vscan"
+	opsKeyPrefix := "temp_"
+
+	for _, i := range data.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
+		scanner := i.GetLabel("scanner")
+		if cache.GetInstance(scanner) == nil {
+			s, _ := cache.NewInstance(scanner)
+			s.SetLabel("scanner", scanner)
+		}
+		i.SetExportable(false)
+	}
+
+	// aggregate per scanner
+	counts := make(map[string]map[string]int) // map[scanner][counter] => value
+
+	for _, i := range data.GetInstances() {
+		scanner := i.GetLabel("scanner")
+		ps := cache.GetInstance(scanner)
+		if ps == nil {
+			logger.Error().Str("scanner", scanner).Msg("Failed to find scanner instance in cache")
+			continue
+		}
+		_, ok := counts[scanner]
+		if !ok {
+			counts[scanner] = make(map[string]int)
+		}
+		for mKey, m := range data.GetMetrics() {
+			if !m.IsExportable() && m.GetType() != "float64" {
+				continue
+			}
+			psm := cache.GetMetric(mKey)
+			if psm == nil {
+				logger.Error().Str("scanner", scanner).Str("metric", mKey).
+					Msg("Failed to find metric in scanner cache")
+				continue
+			}
+			if value, ok := m.GetValueFloat64(i); ok {
+				fv, _ := psm.GetValueFloat64(ps)
+
+				if mKey == latencyKey {
+					// weighted average for scan.latency
+					opsKey := m.GetComment()
+
+					if ops := data.GetMetric(opsKey); ops != nil {
+						if opsValue, ok := ops.GetValueFloat64(i); ok {
+							var tempOpsV float64
+
+							prod := value * opsValue
+							tempOpsKey := opsKeyPrefix + opsKey
+							tempOps := cache.GetMetric(tempOpsKey)
+
+							if tempOps == nil {
+								if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
+									return nil, nil, err
+								}
+								tempOps.SetExportable(false)
+							} else {
+								tempOpsV, _ = tempOps.GetValueFloat64(ps)
+							}
+
+							if value != 0 {
+								err = tempOps.SetValueFloat64(ps, tempOpsV+opsValue)
+								if err != nil {
+									logger.Error().Err(err).Msg("error")
+								}
+							}
+							err = psm.SetValueFloat64(ps, fv+prod)
+							if err != nil {
+								logger.Error().Err(err).Msg("error")
+							}
+						}
+					}
+
+					continue
+				}
+
+				// sum for scan_request_dispatched_rate
+				if mKey == rateKey {
+					err := psm.SetValueFloat64(ps, fv+value)
+					if err != nil {
+						logger.Error().Err(err).Str("metric", "scan_request_dispatched_rate").
+							Msg("Error setting metric value")
+					}
+
+					continue
+				} else if strings.HasSuffix(mKey, "_used") {
+					// these need averaging
+					counts[scanner][mKey]++
+					runningTotal, _ := psm.GetValueFloat64(ps)
+					value, _ := m.GetValueFloat64(ps)
+					err := psm.SetValueFloat64(ps, runningTotal+value)
+					if err != nil {
+						logger.Error().Err(err).Str("mKey", mKey).Msg("Failed to set value")
+					}
+				}
+			}
+		}
+	}
+
+	// cook averaged values and latencies
+	for scanner, i := range cache.GetInstances() {
+		for mKey, m := range cache.GetMetrics() {
+			if !m.IsExportable() {
+				continue
+			}
+			if strings.HasSuffix(m.GetName(), "_used") {
+				count := counts[scanner][mKey]
+				value, ok := m.GetValueFloat64(i)
+				if !ok {
+					continue
+				}
+				if err := m.SetValueFloat64(i, value/float64(count)); err != nil {
+					logger.Error().Err(err).
+						Str("mKey", mKey).
+						Str("name", m.GetName()).
+						Msg("Unable to set average")
+				}
+			} else if strings.HasSuffix(m.GetName(), "_latency") {
+				if value, ok := m.GetValueFloat64(i); ok {
+					opsKey := m.GetComment()
+
+					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
+						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
+							err := m.SetValueFloat64(i, value/opsValue)
+							if err != nil {
+								logger.Error().Err(err).Msg("error")
+							}
+						} else {
+							m.SetValueNAN(i)
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	return []*matrix.Matrix{cache}, nil, nil
+}
+
+func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData, nData *matrix.Matrix, logger *logging.Logger) error {
+	var err error
+	for portKey, ifgroupName := range portIfgroupMap {
+		portInfo, ok := portDataMap[portKey]
+		if !ok {
+			continue
+		}
+		nodeName := portInfo.Node
+		port := portInfo.Port
+		readBytes := portInfo.Read
+		writeBytes := portInfo.Write
+
+		ifgrpupInstanceKey := nodeName + ifgroupName
+		ifgroupInstance := nData.GetInstance(ifgrpupInstanceKey)
+		if ifgroupInstance == nil {
+			ifgroupInstance, err = nData.NewInstance(ifgrpupInstanceKey)
+			if err != nil {
+				logger.Debug().Str("ifgrpupInstanceKey", ifgrpupInstanceKey).Err(err).Msg("Failed to add instance")
+				return err
+			}
+		}
+
+		// set labels
+		ifgroupInstance.SetLabel("node", nodeName)
+		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
+		if ifgroupInstance.GetLabel("ports") != "" {
+			portSlice := []string{ifgroupInstance.GetLabel("ports"), port}
+			// make sure ports are always in sorted order
+			sort.Strings(portSlice)
+			ifgroupInstance.SetLabel("ports", strings.Join(portSlice, ","))
+		} else {
+			ifgroupInstance.SetLabel("ports", port)
+		}
+
+		rx := nData.GetMetric("rx_bytes")
+		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
+		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
+			logger.Debug().Float64("value", readBytes).Err(err).Msg("Failed to parse value")
+		}
+
+		tx := nData.GetMetric("tx_bytes")
+		txv, _ := tx.GetValueFloat64(ifgroupInstance)
+		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
+			logger.Debug().Float64("value", writeBytes).Err(err).Msg("Failed to parse value")
+		}
+	}
+	return nil
 }

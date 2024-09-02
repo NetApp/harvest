@@ -154,7 +154,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count( count by(disk) (disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) )",
+          "expr": "count(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -166,7 +166,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Disks by Node(s)",
+      "title": "Total Disks",
       "type": "stat"
     },
     {
