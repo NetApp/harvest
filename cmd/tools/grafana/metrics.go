@@ -190,8 +190,11 @@ func VisitAllPanels(data []byte, handle func(path string, key gjson.Result, valu
 
 func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(path string, key gjson.Result, value gjson.Result)) {
 	gjson.GetBytes(data, panelPath).ForEach(func(key, value gjson.Result) bool {
-		path := fmt.Sprintf("%s[%d]", panelPath, key.Int())
-		fullPath := fmt.Sprintf("%s%s", pathPrefix, path)
+		path := panelPath + "." + key.String()
+		fullPath := path
+		if pathPrefix != "" {
+			fullPath = pathPrefix + "." + path
+		}
 		handle(fullPath, key, value)
 		visitPanels([]byte(value.Raw), "panels", fullPath, handle)
 		return true

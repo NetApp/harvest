@@ -62,6 +62,7 @@ type options struct {
 	svmRegex            string
 	customizeDir        string
 	customAllValue      string
+	customCluster       string
 }
 
 type Folder struct {
@@ -516,6 +517,11 @@ func importFiles(dir string, folder *Folder) {
 			data = addSvmRegex(data, file.Name(), opts.svmRegex)
 		}
 
+		// change cluster label if needed
+		if opts.customCluster != "" {
+			data = changeClusterLabel(data, opts.customCluster)
+		}
+
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
 		caser := cases.Title(language.Und)
@@ -587,6 +593,60 @@ func importFiles(dir string, folder *Folder) {
 	}
 }
 
+// This function will rewrite all panel expressions in the dashboard to use the new cluster label.
+// Example:
+// sum(write_data{datacenter=~"$Datacenter",cluster=~"$Cluster",svm=~"$SVM"})
+// with --cluster-label=na_cluster will become
+// sum(write_data{datacenter=~"$Datacenter",na_cluster=~"$Cluster",svm=~"$SVM"})
+// See https://github.com/NetApp/harvest/issues/3131
+func changeClusterLabel(data []byte, cluster string) []byte {
+
+	// Change all panel expressions
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
+		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
+			expr := target.Get("expr")
+			if expr.Exists() {
+				newExpr := strings.ReplaceAll(expr.String(), "cluster", cluster)
+
+				destPath := path + ".targets." + targetKey.String() + ".expr"
+				data, _ = sjson.SetBytes(data, destPath, []byte(newExpr))
+			}
+
+			legendFormat := target.Get("legendFormat")
+			if legendFormat.Exists() {
+				newLegendFormat := strings.ReplaceAll(legendFormat.String(), "cluster", cluster)
+
+				destPath := path + ".targets." + targetKey.String() + ".legendFormat"
+				data, _ = sjson.SetBytes(data, destPath, []byte(newLegendFormat))
+			}
+
+			return true
+		})
+	})
+
+	// Change all templating variables that contain cluster
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+
+		// Change definition
+		definition := value.Get("definition")
+		if definition.Exists() {
+			newDefinition := strings.ReplaceAll(definition.String(), "cluster", cluster)
+			data, _ = sjson.SetBytes(data, "templating.list."+key.String()+".definition", []byte(newDefinition))
+		}
+
+		// Change query
+		query := value.Get("query.query")
+		if query.Exists() {
+			newQuery := strings.ReplaceAll(query.String(), "cluster", cluster)
+			data, _ = sjson.SetBytes(data, "templating.list."+key.String()+".query.query", []byte(newQuery))
+		}
+
+		return true
+	})
+
+	return data
+}
+
 func writeCustomDashboard(dashboard map[string]any, dir string, file os.DirEntry) error {
 	data, err := json.Marshal(dashboard)
 	if err != nil {
@@ -617,8 +677,8 @@ func formatJSON(data []byte) ([]byte, error) {
 	return prettyJSON.Bytes(), nil
 }
 
-// addGlobalPrefix adds the given prefix to all metric names in the
-// dashboards. It assumes that metrics are in Prometheus-format.
+// addGlobalPrefix adds the given prefix to all metric names in the dashboards.
+// It assumes that metrics are in Prometheus format.
 //
 // A more reliable implementation of this feature would be, to
 // add a constant prefix to all metrics, before they are pushed
@@ -717,7 +777,7 @@ func handlingPanels(p interface{}, prefix string) {
 
 // addPrefixToMetricNames adds prefix to metric names in expr or leaves it
 // unchanged if no metric names are identified.
-// Note that this function will only work with the Prometheus-dashboards of Harvest.
+// Note that this function will only work with the Prometheus dashboards of Harvest.
 // It will use a number of patterns in which metrics might be used in queries.
 // (E.g. a single metric, multiple metrics used in addition, etc. -- for examples
 // see the test). If we change queries of our dashboards, we have to review
@@ -1153,6 +1213,9 @@ func addImportCustomizeFlags(commands ...*cobra.Command) {
 			"Modify the dashboards to add multi-select dropdowns for each variable")
 		cmd.PersistentFlags().BoolVar(&opts.forceImport, "force", false,
 			"Import even if the datasource name is not defined in Grafana")
+		cmd.PersistentFlags().StringVar(&opts.customCluster, "cluster-label", "",
+			"Rewrite all panel expressions to use the specified cluster label instead of the default 'cluster'")
+
 		_ = cmd.PersistentFlags().MarkHidden("multi")
 		_ = cmd.PersistentFlags().MarkHidden("force")
 	}
