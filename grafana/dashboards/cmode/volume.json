@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1725283750521,
+  "iteration": 1725435445188,
   "links": [
     {
       "asDropdown": true,
@@ -3045,7 +3045,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume Performance",
+      "title": "Performance",
       "type": "row"
     },
     {
@@ -3244,7 +3244,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume I/O Density",
+      "title": "I/O Density",
       "type": "row"
     },
     {
@@ -4010,7 +4010,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Volume End-to-End QoS",
+      "title": "QoS",
       "type": "row"
     },
     {
@@ -5037,7 +5037,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Volume QoS Resource Latency",
+      "title": "QoS Resource Latency",
       "type": "row"
     },
     {
@@ -5873,7 +5873,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume Capacity",
+      "title": "Capacity",
       "type": "row"
     },
     {
@@ -6457,7 +6457,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume Capacity %",
+      "title": "Capacity %",
       "type": "row"
     },
     {
@@ -6851,12 +6851,12 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Volumes Clients by Write Throughput.",
+          "title": "Top $TopResources Volumes Clients by Write Throughput",
           "transformations": [],
           "type": "timeseries"
         }
       ],
-      "title": "Volume Top Clients",
+      "title": "Clients",
       "type": "row"
     },
     {
@@ -7350,7 +7350,7 @@
           "type": "table"
         }
       ],
-      "title": "Top Volume Object Storage",
+      "title": "Object Storage",
       "type": "row"
     },
     {
@@ -7745,7 +7745,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Volume FabricPool",
+      "title": "FabricPool",
       "type": "row"
     },
     {
@@ -8025,7 +8025,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Top Inode",
+      "title": "Inode",
       "type": "row"
     },
     {
@@ -8334,7 +8334,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Volume Sis Stat",
+      "title": "Sis Stat",
       "type": "row"
     },
     {
@@ -8555,7 +8555,7 @@
           "refId": "A"
         }
       ],
-      "title": "Volume Growth Rate",
+      "title": "Growth Rate",
       "type": "row"
     },
     {
