@@ -101,14 +101,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 2,
+        "h": 3,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 107,
       "options": {
-        "content": "This dashboard requires ONTAP 9.7+. One action is required to use this dashboard: <br>1. On Harvest, enable the Rest collector for OntapS3 template in your `harvest.yml` config for configuration metrics",
+        "content": "This dashboard requires ONTAP 9.7+. Three actions are required to use this dashboard: <br>1. If you are using the Rest collector, then you must enable the OntapS3 counters in `$HARVEST/conf/rest/default.yaml`. <br>2. If you are using the ZapiPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>3. If you are using the RestPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/restperf/default.yaml`. Please see https://github.com/NetApp/harvest/discussions/1796 for more details.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -120,7 +120,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "id": 16,
       "title": "Bucket",
@@ -352,7 +352,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "id": 5,
       "options": {
@@ -564,7 +564,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "id": 127,
       "options": {
@@ -682,7 +682,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 13
       },
       "id": 128,
       "options": {
@@ -838,7 +838,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 6,
       "options": {
@@ -910,6 +910,741 @@
         }
       ],
       "type": "table"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 17,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays Requests and Connections counts at each SVM.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short",
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 5
+          },
+          "id": 137,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_requests{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_connections{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_max_requests_outstanding{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_max_connected_connections{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_max_cmds_per_connection{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            }
+          ],
+          "title": "Requests & Connections stats",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Value #A",
+                    "Value #B",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "svm",
+                    "cluster",
+                    "datacenter"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "Value #D": 6,
+                  "Value #E": 7,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "svm": 2
+                },
+                "renameByName": {
+                  "Value": "Used space",
+                  "Value #A": "Requests",
+                  "Value #B": "Connections",
+                  "Value #C": "Max Outstanding Requests",
+                  "Value #D": "Max Connected Connections",
+                  "Value #E": "Max cmds per Connections"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of GET/PUT/HEAD/DELETE object operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Operations",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 15
+          },
+          "id": 132,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - GET",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - PUT",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_head_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_head_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - HEAD",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_delete_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_delete_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - DELETE",
+              "range": true,
+              "refId": "D"
+            }
+          ],
+          "title": "Top $TopResources Object Total by Operations",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of GET/PUT/HEAD/DELETE object operations per second.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Operations/sec",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 15
+          },
+          "id": 129,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - GET",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - PUT",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_head_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_head_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - HEAD",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_delete_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_delete_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - DELETE",
+              "range": true,
+              "refId": "D"
+            }
+          ],
+          "title": "Top $TopResources Object by Rate",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Average latency for GET/PUT/HEAD/DELETE object operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Latency",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 26
+          },
+          "id": 130,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - GET",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - PUT",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_head_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_head_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - HEAD",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_delete_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_delete_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - DELETE",
+              "range": true,
+              "refId": "D"
+            }
+          ],
+          "title": "Top $TopResources Object by Latency",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Rate of GET/PUT object data transfers per second.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Data Transfer",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 26
+          },
+          "id": 131,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - GET",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - PUT",
+              "range": true,
+              "refId": "B"
+            }
+          ],
+          "title": "Top $TopResources by Data Transfer",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "S3 Object Storage SVM",
+      "type": "row"
     }
   ],
   "refresh": "",
