@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	constant "github.com/netapp/harvest/v2/pkg/const"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -33,6 +34,7 @@ const (
 	licenseHealthMatrix                           = "health_license"
 	severityLabel                                 = "severity"
 	defaultDataPollDuration                       = 3 * time.Minute
+	alerts                                        = "alerts"
 )
 
 type Health struct {
@@ -49,7 +51,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 var metrics = []string{
-	"alerts",
+	alerts,
 }
 
 func (h *Health) Init() error {
@@ -776,15 +778,15 @@ func (h *Health) getTimeStampFilter(clusterTime time.Time) string {
 
 func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
 	var err error
-	m := mat.GetMetric("alerts")
+	m := mat.GetMetric(alerts)
 	if m == nil {
-		if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-			h.Logger.Warn().Err(err).Str("key", "alerts").Msg("error while creating metric")
+		if m, err = mat.NewMetricFloat64(alerts); err != nil {
+			h.Logger.Warn().Err(err).Str("key", alerts).Msg("error while creating metric")
 			return
 		}
 	}
 	if err = m.SetValueFloat64(instance, value); err != nil {
-		h.Logger.Error().Err(err).Str("metric", "alerts").Msg("Unable to set value on metric")
+		h.Logger.Error().Err(err).Str("metric", alerts).Msg("Unable to set value on metric")
 	}
 }
 
@@ -826,4 +828,86 @@ func (h *Health) generateResolutionMetrics() int {
 	}
 	h.previousData = h.data
 	return resolutionInstancesCount
+}
+
+func (h *Health) GetGeneratedMetrics() []plugin.CustomMetric {
+	return []plugin.CustomMetric{
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Disks health check if disks are broken or unassigned. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       diskHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Shelf health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       shelfHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Support health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       supportHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Node health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       nodeHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to HA health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       haHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Network Ethernet Port health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       networkEthernetPortHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Network FC Port health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       networkFCPortHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to LIF health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       lifHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Volume Ransomware health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       volumeRansomwareHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to Volume Move health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       volumeMoveHealthMatrix,
+		},
+		{
+			Name:         alerts,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Provides any issues related to License health check. Value of 1 means issue is happening and 0 means that issue is resolved.",
+			Prefix:       licenseHealthMatrix,
+		},
+	}
 }

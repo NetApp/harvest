@@ -21,6 +21,17 @@ import (
 const (
 	zapiValueKey = "environment-sensors-info.threshold-sensor-value"
 	restValueKey = "value"
+
+	// Metric Names
+	power                     = "power"
+	minTemperature            = "min_temperature"
+	averageAmbientTemperature = "average_ambient_temperature"
+	averageFanSpeed           = "average_fan_speed"
+	averageTemperature        = "average_temperature"
+	maxFanSpeed               = "max_fan_speed"
+	maxTemperature            = "max_temperature"
+	minAmbientTemperature     = "min_ambient_temperature"
+	minFanSpeed               = "min_fan_speed"
 )
 
 // CollectChassisFRU is here because both ZAPI and REST sensor.go plugin call it to collect
@@ -87,15 +98,15 @@ var voltageRegex = regexp.MustCompile(`^PSU\d (\d+V|InVoltage|VIN|AC In Volt|In 
 var currentRegex = regexp.MustCompile(`^PSU\d (\d+V Curr|Curr|InCurrent|Curr IIN|AC In Curr|In Curr)$`)
 
 var eMetrics = []string{
-	"average_ambient_temperature",
-	"average_fan_speed",
-	"average_temperature",
-	"max_fan_speed",
-	"max_temperature",
-	"min_ambient_temperature",
-	"min_fan_speed",
-	"min_temperature",
-	"power",
+	averageAmbientTemperature,
+	averageFanSpeed,
+	averageTemperature,
+	maxFanSpeed,
+	maxTemperature,
+	minAmbientTemperature,
+	minFanSpeed,
+	minTemperature,
+	power,
 }
 
 func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, valueKey string, myData *matrix.Matrix, nodeToNumNode map[string]int) []*matrix.Matrix {
@@ -229,7 +240,7 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 		for _, k := range eMetrics {
 			m := myData.GetMetric(k)
 			switch k {
-			case "power":
+			case power:
 				var sumPower float64
 				switch {
 				case len(v.powerSensor) > 0:
@@ -300,7 +311,7 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 				if err2 != nil {
 					logger.Logger.Error().Float64("power", sumPower).Err(err2).Msg("Unable to set power")
 				}
-			case "average_ambient_temperature":
+			case averageAmbientTemperature:
 				if len(v.ambientTemperature) > 0 {
 					aaT := util.Avg(v.ambientTemperature)
 					err2 = m.SetValueFloat64(instance, aaT)
@@ -308,19 +319,19 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 						logger.Logger.Error().Float64("average_ambient_temperature", aaT).Err(err2).Msg("Unable to set average_ambient_temperature")
 					}
 				}
-			case "min_ambient_temperature":
+			case minAmbientTemperature:
 				maT := util.Min(v.ambientTemperature)
 				err2 = m.SetValueFloat64(instance, maT)
 				if err2 != nil {
 					logger.Logger.Error().Float64("min_ambient_temperature", maT).Err(err2).Msg("Unable to set min_ambient_temperature")
 				}
-			case "max_temperature":
+			case maxTemperature:
 				mT := util.Max(v.nonAmbientTemperature)
 				err2 = m.SetValueFloat64(instance, mT)
 				if err2 != nil {
 					logger.Logger.Error().Float64("max_temperature", mT).Err(err2).Msg("Unable to set max_temperature")
 				}
-			case "average_temperature":
+			case averageTemperature:
 				if len(v.nonAmbientTemperature) > 0 {
 					nat := util.Avg(v.nonAmbientTemperature)
 					err2 = m.SetValueFloat64(instance, nat)
@@ -328,13 +339,13 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 						logger.Logger.Error().Float64("average_temperature", nat).Err(err2).Msg("Unable to set average_temperature")
 					}
 				}
-			case "min_temperature":
+			case minTemperature:
 				mT := util.Min(v.nonAmbientTemperature)
 				err2 = m.SetValueFloat64(instance, mT)
 				if err2 != nil {
 					logger.Logger.Error().Float64("min_temperature", mT).Err(err2).Msg("Unable to set min_temperature")
 				}
-			case "average_fan_speed":
+			case averageFanSpeed:
 				if len(v.fanSpeed) > 0 {
 					afs := util.Avg(v.fanSpeed)
 					err2 = m.SetValueFloat64(instance, afs)
@@ -342,13 +353,13 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *logging.Logger, va
 						logger.Logger.Error().Float64("average_fan_speed", afs).Err(err2).Msg("Unable to set average_fan_speed")
 					}
 				}
-			case "max_fan_speed":
+			case maxFanSpeed:
 				mfs := util.Max(v.fanSpeed)
 				err2 = m.SetValueFloat64(instance, mfs)
 				if err2 != nil {
 					logger.Logger.Error().Float64("max_fan_speed", mfs).Err(err2).Msg("Unable to set max_fan_speed")
 				}
-			case "min_fan_speed":
+			case minFanSpeed:
 				mfs := util.Min(v.fanSpeed)
 				err2 = m.SetValueFloat64(instance, mfs)
 				if err2 != nil {
@@ -383,130 +394,130 @@ type Sensor struct {
 	hasREST        bool
 }
 
-func (my *Sensor) Init() error {
+func (s *Sensor) Init() error {
 
 	var err error
-	if err := my.InitAbc(); err != nil {
+	if err := s.InitAbc(); err != nil {
 		return err
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout, my.Auth); err != nil {
-		my.Logger.Error().Err(err).Msg("connecting")
+	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
+		s.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 
-	my.hasREST = true
+	s.hasREST = true
 
-	if err := my.client.Init(5); err != nil {
+	if err := s.client.Init(5); err != nil {
 		var re *errs.RestError
 		if errors.As(err, &re) && re.StatusCode == http.StatusNotFound {
-			my.Logger.Warn().Msg("Cluster does not support REST. Power plugin disabled")
-			my.hasREST = false
+			s.Logger.Warn().Msg("Cluster does not support REST. Power plugin disabled")
+			s.hasREST = false
 			return nil
 		}
 		return err
 	}
 
-	my.data = matrix.New(my.Parent+".Sensor", "environment_sensor", "environment_sensor")
-	my.instanceKeys = make(map[string]string)
-	my.instanceLabels = make(map[string]map[string]string)
+	s.data = matrix.New(s.Parent+".Sensor", "environment_sensor", "environment_sensor")
+	s.instanceKeys = make(map[string]string)
+	s.instanceLabels = make(map[string]map[string]string)
 
 	// init environment metrics in plugin matrix
 	// create environment metric if not exists
 	for _, k := range eMetrics {
-		err := matrix.CreateMetric(k, my.data)
+		err := matrix.CreateMetric(k, s.data)
 		if err != nil {
-			my.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+			s.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
 		}
 	}
 	return nil
 }
 
-func (my *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
-	if !my.hasREST {
+func (s *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+	if !s.hasREST {
 		return nil, nil, nil
 	}
-	data := dataMap[my.Object]
+	data := dataMap[s.Object]
 	// Purge and reset data
-	my.data.PurgeInstances()
-	my.data.Reset()
-	my.client.Metadata.Reset()
+	s.data.PurgeInstances()
+	s.data.Reset()
+	s.client.Metadata.Reset()
 
 	// Set all global labels if they don't already exist
-	my.data.SetGlobalLabels(data.GetGlobalLabels())
+	s.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	// Collect chassis fru show, so we can determine if a controller's PSUs are shared or not
-	nodeToNumNode, err := collectChassisFRU(my.client, my.Logger)
+	nodeToNumNode, err := collectChassisFRU(s.client, s.Logger)
 	if err != nil {
 		return nil, nil, err
 	}
 	if len(nodeToNumNode) == 0 {
-		my.Logger.Debug().Msg("No chassis field replaceable units found")
+		s.Logger.Debug().Msg("No chassis field replaceable units found")
 	}
 
 	valueKey := zapiValueKey
-	if my.Parent == "Rest" {
+	if s.Parent == "Rest" {
 		valueKey = restValueKey
 	}
-	metrics := calculateEnvironmentMetrics(data, my.Logger, valueKey, my.data, nodeToNumNode)
+	metrics := calculateEnvironmentMetrics(data, s.Logger, valueKey, s.data, nodeToNumNode)
 
-	return metrics, my.client.Metadata, nil
+	return metrics, s.client.Metadata, nil
 }
 
-func (my *Sensor) GetGeneratedMetrics() []plugin.CustomMetric {
+func (s *Sensor) GetGeneratedMetrics() []plugin.CustomMetric {
 
 	return []plugin.CustomMetric{
 		{
-			Name:         "power",
+			Name:         power,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Power consumed by a node in Watts.",
 		},
 		{
-			Name:         "min_temperature",
+			Name:         minTemperature,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Minimum temperature of all non-ambient sensors for node in Celsius.",
 		},
 		{
-			Name:         "average_ambient_temperature",
+			Name:         averageAmbientTemperature,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Average temperature of all ambient sensors for node in Celsius.",
 		},
 		{
-			Name:         "average_fan_speed",
+			Name:         averageFanSpeed,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Average fan speed for node in rpm.",
 		},
 		{
-			Name:         "average_temperature",
+			Name:         averageTemperature,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Average temperature of all non-ambient sensors for node in Celsius.",
 		},
 		{
-			Name:         "max_fan_speed",
+			Name:         maxFanSpeed,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Maximum fan speed for node in rpm.",
 		},
 		{
-			Name:         "max_temperature",
+			Name:         maxTemperature,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Maximum temperature of all non-ambient sensors for node in Celsius.",
 		},
 		{
-			Name:         "min_ambient_temperature",
+			Name:         minAmbientTemperature,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Minimum temperature of all ambient sensors for node in Celsius.",
 		},
 		{
-			Name:         "min_fan_speed",
+			Name:         minFanSpeed,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,
 			Description:  "Minimum fan speed for node in rpm.",

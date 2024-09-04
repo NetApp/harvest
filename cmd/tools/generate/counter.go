@@ -296,37 +296,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 		}
 	}
 
-	// If the template has any PluginMetrics, add them
-	for _, metric := range model.PluginMetrics {
-		co := Counter{
-			Name: model.Object + "_" + metric.Name,
-			APIs: []MetricDef{
-				{
-					API:          "REST",
-					Endpoint:     model.Query,
-					Template:     path,
-					ONTAPCounter: metric.Source,
-				},
-			},
-		}
-		counters[co.Name] = co
-	}
-
-	for _, metric := range model.PluginCustomMetrics {
-		co := Counter{
-			Name:        model.Object + "_" + metric.Name,
-			Description: metric.Description,
-			APIs: []MetricDef{
-				{
-					API:          "REST",
-					Endpoint:     metric.Endpoint,
-					Template:     path,
-					ONTAPCounter: metric.ONTAPCounter,
-				},
-			},
-		}
-		counters[co.Name] = co
-	}
+	addPluginMetrics(&model, path, counters, "REST")
 
 	return counters
 }
@@ -505,37 +475,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		}
 	}
 
-	// If the template has any PluginMetrics, add them
-	for _, metric := range model.PluginMetrics {
-		co := Counter{
-			Name: model.Object + "_" + metric.Name,
-			APIs: []MetricDef{
-				{
-					API:          "ZAPI",
-					Endpoint:     model.Query,
-					Template:     path,
-					ONTAPCounter: metric.Source,
-				},
-			},
-		}
-		counters[co.Name] = co
-	}
-
-	for _, metric := range model.PluginCustomMetrics {
-		co := Counter{
-			Name:        model.Object + "_" + metric.Name,
-			Description: metric.Description,
-			APIs: []MetricDef{
-				{
-					API:          "ZAPI",
-					Endpoint:     metric.Endpoint,
-					Template:     path,
-					ONTAPCounter: metric.ONTAPCounter,
-				},
-			},
-		}
-		counters[co.Name] = co
-	}
+	addPluginMetrics(&model, path, counters, "ZAPI")
 
 	// handling for templates with common object names
 	if specialPerfObjects[model.Object] {
@@ -598,13 +538,19 @@ func processZapiConfigCounters(path string) map[string]Counter {
 		}
 	}
 
+	addPluginMetrics(&model, path, counters, "ZAPI")
+
+	return counters
+}
+
+func addPluginMetrics(model *template2.Model, path string, counters map[string]Counter, apiType string) {
 	// If the template has any PluginMetrics, add them
 	for _, metric := range model.PluginMetrics {
 		co := Counter{
 			Name: model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
-					API:          "ZAPI",
+					API:          apiType,
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,
@@ -614,13 +560,18 @@ func processZapiConfigCounters(path string) map[string]Counter {
 		counters[co.Name] = co
 	}
 
+	// If the template has any PluginCustomMetrics, add them
 	for _, metric := range model.PluginCustomMetrics {
+		metricName := model.Object + "_" + metric.Name
+		if metric.Prefix != "" {
+			metricName = metric.Prefix + "_" + metric.Name
+		}
 		co := Counter{
-			Name:        model.Object + "_" + metric.Name,
+			Name:        metricName,
 			Description: metric.Description,
 			APIs: []MetricDef{
 				{
-					API:          "ZAPI",
+					API:          apiType,
 					Endpoint:     metric.Endpoint,
 					Template:     path,
 					ONTAPCounter: metric.ONTAPCounter,
@@ -629,7 +580,6 @@ func processZapiConfigCounters(path string) map[string]Counter {
 		}
 		counters[co.Name] = co
 	}
-	return counters
 }
 
 func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path string, client *rest.Client) map[string]Counter) map[string]Counter {
@@ -944,37 +894,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 		return true
 	})
 
-	// If the template has any PluginMetrics, add them
-	for _, metric := range model.PluginMetrics {
-		co := Counter{
-			Name: model.Object + "_" + metric.Name,
-			APIs: []MetricDef{
-				{
-					API:          "REST",
-					Endpoint:     model.Query,
-					Template:     path,
-					ONTAPCounter: metric.Source,
-				},
-			},
-		}
-		counters[co.Name] = co
-	}
-
-	for _, metric := range model.PluginCustomMetrics {
-		co := Counter{
-			Name:        model.Object + "_" + metric.Name,
-			Description: metric.Description,
-			APIs: []MetricDef{
-				{
-					API:          "REST",
-					Endpoint:     metric.Endpoint,
-					Template:     path,
-					ONTAPCounter: metric.ONTAPCounter,
-				},
-			},
-		}
-		counters[co.Name] = co
-	}
+	addPluginMetrics(&model, path, counters, "REST")
 	// handling for templates with common object names/metric name
 	if specialPerfObjects[model.Object] {
 		return specialHandlingPerfCounters(counters, model)

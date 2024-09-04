@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Aug-12
+Creation Date : 2024-Sep-04
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -3000,6 +3000,105 @@ Utilization component of the optimal point of the latency/utilization curve. Thi
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml | 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml | 
+
+
+### health_disk_alerts
+
+Provides any issues related to Disks health check if disks are broken or unassigned. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_ha_alerts
+
+Provides any issues related to HA health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_license_alerts
+
+Provides any issues related to License health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_lif_alerts
+
+Provides any issues related to LIF health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_network_ethernet_port_alerts
+
+Provides any issues related to Network Ethernet Port health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_network_fc_port_alerts
+
+Provides any issues related to Network FC Port health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_node_alerts
+
+Provides any issues related to Node health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_shelf_alerts
+
+Provides any issues related to Shelf health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_support_alerts
+
+Provides any issues related to Support health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_volume_move_alerts
+
+Provides any issues related to Volume Move health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_volume_ransomware_alerts
+
+Provides any issues related to Volume Ransomware health check. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
 ### hostadapter_bytes_read

@@ -5,6 +5,7 @@ type CustomMetric struct {
 	Endpoint     string
 	ONTAPCounter string
 	Description  string
+	Prefix       string
 }
 
 type MetricGenerator interface {
