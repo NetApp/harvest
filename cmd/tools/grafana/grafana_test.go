@@ -631,3 +631,60 @@ func TestAddLabel(t *testing.T) {
 		})
 	}
 }
+
+func TestClusterRewrite(t *testing.T) {
+	type test struct {
+		name    string
+		input   string
+		want    string
+		cluster string
+	}
+
+	tests := []test{
+		{
+			name:    "no cluster label",
+			input:   `abc{datacenter=~\"$Datacenter\"})`,
+			want:    `abc{datacenter=~\"$Datacenter\"})`,
+			cluster: "netapp_cluster",
+		},
+		{
+			name:    "multiple cluster labels",
+			input:   `sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})`,
+			want:    `sum by(site_name,netapp_cluster,datacenter)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"})`,
+			cluster: "netapp_cluster",
+		},
+		{
+			name:    "by cluster label",
+			input:   `sum by (cluster) (abc{cluster="$Cluster"}[2m)`,
+			want:    `sum by (netapp_cluster) (abc{netapp_cluster="$Cluster"}[2m)`,
+			cluster: "netapp_cluster",
+		},
+		{
+			name:    "cluster_new_status should not change",
+			input:   `"label_values(cluster_new_status{}, cluster)`,
+			want:    `"label_values(cluster_new_status{}, netapp_cluster)`,
+			cluster: "netapp_cluster",
+		},
+		{
+			name:    "cluster_new_status should not change 2",
+			input:   `cluster_new_status{}, cluster`,
+			want:    `cluster_new_status{}, netapp_cluster`,
+			cluster: "netapp_cluster",
+		},
+		{
+			name:    "snapmirror var",
+			input:   `snapmirror_labels{source_cluster) "source_cluster", "$1", "cluster", "(.*)")`,
+			want:    `snapmirror_labels{source_cluster) "source_cluster", "$1", "netapp_cluster", "(.*)")`,
+			cluster: "netapp_cluster",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := rewriteCluster(tt.input, tt.cluster)
+			if got != tt.want {
+				t.Errorf("TestClusterLabel\n got=%v\nwant=%v", got, tt.want)
+			}
+		})
+	}
+}
