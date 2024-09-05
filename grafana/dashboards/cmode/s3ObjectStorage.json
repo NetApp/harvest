@@ -108,7 +108,7 @@
       },
       "id": 107,
       "options": {
-        "content": "This dashboard requires ONTAP 9.7+. Three actions are required to use this dashboard: <br>1. If you are using the Rest collector, then you must enable the OntapS3 counters in `$HARVEST/conf/rest/default.yaml`. <br>2. If you are using the ZapiPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>3. If you are using the RestPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/restperf/default.yaml`. Please see https://github.com/NetApp/harvest/discussions/1796 for more details.",
+        "content": "This dashboard requires ONTAP 9.7+. Three actions are required to use this dashboard: <br>1. If you are using the Rest collector, then you must enable the OntapS3 counters in `$HARVEST/conf/rest/default.yaml`. <br>2. If you are using the ZapiPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>3. If you are using the RestPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/restperf/default.yaml`. Please see https://github.com/NetApp/harvest/discussions/3137 for more details.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -1042,7 +1042,12 @@
               "show": false
             },
             "showHeader": true,
-            "sortBy": []
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "SVM"
+              }
+            ]
           },
           "pluginVersion": "10.3.1",
           "targets": [
@@ -1145,7 +1150,7 @@
                   "Value #B": "Connections",
                   "Value #C": "Max Outstanding Requests",
                   "Value #D": "Max Connected Connections",
-                  "Value #E": "Max cmds per Connections"
+                  "Value #E": "Max Commands Per Connections"
                 }
               }
             }
@@ -1154,7 +1159,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of GET/PUT/HEAD/DELETE object operations.",
+          "description": "Number of GET/PUT/HEAD/DELETE SVM operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1275,13 +1280,13 @@
               "refId": "D"
             }
           ],
-          "title": "Top $TopResources Object Total by Operations",
+          "title": "Top $TopResources SVMs by Operations",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of GET/PUT/HEAD/DELETE object operations per second.",
+          "description": "Number of GET/PUT/HEAD/DELETE SVM operations per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1403,13 +1408,13 @@
               "refId": "D"
             }
           ],
-          "title": "Top $TopResources Object by Rate",
+          "title": "Top $TopResources SVMs by Rate",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency for GET/PUT/HEAD/DELETE object operations.",
+          "description": "Average latency for GET/PUT/HEAD/DELETE SVM operations.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1530,13 +1535,13 @@
               "refId": "D"
             }
           ],
-          "title": "Top $TopResources Object by Latency",
+          "title": "Top $TopResources SVMs by Latency",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Rate of GET/PUT object data transfers per second.",
+          "description": "Rate of GET/PUT SVM data transfers per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1638,7 +1643,7 @@
               "refId": "B"
             }
           ],
-          "title": "Top $TopResources by Data Transfer",
+          "title": "Top $TopResources SVMs by Data Transfer",
           "transformations": [],
           "type": "timeseries"
         }
