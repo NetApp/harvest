@@ -603,25 +603,105 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 
 	// Change all panel expressions
 	VisitAllPanels(data, func(path string, _, value gjson.Result) {
+
+		// Rewrite expressions and legends
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() {
-				newExpr := strings.ReplaceAll(expr.String(), "cluster", cluster)
+				newExpression := rewriteCluster(expr.String(), cluster)
 
-				destPath := path + ".targets." + targetKey.String() + ".expr"
-				data, _ = sjson.SetBytes(data, destPath, []byte(newExpr))
+				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.String()+".expr", []byte(newExpression))
 			}
 
 			legendFormat := target.Get("legendFormat")
 			if legendFormat.Exists() {
-				newLegendFormat := strings.ReplaceAll(legendFormat.String(), "cluster", cluster)
+				newLegendFormat := rewriteCluster(legendFormat.String(), cluster)
 
-				destPath := path + ".targets." + targetKey.String() + ".legendFormat"
-				data, _ = sjson.SetBytes(data, destPath, []byte(newLegendFormat))
+				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.String()+".legendFormat", []byte(newLegendFormat))
 			}
 
 			return true
 		})
+
+		// Rewrite tables columns
+		panelType := value.Get("type")
+		if panelType.String() == "table" {
+			value.Get("transformations").ForEach(func(transKey, value gjson.Result) bool {
+				id := value.Get("id")
+				if id.String() == "organize" {
+
+					// Check if the cluster exists in renameByName, and if so, rename it to the new cluster label
+					clusterTrans := value.Get("options.renameByName.cluster")
+					if clusterTrans.Exists() {
+						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.renameByName."+cluster, []byte(clusterTrans.String()))
+					}
+
+					// If the cluster column exists, remove the column, and add the new cluster label at the same index
+					clusterIndex := value.Get("options.indexByName.cluster")
+					if clusterIndex.Exists() {
+						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.indexByName."+cluster, clusterIndex.Int())
+						data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.indexByName.cluster")
+					}
+					// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
+					for i := range 10 {
+						clusterN := "cluster " + strconv.Itoa(i)
+						clusterIndexI := value.Get("options.indexByName." + clusterN)
+						if clusterIndexI.Exists() {
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.indexByName."+cluster+" "+strconv.Itoa(i), clusterIndexI.Int())
+							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.indexByName."+clusterN)
+						}
+					}
+
+					// If cluster is excluded from the table, exclude the new cluster label too
+					excludeByName := value.Get("options.excludeByName")
+					if excludeByName.Exists() {
+						clusterIndex := value.Get("options.excludeByName.cluster")
+						if clusterIndex.Exists() {
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.excludeByName."+cluster, clusterIndex.Int())
+							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.excludeByName.cluster")
+						}
+						// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
+						for i := range 10 {
+							clusterN := "cluster " + strconv.Itoa(i)
+							clusterIndexI := value.Get("options.excludeByName." + clusterN)
+							if clusterIndexI.Exists() {
+								data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), true)
+								data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.excludeByName."+clusterN)
+							}
+						}
+					}
+				} else if id.String() == "filterFieldsByName" {
+					// Check if the cluster exists in filterFieldsByName, and if so, rename it to the new cluster label
+					names := value.Get("options.include.names")
+					if names.Exists() {
+						var nameValues []string
+						hasCluster := false
+						for _, name := range names.Array() {
+							if name.String() == "cluster" {
+								hasCluster = true
+								nameValues = append(nameValues, cluster)
+								continue
+							}
+							nameValues = append(nameValues, name.String())
+						}
+
+						if hasCluster {
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.include.names", nameValues)
+						}
+					}
+				}
+
+				return true
+			})
+
+			// Change all fieldConfig overrides that contain cluster
+			value.Get("fieldConfig.overrides").ForEach(func(overrideKey, override gjson.Result) bool {
+				if override.Get("matcher.id").String() == "byName" && override.Get("matcher.options").String() == "cluster" {
+					data, _ = sjson.SetBytes(data, path+".fieldConfig.overrides."+overrideKey.String()+".matcher.options", cluster)
+				}
+				return true
+			})
+		}
 	})
 
 	// Change all templating variables that contain cluster
@@ -630,14 +710,15 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 		// Change definition
 		definition := value.Get("definition")
 		if definition.Exists() {
-			newDefinition := strings.ReplaceAll(definition.String(), "cluster", cluster)
+			newDefinition := rewriteCluster(definition.String(), cluster)
+
 			data, _ = sjson.SetBytes(data, "templating.list."+key.String()+".definition", []byte(newDefinition))
 		}
 
 		// Change query
 		query := value.Get("query.query")
 		if query.Exists() {
-			newQuery := strings.ReplaceAll(query.String(), "cluster", cluster)
+			newQuery := rewriteCluster(query.String(), cluster)
 			data, _ = sjson.SetBytes(data, "templating.list."+key.String()+".query.query", []byte(newQuery))
 		}
 
@@ -645,6 +726,25 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 	})
 
 	return data
+}
+
+func rewriteCluster(input string, cluster string) string {
+	const marker = `!!^`
+	hiddenNames := []string{"cluster_new_status", "source_cluster"}
+	for _, name := range hiddenNames {
+		if strings.Contains(input, name) {
+			// hide name
+			repl := strings.ReplaceAll(name, "cluster", marker)
+			input = strings.ReplaceAll(input, name, repl)
+		}
+	}
+
+	result := strings.ReplaceAll(input, "cluster", cluster)
+
+	// Restore hidden names
+	result = strings.ReplaceAll(result, marker, "cluster")
+
+	return result
 }
 
 func writeCustomDashboard(dashboard map[string]any, dir string, file os.DirEntry) error {
