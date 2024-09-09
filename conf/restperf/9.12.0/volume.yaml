@@ -47,16 +47,11 @@ plugins:
       - node
   - Volume:
       include_constituents: false
-  # VolumeTopClients configuration:
-  # - MaxVolumeCount: Specifies the maximum number of volumes to consider for top client metrics.
-  #   Note: The actual maximum value is capped at 50, even if a higher number is specified.
-  # - Metrics Collected:
-  #   - Read Operations
-  #   - Write Operations
-  #   - Read Throughput
-  #   - Write Throughput
 #  - VolumeTopClients:
-#      - MaxVolumeCount: 5
+#      # The maximum number of volumes to consider for top client metrics.
+#      # The actual maximum value is capped at 50, even if a higher number is specified.
+#      # When enabled, this plugin will collect read/write operations and throughput metrics for the top clients of each volume.
+#       - MaxVolumeCount: 5
 #  - LabelAgent:
 #      # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex:

@@ -1,6 +1,7 @@
 package volumetopclients
 
 import (
+	"cmp"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -9,15 +10,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"math"
-	"sort"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type VolumeInterface interface {
-	fetchTopClients(volumes []string, svms []string, metric string) ([]gjson.Result, error)
+	fetchTopClients(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error)
 	fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 	processTopClients(data *matrix.Matrix) error
 }
@@ -32,14 +32,11 @@ const (
 	maxTopN                  = 50
 )
 
-var opMetrics = []string{
-	"ops",
-}
-var dataMetrics = []string{
-	"data",
-}
+var opMetric = "ops"
 
-type Volume struct {
+var dataMetric = "data"
+
+type TopClients struct {
 	*plugin.AbstractPlugin
 	client          *rest.Client
 	data            map[string]*matrix.Matrix
@@ -59,95 +56,93 @@ type MetricValue struct {
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &Volume{AbstractPlugin: p}
+	return &TopClients{AbstractPlugin: p}
 }
 
-func (v *Volume) InitAllMatrix() error {
-	v.data = make(map[string]*matrix.Matrix)
+func (t *TopClients) InitAllMatrix() error {
+	t.data = make(map[string]*matrix.Matrix)
 	mats := []struct {
-		name    string
-		object  string
-		metrics []string
+		name   string
+		object string
+		metric string
 	}{
-		{topClientReadOPSMatrix, "volume_top_clients_read", opMetrics},
-		{topClientWriteOPSMatrix, "volume_top_clients_write", opMetrics},
-		{topClientReadDataMatrix, "volume_top_clients_read", dataMetrics},
-		{topClientWriteDataMatrix, "volume_top_clients_write", dataMetrics},
+		{topClientReadOPSMatrix, "volume_top_clients_read", opMetric},
+		{topClientWriteOPSMatrix, "volume_top_clients_write", opMetric},
+		{topClientReadDataMatrix, "volume_top_clients_read", dataMetric},
+		{topClientWriteDataMatrix, "volume_top_clients_write", dataMetric},
 	}
 
 	for _, m := range mats {
-		if err := v.initMatrix(m.name, m.object, v.data, m.metrics); err != nil {
+		if err := t.initMatrix(m.name, m.object, t.data, m.metric); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (v *Volume) initMatrix(name string, object string, inputMat map[string]*matrix.Matrix, metrics []string) error {
-	matrixName := v.Parent + name
+func (t *TopClients) initMatrix(name string, object string, inputMat map[string]*matrix.Matrix, metric string) error {
+	matrixName := t.Parent + name
 	inputMat[name] = matrix.New(matrixName, object, name)
-	for _, v1 := range v.data {
+	for _, v1 := range t.data {
 		v1.SetExportOptions(matrix.DefaultExportOptions())
 	}
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, inputMat[name])
-		if err != nil {
-			v.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
-			return err
-		}
+	err := matrix.CreateMetric(metric, inputMat[name])
+	if err != nil {
+		t.Logger.Warn().Err(err).Str("key", metric).Msg("error while creating metric")
+		return err
 	}
 	return nil
 }
 
-func (v *Volume) Init() error {
+func (t *TopClients) Init() error {
 	var err error
-	if err := v.InitAbc(); err != nil {
+	if err := t.InitAbc(); err != nil {
 		return err
 	}
 
-	if err := v.InitAllMatrix(); err != nil {
+	if err := t.InitAllMatrix(); err != nil {
 		return err
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
+	if t.client, err = rest.New(conf.ZapiPoller(t.ParentParams), timeout, t.Auth); err != nil {
 		return err
 	}
 
-	if err := v.client.Init(5); err != nil {
+	if err := t.client.Init(5); err != nil {
 		return err
 	}
 
-	if maxVol := v.Params.GetChildContentS("MaxVolumeCount"); maxVol != "" {
+	if maxVol := t.Params.GetChildContentS("MaxVolumeCount"); maxVol != "" {
 		if maxVolCount, err := strconv.Atoi(maxVol); err != nil {
-			v.maxVolumeCount = defaultTopN
+			t.maxVolumeCount = defaultTopN
 		} else {
-			v.maxVolumeCount = int(math.Min(float64(maxVolCount), float64(maxTopN)))
+			t.maxVolumeCount = min(maxVolCount, maxTopN)
 		}
 	}
-	v.Logger.Info().Int("maxVolumeCount", v.maxVolumeCount).Msg("Using maxVolumeCount")
+	t.Logger.Info().Int("maxVolumeCount", t.maxVolumeCount).Msg("Using maxVolumeCount")
 	return nil
 }
 
-func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
-	data := dataMap[v.Object]
-	v.client.Metadata.Reset()
-	err := v.InitAllMatrix()
+func (t *TopClients) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+	data := dataMap[t.Object]
+	t.client.Metadata.Reset()
+	err := t.InitAllMatrix()
 	if err != nil {
 		return nil, nil, err
 	}
-	for k := range v.data {
+	for k := range t.data {
 		// Set all global labels if already not exist
-		v.data[k].SetGlobalLabels(data.GetGlobalLabels())
+		t.data[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
-	err = v.processTopClients(data)
+	err = t.processTopClients(data)
 	if err != nil {
 		return nil, nil, err
 	}
-	result := make([]*matrix.Matrix, 0, len(v.data))
+	result := make([]*matrix.Matrix, 0, len(t.data))
 
 	var pluginInstances uint64
-	for _, value := range v.data {
+	for _, value := range t.data {
 		instCount := len(value.GetInstances())
 		if instCount == 0 {
 			continue
@@ -156,25 +151,25 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		pluginInstances = +uint64(len(value.GetInstances()))
 	}
 
-	v.client.Metadata.PluginInstances = pluginInstances
-	return result, v.client.Metadata, err
+	t.client.Metadata.PluginInstances = pluginInstances
+	return result, t.client.Metadata, err
 }
 
-func (v *Volume) getCachedVolumesWithActivityTracking() (*set.Set, error) {
+func (t *TopClients) getCachedVolumesWithActivityTracking() (*set.Set, error) {
 	const cacheDuration = time.Hour
 
 	// Check if the cache is still valid
-	if v.cache != nil && time.Since(v.cache.lastFetched) < cacheDuration {
-		return v.cache.volumesWithActivityTrackingEnabled, nil
+	if t.cache != nil && time.Since(t.cache.lastFetched) < cacheDuration {
+		return t.cache.volumesWithActivityTrackingEnabled, nil
 	}
 
-	va, err := v.fetchVolumesWithActivityTrackingEnabled()
+	va, err := t.fetchVolumesWithActivityTrackingEnabled()
 	if err != nil {
 		return nil, err
 	}
 
 	// Update the cache
-	v.cache = &VolumeCache{
+	t.cache = &VolumeCache{
 		volumesWithActivityTrackingEnabled: va,
 		lastFetched:                        time.Now(),
 	}
@@ -182,8 +177,8 @@ func (v *Volume) getCachedVolumesWithActivityTracking() (*set.Set, error) {
 	return va, nil
 }
 
-func (v *Volume) processTopClients(data *matrix.Matrix) error {
-	va, err := v.getCachedVolumesWithActivityTracking()
+func (t *TopClients) processTopClients(data *matrix.Matrix) error {
+	va, err := t.getCachedVolumesWithActivityTracking()
 	if err != nil {
 		return err
 	}
@@ -201,52 +196,53 @@ func (v *Volume) processTopClients(data *matrix.Matrix) error {
 		}
 	}
 
-	readOpsList, writeOpsList, readDataList, writeDataList := v.collectMetricValues(data, filteredDataInstances)
+	readOpsList, writeOpsList, readDataList, writeDataList := t.collectMetricValues(data, filteredDataInstances)
 
-	topReadOps := v.getTopN(readOpsList)
-	topWriteOps := v.getTopN(writeOpsList)
-	topReadData := v.getTopN(readDataList)
-	topWriteData := v.getTopN(writeDataList)
+	topReadOps := t.getTopN(readOpsList)
+	topWriteOps := t.getTopN(writeOpsList)
+	topReadData := t.getTopN(readDataList)
+	topWriteData := t.getTopN(writeDataList)
 
-	readOpsVolumes, readOpsSvms := v.extractVolumesAndSvms(data, topReadOps)
-	writeOpsVolumes, writeOpsSvms := v.extractVolumesAndSvms(data, topWriteOps)
-	readDataVolumes, readDataSvms := v.extractVolumesAndSvms(data, topReadData)
-	writeDataVolumes, writeDataSvms := v.extractVolumesAndSvms(data, topWriteData)
+	readOpsVolumes, readOpsSvms := t.extractVolumesAndSvms(data, topReadOps)
+	writeOpsVolumes, writeOpsSvms := t.extractVolumesAndSvms(data, topWriteOps)
+	readDataVolumes, readDataSvms := t.extractVolumesAndSvms(data, topReadData)
+	writeDataVolumes, writeDataSvms := t.extractVolumesAndSvms(data, topWriteData)
 
-	if err := v.processTopClientsByMetric(readOpsVolumes, readOpsSvms, topClientReadOPSMatrix, "iops.read", v.setOpsMetric); err != nil {
+	if err := t.processTopClientsByMetric(readOpsVolumes, readOpsSvms, topClientReadOPSMatrix, "iops.read", opMetric); err != nil {
 		return err
 	}
 
-	if err := v.processTopClientsByMetric(writeOpsVolumes, writeOpsSvms, topClientWriteOPSMatrix, "iops.write", v.setOpsMetric); err != nil {
+	if err := t.processTopClientsByMetric(writeOpsVolumes, writeOpsSvms, topClientWriteOPSMatrix, "iops.write", opMetric); err != nil {
 		return err
 	}
 
-	if err := v.processTopClientsByMetric(readDataVolumes, readDataSvms, topClientReadDataMatrix, "throughput.read", v.setDataMetric); err != nil {
+	if err := t.processTopClientsByMetric(readDataVolumes, readDataSvms, topClientReadDataMatrix, "throughput.read", dataMetric); err != nil {
 		return err
 	}
 
-	if err := v.processTopClientsByMetric(writeDataVolumes, writeDataSvms, topClientWriteDataMatrix, "throughput.write", v.setDataMetric); err != nil {
+	if err := t.processTopClientsByMetric(writeDataVolumes, writeDataSvms, topClientWriteDataMatrix, "throughput.write", dataMetric); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (v *Volume) collectMetricValues(data *matrix.Matrix, filteredDataInstances *set.Set) ([]MetricValue, []MetricValue, []MetricValue, []MetricValue) {
+func (t *TopClients) collectMetricValues(data *matrix.Matrix, filteredDataInstances *set.Set) ([]MetricValue, []MetricValue, []MetricValue, []MetricValue) {
 	readOpsMetric := data.GetMetric("total_read_ops")
 	writeOpsMetric := data.GetMetric("total_write_ops")
 	readDataMetric := data.GetMetric("bytes_read")
 	writeDataMetric := data.GetMetric("bytes_written")
 
 	var readOpsList, writeOpsList, readDataList, writeDataList []MetricValue
-	for _, key := range filteredDataInstances.Slice() {
+	for key := range filteredDataInstances.Iter() {
+		instanceKey := data.GetInstance(key)
 		var readOps, writeOps, readData, writeData float64
 		var ro, wo, rb, wb bool
 		if readOpsMetric != nil {
-			readOps, ro = readOpsMetric.GetValueFloat64(data.GetInstance(key))
+			readOps, ro = readOpsMetric.GetValueFloat64(instanceKey)
 		}
 		if writeOpsMetric != nil {
-			writeOps, wo = writeOpsMetric.GetValueFloat64(data.GetInstance(key))
+			writeOps, wo = writeOpsMetric.GetValueFloat64(instanceKey)
 		}
 		if ro && readOps > 0 {
 			readOpsList = append(readOpsList, MetricValue{key: key, value: readOps})
@@ -256,10 +252,10 @@ func (v *Volume) collectMetricValues(data *matrix.Matrix, filteredDataInstances 
 		}
 
 		if readDataMetric != nil {
-			readData, rb = readDataMetric.GetValueFloat64(data.GetInstance(key))
+			readData, rb = readDataMetric.GetValueFloat64(instanceKey)
 		}
 		if writeDataMetric != nil {
-			writeData, wb = writeDataMetric.GetValueFloat64(data.GetInstance(key))
+			writeData, wb = writeDataMetric.GetValueFloat64(instanceKey)
 		}
 
 		if rb && readData > 0 {
@@ -272,18 +268,18 @@ func (v *Volume) collectMetricValues(data *matrix.Matrix, filteredDataInstances 
 	return readOpsList, writeOpsList, readDataList, writeDataList
 }
 
-func (v *Volume) getTopN(metricList []MetricValue) []MetricValue {
-	sort.Slice(metricList, func(i, j int) bool {
-		return metricList[i].value > metricList[j].value
+func (t *TopClients) getTopN(metricList []MetricValue) []MetricValue {
+	slices.SortFunc(metricList, func(a, b MetricValue) int {
+		return cmp.Compare(b.value, a.value) // Sort in descending order
 	})
 
-	if len(metricList) > v.maxVolumeCount {
-		return metricList[:v.maxVolumeCount]
+	if len(metricList) > t.maxVolumeCount {
+		return metricList[:t.maxVolumeCount]
 	}
 	return metricList
 }
 
-func (v *Volume) extractVolumesAndSvms(data *matrix.Matrix, topMetrics []MetricValue) (*set.Set, *set.Set) {
+func (t *TopClients) extractVolumesAndSvms(data *matrix.Matrix, topMetrics []MetricValue) (*set.Set, *set.Set) {
 	volumes := set.New()
 	svms := set.New()
 	for _, item := range topMetrics {
@@ -298,73 +294,60 @@ func (v *Volume) extractVolumesAndSvms(data *matrix.Matrix, topMetrics []MetricV
 	return volumes, svms
 }
 
-func (v *Volume) processTopClientsByMetric(volumes, svms *set.Set, matrixName, metric string, setMetricFunc func(*matrix.Matrix, *matrix.Instance, float64)) error {
+func (t *TopClients) processTopClientsByMetric(volumes, svms *set.Set, matrixName, metric, metricType string) error {
 	if svms.Size() == 0 || volumes.Size() == 0 {
 		return nil
 	}
 
-	topClients, err := v.fetchTopClients(volumes.Values(), svms.Values(), metric)
+	topClients, err := t.fetchTopClients(volumes, svms, metric)
 	if err != nil {
 		return err
 	}
 
-	mat := v.data[matrixName]
+	mat := t.data[matrixName]
 	if mat == nil {
 		return nil
 	}
-	for i, client := range topClients {
+	for _, client := range topClients {
 		clientIP := client.Get("client_ip").String()
 		vol := client.Get("volume.name").String()
 		svm := client.Get("svm.name").String()
 		value := client.Get(metric).Float()
-		instance, err := mat.NewInstance(strconv.Itoa(i))
+		instanceKey := clientIP + keyToken + vol + keyToken + svm
+		instance, err := mat.NewInstance(instanceKey)
 		if err != nil {
-			v.Logger.Warn().Str("volume", vol).Msg("error while creating instance")
+			t.Logger.Warn().Str("volume", vol).Msg("error while creating instance")
 			continue
 		}
 		instance.SetLabel("volume", vol)
 		instance.SetLabel("svm", svm)
 		instance.SetLabel("client_ip", clientIP)
-		setMetricFunc(mat, instance, value)
+		t.setMetric(mat, instance, value, metricType)
 	}
 	return nil
 }
 
-func (v *Volume) setOpsMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
+func (t *TopClients) setMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64, metricType string) {
 	var err error
-	m := mat.GetMetric("ops")
+	m := mat.GetMetric(metricType)
 	if m == nil {
-		if m, err = mat.NewMetricFloat64("ops"); err != nil {
-			v.Logger.Warn().Err(err).Str("key", "ops").Msg("error while creating metric")
+		if m, err = mat.NewMetricFloat64(metricType); err != nil {
+			t.Logger.Warn().Err(err).Str("key", metricType).Msg("error while creating metric")
 			return
 		}
 	}
 	if err = m.SetValueFloat64(instance, value); err != nil {
-		v.Logger.Error().Err(err).Str("metric", "ops").Msg("Unable to set value on metric")
+		t.Logger.Error().Err(err).Str("metric", metricType).Msg("Unable to set value on metric")
 	}
 }
 
-func (v *Volume) setDataMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
-	var err error
-	m := mat.GetMetric("data")
-	if m == nil {
-		if m, err = mat.NewMetricFloat64("data"); err != nil {
-			v.Logger.Warn().Err(err).Str("key", "data").Msg("error while creating metric")
-			return
-		}
-	}
-	if err = m.SetValueFloat64(instance, value); err != nil {
-		v.Logger.Error().Err(err).Str("metric", "data").Msg("Unable to set value on metric")
-	}
-}
-
-func (v *Volume) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {
+func (t *TopClients) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {
 	var (
 		result []gjson.Result
 		err    error
 	)
-	if v.volumeInterface != nil {
-		return v.volumeInterface.fetchVolumesWithActivityTrackingEnabled()
+	if t.volumeInterface != nil {
+		return t.volumeInterface.fetchVolumesWithActivityTrackingEnabled()
 	}
 	va := set.New()
 	query := "api/storage/volumes"
@@ -374,7 +357,7 @@ func (v *Volume) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {
 		Filter([]string{"activity_tracking.state=on"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(t.client, href, t.Logger); err != nil {
 		return va, err
 	}
 
@@ -386,22 +369,22 @@ func (v *Volume) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {
 	return va, nil
 }
 
-func (v *Volume) fetchTopClients(volumes []string, svms []string, metric string) ([]gjson.Result, error) {
+func (t *TopClients) fetchTopClients(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
 	)
-	if v.volumeInterface != nil {
-		return v.volumeInterface.fetchTopClients(volumes, svms, metric)
+	if t.volumeInterface != nil {
+		return t.volumeInterface.fetchTopClients(volumes, svms, metric)
 	}
 	query := "api/storage/volumes/*/top-metrics/clients"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"client_ip", "svm", "volume.name", metric}).
-		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes, "|"), "svm=" + strings.Join(svms, "|")}).
+		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(t.client, href, t.Logger); err != nil {
 		return result, err
 	}
 

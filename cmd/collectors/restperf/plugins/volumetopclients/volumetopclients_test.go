@@ -13,11 +13,11 @@ import (
 var globalDataMatrix *matrix.Matrix
 
 type MockVolume struct {
-	*Volume
+	*TopClients
 	testFilePath string
 }
 
-func (mv *MockVolume) fetchTopClients(_ []string, _ []string, _ string) ([]gjson.Result, error) {
+func (mv *MockVolume) fetchTopClients(_ *set.Set, _ *set.Set, _ string) ([]gjson.Result, error) {
 	return collectors.InvokeRestCallWithTestFile(nil, "", nil, mv.testFilePath)
 }
 
@@ -29,9 +29,9 @@ func (mv *MockVolume) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error
 }
 
 func NewMockVolume(p *plugin.AbstractPlugin, testFilePath string) *MockVolume {
-	v := &Volume{AbstractPlugin: p}
+	v := &TopClients{AbstractPlugin: p}
 	mockVolume := &MockVolume{
-		Volume:       v,
+		TopClients:   v,
 		testFilePath: testFilePath,
 	}
 	mockVolume.volumeInterface = mockVolume
