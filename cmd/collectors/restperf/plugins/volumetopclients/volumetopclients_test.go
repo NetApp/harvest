@@ -34,7 +34,7 @@ func NewMockVolume(p *plugin.AbstractPlugin, testFilePath string) *MockVolume {
 		TopClients:   v,
 		testFilePath: testFilePath,
 	}
-	mockVolume.volumeInterface = mockVolume
+	mockVolume.tracker = mockVolume
 	return mockVolume
 }
 

@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type VolumeInterface interface {
+type VolumeTracker interface {
 	fetchTopClients(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error)
 	fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 	processTopClients(data *matrix.Matrix) error
@@ -38,12 +38,12 @@ var dataMetric = "data"
 
 type TopClients struct {
 	*plugin.AbstractPlugin
-	schedule        int
-	client          *rest.Client
-	data            map[string]*matrix.Matrix
-	cache           *VolumeCache
-	maxVolumeCount  int
-	volumeInterface VolumeInterface
+	schedule       int
+	client         *rest.Client
+	data           map[string]*matrix.Matrix
+	cache          *VolumeCache
+	maxVolumeCount int
+	tracker        VolumeTracker
 }
 
 type VolumeCache struct {
@@ -351,8 +351,8 @@ func (t *TopClients) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 		result []gjson.Result
 		err    error
 	)
-	if t.volumeInterface != nil {
-		return t.volumeInterface.fetchVolumesWithActivityTrackingEnabled()
+	if t.tracker != nil {
+		return t.tracker.fetchVolumesWithActivityTrackingEnabled()
 	}
 	va := set.New()
 	query := "api/storage/volumes"
@@ -379,8 +379,8 @@ func (t *TopClients) fetchTopClients(volumes *set.Set, svms *set.Set, metric str
 		result []gjson.Result
 		err    error
 	)
-	if t.volumeInterface != nil {
-		return t.volumeInterface.fetchTopClients(volumes, svms, metric)
+	if t.tracker != nil {
+		return t.tracker.fetchTopClients(volumes, svms, metric)
 	}
 	query := "api/storage/volumes/*/top-metrics/clients"
 	href := rest.NewHrefBuilder().

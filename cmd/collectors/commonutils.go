@@ -73,7 +73,7 @@ func InvokeRestCallWithTestFile(client *rest.Client, href string, logger *loggin
 func InvokeRestCall(client *rest.Client, href string, logger *logging.Logger) ([]gjson.Result, error) {
 	result, err := rest.Fetch(client, href)
 	if err != nil {
-		logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		logger.Error().Err(err).Str("href", href).Int("hrefLength", len(href)).Msg("Failed to fetch data")
 		return []gjson.Result{}, err
 	}
 
