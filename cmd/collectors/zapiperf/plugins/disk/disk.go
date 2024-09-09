@@ -2,6 +2,7 @@
 package disk
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -891,4 +892,8 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 	}
 
 	return output, nil
+}
+
+func (d *Disk) GetGeneratedMetrics() []plugin.CustomMetric {
+	return collectors.GetCommonMetrics()
 }

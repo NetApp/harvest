@@ -475,6 +475,12 @@ func (s *Sensor) GetGeneratedMetrics() []plugin.CustomMetric {
 			Description:  "Power consumed by a node in Watts.",
 		},
 		{
+			Name:         power,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Power consumed by a node in Watts.",
+		},
+		{
 			Name:         minTemperature,
 			Endpoint:     "NA",
 			ONTAPCounter: constant.HarvestGenerated,

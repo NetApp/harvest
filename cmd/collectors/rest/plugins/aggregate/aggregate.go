@@ -17,12 +17,14 @@ import (
 
 const (
 	aggrObjectStoreMatrix = "aggr_object_store"
-	apiQuery              = "api/private/cli/aggr/show-space"
+	showSpaceQuery        = "api/private/cli/aggr/show-space"
+	logicalUsed           = "logical_used"
+	physicalUsed          = "physical_used"
 )
 
 var metrics = []string{
-	"logical_used",
-	"physical_used",
+	logicalUsed,
+	physicalUsed,
 }
 
 type Aggregate struct {
@@ -127,8 +129,8 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 
 		binNum := record.Get("bin_num").String()
 		tierName := record.Get("tier_name").String()
-		logicalUsed := record.Get("object_store_logical_used").String()
-		physicalUsed := record.Get("object_store_physical_used").String()
+		objLogicalUsed := record.Get("object_store_logical_used").String()
+		objPhysicalUsed := record.Get("object_store_physical_used").String()
 		instanceKey := aggrName + "_" + tierName + "_" + binNum
 
 		instance, err := aggrSpaceMat.NewInstance(instanceKey)
@@ -141,15 +143,15 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		instance.SetLabel("tier", tierName)
 		instance.SetLabel("bin_num", binNum)
 
-		if logicalUsed != "" {
-			if err := aggrSpaceMat.GetMetric("logical_used").SetValueString(instance, logicalUsed); err != nil {
-				a.Logger.Error().Err(err).Str("metric", "logical_used").Msg("Unable to set value on metric")
+		if objLogicalUsed != "" {
+			if err := aggrSpaceMat.GetMetric(logicalUsed).SetValueString(instance, objLogicalUsed); err != nil {
+				a.Logger.Error().Err(err).Str("metric", logicalUsed).Msg("Unable to set value on metric")
 			}
 		}
 
-		if physicalUsed != "" {
-			if err := aggrSpaceMat.GetMetric("physical_used").SetValueString(instance, physicalUsed); err != nil {
-				a.Logger.Error().Err(err).Str("metric", "physical_used").Msg("Unable to set value on metric")
+		if objPhysicalUsed != "" {
+			if err := aggrSpaceMat.GetMetric(physicalUsed).SetValueString(instance, objPhysicalUsed); err != nil {
+				a.Logger.Error().Err(err).Str("metric", physicalUsed).Msg("Unable to set value on metric")
 			}
 		}
 	}
@@ -158,10 +160,30 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 func (a *Aggregate) getObjectStoreData() ([]gjson.Result, error) {
 	fields := []string{"aggregate_name", "bin_num", "tier_name", "object_store_logical_used", "object_store_physical_used"}
 	href := rest.NewHrefBuilder().
-		APIPath(apiQuery).
+		APIPath(showSpaceQuery).
 		Fields(fields).
 		Filter([]string{`tier_name=!" "|""`}).
 		Build()
 
 	return collectors.InvokeRestCall(a.client, href, a.Logger)
+}
+
+func (a *Aggregate) GetGeneratedMetrics() []plugin.CustomMetric {
+
+	return []plugin.CustomMetric{
+		{
+			Name:         logicalUsed,
+			Endpoint:     showSpaceQuery,
+			ONTAPCounter: "object_store_logical_used",
+			Description:  "Logical space usage of aggregates in the attached object store.",
+			Prefix:       aggrObjectStoreMatrix,
+		},
+		{
+			Name:         physicalUsed,
+			Endpoint:     showSpaceQuery,
+			ONTAPCounter: "object_store_physical_used",
+			Description:  "Physical space usage of aggregates in the attached object store.",
+			Prefix:       aggrObjectStoreMatrix,
+		},
+	}
 }

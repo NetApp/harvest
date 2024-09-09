@@ -1,6 +1,7 @@
 package disk
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -850,4 +851,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 			}
 		}
 	}
+}
+
+func (d *Disk) GetGeneratedMetrics() []plugin.CustomMetric {
+	return collectors.GetCommonMetrics()
 }

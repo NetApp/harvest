@@ -3,13 +3,19 @@ package workload
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	constant "github.com/netapp/harvest/v2/pkg/const"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 )
 
+const (
+	maxThroughputIOPS = "max_throughput_iops"
+	maxThroughputMBPS = "max_throughput_mbps"
+)
+
 var metrics = []string{
-	"max_throughput_iops",
-	"max_throughput_mbps",
+	maxThroughputIOPS,
+	maxThroughputMBPS,
 }
 
 type Workload struct {
@@ -51,8 +57,26 @@ func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 		if !instance.IsExportable() {
 			continue
 		}
-		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", w.Logger)
+		collectors.SetThroughput(data, instance, "max_xput", maxThroughputIOPS, maxThroughputMBPS, w.Logger)
 	}
 
 	return nil, nil, nil
+}
+
+func (w *Workload) GetGeneratedMetrics() []plugin.CustomMetric {
+
+	return []plugin.CustomMetric{
+		{
+			Name:         maxThroughputIOPS,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Maximum throughput IOPs allowed for the workload.",
+		},
+		{
+			Name:         maxThroughputMBPS,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Maximum throughput Mbps allowed for the workload.",
+		},
+	}
 }

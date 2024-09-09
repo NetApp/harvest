@@ -3,16 +3,24 @@ package qospolicyfixed
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	constant "github.com/netapp/harvest/v2/pkg/const"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"strings"
 )
 
+const (
+	maxThroughputIOPS = "max_throughput_iops"
+	maxThroughputMBPS = "max_throughput_mbps"
+	minThroughputIOPS = "min_throughput_iops"
+	minThroughputMBPS = "min_throughput_mbps"
+)
+
 var metrics = []string{
-	"max_throughput_iops",
-	"max_throughput_mbps",
-	"min_throughput_iops",
-	"min_throughput_mbps",
+	maxThroughputIOPS,
+	maxThroughputMBPS,
+	minThroughputIOPS,
+	minThroughputMBPS,
 }
 
 type QosPolicyFixed struct {
@@ -62,8 +70,38 @@ func (q *QosPolicyFixed) setFixed(data *matrix.Matrix, instance *matrix.Instance
 		q.Logger.Error().Err(err).Str("label", after).Msg("Failed to parse fixed xput label")
 		return
 	}
-	collectors.QosSetLabel("min_throughput_iops", data, instance, minV.IOPS, q.Logger)
-	collectors.QosSetLabel("max_throughput_iops", data, instance, maxV.IOPS, q.Logger)
-	collectors.QosSetLabel("min_throughput_mbps", data, instance, minV.Mbps, q.Logger)
-	collectors.QosSetLabel("max_throughput_mbps", data, instance, maxV.Mbps, q.Logger)
+	collectors.QosSetLabel(minThroughputIOPS, data, instance, minV.IOPS, q.Logger)
+	collectors.QosSetLabel(maxThroughputIOPS, data, instance, maxV.IOPS, q.Logger)
+	collectors.QosSetLabel(minThroughputMBPS, data, instance, minV.Mbps, q.Logger)
+	collectors.QosSetLabel(maxThroughputMBPS, data, instance, maxV.Mbps, q.Logger)
+}
+
+func (q *QosPolicyFixed) GetGeneratedMetrics() []plugin.CustomMetric {
+
+	return []plugin.CustomMetric{
+		{
+			Name:         maxThroughputIOPS,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Maximum throughput defined by this policy. It is specified in terms of IOPS. 0 means no maximum throughput is enforced.",
+		},
+		{
+			Name:         maxThroughputMBPS,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Maximum throughput defined by this policy. It is specified in terms of Mbps. 0 means no maximum throughput is enforced.",
+		},
+		{
+			Name:         minThroughputIOPS,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Minimum throughput defined by this policy. It is specified in terms of IOPS. 0 means no minimum throughput is enforced. These floors are not guaranteed on non-AFF platforms or when FabricPool tiering policies are set.",
+		},
+		{
+			Name:         minThroughputMBPS,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Minimum throughput defined by this policy. It is specified in terms of Mbps. 0 means no minimum throughput is enforced.",
+		},
+	}
 }

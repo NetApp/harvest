@@ -1,38 +1,10 @@
 counters:
 
-  - Name: aggr_object_store_logical_used
-    Description: Logical space usage of aggregates in the attached object store.
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/aggr/show-space
-        ONTAPCounter: object_store_logical_used
-        Template: conf/rest/9.12.0/aggr.yaml
-
-  - Name: aggr_object_store_physical_used
-    Description: Physical space usage of aggregates in the attached object store.
-    APIs:
-      - API: REST
-        Endpoint: api/private/cli/aggr/show-space
-        ONTAPCounter: object_store_physical_used
-        Template: conf/rest/9.12.0/aggr.yaml
-
   - Name: aggr_physical_used_wo_snapshots
     Description: Total Data Reduction Physical Used Without Snapshots
 
   - Name: aggr_physical_used_wo_snapshots_flexclones
     Description: Total Data Reduction Physical Used without snapshots and flexclones
-
-  - Name: aggr_power
-    Description: Power consumed by aggregate in Watts.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: aggr_raid_disk_count
     Description: Number of disks in the aggregate.
@@ -352,6 +324,9 @@ counters:
       - API: ZAPI
         Unit: b_per_sec
 
+  - Name: shelf_disk_count
+    Description: Disk count in a shelf.
+
   - Name: qos_detail_resource_latency
     Description: |
       This refers to the average latency for workloads within the subsystems of Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem. Below is the description of subsystems' latency.
@@ -547,117 +522,6 @@ counters:
   - Name: security_audit_destination_port
     Description: The destination port used to forward the message.
 
-  - Name: shelf_average_ambient_temperature
-    Description: Average temperature of all ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_average_fan_speed
-    Description: Average fan speed for shelf in rpm.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_average_temperature
-    Description: Average temperature of all non-ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_disk_count
-    Description: Disk count in a shelf.
-
-  - Name: shelf_max_fan_speed
-    Description: Maximum fan speed for shelf in rpm.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_max_temperature
-    Description: Maximum temperature of all non-ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_min_ambient_temperature
-    Description: Minimum temperature of all ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_min_fan_speed
-    Description: Minimum fan speed for shelf in rpm.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_min_temperature
-    Description: Minimum temperature of all non-ambient sensors for shelf in Celsius.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
-  - Name: shelf_power
-    Description: Power consumed by shelf in Watts.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
-
   - Name: snapmirror_break_failed_count
     Description: The number of failed SnapMirror break operations for the relationship
 
@@ -809,38 +673,6 @@ counters:
     Description: amount of storage space currently used by a volume's snapshot reserve,
       which is calculated by subtracting the snapshot reserve available space from the
       snapshot reserve size.
-
-  - Name: metrocluster_check_cluster_status
-    Description: Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/metrocluster_check.yaml
-
-  - Name: metrocluster_check_node_status
-    Description: Detail of the type of diagnostic operation run for the Node with diagnostic operation result.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/metrocluster_check.yaml
-
-  - Name: metrocluster_check_aggr_status
-    Description: Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/metrocluster_check.yaml
-
-  - Name: metrocluster_check_volume_status
-    Description: Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/metrocluster_check.yaml
 
   - Name: flashpool_hya_read_hit_latency_average
     APIs:

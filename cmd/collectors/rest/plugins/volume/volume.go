@@ -19,8 +19,11 @@ import (
 	"time"
 )
 
-const HoursInMonth = 24 * 30
-const ARWSupportedVersion = "9.10.0"
+const (
+	HoursInMonth        = 24 * 30
+	ARWSupportedVersion = "9.10.0"
+	cloneSplitEstimate  = "clone_split_estimate"
+)
 
 type Volume struct {
 	*plugin.AbstractPlugin
@@ -129,9 +132,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]volumeInfo) {
 	var err error
-	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
+	cloneSplitEstimateMetric := data.GetMetric(cloneSplitEstimate)
 	if cloneSplitEstimateMetric == nil {
-		if cloneSplitEstimateMetric, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
+		if cloneSplitEstimateMetric, err = data.NewMetricFloat64(cloneSplitEstimate); err != nil {
 			v.Logger.Error().Err(err).Msg("error while creating clone split estimate metric")
 			return
 		}
@@ -315,5 +318,17 @@ func (v *Volume) updateAggrMap(disks []gjson.Result) {
 				v.aggrsMap[aggr.String()] = true
 			}
 		}
+	}
+}
+
+func (v *Volume) GetGeneratedMetrics() []plugin.CustomMetric {
+
+	return []plugin.CustomMetric{
+		{
+			Name:         cloneSplitEstimate,
+			Endpoint:     "api/storage/volumes",
+			ONTAPCounter: "clone.split_estimate",
+			Description:  "Space required by the containing-aggregate to split the FlexClone volume..",
+		},
 	}
 }

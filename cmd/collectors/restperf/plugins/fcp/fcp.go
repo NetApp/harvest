@@ -2,12 +2,19 @@ package fcp
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	constant "github.com/netapp/harvest/v2/pkg/const"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"math"
 	"strconv"
 	"strings"
+)
+
+const (
+	readPercent  = "read_percent"
+	writePercent = "write_percent"
+	utilPercent  = "util_percent"
 )
 
 type Fcp struct {
@@ -20,7 +27,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
-	var rx, tx, utilPercent, read, write *matrix.Metric
+	var rx, tx, up, read, write *matrix.Metric
 	var err error
 	data := dataMap[f.Object]
 
@@ -32,25 +39,25 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		return nil, nil, errs.New(errs.ErrNoMetric, "write_data")
 	}
 
-	if rx = data.GetMetric("read_percent"); rx == nil {
-		if rx, err = data.NewMetricFloat64("read_percent"); err == nil {
+	if rx = data.GetMetric(readPercent); rx == nil {
+		if rx, err = data.NewMetricFloat64(readPercent); err == nil {
 			rx.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
 
 	}
-	if tx = data.GetMetric("write_percent"); tx == nil {
-		if tx, err = data.NewMetricFloat64("write_percent"); err == nil {
+	if tx = data.GetMetric(writePercent); tx == nil {
+		if tx, err = data.NewMetricFloat64(writePercent); err == nil {
 			tx.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
 	}
 
-	if utilPercent = data.GetMetric("util_percent"); utilPercent == nil {
-		if utilPercent, err = data.NewMetricFloat64("util_percent"); err == nil {
-			utilPercent.SetProperty("raw")
+	if up = data.GetMetric(utilPercent); up == nil {
+		if up, err = data.NewMetricFloat64(utilPercent); err == nil {
+			up.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
@@ -90,7 +97,7 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			}
 
 			if rxOk || txOk {
-				err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
+				err := up.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
 					f.Logger.Error().Err(err).Msg("error")
 				}
@@ -98,4 +105,27 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		}
 	}
 	return nil, nil, nil
+}
+
+func (f *Fcp) GetGeneratedMetrics() []plugin.CustomMetric {
+	return []plugin.CustomMetric{
+		{
+			Name:         readPercent,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Bytes received percentage.",
+		},
+		{
+			Name:         writePercent,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Bytes sent percentage.",
+		},
+		{
+			Name:         utilPercent,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Max of Bytes received percentage and Bytes sent percentage.",
+		},
+	}
 }

@@ -2,11 +2,27 @@ package metroclustercheck
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	constant "github.com/netapp/harvest/v2/pkg/const"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 )
+
+const (
+	metrocClusterMatrix = "metrocluster_check"
+	clusterStatus       = "cluster_status"
+	nodeStatus          = "node_status"
+	aggrStatus          = "aggr_status"
+	volumeStatus        = "volume_status"
+)
+
+var pluginMetrics = []string{
+	clusterStatus,
+	nodeStatus,
+	aggrStatus,
+	volumeStatus,
+}
 
 type MetroclusterCheck struct {
 	*plugin.AbstractPlugin
@@ -19,14 +35,13 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (m *MetroclusterCheck) Init() error {
 
-	pluginMetrics := []string{"cluster_status", "node_status", "aggr_status", "volume_status"}
 	pluginLabels := []string{"result", "name", "node", "aggregate", "volume"}
 
 	if err := m.InitAbc(); err != nil {
 		return err
 	}
 
-	m.data = matrix.New(m.Parent+".Metrocluster", "metrocluster_check", "metrocluster_check")
+	m.data = matrix.New(m.Parent+"."+metrocClusterMatrix, metrocClusterMatrix, metrocClusterMatrix)
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	for _, label := range pluginLabels {
@@ -105,13 +120,13 @@ func (m *MetroclusterCheck) update(objectInfo string, object string) {
 
 			switch object {
 			case "volume":
-				m.setValue("volume_status", newDetailInstance, result)
+				m.setValue(volumeStatus, newDetailInstance, result)
 			case "aggregate":
-				m.setValue("aggr_status", newDetailInstance, result)
+				m.setValue(aggrStatus, newDetailInstance, result)
 			case "node":
-				m.setValue("node_status", newDetailInstance, result)
+				m.setValue(nodeStatus, newDetailInstance, result)
 			case "cluster":
-				m.setValue("cluster_status", newDetailInstance, result)
+				m.setValue(clusterStatus, newDetailInstance, result)
 			}
 		}
 	}
@@ -136,5 +151,39 @@ func (m *MetroclusterCheck) setValue(metricName string, newDetailInstance *matri
 		m.Logger.Error().Err(err).Float64("value", value).Msg("Failed to parse value")
 	} else {
 		m.Logger.Debug().Float64("value", value).Msg("added value")
+	}
+}
+
+func (m *MetroclusterCheck) GetGeneratedMetrics() []plugin.CustomMetric {
+
+	return []plugin.CustomMetric{
+		{
+			Name:         clusterStatus,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.",
+			Prefix:       metrocClusterMatrix,
+		},
+		{
+			Name:         aggrStatus,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.",
+			Prefix:       metrocClusterMatrix,
+		},
+		{
+			Name:         volumeStatus,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.",
+			Prefix:       metrocClusterMatrix,
+		},
+		{
+			Name:         nodeStatus,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Detail of the type of diagnostic operation run for the Node with diagnostic operation result.",
+			Prefix:       metrocClusterMatrix,
+		},
 	}
 }

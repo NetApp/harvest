@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Sep-04
+Creation Date : 2024-Sep-09
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -578,7 +578,6 @@ Power consumed by aggregate in Watts.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### aggr_primary_disk_count
@@ -2079,6 +2078,15 @@ Number of read operations
 | ZAPI | `perf-object-get-instances fcp_port` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml | 
 
 
+### fcp_read_percent
+
+Bytes received percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml | 
+
+
 ### fcp_reset_count
 
 Number of physical port resets
@@ -2139,6 +2147,15 @@ Total number of FCP operations
 | ZAPI | `perf-object-get-instances fcp_port` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml | 
 
 
+### fcp_util_percent
+
+Max of Bytes received percentage and Bytes sent percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml | 
+
+
 ### fcp_write_data
 
 Amount of data written to the storage system
@@ -2157,6 +2174,15 @@ Number of write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml | 
 | ZAPI | `perf-object-get-instances fcp_port` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml | 
+
+
+### fcp_write_percent
+
+Bytes sent percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml | 
 
 
 ### fcvi_firmware_invalid_crc_count
@@ -4346,6 +4372,24 @@ Maximum number of string objects.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StringMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml | 
 
 
+### nic_ifgrp_rx_bytes
+
+Link Aggregation Group (LAG) Bytes received
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml | 
+
+
+### nic_ifgrp_tx_bytes
+
+Link Aggregation Group (LAG) Bytes sent.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml | 
+
+
 ### nic_link_up_to_downs
 
 Number of link state change from UP to DOWN.
@@ -4406,6 +4450,15 @@ Length errors detected on received packets
 | ZAPI | `perf-object-get-instances nic_common` | `rx_length_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml | 
 
 
+### nic_rx_percent
+
+Bytes received percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml | 
+
+
 ### nic_rx_total_errors
 
 Total errors received
@@ -4446,6 +4499,15 @@ Transmit errors reported by hardware
 | ZAPI | `perf-object-get-instances nic_common` | `tx_hw_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml | 
 
 
+### nic_tx_percent
+
+Bytes sent percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml | 
+
+
 ### nic_tx_total_errors
 
 Total errors sent
@@ -4454,6 +4516,15 @@ Total errors sent
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nic_common` | `transmit_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml | 
 | ZAPI | `perf-object-get-instances nic_common` | `tx_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml | 
+
+
+### nic_util_percent
+
+Max of Bytes received percentage and Bytes sent percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml | 
 
 
 ### node_avg_processor_busy
@@ -9594,6 +9665,69 @@ This is the rate of this workload's other operations that completed during the m
 | ZAPI | `perf-object-get-instances workload_volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
+### qos_policy_adaptive_absolute_min_iops
+
+Specifies the absolute minimum IOPS that is used as an override when the expected_iops is less than this value.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
+
+
+### qos_policy_adaptive_expected_iops
+
+Specifies the size to be used to calculate expected IOPS per TB.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
+
+
+### qos_policy_adaptive_peak_iops
+
+Specifies the maximum possible IOPS per TB allocated based on the storage object allocated size or the storage object used size.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
+
+
+### qos_policy_fixed_max_throughput_iops
+
+Maximum throughput defined by this policy. It is specified in terms of IOPS. 0 means no maximum throughput is enforced.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_fixed.yaml |
+
+
+### qos_policy_fixed_max_throughput_mbps
+
+Maximum throughput defined by this policy. It is specified in terms of Mbps. 0 means no maximum throughput is enforced.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_fixed.yaml |
+
+
+### qos_policy_fixed_min_throughput_iops
+
+Minimum throughput defined by this policy. It is specified in terms of IOPS. 0 means no minimum throughput is enforced. These floors are not guaranteed on non-AFF platforms or when FabricPool tiering policies are set.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_fixed.yaml |
+
+
+### qos_policy_fixed_min_throughput_mbps
+
+Minimum throughput defined by this policy. It is specified in terms of Mbps. 0 means no minimum throughput is enforced.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_fixed.yaml |
+
+
 ### qos_read_data
 
 This is the amount of data read per second from the filer by the workload.
@@ -9662,6 +9796,24 @@ This is the total amount of data read/written per second from/to the filer by th
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml | 
 | ZAPI | `perf-object-get-instances workload_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
+
+
+### qos_workload_max_throughput_iops
+
+Maximum throughput IOPs allowed for the workload.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_workload.yaml |
+
+
+### qos_workload_max_throughput_mbps
+
+Maximum throughput Mbps allowed for the workload.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_workload.yaml |
 
 
 ### qos_write_data
@@ -10121,7 +10273,6 @@ Average temperature of all ambient sensors for shelf in Celsius.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_average_fan_speed
@@ -10131,7 +10282,6 @@ Average fan speed for shelf in rpm.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_average_temperature
@@ -10141,12 +10291,11 @@ Average temperature of all non-ambient sensors for shelf in Celsius.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_disk_count
 
-Disk count in a shelf.
+
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10161,7 +10310,6 @@ Maximum fan speed for shelf in rpm.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_max_temperature
@@ -10171,7 +10319,6 @@ Maximum temperature of all non-ambient sensors for shelf in Celsius.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_min_ambient_temperature
@@ -10181,7 +10328,6 @@ Minimum temperature of all ambient sensors for shelf in Celsius.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_min_fan_speed
@@ -10191,7 +10337,6 @@ Minimum fan speed for shelf in rpm.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_min_temperature
@@ -10201,17 +10346,15 @@ Minimum temperature of all non-ambient sensors for shelf in Celsius.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_power
 
-Power consumed by shelf in Watts.
+Power consumed by a shelf in Watts.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### smb2_close_latency
@@ -12836,6 +12979,69 @@ Number of successful token zero requests.
 | ZAPI | `perf-object-get-instances token_manager` | `token_zero_success`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml | 
 
 
+### volume_analytics_bytes_used_by_accessed_time
+
+Number of bytes used on-disk, broken down by date of last access.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_accessed_time.bytes_used.values` | conf/rest/9.12.0/volume_analytics.yaml |
+
+
+### volume_analytics_bytes_used_by_modified_time
+
+Number of bytes used on-disk, broken down by date of last modification.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_modified_time.bytes_used.values` | conf/rest/9.12.0/volume_analytics.yaml |
+
+
+### volume_analytics_bytes_used_percent_by_accessed_time
+
+Percent used on-disk, broken down by date of last access.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_accessed_time.bytes_used.percentages` | conf/rest/9.12.0/volume_analytics.yaml |
+
+
+### volume_analytics_bytes_used_percent_by_modified_time
+
+Percent used on-disk, broken down by date of last modification.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_modified_time.bytes_used.percentages` | conf/rest/9.12.0/volume_analytics.yaml |
+
+
+### volume_analytics_dir_bytes_used
+
+The actual number of bytes used on disk by this file.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.bytes_used` | conf/rest/9.12.0/volume_analytics.yaml |
+
+
+### volume_analytics_dir_file_count
+
+Number of files in a directory.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.file_count` | conf/rest/9.12.0/volume_analytics.yaml |
+
+
+### volume_analytics_dir_subdir_count
+
+Number of sub directories in a directory.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.subdir_count` | conf/rest/9.12.0/volume_analytics.yaml |
+
+
 ### volume_autosize_grow_threshold_percent
 
 Used space threshold which triggers autogrow. When the size-used is greater than this percent of size-total, the volume will be grown. The computed value is rounded down. The default value of this element varies from 85% to 98%, depending on the volume size. It is an error for the grow threshold to be less than or equal to the shrink threshold.
@@ -12882,6 +13088,15 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1_percent` | conf/rest/9.14.0/volume.yaml |
+
+
+### volume_clone_split_estimate
+
+Space required by the containing-aggregate to split the FlexClone volume..
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes` | `clone.split_estimate` | conf/rest/9.14.0/volume.yaml |
 
 
 ### volume_filesystem_size

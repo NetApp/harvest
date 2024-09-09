@@ -15,7 +15,16 @@ import (
 	"time"
 )
 
-const explorer = "volume_analytics"
+const (
+	volumeAnalyticsMatrix          = "volume_analytics"
+	dirBytesUsed                   = "dir_bytes_used"
+	dirFileCount                   = "dir_file_count"
+	dirSubDirCount                 = "dir_subdir_count"
+	bytesUsedByAccessedTime        = "bytes_used_by_accessed_time"
+	bytesUsedPercentByAccessedTime = "bytes_used_percent_by_accessed_time"
+	bytesUsedByModifiedTime        = "bytes_used_by_modified_time"
+	bytesUsedPercentByModifiedTime = "bytes_used_percent_by_modified_time"
+)
 
 var MaxDirCollectCount = 100
 
@@ -31,9 +40,9 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 var metrics = []string{
-	"dir_bytes_used",
-	"dir_file_count",
-	"dir_subdir_count",
+	dirBytesUsed,
+	dirFileCount,
+	dirSubDirCount,
 }
 
 func (v *VolumeAnalytics) Init() error {
@@ -77,13 +86,13 @@ func (v *VolumeAnalytics) Init() error {
 func (v *VolumeAnalytics) initMatrix() error {
 	v.data = make(map[string]*matrix.Matrix)
 
-	v.data[explorer] = matrix.New(v.Parent+explorer, explorer, explorer)
+	v.data[volumeAnalyticsMatrix] = matrix.New(v.Parent+volumeAnalyticsMatrix, volumeAnalyticsMatrix, volumeAnalyticsMatrix)
 
 	for _, v1 := range v.data {
 		v1.SetExportOptions(matrix.DefaultExportOptions())
 	}
 	for _, k := range metrics {
-		err := matrix.CreateMetric(k, v.data[explorer])
+		err := matrix.CreateMetric(k, v.data[volumeAnalyticsMatrix])
 		if err != nil {
 			v.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
 			return err
@@ -138,7 +147,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 				v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
 			}
 		} else {
-			explorerMatrix := v.data[explorer]
+			explorerMatrix := v.data[volumeAnalyticsMatrix]
 			for index, record := range records {
 				name := record.Get("name").String()
 				fileCount := record.Get("analytics.file_count").String()
@@ -164,22 +173,22 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 					instance.SetLabel(k1, v1)
 				}
 				if bytesUsed != "" {
-					if err = explorerMatrix.GetMetric("dir_bytes_used").SetValueString(instance, bytesUsed); err != nil {
+					if err = explorerMatrix.GetMetric(dirBytesUsed).SetValueString(instance, bytesUsed); err != nil {
 						v.Logger.Error().Err(err).Str("value", bytesUsed).Msg("set metric")
 					}
 				}
 				if fileCount != "" {
-					if err = explorerMatrix.GetMetric("dir_file_count").SetValueString(instance, fileCount); err != nil {
+					if err = explorerMatrix.GetMetric(dirFileCount).SetValueString(instance, fileCount); err != nil {
 						v.Logger.Error().Err(err).Str("value", fileCount).Msg("set metric")
 					}
 				}
 				if subDirCount != "" {
 					if name == "." {
-						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, util.AddIntString(subDirCount, 1)); err != nil {
+						if err = explorerMatrix.GetMetric(dirSubDirCount).SetValueString(instance, util.AddIntString(subDirCount, 1)); err != nil {
 							v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
 						}
 					} else {
-						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, subDirCount); err != nil {
+						if err = explorerMatrix.GetMetric(dirSubDirCount).SetValueString(instance, subDirCount); err != nil {
 							v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
 						}
 					}
@@ -193,7 +202,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						key := "modified_value_" + mtBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
-							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_modified_time"); err != nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, bytesUsedByModifiedTime); err != nil {
 								return nil, nil, err
 							}
 						}
@@ -212,7 +221,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						key := "modified_percent_" + mtBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
-							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_modified_time"); err != nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, bytesUsedPercentByModifiedTime); err != nil {
 								return nil, nil, err
 							}
 						}
@@ -235,7 +244,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						key := "access_value_" + atBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
-							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_by_accessed_time"); err != nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, bytesUsedByAccessedTime); err != nil {
 								return nil, nil, err
 							}
 						}
@@ -254,7 +263,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						key := "access_percent_" + atBytesUsedLabels[i]
 						m := explorerMatrix.GetMetric(key)
 						if m == nil {
-							if m, err = explorerMatrix.NewMetricFloat64(key, "bytes_used_percent_by_accessed_time"); err != nil {
+							if m, err = explorerMatrix.NewMetricFloat64(key, bytesUsedPercentByAccessedTime); err != nil {
 								return nil, nil, err
 							}
 						}
@@ -313,4 +322,59 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, g
 		return nil, gjson.Result{}, err
 	}
 	return result, analytics, nil
+}
+
+func (v *VolumeAnalytics) GetGeneratedMetrics() []plugin.CustomMetric {
+
+	return []plugin.CustomMetric{
+		{
+			Name:         dirBytesUsed,
+			Endpoint:     "api/storage/volumes/{volume.uuid}/files",
+			ONTAPCounter: "analytics.bytes_used",
+			Description:  "The actual number of bytes used on disk by this file.",
+			Prefix:       volumeAnalyticsMatrix,
+		},
+		{
+			Name:         dirFileCount,
+			Endpoint:     "api/storage/volumes/{volume.uuid}/files",
+			ONTAPCounter: "analytics.file_count",
+			Description:  "Number of files in a directory.",
+			Prefix:       volumeAnalyticsMatrix,
+		},
+		{
+			Name:         dirSubDirCount,
+			Endpoint:     "api/storage/volumes/{volume.uuid}/files",
+			ONTAPCounter: "analytics.subdir_count",
+			Description:  "Number of sub directories in a directory.",
+			Prefix:       volumeAnalyticsMatrix,
+		},
+		{
+			Name:         bytesUsedByAccessedTime,
+			Endpoint:     "api/storage/volumes/{volume.uuid}/files",
+			ONTAPCounter: "analytics.by_accessed_time.bytes_used.values",
+			Description:  "Number of bytes used on-disk, broken down by date of last access.",
+			Prefix:       volumeAnalyticsMatrix,
+		},
+		{
+			Name:         bytesUsedPercentByAccessedTime,
+			Endpoint:     "api/storage/volumes/{volume.uuid}/files",
+			ONTAPCounter: "analytics.by_accessed_time.bytes_used.percentages",
+			Description:  "Percent used on-disk, broken down by date of last access.",
+			Prefix:       volumeAnalyticsMatrix,
+		},
+		{
+			Name:         bytesUsedByModifiedTime,
+			Endpoint:     "api/storage/volumes/{volume.uuid}/files",
+			ONTAPCounter: "analytics.by_modified_time.bytes_used.values",
+			Description:  "Number of bytes used on-disk, broken down by date of last modification.",
+			Prefix:       volumeAnalyticsMatrix,
+		},
+		{
+			Name:         bytesUsedPercentByModifiedTime,
+			Endpoint:     "api/storage/volumes/{volume.uuid}/files",
+			ONTAPCounter: "analytics.by_modified_time.bytes_used.percentages",
+			Description:  "Percent used on-disk, broken down by date of last modification.",
+			Prefix:       volumeAnalyticsMatrix,
+		},
+	}
 }

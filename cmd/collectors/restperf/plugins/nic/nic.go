@@ -17,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	constant "github.com/netapp/harvest/v2/pkg/const"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -35,9 +36,18 @@ type Nic struct {
 	testFilePath string // Used only from unit test
 }
 
+const (
+	nicIfgrpMatrix   = "nic_ifgrp"
+	rxBytesConst     = "rx_bytes"
+	txBytesConst     = "tx_bytes"
+	rxPercentConst   = "rx_percent"
+	txPercentConst   = "tx_percent"
+	utilPercentConst = "util_percent"
+)
+
 var ifgrpMetrics = []string{
-	"rx_bytes",
-	"tx_bytes",
+	rxBytesConst,
+	txBytesConst,
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -50,7 +60,7 @@ func (n *Nic) Init() error {
 		return err
 	}
 
-	n.data = matrix.New(n.Parent+".NicCommon", "nic_ifgrp", "nic_ifgrp")
+	n.data = matrix.New(n.Parent+"."+nicIfgrpMatrix, nicIfgrpMatrix, nicIfgrpMatrix)
 
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
@@ -88,7 +98,7 @@ func (n *Nic) Init() error {
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
 func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
-	var read, write, rx, tx, utilPercent *matrix.Metric
+	var read, write, rx, tx, up *matrix.Metric
 	var err error
 	portDataMap := make(map[string]collectors.PortData)
 	data := dataMap[n.Object]
@@ -110,25 +120,25 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		return nil, nil, errs.New(errs.ErrNoMetric, "transmit_bytes")
 	}
 
-	if rx = data.GetMetric("rx_percent"); rx == nil {
-		if rx, err = data.NewMetricFloat64("rx_percent"); err == nil {
+	if rx = data.GetMetric(rxPercentConst); rx == nil {
+		if rx, err = data.NewMetricFloat64(rxPercentConst); err == nil {
 			rx.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
 
 	}
-	if tx = data.GetMetric("tx_percent"); tx == nil {
-		if tx, err = data.NewMetricFloat64("tx_percent"); err == nil {
+	if tx = data.GetMetric(txPercentConst); tx == nil {
+		if tx, err = data.NewMetricFloat64(txPercentConst); err == nil {
 			tx.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
 	}
 
-	if utilPercent = data.GetMetric("util_percent"); utilPercent == nil {
-		if utilPercent, err = data.NewMetricFloat64("util_percent"); err == nil {
-			utilPercent.SetProperty("raw")
+	if up = data.GetMetric(utilPercentConst); up == nil {
+		if up, err = data.NewMetricFloat64(utilPercentConst); err == nil {
+			up.SetProperty("raw")
 		} else {
 			return nil, nil, err
 		}
@@ -188,7 +198,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				portDataMap[nodeName+port] = collectors.PortData{Node: nodeName, Port: port, Read: rxBytes, Write: txBytes}
 
 				if rxOk || txOk {
-					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
+					err := up.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 					if err != nil {
 						n.Logger.Error().Err(err).Msg("error")
 					}
@@ -251,4 +261,41 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 		}
 	}
 	return portIfgroupMap
+}
+
+func (n *Nic) GetGeneratedMetrics() []plugin.CustomMetric {
+	return []plugin.CustomMetric{
+		{
+			Name:         rxBytesConst,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Link Aggregation Group (LAG) Bytes received",
+			Prefix:       nicIfgrpMatrix,
+		},
+		{
+			Name:         txBytesConst,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Link Aggregation Group (LAG) Bytes sent.",
+			Prefix:       nicIfgrpMatrix,
+		},
+		{
+			Name:         rxPercentConst,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Bytes received percentage.",
+		},
+		{
+			Name:         txPercentConst,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Bytes sent percentage.",
+		},
+		{
+			Name:         utilPercentConst,
+			Endpoint:     "NA",
+			ONTAPCounter: constant.HarvestGenerated,
+			Description:  "Max of Bytes received percentage and Bytes sent percentage.",
+		},
+	}
 }
