@@ -104,6 +104,7 @@ var excludeCounters = []string{
 	"nfs_clients_",
 	"ndmp_session_",
 	"metrocluster_check_",
+	"volume_top_clients_",
 }
 
 var flakyCounters = []string{
