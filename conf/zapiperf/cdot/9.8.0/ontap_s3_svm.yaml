@@ -6,6 +6,7 @@ counters:
   - abort_multipart_upload_failed
   - abort_multipart_upload_failed_client_close
   - abort_multipart_upload_latency
+  - abort_multipart_upload_latency_base
   - abort_multipart_upload_rate
   - abort_multipart_upload_total
   - allow_access
@@ -16,6 +17,7 @@ counters:
   - complete_multipart_upload_failed
   - complete_multipart_upload_failed_client_close
   - complete_multipart_upload_latency
+  - complete_multipart_upload_latency_base
   - complete_multipart_upload_rate
   - complete_multipart_upload_total
   - connected_connections
@@ -23,21 +25,25 @@ counters:
   - create_bucket_failed
   - create_bucket_failed_client_close
   - create_bucket_latency
+  - create_bucket_latency_base
   - create_bucket_rate
   - create_bucket_total
   - default_deny_access
   - delete_bucket_failed
   - delete_bucket_failed_client_close
   - delete_bucket_latency
+  - delete_bucket_latency_base
   - delete_bucket_rate
   - delete_bucket_total
   - delete_object_failed
   - delete_object_failed_client_close
   - delete_object_latency
+  - delete_object_latency_base
   - delete_object_rate
   - delete_object_tagging_failed
   - delete_object_tagging_failed_client_close
   - delete_object_tagging_latency
+  - delete_object_tagging_latency_base
   - delete_object_tagging_rate
   - delete_object_tagging_total
   - delete_object_total
@@ -52,11 +58,14 @@ counters:
   - get_object_failed
   - get_object_failed_client_close
   - get_object_lastbyte_latency
+  - get_object_lastbyte_latency_base
   - get_object_latency
+  - get_object_latency_base
   - get_object_rate
   - get_object_tagging_failed
   - get_object_tagging_failed_client_close
   - get_object_tagging_latency
+  - get_object_tagging_latency_base
   - get_object_tagging_rate
   - get_object_tagging_total
   - get_object_total
@@ -64,16 +73,19 @@ counters:
   - head_bucket_failed
   - head_bucket_failed_client_close
   - head_bucket_latency
+  - head_bucket_latency_base
   - head_bucket_rate
   - head_bucket_total
   - head_object_failed
   - head_object_failed_client_close
   - head_object_latency
+  - head_object_latency_base
   - head_object_rate
   - head_object_total
   - initiate_multipart_upload_failed
   - initiate_multipart_upload_failed_client_close
   - initiate_multipart_upload_latency
+  - initiate_multipart_upload_latency_base
   - initiate_multipart_upload_rate
   - initiate_multipart_upload_total
   - input_flow_control_entry
@@ -81,21 +93,25 @@ counters:
   - list_buckets_failed
   - list_buckets_failed_client_close
   - list_buckets_latency
+  - list_buckets_latency_base
   - list_buckets_rate
   - list_buckets_total
   - list_object_versions_failed
   - list_object_versions_failed_client_close
   - list_object_versions_latency
+  - list_object_versions_latency_base
   - list_object_versions_rate
   - list_object_versions_total
   - list_objects_failed
   - list_objects_failed_client_close
   - list_objects_latency
+  - list_objects_latency_base
   - list_objects_rate
   - list_objects_total
   - list_uploads_failed
   - list_uploads_failed_client_close
   - list_uploads_latency
+  - list_uploads_latency_base
   - list_uploads_rate
   - list_uploads_total
   - max_cmds_per_connection
@@ -112,10 +128,12 @@ counters:
   - put_object_failed
   - put_object_failed_client_close
   - put_object_latency
+  - put_object_latency_base
   - put_object_rate
   - put_object_tagging_failed
   - put_object_tagging_failed_client_close
   - put_object_tagging_latency
+  - put_object_tagging_latency_base
   - put_object_tagging_rate
   - put_object_tagging_total
   - put_object_total
@@ -130,6 +148,7 @@ counters:
   - upload_part_failed
   - upload_part_failed_client_close
   - upload_part_latency
+  - upload_part_latency_base
   - upload_part_rate
   - upload_part_total
   - vserver_name                                        => svm
