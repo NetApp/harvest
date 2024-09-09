@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetag"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetopclients"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/vscan"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -1391,6 +1392,8 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 		return volume.New(p)
 	case "VolumeTag":
 		return volumetag.New(p)
+	case "VolumeTopClients":
+		return volumetopclients.New(p)
 	case "Disk":
 		return disk.New(p)
 	case "Vscan":

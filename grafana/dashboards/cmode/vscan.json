@@ -1,9 +1,8 @@
 {
-  "__elements": [],
   "__inputs": [
     {
       "description": "",
-      "label": "prometheus",
+      "label": "Prometheus",
       "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
       "pluginName": "Prometheus",
@@ -15,7 +14,7 @@
       "id": "grafana",
       "name": "Grafana",
       "type": "grafana",
-      "version": "8.3.4"
+      "version": "8.1.8"
     },
     {
       "id": "prometheus",
@@ -51,10 +50,10 @@
   },
   "description": "",
   "editable": true,
-  "fiscalYearStartMonth": 0,
+  "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1724416900321,
+  "iteration": 1725284823531,
   "links": [
     {
       "asDropdown": true,
@@ -71,7 +70,6 @@
       "url": ""
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -94,6 +92,34 @@
         "defaults": {
           "color": {
             "mode": "thresholds"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -228,7 +254,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "avg by (cluster, svm) (\\n    svm_vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))",
+          "expr": "avg by (cluster, svm) (\n    svm_vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -317,7 +343,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "avg by (cluster, svm) (\\n    svm_vscan_dispatch_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_dispatch_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))\\n",
+          "expr": "avg by (cluster, svm) (\n    svm_vscan_dispatch_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_dispatch_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -431,7 +457,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster, svm) (\\n    rate(svm_vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[4m])\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))\\n",
+          "expr": "sum by (cluster, svm) (\n    rate(svm_vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[4m])\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -545,7 +571,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster, svm) (\\n    rate(svm_vscan_scan_noti_received_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[4m])\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm) (\\n        avg_over_time(\\n            svm_vscan_scan_noti_received_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\"}[3h]\\n        @ end()\\n    )\\n))",
+          "expr": "sum by (cluster, svm) (\n    rate(svm_vscan_scan_noti_received_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[4m])\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_scan_noti_received_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -645,7 +671,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "avg by (cluster, svm, scanner) (\\n    vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\", scanner=~\\\"$Scanner\\\"}\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, svm, scanner) (\\n        avg_over_time(\\n            vscan_scan_latency{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", svm=~\\\"$SVM\\\", scanner=~\\\"$Scanner\\\"}[3h]\\n        @ end()\\n    )\\n))",
+              "expr": "avg by (cluster, svm, scanner) (\n    vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scanner=~\"$Scanner\"}\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm, scanner) (\n        avg_over_time(\n            vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scanner=~\"$Scanner\"}[3h]\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
@@ -759,7 +785,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "sum by (cluster, scanner, svm) (\\n    rate(vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", scanner=~\\\"$Scanner\\\"}[4m])\\n)\\nand\\ntopk(\\n    $TopResources,\\n    avg by (cluster, scanner, svm) (\\n        avg_over_time(\\n            vscan_scan_request_dispatched_rate{datacenter=~\\\"$Datacenter\\\", cluster=~\\\"$Cluster\\\", scanner=~\\\"$Scanner\\\"}[3h]\\n        @ end()\\n    )\\n))",
+              "expr": "sum by (cluster, scanner, svm) (\n    rate(vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", scanner=~\"$Scanner\"}[4m])\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, scanner, svm) (\n        avg_over_time(\n            vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", scanner=~\"$Scanner\"}[3h]\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
@@ -1065,7 +1091,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 34,
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1073,9 +1099,11 @@
       {
         "current": {
           "selected": false,
-          "text": "prometheus",
-          "value": "prometheus"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -1089,11 +1117,15 @@
         "type": "datasource"
       },
       {
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\"}, datacenter)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": true,
         "name": "Datacenter",
         "options": [],
@@ -1115,8 +1147,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "Cluster",
         "options": [],
@@ -1138,8 +1173,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(svm_vscan_scan_latency{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, svm)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "SVM",
         "options": [],
@@ -1158,8 +1196,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(vscan_scanner_stats_pct_cpu_used{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, scanner)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "Scanner",
         "options": [],
@@ -1174,13 +1215,17 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {
           "selected": true,
           "text": "5",
           "value": "5"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
@@ -1282,6 +1327,5 @@
   "timezone": "",
   "title": "ONTAP: Vscan",
   "uid": "cdot-vscan",
-  "version": 1,
-  "weekStart": ""
+  "version": 2
 }

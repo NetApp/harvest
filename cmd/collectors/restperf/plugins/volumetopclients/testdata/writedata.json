@@ -1,0 +1,82 @@
+{
+  "records": [
+    {
+      "volume": {
+        "uuid": "03613247-54ac-4127-a512-afb331f1c207",
+        "name": "osc_vol01",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207"
+          }
+        }
+      },
+      "throughput": {
+        "write": 863436
+      },
+      "client_ip": "10.193.49.9",
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      }
+    },
+    {
+      "volume": {
+        "uuid": "03613247-54ac-4127-a512-afb331f1c207",
+        "name": "osc_vol01",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207"
+          }
+        }
+      },
+      "throughput": {
+        "write": 1638
+      },
+      "client_ip": "10.193.206.81",
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      }
+    },
+    {
+      "volume": {
+        "uuid": "079b3c19-1356-11ef-9138-00a098d390f2",
+        "name": "volharvest",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/079b3c19-1356-11ef-9138-00a098d390f2"
+          }
+        }
+      },
+      "throughput": {
+        "write": 5272371
+      },
+      "client_ip": "10.193.113.50",
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      }
+    }
+  ],
+  "num_records": 3,
+  "_links": {
+    "self": {
+      "href": "/api/storage/volumes/*/top-metrics/clients?top_metric=throughput.write&fields=client_ip,svm&volume.name=volharvest|osc_vol01|RahulTest&svm.name=osc|astra300"
+    }
+  }
+}

@@ -71,6 +71,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 			continue
 		}
 		index := quota.GetLabel("index")
+		volumeUUID := quota.GetLabel("volume_uuid")
 		uName := quota.GetLabel("userName")
 		uid := quota.GetLabel("userId")
 		group := quota.GetLabel("groupName")
@@ -93,7 +94,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 		for metricName, m := range metricMap {
 			// set -1 for unlimited
 			value := -1.0
-			quotaInstanceKey := index + metricName
+			quotaInstanceKey := index + volumeUUID + metricName
 			quotaInstance, err := data.NewInstance(quotaInstanceKey)
 			if err != nil {
 				q.Logger.Debug().Msgf("add (%s) instance: %v", metricName, err)

@@ -104,7 +104,8 @@ var excludeCounters = []string{
 	"nfs_clients_",
 	"ndmp_session_",
 	"metrocluster_check_",
-	"ontaps3_svm_",
+	"volume_top_clients_",
+  "ontaps3_svm_",
 }
 
 var flakyCounters = []string{
