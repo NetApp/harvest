@@ -47,13 +47,15 @@ plugins:
       - node
   - Volume:
       include_constituents: false
+
 #  - VolumeTopClients:
 #      # The maximum number of volumes to consider for top client metrics.
 #      # The actual maximum value is capped at 50, even if a higher number is specified.
 #      # When enabled, this plugin will collect read/write operations and throughput metrics for the top clients of each volume.
 #      - schedule:
 #          - data: 1h  # This value should be a multiple of the poll duration. By default, Harvest will check once an hour to see how many volumes have activity_tracking.state set to on.
-#      - MaxVolumeCount: 5
+#      - max_volumes: 5
+
 #  - LabelAgent:
 #      # To prevent visibility of transient volumes, uncomment the following lines
 #      exclude_regex:
