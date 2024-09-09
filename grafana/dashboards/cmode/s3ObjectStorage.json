@@ -1149,7 +1149,7 @@
                   "Value #A": "Requests",
                   "Value #B": "Connections",
                   "Value #C": "Max Outstanding Requests",
-                  "Value #D": "Max Connected Connections",
+                  "Value #D": "Max Connections",
                   "Value #E": "Max Commands Per Connections"
                 }
               }
@@ -1590,7 +1590,7 @@
                   }
                 ]
               },
-              "unit": "bytes",
+              "unit": "Bps",
               "unitScale": true
             },
             "overrides": []
