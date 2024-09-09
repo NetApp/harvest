@@ -11,9 +11,9 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/gjson v1.17.3
 	github.com/zekroTJA/timedmap/v2 v2.0.0
-	golang.org/x/sys v0.24.0
-	golang.org/x/term v0.23.0
-	golang.org/x/text v0.17.0
+	golang.org/x/sys v0.25.0
+	golang.org/x/term v0.24.0
+	golang.org/x/text v0.18.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
