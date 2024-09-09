@@ -38,6 +38,7 @@ var dataMetric = "data"
 
 type TopClients struct {
 	*plugin.AbstractPlugin
+	schedule        int
 	client          *rest.Client
 	data            map[string]*matrix.Matrix
 	cache           *VolumeCache
@@ -120,6 +121,7 @@ func (t *TopClients) Init() error {
 			t.maxVolumeCount = min(maxVolCount, maxTopN)
 		}
 	}
+	t.schedule = t.SetPluginInterval()
 	t.Logger.Info().Int("maxVolumeCount", t.maxVolumeCount).Msg("Using maxVolumeCount")
 	return nil
 }
@@ -156,24 +158,27 @@ func (t *TopClients) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 }
 
 func (t *TopClients) getCachedVolumesWithActivityTracking() (*set.Set, error) {
-	const cacheDuration = time.Hour
 
-	// Check if the cache is still valid
-	if t.cache != nil && time.Since(t.cache.lastFetched) < cacheDuration {
-		return t.cache.volumesWithActivityTrackingEnabled, nil
+	var (
+		va  *set.Set
+		err error
+	)
+	if t.schedule >= t.PluginInvocationRate {
+		va, err = t.fetchVolumesWithActivityTrackingEnabled()
+		if err != nil {
+			return nil, err
+		}
+		t.schedule = 0
+		// Update the cache
+		t.cache = &VolumeCache{
+			volumesWithActivityTrackingEnabled: va,
+			lastFetched:                        time.Now(),
+		}
+	} else {
+		va = t.cache.volumesWithActivityTrackingEnabled
 	}
 
-	va, err := t.fetchVolumesWithActivityTrackingEnabled()
-	if err != nil {
-		return nil, err
-	}
-
-	// Update the cache
-	t.cache = &VolumeCache{
-		volumesWithActivityTrackingEnabled: va,
-		lastFetched:                        time.Now(),
-	}
-
+	t.schedule++
 	return va, nil
 }
 
