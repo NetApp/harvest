@@ -344,7 +344,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	// update metadata for collector logs
 	_ = e.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
 	_ = e.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
-	_ = e.Metadata.LazySetValueUint64("instances", "instance", uint64(bookendCacheSize))
+	_ = e.Metadata.LazySetValueUint64("instances", "instance", uint64(bookendCacheSize)) //nolint:gosec
 
 	return nil, nil
 }

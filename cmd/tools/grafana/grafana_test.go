@@ -99,7 +99,7 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 			}
 			newExpressions = readExprs(updatedData)
 
-			for i := range len(newExpressions) {
+			for i := range newExpressions {
 				if newExpressions[i] != prefix+oldExpressions[i] {
 					t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, prefix+oldExpressions[i], newExpressions[i])
 				}

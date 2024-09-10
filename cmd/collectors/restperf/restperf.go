@@ -1272,7 +1272,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	calcD := time.Since(calcStart)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
+	_ = r.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
