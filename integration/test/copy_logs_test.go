@@ -6,7 +6,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"os/exec"
 	"testing"
 )
@@ -26,7 +26,12 @@ func TestCopyLogs(t *testing.T) {
 		dest := harvestLogDir + "/" + containerShortID + ".log"
 		err = docker.StoreContainerLog(containerShortID, dest)
 		if err != nil {
-			log.Error().Err(err).Str("id", containerShortID).Str("dest", dest).Msg("Unable to copy logs")
+			slog.Error(
+				"Unable to copy logs",
+				slog.Any("err", err),
+				slog.String("id", containerShortID),
+				slog.String("dest", dest),
+			)
 		}
 	}
 }

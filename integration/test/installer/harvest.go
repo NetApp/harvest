@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/core"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 	"strings"
 	"time"
 )
@@ -18,7 +18,7 @@ type Harvest struct {
 func (h *Harvest) Start() {
 	status, err := utils.Exec(HarvestHome, HarvestBin, nil, "start")
 	if err != nil {
-		log.Printf("error %s", err)
+		slog.Error("", slog.Any("err", err))
 		panic(err)
 	}
 	fmt.Println(status)
@@ -29,7 +29,7 @@ func (h *Harvest) Start() {
 func (h *Harvest) Stop() {
 	status, err := utils.Exec(HarvestHome, HarvestBin, nil, "stop")
 	if err != nil {
-		log.Printf("error %s", err)
+		slog.Error("", slog.Any("err", err))
 		panic(err)
 	}
 	fmt.Println(status)
@@ -46,10 +46,10 @@ func (h *Harvest) AllRunning() bool {
 }
 
 func (h *Harvest) GetPollerInfo() []core.Poller {
-	log.Println("Getting all pollers details")
+	slog.Info("Getting all pollers details")
 	harvestStatus, err := utils.Exec(HarvestHome, HarvestBin, nil, "status")
 	if err != nil {
-		log.Printf("error %s", err)
+		slog.Error("", slog.Any("err", err))
 		panic(err)
 	}
 	fmt.Println(harvestStatus)

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"time"
@@ -20,7 +20,7 @@ func (g *Grafana) Init(image string) {
 
 func (g *Grafana) Install() bool {
 	g.image = "grafana/grafana:8.1.8"
-	log.Println("Grafana image : " + g.image)
+	slog.Info("Grafana image : " + g.image)
 	imageName := "grafana"
 	_ = docker.StopContainers(imageName)
 	cmd := exec.Command("docker", "run", "-d", "-e", "GF_LOG_LEVEL=debug", "-p", utils.GrafanaPort+":"+utils.GrafanaPort, g.image) //nolint:gosec
@@ -36,7 +36,7 @@ func (g *Grafana) Install() bool {
 			return true
 		}
 	}
-	log.Printf("Reached maximum timeout. Grafana is failed to start after %d min\n", maxWaitCount)
+	slog.Info("Reached maximum timeout. Grafana is failed to start", slog.Int("maxWaitCount", maxWaitCount))
 	return false
 }
 

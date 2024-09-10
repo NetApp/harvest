@@ -3,10 +3,9 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/Netapp/harvest-automation/test/grafana"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"testing"
 	"time"
 )
@@ -29,7 +28,7 @@ var cDotFolder, sevenModeFolder string
 
 func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	log.Info().Msg("Verify Grafana and Prometheus are configured")
+	slog.Info("Verify Grafana and Prometheus are configured")
 	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
 		panic(errors.New("grafana is not reachable"))
 	}
@@ -38,7 +37,7 @@ func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
 	}
 	cDotFolder = "Harvest-main-cDOT"
 	sevenModeFolder = "Harvest-main-7mode"
-	log.Info().Str("cMode", cDotFolder).Str("7mode", sevenModeFolder).Msg("Folder name details")
+	slog.Info("Folder name details", slog.String("cMode", cDotFolder), slog.String("7mode", sevenModeFolder))
 	status, out := new(grafana.Mgr).Import()
 	if !status {
 		t.Errorf("Grafana import operation failed out=%s", out)
@@ -48,7 +47,7 @@ func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
 
 func TestImport(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	log.Info().Msg("Verify harvest folder")
+	slog.Info("Verify harvest folder")
 	data, err := utils.GetResponseBody(utils.GetGrafanaHTTPURL() + "/api/folders?limit=10")
 	utils.PanicIfNotNil(err)
 	var dataFolder []Folder
@@ -59,7 +58,7 @@ func TestImport(t *testing.T) {
 			return
 		}
 	}
-	log.Info().Bytes("Data", data).Msg("Folder data")
+	slog.Info("Folder data", slog.String("Data", string(data)))
 	t.Error("Unable to find harvest folder")
 }
 
@@ -107,7 +106,7 @@ func TestSevenModeDashboardCount(t *testing.T) {
 }
 
 func getFolderID(t *testing.T, folderName string) int64 {
-	log.Info().Msg("Find " + folderName + " folder id")
+	slog.Info("Find " + folderName + " folder id")
 	data, err := utils.GetResponseBody(utils.GetGrafanaHTTPURL() + "/api/folders?limit=100")
 	utils.PanicIfNotNil(err)
 	var dataFolder []Folder
@@ -127,9 +126,9 @@ func getFolderID(t *testing.T, folderName string) int64 {
 }
 
 func verifyDashboards(t *testing.T, folderID int64, expectedName []string) {
-	log.Info().Msg(fmt.Sprintf("Find list of dashboard for folder %d", folderID))
+	slog.Info("Find list of dashboard for folder", slog.Int64("folderID", folderID))
 	url := utils.GetGrafanaHTTPURL() + "/api/search?type=dash-db"
-	log.Info().Msg(url)
+	slog.Info(url)
 	data, err := utils.GetResponseBody(url)
 	utils.PanicIfNotNil(err)
 	var dataDashboard []Dashboard
@@ -137,7 +136,7 @@ func verifyDashboards(t *testing.T, folderID int64, expectedName []string) {
 	utils.PanicIfNotNil(err)
 	actualNames := make([]string, 0, len(dataDashboard))
 	var notFoundList []string
-	log.Info().Int64("folderID", folderID).Msg("Folder details")
+	slog.Info("Folder details", slog.Int64("folderID", folderID))
 	for _, values := range dataDashboard {
 		actualNames = append(actualNames, values.Title)
 	}
@@ -147,7 +146,7 @@ func verifyDashboards(t *testing.T, folderID int64, expectedName []string) {
 		}
 	}
 	if len(notFoundList) > 0 {
-		log.Info().Msg("The following dashboards were not imported successfully.")
+		slog.Info("The following dashboards were not imported successfully.")
 		t.Errorf("One or more dashboards %s were missing/ not imported", notFoundList)
 	}
 }

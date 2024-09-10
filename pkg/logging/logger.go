@@ -16,7 +16,6 @@ import (
 
 const (
 	defaultLogFileName           = "harvest.log"
-	defaultLogLevel              = zerolog.InfoLevel
 	defaultConsoleLoggingEnabled = true
 	defaultFileLoggingEnabled    = false // false to avoid opening many file descriptors for same log file
 	DefaultLogMaxMegaBytes       = 10    // 10 MB
@@ -65,7 +64,7 @@ func Get() *Logger {
 			logConfig := LogConfig{ConsoleLoggingEnabled: defaultConsoleLoggingEnabled,
 				PrefixKey:          defaultPrefixKey,
 				PrefixValue:        defaultPrefixValue,
-				LogLevel:           defaultLogLevel,
+				LogLevel:           zerolog.InfoLevel,
 				FileLoggingEnabled: defaultFileLoggingEnabled,
 				Directory:          GetLogPath(),
 				Filename:           defaultLogFileName,

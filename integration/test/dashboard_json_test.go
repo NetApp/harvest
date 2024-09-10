@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -125,12 +125,12 @@ func TestMain(m *testing.M) {
 func TestDashboardsLoad(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
 	jsonDir := utils.GetHarvestRootDir() + "/grafana/dashboards"
-	log.Info().Str("jsonDir", jsonDir).Msg("Dashboard directory path")
+	slog.Info("Dashboard directory path", slog.String("jsonDir", jsonDir))
 	fileSet = GetAllJsons(jsonDir)
 	if len(fileSet) == 0 {
 		t.Fatalf("No json file found @ %s", jsonDir)
 	}
-	log.Info().Int("fileSet", len(fileSet)).Msg("Json files")
+	slog.Info("Json files", slog.Int("fileSet", len(fileSet)))
 }
 
 func TestJsonExpression(t *testing.T) {
@@ -159,14 +159,15 @@ func TestJsonExpression(t *testing.T) {
 		}
 	}
 
-	log.Info().
-		Str("dur", time.Since(now).Round(time.Millisecond).String()).
-		Msg("Pre-check counters done")
+	slog.Info(
+		"Pre-check counters done",
+		slog.String("dur", time.Since(now).Round(time.Millisecond).String()),
+	)
 
 	for _, filePath := range fileSet {
 		dashPath := shortPath(filePath)
 		if shouldSkipDashboard(filePath) {
-			log.Info().Str("path", dashPath).Msg("Skip")
+			slog.Info("Skip", slog.String("path", dashPath))
 			continue
 		}
 		sub := time.Now()
@@ -230,35 +231,35 @@ func TestJsonExpression(t *testing.T) {
 					strings.Join(counters, " "), actualExpression)
 			}
 		}
-		log.Info().
-			Str("path", dashPath).
-			Int("numCounters", subCounters).
-			Int("missing", sumMissing).
-			Int("flaky", subFlaky).
-			Str("dur", time.Since(sub).Round(time.Millisecond).String()).
-			Msg("Dashboard validation completed")
+		slog.Info("Dashboard validation completed",
+			slog.String("path", dashPath),
+			slog.Int("numCounters", subCounters),
+			slog.Int("missing", sumMissing),
+			slog.Int("flaky", subFlaky),
+			slog.String("dur", time.Since(sub).Round(time.Millisecond).String()),
+		)
 	}
 
 	if restFails > 0 {
 		t.Errorf("Rest validation failures=%d", restFails)
 	} else {
-		log.Info().Msg("Rest Validation looks good!!")
+		slog.Info("Rest Validation looks good!!")
 	}
 
 	if zapiFails > 0 {
 		t.Errorf("Zapi validation failures=%d", zapiFails)
 	} else {
-		log.Info().Msg("Zapi Validation looks good!!")
+		slog.Info("Zapi Validation looks good!!")
 	}
-	log.Info().
-		Str("durMs", time.Since(now).Round(time.Millisecond).String()).
-		Int("exprIgnored", exprIgnored).
-		Int("numCounters", numCounters).
-		Int("restMiss", restFails).
-		Int("restFlaky", restFlaky).
-		Int("zapiMiss", zapiFails).
-		Int("zapiFlaky", zapiFlaky).
-		Msg("Dashboard Json validated")
+	slog.Info("Dashboard Json validated",
+		slog.String("durMs", time.Since(now).Round(time.Millisecond).String()),
+		slog.Int("exprIgnored", exprIgnored),
+		slog.Int("numCounters", numCounters),
+		slog.Int("restMiss", restFails),
+		slog.Int("restFlaky", restFlaky),
+		slog.Int("zapiMiss", zapiFails),
+		slog.Int("zapiFlaky", zapiFlaky),
+	)
 
 	// Add checks for queries in Prometheus
 	for _, query := range validateQueries {

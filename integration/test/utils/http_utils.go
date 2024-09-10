@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
 func GetResponse(url string) (string, error) {
@@ -26,12 +27,13 @@ func GetResponse(url string) (string, error) {
 func GetResponseBody(url string) ([]byte, error) {
 	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
-		log.Fatalln(err)
+		slog.Error("", slog.Any("err", err))
+		os.Exit(1)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
-		return nil, err
+		slog.Error("", slog.Any("err", err))
+		os.Exit(1)
 	}
 	resp.Body.Close()
 	return body, nil
@@ -51,7 +53,7 @@ func SendReqAndGetRes(url string, method string,
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	PanicIfNotNil(err)
-	log.Println(string(body))
+	slog.Info(string(body))
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	PanicIfNotNil(err)

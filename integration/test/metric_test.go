@@ -5,7 +5,8 @@ import (
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/rs/zerolog/log"
+	"log/slog"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -27,7 +28,8 @@ func TestPollerMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
 	_, err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Unable to load harvest config")
+		slog.Error("Unable to load harvest config", slog.Any("err", err))
+		os.Exit(1)
 	}
 	var duplicateMetrics []string
 	for _, pollerName := range conf.Config.PollersOrdered {
@@ -74,7 +76,6 @@ func TestPollerMetrics(t *testing.T) {
 				if uniqueSetOfMetricLabels[key] {
 					_, ok := skipDuplicates[metricName]
 					if ok {
-						log.Trace().Str("metric", key).Msg("Ignore duplicate")
 						continue
 					}
 					duplicateMetrics = append(duplicateMetrics,
@@ -86,13 +87,17 @@ func TestPollerMetrics(t *testing.T) {
 					validCounters++
 				}
 			} else {
-				log.Error().Str("row", row).Msg("Invalid string data found in the metric output")
+				slog.Error("Invalid string data found in the metric output", slog.String("row", row))
 			}
 		}
 		if validCounters == 0 {
 			panic("Empty values found for all counters for poller " + pollerName)
 		}
-		log.Info().Int("numCounters", validCounters).Str("poller", pollerName).Msg("Valid Counters for poller")
+		slog.Info(
+			"Valid Counters for poller",
+			slog.Int("numCounters", validCounters),
+			slog.String("poller", pollerName),
+		)
 	}
 	sort.Strings(duplicateMetrics)
 	for _, dupMetric := range duplicateMetrics {

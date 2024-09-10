@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"time"
@@ -20,7 +20,7 @@ func (p *Prometheus) Init(image string) {
 
 func (p *Prometheus) Install() bool {
 	p.image = "prom/prometheus:v2.33.0"
-	log.Println("Prometheus image : " + p.image)
+	slog.Info("Prometheus image : " + p.image)
 	imageName := "prometheus"
 	err := docker.StopContainers(imageName)
 	utils.PanicIfNotNil(err)
@@ -42,7 +42,7 @@ func (p *Prometheus) Install() bool {
 			return true
 		}
 	}
-	log.Printf("Reached maximum timeout. Prometheus is failed to start after %d min\n", maxWaitCount)
+	slog.Info("Reached maximum timeout. Prometheus is failed to start", slog.Int("maxWaitCount", maxWaitCount))
 	return false
 }
 

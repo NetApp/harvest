@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 	"os/exec"
 	"strings"
 )
@@ -29,7 +29,7 @@ func StoreContainerLog(containerID string, logFile string) error {
 }
 
 func ReStartContainers(commandSubString string) error {
-	log.Printf("ReStartContainers start %s\n", commandSubString)
+	slog.Info("ReStartContainers start", slog.String("commandSubString", commandSubString))
 	containers, err := Containers(commandSubString)
 	if err != nil {
 		return err
@@ -37,19 +37,19 @@ func ReStartContainers(commandSubString string) error {
 
 	var errs []error
 	for _, container := range containers {
-		log.Println("Restarting container", container.ID[:10], "...")
+		slog.Info("Restarting container", slog.String("containerID", container.ID[:10]))
 		command := exec.Command("docker", "container", "restart", container.ID) //nolint:gosec
 		err = command.Run()
 		if err != nil {
 			errs = append(errs, err)
 		}
 	}
-	log.Printf("ReStartContainers complete %s\n", commandSubString)
+	slog.Info("ReStartContainers complete", slog.String("commandSubString", commandSubString))
 	return errors.Join(errs...)
 }
 
 func StopContainers(commandSubString string) error {
-	log.Printf("StopContainers start  %s  \n", commandSubString)
+	slog.Info("StopContainers start", slog.String("commandSubString", commandSubString))
 	containers, err := Containers(commandSubString)
 	if err != nil {
 		return err
@@ -57,14 +57,14 @@ func StopContainers(commandSubString string) error {
 
 	var errs []error
 	for _, container := range containers {
-		log.Println("Stopping container", container.ID[:10], "...")
+		slog.Info("Stopping container", slog.String("containerID", container.ID[:10]))
 		command := exec.Command("docker", "container", "stop", container.ID) //nolint:gosec
 		err = command.Run()
 		if err != nil {
 			errs = append(errs, err)
 		}
 	}
-	log.Printf("StopContainers complete  %s  \n", commandSubString)
+	slog.Info("StopContainers complete", slog.String("commandSubString", commandSubString))
 	return errors.Join(errs...)
 }
 
