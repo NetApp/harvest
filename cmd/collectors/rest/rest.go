@@ -239,7 +239,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 
 	opt := a.GetOptions()
 	if poller, err = conf.PollerNamed(opt.Poller); err != nil {
-		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msgf("")
+		r.Logger.Error().Err(err).Str("poller", opt.Poller).Send()
 		return nil, err
 	}
 	if poller.Addr == "" {
