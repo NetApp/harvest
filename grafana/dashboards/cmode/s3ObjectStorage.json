@@ -101,14 +101,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 107,
       "options": {
-        "content": "This dashboard requires ONTAP 9.7+. Three actions are required to use this dashboard: <br>1. If you are using the Rest collector, then you must enable the OntapS3 counters in `$HARVEST/conf/rest/default.yaml`. <br>2. If you are using the ZapiPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>3. If you are using the RestPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/restperf/default.yaml`. Please see https://github.com/NetApp/harvest/discussions/3137 for more details.",
+        "content": "This dashboard requires ONTAP 9.7+. Three actions are required to use this dashboard: <br>1. If you are using the Rest collector, then you must enable the OntapS3 counters in `$HARVEST/conf/rest/default.yaml`. <br>2. If you are using the ZapiPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/zapiperf/default.yaml`. <br>3. If you are using the RestPerf collector, then you must enable the OntapS3SVM counters in `$HARVEST/conf/restperf/default.yaml`. <br>Please see https://github.com/NetApp/harvest/discussions/3137 for more details.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -120,7 +120,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "id": 16,
       "title": "Bucket",
@@ -352,7 +352,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 5,
       "options": {
@@ -564,7 +564,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 127,
       "options": {
@@ -682,7 +682,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 14
       },
       "id": 128,
       "options": {
@@ -838,7 +838,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 6,
       "options": {
@@ -918,7 +918,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 33
       },
       "id": 17,
       "panels": [
@@ -1897,5 +1897,5 @@
   "timezone": "",
   "title": "ONTAP: S3 Object Storage",
   "uid": "cdot-s3-object-storage",
-  "version": 2
+  "version": 3
 }
