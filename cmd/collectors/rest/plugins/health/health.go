@@ -179,6 +179,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		Int("numResolutionInstanceCount", resolutionInstancesCount).
 		Msg("Collected")
 
+	//nolint:gosec
 	h.client.Metadata.PluginInstances = uint64(diskAlertCount + shelfAlertCount + supportAlertCount + nodeAlertCount + HAAlertCount + networkEthernetPortAlertCount + networkFcpPortAlertCount +
 		networkInterfaceAlertCount + volumeRansomwareAlertCount + volumeMoveAlertCount + licenseAlertCount + resolutionInstancesCount)
 

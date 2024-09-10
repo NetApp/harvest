@@ -135,7 +135,13 @@ counters:
   - upload_part_rate
   - upload_part_total
 
-export_options:
-  instance_keys:
-    - node
-    - svm
+plugins:
+  - Aggregator:
+      # plugin will create summary/average for each ontaps3_svm object
+      # any names after the object names will be treated as
+      # label names that will be added to instances
+      - svm<>ontaps3_svm
+
+# only export svm aggregations from plugin
+# set this true or comment, to get data for each ontaps3_svm
+export_data: false

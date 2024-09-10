@@ -441,7 +441,7 @@ func (kp *KeyPerf) pollData(
 	calcD := time.Since(calcStart)
 	_ = kp.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	_ = kp.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = kp.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
+	_ = kp.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	kp.Matrix[kp.Object] = cachedData

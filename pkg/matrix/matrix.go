@@ -473,7 +473,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 		case metric.record[i] && sRecord[i]:
 			minimumBase := tValues[i] * x
 			metricName := metric.GetName()
-			if metricName == "optimal_point_latency" || metricName == "scan_latency" {
+			if metricName == "optimal_point_latency" || metricName == "scan_latency" || m.Object == "ontaps3_svm" {
 				// An exception is made for these counters because the base counter always has a few IOPS
 				minimumBase = 0
 			}

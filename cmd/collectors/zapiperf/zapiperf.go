@@ -887,7 +887,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	calcD := time.Since(calcStart)
 
 	_ = z.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = z.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
+	_ = z.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	z.Matrix[z.Object] = cachedData
