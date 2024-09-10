@@ -114,7 +114,9 @@ func (t *TopClients) Init() error {
 		return err
 	}
 
-	if maxVol := t.Params.GetChildContentS("MaxVolumeCount"); maxVol != "" {
+	t.maxVolumeCount = defaultTopN
+
+	if maxVol := t.Params.GetChildContentS("max_volumes"); maxVol != "" {
 		if maxVolCount, err := strconv.Atoi(maxVol); err != nil {
 			t.maxVolumeCount = defaultTopN
 		} else {
