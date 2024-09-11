@@ -155,12 +155,12 @@ func (e *Ems) InitCache() error {
 			e.maxURLSize = s
 		}
 	}
-	e.Logger.Debug().Int("max_url_size", e.maxURLSize).Msgf("")
+	e.Logger.Debug().Int("max_url_size", e.maxURLSize).Send()
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
 		e.severityFilter = severityFilterPrefix + s
 	}
-	e.Logger.Debug().Str("severityFilter", e.severityFilter).Msgf("")
+	e.Logger.Debug().Str("severityFilter", e.severityFilter).Send()
 
 	if export := e.Params.GetChildS("export_options"); export != nil {
 		e.Matrix[e.Object].SetExportOptions(export)
