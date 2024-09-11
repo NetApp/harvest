@@ -322,7 +322,7 @@ func RemoveDuplicateStr(strSlice []string) []string {
 func SetupLogging() {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
 		AddSource: true,
-		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+		ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
 			if a.Key == slog.SourceKey {
 				source := a.Value.Any().(*slog.Source)
 				source.File = filepath.Base(source.File)
