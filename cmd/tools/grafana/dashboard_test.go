@@ -1139,7 +1139,8 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 			return
 		}
 		if !spanNulls.Bool() {
-			t.Errorf(`dashboard=%s panel="%s got=[%s] want=true`, dashPath, value.Get("title").String(), spanNulls.String())
+			t.Errorf(`dashboard=%s panel="%s fieldConfig.defaults.custom.spanNulls got=[%s] want=true`,
+				dashPath, value.Get("title").String(), spanNulls.String())
 		}
 	})
 }
