@@ -5,7 +5,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 	"regexp"
 )
 
@@ -18,7 +18,7 @@ func (g *Mgr) Import() (bool, string) {
 		status       bool
 		err          error
 	)
-	log.Println("Verify Grafana and Prometheus are configured")
+	slog.Info("Verify Grafana and Prometheus are configured")
 	var re = regexp.MustCompile(`404|not-found|error`)
 	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
 		panic(errors.New("grafana is not reachable"))
@@ -26,7 +26,7 @@ func (g *Mgr) Import() (bool, string) {
 	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
 		panic(errors.New("prometheus is not reachable"))
 	}
-	log.Println("Import dashboard from grafana/dashboards")
+	slog.Info("Import dashboard from grafana/dashboards")
 	containerIDs, err := docker.Containers("poller")
 	if err != nil {
 		panic(err)
@@ -41,11 +41,11 @@ func (g *Mgr) Import() (bool, string) {
 		params = append(params, importCmds...)
 		importOutput, err = utils.Run("docker", params...)
 	} else {
-		log.Println("It is non docker based harvest")
+		slog.Info("It is non docker based harvest")
 		importOutput, err = utils.Exec(installer.HarvestHome, "bin/harvest", nil, importCmds...)
 	}
 	if err != nil {
-		log.Printf("error %s", err)
+		slog.Error("error", slog.Any("err", err))
 		panic(err)
 	}
 	if re.MatchString(importOutput) {
@@ -53,6 +53,6 @@ func (g *Mgr) Import() (bool, string) {
 	} else {
 		status = true
 	}
-	log.Printf("Grafana import status : %t", status)
+	slog.Info("Grafana import status", slog.Bool("status", status))
 	return status, importOutput
 }

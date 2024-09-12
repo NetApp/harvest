@@ -9,7 +9,7 @@ import (
 	"github.com/Netapp/harvest-automation/certer/models"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/carlmjohnson/requests"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/exec"
@@ -64,7 +64,7 @@ func printRequired(name string) {
 }
 
 func begin() {
-	log.Info().Str("ip", ip).Msg("Create certificates for ip")
+	slog.Info("Create certificates for ip", slog.String("ip", ip))
 
 	// Get admin SVM
 	fetchAdminSVM()
@@ -72,7 +72,7 @@ func begin() {
 	// Query for existing CA
 	certificates, err := fetchCA()
 	if err != nil {
-		log.Error().Err(err).Send()
+		slog.Error("", slog.Any("err", err))
 		return
 	}
 
@@ -84,19 +84,19 @@ func begin() {
 	// Create private key and certificate signing request (CSR)
 	csr, err := ensureOpenSSLInstalled()
 	if err != nil {
-		log.Error().Err(err).Send()
+		slog.Error("", slog.Any("err", err))
 		return
 	}
 
 	// Delete existing
 	if certificates.NumRecords > 0 {
-		log.Info().
-			Int("num", certificates.NumRecords).
-			Str("common_name", commonName).
-			Msg("Deleting matching certificates")
+		slog.Info("Deleting matching certificates",
+			slog.Int("num", certificates.NumRecords),
+			slog.String("common_name", commonName))
+
 		err := deleteCertificates(certificates)
 		if err != nil {
-			log.Error().Err(err).Msg("failed to delete certificates")
+			slog.Error("failed to delete certificates", slog.Any("err", err))
 			return
 		}
 	}
@@ -104,21 +104,22 @@ func begin() {
 	// Create a root CA certificate that will be used to sign certificate requests for the user account(s)
 	err = createRootCA()
 	if err != nil {
-		log.Error().Err(err).Msg("failed")
+		slog.Error("failed", slog.Any("err", err))
 		return
 	}
 
 	// Sign the locally created certificate with the root CA generated above
 	err = signCSR(csr)
 	if err != nil {
-		log.Error().Err(err).Msg("failed")
+		slog.Error("failed", slog.Any("err", err))
 		return
 	}
 
 	// Add certificate auth to this ONTAP user
 	err = addCertificateAuthToHarvestUser()
 	if err != nil {
-		log.Error().Err(err).Send()
+		slog.Error("", slog.Any("err", err))
+
 	}
 
 	fmt.Printf("Success! Test with:\n")
@@ -130,15 +131,16 @@ func begin() {
 func sleep(s string) {
 	duration, err := time.ParseDuration(s)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to sleep")
+		slog.Error("failed to sleep", slog.Any("err", err))
 	}
-	log.Info().Str("sleep", s).Msg("sleep")
+	slog.Info("sleep", slog.String("sleep", s))
 	time.Sleep(duration)
 }
 
 func curlServer() {
 	if _, err := os.Stat(local(".crt")); errors.Is(err, os.ErrNotExist) {
-		log.Panic().Str("crt", local(".crt")).Msg("does not exist")
+		slog.Error("does not exist", slog.String("crt", local(".crt")))
+		os.Exit(1)
 	}
 
 	for range 60 {
@@ -147,7 +149,7 @@ func curlServer() {
 			fmt.Sprintf("https://%s/api/cluster?fields=version", ip))
 		output, err := command.CombinedOutput()
 		if err != nil {
-			log.Error().Err(err).Str("output", string(output)).Msg("failed to exec curl")
+			slog.Error("failed to exec curl", slog.Any("err", err), slog.String("output", string(output)))
 		} else {
 			fmt.Println(string(output))
 			return
@@ -159,7 +161,7 @@ func curlServer() {
 func certsAreFresh(certificates models.Certificates) bool {
 	cert := certificates.Records[0]
 	date := cert.ExpiryTime.Format("2006-01-02")
-	log.Info().Str("expire", date).Msg("Certificates are fresh. Done")
+	slog.Info("Certificates are fresh. Done", slog.String("expire", date))
 	return cert.ExpiryTime.After(time.Now().Add(8 * time.Hour))
 }
 
@@ -271,7 +273,7 @@ func ensureOpenSSLInstalled() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("err=%w output=%s", err, output)
 	}
-	log.Debug().Str("output", string(output)).Msg("created private key")
+	slog.Debug("created private key", slog.String("output", string(output)))
 	// openssl req -days 3650 -sha256 -new -nodes -key cert/u2.key -subj /CN=harvest -out u2.csr
 
 	command = exec.Command("openssl", "req", "-days", "3650", "-sha256", "-new", "-nodes", "-key", privateKey,
@@ -281,8 +283,8 @@ func ensureOpenSSLInstalled() (string, error) {
 		return "", fmt.Errorf("error creating csr err=%w output=%s", err, output)
 	}
 
-	log.Debug().Str("output", string(output)).Msg("created csr")
-	log.Info().Str("privateKey", privateKey).Msg("Created private key and certificate signing request (CSR)")
+	slog.Debug("created csr", slog.String("output", string(output)))
+	slog.Info("Created private key and certificate signing request (CSR)", slog.String("privateKey", privateKey))
 
 	data, err := os.ReadFile(csr)
 	if err != nil {
@@ -308,7 +310,7 @@ func createRootCA() error {
 	if err != nil {
 		return fmt.Errorf("failed to create root CA err=%w", err)
 	}
-	log.Info().Msg("Created Root CA")
+	slog.Info("Created Root CA")
 	return nil
 }
 
@@ -321,7 +323,7 @@ func fetchAdminSVM() {
 		ToJSON(&svmResp).
 		Fetch(context.Background())
 	if err != nil {
-		log.Error().Err(err).Msg("failed to fetch admin SVM")
+		slog.Error("failed to fetch admin SVM", slog.Any("err", err))
 		return
 	}
 	adminSVM = svmResp.Records[0].Vserver

@@ -18,6 +18,7 @@ package collector
 
 import (
 	"errors"
+	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
@@ -26,6 +27,7 @@ import (
 	"math"
 	"math/rand"
 	"reflect"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -304,7 +306,8 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer func() {
 		if r := recover(); r != nil {
-			c.Logger.Error().Stack().Err(errs.New(errs.ErrPanic, "")).Any("err", r).Msg("Collector panicked")
+			err := fmt.Sprintf("%+v\n", r)
+			c.Logger.Error().Str("err", err).Bytes("stack", debug.Stack()).Msg("Collector panicked")
 		}
 	}()
 

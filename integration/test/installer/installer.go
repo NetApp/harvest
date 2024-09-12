@@ -3,7 +3,7 @@ package installer
 import (
 	"bufio"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"os"
 	"strings"
 )
@@ -27,7 +27,7 @@ func GetPerfFileWithQosCounters(source string, target string) string {
 	writeBuffer := bufio.NewWriter(writeFile)
 	file, err := os.Open(utils.GetHarvestRootDir() + "/" + source)
 	if err != nil {
-		log.Error().Err(err).Send()
+		slog.Error("", slog.Any("err", err))
 	}
 	defer func(file *os.File) { _ = file.Close() }(file)
 
@@ -41,7 +41,7 @@ func GetPerfFileWithQosCounters(source string, target string) string {
 		_, _ = writeBuffer.WriteString(lineString + "\n")
 	}
 	if err := scanner.Err(); err != nil {
-		log.Error().Err(err).Send()
+		slog.Error("", slog.Any("err", err))
 	}
 	_ = writeBuffer.Flush()
 	return modifiedFilePath

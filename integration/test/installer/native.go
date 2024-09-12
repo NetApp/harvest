@@ -3,7 +3,7 @@ package installer
 import (
 	"errors"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 )
 
 type Native struct {
@@ -23,15 +23,15 @@ func (n *Native) Install() bool {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Downloaded: " + n.path)
+	slog.Info("Downloaded: " + n.path)
 	Uninstall()
-	log.Println("Installing " + tarFileName)
+	slog.Info("Installing " + tarFileName)
 	unTarOutput, err := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
 	if err != nil {
-		log.Printf("error %s", err)
+		slog.Error("", slog.Any("err", err))
 		panic(err)
 	}
-	log.Println(unTarOutput)
+	slog.Info("Untar output: " + unTarOutput)
 	utils.RemoveSafely(HarvestHome + "/" + harvestFile)
 	utils.UseCertFile(HarvestHome)
 	_, err1 := utils.Run("cp", GetPerfFileWithQosCounters(ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+ZapiPerfDefaultFile)

@@ -1404,14 +1404,5 @@ func init() {
 
 // start poller, if fails try to write to syslog
 func main() {
-	// don't recover if a goroutine has panicked, instead
-	// log as much as possible
-	defer func() {
-		if r := recover(); r != nil {
-			logger.Error().Stack().Any("err", r).Msg("Poller panicked")
-			logger.Fatal().Msg(`(main) terminating abnormally, tip: run in foreground mode (with "--loglevel 0") to debug`)
-		}
-	}()
-
 	cobra.CheckErr(pollerCmd.Execute())
 }

@@ -74,7 +74,7 @@ func (n *Nic) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if n.client, err = rest.New(conf.ZapiPoller(n.ParentParams), timeout, n.Auth); err != nil {
-		n.Logger.Error().Stack().Err(err).Msg("connecting")
+		n.Logger.Error().Err(err).Msg("connecting")
 		return err
 	}
 

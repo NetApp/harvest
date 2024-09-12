@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -111,7 +110,6 @@ func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
 
 func (a *Admin) setupLogger() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	zerolog.ErrorStackMarshaler = logging.MarshalStack //nolint:reassign
 
 	a.logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).
 		With().Caller().Timestamp().Logger()

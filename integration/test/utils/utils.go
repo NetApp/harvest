@@ -7,9 +7,8 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -143,7 +142,7 @@ func UseCertFile(harvestHome string) {
 	_, _ = Run("certer", "-ip", "10.193.48.11")
 
 	path := harvestHome + "/cert"
-	log.Info().Str("path", path).Msg("Copy certificate files")
+	slog.Info("Copy certificate files", slog.String("path", path))
 	if FileExists(path) {
 		err := RemoveDir(path)
 		PanicIfNotNil(err)
@@ -189,7 +188,7 @@ func IsURLReachable(url string) bool {
 }
 
 func AddPrometheusToGrafana() {
-	log.Info().Msg("Add Prometheus into Grafana")
+	slog.Info("Add Prometheus into Grafana")
 	url := GetGrafanaHTTPURL() + "/api/datasources"
 	method := "POST"
 	//goland:noinspection HttpUrlsUsage
@@ -200,14 +199,14 @@ func AddPrometheusToGrafana() {
 	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["message"])
 	if key == "Datasource added" {
-		log.Info().Msg("Prometheus has been added successfully into Grafana .")
+		slog.Info("Prometheus has been added successfully into Grafana .")
 		return
 	}
 	panic(errors.New("ERROR: unable to add Prometheus into grafana"))
 }
 
 func CreateGrafanaToken() string {
-	log.Info().Msg("Creating grafana API Key.")
+	slog.Info("Creating grafana API Key.")
 	url := GetGrafanaHTTPURL() + "/api/auth/keys"
 	method := "POST"
 	name := strconv.FormatInt(time.Now().Unix(), 10)
@@ -219,7 +218,7 @@ func CreateGrafanaToken() string {
 	data := SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["key"])
 	if key != "" {
-		log.Info().Msg("Grafana: Token has been created successfully.")
+		slog.Info("Grafana: Token has been created successfully.")
 		return key
 	}
 	panic(errors.New("ERROR: unable to create grafana token"))
@@ -263,18 +262,19 @@ func WriteToken(token string) {
 	tools := conf.Config.Tools
 	if tools != nil {
 		if tools.GrafanaAPIToken != "" {
-			log.Error().Str("path", abs).Msg("Harvest.yml contains a grafana token")
+			slog.Error("Harvest.yml contains a grafana token", slog.String("path", abs))
 			return
 		}
 	}
 	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0600)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to open file")
+		slog.Error("Failed to open file", slog.Any("err", err))
+		os.Exit(1)
 	}
 	defer func(f *os.File) { _ = f.Close() }(f)
 	_, _ = fmt.Fprintf(f, "\n%s\n", "Tools:")
 	_, _ = fmt.Fprintf(f, "  %s: %s\n", GrafanaTokeKey, token)
-	log.Info().Str("path", abs).Msg("Wrote Grafana token to harvest.yml")
+	slog.Info("Wrote Grafana token to harvest.yml", slog.String("path", abs))
 }
 
 func GetGrafanaHTTPURL() string {
@@ -320,10 +320,17 @@ func RemoveDuplicateStr(strSlice []string) []string {
 }
 
 func SetupLogging() {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	zerolog.ErrorStackMarshaler = MarshalStack //nolint:reassign
-	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, NoColor: true}).
-		With().Caller().Stack().Timestamp().Logger()
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		AddSource: true,
+		ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.SourceKey {
+				source := a.Value.Any().(*slog.Source)
+				source.File = filepath.Base(source.File)
+			}
+			return a
+		},
+	}))
+	slog.SetDefault(logger)
 }
 
 func MarshalStack(err error) interface{} {

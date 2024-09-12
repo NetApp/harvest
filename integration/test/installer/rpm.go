@@ -3,7 +3,7 @@ package installer
 import (
 	"errors"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 	"strings"
 )
 
@@ -23,17 +23,17 @@ func (r *RPM) Install() bool {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Downloaded: " + r.path)
+	slog.Info("Downloaded: " + r.path)
 	Uninstall()
 	harvestObj := new(Harvest)
-	log.Println("Installing " + rpmFileName)
+	slog.Info("Installing " + rpmFileName)
 	installOutput, err := utils.Run("yum", "install", "-y", rpmFileName)
 	if err != nil {
-		log.Printf("error %s", err)
+		slog.Error("", slog.Any("err", err))
 		panic(err)
 	}
-	log.Println(installOutput)
-	log.Println("Stopping harvest")
+	slog.Info(installOutput)
+	slog.Info("Stopping harvest")
 	harvestObj.Stop()
 	_, err = utils.Run("cp", harvestFile, HarvestHome+"/"+harvestFile)
 	if err != nil {
@@ -56,16 +56,16 @@ func (r *RPM) Upgrade() bool {
 	versionCmd := []string{"-qa", "harvest"}
 	out, err := utils.Run("rpm", versionCmd...)
 	if err != nil {
-		log.Printf("error %s", err)
+		slog.Error("", slog.Any("err", err))
 		panic(err)
 	}
 	previousVersion := strings.TrimSpace(out)
 	err = utils.DownloadFile(rpmFileName, r.path)
 	utils.PanicIfNotNil(err)
-	log.Println("Downloaded: " + r.path)
-	log.Println("Updating " + rpmFileName)
+	slog.Info("Downloaded: " + r.path)
+	slog.Info("Updating " + rpmFileName)
 	installOutput, _ := utils.Run("yum", "upgrade", "-y", rpmFileName)
-	log.Println(installOutput)
+	slog.Info(installOutput)
 	out, _ = utils.Run("rpm", versionCmd...)
 	installedVersion := strings.TrimSpace(out)
 	if previousVersion == installedVersion {
