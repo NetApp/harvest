@@ -216,7 +216,7 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 		Platform: &platformInfo{
 			Arch: arch,
 			CPUs: cpus,
-			OS:   getOSName(),
+			OS:   GetOSName(),
 		},
 		Target: &TargetInfo{
 			Ping: status.LazyValueFloat64("ping", "host"),
@@ -261,12 +261,12 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	// add harvest release info
 	msg.Harvest = &harvestInfo{
 		// harvest uuid creation from sha1 of cluster uuid
-		UUID:         sha1Sum(msg.Target.ClusterUUID),
+		UUID:         Sha1Sum(msg.Target.ClusterUUID),
 		Version:      version.VERSION,
 		Release:      version.Release,
 		Commit:       version.Commit,
 		BuildDate:    version.BuildDate,
-		HostHash:     sha1Sum(hostname),
+		HostHash:     Sha1Sum(hostname),
 		NumClusters:  1,
 		NumPollers:   uint64(len(conf.Config.Pollers)),
 		NumExporters: uint64(len(conf.Config.Exporters)),
@@ -421,7 +421,7 @@ func getCPUInfo() (string, uint8) {
 	return arch, uint8(cpuCount) // #nosec G115
 }
 
-func getOSName() string {
+func GetOSName() string {
 	info, err := host.Info()
 	if err != nil {
 		return ""
@@ -455,7 +455,7 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 	return path.Join(payloadDir, fmt.Sprintf("%s_%s", pollerName, "payload.json")), nil
 }
 
-func sha1Sum(s string) string {
+func Sha1Sum(s string) string {
 	hash := sha1.New() //nolint:gosec // using sha1 for a hash, not a security risk
 	hash.Write([]byte(s))
 	return hex.EncodeToString(hash.Sum(nil))

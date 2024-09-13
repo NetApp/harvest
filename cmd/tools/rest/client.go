@@ -114,16 +114,19 @@ func (c *Client) printRequestAndResponse(req string, response []byte) {
 	}
 }
 
-// GetRest makes a REST request to the cluster and returns a json response as a []byte
-func (c *Client) GetRest(request string) ([]byte, error) {
+// GetPlainRest makes a REST request to the cluster and returns a json response as a []byte
+func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
 	var err error
 	if strings.Index(request, "/") == 0 {
 		request = request[1:]
 	}
-	request, err = util.EncodeURL(request)
-	if err != nil {
-		return nil, err
+	if encodeURL {
+		request, err = util.EncodeURL(request)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	u := c.baseURL + request
 	c.request, err = requests.New("GET", u, nil)
 	if err != nil {
@@ -152,6 +155,11 @@ func (c *Client) GetRest(request string) ([]byte, error) {
 	c.Metadata.NumCalls++
 
 	return result, err
+}
+
+// GetRest makes a REST request to the cluster and returns a json response as a []byte
+func (c *Client) GetRest(request string) ([]byte, error) {
+	return c.GetPlainRest(request, true)
 }
 
 func (c *Client) invokeWithAuthRetry() ([]byte, error) {

@@ -46,6 +46,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/schedule"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -55,6 +56,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/shirou/gopsutil/v4/mem"
 	"github.com/shirou/gopsutil/v4/process"
 	"github.com/spf13/cobra"
@@ -1353,6 +1355,11 @@ func (p *Poller) addMemoryMetadata() {
 }
 
 func (p *Poller) logPollerMetadata() (map[string]*matrix.Matrix, error) {
+	err := p.sendHarvestVersion()
+	if err != nil {
+		logger.Error().Err(err).Msg("Failed to send Harvest version")
+	}
+
 	rss, _ := p.status.LazyGetValueFloat64("memory.rss", "host")
 	logger.Info().
 		Float64("rssKB", rss).
@@ -1361,6 +1368,55 @@ func (p *Poller) logPollerMetadata() (map[string]*matrix.Matrix, error) {
 		Msg("Metadata")
 
 	return nil, nil
+}
+
+func (p *Poller) sendHarvestVersion() error {
+	var (
+		poller     *conf.Poller
+		connection *rest.Client
+		err        error
+	)
+
+	// connect to the cluster and retrieve the system version
+	if poller, err = conf.PollerNamed(opts.Poller); err != nil {
+		return err
+	}
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	if connection, err = rest.New(poller, timeout, p.auth); err != nil {
+		return err
+	}
+	err = connection.Init(2)
+	if err != nil {
+		return err
+	}
+
+	// Check if the cluster is running ONTAP 9.11.1 or later
+	// If it is, send a harvestTag to the cluster to indicate that Harvest is running
+	// Otherwise, do nothing
+
+	ontapVersion, err := goversion.NewVersion(connection.Cluster().GetVersion())
+	if err != nil {
+		return err
+	}
+
+	if ontapVersion.LessThan(goversion.Must(goversion.NewVersion("9.11.1"))) {
+		return err
+	}
+
+	// Send the harvestTag to the ONTAP cluster including the OS name, sha1(hostname), Harvest version, and max RSS in MB
+	osName := collector.GetOSName()
+	hostname, _ := os.Hostname()
+	sha1Hostname := collector.Sha1Sum(hostname)
+	rssMB := p.maxRssBytes / 1024 / 1024
+	fields := []string{osName, sha1Hostname, version.VERSION, strconv.FormatUint(rssMB, 10)}
+
+	href := `api/cluster?ignore_unknown_fields=true&fields=harvestTag,` + strings.Join(fields, ",")
+	_, err = connection.GetPlainRest(href, false)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
