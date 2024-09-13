@@ -706,8 +706,6 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 	table.SetAutoWrapText(false)
 	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "Counter", "Template"})
 
-	var issues bool
-
 	for _, k := range keys {
 		if k == "" {
 			continue
@@ -717,7 +715,6 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		if counter.Description == "" {
 			for _, def := range counter.APIs {
 				if _, ok := knownDescriptionGaps[counter.Name]; !ok {
-					issues = true
 					appendRow(table, "Description", counter, def)
 				}
 			}
@@ -745,7 +742,6 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 				if isPrint {
 					for _, def := range counter.APIs {
 						if _, ok := knownMappingGaps[counter.Name]; !ok {
-							issues = true
 							appendRow(table, "REST", counter, def)
 						}
 					}
@@ -757,7 +753,6 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 			if def.ONTAPCounter == "" {
 				for _, def := range counter.APIs {
 					if _, ok := knownMappingGaps[counter.Name]; !ok {
-						issues = true
 						appendRow(table, "Mapping", counter, def)
 					}
 				}
@@ -780,7 +775,7 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 	}
 	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
 
-	if issues {
+	if table.NumLines() > 0 {
 		log.Fatalf("Issues found: refer table above")
 	}
 }
