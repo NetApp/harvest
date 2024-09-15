@@ -761,11 +761,11 @@ You can view the metrics published by the ChangeLog plugin in the `ChangeLog Mon
 
 # VolumeTopClients
 
-The `VolumeTopClients` plugin is used to track the top clients for volumes in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.12 and later.
+The `VolumeTopClients` plugin is used to track a volume's top clients for volumes in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.12 and later.
 
 ## Enabling the Plugin
 
-Top Clients collection is disabled by default. To enable Top Clients Tracking in Harvest, follow these steps:
+Top Clients collection is disabled by default. To enable Top Clients tracking in Harvest, follow these steps:
 
 1. Ensure you are using ONTAP version 9.12 or later.
 2. Enable the Top Clients collection in the RestPerf Collector Volume template via the `VolumeTopClients` plugin.
