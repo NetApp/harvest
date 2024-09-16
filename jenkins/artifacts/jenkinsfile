@@ -171,6 +171,17 @@ pipeline {
           }
       }
 
+        stage('Test and Generate Harvest Metrics') {
+            steps {
+                script {
+                    def result = sh(script: 'bin/harvest generate metrics --poller dc1 --config /u/mpeg/harvest/harvest.yml', returnStatus: true)
+                    if (result != 0) {
+                        error("Generate Harvest metrics command failed.")
+                    }
+                }
+            }
+        }
+
         stage('Run Tests') {
             when {
                 expression {
