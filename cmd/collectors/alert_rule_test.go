@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log"
+	"maps"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -23,10 +24,10 @@ type AlertRule struct {
 	labels []string
 }
 
-var labelRegex = regexp.MustCompile(`\{{.*?}\}`)
+var labelRegex = regexp.MustCompile(`\{{.*?}}`)
 var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
 var pluginGeneratedMetric = map[string][]string{
-	"change_log": []string{"svm", "state", "type", "anti_ransomware_state", "object", "node", "location", "healthy", "volume", "style", "aggr", "status"},
+	"change_log": {"svm", "state", "type", "anti_ransomware_state", "object", "node", "location", "healthy", "volume", "style", "aggr", "status"},
 }
 var exceptionMetrics = []string{
 	"up",
@@ -34,8 +35,8 @@ var exceptionMetrics = []string{
 }
 
 func TestParseAlertRules(t *testing.T) {
-	metrics := getRestMetrics("../../")
-	updateMetrics(metrics)
+	metrics := getRestMetrics(t, "../../")
+	maps.Copy(metrics, pluginGeneratedMetric)
 
 	alertRules := GetAllAlertRules("../../container/prometheus/", "alert_rules.yml")
 	for _, alertRule := range alertRules {
@@ -60,7 +61,7 @@ func GetAllAlertRules(dir string, fileName string) []AlertRule {
 	alertNames := make([]string, 0)
 	exprList := make([]string, 0)
 	summaryList := make([]string, 0)
-	alertRulesFilePath := dir + "/" + fileName
+	alertRulesFilePath := filepath.Join(dir, fileName)
 	data, err := tree.ImportYaml(alertRulesFilePath)
 	if err != nil {
 		panic(err)
@@ -146,21 +147,15 @@ func getAllLabels(summary string) []string {
 	return labels
 }
 
-func updateMetrics(metrics map[string][]string) {
-	for k, v := range pluginGeneratedMetric {
-		metrics[k] = v
-	}
-}
-
-func getRestMetrics(path string) map[string][]string {
+func getRestMetrics(t *testing.T, path string) map[string][]string {
 	var (
 		err error
 	)
 
-	_, err = conf.LoadHarvestConfig(path + "harvest.yml")
+	harvestYmlPath := filepath.Join(path, "harvest.yml")
+	_, err = conf.LoadHarvestConfig(harvestYmlPath)
 	if err != nil {
-		fmt.Printf("%v\n", err)
-		os.Exit(1)
+		t.Fatalf("Unable to load harvest config file %s. Error: %v", harvestYmlPath, err)
 	}
 
 	restCounters := processRestCounters(path)
@@ -168,18 +163,17 @@ func getRestMetrics(path string) map[string][]string {
 }
 
 func processRestCounters(path string) map[string][]string {
-	restPerfCounters := visitRestTemplates(path+"conf/restperf", processRestPerfCounters)
-	restCounters := visitRestTemplates(path+"conf/rest", processRestConfigCounters)
+	restPerfCounters := visitRestTemplates(filepath.Join(path, "conf", "restperf"), processRestPerfCounters)
+	restCounters := visitRestTemplates(filepath.Join(path, "conf", "rest"), processRestConfigCounters)
 
-	for k, v := range restPerfCounters {
-		restCounters[k] = v
-	}
+	maps.Copy(restCounters, restPerfCounters)
+
 	return restCounters
 }
 
 func visitRestTemplates(dir string, eachTemp func(path string) map[string][]string) map[string][]string {
 	result := make(map[string][]string)
-	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
+	err := filepath.WalkDir(dir, func(path string, _ os.DirEntry, err error) error {
 		if err != nil {
 			log.Fatal("failed to read directory:", err)
 		}
@@ -191,9 +185,7 @@ func visitRestTemplates(dir string, eachTemp func(path string) map[string][]stri
 			return nil
 		}
 		r := eachTemp(path)
-		for k, v := range r {
-			result[k] = v
-		}
+		maps.Copy(result, r)
 		return nil
 	})
 
