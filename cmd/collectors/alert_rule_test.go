@@ -29,7 +29,7 @@ var exceptionMetrics = []string{
 }
 
 func TestAlertRules(t *testing.T) {
-	metrics, _ := generate.GeneratedMetrics("../../", "harvest.yml")
+	metrics, _ := generate.GeneratedMetrics("../../", "harvest.yml", "dc1")
 	for pluginMetric, pluginLabels := range pluginGeneratedMetric {
 		metrics[pluginMetric] = generate.Counter{Name: pluginMetric, Labels: pluginLabels}
 	}
