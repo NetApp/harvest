@@ -5,7 +5,6 @@ import (
 	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/cmd/collectors"
-	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
