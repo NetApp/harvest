@@ -1715,6 +1715,63 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#volumetopclients" class="md-nav__link">
+    <span class="md-ellipsis">
+      VolumeTopClients
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VolumeTopClients">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-the-plugin_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enabling the Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#max_volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      max_volumes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-the-metrics_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing the Metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2252,6 +2309,63 @@
         
           <li class="md-nav__item">
   <a href="#viewing-the-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing the Metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volumetopclients" class="md-nav__link">
+    <span class="md-ellipsis">
+      VolumeTopClients
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VolumeTopClients">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-the-plugin_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enabling the Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#max_volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      max_volumes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-the-metrics_1" class="md-nav__link">
     <span class="md-ellipsis">
       Viewing the Metrics
     </span>
@@ -2853,6 +2967,27 @@ value of a given metric, perform the requested mathematical operation, and store
 </code></pre></div>
 <h2 id="viewing-the-metrics">Viewing the Metrics<a class="headerlink" href="#viewing-the-metrics" title="Permanent link">&para;</a></h2>
 <p>You can view the metrics published by the ChangeLog plugin in the <code>ChangeLog Monitor</code> dashboard in <code>Grafana</code>. This dashboard provides a visual representation of the changes tracked by the plugin for volume, svm, and node objects.</p>
+<h1 id="volumetopclients">VolumeTopClients<a class="headerlink" href="#volumetopclients" title="Permanent link">&para;</a></h1>
+<p>The <code>VolumeTopClients</code> plugin is used to track a volume's top clients for volumes in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.12 and later.</p>
+<h2 id="enabling-the-plugin_1">Enabling the Plugin<a class="headerlink" href="#enabling-the-plugin_1" title="Permanent link">&para;</a></h2>
+<p>Top Clients collection is disabled by default. To enable Top Clients tracking in Harvest, follow these steps:</p>
+<ol>
+<li>Ensure you are using ONTAP version 9.12 or later.</li>
+<li>Enable the Top Clients collection in the RestPerf Collector Volume template via the <code>VolumeTopClients</code> plugin.</li>
+</ol>
+<p>For detailed steps on how to enable the plugin, refer to the <a href="https://github.com/NetApp/harvest/discussions/3130">discussion here</a>.</p>
+<h2 id="configuration-parameters">Configuration Parameters<a class="headerlink" href="#configuration-parameters" title="Permanent link">&para;</a></h2>
+<h3 id="max_volumes"><code>max_volumes</code><a class="headerlink" href="#max_volumes" title="Permanent link">&para;</a></h3>
+<p>The <code>max_volumes</code> parameter specifies the maximum number of top volumes to track. By default, this value is set to 5, but it can be configured up to a maximum of 50.</p>
+<p>The plugin will select the top volumes based on the descending order of read IOPS, write IOPS, read throughput, and write throughput in each performance poll. This means that during each performance poll, the plugin will:</p>
+<ol>
+<li>Collect the read IOPS, write IOPS, read throughput, and write throughput for all volumes.</li>
+<li>Sort the volumes in descending order based on their metric values.</li>
+<li>Select the top volumes as specified by <code>max_volumes</code>.</li>
+<li>Collect top clients metrics for these volumes.</li>
+</ol>
+<h2 id="viewing-the-metrics_1">Viewing the Metrics<a class="headerlink" href="#viewing-the-metrics_1" title="Permanent link">&para;</a></h2>
+<p>You can view the metrics published by the <code>VolumeTopClients</code> plugin in the <code>Volume</code> dashboard under the <code>Top Clients</code> row in Grafana.</p>
 
 
 
