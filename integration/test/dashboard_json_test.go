@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"os"
 	"path/filepath"
-	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -340,7 +339,7 @@ func getAllExpr(record gjson.Result) []string {
 }
 
 func getAllCounters(expression string) []string {
-	all := FindStringBetweenTwoChar(expression, "{", "(")
+	all := collectors.FindStringBetweenTwoChar(expression, "{", "(")
 	var filtered []string
 
 allLoop:
@@ -361,7 +360,7 @@ allLoop:
 
 func validateExpr(expression string) (bool, string) {
 	if expression != "" {
-		counters := FindStringBetweenTwoChar(expression, "{", "(")
+		counters := collectors.FindStringBetweenTwoChar(expression, "{", "(")
 		newExpression := expression
 		if len(counters) > 0 {
 			for _, counter := range counters {
@@ -393,34 +392,6 @@ func GetAllJsons(dir string) []string {
 		})
 	utils.PanicIfNotNil(err)
 	return fileSet
-}
-
-func FindStringBetweenTwoChar(stringValue string, startChar string, endChar string) []string {
-	var counters = make([]string, 0)
-	var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
-	firstSet := strings.Split(stringValue, startChar)
-	for _, actualString := range firstSet {
-		counterArray := strings.Split(actualString, endChar)
-		switch {
-		case strings.Contains(actualString, "+"): // check for inner expression such as top:
-			counterArray = strings.Split(actualString, "+")
-		case strings.Contains(actualString, "/"): // check for inner expression such as top:
-			counterArray = strings.Split(actualString, "/")
-		case strings.Contains(actualString, ","): // check for inner expression such as top:
-			counterArray = strings.Split(actualString, ",")
-		}
-
-		counter := strings.TrimSpace(counterArray[len(counterArray)-1])
-		counterArray = strings.Split(counter, endChar)
-		counter = strings.TrimSpace(counterArray[len(counterArray)-1])
-		if _, err := strconv.Atoi(counter); err == nil {
-			continue
-		}
-		if isStringAlphabetic(counter) && counter != "" {
-			counters = append(counters, counter)
-		}
-	}
-	return counters
 }
 
 func hasDataInDB(query string, waitFor time.Duration) bool {

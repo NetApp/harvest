@@ -2,18 +2,13 @@ package collectors
 
 import (
 	"fmt"
-	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
-	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/cmd/tools/generate"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"log"
-	"maps"
-	"os"
 	"path/filepath"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 	"testing"
 )
@@ -25,7 +20,6 @@ type AlertRule struct {
 }
 
 var labelRegex = regexp.MustCompile(`\{{.*?}}`)
-var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
 var pluginGeneratedMetric = map[string][]string{
 	"change_log": {"svm", "state", "type", "anti_ransomware_state", "object", "node", "location", "healthy", "volume", "style", "aggr", "status"},
 }
@@ -34,29 +28,50 @@ var exceptionMetrics = []string{
 	"node_nfs_latency", // need to check why it was skipped in restperf
 }
 
-func TestParseAlertRules(t *testing.T) {
-	metrics := getRestMetrics(t, "../../")
-	maps.Copy(metrics, pluginGeneratedMetric)
+func TestAlertRules(t *testing.T) {
+	metrics, _ := generate.GeneratedMetrics("../../", "harvest.yml")
+	for pluginMetric, pluginLabels := range pluginGeneratedMetric {
+		metrics[pluginMetric] = generate.Counter{Name: pluginMetric, Labels: pluginLabels}
+	}
 
-	alertRules := GetAllAlertRules("../../container/prometheus/", "alert_rules.yml")
+	alertRules := GetAllAlertRules("../../container/prometheus/", "alert_rules.yml", false)
 	for _, alertRule := range alertRules {
-		if strings.Contains(strings.Join(alertRule.exprs, ","), "_labels") {
-			continue
-		}
-		for _, expr := range alertRule.exprs {
-			if !slices.Contains(exceptionMetrics, expr) {
-				metricLabels := metrics[expr]
-				for _, label := range alertRule.labels {
-					if !slices.Contains(metricLabels, label) {
-						t.Errorf("%s is not available in %s metric", label, expr)
+		for _, label := range alertRule.labels {
+			found := false
+			for _, expr := range alertRule.exprs {
+				if !slices.Contains(exceptionMetrics, expr) {
+					metricCounters := metrics[expr]
+					if slices.Contains(metricCounters.Labels, label) {
+						found = true
+						break
 					}
+				} else {
+					found = true
+				}
+			}
+			if !found {
+				t.Errorf("%s is not available in %s metric", label, alertRule.exprs)
+			}
+		}
+	}
+}
+
+func TestEmsAlertRules(t *testing.T) {
+	templateEmsLabels := getEmsLabels("../../conf/ems/9.6.0/ems.yaml")
+	emsAlertRules := GetAllAlertRules("../../container/prometheus/", "ems_alert_rules.yml", true)
+	for _, alertRule := range emsAlertRules {
+		for _, ems := range alertRule.exprs {
+			emsLabels := templateEmsLabels[ems]
+			for _, label := range alertRule.labels {
+				if !slices.Contains(emsLabels, label) {
+					t.Errorf("%s is not available in %s ems", label, ems)
 				}
 			}
 		}
 	}
 }
 
-func GetAllAlertRules(dir string, fileName string) []AlertRule {
+func GetAllAlertRules(dir string, fileName string, isEms bool) []AlertRule {
 	alertRules := make([]AlertRule, 0)
 	alertNames := make([]string, 0)
 	exprList := make([]string, 0)
@@ -87,15 +102,19 @@ func GetAllAlertRules(dir string, fileName string) []AlertRule {
 	}
 
 	for i := range alertNames {
-		alertRules = append(alertRules, AlertRule{name: alertNames[i], exprs: getAllExpressions(exprList[i]), labels: getAllLabels(summaryList[i])})
+		alertRules = append(alertRules, AlertRule{name: alertNames[i], exprs: getAllExpressions(exprList[i], isEms), labels: getAllLabels(summaryList[i])})
 	}
 	return alertRules
 }
 
-func getAllExpressions(expression string) []string {
-	all := FindStringBetweenTwoChar(expression, "{", "(")
+func getAllExpressions(expression string, isEms bool) []string {
 	filtered := make([]string, 0)
-
+	var all []string
+	if isEms {
+		all = FindEms(expression, "{", "}")
+	} else {
+		all = FindStringBetweenTwoChar(expression, "{", "(")
+	}
 	for _, counter := range all {
 		if counter == "" {
 			continue
@@ -105,32 +124,17 @@ func getAllExpressions(expression string) []string {
 	return filtered
 }
 
-func FindStringBetweenTwoChar(stringValue string, startChar string, endChar string) []string {
-	var counters = make([]string, 0)
+func FindEms(stringValue string, startChar string, endChar string) []string {
+	var emsSlice = make([]string, 0)
 	firstSet := strings.Split(stringValue, startChar)
-	for _, actualString := range firstSet {
-		counterArray := strings.Split(actualString, endChar)
-		switch {
-		case strings.Contains(actualString, ")"): // check for inner expression such as top:
-			counterArray = strings.Split(actualString, ")")
-		case strings.Contains(actualString, "+"): // check for inner expression such as top:
-			counterArray = strings.Split(actualString, "+")
-		case strings.Contains(actualString, "/"): // check for inner expression such as top:
-			counterArray = strings.Split(actualString, "/")
-		case strings.Contains(actualString, ","): // check for inner expression such as top:
-			counterArray = strings.Split(actualString, ",")
-		}
-		counter := strings.TrimSpace(counterArray[len(counterArray)-1])
-		counterArray = strings.Split(counter, endChar)
-		counter = strings.TrimSpace(counterArray[len(counterArray)-1])
-		if _, err := strconv.Atoi(counter); err == nil {
-			continue
-		}
-		if isStringAlphabetic(counter) && counter != "" {
-			counters = append(counters, counter)
-		}
+	actualString := strings.TrimSpace(firstSet[1])
+	counterArray := strings.Split(actualString, endChar)
+	ems := strings.TrimSpace(counterArray[0])
+	if ems != "" {
+		counterArray = strings.Split(ems, "=")
+		emsSlice = append(emsSlice, strings.ReplaceAll(counterArray[1], "\"", ""))
 	}
-	return counters
+	return emsSlice
 }
 
 func getAllLabels(summary string) []string {
@@ -147,168 +151,38 @@ func getAllLabels(summary string) []string {
 	return labels
 }
 
-func getRestMetrics(t *testing.T, path string) map[string][]string {
+func getEmsLabels(path string) map[string][]string {
 	var (
-		err error
+		emsLabels = make(map[string][]string)
 	)
-
-	harvestYmlPath := filepath.Join(path, "harvest.yml")
-	_, err = conf.LoadHarvestConfig(harvestYmlPath)
-	if err != nil {
-		t.Fatalf("Unable to load harvest config file %s. Error: %v", harvestYmlPath, err)
-	}
-
-	restCounters := processRestCounters(path)
-	return restCounters
-}
-
-func processRestCounters(path string) map[string][]string {
-	restPerfCounters := visitRestTemplates(filepath.Join(path, "conf", "restperf"), processRestPerfCounters)
-	restCounters := visitRestTemplates(filepath.Join(path, "conf", "rest"), processRestConfigCounters)
-
-	maps.Copy(restCounters, restPerfCounters)
-
-	return restCounters
-}
-
-func visitRestTemplates(dir string, eachTemp func(path string) map[string][]string) map[string][]string {
-	result := make(map[string][]string)
-	err := filepath.WalkDir(dir, func(path string, _ os.DirEntry, err error) error {
-		if err != nil {
-			log.Fatal("failed to read directory:", err)
-		}
-		ext := filepath.Ext(path)
-		if ext != ".yaml" {
-			return nil
-		}
-		if strings.HasSuffix(path, "default.yaml") {
-			return nil
-		}
-		r := eachTemp(path)
-		maps.Copy(result, r)
-		return nil
-	})
-
-	if err != nil {
-		log.Fatal("failed to read template:", err)
-		return nil
-	}
-	return result
-}
-
-func processRestPerfCounters(path string) map[string][]string {
-	var (
-		counters = make(map[string][]string)
-	)
-	t, err := tree.ImportYaml(path)
-	if t == nil || err != nil {
-		fmt.Printf("Unable to import template file %s. File is invalid or empty\n", path)
-		return nil
-	}
-	model, err := template2.ReadTemplate(path)
-	if err != nil {
-		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
-		return nil
-	}
-	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
-	templateCounters := t.GetChildS("counters")
-	if model.ExportData == "false" && noExtraMetrics {
-		return nil
-	}
-	if templateCounters == nil {
-		return nil
-	}
-	counterMap := make(map[string]string)
-	counterMapNoPrefix := make(map[string]string)
-	labels := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
-	for _, c := range templateCounters.GetAllChildContentS() {
-		if c != "" {
-			name, display, m, _ := util.ParseMetric(c)
-			if m == "float" {
-				counterMap[name] = model.Object + "_" + display
-				counterMapNoPrefix[name] = display
-				counters[name] = labels
-			}
-		}
-	}
-
-	return counters
-}
-
-func processRestConfigCounters(path string) map[string][]string {
-	var (
-		counters = make(map[string][]string)
-	)
-	t, err := tree.ImportYaml(path)
-	if t == nil || err != nil {
-		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
-		return nil
-	}
-
-	model, err := template2.ReadTemplate(path)
-	if err != nil {
-		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
-		return nil
-	}
-	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
-	templateCounters := t.GetChildS("counters")
-	if model.ExportData == "false" && noExtraMetrics {
-		return nil
-	}
-
-	if templateCounters != nil {
-		processCounters(t, templateCounters.GetAllChildContentS(), &model, counters)
-	}
-
-	endpoints := t.GetChildS("endpoints")
-	if endpoints != nil {
-		for _, endpoint := range endpoints.GetChildren() {
-			for _, line := range endpoint.GetChildren() {
-				if line.GetNameS() == "counters" {
-					processCounters(line, line.GetAllChildContentS(), &model, counters)
-				}
-			}
-		}
-	}
-	return counters
-}
-
-func processCounters(t *node.Node, counterContents []string, model *template2.Model, counters map[string][]string) {
-	labels := getAllExportedLabels(t, counterContents)
-	for _, c := range counterContents {
-		if c == "" {
-			continue
-		}
-		_, display, m, _ := util.ParseMetric(c)
-		harvestName := model.Object + "_" + display
-		if m == "float" {
-			counters[harvestName] = labels
-		}
-	}
-	harvestName := model.Object + "_" + "labels"
-	counters[harvestName] = labels
-}
-
-func getAllExportedLabels(t *node.Node, counterContents []string) []string {
+	emsNames := make([]string, 0)
 	labels := make([]string, 0)
-	if exportOptions := t.GetChildS("export_options"); exportOptions != nil {
-		if iAllLabels := exportOptions.GetChildS("include_all_labels"); iAllLabels != nil {
-			if iAllLabels.GetContentS() == "true" {
-				for _, c := range counterContents {
-					if c == "" {
-						continue
-					}
-					if _, display, m, _ := util.ParseMetric(c); m == "key" || m == "label" {
-						labels = append(labels, display)
-					}
-				}
-				return labels
+	data, err := tree.ImportYaml(path)
+	if data == nil || err != nil {
+		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
+		return nil
+	}
+
+	for _, e := range data.GetChildS("events").GetChildren() {
+		emsNames = append(emsNames, e.GetChildContentS("name"))
+		labels = append(labels, parseEmsLabels(e.GetChildS("exports")))
+	}
+
+	for i := range emsNames {
+		emsLabels[emsNames[i]] = strings.Split(labels[i], ",")
+	}
+	return emsLabels
+}
+
+func parseEmsLabels(exports *node.Node) string {
+	var labels []string
+	if exports != nil {
+		for _, export := range exports.GetAllChildContentS() {
+			name, _, _, _ := util.ParseMetric(export)
+			if strings.HasPrefix(name, "parameters") {
+				labels = append(labels, strings.Split(name, ".")[1])
 			}
 		}
-
-		if iKeys := exportOptions.GetChildS("instance_keys"); iKeys != nil {
-			labels = append(labels, iKeys.GetAllChildContentS()...)
-		}
 	}
-	return labels
+	return strings.Join(labels, ",")
 }

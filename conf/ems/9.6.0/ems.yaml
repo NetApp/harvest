@@ -138,18 +138,21 @@ events:
 
   - name: Nblade.vscanVirusDetected
     exports:
-      - parameters.SID           => sid
-      - parameters.clientIp      => client_ip
-      - parameters.filePath      => file_path
-      - parameters.object_type   => object_type
-      - parameters.object_uuid   => object_uuid
-      - parameters.vscanServerIp => vscan_server_ip
-      - parameters.vserverName   => svm
+      - parameters.SID                     => sid
+      - parameters.clientIp                => client_ip
+      - parameters.filePath                => file_path
+      - parameters.object_type             => object_type
+      - parameters.object_uuid             => object_uuid
+      - parameters.vscanServerIp           => vscan_server_ip
+      - parameters.vserverName             => svm
+      - parameters.vscanEngineStatus       => vscanEngineStatus
+      - parameters.vscanEngineResultString => vscanEngineResultString
 
   - name: arl.netra.ca.check.failed
     exports:
       - parameters.aggr_uuid => aggr_uuid
       - parameters.vol       => volume
+      - parameters.reason    => reason
 
   - name: arw.volume.state
     matches:
@@ -269,6 +272,7 @@ events:
       - parameters.object_uuid           => object_uuid
       - parameters.operation             => operation
       - parameters.shareName             => share
+      - parameters.errMsg                => errMsg
 
   - name: cloud.aws.iamNotInitialized
     exports:
@@ -319,6 +323,7 @@ events:
     exports:
       - parameters.aggr_uuid => aggr_uuid
       - parameters.vol       => volume
+      - parameters.reason    => reason
 
   - name: hm.alert.raised
     matches:
@@ -335,6 +340,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -354,6 +360,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -373,6 +380,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -392,6 +400,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -411,6 +420,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -430,6 +440,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -449,6 +460,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -468,6 +480,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -487,6 +500,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -506,6 +520,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -525,6 +540,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -544,6 +560,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -563,6 +580,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -582,6 +600,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -601,6 +620,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -620,6 +640,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -639,6 +660,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -658,6 +680,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h

@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -19,6 +20,8 @@ const (
 	DefaultBatchSize    = "500"
 	MaxAllowedTimeDrift = 10 * time.Second
 )
+
+var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
 
 var validUnits = map[string]bool{
 	"mW":    true,
@@ -513,4 +516,32 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 		}
 	}
 	return nil
+}
+
+func FindStringBetweenTwoChar(stringValue string, startChar string, endChar string) []string {
+	var counters = make([]string, 0)
+	firstSet := strings.Split(stringValue, startChar)
+	for _, actualString := range firstSet {
+		counterArray := strings.Split(actualString, endChar)
+		switch {
+		case strings.Contains(actualString, ")"): // check for inner expression such as top:
+			counterArray = strings.Split(actualString, ")")
+		case strings.Contains(actualString, "+"): // check for inner expression such as top:
+			counterArray = strings.Split(actualString, "+")
+		case strings.Contains(actualString, "/"): // check for inner expression such as top:
+			counterArray = strings.Split(actualString, "/")
+		case strings.Contains(actualString, ","): // check for inner expression such as top:
+			counterArray = strings.Split(actualString, ",")
+		}
+		counter := strings.TrimSpace(counterArray[len(counterArray)-1])
+		counterArray = strings.Split(counter, endChar)
+		counter = strings.TrimSpace(counterArray[len(counterArray)-1])
+		if _, err := strconv.Atoi(counter); err == nil {
+			continue
+		}
+		if isStringAlphabetic(counter) && counter != "" {
+			counters = append(counters, counter)
+		}
+	}
+	return counters
 }
