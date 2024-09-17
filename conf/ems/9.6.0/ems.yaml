@@ -241,6 +241,7 @@ events:
       - parameters.volUuid     => volume_uuid
       - parameters.vserverName => svm
       - parameters.vserverUuid => svm_uuid
+      - parameters.subject     => subject
 
   - name: callhome.battery.low
     exports:
@@ -250,6 +251,9 @@ events:
         resolve_after: 672h
 
   - name: callhome.hainterconnect.down
+    exports:
+      - parameters.subject    => subject
+      - parameters.reason     => reason
 
   - name: callhome.sp.hbt.missed
 
@@ -278,9 +282,12 @@ events:
 
   - name: disk.outOfService
     exports:
-      - parameters.diskName     => disk
-      - parameters.powerOnHours => power_on_hours
-      - parameters.serialno     => serial_no
+      - parameters.diskName         => disk
+      - parameters.powerOnHours     => power_on_hours
+      - parameters.serialno         => serial_no
+      - parameters.reason           => reason
+      - parameters.glistEntries     => glistEntries
+      - parameters.disk_information => disk_information
 
   - name: diskShelf.psu.added
     exports:
@@ -712,6 +719,7 @@ events:
     exports:
       - ^^parameters.node_uuid => node_uuid
       - parameters.configname  => config
+      - parameters.reason      => reason
     resolve_when_ems:
       - name: object.store.available
         resolve_after: 672h
@@ -769,11 +777,17 @@ events:
     exports:
       - ^^parameters.prodChannel => prod_channel
       - parameters.fanNumber     => fan_number
+      - parameters.typeText      => typeText
+      - parameters.errorMsg      => errorMsg
+      - parameters.errorText     => errorText
+      - parameters.locationText  => locationText
     resolve_when_ems:
       - name: ses.status.fanInfo
         resolve_after: 672h
 
   - name: sk.panic
+    exports:
+      - parameters.reason      => reason
 
   - name: sm.mediator.added
     exports:
@@ -861,6 +875,7 @@ events:
       - ^^parameters.relationship_id => relationship_id
       - parameters.dstpath           => dst_path
       - parameters.srcpath           => src_path
+      - parameters.error_msg         => error_msg
     resolve_when_ems:
       - name: sms.status.in.sync
         resolve_after: 672h
@@ -870,6 +885,7 @@ events:
       - parameters.cg_relationship_id => cg_relationship_id
       - parameters.dstcgpath          => dst_cg_path
       - parameters.srccgpath          => src_cg_path
+      - parameters.error_msg          => error_msg
 
   - name: sp.ipmi.lost.shutdown
     exports:
