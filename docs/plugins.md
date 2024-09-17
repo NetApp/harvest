@@ -758,3 +758,33 @@ change_log{aggr="umeng_aff300_aggr2", cluster="umeng-aff300-01-02", datacenter="
 ## Viewing the Metrics
 
 You can view the metrics published by the ChangeLog plugin in the `ChangeLog Monitor` dashboard in `Grafana`. This dashboard provides a visual representation of the changes tracked by the plugin for volume, svm, and node objects.
+
+# VolumeTopClients
+
+The `VolumeTopClients` plugin is used to track a volume's top clients for volumes in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.12 and later.
+
+## Enabling the Plugin
+
+Top Clients collection is disabled by default. To enable Top Clients tracking in Harvest, follow these steps:
+
+1. Ensure you are using ONTAP version 9.12 or later.
+2. Enable the Top Clients collection in the RestPerf Collector Volume template via the `VolumeTopClients` plugin.
+
+For detailed steps on how to enable the plugin, refer to the [discussion here](https://github.com/NetApp/harvest/discussions/3130).
+
+## Configuration Parameters
+
+### `max_volumes`
+
+The `max_volumes` parameter specifies the maximum number of top volumes to track. By default, this value is set to 5, but it can be configured up to a maximum of 50.
+
+The plugin will select the top volumes based on the descending order of read IOPS, write IOPS, read throughput, and write throughput in each performance poll. This means that during each performance poll, the plugin will:
+
+1. Collect the read IOPS, write IOPS, read throughput, and write throughput for all volumes.
+2. Sort the volumes in descending order based on their metric values.
+3. Select the top volumes as specified by `max_volumes`.
+4. Collect top clients metrics for these volumes.
+
+## Viewing the Metrics
+
+You can view the metrics published by the `VolumeTopClients` plugin in the `Volume` dashboard under the `Top Clients` row in Grafana.

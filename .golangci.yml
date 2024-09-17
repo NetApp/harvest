@@ -33,6 +33,7 @@ linters:
     - prealloc
     - reassign
     - revive
+    - sloglint
     - staticcheck
     - stylecheck
     - tenv

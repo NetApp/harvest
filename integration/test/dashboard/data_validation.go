@@ -3,8 +3,8 @@ package dashboard
 import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"net/url"
 	"strings"
 )
@@ -36,6 +36,11 @@ func HasMinRecord(query string, limit int) bool {
 			return true
 		}
 	}
-	log.Info().Str("Query", query).Str("Query Url", queryURL).Str("Response", resp).Msg("failed query info")
+	slog.Info(
+		"failed query info",
+		slog.String("Query", query),
+		slog.String("Query Url", queryURL),
+		slog.String("Response", resp),
+	)
 	return false
 }

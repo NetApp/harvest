@@ -73,6 +73,48 @@ var (
 		"svm_nfs":  true,
 		"node_nfs": true,
 	}
+
+	knownDescriptionGaps = map[string]struct{}{
+		"ontaps3_object_count":                      {},
+		"security_certificate_expiry_time":          {},
+		"volume_capacity_tier_footprint":            {},
+		"volume_capacity_tier_footprint_percent":    {},
+		"volume_num_compress_attempts":              {},
+		"volume_num_compress_fail":                  {},
+		"volume_performance_tier_footprint":         {},
+		"volume_performance_tier_footprint_percent": {},
+	}
+
+	knownMappingGaps = map[string]struct{}{
+		"aggr_snapshot_inode_used_percent":                      {},
+		"aggr_space_reserved":                                   {},
+		"flexcache_blocks_requested_from_client":                {},
+		"flexcache_blocks_retrieved_from_origin":                {},
+		"flexcache_evict_rw_cache_skipped_reason_disconnected":  {},
+		"flexcache_evict_skipped_reason_config_noent":           {},
+		"flexcache_evict_skipped_reason_disconnected":           {},
+		"flexcache_evict_skipped_reason_offline":                {},
+		"flexcache_invalidate_skipped_reason_config_noent":      {},
+		"flexcache_invalidate_skipped_reason_disconnected":      {},
+		"flexcache_invalidate_skipped_reason_offline":           {},
+		"flexcache_miss_percent":                                {},
+		"flexcache_nix_retry_skipped_reason_initiator_retrieve": {},
+		"flexcache_nix_skipped_reason_config_noent":             {},
+		"flexcache_nix_skipped_reason_disconnected":             {},
+		"flexcache_nix_skipped_reason_in_progress":              {},
+		"flexcache_nix_skipped_reason_offline":                  {},
+		"flexcache_reconciled_data_entries":                     {},
+		"flexcache_reconciled_lock_entries":                     {},
+		"quota_disk_used_pct_threshold":                         {},
+		"rw_ctx_cifs_giveups":                                   {},
+		"rw_ctx_cifs_rewinds":                                   {},
+		"rw_ctx_nfs_giveups":                                    {},
+		"rw_ctx_nfs_rewinds":                                    {},
+		"rw_ctx_qos_flowcontrol":                                {},
+		"rw_ctx_qos_rewinds":                                    {},
+		"security_audit_destination_port":                       {},
+		"wafl_reads_from_pmem":                                  {},
+	}
 )
 
 type Counters struct {
@@ -688,7 +730,9 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 
 		if counter.Description == "" {
 			for _, def := range counter.APIs {
-				appendRow(table, "Description", counter, def)
+				if _, ok := knownDescriptionGaps[counter.Name]; !ok {
+					appendRow(table, "Description", counter, def)
+				}
 			}
 		}
 		values = append(values, counter)
@@ -713,7 +757,9 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 				// missing Rest Mapping
 				if isPrint {
 					for _, def := range counter.APIs {
-						appendRow(table, "REST", counter, def)
+						if _, ok := knownMappingGaps[counter.Name]; !ok {
+							appendRow(table, "REST", counter, def)
+						}
 					}
 				}
 			}
@@ -722,7 +768,9 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		for _, def := range counter.APIs {
 			if def.ONTAPCounter == "" {
 				for _, def := range counter.APIs {
-					appendRow(table, "Mapping", counter, def)
+					if _, ok := knownMappingGaps[counter.Name]; !ok {
+						appendRow(table, "Mapping", counter, def)
+					}
 				}
 			}
 		}
@@ -742,6 +790,10 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		panic(err)
 	}
 	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
+
+	if table.NumLines() > 0 {
+		log.Fatalf("Issues found: refer table above")
+	}
 }
 
 func appendRow(table *tw.Table, missing string, counter Counter, def MetricDef) {
