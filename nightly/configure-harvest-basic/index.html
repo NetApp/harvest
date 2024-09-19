@@ -927,6 +927,24 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#yaml-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      YAML format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plain-text-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plain text format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       Example
@@ -1965,6 +1983,24 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#yaml-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      YAML format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plain-text-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plain text format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       Example
@@ -2405,28 +2441,23 @@ See <a href="https://github.com/NetApp/harvest/discussions/884">#884</a> for exa
 <li>The first argument <code>$addr</code> is the address of the cluster taken from the <code>addr</code> field under the <code>Pollers</code> section of your <code>harvest.yml</code> file.</li>
 <li>The second argument <code>$username</code> is the username for the cluster taken from the <code>username</code> field under the <code>Pollers</code> section of your <code>harvest.yml</code> file. If your <code>harvest.yml</code> does not include a username, nothing will be passed.</li>
 </ul>
-<p>The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:</p>
-<ol>
-<li><strong>YAML format:</strong></li>
-<li>
+<p>The script should communicate the credentials to Harvest by writing the response to its standard output (stdout).
+Harvest supports two output formats from the script: YAML and plain text.</p>
+<h3 id="yaml-format">YAML format<a class="headerlink" href="#yaml-format" title="Permanent link">&para;</a></h3>
 <p>If the script outputs a YAML object with <code>username</code> and <code>password</code> keys, Harvest will use both the <code>username</code> and <code>password</code> from the output. For example, if the script writes the following, Harvest will use <code>myuser</code> and <code>mypassword</code> for the poller's credentials.
    <div class="highlight"><pre><span></span><code><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myuser</span>
 <span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypassword</span>
 </code></pre></div>
    If only the <code>password</code> is provided, Harvest will use the <code>username</code> from the <code>harvest.yml</code> file, if available. If your username or password contains spaces, <code>#</code>, or other characters with special meaning in YAML, make sure you quote the value like so:
    <code>password: "my password with spaces"</code></p>
-</li>
-<li>
 <p>If the script outputs a YAML object containing an <code>authToken</code>, Harvest will use this <code>authToken</code> when communicating with ONTAP or StorageGRID clusters. Harvest will include the <code>authToken</code> in the HTTP request's authorization header using the Bearer authentication scheme.
    <div class="highlight"><pre><span></span><code><span class="nt">authToken</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0.eyJleHAiOjE3MjE4Mj</span>
-</code></pre></div></p>
-</li>
-<li>
-<p><strong>Plain text format:</strong> If the script outputs plain text, Harvest will use the output as the password. The <code>username</code> will be taken from the <code>harvest.yml</code> file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the <code>harvest.yml</code> and <code>mypassword</code> for the poller's credentials.
+</code></pre></div>
+  When using <code>authToken</code>, the <code>username</code> and <code>password</code> fields are ignored if they are present in the script's output.</p>
+<h3 id="plain-text-format">Plain text format<a class="headerlink" href="#plain-text-format" title="Permanent link">&para;</a></h3>
+<p>If the script outputs plain text, Harvest will use the output as the password. The <code>username</code> will be taken from the <code>harvest.yml</code> file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the <code>harvest.yml</code> and <code>mypassword</code> for the poller's credentials.
    <div class="highlight"><pre><span></span><code>mypassword
 </code></pre></div></p>
-</li>
-</ol>
 <p>If the script doesn't finish within the specified <code>timeout</code>, Harvest will terminate the script and any spawned processes.</p>
 <p>Credential scripts are defined under the <code>credentials_script</code> section within <code>Pollers</code> in your <code>harvest.yml</code>. Below are the options for the <code>credentials_script</code> section:</p>
 <table>
@@ -2530,9 +2561,14 @@ cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
 </code></pre></div></p>
 <h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Make sure your script is executable </li>
+<li>Make sure your script is executable</li>
+<li>If running the poller from a container, ensure that you have mounted the script so that it is available inside the container and that you have updated the path in the <code>harvest.yml</code> file to reflect the path inside the container.</li>
+<li>If running the poller from a container, ensure that your <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">shebang</a> references an interpreter that exists inside the container. Harvest containers are built from <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a> images, so you may need to use <code>#!/busybox/sh</code>.</li>
 <li>Ensure the user/group that executes your poller also has read and execute permissions on the script. 
-  <code>su</code> as the user/group that runs Harvest and make sure you can execute the script too. </li>
+  One way to test this is to <code>su</code> to the user/group that runs Harvest
+  and ensure that the <code>su</code>-ed user/group can execute the script too.</li>
+<li>When your script outputs YAML, make sure it is valid YAML. You can use <a href="http://www.yamllint.com/">YAML Lint</a> to check your output.</li>
+<li>When your script outputs YAML and you want to include debug logging, make sure to redirect the debug output to <code>stderr</code> instead of <code>stdout</code>, or write the debug output as YAML comments prefixed with <code>#.</code></li>
 </ul>
 
 
