@@ -676,11 +676,11 @@ func init() {
 	fFlags := fullCmd.PersistentFlags()
 
 	flags := metricCmd.PersistentFlags()
-	flags.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
+	flags.StringVarP(&opts.Poller, "poller", "p", "dc1", "name of poller, e.g. 10.193.48.154")
 	_ = metricCmd.MarkPersistentFlagRequired("poller")
 
 	flag := descCmd.PersistentFlags()
-	flag.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
+	flag.StringVarP(&opts.Poller, "poller", "p", "dc1", "name of poller, e.g. 10.193.48.154")
 	_ = descCmd.MarkPersistentFlagRequired("poller")
 
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,

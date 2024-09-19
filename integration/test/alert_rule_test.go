@@ -1,7 +1,8 @@
-package collectors
+package main
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/cmd/tools/generate"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -29,6 +30,7 @@ var exceptionMetrics = []string{
 }
 
 func TestAlertRules(t *testing.T) {
+	utils.SkipIfMissing(t, utils.Regression)
 	metrics, _ := generate.GeneratedMetrics("../../", "harvest.yml", "dc1")
 	for pluginMetric, pluginLabels := range pluginGeneratedMetric {
 		metrics[pluginMetric] = generate.Counter{Name: pluginMetric, Labels: pluginLabels}
@@ -57,6 +59,7 @@ func TestAlertRules(t *testing.T) {
 }
 
 func TestEmsAlertRules(t *testing.T) {
+	utils.SkipIfMissing(t, utils.Regression)
 	templateEmsLabels := getEmsLabels("../../conf/ems/9.6.0/ems.yaml")
 	emsAlertRules := GetAllAlertRules("../../container/prometheus/", "ems_alert_rules.yml", true)
 	for _, alertRule := range emsAlertRules {
