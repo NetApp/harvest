@@ -31,7 +31,7 @@ var exceptionMetrics = []string{
 
 func TestAlertRules(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	metrics, _ := generate.GeneratedMetrics("../../", "harvest.yml", "dc1")
+	metrics, _ := generate.GeneratedMetrics("../..", "integration/test/harvest.yml", "dc1")
 	for pluginMetric, pluginLabels := range pluginGeneratedMetric {
 		metrics[pluginMetric] = generate.Counter{Name: pluginMetric, Labels: pluginLabels}
 	}
