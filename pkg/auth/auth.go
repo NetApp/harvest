@@ -166,8 +166,6 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 		c.logger.Error().Err(err).
 			Str("script", lookPath).
 			Str("timeout", duration.String()).
-			Str("stderr", stderr.String()).
-			Str("stdout", stdout.String()).
 			Str("kind", kind).
 			Msg("Failed to start script")
 		return response, fmt.Errorf("script start failed script=%s kind=%s err=%w", lookPath, kind, err)
@@ -177,8 +175,6 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 		c.logger.Error().Err(err).
 			Str("script", lookPath).
 			Str("timeout", duration.String()).
-			Str("stderr", stderr.String()).
-			Str("stdout", stdout.String()).
 			Str("kind", kind).
 			Msg("Failed to execute script")
 		return response, fmt.Errorf("script execute failed script=%s kind=%s err=%w", lookPath, kind, err)
@@ -190,8 +186,6 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 		c.logger.Debug().Err(err).
 			Str("script", lookPath).
 			Str("timeout", duration.String()).
-			Str("stderr", stderr.String()).
-			Str("stdout", stdout.String()).
 			Str("kind", kind).
 			Msg("Failed to parse YAML output. Treating as plain text.")
 	}
