@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"os"
 	"slices"
 	"testing"
@@ -56,7 +56,8 @@ func NewEms() *Ems {
 	ac := collector.New("Ems", "Ems", opts, emsParams(emsConfigPath), nil)
 	e := &Ems{}
 	if err := e.Init(ac); err != nil {
-		log.Fatal().Err(err).Send()
+		slog.Error("", slog.Any("err", err))
+		os.Exit(1)
 	}
 	// Changed the resolve_after for 2 issuing ems for auto resolve testing
 	e.resolveAfter["LUN.offline"] = 1 * time.Second

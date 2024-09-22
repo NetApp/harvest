@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 )
 
 type Bucket struct {
@@ -28,7 +29,7 @@ func (b *Bucket) Init() error {
 
 	clientTimeout := b.ParentParams.GetChildContentS("client_timeout")
 	if b.client, err = rest.NewClient(b.Options.Poller, clientTimeout, b.Auth); err != nil {
-		b.Logger.Error().Err(err).Msg("connecting")
+		b.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -68,16 +69,17 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		err := b.client.Fetch(href, &records)
 		tenantName := inst.GetLabel("tenant")
 		if err != nil {
-			b.Logger.Error().Err(err).
-				Str("id", instKey).
-				Str("tenantName", tenantName).
-				Msg("Unable to fetch bucket details")
+			b.SLogger.Error("Unable to fetch bucket details",
+				slog.Any("err", err),
+				slog.String("id", instKey),
+				slog.String("tenantName", tenantName),
+			)
 			continue
 		}
 
 		for _, record := range records {
 			if !record.IsObject() {
-				b.Logger.Warn().Str("type", record.Type.String()).Msg("Bucket is not object, skipping")
+				b.SLogger.Warn("Bucket is not object, skipping", slog.String("type", record.Type.String()))
 				continue
 			}
 
@@ -89,10 +91,13 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 				instanceKey = instKey + "#" + bucket
 				bucketInstance, err2 := b.data.NewInstance(instanceKey)
 				if err2 != nil {
-					b.Logger.Error().Err(err).Str("instanceKey", instanceKey).Msg("Failed to add instance")
+					b.SLogger.Error("Failed to add instance",
+						slog.Any("err", err2),
+						slog.String("instanceKey", instanceKey),
+					)
 					break
 				}
-				b.Logger.Debug().Str("instanceKey", instanceKey).Msg("add instance")
+				b.SLogger.Debug("add instance", slog.String("instanceKey", instanceKey))
 				bucketInstance.SetLabel("bucket", bucket)
 				bucketInstance.SetLabel("tenant", tenantName)
 				bucketInstance.SetLabel("region", region)
@@ -100,16 +105,19 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 					jsonKey := metricToJSON[metricKey]
 					if value := bucketJSON.Get(jsonKey); value.Exists() {
 						if err = m.SetValueString(bucketInstance, value.String()); err != nil {
-							b.Logger.Error().Err(err).
-								Str("key", metricKey).
-								Str("metric", m.GetName()).
-								Str("value", value.String()).
-								Msg("Unable to set float key on metric")
+							b.SLogger.Error(
+								"Unable to set float key on metric",
+								slog.Any("err", err),
+								slog.String("key", metricKey),
+								slog.String("metric", m.GetName()),
+								slog.String("value", value.String()),
+							)
 						} else {
-							b.Logger.Debug().
-								Str("metricKey", metricKey).
-								Str("value", value.String()).
-								Msg("added")
+							b.SLogger.Debug(
+								"added",
+								slog.String("metricKey", metricKey),
+								slog.String("value", value.String()),
+							)
 						}
 					}
 				}

@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"strconv"
 	"time"
 )
@@ -63,7 +64,7 @@ func (v *Volume) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
-		v.Logger.Error().Err(err).Msg("connecting")
+		v.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -78,7 +79,7 @@ func (v *Volume) Init() error {
 	v.arw.SetExportOptions(exportOptions)
 	_, err = v.arw.NewMetricFloat64("status", "status")
 	if err != nil {
-		v.Logger.Error().Err(err).Msg("add metric")
+		v.SLogger.Error("add metric", slog.Any("err", err))
 		return err
 	}
 
@@ -102,9 +103,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		// invoke disk rest and populate info in aggrsMap
 		if disks, err := v.getEncryptedDisks(); err != nil {
 			if errs.IsRestErr(err, errs.APINotFound) {
-				v.Logger.Debug().Err(err).Msg("Failed to collect disk data")
+				v.SLogger.Debug("Failed to collect disk data", slog.Any("err", err))
 			} else {
-				v.Logger.Error().Err(err).Msg("Failed to collect disk data")
+				v.SLogger.Error("Failed to collect disk data", slog.Any("err", err))
 			}
 		} else {
 			// update aggrsMap based on disk data
@@ -114,7 +115,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	volumeMap, err := v.getVolumeInfo()
 	if err != nil {
-		v.Logger.Error().Err(err).Msg("Failed to collect volume info data")
+		v.SLogger.Error("Failed to collect volume info data", slog.Any("err", err))
 	}
 
 	// update volume instance labels
@@ -132,7 +133,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
 	if cloneSplitEstimateMetric == nil {
 		if cloneSplitEstimateMetric, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
-			v.Logger.Error().Err(err).Msg("error while creating clone split estimate metric")
+			v.SLogger.Error("error while creating clone split estimate metric", slog.Any("err", err))
 			return
 		}
 	}
@@ -157,7 +158,11 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			if volume.GetLabel("is_flexclone") == "true" {
 				volume.SetLabel("clone_parent_snapshot", vInfo.cloneSnapshotName)
 				if err = cloneSplitEstimateMetric.SetValueFloat64(volume, vInfo.cloneSplitEstimateMetric); err != nil {
-					v.Logger.Error().Err(err).Str("metric", "cloneSplitEstimateMetric").Msg("Unable to set value on metric")
+					v.SLogger.Error(
+						"error while setting value on metric",
+						slog.Any("err", err),
+						slog.String("metric", "clone_split_estimate"),
+					)
 				}
 			}
 		} else {
@@ -208,7 +213,11 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 			}
 			// If ARW startTime is more than 30 days old, which indicates that learning mode has been finished.
 			if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
-				v.Logger.Error().Err(err).Msg("Failed to parse arw start time")
+				v.SLogger.Error(
+					"Failed to parse arw start time",
+					slog.Any("err", err),
+					slog.String("arwStartTime", arwStartTime),
+				)
 				arwStartTimeValue = time.Now()
 			}
 			if time.Since(arwStartTimeValue).Hours() > HoursInMonth {
@@ -221,7 +230,11 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 
 	arwInstanceKey := data.GetGlobalLabels()["cluster"] + data.GetGlobalLabels()["datacenter"]
 	if arwInstance, err = v.arw.NewInstance(arwInstanceKey); err != nil {
-		v.Logger.Error().Err(err).Str("arwInstanceKey", arwInstanceKey).Msg("Failed to create arw instance")
+		v.SLogger.Error(
+			"Failed to create arw instance",
+			slog.Any("err", err),
+			slog.String("arwInstanceKey", arwInstanceKey),
+		)
 		return
 	}
 
@@ -230,9 +243,9 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	// populate numeric data
 	value := 1.0
 	if err = m.SetValueFloat64(arwInstance, value); err != nil {
-		v.Logger.Error().Err(err).Float64("value", value).Msg("Failed to parse value")
+		v.SLogger.Error("Failed to parse value", slog.Any("err", err), slog.Float64("value", value))
 	} else {
-		v.Logger.Debug().Float64("value", value).Msg("added value")
+		v.SLogger.Debug("added value", slog.Float64("value", value))
 	}
 }
 
@@ -249,7 +262,7 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 		Filter([]string{"protection_mode=!data|full"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(v.client, href, v.SLogger); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -285,7 +298,7 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 		Filter([]string{field}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(v.client, href, v.SLogger); err != nil {
 		return nil, err
 	}
 

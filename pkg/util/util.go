@@ -8,10 +8,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/third_party/go-version"
-	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v4/process"
 	"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
+	"log/slog"
+	"maps"
 	"math"
 	"net"
 	"net/http"
@@ -38,11 +39,7 @@ var IsCollector = map[string]struct{}{
 }
 
 func GetCollectorSlice() []string {
-	keys := make([]string, 0, len(IsCollector))
-	for k := range IsCollector {
-		keys = append(keys, k)
-	}
-	return keys
+	return slices.Collect(maps.Keys(IsCollector))
 }
 
 func MinLen(elements [][]string) int {
@@ -146,19 +143,22 @@ func FindLocalIP() (string, error) {
 	return localAddr.IP.String(), nil
 }
 
-func CheckCert(certPath string, name string, configPath string, logger zerolog.Logger) {
+func CheckCert(certPath string, name string, configPath string, logger *slog.Logger) {
 	if certPath == "" {
-		logger.Fatal().
-			Str("config", configPath).
-			Str(name, certPath).
-			Msg("TLS is enabled but cert path is empty.")
+		logger.Error("TLS is enabled but cert path is empty",
+			slog.String("config", configPath),
+			slog.String(name, certPath),
+		)
+		os.Exit(1)
 	}
 	absPath := certPath
 	if _, err := os.Stat(absPath); err != nil {
-		logger.Fatal().
-			Str("config", configPath).
-			Str(name, absPath).
-			Msg("TLS is enabled but cert path is invalid.")
+		logger.Error("TLS is enabled but cert path is invalid",
+			slog.Any("err", err),
+			slog.String("config", configPath),
+			slog.String(name, certPath),
+		)
+		os.Exit(1)
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"strconv"
 	"strings"
 )
@@ -37,7 +38,7 @@ func (a *MetricAgent) Init() error {
 	if count = a.parseRules(); count == 0 {
 		err = errs.New(errs.ErrMissingParam, "valid rules")
 	} else {
-		a.Logger.Debug().Int("count", count).Int("actions", len(a.actions)).Msg("parsed rules")
+		a.SLogger.Debug("parsed rules", slog.Int("count", count), slog.Int("actions", len(a.actions)))
 	}
 
 	return err
@@ -68,7 +69,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 	for _, r := range a.computeMetricRules {
 		if metric = a.getMetric(m, r.metric); metric == nil {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
-				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("Failed to create metric")
+				a.SLogger.Error("Failed to create metric", slog.Any("err", err), slog.String("metric", r.metric))
 				return err
 			}
 			metric.SetProperty("compute_metric mapping")
@@ -85,7 +86,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					continue
 				}
 			} else {
-				a.Logger.Warn().Err(err).Str("metricName", r.metricNames[0]).Msg("computeMetrics: metric not found")
+				a.SLogger.Warn("computeMetrics: metric not found", slog.Any("err", err), slog.String("metricName", r.metricNames[0]))
 			}
 
 			// Parse other operands and process them
@@ -125,7 +126,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 						result = 0
 					}
 				default:
-					a.Logger.Warn().Str("operation", r.operation).Msg("Unknown operation")
+					a.SLogger.Warn("Unknown operation", slog.String("operation", r.operation))
 				}
 			}
 
@@ -133,7 +134,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 		}
 	}
 	if len(metricNotFound) > 0 {
-		a.Logger.Warn().Errs("computeMetrics: errors for metric not found", metricNotFound).Send()
+		a.SLogger.Warn("", slog.Any("computeMetrics: errors for metric not found", metricNotFound))
 	}
 	return nil
 }

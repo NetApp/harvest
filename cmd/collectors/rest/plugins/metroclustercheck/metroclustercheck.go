@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 )
 
 type MetroclusterCheck struct {
@@ -94,7 +95,7 @@ func (m *MetroclusterCheck) update(objectInfo string, object string) {
 			}
 
 			if newDetailInstance, err = m.data.NewInstance(key); err != nil {
-				m.Logger.Error().Err(err).Str("arwInstanceKey", key).Msg("Failed to create arw instance")
+				m.SLogger.Error("Failed to create instance", slog.Any("err", err), slog.String("key", key))
 				continue
 			}
 			newDetailInstance.SetLabel("name", name)
@@ -119,7 +120,7 @@ func (m *MetroclusterCheck) update(objectInfo string, object string) {
 
 func (m *MetroclusterCheck) createMetric(metricName string) error {
 	if _, err := m.data.NewMetricFloat64(metricName, metricName); err != nil {
-		m.Logger.Error().Err(err).Msg("add metric")
+		m.SLogger.Error("Failed to create metric", slog.Any("err", err), slog.String("metric", metricName))
 		return err
 	}
 	return nil
@@ -133,8 +134,8 @@ func (m *MetroclusterCheck) setValue(metricName string, newDetailInstance *matri
 
 	met := m.data.GetMetric(metricName)
 	if err := met.SetValueFloat64(newDetailInstance, value); err != nil {
-		m.Logger.Error().Err(err).Float64("value", value).Msg("Failed to parse value")
+		m.SLogger.Error("Failed to parse value", slog.Any("err", err), slog.Float64("value", value))
 	} else {
-		m.Logger.Debug().Float64("value", value).Msg("added value")
+		m.SLogger.Debug("added value", slog.Float64("value", value))
 	}
 }

@@ -15,7 +15,6 @@ package options
 import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
-	"github.com/rs/zerolog"
 	"os"
 	"path/filepath"
 )
@@ -62,18 +61,6 @@ func WithConfigPath(path string) Option {
 	return func(o *Options) {
 		o.Config = path
 	}
-}
-
-func (o *Options) MarshalZerologObject(e *zerolog.Event) {
-	e.Str("config", o.Config)
-	e.Str("confPath", o.ConfPath)
-	e.Bool("daemon", o.Daemon)
-	e.Int("profiling", o.Profiling)
-	e.Int("promPort", o.PromPort)
-	e.Str("homePath", o.HomePath)
-	e.Str("logPath", o.LogPath)
-	e.Str("hostname", o.Hostname)
-	e.Bool("asup", o.Asup)
 }
 
 func (o *Options) SetDefaults() *Options {

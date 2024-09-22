@@ -25,6 +25,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
@@ -62,6 +63,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io"
+	"log/slog"
 	"math"
 	"net/http"
 	_ "net/http/pprof" // #nosec since pprof is off by default
@@ -95,8 +97,8 @@ const (
 	NoUpgrade = "HARVEST_NO_COLLECTOR_UPGRADE"
 )
 
-// init with default configuration that logs to both console and harvest.log
-var logger = logging.Get()
+// init with default configuration that logs to the console and harvest.log
+var logger = slog.Default()
 
 // SIGNALS to catch
 var SIGNALS = []os.Signal{
@@ -148,7 +150,7 @@ func (p *Poller) Init() error {
 	p.options = opts.SetDefaults()
 	p.name = opts.Poller
 
-	zeroLogLevel := logging.GetZerologLevel(p.options.LogLevel)
+	logLevel := logging.GetLogLevel(p.options.LogLevel)
 	// if we are a daemon, use file logging
 	if p.options.Daemon {
 		fileLoggingEnabled = true
@@ -164,20 +166,22 @@ func (p *Poller) Init() error {
 	if err != nil {
 		// separate logger is not yet configured as it depends on setting logMaxMegaBytes, logMaxFiles later
 		// Using default instance of logger which logs below error to harvest.log
-		logging.Get().SubLogger("Poller", p.name).Error().
-			Str("config", p.options.Config).
-			Str("configPath", configPath).
-			Err(err).
-			Msg("Unable to read config")
+		slog.Default().With(slog.String("Poller", p.name)).Error(
+			"Unable to read config",
+			slog.Any("err", err),
+			slog.String("config", p.options.Config),
+			slog.String("configPath", configPath),
+		)
 		return err
 	}
 	p.params, err = conf.PollerNamed(p.name)
 	if err != nil {
-		logging.Get().SubLogger("Poller", p.name).Error().
-			Str("config", p.options.Config).
-			Str("configPath", configPath).
-			Err(err).
-			Msg("Failed to find poller")
+		slog.Default().With(slog.String("Poller", p.name)).Error(
+			"Failed to find poller",
+			slog.Any("err", err),
+			slog.String("config", p.options.Config),
+			slog.String("configPath", configPath),
+		)
 		return err
 	}
 
@@ -194,16 +198,18 @@ func (p *Poller) Init() error {
 		logMaxBackups = p.params.LogMaxFiles
 	}
 
-	logConfig := logging.LogConfig{ConsoleLoggingEnabled: consoleLoggingEnabled,
-		PrefixKey:          "Poller",
-		PrefixValue:        p.name,
-		LogLevel:           zeroLogLevel,
-		FileLoggingEnabled: fileLoggingEnabled,
-		Directory:          p.options.LogPath,
-		Filename:           logFileName,
-		MaxSize:            logMaxMegaBytes,
-		MaxBackups:         logMaxBackups,
-		MaxAge:             logMaxAge}
+	logConfig := logging.LogConfig{
+		ConsoleLoggingEnabled: consoleLoggingEnabled,
+		PrefixKey:             "Poller",
+		PrefixValue:           p.name,
+		LogLevel:              logLevel,
+		FileLoggingEnabled:    fileLoggingEnabled,
+		Directory:             p.options.LogPath,
+		Filename:              logFileName,
+		MaxSize:               logMaxMegaBytes,
+		MaxBackups:            logMaxBackups,
+		MaxAge:                logMaxAge,
+	}
 
 	logger = logging.Configure(logConfig)
 
@@ -212,7 +218,7 @@ func (p *Poller) Init() error {
 	// cmd/exporters/prometheus/httpd.go
 	if p.options.Profiling > 0 {
 		addr := fmt.Sprintf("localhost:%d", p.options.Profiling)
-		logger.Info().Msgf("profiling enabled on [%s]", addr)
+		slog.Info("profiling enabled", slog.String("addr", addr))
 		go func() {
 			fmt.Println(http.ListenAndServe(addr, nil)) //nolint:gosec
 		}()
@@ -220,40 +226,48 @@ func (p *Poller) Init() error {
 
 	getwd, err := os.Getwd()
 	if err != nil {
-		logger.Error().Err(err).Msg("Unable to get current working directory")
+		slog.Error("Unable to get current working directory", slog.Any("err", err))
 		getwd = ""
 	}
-	logger.Info().
-		Str("logLevel", zeroLogLevel.String()).
-		Str("configPath", configPath).
-		Str("cwd", getwd).
-		Str("version", strings.TrimSpace(version.String())).
-		EmbedObject(p.options).
-		Msg("Init")
+	slog.Info("Init",
+		slog.String("logLevel", logLevel.String()),
+		slog.String("configPath", configPath),
+		slog.String("cwd", getwd),
+		slog.String("version", strings.TrimSpace(version.String())),
+		slog.Any("options", p.options),
+	)
 
 	// set signal handler for graceful termination
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, SIGNALS...)
 	go p.handleSignals(signalChannel)
-	logger.Debug().Msgf("set signal handler for %v", SIGNALS)
 
 	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
-		util.CheckCert(conf.Config.Admin.Httpsd.TLS.CertFile, "ssl_cert", p.options.Config, *logger.Logger)
+		util.CheckCert(conf.Config.Admin.Httpsd.TLS.CertFile, "ssl_cert", p.options.Config, slog.Default())
 		cert, err := os.ReadFile(conf.Config.Admin.Httpsd.TLS.CertFile)
 		if err != nil {
-			logger.Fatal().Str("certFile", conf.Config.Admin.Httpsd.TLS.CertFile).Msg("Unable to read cert file")
+			slog.Error(
+				"Unable to read cert file",
+				slog.Any("err", err),
+				slog.String("certFile", conf.Config.Admin.Httpsd.TLS.CertFile),
+			)
+			os.Exit(1)
 		}
 		certPool := x509.NewCertPool()
 		if ok := certPool.AppendCertsFromPEM(cert); !ok {
-			logger.Fatal().Str("certFile", conf.Config.Admin.Httpsd.TLS.CertFile).Msg("Unable to parse cert")
+			slog.Error(
+				"Unable to parse cert file",
+				slog.String("certFile", conf.Config.Admin.Httpsd.TLS.CertFile),
+			)
+			os.Exit(1)
 		}
 		p.certPool = certPool
 	}
 	// announce startup
 	if p.options.Daemon {
-		logger.Info().Int("pid", os.Getpid()).Msg("started as daemon")
+		slog.Info("started as daemon", slog.Int("pid", os.Getpid()))
 	} else {
-		logger.Info().Int("pid", os.Getpid()).Msg("started in foreground")
+		slog.Info("started in foreground", slog.Int("pid", os.Getpid()))
 	}
 
 	// each poller is associated with a remote host
@@ -284,7 +298,7 @@ func (p *Poller) Init() error {
 		}
 	}
 	if len(filteredCollectors) == 0 {
-		logger.Warn().Msg("no collectors defined for this poller in config or CLI")
+		slog.Warn("no collectors defined for this poller in config or CLI")
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
 
@@ -292,13 +306,19 @@ func (p *Poller) Init() error {
 	for _, c := range filteredCollectors {
 		_, ok := util.IsCollector[c.Name]
 		if !ok {
-			logger.Error().Str("Detected invalid collector", c.Name).Msgf("Valid collectors are: %v", util.GetCollectorSlice())
+			valid := strings.Join(util.GetCollectorSlice(), ", ")
+			slog.Error("Valid collectors are: "+valid, slog.String("Detected invalid collector", c.Name))
 			continue
 		}
 		objects, err := p.readObjects(c)
 		if err != nil {
-			logger.Error().Err(err).
-				Str("collector", c.Name).Strs("templates", *c.Templates).Msg("Failed to read objects")
+			slog.Error(
+				"Failed to read objects",
+				slog.Any("err", err),
+				slog.String("collector", c.Name),
+				slog.String("templates", strings.Join(*c.Templates, ",")),
+				slog.String("error", err.Error()),
+			)
 			continue
 		}
 		for _, oc := range objects {
@@ -312,23 +332,23 @@ func (p *Poller) Init() error {
 	// start the uniqueified collectors
 	err = p.loadCollectorObject(uniqueOCs)
 	if err != nil {
-		logger.Error().Err(err).Msg("Failed to load collector")
+		logger.Error("Failed to load collector", slog.Any("err", err))
 	}
 
 	// at least one collector should successfully initialize
 	if len(p.collectors) == 0 {
-		logger.Warn().Msg("no collectors initialized, stopping")
+		logger.Warn("no collectors initialized, stopping")
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
 
-	logger.Debug().Msgf("initialized %d collectors", len(p.collectors))
+	logger.Debug("collectors initialized", slog.Int("count", len(p.collectors)))
 
 	// we are more tolerable against exporters, since we might only
 	// want to debug collectors without actually exporting
 	if len(p.exporters) == 0 {
-		logger.Warn().Msg("no exporters initialized, continuing without exporters")
+		logger.Warn("no exporters initialized, continuing without exporters")
 	} else {
-		logger.Debug().Msgf("initialized %d exporters", len(p.exporters))
+		logger.Debug("exporters initialized", slog.Int("count", len(p.exporters)))
 	}
 
 	// initialize a schedule for the poller, this is the interval at which
@@ -339,7 +359,7 @@ func (p *Poller) Init() error {
 	}
 	p.schedule = schedule.New()
 	if err = p.schedule.NewTaskString("poller", pollerSchedule, 0, nil, true, "poller_"+p.name); err != nil {
-		logger.Error().Err(err).Msg("set schedule:")
+		logger.Error("set schedule:", slog.Any("err", err))
 		return err
 	}
 
@@ -347,19 +367,20 @@ func (p *Poller) Init() error {
 		pollerLogSchedule = p.params.PollerLogSchedule
 	}
 	if err = p.schedule.NewTaskString("log", pollerLogSchedule, 0, p.logPollerMetadata, true, "poller_log_"+p.name); err != nil {
-		logger.Error().Err(err).Msg("set schedule:")
+		logger.Error("set log schedule:", slog.Any("err", err))
 		return err
 	}
 
-	logger.Debug().
-		Str("pollerSchedule", pollerSchedule).
-		Str("pollerLogSchedule", pollerLogSchedule).
-		Msg("set poller schedule")
+	logger.Debug(
+		"set poller schedule",
+		slog.String("pollerSchedule", pollerSchedule),
+		slog.String("pollerLogSchedule", pollerLogSchedule),
+	)
 
 	// Check if autosupport is enabled
 	tools := conf.Config.Tools
 	if tools != nil && tools.AsupDisabled {
-		logger.Info().Msgf("Autosupport is disabled")
+		logger.Info("Autosupport is disabled")
 	} else {
 		if p.targetIsOntap() {
 			// Write the payload after asupFirstWrite.
@@ -367,9 +388,11 @@ func (p *Poller) Init() error {
 			// Nothing is sent, sending happens based on the asupSchedule
 			duration, err := time.ParseDuration(asupFirstWrite)
 			if err != nil {
-				logger.Error().Err(err).
-					Str("asupFirstWrite", asupFirstWrite).
-					Msg("Failed to write 1st autosupport payload.")
+				logger.Error(
+					"Failed to write first autosupport payload.",
+					slog.Any("err", err),
+					slog.String("asupFirstWrite", asupFirstWrite),
+				)
 			} else {
 				time.AfterFunc(duration, func() {
 					p.firstAutoSupport()
@@ -378,18 +401,17 @@ func (p *Poller) Init() error {
 			if err := p.schedule.NewTaskString("asup", asupSchedule, 0, p.startAsup, p.options.Asup, "asup_"+p.name); err != nil {
 				return err
 			}
-			logger.Info().
-				Str("asupSchedule", asupSchedule).
-				Msg("Autosupport scheduled.")
+			logger.Info("Autosupport scheduled", slog.String("asupSchedule", asupSchedule))
 		} else {
-			logger.Info().
-				Str("poller", p.name).
-				Msg("Autosupport disabled since poller not connected to ONTAP.")
+			logger.Info(
+				`Autosupport disabled since poller not connected to ONTAP.`,
+				slog.String("poller", p.name),
+			)
 		}
 	}
 
 	// famous last words
-	logger.Info().Msg("poller start-up complete")
+	logger.Info("poller start-up complete")
 
 	return nil
 
@@ -453,18 +475,22 @@ func (p *Poller) firstAutoSupport() {
 		return
 	}
 	if _, err := collector.BuildAndWriteAutoSupport(p.collectors, p.metadataTarget, p.name, p.maxRssBytes); err != nil {
-		logger.Error().Err(err).
-			Str("poller", p.name).
-			Msg("First autosupport failed.")
+		slog.Error(
+			"First autosupport failed",
+			slog.Any("err", err),
+			slog.String("poller", p.name),
+		)
 	}
 }
 
 func (p *Poller) startAsup() (map[string]*matrix.Matrix, error) {
 	if p.collectors != nil {
 		if err := collector.SendAutosupport(p.collectors, p.metadataTarget, p.name, p.maxRssBytes); err != nil {
-			logger.Error().Err(err).
-				Str("poller", p.name).
-				Msg("Start autosupport failed.")
+			slog.Error(
+				"Start autosupport failed.",
+				slog.Any("err", err),
+				slog.String("poller", p.name),
+			)
 			return nil, err
 		}
 	}
@@ -495,7 +521,7 @@ func (p *Poller) Start() {
 	wg.Wait()
 
 	// ...until there are no collectors running anymore
-	logger.Info().Msg("no active collectors -- terminating")
+	logger.Info("no active collectors -- terminating")
 
 	p.Stop()
 }
@@ -564,7 +590,13 @@ func (p *Poller) Run() {
 			// update status of exporters
 			for _, ee := range p.exporters {
 				code, status, msg := ee.GetStatus()
-				logger.Debug().Msgf("exporter (%s) status: (%d - %s) %s", ee.GetName(), code, status, msg)
+				logger.Debug(
+					"exporter status",
+					slog.String("name", ee.GetName()),
+					slog.Int("code", int(code)),
+					slog.String("status", status),
+					slog.String("msg", msg),
+				)
 
 				if code == 0 {
 					upe++
@@ -585,19 +617,25 @@ func (p *Poller) Run() {
 			// @TODO if there are no "master" exporters, don't collect metadata
 			for _, ee := range p.exporters {
 				if _, err := ee.Export(p.metadata); err != nil {
-					logger.Error().Err(err).Msg("export component metadata:")
+					logger.Error("export component metadata", slog.Any("err", err))
 				}
 				if _, err := ee.Export(p.metadataTarget); err != nil {
-					logger.Error().Err(err).Msg("export target metadata:")
+					logger.Error("export target metadata", slog.Any("err", err))
 				}
 				if _, err := ee.Export(p.status); err != nil {
-					logger.Error().Err(err).Msg("export poller status:")
+					logger.Error("export poller status", slog.Any("err", err))
 				}
 			}
 
 			// only log when there are changes, which we expect to be infrequent
 			if upc != upCollectors || upe != upExporters {
-				logger.Info().Msgf("updated status, up collectors: %d (of %d), up exporters: %d (of %d)", upc, len(p.collectors), upe, len(p.exporters))
+				logger.Info(
+					"updated status",
+					slog.Int("upCollectors", upc),
+					slog.Int("collectorsTotal", len(p.collectors)),
+					slog.Int("upExporters", upe),
+					slog.Int("exportersTotal", len(p.exporters)),
+				)
 			}
 			upCollectors = upc
 			upExporters = upe
@@ -618,14 +656,14 @@ func (p *Poller) Run() {
 
 // Stop gracefully exits the program by closing zeroLog
 func (p *Poller) Stop() {
-	logger.Info().Msgf("cleaning up and stopping [pid=%d]", os.Getpid())
+	logger.Info("stopping poller", slog.Int("pid", os.Getpid()))
 }
 
 // set up signal disposition
 func (p *Poller) handleSignals(signalChannel chan os.Signal) {
 	for {
 		sig := <-signalChannel
-		logger.Info().Msgf("caught signal [%s]", sig)
+		slog.Info("caught signal", slog.String("signal", sig.String()))
 		p.Stop()
 		os.Exit(0)
 	}
@@ -669,9 +707,16 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 	// throw warning for deprecated collectors
 	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
 		if r != "" {
-			logger.Warn().Msgf("collector (%s) is deprecated, please use (%s) instead", class, r)
+			logger.Warn(
+				"collector is deprecated, please use replacement",
+				slog.String("collector", class),
+				slog.String("replacement", r),
+			)
 		} else {
-			logger.Warn().Msgf("collector (%s) is deprecated, see documentation for help", class)
+			logger.Warn(
+				"collector is deprecated, see documentation for help",
+				slog.String("collector", class),
+			)
 		}
 	}
 
@@ -680,23 +725,27 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 	if c.Templates != nil {
 		for _, t := range *c.Templates {
 			if subTemplate, err = collector.ImportTemplate(p.options.ConfPaths, t, class); err != nil {
-				logEvent := logger.Warn() //nolint:zerologlint
+				level := slog.LevelWarn
+				// When the template is custom.yaml, log at debug level to reduce noise, since that template
+				// won't exist for most people
 				if t == "custom.yaml" {
-					// make this less noisy since it won't exist for most people
-					logEvent = logger.Debug() //nolint:zerologlint
+					level = slog.LevelDebug
 				}
-				logEvent.
-					Str("err", err.Error()).
-					Strs("confPaths", p.options.ConfPaths).
-					Str("template", t).
-					Str("collector", class).
-					Msg("Unable to load template.")
+				logger.LogAttrs(
+					context.Background(),
+					level,
+					"Unable to load template",
+					slog.Any("err", err),
+					slog.String("template", t),
+					slog.String("collector", class),
+					slog.Any("confPaths", p.options.ConfPaths),
+				)
 				continue
 			}
 			if template == nil {
 				template = subTemplate
 			} else {
-				logger.Debug().Str("template", t).Msg("Merged template.")
+				logger.Debug("Merging template", slog.String("template", t))
 				if c.Name == "Zapi" || c.Name == "ZapiPerf" {
 					// Do not overwrite child of objects. They will be concatenated
 					template.Merge(subTemplate, []string{"objects"})
@@ -747,31 +796,36 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 
 	var collectors []collector.Collector
 
-	logger.Debug().Int("collectors", len(ocs)).Msg("Starting collectors")
+	logger.Debug("Starting collectors", slog.Int("collectors", len(ocs)))
 
 	for _, oc := range ocs {
 		col, err := p.newCollector(oc.class, oc.object, oc.template)
 		if err != nil {
 			switch {
 			case errors.Is(err, errs.ErrConnection):
-				logger.Warn().Err(err).
-					Str("collector", oc.class).
-					Str("object", oc.object).
-					Msg("abort collector")
+				logger.Warn(
+					"abort collector",
+					slog.Any("err", err),
+					slog.String("collector", oc.class),
+					slog.String("object", oc.object),
+				)
 			case errors.Is(err, errs.ErrWrongTemplate):
-				logger.Debug().Err(err).Msg("Zapi Status_7mode failed to load")
+				logger.Debug("Zapi Status_7mode failed to load", slog.Any("err", err))
 			default:
-				logger.Warn().Err(err).
-					Str("collector", oc.class).
-					Str("object", oc.object).
-					Msg("init collector-object")
+				logger.Warn(
+					"init collector-object",
+					slog.Any("err", err),
+					slog.String("collector", oc.class),
+					slog.String("object", oc.object),
+				)
 			}
 		} else {
 			collectors = append(collectors, col)
-			logger.Debug().
-				Str("collector", oc.class).
-				Str("object", oc.object).
-				Msg("initialized collector-object")
+			logger.Debug(
+				"initialized collector-object",
+				slog.String("collector", oc.class),
+				slog.String("object", oc.object),
+			)
 		}
 	}
 
@@ -779,7 +833,7 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	// link each collector with requested exporter & update metadata
 	for _, col := range collectors {
 		if col == nil {
-			logger.Warn().Msg("ignoring nil collector")
+			logger.Warn("ignoring nil collector")
 			continue
 		}
 		name := col.GetName()
@@ -789,11 +843,12 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 			if exp := p.loadExporter(expName); exp != nil {
 				col.LinkExporter(exp)
 			} else {
-				logger.Warn().
-					Str("exporterName", expName).
-					Str("name", name).
-					Str("object", obj).
-					Msg("exporter requested by not available")
+				logger.Warn(
+					"exporter requested not available",
+					slog.String("exporterName", expName),
+					slog.String("name", name),
+					slog.String("object", obj),
+				)
 			}
 		}
 
@@ -943,12 +998,12 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 
 	params, ok := p.exporterParams[name]
 	if !ok {
-		logger.Warn().Msgf("exporter (%s) not defined in config", name)
+		logger.Warn("exporter not defined in config", slog.String("name", name))
 		return nil
 	}
 
 	if class = params.Type; class == "" {
-		logger.Warn().Msgf("exporter (%s) has no exporter class defined", name)
+		logger.Warn("exporter has no exporter class defined", slog.String("name", name))
 		return nil
 	}
 
@@ -959,20 +1014,20 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 	case "InfluxDB":
 		exp = influxdb.New(absExp)
 	default:
-		logger.Error().Msgf("no exporter of name:type %s:%s", name, class)
+		logger.Error("no exporter of name:type", slog.String("name", name), slog.String("type", class))
 		return nil
 	}
 	if err = exp.Init(); err != nil {
-		logger.Error().Err(err).Str("name", name).Msg("Unable to init exporter")
+		logger.Error("Unable to init exporter", slog.Any("err", err), slog.String("name", name))
 		return nil
 	}
 
 	p.exporters = append(p.exporters, exp)
-	logger.Debug().Msgf("initialized exporter (%s)", name)
+	logger.Debug("initialized exporter", slog.String("name", name), slog.String("type", class))
 
 	// update metadata
 	if instance, err := p.metadata.NewInstance(exp.GetClass() + "." + exp.GetName()); err != nil {
-		logger.Error().Msgf("add metadata instance: %v", err)
+		logger.Error("add metadata instance", slog.Any("err", err))
 	} else {
 		instance.SetLabel("type", "exporter")
 		instance.SetLabel("name", exp.GetClass())
@@ -1091,7 +1146,7 @@ type pollerDetails struct {
 func (p *Poller) publishDetails() {
 	localIP, err := util.FindLocalIP()
 	if err != nil {
-		logger.Err(err).Msg("Unable to find local IP")
+		logger.Error("Unable to find local IP", slog.Any("err", err))
 		return
 	}
 	if p.client == nil {
@@ -1130,7 +1185,7 @@ func (p *Poller) publishDetails() {
 	}
 	payload, err := json.Marshal(details)
 	if err != nil {
-		logger.Error().Err(err).Str("poller", p.name).Msg("Unable to marshal poller details")
+		logger.Error("Unable to marshal poller details", slog.Any("err", err), slog.String("poller", p.name))
 		return
 	}
 	defaultURL := p.makePublishURL()
@@ -1140,7 +1195,7 @@ func (p *Poller) publishDetails() {
 	}
 	req, err := requests.New("PUT", heartBeatURL, bytes.NewBuffer(payload))
 	if err != nil {
-		logger.Err(err).Msg("failed to connect to admin")
+		logger.Error("failed to connect to admin", slog.Any("err", err))
 		return
 	}
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
@@ -1156,29 +1211,36 @@ func (p *Poller) publishDetails() {
 		}
 		// check if this is a connection error, if so, the admin node is down
 		// log as warning instead of error
-		event := logger.Error() //nolint:zerologlint
+		level := slog.LevelError
 		if strings.Contains(rErr.Error(), "connection refused") {
-			event = logger.Warn() //nolint:zerologlint
+			level = slog.LevelWarn
 		}
-		event.Err(rErr).Str("admin", conf.Config.Admin.Httpsd.Listen).Msg("Failed connecting to admin node")
+		logger.LogAttrs(
+			context.Background(),
+			level,
+			"Failed connecting to admin node",
+			slog.Any("err", rErr),
+			slog.String("admin", conf.Config.Admin.Httpsd.Listen),
+		)
 		return
 	}
 	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		logger.Err(err).Msg("failed to read publishDetails response to admin")
+		logger.Error("failed to read publishDetails response to admin", slog.Any("err", err))
 		return
 	}
 	p.client.CloseIdleConnections()
 	if resp.StatusCode != http.StatusOK {
 		txt := string(body)
 		txt = txt[0:int(math.Min(float64(len(txt)), 48))]
-		logger.Error().
-			Str("admin", conf.Config.Admin.Httpsd.Listen).
-			Str("body", txt).
-			Int("httpStatusCode", resp.StatusCode).
-			Msg("Admin node problem")
+		logger.Error(
+			"Admin node problem",
+			slog.String("admin", conf.Config.Admin.Httpsd.Listen),
+			slog.String("body", txt),
+			slog.Int("httpStatusCode", resp.StatusCode),
+		)
 	}
 }
 
@@ -1198,8 +1260,11 @@ func (p *Poller) startHeartBeat() {
 	}
 	duration, err := time.ParseDuration(conf.Config.Admin.Httpsd.HeartBeat)
 	if err != nil {
-		logger.Warn().Str("heart_beat", conf.Config.Admin.Httpsd.HeartBeat).
-			Err(err).Msg("Invalid heart_beat using 1m")
+		logger.Warn(
+			"Invalid heart_beat using 1m",
+			slog.Any("err", err),
+			slog.String("heart_beat", conf.Config.Admin.Httpsd.HeartBeat),
+		)
 		duration = 1 * time.Minute
 	}
 	tick := time.Tick(duration)
@@ -1262,12 +1327,12 @@ func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Co
 		var he errs.HarvestError
 		if errors.As(err, &he) {
 			if he.ErrNum == errs.ErrNumZAPISuspended {
-				logger.Warn().Str("collector", c.Name).Msg("ZAPIs suspended. Use REST")
+				logger.Warn("ZAPIs suspended. Use REST", slog.String("collector", c.Name))
 				switchToRest = true
 			}
 
 			if he.StatusCode == http.StatusBadRequest {
-				logger.Warn().Str("collector", c.Name).Msg("ZAPIs EOA. Use REST")
+				logger.Warn("ZAPIs EOA. Use REST", slog.String("collector", c.Name))
 				switchToRest = true
 			}
 		}
@@ -1278,7 +1343,7 @@ func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Co
 				Templates: c.Templates,
 			}
 		}
-		logger.Error().Err(err).Str("collector", c.Name).Msg("Failed to negotiateAPI")
+		logger.Error("Failed to negotiateAPI", slog.Any("err", err), slog.String("collector", c.Name))
 	}
 
 	return c
@@ -1320,18 +1385,18 @@ func (p *Poller) addMemoryMetadata() {
 	pid := os.Getpid()
 	pid32, err := util.SafeConvertToInt32(pid)
 	if err != nil {
-		logger.Warn().Int("pid", pid).Msg(err.Error())
+		slog.Warn(err.Error(), slog.Int("pid", pid))
 		return
 	}
 
 	proc, err := process.NewProcess(pid32)
 	if err != nil {
-		logger.Error().Err(err).Int("pid", pid).Msg("Failed to lookup process for poller")
+		slog.Error("Failed to lookup process for poller", slog.Any("err", err), slog.Int("pid", pid))
 		return
 	}
 	memInfo, err := proc.MemoryInfo()
 	if err != nil {
-		logger.Error().Err(err).Int("pid", pid).Msg("Failed to get memory info for poller")
+		slog.Error("Failed to get memory info for poller", slog.Any("err", err), slog.Int("pid", pid))
 		return
 	}
 
@@ -1343,7 +1408,7 @@ func (p *Poller) addMemoryMetadata() {
 	// Calculate memory percentage
 	memory, err := mem.VirtualMemory()
 	if err != nil {
-		logger.Error().Err(err).Int("pid", pid).Msg("Failed to get memory for machine")
+		slog.Error("Failed to get memory for machine", slog.Any("err", err), slog.Int("pid", pid))
 		return
 	}
 
@@ -1357,15 +1422,16 @@ func (p *Poller) addMemoryMetadata() {
 func (p *Poller) logPollerMetadata() (map[string]*matrix.Matrix, error) {
 	err := p.sendHarvestVersion()
 	if err != nil {
-		logger.Error().Err(err).Msg("Failed to send Harvest version")
+		slog.Error("Failed to send Harvest version", slog.Any("err", err))
 	}
 
 	rss, _ := p.status.LazyGetValueFloat64("memory.rss", "host")
-	logger.Info().
-		Float64("rssKB", rss).
-		Uint64("maxRssKB", p.maxRssBytes/1024).
-		Str("version", strings.TrimSpace(version.String())).
-		Msg("Metadata")
+	slog.Info(
+		"Metadata",
+		slog.Float64("rssKB", rss),
+		slog.Uint64("maxRssKB", p.maxRssBytes/1024),
+		slog.String("version", strings.TrimSpace(version.String())),
+	)
 
 	return nil, nil
 }

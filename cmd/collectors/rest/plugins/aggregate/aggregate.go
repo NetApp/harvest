@@ -2,6 +2,7 @@ package aggregate
 
 import (
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/netapp/harvest/v2/cmd/collectors"
@@ -100,9 +101,9 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 	records, err := a.getObjectStoreData()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			a.Logger.Debug().Err(err).Msg("API not found")
+			a.SLogger.Debug("API not found", slog.Any("err", err))
 		} else {
-			a.Logger.Error().Err(err).Msg("Failed to collect object store data")
+			a.SLogger.Error("Failed to collect object store data", slog.Any("err", err))
 		}
 		return
 	}
@@ -133,7 +134,10 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 
 		instance, err := aggrSpaceMat.NewInstance(instanceKey)
 		if err != nil {
-			a.Logger.Warn().Str("key", instanceKey).Msg("error while creating instance")
+			a.SLogger.Warn(
+				"Failed to create instance",
+				slog.String("key", instanceKey),
+			)
 			continue
 		}
 
@@ -143,13 +147,21 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 
 		if logicalUsed != "" {
 			if err := aggrSpaceMat.GetMetric("logical_used").SetValueString(instance, logicalUsed); err != nil {
-				a.Logger.Error().Err(err).Str("metric", "logical_used").Msg("Unable to set value on metric")
+				a.SLogger.Error(
+					"Unable to set value on metric",
+					slog.Any("err", err),
+					slog.String("metric", "logical_used"),
+				)
 			}
 		}
 
 		if physicalUsed != "" {
 			if err := aggrSpaceMat.GetMetric("physical_used").SetValueString(instance, physicalUsed); err != nil {
-				a.Logger.Error().Err(err).Str("metric", "physical_used").Msg("Unable to set value on metric")
+				a.SLogger.Error(
+					"Unable to set value on metric",
+					slog.Any("err", err),
+					slog.String("metric", "physical_used"),
+				)
 			}
 		}
 	}
@@ -163,5 +175,5 @@ func (a *Aggregate) getObjectStoreData() ([]gjson.Result, error) {
 		Filter([]string{`tier_name=!" "|""`}).
 		Build()
 
-	return collectors.InvokeRestCall(a.client, href, a.Logger)
+	return collectors.InvokeRestCall(a.client, href, a.SLogger)
 }

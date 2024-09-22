@@ -3,7 +3,7 @@ package volume_test
 import (
 	volume2 "github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
-	"github.com/netapp/harvest/v2/pkg/logging"
+	"log/slog"
 	"testing"
 
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -231,12 +231,12 @@ func TestRunForAllImplementations(t *testing.T) {
 
 func createRestVolume(params *node.Node) plugin.Plugin {
 	v := &volume2.Volume{AbstractPlugin: plugin.New("volume", nil, params, nil, "volume", nil)}
-	v.Logger = logging.Get()
+	v.SLogger = slog.Default()
 	return v
 }
 
 func createZapiVolume(params *node.Node) plugin.Plugin {
 	v := &volume.Volume{AbstractPlugin: plugin.New("volume", nil, params, nil, "volume", nil)}
-	v.Logger = logging.Get()
+	v.SLogger = slog.Default()
 	return v
 }

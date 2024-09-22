@@ -14,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func (s *SecurityAccount) Init() error {
 	}
 	timeout, err := time.ParseDuration(clientTimeout)
 	if err != nil {
-		s.Logger.Info().Str("timeout", rest.DefaultTimeout).Msg("Using default timeout")
+		s.SLogger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
 	}
 	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
 		return fmt.Errorf("failed to connect err=%w", err)
@@ -68,7 +69,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		Build()
 
 	s.client.Metadata.Reset()
-	if result, err = collectors.InvokeRestCall(s.client, href, s.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
 		return nil, nil, err
 	}
 

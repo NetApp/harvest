@@ -8,18 +8,19 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/zekroTJA/timedmap/v2"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"time"
 )
 
 type Admin struct {
 	listen           string
-	logger           zerolog.Logger
+	logger           *slog.Logger
 	localIP          string
 	pollerToPromAddr *timedmap.TimedMap[string, pollerDetails]
 	httpSD           conf.Httpsd
@@ -30,7 +31,7 @@ func (a *Admin) startServer() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/v1/sd", a.APISD)
 
-	a.logger.Debug().Str("listen", a.listen).Msg("Admin node starting")
+	a.logger.Debug("Admin node starting", slog.String("listen", a.listen))
 	server := &http.Server{
 		Addr:              a.listen,
 		Handler:           mux,
@@ -48,43 +49,51 @@ func (a *Admin) startServer() {
 
 	go func() {
 		<-quit
-		a.logger.Info().Msg("Admin node is shutting down")
+		a.logger.Info("Admin node is shutting down")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
 		if err := server.Shutdown(ctx); err != nil {
-			a.logger.Fatal().
-				Err(err).
-				Msg("Could not gracefully shutdown the admin node")
+			a.logger.Error("Could not gracefully shutdown the admin node", slog.Any("err", err))
+			os.Exit(1)
 		}
 		close(done)
 	}()
 
-	a.logger.Info().
-		Str("listen", a.listen).
-		Bool("TLS", a.httpSD.TLS.KeyFile != "").
-		Bool("BasicAuth", a.httpSD.AuthBasic.Username != "").
-		Msg("Admin node started")
+	a.logger.Info(
+		"Admin node started",
+		slog.String("listen", a.listen),
+		slog.Bool("TLS", a.httpSD.TLS.KeyFile != ""),
+		slog.Bool("BasicAuth", a.httpSD.AuthBasic.Username != ""),
+	)
 
 	if a.httpSD.TLS.KeyFile != "" {
 		if err := server.ListenAndServeTLS(a.httpSD.TLS.CertFile, a.httpSD.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			a.logger.Fatal().Err(err).
-				Str("listen", a.listen).
-				Str("ssl_cert", a.httpSD.TLS.CertFile).
-				Str("ssl_key", a.httpSD.TLS.KeyFile).
-				Msg("Admin node could not listen")
+			a.logger.Error(
+				"Admin node could not listen",
+				slog.Any("err", err),
+				slog.String("listen", a.listen),
+				slog.String("ssl_cert", a.httpSD.TLS.CertFile),
+				slog.String("ssl_key", a.httpSD.TLS.KeyFile),
+				slog.Bool("BasicAuth", a.httpSD.AuthBasic.Username != ""),
+			)
+			os.Exit(1)
 		}
 	} else {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			a.logger.Fatal().Err(err).
-				Str("listen", a.listen).
-				Msg("Admin node could not listen")
+			a.logger.Error(
+				"Admin node could not listen",
+				slog.Any("err", err),
+				slog.String("listen", a.listen),
+			)
+			os.Exit(1)
 		}
 	}
 
 	<-done
-	a.logger.Info().Msg("Admin node stopped")
+
+	a.logger.Info("Admin node stopped")
 }
 
 func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
@@ -109,10 +118,19 @@ func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Admin) setupLogger() {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-
-	a.logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).
-		With().Caller().Timestamp().Logger()
+	handlerOptions := &slog.HandlerOptions{
+		AddSource: true,
+		ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.SourceKey {
+				source := a.Value.Any().(*slog.Source)
+				source.File = filepath.Base(source.File)
+				a.Value = slog.StringValue(fmt.Sprintf("%s:%d", source.File, source.Line))
+			}
+			return a
+		},
+	}
+	handler := slog.NewTextHandler(os.Stderr, handlerOptions)
+	a.logger = slog.New(handler)
 }
 
 type pollerDetails struct {
@@ -126,13 +144,12 @@ func (a *Admin) apiPublish(w http.ResponseWriter, r *http.Request) {
 	var publish pollerDetails
 	err := decoder.Decode(&publish)
 	if err != nil {
-		a.logger.Err(err).Msg("Unable to parse publish json")
+		a.logger.Error("Unable to parse publish json", slog.Any("err", err))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	a.pollerToPromAddr.Set(publish.Name, publish, a.expireAfter)
-	a.logger.Debug().Str("name", publish.Name).Str("ip", publish.IP).Int("port", publish.Port).
-		Msg("Published poller")
+	a.logger.Debug("Published poller", slog.Any("publish", publish))
 	_, _ = fmt.Fprintf(w, "OK")
 }
 
@@ -154,10 +171,10 @@ func (a *Admin) makeTargets() []byte {
 		}
 		targets = append(targets, target)
 	}
-	a.logger.Debug().Int("size", len(targets)).Msg("makeTargets")
+	a.logger.Debug("makeTargets", slog.Int("size", len(targets)))
 	j, err := json.Marshal(targets)
 	if err != nil {
-		a.logger.Error().Err(err).Msg("Failed to marshal targets")
+		a.logger.Error("Failed to marshal targets", slog.Any("err", err))
 		return []byte{}
 	}
 	return j
@@ -237,9 +254,8 @@ func newAdmin(configPath string) Admin {
 	}
 	a.setupLogger()
 	if a.listen == "" {
-		a.logger.Fatal().
-			Str("config", configPath).
-			Msg("Admin.address is empty in config. Must be a valid address")
+		a.logger.Error("Admin.address is empty in config. Must be a valid address", slog.String("config", configPath))
+		os.Exit(1)
 	}
 	if a.httpSD.TLS != (conf.TLS{}) {
 		util.CheckCert(a.httpSD.TLS.CertFile, "ssl_cert", configPath, a.logger)
@@ -249,10 +265,11 @@ func newAdmin(configPath string) Admin {
 	a.localIP, _ = util.FindLocalIP()
 	a.expireAfter = a.setDuration(a.httpSD.ExpireAfter, 1*time.Minute, "expire_after")
 	a.pollerToPromAddr = timedmap.New[string, pollerDetails](a.expireAfter)
-	a.logger.Debug().
-		Str("expireAfter", a.expireAfter.String()).
-		Str("localIP", a.localIP).
-		Msg("newAdmin")
+	a.logger.Debug(
+		"newAdmin",
+		slog.String("localIP", a.localIP),
+		slog.String("expireAfter", a.expireAfter.String()),
+	)
 
 	return a
 }
@@ -263,8 +280,12 @@ func (a *Admin) setDuration(every string, defaultDur time.Duration, name string)
 	}
 	everyDur, err := time.ParseDuration(every)
 	if err != nil {
-		a.logger.Warn().Err(err).Str(name, every).
-			Msgf("Failed to parse %s. Using %s", name, defaultDur.String())
+		a.logger.Warn(
+			"Failed to parse name",
+			slog.Any("err", err),
+			slog.String(name, every),
+			slog.String("defaultDur", defaultDur.String()),
+		)
 		everyDur = defaultDur
 	}
 	return everyDur

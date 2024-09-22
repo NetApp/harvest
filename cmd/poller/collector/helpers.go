@@ -21,6 +21,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/go-version"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -90,11 +91,13 @@ nextFile:
 				jitter = "none"
 			}
 
-			c.Logger.Info().
-				Str("path", templatePath).
-				Str("v", verWithDots).
-				Str("jitter", jitter).
-				Msg("best-fit template")
+			c.Logger.Info(
+				"best-fit template",
+				slog.String("path", templatePath),
+				slog.String("v", verWithDots),
+				slog.String("jitter", jitter),
+			)
+
 			if finalTemplate == nil {
 				finalTemplate, err = tree.ImportYaml(templatePath)
 				if err == nil {
@@ -106,8 +109,10 @@ nextFile:
 				// any errors w.r.t customTemplate are warnings and should not be returned to caller
 				customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
 				if customTemplateErr != nil {
-					c.Logger.Warn().Err(err).Str("path", templatePath).
-						Msg("Unable to import template file. File is invalid or empty")
+					c.Logger.Warn("Unable to import template file. File is invalid or empty",
+						slog.Any("err", err),
+						slog.String("path", templatePath),
+					)
 					continue
 				}
 				customTemplate.PreprocessTemplate()
@@ -136,7 +141,7 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 	)
 
 	pathPrefix := filepath.Join(homePath, confPath, strings.ToLower(c.Name), model)
-	c.Logger.Debug().Str("pathPrefix", pathPrefix).Msg("Looking for best-fitting template in pathPrefix")
+	c.Logger.Debug("Looking for best-fitting template in pathPrefix", slog.String("pathPrefix", pathPrefix))
 
 	// check for available versions, these are the subdirectories with matching filenames
 	files, err := os.ReadDir(pathPrefix)

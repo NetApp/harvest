@@ -4,9 +4,9 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"log/slog"
 	"testing"
 )
 
@@ -17,7 +17,7 @@ func NewQtree(historicalLabels bool) plugin.Plugin {
 	pp.NewChildS("addr", "1.2.3.4")
 	o := options.Options{IsTest: true}
 	q := &Qtree{AbstractPlugin: plugin.New("qtree", &o, params, pp, "qtree", nil)}
-	q.Logger = logging.Get()
+	q.SLogger = slog.Default()
 	q.historicalLabels = historicalLabels
 	q.data = matrix.New(q.Parent+".Qtree", "quota", "quota")
 	q.client = client.NewTestClient()

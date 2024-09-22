@@ -9,12 +9,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -38,7 +38,7 @@ type Client struct {
 	client   *http.Client
 	request  *http.Request
 	buffer   *bytes.Buffer
-	Logger   *logging.Logger
+	Logger   *slog.Logger
 	baseURL  string
 	cluster  Cluster
 	token    string
@@ -69,7 +69,7 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 		auth:     credentials,
 		Metadata: &util.Metadata{},
 	}
-	client.Logger = logging.Get().SubLogger("REST", "Client")
+	client.Logger = slog.Default().With(slog.String("REST", "Client"))
 
 	if addr = poller.Addr; addr == "" {
 		return nil, errs.New(errs.ErrMissingParam, "addr")
@@ -107,10 +107,11 @@ func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
 
 func (c *Client) printRequestAndResponse(req string, response []byte) {
 	if c.logRest {
-		c.Logger.Info().
-			Str("Request", req).
-			Bytes("Response", response).
-			Send()
+		c.Logger.Info(
+			"",
+			slog.String("Request", req),
+			slog.String("Response", string(response)),
+		)
 	}
 }
 
@@ -139,7 +140,7 @@ func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
 	}
 	if pollerAuth.AuthToken != "" {
 		c.request.Header.Set("Authorization", "Bearer "+pollerAuth.AuthToken)
-		c.Logger.Debug().Msg("Using authToken from credential script")
+		c.Logger.Debug("Using authToken from credential script")
 	} else if pollerAuth.Username != "" {
 		c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 	}
@@ -270,7 +271,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 					if pollerAuth.AuthToken != "" {
 						c.token = pollerAuth.AuthToken
 						c.request.Header.Set("Authorization", "Bearer "+c.token)
-						c.Logger.Debug().Msg("Using authToken from credential script")
+						c.Logger.Debug("Using authToken from credential script")
 						return doInvoke()
 					}
 					c.request.SetBasicAuth(pollerAuth2.Username, pollerAuth2.Password)
@@ -294,7 +295,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
-	credentials := auth.NewCredentials(poller, logging.Get())
+	credentials := auth.NewCredentials(poller, slog.Default())
 	transport, err := credentials.Transport(request)
 	if err != nil {
 		return 0, err

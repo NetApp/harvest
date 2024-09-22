@@ -8,7 +8,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/rs/zerolog/log"
+	"log/slog"
+	"os"
 	"testing"
 )
 
@@ -190,7 +191,8 @@ func NewZapiPerf(object, path string) *ZapiPerf {
 	ac := collector.New("Zapiperf", object, opts, params(object, path), nil)
 	z := &ZapiPerf{}
 	if err := z.Init(ac); err != nil {
-		log.Fatal().Err(err).Send()
+		slog.Error("", slog.Any("err", err))
+		os.Exit(1)
 	}
 
 	z.Object = object

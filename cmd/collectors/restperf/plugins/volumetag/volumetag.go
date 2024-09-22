@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"time"
 )
 
@@ -26,7 +27,7 @@ func (v *VolumeTag) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
-		v.Logger.Error().Err(err).Msg("connecting")
+		v.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -51,7 +52,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	records, err := rest.Fetch(v.client, href)
 	if err != nil {
-		v.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		v.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return nil, nil, err
 	}
 
@@ -62,7 +63,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	for _, volume := range records {
 
 		if !volume.IsObject() {
-			v.Logger.Warn().Str("type", volume.Type.String()).Msg("volume is not object, skipping")
+			v.SLogger.Warn("volume is not object, skipping", slog.String("type", volume.Type.String()))
 			continue
 		}
 		key := volume.Get("uuid").String()

@@ -2,15 +2,15 @@ package health
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"log/slog"
 	"testing"
 )
 
 func TestEndPoll(t *testing.T) {
 	// Create a new Health struct
 	h := &Health{AbstractPlugin: plugin.New("health", nil, nil, nil, "health", nil)}
-	h.Logger = logging.Get()
+	h.SLogger = slog.Default()
 	h.data = make(map[string]*matrix.Matrix)
 	h.previousData = make(map[string]*matrix.Matrix)
 	_ = h.InitAllMatrix()

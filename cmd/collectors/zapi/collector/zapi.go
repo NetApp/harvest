@@ -23,13 +23,13 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
-	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -82,7 +82,7 @@ func (z *Zapi) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	z.Logger.Debug().Msg("initialized")
+	z.Logger.Debug("initialized")
 	return nil
 }
 
@@ -110,7 +110,7 @@ func (z *Zapi) InitVars() error {
 	if err = z.Client.Init(5); err != nil { // 5 retries before giving up to connect
 		return errs.New(errs.ErrConnection, err.Error())
 	}
-	z.Logger.Debug().Msgf("connected to: %s", z.Client.Info())
+	z.Logger.Debug("connected", slog.String("client", z.Client.Info()))
 
 	model := "cdot"
 	if !z.Client.IsClustered() {
@@ -179,7 +179,7 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	case "Workload":
 		return workload.New(abc)
 	default:
-		z.Logger.Info().Msgf("no zapi plugin found for %s", kind)
+		z.Logger.Info("no zapi plugin found", slog.String("kind", kind))
 	}
 	return nil
 }
@@ -206,7 +206,7 @@ func (z *Zapi) InitCache() error {
 
 	var ok bool
 
-	z.Logger.Debug().Msgf("Parsing counters: %d values", len(counters.GetChildren()))
+	z.Logger.Debug("Parsing counters", slog.Int("counters", len(counters.GetChildren())))
 
 	if ok, z.desiredAttributes = z.LoadCounters(counters); !ok {
 		if z.Params.GetChildContentS("collect_only_labels") != "true" {
@@ -214,7 +214,11 @@ func (z *Zapi) InitCache() error {
 		}
 	}
 
-	z.Logger.Debug().Msgf("initialized cache with %d metrics and %d labels", len(z.Matrix[z.GetObject()].GetInstances()), len(z.instanceLabelPaths))
+	z.Logger.Debug(
+		"initialized cache",
+		slog.Int("metrics", len(z.Matrix[z.GetObject()].GetInstances())),
+		slog.Int("labels", len(z.instanceLabelPaths)),
+	)
 
 	// unless cluster is the only instance, require instance keys
 	if len(z.instanceKeyPaths) == 0 && z.Params.GetChildContentS("only_cluster_instance") != "true" {
@@ -223,8 +227,8 @@ func (z *Zapi) InitCache() error {
 
 	// @TODO validate
 	z.shortestPathPrefix = ParseShortestPath(z.Matrix[z.GetObject()], z.instanceLabelPaths)
-	z.Logger.Debug().Msgf("Parsed Instance Keys: %v", z.instanceKeyPaths)
-	z.Logger.Debug().Msgf("Parsed Instance Key Prefix: %v", z.shortestPathPrefix)
+	z.Logger.Debug("Parsed Instance Keys", slog.Any("keys", z.instanceKeyPaths))
+	z.Logger.Debug("Parsed Instance Key Prefix", slog.Any("keys", z.shortestPathPrefix))
 	return nil
 
 }
@@ -292,7 +296,12 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				count++
 			} else if metric := mat.GetMetric(key); metric != nil {
 				if err := metric.SetValueString(instance, value); err != nil {
-					z.Logger.Error().Msgf("%smetric (%s) set value (%s): %v%s", color.Red, key, value, err, color.End)
+					z.Logger.Error(
+						"failed to set value",
+						slog.Any("err", err),
+						slog.String("key", key),
+						slog.String("value", value),
+					)
 					skipped++
 				} else {
 					count++
@@ -376,7 +385,11 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 			if instance == nil {
 				if instance, err = mat.NewInstance(key); err != nil {
-					z.Logger.Error().Err(err).Str("instKey", key).Msg("Failed to create new missing instance")
+					z.Logger.Error(
+						"Failed to create new missing instance",
+						slog.Any("err", err),
+						slog.String("instKey", key),
+					)
 					continue
 				}
 			}
@@ -390,7 +403,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	// remove deleted instances
 	for key := range oldInstances.Iter() {
 		mat.RemoveInstance(key)
-		z.Logger.Debug().Str("key", key).Msg("removed instance")
+		z.Logger.Debug("removed instance", slog.String("key", key))
 	}
 
 	numInstances := len(mat.GetInstances())
@@ -482,9 +495,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 			nodeIDs, err = z.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
-				z.Logger.Error().
-					Err(err).
-					Msg("Unable to get nodes.")
+				z.Logger.Error("Unable to get nodes", slog.Any("err", err))
 			}
 			info.Ids = nodeIDs
 			p.Nodes = &info

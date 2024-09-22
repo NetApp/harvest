@@ -3,11 +3,11 @@ package collectors
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -96,7 +96,7 @@ func loadTestdata() {
 	sensor.data = matrix.New("Sensor", "environment_sensor", "environment_sensor")
 	sensor.instanceKeys = make(map[string]string)
 	sensor.instanceLabels = make(map[string]map[string]string)
-	sensor.AbstractPlugin.Logger = logging.Get()
+	sensor.AbstractPlugin.SLogger = slog.Default()
 
 	for _, k := range eMetrics {
 		_ = matrix.CreateMetric(k, sensor.data)
@@ -137,7 +137,7 @@ func TestSensor_Run(t *testing.T) {
 		"cdot-k3-07": 1,
 		"cdot-k3-08": 1,
 	}
-	omat := calculateEnvironmentMetrics(mat, logging.Get(), zapiValueKey, sensor.data, nodeToNumNode)
+	omat := calculateEnvironmentMetrics(mat, slog.Default(), zapiValueKey, sensor.data, nodeToNumNode)
 	expected := map[string]map[string]float64{
 		"average_ambient_temperature": {"cdot-k3-05": 22, "cdot-k3-06": 22.5, "cdot-k3-07": 22, "cdot-k3-08": 22.5},
 		"average_fan_speed":           {"cdot-k3-05": 7030, "cdot-k3-06": 7050, "cdot-k3-07": 7040, "cdot-k3-08": 7050},

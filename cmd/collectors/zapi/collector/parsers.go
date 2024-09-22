@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"strings"
 )
 
@@ -113,7 +114,12 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 			_, err = mat.NewMetricUint64(key, display)
 		}
 		if err != nil {
-			z.Logger.Error().Err(err).Str("key", key).Str("display", display).Msg("Failed to add metric")
+			z.Logger.Error(
+				"Failed to add metric",
+				slog.Any("err", err),
+				slog.String("key", key),
+				slog.String("display", display),
+			)
 		}
 	}
 

@@ -1,6 +1,7 @@
 package disk
 
 import (
+	"context"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -9,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"maps"
 	"slices"
 	"strings"
@@ -113,7 +115,7 @@ func (d *Disk) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if d.client, err = rest.New(conf.ZapiPoller(d.ParentParams), timeout, d.Auth); err != nil {
-		d.Logger.Error().Err(err).Msg("connecting")
+		d.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -172,7 +174,7 @@ func (d *Disk) Init() error {
 			case "float":
 				_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
 				if err != nil {
-					d.Logger.Error().Err(err).Msg("add metric")
+					d.SLogger.Error("add metric", slog.Any("err", err))
 					return err
 				}
 			}
@@ -185,7 +187,7 @@ func (d *Disk) Init() error {
 	d.initAggrPowerMatrix()
 	d.initMaps()
 
-	d.Logger.Debug().Msgf("initialized with shelfData [%d] objects", len(d.shelfData))
+	d.SLogger.Debug("initialized", slog.Any("shelfData", len(d.shelfData)))
 	return nil
 }
 
@@ -210,7 +212,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 
 	records, err := rest.Fetch(d.client, href)
 	if err != nil {
-		d.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch shelfData")
+		d.SLogger.Error("Failed to fetch shelfData", slog.Any("err", err), slog.String("href", href))
 		return nil, nil, err
 	}
 
@@ -231,7 +233,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	for _, shelf := range records {
 
 		if !shelf.IsObject() {
-			d.Logger.Warn().Str("type", shelf.Type.String()).Msg("Shelf is not object, skipping")
+			d.SLogger.Warn("Shelf is not object, skipping", slog.String("type", shelf.Type.String()))
 			continue
 		}
 
@@ -242,7 +244,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
 
 				if len(d.instanceKeys[attribute]) == 0 {
-					d.Logger.Warn().Str("attribute", attribute).Msg("no instance keys defined for object, skipping")
+					d.SLogger.Warn("no instance keys defined for object, skipping", slog.String("attribute", attribute))
 					continue
 				}
 
@@ -269,7 +271,12 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 								shelfChildInstance, err2 := data1.NewInstance(instanceKey)
 
 								if err2 != nil {
-									d.Logger.Error().Err(err).Str("attribute", attribute).Str("instanceKey", instanceKey).Msg("Failed to add instance")
+									d.SLogger.Error(
+										"Failed to add instance",
+										slog.Any("err", err2),
+										slog.String("attribute", attribute),
+										slog.String("instanceKey", instanceKey),
+									)
 									break
 								}
 
@@ -292,7 +299,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 										}
 									} else {
 										// spams a lot currently due to missing label mappings. Moved to debug for now till rest gaps are filled
-										d.Logger.Debug().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+										d.SLogger.Debug("Missing label value", slog.String("Instance key", instanceKey), slog.String("label", label))
 									}
 								}
 
@@ -310,14 +317,22 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 
 									if value := obj.Get(metricKey); value.Exists() {
 										if err = m.SetValueString(shelfChildInstance, value.String()); err != nil { // float
-											d.Logger.Error().Err(err).Str("key", metricKey).Str("metric", m.GetName()).Str("value", value.String()).
-												Msg("Unable to set float key on metric")
+											d.SLogger.Error(
+												"Unable to set float key on metric",
+												slog.Any("err", err),
+												slog.String("key", metricKey),
+												slog.String("metric", m.GetName()),
+												slog.String("value", value.String()),
+											)
 										}
 									}
 								}
 
-							} else {
-								d.Logger.Debug().Msgf("instance without [%s], skipping", d.instanceKeys[attribute])
+							} else if d.SLogger.Enabled(context.Background(), slog.LevelDebug) {
+								d.SLogger.Debug(
+									"instance without keys, skipping",
+									slog.String("attribute", strings.Join(d.instanceKeys[attribute], ",")),
+								)
 							}
 						}
 					}
@@ -332,7 +347,9 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 
 	if len(noSet) > 0 {
 		attributes := slices.Sorted(maps.Keys(noSet))
-		d.Logger.Warn().Strs("attributes", attributes).Msg("No instances")
+		if d.SLogger.Enabled(context.Background(), slog.LevelDebug) {
+			d.SLogger.Warn("No instances", slog.String("attributes", strings.Join(attributes, ",")))
+		}
 	}
 
 	output, err = d.handleShelfPower(records, output)
@@ -379,7 +396,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 			var a *aggregate
 			a, ok = d.aggrMap[aggrName]
 			if !ok {
-				d.Logger.Warn().Str("aggrName", aggrName).Msg("Missing Aggregate info")
+				d.SLogger.Warn("Missing Aggregate info", slog.String("aggrName", aggrName))
 				continue
 			}
 
@@ -396,12 +413,14 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 					a.power += diskPower
 				}
 			} else {
-				d.Logger.Warn().Str("diskUUID", diskUUID).
-					Str("diskName", diskName).
-					Msg("Missing disk info")
+				d.SLogger.Warn(
+					"Missing disk info",
+					slog.String("diskUUID", diskUUID),
+					slog.String("diskName", diskName),
+				)
 			}
 		} else {
-			d.Logger.Debug().Str("key", key).Msg("Instance not exported")
+			d.SLogger.Debug("Instance not exported", slog.String("key", key))
 		}
 	}
 
@@ -425,7 +444,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 						for _, a1 := range v1.aggregates {
 							a, ok := d.aggrMap[a1]
 							if !ok {
-								d.Logger.Warn().Str("aggrName", a1).Msg("Missing Aggregate info")
+								d.SLogger.Warn("Missing Aggregate info", slog.String("aggrName", a1))
 								continue
 							}
 							a.power += powerPerAggregate
@@ -445,7 +464,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	for instanceKey, v := range d.aggrMap {
 		instance, err := aggrData.NewInstance(instanceKey)
 		if err != nil {
-			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
+			d.SLogger.Error("Failed to add instance", slog.Any("err", err), slog.String("key", instanceKey))
 			continue
 		}
 		instance.SetLabel("aggr", instanceKey)
@@ -455,7 +474,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 		m := aggrData.GetMetric("power")
 		err = m.SetValueFloat64(instance, v.power)
 		if err != nil {
-			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to set value")
+			d.SLogger.Error("Failed to set value", slog.Any("err", err), slog.String("key", instanceKey))
 			continue
 		}
 	}
@@ -492,9 +511,11 @@ func (d *Disk) populateShelfIOPS(data *matrix.Matrix) error {
 				sh.iops += v
 			}
 		} else {
-			d.Logger.Warn().Str("diskUUID", diskUUID).
-				Str("diskName", diskName).
-				Msg("Missing disk info")
+			d.SLogger.Warn(
+				"Missing disk info",
+				slog.String("diskUUID", diskUUID),
+				slog.String("diskName", diskName),
+			)
 		}
 	}
 	return nil
@@ -515,7 +536,7 @@ func (d *Disk) getDisks() error {
 
 	records, err := rest.Fetch(d.client, href)
 	if err != nil {
-		d.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		d.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err
 	}
 
@@ -525,7 +546,7 @@ func (d *Disk) getDisks() error {
 
 	for _, v := range records {
 		if !v.IsObject() {
-			d.Logger.Warn().Str("type", v.Type.String()).Msg("Shelf is not object, skipping")
+			d.SLogger.Warn("Shelf is not object, skipping", slog.String("type", v.Type.String()))
 			continue
 		}
 
@@ -573,7 +594,7 @@ func (d *Disk) getAggregates() error {
 
 	records, err := rest.Fetch(d.client, href)
 	if err != nil {
-		d.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		d.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err
 	}
 
@@ -583,7 +604,7 @@ func (d *Disk) getAggregates() error {
 
 	for _, aggr := range records {
 		if !aggr.IsObject() {
-			d.Logger.Warn().Str("type", aggr.Type.String()).Msg("aggregate is not object, skipping")
+			d.SLogger.Warn("Aggregate is not object, skipping", slog.String("type", aggr.Type.String()))
 			continue
 		}
 		aggrName := aggr.Get("aggregate").String()
@@ -645,7 +666,7 @@ func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix)
 	for _, s := range shelves {
 
 		if !s.IsObject() {
-			d.Logger.Warn().Str("type", s.Type.String()).Msg("Shelf is not object, skipping")
+			d.SLogger.Warn("Shelf is not object, skipping", slog.String("type", s.Type.String()))
 			continue
 		}
 		shelfName := s.Get("name").String()
@@ -655,7 +676,7 @@ func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix)
 		instanceKey := shelfSerialNumber
 		instance, err := data.NewInstance(instanceKey)
 		if err != nil {
-			d.Logger.Error().Err(err).Str("key", instanceKey).Msg("Failed to add instance")
+			d.SLogger.Error("Failed to add instance", slog.Any("err", err), slog.String("key", instanceKey))
 			return output, err
 		}
 		instance.SetLabel("shelf", shelfName)
@@ -675,7 +696,7 @@ func (d *Disk) initShelfPowerMatrix() {
 	for _, k := range shelfMetrics {
 		err := matrix.CreateMetric(k, d.powerData["shelf"])
 		if err != nil {
-			d.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+			d.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", k))
 		}
 	}
 }
@@ -686,7 +707,7 @@ func (d *Disk) initAggrPowerMatrix() {
 	for _, k := range aggrMetrics {
 		err := matrix.CreateMetric(k, d.powerData["aggr"])
 		if err != nil {
-			d.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+			d.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", k))
 		}
 	}
 }
@@ -763,7 +784,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 	for _, k := range shelfMetrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
-			d.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+			d.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", k))
 		}
 	}
 	for key, v := range shelfEnvironmentMetricMap {
@@ -771,7 +792,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 			m := data.GetMetric(k)
 			instance := data.GetInstance(key)
 			if instance == nil {
-				d.Logger.Warn().Str("key", key).Msg("Instance not found")
+				d.SLogger.Warn("Instance not found", slog.String("key", key))
 				continue
 			}
 			switch k {
@@ -782,13 +803,13 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 						// in W
 						sumPower += (v1 * v2) / 1000
 					} else {
-						d.Logger.Warn().Str("voltage sensor id", k1).Msg("missing current sensor")
+						d.SLogger.Warn("missing current sensor", slog.String("voltage sensor id", k1))
 					}
 				}
 
 				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
-					d.Logger.Error().Float64("power", sumPower).Err(err).Msg("Unable to set power")
+					d.SLogger.Error("Unable to set power", slog.Any("err", err), slog.Float64("power", sumPower))
 				} else {
 					d.ShelfMap[instance.GetLabel("shelfUID")] = &shelf{power: sumPower}
 				}
@@ -798,54 +819,86 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					aaT := util.Avg(v.ambientTemperature)
 					err = m.SetValueFloat64(instance, aaT)
 					if err != nil {
-						d.Logger.Error().Float64("average_ambient_temperature", aaT).Err(err).Msg("Unable to set average_ambient_temperature")
+						d.SLogger.Error(
+							"Unable to set average_ambient_temperature",
+							slog.Any("err", err),
+							slog.Float64("average_ambient_temperature", aaT),
+						)
 					}
 				}
 			case "min_ambient_temperature":
 				maT := util.Min(v.ambientTemperature)
 				err = m.SetValueFloat64(instance, maT)
 				if err != nil {
-					d.Logger.Error().Float64("min_ambient_temperature", maT).Err(err).Msg("Unable to set min_ambient_temperature")
+					d.SLogger.Error(
+						"Unable to set min_ambient_temperature",
+						slog.Any("err", err),
+						slog.Float64("min_ambient_temperature", maT),
+					)
 				}
 			case "max_temperature":
 				mT := util.Max(v.nonAmbientTemperature)
 				err = m.SetValueFloat64(instance, mT)
 				if err != nil {
-					d.Logger.Error().Float64("max_temperature", mT).Err(err).Msg("Unable to set max_temperature")
+					d.SLogger.Error(
+						"Unable to set max_temperature",
+						slog.Any("err", err),
+						slog.Float64("max_temperature", mT),
+					)
 				}
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
 					nat := util.Avg(v.nonAmbientTemperature)
 					err = m.SetValueFloat64(instance, nat)
 					if err != nil {
-						d.Logger.Error().Float64("average_temperature", nat).Err(err).Msg("Unable to set average_temperature")
+						d.SLogger.Error(
+							"Unable to set average_temperature",
+							slog.Any("err", err),
+							slog.Float64("average_temperature", nat),
+						)
 					}
 				}
 			case "min_temperature":
 				mT := util.Min(v.nonAmbientTemperature)
 				err = m.SetValueFloat64(instance, mT)
 				if err != nil {
-					d.Logger.Error().Float64("min_temperature", mT).Err(err).Msg("Unable to set min_temperature")
+					d.SLogger.Error(
+						"Unable to set min_temperature",
+						slog.Any("err", err),
+						slog.Float64("min_temperature", mT),
+					)
 				}
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
 					afs := util.Avg(v.fanSpeed)
 					err = m.SetValueFloat64(instance, afs)
 					if err != nil {
-						d.Logger.Error().Float64("average_fan_speed", afs).Err(err).Msg("Unable to set average_fan_speed")
+						d.SLogger.Error(
+							"Unable to set average_fan_speed",
+							slog.Any("err", err),
+							slog.Float64("average_fan_speed", afs),
+						)
 					}
 				}
 			case "max_fan_speed":
 				mfs := util.Max(v.fanSpeed)
 				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
-					d.Logger.Error().Float64("max_fan_speed", mfs).Err(err).Msg("Unable to set max_fan_speed")
+					d.SLogger.Error(
+						"Unable to set max_fan_speed",
+						slog.Any("err", err),
+						slog.Float64("max_fan_speed", mfs),
+					)
 				}
 			case "min_fan_speed":
 				mfs := util.Min(v.fanSpeed)
 				err = m.SetValueFloat64(instance, mfs)
 				if err != nil {
-					d.Logger.Error().Float64("min_fan_speed", mfs).Err(err).Msg("Unable to set min_fan_speed")
+					d.SLogger.Error(
+						"Unable to set min_fan_speed",
+						slog.Any("err", err),
+						slog.Float64("min_fan_speed", mfs),
+					)
 				}
 			}
 		}

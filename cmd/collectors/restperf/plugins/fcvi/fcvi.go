@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"time"
 )
 
@@ -26,7 +27,7 @@ func (f *FCVI) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if f.client, err = rest.New(conf.ZapiPoller(f.ParentParams), timeout, f.Auth); err != nil {
-		f.Logger.Error().Err(err).Msg("connecting")
+		f.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -45,7 +46,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		Build()
 	records, err := rest.Fetch(f.client, href)
 	if err != nil {
-		f.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		f.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return nil, nil, err
 	}
 
@@ -55,7 +56,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 
 	for _, adapterData := range records {
 		if !adapterData.IsObject() {
-			f.Logger.Warn().Str("type", adapterData.Type.String()).Msg("adapter is not object, skipping")
+			f.SLogger.Warn("adapter is not object, skipping", slog.String("type", adapterData.Type.String()))
 			continue
 		}
 		node := adapterData.Get("node").String()

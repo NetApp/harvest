@@ -14,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"regexp"
 	"sort"
 	"strconv"
@@ -68,142 +69,142 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SVM{AbstractPlugin: p}
 }
 
-func (my *SVM) Init() error {
+func (s *SVM) Init() error {
 
 	var err error
 
-	if err := my.InitAbc(); err != nil {
+	if err := s.InitAbc(); err != nil {
 		return err
 	}
 
-	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
-		my.Logger.Error().Err(err).Msg("connecting")
+	if s.client, err = zapi.New(conf.ZapiPoller(s.ParentParams), s.Auth); err != nil {
+		s.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
-	if err := my.client.Init(5); err != nil {
+	if err := s.client.Init(5); err != nil {
 		return err
 	}
 
-	my.auditProtocols = make(map[string]string)
-	my.cifsProtocols = make(map[string]CifsSecurity)
-	my.nsswitchInfo = make(map[string]Nsswitch)
-	my.nisInfo = make(map[string]string)
-	my.cifsEnabled = make(map[string]bool)
-	my.nfsEnabled = make(map[string]string)
-	my.sshData = make(map[string]SSHInfo)
-	my.iscsiAuth = make(map[string]string)
-	my.iscsiService = make(map[string]string)
-	my.fpolicyData = make(map[string]Fpolicy)
-	my.ldapData = make(map[string]string)
-	my.kerberosConfig = make(map[string]string)
+	s.auditProtocols = make(map[string]string)
+	s.cifsProtocols = make(map[string]CifsSecurity)
+	s.nsswitchInfo = make(map[string]Nsswitch)
+	s.nisInfo = make(map[string]string)
+	s.cifsEnabled = make(map[string]bool)
+	s.nfsEnabled = make(map[string]string)
+	s.sshData = make(map[string]SSHInfo)
+	s.iscsiAuth = make(map[string]string)
+	s.iscsiService = make(map[string]string)
+	s.fpolicyData = make(map[string]Fpolicy)
+	s.ldapData = make(map[string]string)
+	s.kerberosConfig = make(map[string]string)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	my.currentVal = my.SetPluginInterval()
+	s.currentVal = s.SetPluginInterval()
 
-	my.batchSize = BatchSize
-	if b := my.Params.GetChildContentS("batch_size"); b != "" {
+	s.batchSize = BatchSize
+	if b := s.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
-			my.batchSize = b
-			my.Logger.Info().Str("BatchSize", my.batchSize).Msg("using batch-size")
+			s.batchSize = b
+			s.SLogger.Info("using batch-size", slog.String("BatchSize", s.batchSize))
 		}
 	}
 
 	return nil
 }
 
-func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	var (
 		err error
 	)
 
-	data := dataMap[my.Object]
-	my.client.Metadata.Reset()
+	data := dataMap[s.Object]
+	s.client.Metadata.Reset()
 
-	if my.currentVal >= my.PluginInvocationRate {
-		my.currentVal = 0
+	if s.currentVal >= s.PluginInvocationRate {
+		s.currentVal = 0
 
 		// invoke fileservice-audit-config-get-iter zapi and get audit protocols
-		if my.auditProtocols, err = my.GetAuditProtocols(); err != nil {
+		if s.auditProtocols, err = s.GetAuditProtocols(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect audit protocols")
+				s.SLogger.Error("Failed to collect audit protocols", slog.Any("err", err))
 			}
 		}
 
 		// invoke cifs-security-get-iter zapi and get cifs protocols
-		if my.cifsProtocols, err = my.GetCifsProtocols(); err != nil {
+		if s.cifsProtocols, err = s.GetCifsProtocols(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect cifs protocols")
+				s.SLogger.Error("Failed to collect cifs protocols", slog.Any("err", err))
 			}
 		}
 
 		// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
-		if my.nsswitchInfo, err = my.GetNSSwitchInfo(); err != nil {
+		if s.nsswitchInfo, err = s.GetNSSwitchInfo(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect nsswitch info")
+				s.SLogger.Error("Failed to collect nsswitch info", slog.Any("err", err))
 			}
 		}
 
 		// invoke nis-get-iter zapi and get nisdomain info
-		if my.nisInfo, err = my.GetNisInfo(); err != nil {
+		if s.nisInfo, err = s.GetNisInfo(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect nisdomain info")
+				s.SLogger.Error("Failed to collect nisdomain info", slog.Any("err", err))
 			}
 		}
 
 		// invoke cifs-server-get-iter zapi and get cifsenabled info
-		if my.cifsEnabled, err = my.GetCifsEnabled(); err != nil {
+		if s.cifsEnabled, err = s.GetCifsEnabled(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect cifsenabled info")
+				s.SLogger.Error("Failed to collect cifsenabled info", slog.Any("err", err))
 			}
 		}
 
 		// invoke nfs-service-get-iter zapi and get cifsenabled info
-		if my.nfsEnabled, err = my.GetNfsEnabled(); err != nil {
+		if s.nfsEnabled, err = s.GetNfsEnabled(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect nfsenabled info")
+				s.SLogger.Error("Failed to collect nfsenabled info", slog.Any("err", err))
 			}
 		}
 
 		// invoke security-ssh-get-iter zapi and get ssh data
-		if my.sshData, err = my.GetSSHData(); err != nil {
+		if s.sshData, err = s.GetSSHData(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect ssh data")
+				s.SLogger.Error("Failed to collect ssh data", slog.Any("err", err))
 			}
 		}
 
 		// invoke iscsi-initiator-auth-get-iter zapi and get iscsi_authentication_type
-		if my.iscsiAuth, err = my.GetIscsiInitiatorAuth(); err != nil {
+		if s.iscsiAuth, err = s.GetIscsiInitiatorAuth(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect iscsi authentication type")
+				s.SLogger.Error("Failed to collect iscsi authentication type", slog.Any("err", err))
 			}
 		}
 
 		// invoke iscsi-service-get-iter zapi and get iscsi_service_enabled
-		if my.iscsiService, err = my.GetIscsiService(); err != nil {
+		if s.iscsiService, err = s.GetIscsiService(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect iscsi service")
+				s.SLogger.Error("Failed to collect iscsi service", slog.Any("err", err))
 			}
 		}
 
 		// invoke fpolicy-policy-status-get-iter zapi and get fpolicy_enabled, fpolicy_name
-		if my.fpolicyData, err = my.GetFpolicy(); err != nil {
+		if s.fpolicyData, err = s.GetFpolicy(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect fpolicy detail")
+				s.SLogger.Error("Failed to collect fpolicy detail", slog.Any("err", err))
 			}
 		}
 
 		// invoke ldap-client-get-iter zapi and get ldap_session_security
-		if my.ldapData, err = my.GetLdapData(); err != nil {
+		if s.ldapData, err = s.GetLdapData(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect ldap session")
+				s.SLogger.Error("Failed to collect ldap session", slog.Any("err", err))
 			}
 		}
 
 		// invoke kerberos-config-get-iter zapi and get nfs_kerberos_protocol_enabled
-		if my.kerberosConfig, err = my.GetKerberosConfig(); err != nil {
+		if s.kerberosConfig, err = s.GetKerberosConfig(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Error().Err(err).Msg("Failed to collect kerberos config")
+				s.SLogger.Error("Failed to collect kerberos config", slog.Any("err", err))
 			}
 		}
 	}
@@ -216,78 +217,78 @@ func (my *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		svmName := svmInstance.GetLabel("svm")
 
 		// Update audit_protocol_enabled label in svm
-		svmInstance.SetLabel("audit_protocol_enabled", my.auditProtocols[svmName])
+		svmInstance.SetLabel("audit_protocol_enabled", s.auditProtocols[svmName])
 
 		// Update cifs_ntlm_enabled label in svm
-		if cifsData, ok := my.cifsProtocols[svmName]; ok {
+		if cifsData, ok := s.cifsProtocols[svmName]; ok {
 			svmInstance.SetLabel("cifs_ntlm_enabled", cifsData.cifsNtlmEnabled)
 			svmInstance.SetLabel("smb_encryption_required", cifsData.smbEncryption)
 			svmInstance.SetLabel("smb_signing_required", cifsData.smbSigning)
 		}
 
 		// Update nis_domain label in svm
-		svmInstance.SetLabel("nis_domain", my.nisInfo[svmName])
+		svmInstance.SetLabel("nis_domain", s.nisInfo[svmName])
 
 		// Update nameservice_switch label in svm
-		if nsswitchInfo, ok := my.nsswitchInfo[svmName]; ok {
+		if nsswitchInfo, ok := s.nsswitchInfo[svmName]; ok {
 			sort.Strings(nsswitchInfo.nsdb)
 			sort.Strings(nsswitchInfo.nssource)
 			nsDB := strings.Join(nsswitchInfo.nsdb, ",")
 			nsSource := strings.Join(nsswitchInfo.nssource, ",")
-			nisDomain := my.nisInfo[svmName]
+			nisDomain := s.nisInfo[svmName]
 			svmInstance.SetLabel("ns_source", nsSource)
 			svmInstance.SetLabel("ns_db", nsDB)
 			collectors.SetNameservice(nsDB, nsSource, nisDomain, svmInstance)
 		}
 
 		// Update cifs_protocol_enabled label in svm
-		if cifsEnable, ok := my.cifsEnabled[svmName]; ok {
+		if cifsEnable, ok := s.cifsEnabled[svmName]; ok {
 			svmInstance.SetLabel("cifs_protocol_enabled", strconv.FormatBool(cifsEnable))
 		}
 
 		// Update nfs_protocol_enabled label in svm
-		if nfsEnable, ok := my.nfsEnabled[svmName]; ok {
+		if nfsEnable, ok := s.nfsEnabled[svmName]; ok {
 			svmInstance.SetLabel("nfs_protocol_enabled", nfsEnable)
 		}
 
 		// Update ciphers label in svm
-		if sshInfoDetail, ok := my.sshData[svmName]; ok {
+		if sshInfoDetail, ok := s.sshData[svmName]; ok {
 			svmInstance.SetLabel("ciphers", sshInfoDetail.ciphers)
 			svmInstance.SetLabel("insecured", sshInfoDetail.isInsecure)
 		}
 
 		// Update iscsi_authentication_type label in svm
-		if authType, ok := my.iscsiAuth[svmName]; ok {
+		if authType, ok := s.iscsiAuth[svmName]; ok {
 			svmInstance.SetLabel("iscsi_authentication_type", authType)
 		}
 
 		// Update iscsi_service_enabled label in svm
-		if available, ok := my.iscsiService[svmName]; ok {
+		if available, ok := s.iscsiService[svmName]; ok {
 			svmInstance.SetLabel("iscsi_service_enabled", available)
 		}
 
 		// Update fpolicy_enabled, fpolicy_name label in svm
-		if fpolicyData, ok := my.fpolicyData[svmName]; ok {
+		if fpolicyData, ok := s.fpolicyData[svmName]; ok {
 			svmInstance.SetLabel("fpolicy_enabled", fpolicyData.enable)
 			svmInstance.SetLabel("fpolicy_name", fpolicyData.name)
 		}
 
 		// Update ldap_session_security label in svm
-		if ldapSessionSecurity, ok := my.ldapData[svmName]; ok {
+		if ldapSessionSecurity, ok := s.ldapData[svmName]; ok {
 			svmInstance.SetLabel("ldap_session_security", ldapSessionSecurity)
 		}
 
 		// Update nfs_kerberos_protocol_enabled label in svm
-		if kerberosEnabled, ok := my.kerberosConfig[svmName]; ok {
+		if kerberosEnabled, ok := s.kerberosConfig[svmName]; ok {
 			svmInstance.SetLabel("nfs_kerberos_protocol_enabled", kerberosEnabled)
 		}
 	}
 
-	my.currentVal++
-	return nil, my.client.Metadata, nil
+	s.currentVal++
+	return nil, s.client.Metadata, nil
 }
 
-func (my *SVM) GetAuditProtocols() (map[string]string, error) {
+func (s *SVM) GetAuditProtocols() (map[string]string, error) {
 	var (
 		result                []*node.Node
 		request               *node.Node
@@ -298,9 +299,9 @@ func (my *SVM) GetAuditProtocols() (map[string]string, error) {
 	vserverAuditEnableMap = make(map[string]string)
 
 	request = node.NewXMLS("fileservice-audit-config-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -316,7 +317,7 @@ func (my *SVM) GetAuditProtocols() (map[string]string, error) {
 	return vserverAuditEnableMap, nil
 }
 
-func (my *SVM) GetCifsProtocols() (map[string]CifsSecurity, error) {
+func (s *SVM) GetCifsProtocols() (map[string]CifsSecurity, error) {
 	var (
 		result             []*node.Node
 		request            *node.Node
@@ -327,9 +328,9 @@ func (my *SVM) GetCifsProtocols() (map[string]CifsSecurity, error) {
 	vserverCifsDataMap = make(map[string]CifsSecurity)
 
 	request = node.NewXMLS("cifs-security-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -347,7 +348,7 @@ func (my *SVM) GetCifsProtocols() (map[string]CifsSecurity, error) {
 	return vserverCifsDataMap, nil
 }
 
-func (my *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
+func (s *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
 	var (
 		result             []*node.Node
 		request            *node.Node
@@ -359,9 +360,9 @@ func (my *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
 	vserverNsswitchMap = make(map[string]Nsswitch)
 
 	request = node.NewXMLS("nameservice-nsswitch-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -387,7 +388,7 @@ func (my *SVM) GetNSSwitchInfo() (map[string]Nsswitch, error) {
 	return vserverNsswitchMap, nil
 }
 
-func (my *SVM) GetNisInfo() (map[string]string, error) {
+func (s *SVM) GetNisInfo() (map[string]string, error) {
 	var (
 		result        []*node.Node
 		request       *node.Node
@@ -398,9 +399,9 @@ func (my *SVM) GetNisInfo() (map[string]string, error) {
 	vserverNisMap = make(map[string]string)
 
 	request = node.NewXMLS("nis-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -416,7 +417,7 @@ func (my *SVM) GetNisInfo() (map[string]string, error) {
 	return vserverNisMap, nil
 }
 
-func (my *SVM) GetCifsEnabled() (map[string]bool, error) {
+func (s *SVM) GetCifsEnabled() (map[string]bool, error) {
 	var (
 		result         []*node.Node
 		request        *node.Node
@@ -427,8 +428,8 @@ func (my *SVM) GetCifsEnabled() (map[string]bool, error) {
 	vserverCifsMap = make(map[string]bool)
 
 	request = node.NewXMLS("cifs-server-get-iter")
-	request.NewChildS("max-records", my.batchSize)
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	request.NewChildS("max-records", s.batchSize)
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -444,7 +445,7 @@ func (my *SVM) GetCifsEnabled() (map[string]bool, error) {
 	return vserverCifsMap, nil
 }
 
-func (my *SVM) GetNfsEnabled() (map[string]string, error) {
+func (s *SVM) GetNfsEnabled() (map[string]string, error) {
 	var (
 		result        []*node.Node
 		request       *node.Node
@@ -455,9 +456,9 @@ func (my *SVM) GetNfsEnabled() (map[string]string, error) {
 	vserverNfsMap = make(map[string]string)
 
 	request = node.NewXMLS("nfs-service-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -473,7 +474,7 @@ func (my *SVM) GetNfsEnabled() (map[string]string, error) {
 	return vserverNfsMap, nil
 }
 
-func (my *SVM) GetSSHData() (map[string]SSHInfo, error) {
+func (s *SVM) GetSSHData() (map[string]SSHInfo, error) {
 	var (
 		result  []*node.Node
 		request *node.Node
@@ -484,9 +485,9 @@ func (my *SVM) GetSSHData() (map[string]SSHInfo, error) {
 	sshMap = make(map[string]SSHInfo)
 
 	request = node.NewXMLS("security-ssh-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -505,7 +506,7 @@ func (my *SVM) GetSSHData() (map[string]SSHInfo, error) {
 	return sshMap, nil
 }
 
-func (my *SVM) GetIscsiInitiatorAuth() (map[string]string, error) {
+func (s *SVM) GetIscsiInitiatorAuth() (map[string]string, error) {
 	var (
 		result              []*node.Node
 		request             *node.Node
@@ -516,9 +517,9 @@ func (my *SVM) GetIscsiInitiatorAuth() (map[string]string, error) {
 	vserverIscsiAuthMap = make(map[string]string)
 
 	request = node.NewXMLS("iscsi-initiator-auth-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -539,7 +540,7 @@ func (my *SVM) GetIscsiInitiatorAuth() (map[string]string, error) {
 	return vserverIscsiAuthMap, nil
 }
 
-func (my *SVM) GetIscsiService() (map[string]string, error) {
+func (s *SVM) GetIscsiService() (map[string]string, error) {
 	var (
 		result                 []*node.Node
 		request                *node.Node
@@ -550,9 +551,9 @@ func (my *SVM) GetIscsiService() (map[string]string, error) {
 	vserverIscsiServiceMap = make(map[string]string)
 
 	request = node.NewXMLS("iscsi-service-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -573,7 +574,7 @@ func (my *SVM) GetIscsiService() (map[string]string, error) {
 	return vserverIscsiServiceMap, nil
 }
 
-func (my *SVM) GetFpolicy() (map[string]Fpolicy, error) {
+func (s *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	var (
 		result            []*node.Node
 		request           *node.Node
@@ -584,9 +585,9 @@ func (my *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	vserverFpolicyMap = make(map[string]Fpolicy)
 
 	request = node.NewXMLS("fpolicy-policy-status-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -608,7 +609,7 @@ func (my *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	return vserverFpolicyMap, nil
 }
 
-func (my *SVM) GetLdapData() (map[string]string, error) {
+func (s *SVM) GetLdapData() (map[string]string, error) {
 	var (
 		result         []*node.Node
 		request        *node.Node
@@ -619,9 +620,9 @@ func (my *SVM) GetLdapData() (map[string]string, error) {
 	vserverLdapMap = make(map[string]string)
 
 	request = node.NewXMLS("ldap-client-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 
@@ -637,7 +638,7 @@ func (my *SVM) GetLdapData() (map[string]string, error) {
 	return vserverLdapMap, nil
 }
 
-func (my *SVM) GetKerberosConfig() (map[string]string, error) {
+func (s *SVM) GetKerberosConfig() (map[string]string, error) {
 	var (
 		result             []*node.Node
 		request            *node.Node
@@ -648,9 +649,9 @@ func (my *SVM) GetKerberosConfig() (map[string]string, error) {
 	vserverKerberosMap = make(map[string]string)
 
 	request = node.NewXMLS("kerberos-config-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", s.batchSize)
 
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = s.client.InvokeZapiCall(request); err != nil {
 		return nil, err
 	}
 

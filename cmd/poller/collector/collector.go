@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"log/slog"
 	"math"
 	"math/rand"
 	"reflect"
@@ -55,7 +55,7 @@ type Collector interface {
 	Start(*sync.WaitGroup)
 	GetName() string
 	GetObject() string
-	GetLogger() *logging.Logger
+	GetLogger() *slog.Logger
 	GetParams() *node.Node
 	GetOptions() *options.Options
 	GetCollectCount() uint64
@@ -92,7 +92,7 @@ var Status = [3]string{
 type AbstractCollector struct {
 	Name    string           // name of the collector, CamelCased
 	Object  string           // object of the collector, describes what that collector is collecting
-	Logger  *logging.Logger  // logger used for logging
+	Logger  *slog.Logger     // logger used for logging
 	Status  uint8            // current state of th
 	Message string           // reason if a collector is in failed state
 	Options *options.Options // poller options
@@ -118,7 +118,7 @@ func New(name, object string, o *options.Options, params *node.Node, credentials
 		Name:     name,
 		Object:   object,
 		Options:  o,
-		Logger:   logging.Get().SubLogger("collector", name+":"+object),
+		Logger:   slog.Default().With(slog.String("collector", name+":"+object)),
 		Params:   params,
 		countMux: &sync.Mutex{},
 		Auth:     credentials,
@@ -181,10 +181,12 @@ func Init(c Collector) error {
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
 			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
-				logger.Debug().Str("task", task.GetNameS()).
-					Str("jitter", jitterR.String()).
-					Str("schedule", task.GetContentS()).
-					Send()
+				logger.Debug(
+					"",
+					slog.String("task", task.GetNameS()),
+					slog.String("jitter", jitterR.String()),
+					slog.String("schedule", task.GetContentS()),
+				)
 				if err := s.NewTaskString(task.GetNameS(), task.GetContentS(), jitterR, foo, true, "Collector_"+c.GetName()+"_"+c.GetObject()); err != nil {
 					return errs.New(errs.ErrInvalidParam, "schedule ("+task.GetNameS()+"): "+err.Error())
 				}
@@ -307,7 +309,11 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 	defer func() {
 		if r := recover(); r != nil {
 			err := fmt.Sprintf("%+v\n", r)
-			c.Logger.Error().Str("err", err).Bytes("stack", debug.Stack()).Msg("Collector panicked")
+			c.Logger.Error(
+				"Collector panicked",
+				slog.String("err", err),
+				slog.String("stack", string(debug.Stack())),
+			)
 		}
 	}()
 
@@ -335,9 +341,10 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 
 			if c.Schedule.IsStandBy() && !c.Schedule.IsTaskStandBy(task) {
-				c.Logger.Info().
-					Str("task", task.Name).
-					Msg("skip, schedule is in standby")
+				c.Logger.Info(
+					"skip, schedule is in standby",
+					slog.String("task", task.Name),
+				)
 				continue
 			}
 
@@ -357,7 +364,11 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			switch {
 			case err != nil:
 				if !c.Schedule.IsStandBy() {
-					c.Logger.Debug().Msgf("handling error during [%s] poll...", task.Name)
+					c.Logger.Debug(
+						"handling error during poll",
+						slog.Any("err", err),
+						slog.String("task", task.Name),
+					)
 				}
 				switch {
 				// target system is unreachable
@@ -367,16 +378,17 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						retryDelay *= 4
 					}
 					if !c.Schedule.IsStandBy() {
-						c.Logger.Warn().
-							Str("task", task.Name).
-							Int("retryDelaySecs", retryDelay).
-							Msg("target unreachable, entering standby mode and retry")
+						c.Logger.Warn("target unreachable, entering standby mode and retry",
+							slog.String("task", task.Name),
+							slog.Int("retryDelaySecs", retryDelay),
+						)
 					}
-					c.Logger.Debug().
-						Err(err).
-						Str("task", task.Name).
-						Int("retryDelaySecs", retryDelay).
-						Msg("target unreachable, entering standby mode and retry")
+					c.Logger.Debug(
+						"target unreachable, entering standby mode and retry",
+						slog.Any("err", err),
+						slog.String("task", task.Name),
+						slog.Int("retryDelaySecs", retryDelay),
+					)
 					c.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
 					c.SetStatus(1, errs.ErrConnection.Error())
 
@@ -385,39 +397,50 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					retryAfter := 30 + rand.Int63n(30) //nolint:gosec
 					c.Schedule.SetStandByMode(task, time.Duration(retryAfter)*time.Second)
 					c.SetStatus(1, err.Error())
-					c.Logger.Warn().
-						Str("task", task.Name).
-						Int64("retryAfterSecs", retryAfter).
-						Msg("CM reject, entering standby mode and retry")
+					c.Logger.Warn(
+						"CM reject, entering standby mode and retry",
+						slog.String("task", task.Name),
+						slog.Int64("retryAfterSecs", retryAfter),
+					)
 				// there are no instances to collect
 				case errors.Is(err, errs.ErrNoInstance):
 					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
 					c.SetStatus(1, errs.ErrNoInstance.Error())
-					c.Logger.Info().
-						Str("task", task.Name).
-						Msg("no instances, entering standby")
+					c.Logger.Info(
+						"no instances, entering standby",
+						slog.String("task", task.Name),
+					)
 				// no metrics available
 				case errors.Is(err, errs.ErrNoMetric):
 					c.SetStatus(1, errs.ErrNoMetric.Error())
 					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-					c.Logger.Info().
-						Str("task", task.Name).
-						Str("object", c.Object).
-						Msg("no metrics of object on system, entering standby mode")
+					c.Logger.Info(
+						"no metrics of object on system, entering standby mode",
+						slog.String("task", task.Name),
+						slog.String("object", c.Object),
+					)
 				// not an error we are expecting, so enter failed or standby state
 				default:
 					switch {
 					case errors.Is(err, errs.ErrPermissionDenied):
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-						c.Logger.Error().Err(err).Str("task", task.Name).Msg("Entering standby mode")
+						c.Logger.Error(
+							"Entering standby mode",
+							slog.Any("err", err),
+							slog.String("task", task.Name),
+						)
 					case errors.Is(err, errs.ErrAPIRequestRejected):
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 						if !errors.Is(err, errs.ErrMetroClusterNotConfigured) {
 							// Log as info since these are not errors.
-							c.Logger.Info().Err(err).Str("task", task.Name).Msg("Entering standby mode")
+							c.Logger.Info(
+								"Entering standby mode",
+								slog.Any("err", err),
+								slog.String("task", task.Name),
+							)
 						}
 					default:
-						c.Logger.Error().Err(err).Str("task", task.Name).Send()
+						c.Logger.Error("", slog.Any("err", err), slog.String("task", task.Name))
 					}
 
 					var herr errs.HarvestError
@@ -433,7 +456,9 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				c.Schedule.Recover()
 				retryDelay = 1
 				c.SetStatus(0, "running")
-				c.Logger.Info().Str("task", task.Name).Msg("recovered from standby mode, back to normal schedule")
+				c.Logger.Info("recovered from standby mode, back to normal schedule",
+					slog.String("task", task.Name),
+				)
 			default:
 				c.SetStatus(0, "running")
 			}
@@ -453,7 +478,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						for _, plg := range v {
 							pluginData, pluginMetadata, err := plg.Run(data)
 							if err != nil {
-								c.Logger.Error().Err(err).Str("plugin", plg.GetName()).Send()
+								c.Logger.Error("", slog.Any("err", err), slog.String("plugin", plg.GetName()))
 								continue
 							}
 							if pluginData != nil {
@@ -490,18 +515,23 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		for _, e := range c.Exporters {
 			if code, status, reason := e.GetStatus(); code != 0 {
-				c.Logger.Warn().
-					Str("exporter", e.GetName()).
-					Str("status", status).
-					Str("reason", reason).
-					Uint8("code", code).
-					Msg("skip export")
+				c.Logger.Warn(
+					"skip export",
+					slog.String("exporter", e.GetName()),
+					slog.String("status", status),
+					slog.String("reason", reason),
+					slog.Int("code", int(code)),
+				)
 				continue
 			}
 
 			// Export metadata first
 			if _, err := e.Export(c.Metadata); err != nil {
-				c.Logger.Warn().Err(err).Str("exporter", e.GetName()).Msg("Unable to export metadata")
+				c.Logger.Warn(
+					"Unable to export metadata",
+					slog.Any("err", err),
+					slog.String("exporter", e.GetName()),
+				)
 			}
 
 			// Continue if metadata failed, since it might be specific to metadata
@@ -509,7 +539,11 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				if data.IsExportable() {
 					stats, err := e.Export(data)
 					if err != nil {
-						c.Logger.Error().Err(err).Str("exporter", e.GetName()).Msg("export data")
+						c.Logger.Error(
+							"export data",
+							slog.Any("err", err),
+							slog.String("exporter", e.GetName()),
+						)
 						break
 					}
 					exporterStats.InstancesExported += stats.InstancesExported
@@ -529,25 +563,26 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			// log if lagging by more than 500 ms
 			// < is used since larger durations are more negative
 		} else if nd.Milliseconds() <= -500 && !c.Schedule.IsStandBy() {
-			c.Logger.Warn().
-				Str("lag", (-nd).String()).
-				Msg("lagging behind schedule")
+			c.Logger.Warn(
+				"lagging behind schedule",
+				slog.String("lag", (-nd).String()),
+			)
 		}
 	}
 }
 
 func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 	metrics := c.Metadata.GetMetrics()
-	info := c.Logger.Info() //nolint:zerologlint
 	inst := c.Metadata.GetInstance(taskName)
 	if inst == nil {
 		return
 	}
+	var attrs []any
 
 	// convert microseconds to milliseconds and names ending with _time into -> *Ms
 	microToMilli := func(value float64, field string) {
 		v := int64(math.Round(value / 1000))
-		info.Int64(field[0:len(field)-5]+"Ms", v)
+		attrs = append(attrs, slog.Int64(field[0:len(field)-5]+"Ms", v))
 	}
 
 	if taskName == "data" {
@@ -561,12 +596,15 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 			if strings.HasSuffix(mName, "_time") {
 				microToMilli(value, mName)
 			} else {
-				info.Int64(mName, int64(value))
+				attrs = append(attrs, slog.Int64(mName, int64(value)))
 			}
 		}
 
-		info.Uint64("instancesExported", stats.InstancesExported)
-		info.Uint64("metricsExported", stats.MetricsExported)
+		attrs = append(attrs,
+			slog.Uint64("instancesExported", stats.InstancesExported),
+			slog.Uint64("metricsExported", stats.MetricsExported),
+		)
+
 	} else {
 		logFields := []string{"api_time", "poll_time"}
 		for _, field := range logFields {
@@ -575,26 +613,20 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 		}
 
 		epoch, _ := c.Metadata.GetMetric(begin).GetValueFloat64(inst)
-		info.Int64(begin, int64(epoch))
+		attrs = append(attrs, slog.Int64(begin, int64(epoch)))
 
 		if taskName == "counter" {
 			v, _ := c.Metadata.GetMetric("metrics").GetValueInt64(inst)
-			info.Int64("metrics", v)
+			attrs = append(attrs, slog.Int64("metrics", v))
 		} else if taskName == "instance" {
 			v, _ := c.Metadata.GetMetric("instances").GetValueInt64(inst)
-			info.Int64("instances", v)
+			attrs = append(attrs, slog.Int64("instances", v))
 		}
 
-		info.Str("task", taskName)
+		attrs = append(attrs, slog.String("task", taskName))
 	}
 
-	bytesRx, _ := c.Metadata.GetMetric("bytesRx").GetValueUint64(inst)
-	info.Uint64("bytesRx", bytesRx)
-
-	numCalls, _ := c.Metadata.GetMetric("numCalls").GetValueUint64(inst)
-	info.Uint64("numCalls", numCalls)
-
-	info.Msg("Collected")
+	c.Logger.Info("Collected", attrs...)
 }
 
 // GetName returns name of the collector
@@ -603,7 +635,7 @@ func (c *AbstractCollector) GetName() string {
 }
 
 // GetLogger returns logger of the collector
-func (c *AbstractCollector) GetLogger() *logging.Logger {
+func (c *AbstractCollector) GetLogger() *slog.Logger {
 	return c.Logger
 }
 
@@ -706,24 +738,24 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, 
 
 		// case 1: available as built-in plugin
 		if p = GetBuiltinPlugin(name, abc); p != nil {
-			c.Logger.Debug().Msgf("loaded built-in plugin [%s]", name)
+			c.Logger.Debug("loaded built-in plugin", slog.String("name", name))
 			// case 2: available as dynamic plugin
 		} else {
 			p = collector.LoadPlugin(name, abc)
-			c.Logger.Debug().Msgf("loaded plugin [%s]", name)
+			c.Logger.Debug("loaded plugin", slog.String("name", name))
 		}
 		if p == nil {
 			continue
 		}
 
 		if err := p.Init(); err != nil {
-			c.Logger.Error().Err(err).Str("name", name).Msgf("init plugin")
+			slog.Error("init plugin", slog.Any("err", err), slog.String("name", name))
 			return err
 		}
 		plugins = append(plugins, p)
 	}
 	c.Plugins[key] = plugins
-	c.Logger.Debug().Msgf("initialized %d plugins", len(c.Plugins))
+	c.Logger.Debug("initialized plugins", slog.Int("count", len(c.Plugins)))
 	return nil
 }
 

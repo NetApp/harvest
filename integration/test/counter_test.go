@@ -8,7 +8,6 @@ import (
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -61,7 +60,7 @@ func TestCounters(t *testing.T) {
 	}
 	timeout, _ := time.ParseDuration(rest2.DefaultTimeout)
 
-	if client, err = rest2.New(poller, timeout, auth.NewCredentials(poller, logging.Get())); err != nil {
+	if client, err = rest2.New(poller, timeout, auth.NewCredentials(poller, slog.Default())); err != nil {
 		slog.Error(
 			"error creating new client",
 			slog.Any("err", err),
@@ -92,7 +91,7 @@ func invokeRestCall(client *rest2.Client, counters map[string][]counterData) err
 				CounterSchema(counterDetail.perfCounters).
 				Build()
 
-			if _, err := collectors.InvokeRestCall(client, href, logging.Get()); err != nil {
+			if _, err := collectors.InvokeRestCall(client, href, slog.Default()); err != nil {
 				return fmt.Errorf("failed to invoke rest href=%s call: %w", href, err)
 			}
 		}

@@ -1,6 +1,7 @@
 package restperf
 
 import (
+	"context"
 	"fmt"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/disk"
@@ -22,8 +23,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"maps"
 	"path"
 	"regexp"
@@ -141,10 +142,12 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	r.Logger.Debug().
-		Int("numMetrics", len(r.Prop.Metrics)).
-		Str("timeout", r.Client.Timeout.String()).
-		Msg("initialized cache")
+	r.Logger.Debug(
+		"initialized cache",
+		slog.Int("numMetrics", len(r.Prop.Metrics)),
+		slog.String("timeout", r.Client.Timeout.String()),
+	)
+
 	return nil
 }
 
@@ -213,24 +216,19 @@ func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
 	if x = r.Params.GetChildS(name); x != nil {
 		v := x.GetAllChildContentS()
 		if len(v) == 0 {
-			r.Logger.Debug().
-				Str("name", name).
-				Str("defaultValue", defaultValue).
-				Send()
+			r.Logger.Debug(
+				"",
+				slog.String("name", name),
+				slog.String("defaultValue", defaultValue),
+			)
 			return defaultValue
 		}
 		slices.Sort(v)
 		s := strings.Join(v, "|")
-		r.Logger.Debug().
-			Str("name", name).
-			Str("value", s).
-			Send()
+		r.Logger.Debug("", slog.String("name", name), slog.String("value", s))
 		return s
 	}
-	r.Logger.Debug().
-		Str("name", name).
-		Str("defaultValue", defaultValue).
-		Send()
+	r.Logger.Debug("", slog.String("name", name), slog.String("defaultValue", defaultValue))
 	return defaultValue
 }
 
@@ -245,13 +243,16 @@ func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
 
 	if x = r.Params.GetChildContentS(name); x != "" {
 		if n, e = strconv.Atoi(x); e == nil {
-			r.Logger.Debug().Msgf("using %s = [%d]", name, n)
+			r.Logger.Debug("using",
+				slog.String("name", name),
+				slog.Int("value", n),
+			)
 			return n
 		}
-		r.Logger.Warn().Msgf("invalid parameter %s = [%s] (expected integer)", name, x)
+		r.Logger.Warn("invalid parameter (expected integer)", slog.String("name", name), slog.String("value", x))
 	}
 
-	r.Logger.Debug().Str("name", name).Str("defaultValue", strconv.Itoa(defaultValue)).Msg("using values")
+	r.Logger.Debug("using", slog.String("name", name), slog.Int("defaultValue", defaultValue))
 	return defaultValue
 }
 
@@ -265,7 +266,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		APIPath(r.Prop.Query).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
-	r.Logger.Debug().Str("href", href).Send()
+	r.Logger.Debug("", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -303,7 +304,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	// populate denominator metric to prop metrics
 	counterSchema.ForEach(func(_, c gjson.Result) bool {
 		if !c.IsObject() {
-			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
+			r.Logger.Warn("Counter is not object, skipping", slog.String("type", c.Type.String()))
 			return true
 		}
 
@@ -318,9 +319,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 		if archivedMetric, found := r.archivedMetrics[name]; found {
 			r.Prop.Metrics[name] = archivedMetric
 			delete(r.archivedMetrics, name) // Remove from archive after restoring
-			r.Logger.Info().
-				Str("key", name).
-				Msg("Metric found in archive. Restore it")
+			r.Logger.Info("Metric found in archive. Restore it", slog.String("key", name))
 		}
 
 		if _, has := r.Prop.Metrics[name]; has {
@@ -353,7 +352,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	counterSchema.ForEach(func(_, c gjson.Result) bool {
 
 		if !c.IsObject() {
-			r.Logger.Warn().Str("type", c.Type.String()).Msg("Counter is not object, skipping")
+			r.Logger.Warn("Counter is not object, skipping", slog.String("type", c.Type.String()))
 			return true
 		}
 
@@ -381,9 +380,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 		if !seenMetrics[name] {
 			r.archivedMetrics[name] = metric
 			// Log the metric that is not present in counterSchema.
-			r.Logger.Warn().
-				Str("key", name).
-				Msg("Metric not found in counterSchema")
+			r.Logger.Warn("Metric not found in counterSchema", slog.String("key", name))
 			delete(r.Prop.Metrics, name)
 		}
 	}
@@ -394,7 +391,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	if mat.GetMetric(timestampMetricName) == nil {
 		m, err := mat.NewMetricFloat64(timestampMetricName)
 		if err != nil {
-			r.Logger.Error().Err(err).Msg("add timestamp metric")
+			r.Logger.Error("add timestamp metric", slog.Any("err", err))
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
@@ -616,9 +613,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 			metr, ok := mat.GetMetrics()[name]
 			if !ok {
 				if metr, err = mat.NewMetricFloat64(name, metric.Label); err != nil {
-					r.Logger.Error().Err(err).
-						Str("name", name).
-						Msg("NewMetricFloat64")
+					r.Logger.Error("NewMetricFloat64", slog.Any("err", err), slog.String("name", name))
 				}
 			}
 			metr.SetExportable(metric.Exportable)
@@ -627,11 +622,11 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 		var service, wait, ops *matrix.Metric
 
 		if service = mat.GetMetric("service_time"); service == nil {
-			r.Logger.Error().Msg("metric [service_time] required to calculate workload missing")
+			r.Logger.Error("metric [service_time] required to calculate workload missing")
 		}
 
 		if wait = mat.GetMetric("wait_time"); wait == nil {
-			r.Logger.Error().Msg("metric [wait-time] required to calculate workload missing")
+			r.Logger.Error("metric [wait-time] required to calculate workload missing")
 		}
 
 		if service == nil || wait == nil {
@@ -719,7 +714,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Send()
+	r.Logger.Debug("", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -804,7 +799,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		if t != 0 {
 			ts = float64(t) / BILLION
 		} else {
-			r.Logger.Warn().Msg("Missing timestamp in response")
+			r.Logger.Warn("Missing timestamp in response")
 		}
 
 		pr.ForEach(func(_, instanceData gjson.Result) bool {
@@ -817,7 +812,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			instIndex++
 
 			if !instanceData.IsObject() {
-				r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+				r.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
 				return true
 			}
 
@@ -830,7 +825,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					if ok {
 						instanceKey += strings.Clone(value.String())
 					} else {
-						r.Logger.Warn().Str("key", k).Msg("missing key")
+						r.Logger.Warn("missing key", slog.String("key", k))
 					}
 				}
 
@@ -853,9 +848,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					instanceKey = before
 					layer = after
 				} else {
-					r.Logger.Warn().
-						Str("instanceKey", instanceKey).
-						Msg("instanceKey has unexpected format")
+					r.Logger.Warn("instanceKey has unexpected format", slog.String("instanceKey", instanceKey))
 					return true
 				}
 
@@ -876,9 +869,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			instance = curMat.GetInstance(instanceKey)
 			if instance == nil {
 				if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
-					r.Logger.Warn().
-						Str("instanceKey", instanceKey).
-						Msg("Skip instanceKey, not found in cache")
+					r.Logger.Warn("Skip instanceKey, not found in cache", slog.String("instanceKey", instanceKey))
 				}
 				return true
 			}
@@ -913,9 +904,9 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					} else {
 						// ignore physical_disk_id logging as in some of 9.12 versions, this field may be absent
 						if r.Prop.Query == "api/cluster/counter/tables/disk:constituent" && label == "physical_disk_id" {
-							r.Logger.Debug().Str("instanceKey", instanceKey).Str("label", label).Msg("Missing label value")
+							r.Logger.Debug("Missing label value", slog.String("instanceKey", instanceKey), slog.String("label", label))
 						} else {
-							r.Logger.Error().Str("instanceKey", instanceKey).Str("label", label).Msg("Missing label value")
+							r.Logger.Error("Missing label value", slog.String("instanceKey", instanceKey), slog.String("label", label))
 						}
 					}
 				}
@@ -933,32 +924,35 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							switch {
 							case wm == "resource_latency" && (name == "wait_time" || name == "service_time"):
 								if err := wMetric.AddValueString(instance, f.value); err != nil {
-									r.Logger.Error().
-										Err(err).
-										Str("name", name).
-										Str("value", f.value).
-										Msg("Add resource_latency failed")
+									r.Logger.Error(
+										"Add resource_latency failed",
+										slog.Any("err", err),
+										slog.String("name", name),
+										slog.String("value", f.value),
+									)
 								} else {
 									count++
 								}
 								continue
 							case wm == "service_time_latency" && name == "service_time":
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
-									r.Logger.Error().
-										Err(err).
-										Str("name", name).
-										Str("value", f.value).
-										Msg("Add service_time_latency failed")
+									r.Logger.Error(
+										"Add service_time_latency failed",
+										slog.Any("err", err),
+										slog.String("name", name),
+										slog.String("value", f.value),
+									)
 								} else {
 									count++
 								}
 							case wm == "wait_time_latency" && name == "wait_time":
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
-									r.Logger.Error().
-										Err(err).
-										Str("name", name).
-										Str("value", f.value).
-										Msg("Add wait_time_latency failed")
+									r.Logger.Error(
+										"Add wait_time_latency failed",
+										slog.Any("err", err),
+										slog.String("name", name),
+										slog.String("value", f.value),
+									)
 								} else {
 									count++
 								}
@@ -972,10 +966,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 						if len(labels) != len(values) {
 							// warn & skip
-							r.Logger.Warn().
-								Str("labels", f.label).
-								Str("value", f.value).
-								Msg("labels don't match parsed values")
+							r.Logger.Warn(
+								"labels don't match parsed values",
+								slog.String("labels", f.label),
+								slog.String("value", f.value),
+							)
 							continue
 						}
 
@@ -987,7 +982,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							key := name + ".bucket"
 							histogramMetric, err = r.getMetric(curMat, prevMat, key, metric.Label)
 							if err != nil {
-								r.Logger.Error().Err(err).Str("key", key).Msg("unable to create histogram metric")
+								r.Logger.Error(
+									"unable to create histogram metric",
+									slog.Any("err", err),
+									slog.String("key", key),
+								)
 								continue
 							}
 							histogramMetric.SetArray(true)
@@ -1001,9 +1000,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							metr, ok := curMat.GetMetrics()[k]
 							if !ok {
 								if metr, err = r.getMetric(curMat, prevMat, k, metric.Label); err != nil {
-									r.Logger.Error().Err(err).
-										Str("name", k).
-										Msg("NewMetricFloat64")
+									r.Logger.Error(
+										"NewMetricFloat64",
+										slog.Any("err", err),
+										slog.String("name", k),
+									)
 									continue
 								}
 								if x := strings.Split(label, arrayKeyToken); len(x) == 2 {
@@ -1024,13 +1025,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 								}
 							}
 							if err = metr.SetValueString(instance, values[i]); err != nil {
-								r.Logger.Error().
-									Err(err).
-									Str("name", name).
-									Str("label", label).
-									Str("value", values[i]).
-									Int("instIndex", instIndex).
-									Msg("Set value failed")
+								r.Logger.Error(
+									"Set value failed",
+									slog.Any("err", err),
+									slog.String("name", name),
+									slog.String("label", label),
+									slog.String("value", values[i]),
+									slog.Int("instIndex", instIndex),
+								)
 								continue
 							}
 							count++
@@ -1039,36 +1041,42 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 						metr, ok := curMat.GetMetrics()[name]
 						if !ok {
 							if metr, err = r.getMetric(curMat, prevMat, name, metric.Label); err != nil {
-								r.Logger.Error().Err(err).
-									Str("name", name).
-									Int("instIndex", instIndex).
-									Msg("NewMetricFloat64")
+								r.Logger.Error(
+									"NewMetricFloat64",
+									slog.Any("err", err),
+									slog.String("name", name),
+									slog.Int("instIndex", instIndex),
+								)
 							}
 						}
 						metr.SetExportable(metric.Exportable)
 						if c, err := strconv.ParseFloat(f.value, 64); err == nil {
 							if err = metr.SetValueFloat64(instance, c); err != nil {
-								r.Logger.Error().Err(err).
-									Str("key", metric.Name).
-									Str("metric", metric.Label).
-									Int("instIndex", instIndex).
-									Msg("Unable to set float key on metric")
+								r.Logger.Error(
+									"Unable to set float key on metric",
+									slog.Any("err", err),
+									slog.String("key", metric.Name),
+									slog.String("metric", metric.Label),
+									slog.Int("instIndex", instIndex),
+								)
 							}
 						} else {
-							r.Logger.Error().Err(err).
-								Str("key", metric.Name).
-								Str("metric", metric.Label).
-								Int("instIndex", instIndex).
-								Msg("Unable to parse float value")
+							r.Logger.Error(
+								"Unable to parse float value",
+								slog.Any("err", err),
+								slog.String("key", metric.Name),
+								slog.String("metric", metric.Label),
+								slog.Int("instIndex", instIndex),
+							)
 						}
 						count++
 					}
 				} else {
-					r.Logger.Warn().Str("counter", name).Msg("Counter is missing or unable to parse.")
+					r.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", name))
 				}
 			}
 			if err = curMat.GetMetric(timestampMetricName).SetValueFloat64(instance, ts); err != nil {
-				r.Logger.Error().Err(err).Msg("Failed to set timestamp")
+				r.Logger.Error("Failed to set timestamp", slog.Any("err", err))
 			}
 
 			return true
@@ -1095,7 +1103,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 	// skip calculating from delta if no data from previous poll
 	if r.perfProp.isCacheEmpty {
-		r.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
+		r.Logger.Debug("skip postprocessing until next poll (previous cache empty)")
 		r.Matrix[r.Object] = curMat
 		r.perfProp.isCacheEmpty = false
 		return nil, nil
@@ -1126,7 +1134,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					orderedDenominatorKeys = append(orderedDenominatorKeys, key)
 				}
 			} else {
-				r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse")
+				r.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
 			}
 		}
 	}
@@ -1140,7 +1148,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
 	if _, err = curMat.Delta("timestamp", prevMat, r.Logger); err != nil {
-		r.Logger.Error().Err(err).Msg("(timestamp) calculate delta:")
+		r.Logger.Error("(timestamp) calculate delta:", slog.Any("err", err))
 	}
 
 	var base *matrix.Metric
@@ -1150,7 +1158,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		key := orderedKeys[i]
 		counter := r.counterLookup(metric, key)
 		if counter == nil {
-			r.Logger.Error().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
+			r.Logger.Error(
+				"Missing counter:",
+				slog.Any("err", err),
+				slog.String("counter", metric.GetName()),
+			)
 			continue
 		}
 		property := counter.counterType
@@ -1166,7 +1178,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 		// all other properties - first calculate delta
 		if skips, err = curMat.Delta(key, prevMat, r.Logger); err != nil {
-			r.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
+			r.Logger.Error("Calculate delta:", slog.Any("err", err), slog.String("key", key))
 			continue
 		}
 		totalSkips += skips
@@ -1195,12 +1207,13 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					continue
 				}
 			}
-			r.Logger.Warn().
-				Str("key", key).
-				Str("property", property).
-				Str("denominator", counter.denominator).
-				Int("instIndex", instIndex).
-				Msg("Base counter missing")
+			r.Logger.Warn(
+				"Base counter missing",
+				slog.String("key", key),
+				slog.String("property", property),
+				slog.String("denominator", counter.denominator),
+				slog.Int("instIndex", instIndex),
+			)
 			continue
 		}
 
@@ -1219,7 +1232,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			}
 
 			if err != nil {
-				r.Logger.Error().Err(err).Str("key", key).Msg("Division by base")
+				r.Logger.Error("Division by base", slog.Any("err", err), slog.String("key", key))
 				continue
 			}
 			totalSkips += skips
@@ -1231,18 +1244,19 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 		if property == "percent" {
 			if skips, err = curMat.MultiplyByScalar(key, 100); err != nil {
-				r.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
+				r.Logger.Error("Multiply by scalar", slog.Any("err", err), slog.String("key", key))
 			} else {
 				totalSkips += skips
 			}
 			continue
 		}
 		// If we reach here then one of the earlier clauses should have executed `continue` statement
-		r.Logger.Error().Err(err).
-			Str("key", key).
-			Str("property", property).
-			Int("instIndex", instIndex).
-			Msg("Unknown property")
+		r.Logger.Error(
+			"Unknown property",
+			slog.String("key", key),
+			slog.String("property", property),
+			slog.Int("instIndex", instIndex),
+		)
 	}
 
 	// calculate rates (which we deferred to calculate averages/percents first)
@@ -1253,18 +1267,20 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			property := counter.counterType
 			if property == "rate" {
 				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
-					r.Logger.Error().Err(err).
-						Int("i", i).
-						Str("metric", metric.GetName()).
-						Str("key", orderedKeys[i]).
-						Int("instIndex", instIndex).
-						Msg("Calculate rate")
+					r.Logger.Error(
+						"Calculate rate",
+						slog.Any("err", err),
+						slog.Int("i", i),
+						slog.String("metric", metric.GetName()),
+						slog.String("key", key),
+						slog.Int("instIndex", instIndex),
+					)
 					continue
 				}
 				totalSkips += skips
 			}
 		} else {
-			r.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse ")
+			r.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
 			continue
 		}
 	}
@@ -1305,7 +1321,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 	}
 
 	if ops = data.GetMetric("ops"); ops == nil {
-		r.Logger.Error().Err(nil).Msgf("ops counter not found in cache")
+		r.Logger.Error("ops counter not found in cache")
 		return errs.New(errs.ErrMissingParam, "counter ops")
 	}
 
@@ -1318,14 +1334,14 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Send()
+	r.Logger.Debug("", slog.String("href", href))
 	if href == "" {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
 
 	records, err = rest.Fetch(r.Client, href)
 	if err != nil {
-		r.Logger.Error().Err(err).Str("href", href).Msg("Failed to fetch data")
+		r.Logger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err
 	}
 
@@ -1340,7 +1356,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		)
 
 		if !instanceData.IsObject() {
-			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			r.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
 			continue
 		}
 
@@ -1348,7 +1364,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		if value.Exists() {
 			instanceKey += strings.Clone(value.String())
 		} else {
-			r.Logger.Warn().Str("key", "name").Msg("skip instance, missing key")
+			r.Logger.Warn("skip instance, missing key", slog.String("key", "name"))
 			continue
 		}
 		instance = data.GetInstance(instanceKey)
@@ -1360,7 +1376,12 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		f := parseMetricResponse(instanceData, counterName)
 		if f.value != "" {
 			if err = ops.SetValueString(instance, f.value); err != nil {
-				r.Logger.Error().Err(err).Str("metric", counterName).Str("value", value.String()).Msg("set metric")
+				r.Logger.Error(
+					"set metric",
+					slog.Any("err", err),
+					slog.String("metric", counterName),
+					slog.String("value", value.String()),
+				)
 			}
 		}
 	}
@@ -1403,7 +1424,7 @@ func (r *RestPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 	case "FCVI":
 		return fcvi.New(p)
 	default:
-		r.Logger.Info().Str("kind", kind).Msg("no Restperf plugin found")
+		r.Logger.Info("no Restperf plugin found", slog.String("kind", kind))
 	}
 	return nil
 }
@@ -1436,7 +1457,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug().Str("href", href).Send()
+	r.Logger.Debug("", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -1484,7 +1505,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 		)
 
 		if !instanceData.IsObject() {
-			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			r.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
 			continue
 		}
 
@@ -1510,7 +1531,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 			if value.Exists() {
 				instanceKey += strings.Clone(value.String())
 			} else {
-				r.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+				r.Logger.Warn("skip instance, missing key", slog.String("key", k))
 				break
 			}
 		}
@@ -1521,7 +1542,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 			instance := mat.GetInstance(instanceKey)
 			r.updateQosLabels(instanceData, instance, instanceKey)
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
-			r.Logger.Error().Err(err).Str("instanceKey", instanceKey).Msg("add instance")
+			r.Logger.Error("add instance", slog.Any("err", err), slog.String("instanceKey", instanceKey))
 		} else {
 			r.updateQosLabels(instanceData, instance, instanceKey)
 		}
@@ -1529,14 +1550,14 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 
 	for key := range oldInstances.Iter() {
 		mat.RemoveInstance(key)
-		r.Logger.Debug().Msgf("removed instance [%s]", key)
+		r.Logger.Debug("removed instance", slog.String("key", key))
 	}
 
 	removed = oldInstances.Size()
 	newSize = len(mat.GetInstances())
 	added = newSize - (oldSize - removed)
 
-	r.Logger.Debug().Int("new", added).Int("removed", removed).Int("total", newSize).Msg("instances")
+	r.Logger.Debug("instances", slog.Int("new", added), slog.Int("removed", removed), slog.Int("total", newSize))
 
 	// update metadata for collector logs
 	_ = r.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
@@ -1560,12 +1581,13 @@ func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, 
 				instance.SetLabel(display, strings.Clone(value.String()))
 			}
 		}
-		if r.Logger.GetLevel() == zerolog.DebugLevel {
-			r.Logger.Debug().
-				Str("query", r.Prop.Query).
-				Str("key", key).
-				Str("qos labels", dict.String(instance.GetLabels())).
-				Send()
+		if r.Logger.Enabled(context.Background(), slog.LevelDebug) {
+			r.Logger.Debug(
+				"",
+				slog.String("query", r.Prop.Query),
+				slog.String("key", key),
+				slog.String("qos labels", dict.String(instance.GetLabels())),
+			)
 		}
 	}
 }

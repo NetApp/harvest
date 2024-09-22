@@ -3,9 +3,9 @@ package rest
 import (
 	"bytes"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 
 	"github.com/netapp/harvest/v2/pkg/auth"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"net/http"
 	"time"
 )
@@ -20,8 +20,6 @@ func NewDummyClient() *Client {
 
 	buffer := new(bytes.Buffer)
 
-	logger := logging.Get()
-
 	cluster := Cluster{
 		Name:    "TestCluster",
 		Info:    "TestInfo",
@@ -33,7 +31,7 @@ func NewDummyClient() *Client {
 		client:   httpClient,
 		request:  httpRequest,
 		buffer:   buffer,
-		Logger:   logger,
+		Logger:   slog.Default(),
 		baseURL:  "http://example.com",
 		Cluster:  cluster,
 		token:    "TestToken",

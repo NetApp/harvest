@@ -37,24 +37,12 @@ github.com/lufia/plan9stats
 github.com/mailru/easyjson/buffer
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
-# github.com/mattn/go-colorable v0.1.13
-## explicit; go 1.15
-github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.20
-## explicit; go 1.15
-github.com/mattn/go-isatty
 # github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55
 ## explicit; go 1.14
 github.com/power-devops/perfstat
 # github.com/rivo/uniseg v0.4.7
 ## explicit; go 1.18
 github.com/rivo/uniseg
-# github.com/rs/zerolog v1.33.0
-## explicit; go 1.15
-github.com/rs/zerolog
-github.com/rs/zerolog/internal/cbor
-github.com/rs/zerolog/internal/json
-github.com/rs/zerolog/log
 # github.com/shirou/gopsutil/v4 v4.24.8
 ## explicit; go 1.18
 github.com/shirou/gopsutil/v4/common

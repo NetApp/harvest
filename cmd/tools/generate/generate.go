@@ -9,12 +9,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"io"
 	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -571,7 +571,7 @@ func generateMetrics() (map[string]Counter, rest.Cluster) {
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	credentials := auth.NewCredentials(poller, logging.Get())
+	credentials := auth.NewCredentials(poller, slog.Default())
 	if restClient, err = rest.New(poller, timeout, credentials); err != nil {
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)

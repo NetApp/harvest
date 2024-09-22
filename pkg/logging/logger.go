@@ -2,15 +2,14 @@ package logging
 
 import (
 	"cmp"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
+	"log/slog"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"sync"
-	"time"
-
-	"github.com/rs/zerolog"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 const (
@@ -27,7 +26,7 @@ type LogConfig struct {
 	// Enable console logging
 	ConsoleLoggingEnabled bool
 	// Log Level
-	LogLevel zerolog.Level
+	LogLevel slog.Level
 	// Prefix
 	PrefixKey   string
 	PrefixValue string
@@ -45,31 +44,30 @@ type LogConfig struct {
 	MaxAge int
 }
 
-var logger *Logger
-
-var once sync.Once
-
-type Logger struct {
-	*zerolog.Logger
-}
+var (
+	logger *slog.Logger
+	once   sync.Once
+)
 
 // Get Returns a logger with default configuration if logger is not initialized yet
 // default configuration only writes to console and not to file see param defaultFileLoggingEnabled
-func Get() *Logger {
+func Get() *slog.Logger {
 	once.Do(func() {
 		if logger == nil {
 			defaultPrefixKey := "harvest"
 			defaultPrefixValue := "harvest"
-			logConfig := LogConfig{ConsoleLoggingEnabled: defaultConsoleLoggingEnabled,
-				PrefixKey:          defaultPrefixKey,
-				PrefixValue:        defaultPrefixValue,
-				LogLevel:           zerolog.InfoLevel,
-				FileLoggingEnabled: defaultFileLoggingEnabled,
-				Directory:          GetLogPath(),
-				Filename:           defaultLogFileName,
-				MaxSize:            DefaultLogMaxMegaBytes,
-				MaxBackups:         DefaultLogMaxBackups,
-				MaxAge:             DefaultLogMaxAge}
+			logConfig := LogConfig{
+				ConsoleLoggingEnabled: defaultConsoleLoggingEnabled,
+				PrefixKey:             defaultPrefixKey,
+				PrefixValue:           defaultPrefixValue,
+				LogLevel:              slog.LevelInfo,
+				FileLoggingEnabled:    defaultFileLoggingEnabled,
+				Directory:             GetLogPath(),
+				Filename:              defaultLogFileName,
+				MaxSize:               DefaultLogMaxMegaBytes,
+				MaxBackups:            DefaultLogMaxBackups,
+				MaxAge:                DefaultLogMaxAge,
+			}
 			logger = Configure(logConfig)
 		}
 	})
@@ -80,70 +78,53 @@ func GetLogPath() string {
 	return cmp.Or(os.Getenv("HARVEST_LOGS"), "/var/log/harvest/")
 }
 
-// SubLogger adds the field key with val as a string to the logger context and returns sublogger
-func (l *Logger) SubLogger(key string, value string) *Logger {
-	if l != nil {
-		logger := l.With().Str(key, value).Logger()
-		subLogger := &Logger{
-			Logger: &logger,
-		}
-		return subLogger
-	}
-	return l
-}
-
 // Configure sets up the logging framework
-func Configure(config LogConfig) *Logger {
-	var writers []io.Writer
+func Configure(config LogConfig) *slog.Logger {
+
+	handlerOptions := &slog.HandlerOptions{
+		AddSource: true,
+		Level:     config.LogLevel,
+		ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.SourceKey {
+				source, ok := a.Value.Any().(*slog.Source)
+				if !ok {
+					return a
+				}
+				if source != nil {
+					source.File = filepath.Base(source.File)
+					a.Value = slog.StringValue(source.File + ":" + strconv.Itoa(source.Line))
+				}
+			}
+			return a
+		},
+	}
+
+	var (
+		handlers []slog.Handler
+		aLogger  *slog.Logger
+	)
 
 	if config.ConsoleLoggingEnabled {
-		writers = append(writers, zerolog.ConsoleWriter{
-			Out:        os.Stderr,
-			NoColor:    true,
-			TimeFormat: time.RFC3339,
-		})
+		handlers = append(handlers, slog.NewTextHandler(os.Stderr, handlerOptions))
 	}
+
 	if config.FileLoggingEnabled {
-		writers = append(writers, newRollingFile(config))
+		handlers = append(handlers, slog.NewJSONHandler(newRollingFile(config), handlerOptions))
 	}
-	multiWriters := zerolog.MultiLevelWriter(writers...)
 
-	zerolog.SetGlobalLevel(config.LogLevel)
-	zerolog.CallerMarshalFunc = ShortFile
-	zeroLogger := zerolog.New(multiWriters).With().Caller().Str(config.PrefixKey, config.PrefixValue).Timestamp().Logger()
-
-	zeroLogger.Debug().
-		Bool("consoleLoggingEnabled", config.ConsoleLoggingEnabled).
-		Bool("fileLogging", config.FileLoggingEnabled).
-		Str("loglevel", config.LogLevel.String()).
-		Str("prefixKey", config.PrefixKey).
-		Str("prefixValue", config.PrefixValue).
-		Str("logDirectory", config.Directory).
-		Str("fileName", config.Filename).
-		Int("maxSizeMB", config.MaxSize).
-		Int("maxBackups", config.MaxBackups).
-		Int("maxAgeInDays", config.MaxAge).
-		Msg("logging configured")
-
-	logger = &Logger{
-		Logger: &zeroLogger,
+	if len(handlers) == 1 {
+		aLogger = slog.New(handlers[0])
+	} else {
+		aLogger = slog.New(MultiHandler(handlers...))
 	}
-	return logger
-}
 
-func ShortFile(_ uintptr, file string, line int) string {
-	short := file
-	slashesSeen := 0
-	for i := len(file) - 1; i > 0; i-- {
-		if file[i] == '/' {
-			slashesSeen++
-			if slashesSeen == 2 {
-				short = file[i+1:]
-				break
-			}
-		}
+	if config.PrefixKey != "" {
+		aLogger = aLogger.With(slog.String(config.PrefixKey, config.PrefixValue))
 	}
-	return short + ":" + strconv.Itoa(line)
+
+	slog.SetDefault(aLogger)
+
+	return aLogger
 }
 
 // returns lumberjack writer
@@ -157,22 +138,22 @@ func newRollingFile(config LogConfig) io.Writer {
 	}
 }
 
-// GetZerologLevel returns log level mapping
-func GetZerologLevel(logLevel int) zerolog.Level {
+// GetLogLevel returns log level mapping
+func GetLogLevel(logLevel int) slog.Level {
 	switch logLevel {
 	case 0:
-		return zerolog.TraceLevel
+		return slog.LevelDebug
 	case 1:
-		return zerolog.DebugLevel
+		return slog.LevelDebug
 	case 2:
-		return zerolog.InfoLevel
+		return slog.LevelInfo
 	case 3:
-		return zerolog.WarnLevel
+		return slog.LevelWarn
 	case 4:
-		return zerolog.ErrorLevel
+		return slog.LevelError
 	case 5:
-		return zerolog.FatalLevel
+		return slog.LevelError
 	default:
-		return zerolog.InfoLevel
+		return slog.LevelInfo
 	}
 }

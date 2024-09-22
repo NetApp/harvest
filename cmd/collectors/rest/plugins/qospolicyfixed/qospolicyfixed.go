@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"strings"
 )
 
@@ -30,7 +31,7 @@ func (q *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
-			q.Logger.Error().Err(err).Str("key", k).Msg("error while creating metric")
+			q.SLogger.Error("error while creating metric", slog.Any("err", err), slog.String("key", k))
 			return nil, nil, err
 		}
 	}
@@ -49,21 +50,21 @@ func (q *QosPolicyFixed) setFixed(data *matrix.Matrix, instance *matrix.Instance
 	}
 	before, after, found := strings.Cut(label, "-")
 	if !found {
-		q.Logger.Warn().Str("label", label).Msg("Unable to parse fixed xput label")
+		q.SLogger.Warn("Unable to parse fixed xput label", slog.String("label", label))
 		return
 	}
 	minV, err := collectors.ZapiXputToRest(before)
 	if err != nil {
-		q.Logger.Error().Err(err).Str("label", before).Msg("Failed to parse fixed xput label")
+		q.SLogger.Error("Failed to parse fixed xput label", slog.Any("err", err), slog.String("label", before))
 		return
 	}
 	maxV, err := collectors.ZapiXputToRest(after)
 	if err != nil {
-		q.Logger.Error().Err(err).Str("label", after).Msg("Failed to parse fixed xput label")
+		q.SLogger.Error("Failed to parse fixed xput label", slog.Any("err", err), slog.String("label", after))
 		return
 	}
-	collectors.QosSetLabel("min_throughput_iops", data, instance, minV.IOPS, q.Logger)
-	collectors.QosSetLabel("max_throughput_iops", data, instance, maxV.IOPS, q.Logger)
-	collectors.QosSetLabel("min_throughput_mbps", data, instance, minV.Mbps, q.Logger)
-	collectors.QosSetLabel("max_throughput_mbps", data, instance, maxV.Mbps, q.Logger)
+	collectors.QosSetLabel("min_throughput_iops", data, instance, minV.IOPS, q.SLogger)
+	collectors.QosSetLabel("max_throughput_iops", data, instance, maxV.IOPS, q.SLogger)
+	collectors.QosSetLabel("min_throughput_mbps", data, instance, minV.Mbps, q.SLogger)
+	collectors.QosSetLabel("max_throughput_mbps", data, instance, maxV.Mbps, q.SLogger)
 }

@@ -1,9 +1,9 @@
 package collectors
 
 import (
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"log/slog"
 	"testing"
 	"time"
 )
@@ -307,7 +307,7 @@ func TestLagTimeBasedOnLastTransferSize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			instance := populateInstance(data, tt.instance, tt.healthy, tt.schedule, tt.lastTransferError, tt.relationshipID, lastTransferSizeMetric, tt.lastBytesValue, lagTimeMetric, tt.lagTimeValue)
-			UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, logging.Get())
+			UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, slog.Default())
 			actualValue, _ := lagTimeMetric.GetValueFloat64(instance)
 			if actualValue != tt.want {
 				t.Errorf("expected %f got %f", tt.want, actualValue)

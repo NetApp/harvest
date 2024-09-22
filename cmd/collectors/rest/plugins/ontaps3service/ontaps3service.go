@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"strings"
 	"time"
 )
@@ -40,10 +41,10 @@ func (o *OntapS3Service) Init() error {
 	if err == nil {
 		timeout = duration
 	} else {
-		o.Logger.Debug().Str("timeout", timeout.String()).Msg("Using default timeout")
+		o.SLogger.Debug("Using default timeout", slog.String("timeout", timeout.String()))
 	}
 	if o.client, err = rest.New(conf.ZapiPoller(o.ParentParams), timeout, o.Auth); err != nil {
-		o.Logger.Error().Err(err).Msg("connecting")
+		o.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -74,14 +75,14 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		Fields(fields).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(o.client, href, o.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(o.client, href, o.SLogger); err != nil {
 		return nil, nil, err
 	}
 
 	// Iterate over services API response
 	for _, ontaps3Service := range result {
 		if !ontaps3Service.IsObject() {
-			o.Logger.Error().Str("type", ontaps3Service.Type.String()).Msg("Ontap S3 Service is not an object, skipping")
+			o.SLogger.Error("Ontap S3 Service is not an object, skipping", slog.String("type", ontaps3Service.Type.String()))
 			return nil, nil, errs.New(errs.ErrNoInstance, "Ontap S3 Service is not an object")
 		}
 		s3ServerName := ontaps3Service.Get("name").String()

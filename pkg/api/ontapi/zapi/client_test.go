@@ -3,8 +3,8 @@ package zapi
 import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"log/slog"
 	"testing"
 	"time"
 )
@@ -54,7 +54,7 @@ func TestNew(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			poller := conf.ZapiPoller(tt.config)
-			_, err := New(poller, auth.NewCredentials(poller, logging.Get()))
+			_, err := New(poller, auth.NewCredentials(poller, slog.Default()))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
 				return

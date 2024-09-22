@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"math"
 	"strconv"
 	"strings"
@@ -78,7 +79,7 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		var err error
 
 		if speed, err = strconv.Atoi(instance.GetLabel("speed")); err != nil {
-			f.Logger.Debug().Msgf("skip, can't convert speed (%s) to numeric", s)
+			f.SLogger.Warn("skip, can't convert speed to numeric", slog.String("s", s))
 		}
 
 		if speed != 0 {
@@ -90,7 +91,7 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				rxPercent = rxBytes / float64(speed)
 				err := rx.SetValueFloat64(instance, rxPercent)
 				if err != nil {
-					f.Logger.Error().Err(err).Msg("error")
+					f.SLogger.Error("error", slog.Any("err", err))
 				}
 			}
 
@@ -98,14 +99,14 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				txPercent = txBytes / float64(speed)
 				err := tx.SetValueFloat64(instance, txPercent)
 				if err != nil {
-					f.Logger.Error().Err(err).Msg("error")
+					f.SLogger.Error("error", slog.Any("err", err))
 				}
 			}
 
 			if rxOk || txOk {
 				err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				if err != nil {
-					f.Logger.Error().Err(err).Msg("error")
+					f.SLogger.Error("error", slog.Any("err", err))
 				}
 			}
 		}

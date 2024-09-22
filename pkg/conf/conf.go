@@ -8,12 +8,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/mergo"
 	"gopkg.in/yaml.v3"
 	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -233,7 +233,7 @@ func ReadCredentialFile(credPath string, p *Poller) error {
 		return err
 	}
 	if fileChanged {
-		logging.Get().Info().Str("credPath", credPath).Msg("reading credentials")
+		slog.Info("reading credentials", slog.String("credPath", credPath))
 		contents, err := os.ReadFile(credPath)
 		if err != nil {
 			abs, err2 := filepath.Abs(credPath)

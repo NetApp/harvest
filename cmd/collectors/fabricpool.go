@@ -1,13 +1,13 @@
 package collectors
 
 import (
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"log/slog"
 	"maps"
 	"strings"
 )
 
-func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object string, opName string, includeConstituents bool, l *logging.Logger) (*matrix.Matrix, error) {
+func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object string, opName string, includeConstituents bool, l *slog.Logger) (*matrix.Matrix, error) {
 	var (
 		err                 error
 		latencyCacheMetrics []string
@@ -42,7 +42,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		}
 	}
 
-	l.Logger.Debug().Int("size", len(cache.GetInstances())).Msg("extracted  flexgroup volumes")
+	l.Debug("extracted  flexgroup volumes", slog.Int("size", len(cache.GetInstances())))
 
 	// create summary
 	for _, i := range data.GetInstances() {
@@ -52,7 +52,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 			fg := cache.GetInstance(key)
 			if fg == nil {
-				l.Logger.Error().Str("key", key).Msg("instance not in local cache")
+				l.Error("instance not in local cache", slog.String("key", key))
 				continue
 			}
 
@@ -63,7 +63,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 				fgm := cache.GetMetric(mkey)
 				if fgm == nil {
-					l.Logger.Error().Str("key", mkey).Msg("metric not in local cache")
+					l.Error("metric not in local cache", slog.String("key", mkey))
 					continue
 				}
 
@@ -74,7 +74,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 					if !strings.HasPrefix(mkey, "cloud_bin_op_latency_average") {
 						err := fgm.SetValueFloat64(fg, fgv+value)
 						if err != nil {
-							l.Logger.Error().Err(err).Msg("error")
+							l.Error("error", slog.Any("err", err))
 						}
 						continue
 					}
@@ -101,12 +101,12 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 							if value != 0 {
 								err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 								if err != nil {
-									l.Logger.Error().Err(err).Msg("error")
+									l.Error("error", slog.Any("err", err))
 								}
 							}
 							err = fgm.SetValueFloat64(fg, fgv+prod)
 							if err != nil {
-								l.Logger.Error().Err(err).Msg("error")
+								l.Error("error", slog.Any("err", err))
 							}
 						}
 					}
@@ -131,7 +131,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
-								l.Logger.Error().Err(err).Msg("error")
+								l.Error("error", slog.Any("err", err))
 							}
 						} else {
 							m.SetValueNAN(i)

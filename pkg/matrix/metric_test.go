@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"github.com/netapp/harvest/v2/pkg/logging"
+	"log/slog"
 	"testing"
 )
 
@@ -131,7 +131,7 @@ func TestMetricFloat64_Delta(t *testing.T) {
 	for _, tt := range tests2 {
 		t.Run(tt.name, func(t *testing.T) {
 			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, addInstance)
-			skips, err := current.Delta("speed", previous, logging.Get())
+			skips, err := current.Delta("speed", previous, slog.Default())
 			matrixTest(t, tt, current, skips, err)
 		})
 	}
@@ -147,7 +147,7 @@ func TestMetricFloat64_Delta(t *testing.T) {
 	for _, tt := range tests3 {
 		t.Run(tt.name, func(t *testing.T) {
 			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, addDeleteInstance)
-			skips, err := current.Delta("speed", previous, logging.Get())
+			skips, err := current.Delta("speed", previous, slog.Default())
 			matrixTest(t, tt, current, skips, err)
 		})
 	}
@@ -171,7 +171,7 @@ func TestMetricFloat64_Delta_PartialAggregation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			previous, current := setupMatrixForPartialAggregation(tt.prevRaw, tt.curRaw, tt.prevPartialAggregation, tt.currPartialAggregation)
-			skips, err := current.Delta("speed", previous, logging.Get())
+			skips, err := current.Delta("speed", previous, slog.Default())
 			if err != nil {
 				t.Errorf("Delta method returned an error: %v", err)
 			}
@@ -217,7 +217,7 @@ func testDelta(t *testing.T, op matrixOp) {
 	for _, tt := range tests {
 		t.Run(tt.name+"_"+string(op), func(t *testing.T) {
 			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, op)
-			skips, err := current.Delta("speed", previous, logging.Get())
+			skips, err := current.Delta("speed", previous, slog.Default())
 			matrixTest(t, tt, current, skips, err)
 		})
 	}
@@ -242,7 +242,7 @@ func TestMetricFloat64_Divide(t *testing.T) {
 			}
 			prevMat, curMat := setupMatrixAdv(latency, tt.prevRaw, tt.curRaw, tt.matrixOp)
 			for k := range curMat.GetMetrics() {
-				_, err := curMat.Delta(k, prevMat, logging.Get())
+				_, err := curMat.Delta(k, prevMat, slog.Default())
 				if err != nil {
 					t.Error("unexpected error", err)
 					return
@@ -277,14 +277,14 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 			cachedData := curMat.Clone(With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
 
 			for k := range curMat.GetMetrics() {
-				_, err := curMat.Delta(k, prevMat, logging.Get())
+				_, err := curMat.Delta(k, prevMat, slog.Default())
 				if err != nil {
 					t.Error("unexpected error", err)
 					return
 				}
 			}
 
-			skips, err := curMat.DivideWithThreshold(latency, "total_ops", tt.threshold, cachedData, prevMat, "timestamp", logging.Get())
+			skips, err := curMat.DivideWithThreshold(latency, "total_ops", tt.threshold, cachedData, prevMat, "timestamp", slog.Default())
 			matrixTestAdv(t, tt, curMat, skips, err, latency)
 		})
 	}

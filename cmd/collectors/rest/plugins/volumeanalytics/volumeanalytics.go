@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"path"
 	"strconv"
 	"strings"
@@ -53,7 +54,7 @@ func (v *VolumeAnalytics) Init() error {
 		count := m.GetContentS()
 		i, err := strconv.Atoi(count)
 		if err != nil {
-			v.Logger.Warn().Str("MaxDirectoryCount", count).Msg("using default")
+			v.SLogger.Warn("using default", slog.String("MaxDirectoryCount", count))
 		} else {
 			MaxDirCollectCount = i
 		}
@@ -61,7 +62,7 @@ func (v *VolumeAnalytics) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
-		v.Logger.Error().Err(err).Msg("connecting")
+		v.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -85,7 +86,7 @@ func (v *VolumeAnalytics) initMatrix() error {
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, v.data[explorer])
 		if err != nil {
-			v.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+			v.SLogger.Warn("error while creating metric", slog.String("key", k))
 			return err
 		}
 	}
@@ -100,17 +101,19 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	clusterVersion := v.client.Cluster().GetVersion()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
-		v.Logger.Error().Err(err).
-			Str("version", clusterVersion).
-			Msg("Failed to parse version")
+		v.SLogger.Error("Failed to parse version",
+			slog.Any("err", err),
+			slog.String("version", clusterVersion),
+		)
 		return nil, nil, nil
 	}
 	version98 := "9.8"
 	version98After, err := goversion.NewVersion(version98)
 	if err != nil {
-		v.Logger.Error().Err(err).
-			Str("version", version98).
-			Msg("Failed to parse version")
+		v.SLogger.Error("Failed to parse version",
+			slog.Any("err", err),
+			slog.String("version", version98),
+		)
 		return nil, nil, nil
 	}
 
@@ -122,7 +125,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	// remove all metrics as analytics label may change over time
 	err = v.initMatrix()
 	if err != nil {
-		v.Logger.Warn().Err(err).Msg("error while init matrix")
+		v.SLogger.Warn("error while init matrix", slog.Any("err", err))
 		return nil, nil, err
 	}
 	for k := range v.data {
@@ -133,9 +136,9 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	for instanceID, dataInstance := range data.GetInstances() {
 		if records, analytics, err := v.getAnalyticsData(instanceID); err != nil {
 			if errs.IsRestErr(err, errs.APINotFound) {
-				v.Logger.Debug().Err(err).Msg("API not found")
+				v.SLogger.Debug("API not found", slog.Any("err", err))
 			} else {
-				v.Logger.Error().Err(err).Msg("Failed to collect analytic data")
+				v.SLogger.Error("Failed to collect analytic data", slog.Any("err", err))
 			}
 		} else {
 			explorerMatrix := v.data[explorer]
@@ -154,7 +157,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 
 				instance, err := explorerMatrix.NewInstance(instanceID + name)
 				if err != nil {
-					v.Logger.Warn().Str("key", name).Msg("error while creating instance")
+					v.SLogger.Warn("error while creating instance", slog.String("key", name))
 					continue
 				}
 				instance.SetLabel("dir_name", name)
@@ -165,22 +168,22 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 				}
 				if bytesUsed != "" {
 					if err = explorerMatrix.GetMetric("dir_bytes_used").SetValueString(instance, bytesUsed); err != nil {
-						v.Logger.Error().Err(err).Str("value", bytesUsed).Msg("set metric")
+						v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", bytesUsed))
 					}
 				}
 				if fileCount != "" {
 					if err = explorerMatrix.GetMetric("dir_file_count").SetValueString(instance, fileCount); err != nil {
-						v.Logger.Error().Err(err).Str("value", fileCount).Msg("set metric")
+						v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", fileCount))
 					}
 				}
 				if subDirCount != "" {
 					if name == "." {
 						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, util.AddIntString(subDirCount, 1)); err != nil {
-							v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
+							v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", subDirCount))
 						}
 					} else {
 						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, subDirCount); err != nil {
-							v.Logger.Error().Err(err).Str("value", subDirCount).Msg("set metric")
+							v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", subDirCount))
 						}
 					}
 				}
@@ -201,7 +204,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m.SetLabel("order", strconv.Itoa(i))
 						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 						if err = m.SetValueString(instance, mv); err != nil {
-							v.Logger.Error().Err(err).Str("value", mv).Msg("set metric")
+							v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", mv))
 						}
 
 					}
@@ -220,7 +223,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m.SetLabel("order", strconv.Itoa(i))
 						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 						if err = m.SetValueString(instance, mp); err != nil {
-							v.Logger.Error().Err(err).Str("value", mp).Msg("set metric")
+							v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", mp))
 						}
 
 					}
@@ -243,7 +246,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m.SetLabel("order", strconv.Itoa(i))
 						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 						if err = m.SetValueString(instance, av); err != nil {
-							v.Logger.Error().Err(err).Str("value", av).Msg("set metric")
+							v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", av))
 						}
 
 					}
@@ -262,7 +265,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						m.SetLabel("order", strconv.Itoa(i))
 						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
 						if err = m.SetValueString(instance, ap); err != nil {
-							v.Logger.Error().Err(err).Str("value", ap).Msg("set metric")
+							v.SLogger.Error("set metric", slog.Any("err", err), slog.String("value", ap))
 						}
 
 					}

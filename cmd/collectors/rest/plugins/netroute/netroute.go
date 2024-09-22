@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"strconv"
 )
 
@@ -80,7 +81,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 				index := cluster + "_" + strconv.Itoa(count)
 				interfaceInstance, err := n.data.NewInstance(index)
 				if err != nil {
-					n.Logger.Error().Err(err).Str("add instance failed for instance key", key).Send()
+					n.SLogger.Error("add instance failed", slog.Any("err", err), slog.String("key", key))
 					return nil, nil, err
 				}
 
