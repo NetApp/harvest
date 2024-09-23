@@ -6204,7 +6204,7 @@
         "type": "custom"
       },
       {
-        "allValue": ".*",
+        "allValue": "",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
