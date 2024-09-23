@@ -83,7 +83,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715087315407,
+  "iteration": 1726748714554,
   "links": [
     {
       "asDropdown": true,
@@ -929,7 +929,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 30
+            "y": 34
           },
           "id": 88,
           "options": {
@@ -956,7 +956,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(volume_analytics_bytes_used_by_accessed_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "sum(volume_analytics_bytes_used_by_accessed_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }}",
@@ -1049,6 +1049,7 @@
                 },
                 "lineWidth": 1
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -1080,7 +1081,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 30
+            "y": 34
           },
           "id": 92,
           "options": {
@@ -1107,7 +1108,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(volume_analytics_bytes_used_percent_by_accessed_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "sum(\n    volume_analytics_bytes_used_percent_by_accessed_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", activity=~\"$Activity\", dir_name=\".\"}\n    * on (cluster, datacenter, svm, volume) group_left()\n    volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\n) by (time, order)\n/\non (cluster, datacenter, svm, volume)\ngroup_left()\nsum(\n    volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }} - {{ time }}",
@@ -1232,7 +1233,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 38
+            "y": 42
           },
           "id": 91,
           "options": {
@@ -1259,7 +1260,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(volume_analytics_bytes_used_by_modified_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "sum(volume_analytics_bytes_used_by_modified_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }}",
@@ -1352,6 +1353,7 @@
                 },
                 "lineWidth": 1
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -1383,7 +1385,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 38
+            "y": 42
           },
           "id": 93,
           "options": {
@@ -1410,7 +1412,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(volume_analytics_bytes_used_percent_by_modified_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",activity=~\"$Activity\",dir_name=\".\"}) by (time,order)",
+              "expr": "sum(\n    volume_analytics_bytes_used_percent_by_modified_time{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", activity=~\"$Activity\", dir_name=\".\"}\n    * on (cluster, datacenter, svm, volume) group_left()\n    volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\n) by (time, order)\n/\non (cluster, datacenter, svm, volume)\ngroup_left()\nsum(\n    volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{ volume }}",
@@ -1769,5 +1771,5 @@
   "timezone": "",
   "title": "ONTAP: File System Analytics (FSA)",
   "uid": "cdot-fsa",
-  "version": 5
+  "version": 6
 }

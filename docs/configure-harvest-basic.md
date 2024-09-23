@@ -274,10 +274,12 @@ At runtime, Harvest will invoke the script specified in the `credentials_script`
 - The first argument `$addr` is the address of the cluster taken from the `addr` field under the `Pollers` section of your `harvest.yml` file.
 - The second argument `$username` is the username for the cluster taken from the `username` field under the `Pollers` section of your `harvest.yml` file. If your `harvest.yml` does not include a username, nothing will be passed.
 
-The script should  communicate the credentials to Harvest by writing the response to its standard output (stdout). Harvest supports two output formats from the script:
+The script should communicate the credentials to Harvest by writing the response to its standard output (stdout).
+Harvest supports two output formats from the script: YAML and plain text.
 
-1. **YAML format:**
-- If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
+### YAML format
+
+If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.
    ```yaml
    username: myuser
    password: mypassword
@@ -285,13 +287,15 @@ The script should  communicate the credentials to Harvest by writing the respons
    If only the `password` is provided, Harvest will use the `username` from the `harvest.yml` file, if available. If your username or password contains spaces, `#`, or other characters with special meaning in YAML, make sure you quote the value like so:
    `password: "my password with spaces"`
 
-
-- If the script outputs a YAML object containing an `authToken`, Harvest will use this `authToken` when communicating with ONTAP or StorageGRID clusters. Harvest will include the `authToken` in the HTTP request's authorization header using the Bearer authentication scheme.
+If the script outputs a YAML object containing an `authToken`, Harvest will use this `authToken` when communicating with ONTAP or StorageGRID clusters. Harvest will include the `authToken` in the HTTP request's authorization header using the Bearer authentication scheme.
    ```yaml
    authToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0.eyJleHAiOjE3MjE4Mj
    ```
+  When using `authToken`, the `username` and `password` fields are ignored if they are present in the script's output.
 
-2. **Plain text format:** If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the `harvest.yml` and `mypassword` for the poller's credentials.
+### Plain text format
+
+If the script outputs plain text, Harvest will use the output as the password. The `username` will be taken from the `harvest.yml` file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the `harvest.yml` and `mypassword` for the poller's credentials.
    ```
    mypassword
    ```
@@ -394,6 +398,11 @@ echo "mypassword"
 
 ### Troubleshooting
 
-* Make sure your script is executable 
+* Make sure your script is executable
+* If running the poller from a container, ensure that you have mounted the script so that it is available inside the container and that you have updated the path in the `harvest.yml` file to reflect the path inside the container.
+* If running the poller from a container, ensure that your [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) references an interpreter that exists inside the container. Harvest containers are built from [Distroless](https://github.com/GoogleContainerTools/distroless) images, so you may need to use `#!/busybox/sh`.
 * Ensure the user/group that executes your poller also has read and execute permissions on the script. 
-  `su` as the user/group that runs Harvest and make sure you can execute the script too. 
+  One way to test this is to `su` to the user/group that runs Harvest
+  and ensure that the `su`-ed user/group can execute the script too.
+* When your script outputs YAML, make sure it is valid YAML. You can use [YAML Lint](http://www.yamllint.com/) to check your output.
+* When your script outputs YAML and you want to include debug logging, make sure to redirect the debug output to `stderr` instead of `stdout`, or write the debug output as YAML comments prefixed with `#.`
