@@ -17,7 +17,6 @@ import (
 	"gopkg.in/yaml.v3"
 	"log"
 	"maps"
-	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -30,8 +29,6 @@ import (
 	"text/template"
 	"time"
 )
-
-const prometheusIP = "10.193.161.234"
 
 var (
 	replacer         = strings.NewReplacer("\n", "", ":", "")
@@ -147,6 +144,8 @@ var (
 		"health_",
 		"aggr_hybrid_disk_count",
 		"nfs_clients_idle_duration",
+		"ems_events",
+		"olume_top_clients",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
@@ -1156,22 +1155,17 @@ func findAPI(apis []MetricDef, other MetricDef) []int {
 	return indices
 }
 
-func fetchAndCategorizePrometheusMetrics() (map[string]bool, map[string]bool, error) {
-	hostPort := net.JoinHostPort(prometheusIP, "9090")
-	baseURL := fmt.Sprintf("http://%s/api/v1/series", hostPort)
+func fetchAndCategorizePrometheusMetrics(promURL string) (map[string]bool, map[string]bool, error) {
+	urlStr := promURL + "/api/v1/series?match[]={datacenter!=\"\"}"
 
-	// Construct the URL with query parameters
-	u, err := url.Parse(baseURL)
+	u, err := url.Parse(urlStr)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to parse base URL: %v", err)
+		return nil, nil, fmt.Errorf("failed to parse URL: %w", err)
 	}
-	q := u.Query()
-	q.Set("match[]", `{datacenter!=""}`)
-	u.RawQuery = q.Encode()
 
 	resp, err := http.Get(u.String())
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to fetch metrics from Prometheus: %v", err)
+		return nil, nil, fmt.Errorf("failed to fetch metrics from Prometheus: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -1183,32 +1177,28 @@ func fetchAndCategorizePrometheusMetrics() (map[string]bool, map[string]bool, er
 		Status string              `json:"status"`
 		Data   []map[string]string `json:"data"`
 	}
-
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, nil, fmt.Errorf("failed to decode Prometheus response: %w", err)
 	}
-
 	if result.Status != "success" {
 		return nil, nil, fmt.Errorf("unexpected status from Prometheus: %s", result.Status)
 	}
 
+	// Categorize metrics
 	restMetrics := make(map[string]bool)
 	zapiMetrics := make(map[string]bool)
-
 	for _, series := range result.Data {
 		metricName := series["__name__"]
-		datacenter := series["datacenter"]
-
-		if datacenter == "Rest" {
+		switch series["datacenter"] {
+		case "REST":
 			restMetrics[metricName] = true
-		} else if datacenter == "Zapi" {
+		case "ZAPI":
 			zapiMetrics[metricName] = true
 		}
 	}
 
 	return restMetrics, zapiMetrics, nil
 }
-
 func validateMetrics(documentedRest, documentedZapi map[string]Counter, prometheusRest, prometheusZapi map[string]bool) error {
 	var documentedButMissingRestMetrics []string
 	var notDocumentedRestMetrics []string

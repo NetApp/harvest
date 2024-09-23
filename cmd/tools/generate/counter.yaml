@@ -561,6 +561,22 @@ counters:
         Type: average
         BaseCounter: ops
 
+  - Name: qos_detail_ops
+    Description: This field is the workload's rate of operations that completed during the measurement interval measured per second.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/qos, api/cluster/counter/tables/qos_volume
+        ONTAPCounter: ops
+        Template: conf/restperf/9.12.0/workload_detail.yaml
+        Unit: per_sec
+        Type: rate
+      - API: ZAPI
+        Endpoint: perf-object-get-instances workload, workload_volume
+        ONTAPCounter: ops
+        Template: conf/zapiperf/9.12.0/workload_detail.yaml
+        Unit: per_sec
+        Type: rate
+
   - Name: qos_detail_service_time_latency
     Description: This refers to the average service time for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. This latency is the processing time within the subsystem.
     APIs:
@@ -1921,3 +1937,11 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+
+  - Name: ems_events
+    Description: Indicates EMS events that have occurred in the ONTAP as configured in the ems.yaml.
+    APIs:
+      - API: REST
+        Endpoint: api/support/ems/events
+        ONTAPCounter: Harvest generated
+        Template: conf/ems/9.6.0/ems.yaml

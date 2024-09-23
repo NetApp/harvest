@@ -22,8 +22,6 @@ const (
 	zapi = "ZAPI"
 )
 
-var restDataCollectors = []string{"Rest"}
-
 var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
 
 var fileSet []string
@@ -284,9 +282,9 @@ func counterIsMissing(flavor string, counter string, waitFor time.Duration) bool
 	if shouldIgnoreCounter(counter, flavor) {
 		return false
 	}
-	query := counter + `{datacenter=~"` + strings.Join(restDataCollectors, "|") + `"}`
+	query := counter + `{datacenter=~"` + rest + `"}`
 	if flavor == zapi {
-		query = counter + `{datacenter!~"` + strings.Join(restDataCollectors, "|") + `"}`
+		query = counter + `{datacenter!~"` + rest + `"}`
 	}
 	return !hasDataInDB(query, waitFor)
 }

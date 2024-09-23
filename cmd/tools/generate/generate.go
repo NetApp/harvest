@@ -72,7 +72,7 @@ type options struct {
 	mounts      []string
 	configPath  string
 	confPath    string
-	isCI        bool
+	promURL     string
 }
 
 var metricRe = regexp.MustCompile(`(\w+)\{`)
@@ -599,8 +599,8 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, rest.
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(dir, counters)
 
-	if opts.isCI {
-		prometheusRest, prometheusZapi, err := fetchAndCategorizePrometheusMetrics()
+	if opts.promURL != "" {
+		prometheusRest, prometheusZapi, err := fetchAndCategorizePrometheusMetrics(opts.promURL)
 		if err != nil {
 			logErrAndExit(err)
 		}
@@ -713,6 +713,5 @@ func init() {
 	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
 	fFlags.IntVar(&opts.grafanaPort, "grafanaPort", 3000, "Grafana Port")
 
-	// Add the new flag for CI validation
-	Cmd.PersistentFlags().BoolVar(&opts.isCI, "ci", false, "Enable CI validation of documented counters against Prometheus")
+	metricCmd.PersistentFlags().StringVar(&opts.promURL, "prom-url", "", "Prometheus URL for CI validation")
 }
