@@ -280,6 +280,17 @@ func doData() {
 		pollers = append(pollers, args.Poller)
 	}
 
+	// Prime the credential cache before forking goroutines
+	for _, pollerName := range pollers {
+		p, _, err := GetPollerAndAddr(pollerName)
+		if err != nil {
+			stderr("failed to get poller %s err: %+v\n", pollers[0], err)
+			continue
+		}
+		cred := auth.NewCredentials(p, slog.Default())
+		_, _ = cred.GetPollerAuth()
+	}
+
 	for _, pollerName := range pollers {
 		go func(pollerName string) {
 			var (
