@@ -160,6 +160,7 @@ type Counter struct {
 	Name        string      `yaml:"Name"`
 	Description string      `yaml:"Description"`
 	APIs        []MetricDef `yaml:"APIs"`
+	Labels      []string    `yaml:"Labels"`
 }
 
 func (c Counter) Header() string {
@@ -209,15 +210,15 @@ func searchDescriptionSwagger(objName string, ontapCounterName string) string {
 }
 
 // processRestCounters parse rest and restperf templates
-func processRestCounters(client *rest.Client) map[string]Counter {
-	restPerfCounters := visitRestTemplates("conf/restperf", client, func(path string, client *rest.Client) map[string]Counter {
+func processRestCounters(dir string, client *rest.Client) map[string]Counter {
+	restPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "restperf"), client, func(path string, client *rest.Client) map[string]Counter {
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
 			return nil
 		}
 		return processRestPerfCounters(path, client)
 	})
 
-	restCounters := visitRestTemplates("conf/rest", client, func(path string, client *rest.Client) map[string]Counter { // revive:disable-line:unused-parameter
+	restCounters := visitRestTemplates(filepath.Join(dir, "conf", "rest"), client, func(path string, client *rest.Client) map[string]Counter { // revive:disable-line:unused-parameter
 		return processRestConfigCounters(path)
 	})
 
@@ -228,11 +229,11 @@ func processRestCounters(client *rest.Client) map[string]Counter {
 }
 
 // processZapiCounters parse zapi and zapiperf templates
-func processZapiCounters(client *zapi.Client) map[string]Counter {
-	zapiCounters := visitZapiTemplates("conf/zapi/cdot", client, func(path string, client *zapi.Client) map[string]Counter { // revive:disable-line:unused-parameter
+func processZapiCounters(dir string, client *zapi.Client) map[string]Counter {
+	zapiCounters := visitZapiTemplates(filepath.Join(dir, "conf", "zapi", "cdot"), client, func(path string, client *zapi.Client) map[string]Counter { // revive:disable-line:unused-parameter
 		return processZapiConfigCounters(path)
 	})
-	zapiPerfCounters := visitZapiTemplates("conf/zapiperf/cdot", client, func(path string, client *zapi.Client) map[string]Counter {
+	zapiPerfCounters := visitZapiTemplates(filepath.Join(dir, "conf", "zapiperf", "cdot"), client, func(path string, client *zapi.Client) map[string]Counter {
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
 			return nil
 		}
@@ -302,6 +303,8 @@ func processRestConfigCounters(path string) map[string]Counter {
 	var (
 		counters = make(map[string]Counter)
 	)
+	var metricLabels []string
+	var labels []string
 	t, err := tree.ImportYaml(path)
 	if t == nil || err != nil {
 		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
@@ -320,7 +323,11 @@ func processRestConfigCounters(path string) map[string]Counter {
 	}
 
 	if templateCounters != nil {
-		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters)
+		metricLabels, labels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters, metricLabels)
+		// This is for object_labels metrics
+		harvestName := model.Object + "_" + "labels"
+		counters[harvestName] = Counter{Name: harvestName, Labels: labels}
 	}
 
 	endpoints := t.GetChildS("endpoints")
@@ -332,7 +339,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 					query = line.GetContentS()
 				}
 				if line.GetNameS() == "counters" {
-					processCounters(line.GetAllChildContentS(), &model, path, query, counters)
+					processCounters(line.GetAllChildContentS(), &model, path, query, counters, metricLabels)
 				}
 			}
 		}
@@ -357,7 +364,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 	return counters
 }
 
-func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter) {
+func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string) {
 	for _, c := range counterContents {
 		if c == "" {
 			continue
@@ -380,6 +387,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 						ONTAPCounter: name,
 					},
 				},
+				Labels: metricLabels,
 			}
 			counters[harvestName] = co
 
@@ -469,6 +477,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		}
 	}
 
+	metricLabels, _ := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
@@ -496,6 +505,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 								BaseCounter:  zapiBaseCounterMap[name],
 							},
 						},
+						Labels: metricLabels,
 					}
 					counters[harvestName] = co
 
@@ -557,6 +567,8 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	var (
 		counters = make(map[string]Counter)
 	)
+	var metricLabels []string
+	var labels []string
 	t, err := tree.ImportYaml(path)
 	if t == nil || err != nil {
 		fmt.Printf("Unable to import template file %s. File is invalid or empty\n", path)
@@ -577,7 +589,10 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	}
 
 	zc := make(map[string]string)
-
+	metricLabels, labels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+	// This is for object_labels metrics
+	harvestName := model.Object + "_" + "labels"
+	counters[harvestName] = Counter{Name: harvestName, Labels: labels}
 	for _, c := range templateCounters.GetChildren() {
 		parseZapiCounters(c, []string{}, model.Object, zc)
 	}
@@ -596,6 +611,7 @@ func processZapiConfigCounters(path string) map[string]Counter {
 					ONTAPCounter: v,
 				},
 			},
+			Labels: metricLabels,
 		}
 		counters[k] = co
 
@@ -875,6 +891,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	}
 	counterMap := make(map[string]string)
 	counterMapNoPrefix := make(map[string]string)
+	metricLabels, _ := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
@@ -934,6 +951,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 						BaseCounter:  r.Get("denominator.name").String(),
 					},
 				},
+				Labels: metricLabels,
 			}
 			counters[c.Name] = c
 
@@ -994,8 +1012,8 @@ func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix st
 	}
 }
 
-func processExternalCounters(counters map[string]Counter) map[string]Counter {
-	dat, err := os.ReadFile("cmd/tools/generate/counter.yaml")
+func processExternalCounters(dir string, counters map[string]Counter) map[string]Counter {
+	dat, err := os.ReadFile(filepath.Join(dir, "cmd", "tools", "generate", "counter.yaml"))
 	if err != nil {
 		fmt.Printf("error while reading file %v", err)
 		return nil
@@ -1056,4 +1074,32 @@ func findAPI(apis []MetricDef, other MetricDef) []int {
 		}
 	}
 	return indices
+}
+
+func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []string) {
+	metricLabels := make([]string, 0)
+	labels := make([]string, 0)
+	if exportOptions := t.GetChildS("export_options"); exportOptions != nil {
+		if iAllLabels := exportOptions.GetChildS("include_all_labels"); iAllLabels != nil {
+			if iAllLabels.GetContentS() == "true" {
+				for _, c := range counterContents {
+					if c == "" {
+						continue
+					}
+					if _, display, m, _ := util.ParseMetric(c); m == "key" || m == "label" {
+						metricLabels = append(metricLabels, display)
+					}
+				}
+				return metricLabels, metricLabels
+			}
+		}
+
+		if iKeys := exportOptions.GetChildS("instance_keys"); iKeys != nil {
+			metricLabels = append(metricLabels, iKeys.GetAllChildContentS()...)
+		}
+		if iLabels := exportOptions.GetChildS("instance_labels"); iLabels != nil {
+			labels = append(labels, iLabels.GetAllChildContentS()...)
+		}
+	}
+	return metricLabels, append(labels, metricLabels...)
 }

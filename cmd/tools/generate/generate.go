@@ -136,13 +136,13 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters, cluster := generateMetrics()
+	counters, cluster := BuildMetrics("", "", opts.Poller)
 	generateCounterTemplate(counters, cluster.Version)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters, _ := generateMetrics()
+	counters, _ := BuildMetrics("", "", opts.Poller)
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
@@ -553,20 +553,26 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func generateMetrics() (map[string]Counter, rest.Cluster) {
+func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, rest.Cluster) {
 	var (
-		poller     *conf.Poller
-		err        error
-		restClient *rest.Client
-		zapiClient *zapi.Client
+		poller         *conf.Poller
+		err            error
+		restClient     *rest.Client
+		zapiClient     *zapi.Client
+		harvestYmlPath string
 	)
 
-	_, err = conf.LoadHarvestConfig(opts.configPath)
+	if opts.configPath != "" {
+		harvestYmlPath = filepath.Join(dir, opts.configPath)
+	} else {
+		harvestYmlPath = filepath.Join(dir, configPath)
+	}
+	_, err = conf.LoadHarvestConfig(harvestYmlPath)
 	if err != nil {
 		logErrAndExit(err)
 	}
 
-	if poller, _, err = rest.GetPollerAndAddr(opts.Poller); err != nil {
+	if poller, _, err = rest.GetPollerAndAddr(pollerName); err != nil {
 		logErrAndExit(err)
 	}
 
@@ -587,10 +593,10 @@ func generateMetrics() (map[string]Counter, rest.Cluster) {
 	}
 
 	swaggerBytes = readSwaggerJSON()
-	restCounters := processRestCounters(restClient)
-	zapiCounters := processZapiCounters(zapiClient)
+	restCounters := processRestCounters(dir, restClient)
+	zapiCounters := processZapiCounters(dir, zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
-	counters = processExternalCounters(counters)
+	counters = processExternalCounters(dir, counters)
 	return counters, restClient.Cluster()
 }
 
@@ -670,11 +676,11 @@ func init() {
 	fFlags := fullCmd.PersistentFlags()
 
 	flags := metricCmd.PersistentFlags()
-	flags.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
+	flags.StringVarP(&opts.Poller, "poller", "p", "dc1", "name of poller, e.g. 10.193.48.154")
 	_ = metricCmd.MarkPersistentFlagRequired("poller")
 
 	flag := descCmd.PersistentFlags()
-	flag.StringVarP(&opts.Poller, "poller", "p", "sar", "name of poller, e.g. 10.193.48.154")
+	flag.StringVarP(&opts.Poller, "poller", "p", "dc1", "name of poller, e.g. 10.193.48.154")
 	_ = descCmd.MarkPersistentFlagRequired("poller")
 
 	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
