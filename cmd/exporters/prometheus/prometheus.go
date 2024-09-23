@@ -22,7 +22,6 @@ Package Description:
 package prometheus
 
 import (
-	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -267,6 +266,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		keysToInclude     []string
 		prefix            string
 		err               error
+		joinedKeys        string
 		histograms        map[string]*histogram
 		normalizedLabels  map[string][]string // cache of histogram normalized labels
 		instancesExported uint64
@@ -389,7 +389,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				if p.Params.SortLabels {
 					sort.Strings(allLabels)
 				}
-				labelData := fmt.Sprintf("%s_labels{%s} 1.0", prefix, strings.Join(allLabels, ","))
+				labelData := prefix + "_labels{" + strings.Join(allLabels, ",") + "} 1.0"
 
 				if tagged != nil && !tagged.Has(prefix+"_labels") {
 					tagged.Add(prefix + "_labels")
@@ -404,6 +404,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		if p.Params.SortLabels {
 			sort.Strings(instanceKeys)
 		}
+		joinedKeys = strings.Join(instanceKeys, ",")
 		histograms = make(map[string]*histogram)
 		for _, metric := range data.GetMetrics() {
 
@@ -443,14 +444,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					for k, v := range metric.GetLabels() {
 						metricLabels = append(metricLabels, escape(p.replacer, k, v))
 					}
-					x := fmt.Sprintf(
-						"%s_%s{%s,%s} %s",
-						prefix,
-						metric.GetName(),
-						strings.Join(instanceKeys, ","),
-						strings.Join(metricLabels, ","),
-						value,
-					)
+					x := prefix + "_" + metric.GetName() + "{" + joinedKeys + "," + strings.Join(metricLabels, ",") + "} " + value
 
 					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
 						tagged.Add(prefix + "_" + metric.GetName())
@@ -462,7 +456,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					rendered = append(rendered, []byte(x))
 					// scalar metric
 				} else {
-					x := metric.GetName() + "{" + strings.Join(instanceKeys, ",") + "} " + value
+					x := metric.GetName() + "{" + joinedKeys + "} " + value
 					if prefix != "" {
 						x = prefix + "_" + x
 					}
@@ -516,32 +510,16 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			)
 			if canNormalize {
 				count, sum := h.computeCountAndSum(normalizedNames)
-				countMetric = fmt.Sprintf("%s_%s{%s} %s",
-					prefix, metric.GetName()+"_count", strings.Join(instanceKeys, ","), count)
-				sumMetric = fmt.Sprintf("%s_%s{%s} %d",
-					prefix, metric.GetName()+"_sum", strings.Join(instanceKeys, ","), sum)
+				countMetric = prefix + "_" + metric.GetName() + "_count{" + joinedKeys + "} " + count
+				sumMetric = prefix + "_" + metric.GetName() + "_sum{" + joinedKeys + "} " + strconv.Itoa(sum)
 			}
 			for i, value := range h.values {
 				bucketName := (*bucketNames)[i]
 				var x string
 				if canNormalize {
-					x = fmt.Sprintf(
-						"%s_%s{%s,%s} %s",
-						prefix,
-						metric.GetName()+"_bucket",
-						strings.Join(instanceKeys, ","),
-						`le="`+normalizedNames[i]+`"`,
-						value,
-					)
+					x = prefix + "_" + metric.GetName() + "_bucket{" + joinedKeys + `,le="` + normalizedNames[i] + `"} ` + value
 				} else {
-					x = fmt.Sprintf(
-						"%s_%s{%s,%s} %s",
-						prefix,
-						metric.GetName(),
-						strings.Join(instanceKeys, ","),
-						escape(p.replacer, "metric", bucketName),
-						value,
-					)
+					x = prefix + "_" + metric.GetName() + "{" + joinedKeys + `,` + escape(p.replacer, "metric", bucketName) + "} " + value
 				}
 				rendered = append(rendered, []byte(x))
 			}
