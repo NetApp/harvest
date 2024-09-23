@@ -8,13 +8,13 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/tidwall/gjson"
 	"io"
+	"log/slog"
 	"math"
 	"net/http"
 	"net/url"
@@ -33,7 +33,7 @@ type Client struct {
 	client   *http.Client
 	request  *http.Request
 	buffer   *bytes.Buffer
-	Logger   *logging.Logger
+	Logger   *slog.Logger
 	baseURL  string
 	Cluster  Cluster
 	token    string
@@ -91,7 +91,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 		auth:     c,
 		Metadata: &util.Metadata{},
 	}
-	client.Logger = logging.Get().SubLogger("StorageGrid", "Client")
+	client.Logger = slog.Default().With(slog.String("StorageGrid", "Client"))
 
 	if addr = poller.Addr; addr == "" {
 		return nil, errs.New(errs.ErrMissingParam, "addr")
@@ -130,10 +130,11 @@ func (c *Client) printRequestAndResponse(response []byte) {
 		if response != nil {
 			res = string(response)
 		}
-		c.Logger.Info().
-			Str("Request", c.request.URL.String()).
-			Str("Response", res).
-			Send()
+		c.Logger.Info(
+			"",
+			slog.String("Request", c.request.URL.String()),
+			slog.String("Response", res),
+		)
 	}
 }
 
@@ -364,7 +365,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 		if pollerAuth.AuthToken != "" {
 			c.token = pollerAuth.AuthToken
 			c.request.Header.Set("Authorization", "Bearer "+c.token)
-			c.Logger.Debug().Msg("Using authToken from credential script")
+			c.Logger.Debug("Using authToken from credential script")
 			return nil
 		}
 		authB := authBody{

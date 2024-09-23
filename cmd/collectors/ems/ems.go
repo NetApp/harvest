@@ -1,6 +1,7 @@
 package ems
 
 import (
+	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
@@ -13,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -134,7 +136,7 @@ func (e *Ems) InitMatrix() error {
 }
 
 func (e *Ems) LoadPlugin(kind string, _ *plugin.AbstractPlugin) plugin.Plugin {
-	e.Logger.Warn().Str("kind", kind).Msg("no ems plugin found")
+	e.Logger.Warn("no ems plugin found", slog.String("kind", kind))
 	return nil
 }
 
@@ -155,12 +157,12 @@ func (e *Ems) InitCache() error {
 			e.maxURLSize = s
 		}
 	}
-	e.Logger.Debug().Int("max_url_size", e.maxURLSize).Send()
+	e.Logger.Debug("", slog.Int("max_url_size", e.maxURLSize))
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
 		e.severityFilter = severityFilterPrefix + s
 	}
-	e.Logger.Debug().Str("severityFilter", e.severityFilter).Send()
+	e.Logger.Debug("", slog.String("severityFilter", e.severityFilter))
 
 	if export := e.Params.GetChildS("export_options"); export != nil {
 		e.Matrix[e.Object].SetExportOptions(export)
@@ -189,7 +191,7 @@ func (e *Ems) InitCache() error {
 	if returnTimeout := e.Params.GetChildContentS("return_timeout"); returnTimeout != "" {
 		iReturnTimeout, err := strconv.Atoi(returnTimeout)
 		if err != nil {
-			e.Logger.Warn().Str("returnTimeout", returnTimeout).Msg("Invalid value of returnTimeout")
+			e.Logger.Warn("Invalid value of returnTimeout", slog.String("returnTimeout", returnTimeout))
 		} else {
 			e.ReturnTimeOut = &iReturnTimeout
 		}
@@ -209,7 +211,7 @@ func (e *Ems) InitCache() error {
 
 		// check if name is present in template
 		if line.GetChildContentS("name") == "" {
-			e.Logger.Error().Msg("Missing event name")
+			e.Logger.Error("Missing event name")
 			continue
 		}
 
@@ -234,7 +236,7 @@ func (e *Ems) InitCache() error {
 			}
 			if line1.GetNameS() == "plugins" {
 				if err := e.LoadPlugins(line1, e, prop.Name); err != nil {
-					e.Logger.Error().Err(err).Msg("Failed to load plugin")
+					e.Logger.Error("Failed to load plugin", slog.Any("err", err))
 				}
 			}
 			if line1.GetNameS() == "resolve_when_ems" {
@@ -256,9 +258,11 @@ func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 		// if first request fetch cluster time
 		dataDuration, err := collectors.GetDataInterval(e.GetParams(), defaultDataPollDuration)
 		if err != nil {
-			e.Logger.Warn().Err(err).
-				Str("defaultDataPollDuration", defaultDataPollDuration.String()).
-				Msg("Failed to parse duration. using default")
+			e.Logger.Warn(
+				"Failed to parse duration. using default",
+				slog.Any("err", err),
+				slog.String("defaultDataPollDuration", defaultDataPollDuration.String()),
+			)
 		}
 		fromTime = clusterTime.Add(-dataDuration).Unix()
 	}
@@ -323,7 +327,12 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	// ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
 	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
 	_, missingNames := util.Intersection(filteredNames, names)
-	e.Logger.Debug().Strs("skipped events", missingNames).Send()
+	if e.Logger.Enabled(context.Background(), slog.LevelDebug) {
+		e.Logger.Debug(
+			"filtered ems events",
+			slog.String("skipped events", strings.Join(missingNames, ",")),
+		)
+	}
 	e.eventNames = filteredNames
 
 	// warning when total instance in cache > 1000 instance
@@ -335,10 +344,10 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	e.Logger.Info().Int("total instances", bookendCacheSize).Send()
+	e.Logger.Info("", slog.Int("total instances", bookendCacheSize))
 	// warning when total instance in cache > 1000 instance
 	if bookendCacheSize > MaxBookendInstances {
-		e.Logger.Warn().Int("total instances", bookendCacheSize).Msg("cache has more than 1000 instances")
+		e.Logger.Warn("cache has more than 1000 instances", slog.Int("total instances", bookendCacheSize))
 	}
 
 	// update metadata for collector logs
@@ -479,22 +488,21 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 		)
 
 		if !instanceData.IsObject() {
-			e.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			e.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
 			continue
 		}
 		messageName := instanceData.Get("message.name")
 
 		// verify if message name exists in ONTAP response
 		if !messageName.Exists() {
-			e.Logger.Error().Msg("skip instance, missing message name")
+			e.Logger.Error("skip instance, missing message name")
 			continue
 		}
 		msgName := messageName.String()
 		if issuingEmsList, ok := e.bookendEmsMap[msgName]; ok {
 			props := prop[msgName]
 			if len(props) == 0 {
-				e.Logger.Warn().Str("resolving ems", msgName).
-					Msg("Ems properties not found")
+				e.Logger.Warn("Ems properties not found", slog.String("resolving ems", msgName))
 				continue
 			}
 			// resolving ems would only have 1 prop record
@@ -514,9 +522,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 				if mx = m[issuingEms]; mx != nil {
 					metr, exist := mx.GetMetrics()["events"]
 					if !exist {
-						e.Logger.Warn().
-							Str("name", "events").
-							Msg("failed to get metric")
+						e.Logger.Warn("failed to get metric", slog.String("name", "events"))
 						continue
 					}
 
@@ -524,8 +530,11 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 					if instances := mx.GetInstancesBySuffix(issuingEms + bookendKey); len(instances) != 0 {
 						for _, instance := range instances {
 							if err = metr.SetValueFloat64(instance, 0); err != nil {
-								e.Logger.Error().Err(err).Str("key", "events").
-									Msg("Unable to set float key on metric")
+								e.Logger.Error(
+									"Unable to set float key on metric",
+									slog.Any("err", err),
+									slog.String("key", "events"),
+								)
 								continue
 							}
 							instance.SetExportable(true)
@@ -536,8 +545,11 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 
 			if !emsResolved {
-				e.Logger.Warn().Str("resolving ems", msgName).Str("issue ems", strings.Join(issuingEmsList.Slice(), ",")).
-					Msg("Unable to find matching issue ems in cache")
+				e.Logger.Warn(
+					"Unable to find matching issue ems in cache",
+					slog.String("resolving ems", msgName),
+					slog.String("issuing ems", strings.Join(issuingEmsList.Slice(), ",")),
+				)
 			}
 		} else {
 			if _, ok := m[msgName]; !ok {
@@ -568,7 +580,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 
 					if instance == nil {
 						if instance, err = mx.NewInstance(instanceKey); err != nil {
-							e.Logger.Error().Err(err).Str("Instance key", instanceKey).Send()
+							e.Logger.Error("", slog.Any("err", err), slog.String("instanceKey", instanceKey))
 							continue
 						}
 					}
@@ -595,7 +607,11 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 							instanceLabelCountPs++
 						} else {
-							e.Logger.Warn().Str("Instance key", instanceKey).Str("label", label).Msg("Missing label value")
+							e.Logger.Warn(
+								"Missing label value",
+								slog.String("instanceKey", instanceKey),
+								slog.String("label", label),
+							)
 						}
 					}
 
@@ -616,11 +632,12 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 								}
 							} else {
 								// value not found
-								e.Logger.Warn().
-									Str("Instance key", instanceKey).
-									Str("name", match.Name).
-									Str("value", match.value).
-									Msg("label is not found")
+								e.Logger.Warn(
+									"label is not found",
+									slog.String("instanceKey", instanceKey),
+									slog.String("name", match.Name),
+									slog.String("value", match.value),
+								)
 							}
 						}
 					}
@@ -632,9 +649,10 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						metr, ok := mx.GetMetrics()[metric.Name]
 						if !ok {
 							if metr, err = mx.NewMetricFloat64(metric.Name); err != nil {
-								e.Logger.Error().Err(err).
-									Str("name", metric.Name).
-									Msg("failed to get metric")
+								e.Logger.Error("failed to get metric",
+									slog.Any("err", err),
+									slog.String("name", metric.Name),
+								)
 								continue
 							}
 							metr.SetExportable(metric.Exportable)
@@ -642,17 +660,25 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						switch {
 						case metric.Name == "events":
 							if err = metr.SetValueFloat64(instance, 1); err != nil {
-								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-									Msg("Unable to set float key on metric")
+								e.Logger.Error("Unable to set float key on metric",
+									slog.Any("err", err),
+									slog.String("key", metric.Name),
+									slog.String("metric", metric.Label),
+								)
 							}
 						case metric.Name == "timestamp":
 							if err = metr.SetValueFloat64(instance, float64(time.Now().UnixMicro())); err != nil {
-								e.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-									Msg("Unable to set timestamp on metric")
+								e.Logger.Error("Unable to set timestamp on metric",
+									slog.Any("err", err),
+									slog.String("key", metric.Name),
+									slog.String("metric", metric.Label),
+								)
 							}
 						default:
-							e.Logger.Warn().Str("key", metric.Name).Str("metric", metric.Label).
-								Msg("Unable to find metric")
+							e.Logger.Warn("Unable to find metric",
+								slog.String("key", metric.Name),
+								slog.String("metric", metric.Label),
+							)
 						}
 					}
 					instanceLabelCount += instanceLabelCountPs
@@ -686,7 +712,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 		if value.Exists() {
 			instanceKey += Hyphen + value.String()
 		} else {
-			e.Logger.Error().Str("key", k).Msg("skip instance, missing key")
+			e.Logger.Error("skip instance, missing key", slog.String("key", k))
 			break
 		}
 	}
@@ -712,19 +738,21 @@ func (e *Ems) updateMatrix(begin time.Time) {
 	for issuingEms, mx := range tempMap {
 		eventMetric, ok := mx.GetMetrics()["events"]
 		if !ok {
-			e.Logger.Error().
-				Str("issuingEms", issuingEms).
-				Str("name", "events").
-				Msg("failed to get metric")
+			e.Logger.Error(
+				"failed to get metric",
+				slog.String("issuingEms", issuingEms),
+				slog.String("name", "events"),
+			)
 			continue
 		}
 
 		timestampMetric, ok := mx.GetMetrics()["timestamp"]
 		if !ok {
-			e.Logger.Error().
-				Str("issuingEms", issuingEms).
-				Str("name", "timestamp").
-				Msg("failed to get metric")
+			e.Logger.Error(
+				"failed to get metric",
+				slog.String("issuingEms", issuingEms),
+				slog.String("name", "timestamp"),
+			)
 			continue
 		}
 		for instanceKey, instance := range mx.GetInstances() {
@@ -741,8 +769,11 @@ func (e *Ems) updateMatrix(begin time.Time) {
 				if collectors.IsTimestampOlderThanDuration(begin, metricTimestamp, e.resolveAfter[issuingEms]) {
 					// Set events metric value as 0 and export instance to true with label autoresolved as true.
 					if err := eventMetric.SetValueFloat64(instance, 0); err != nil {
-						e.Logger.Error().Err(err).Str("key", "events").
-							Msg("Unable to set float key on metric")
+						e.Logger.Error(
+							"Unable to set float key on metric",
+							slog.Any("err", err),
+							slog.String("key", "events"),
+						)
 						continue
 					}
 					instance.SetExportable(true)

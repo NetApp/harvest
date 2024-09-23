@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -49,7 +50,7 @@ func (q *Qtree) Init() error {
 	}
 
 	if q.client, err = zapi.New(conf.ZapiPoller(q.ParentParams), q.Auth); err != nil {
-		q.Logger.Error().Err(err).Msg("connecting")
+		q.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -62,7 +63,7 @@ func (q *Qtree) Init() error {
 	} else {
 		q.query = "quota-report"
 	}
-	q.Logger.Debug().Msg("plugin connected!")
+	q.SLogger.Debug("plugin connected!")
 
 	q.data = matrix.New(q.Parent+".Qtree", "quota", "quota")
 	q.instanceKeys = make(map[string]string)
@@ -121,12 +122,12 @@ func (q *Qtree) Init() error {
 
 		_, err := q.data.NewMetricFloat64(metricName, display)
 		if err != nil {
-			q.Logger.Error().Err(err).Msg("add metric")
+			q.SLogger.Error("add metric", slog.Any("err", err))
 			return err
 		}
 	}
 
-	q.Logger.Debug().Msgf("added data with %d metrics", len(q.data.GetMetrics()))
+	q.SLogger.Debug("added data with metrics", slog.Int("metrics", len(q.data.GetMetrics())))
 
 	// setup batchSize for request
 	q.batchSize = BatchSize
@@ -201,11 +202,11 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		}
 
 		if len(quotas) == 0 {
-			q.Logger.Debug().Msg("no quota instances found")
+			q.SLogger.Debug("no quota instances found")
 			return nil, q.client.Metadata, nil
 		}
 
-		q.Logger.Debug().Int("quotas", len(quotas)).Msg("fetching quotas")
+		q.SLogger.Debug("fetching quotas", slog.Int("quotas", len(quotas)))
 
 		// Populate metrics with quota prefix
 		err = q.handlingQuotaMetrics(quotas, data, &quotaIndex, &numMetrics)
@@ -217,13 +218,14 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 
 	q.client.Metadata.PluginInstances = uint64(quotaIndex) //nolint:gosec
 
-	q.Logger.Info().
-		Int("numQuotas", quotaIndex).
-		Int("metrics", numMetrics).
-		Str("apiD", apiT.Round(time.Millisecond).String()).
-		Str("parseD", parseT.Round(time.Millisecond).String()).
-		Str("batchSize", q.batchSize).
-		Msg("Collected")
+	q.SLogger.Info(
+		"Collected",
+		slog.Int("numQuotas", quotaIndex),
+		slog.Int("metrics", numMetrics),
+		slog.String("apiD", apiT.Round(time.Millisecond).String()),
+		slog.String("parseD", parseT.Round(time.Millisecond).String()),
+		slog.String("batchSize", q.batchSize),
+	)
 
 	if q.qtreeMetrics || q.historicalLabels {
 		// metrics with qtree prefix and quota prefix are available to support backward compatibility
@@ -282,11 +284,12 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				qtreeInstance = data.GetInstance(volume + "." + tree)
 			}
 			if qtreeInstance == nil {
-				q.Logger.Warn().
-					Str("tree", tree).
-					Str("volume", volume).
-					Str("vserver", vserver).
-					Msg("No instance matching tree.volume.vserver")
+				q.SLogger.Warn(
+					"no instance matching tree.volume.vserver",
+					slog.String("tree", tree),
+					slog.String("volume", volume),
+					slog.String("vserver", vserver),
+				)
 				continue
 			}
 			if !qtreeInstance.IsExportable() {
@@ -310,7 +313,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				}
 				quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 				if err != nil {
-					q.Logger.Debug().Msgf("add (%s) instance: %v", attribute, err)
+					q.SLogger.Debug("add instance", slog.Any("err", err), slog.String("attribute", attribute))
 					return err
 				}
 
@@ -363,7 +366,12 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 						quotaInstance.SetLabel("unit", "Kbyte")
 					}
 					if err := m.SetValueString(quotaInstance, value); err != nil {
-						q.Logger.Debug().Msgf("(%s) failed to parse value (%s): %v", attribute, value, err)
+						q.SLogger.Debug(
+							"failed to parse value",
+							slog.Any("err", err),
+							slog.String("attribute", attribute),
+							slog.String("value", value),
+						)
 					} else {
 						*numMetrics++
 					}

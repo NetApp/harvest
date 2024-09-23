@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"maps"
 	"slices"
 	"time"
@@ -21,7 +22,11 @@ func (e *Ems) ParseMatches(matches *node.Node, prop *emsProp) {
 				value: value,
 			})
 		} else {
-			e.Logger.Warn().Str("name", name).Str("value", value).Msg("Match name and value cannot be empty")
+			e.Logger.Warn(
+				"Match name and value cannot be empty",
+				slog.String("name", name),
+				slog.String("value", value),
+			)
 			continue
 		}
 	}
@@ -35,11 +40,12 @@ func (e *Ems) ParseLabels(labels *node.Node, prop *emsProp) {
 		if labelName != "" && labelValue != "" {
 			prop.Labels[labelName] = labelValue
 		} else {
-			e.Logger.Warn().
-				Str("ems", prop.Name).
-				Str("labelName", labelName).
-				Str("labelValue", labelValue).
-				Msg("Label name and value cannot be empty for ems")
+			e.Logger.Warn(
+				"Label name and value cannot be empty for ems",
+				slog.String("ems", prop.Name),
+				slog.String("labelName", labelName),
+				slog.String("labelValue", labelValue),
+			)
 			continue
 		}
 	}
@@ -111,7 +117,7 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 
 	// check if resolvedby is present in template
 	if resolveEmsName = resolveEvent.GetChildContentS("name"); resolveEmsName == "" {
-		e.Logger.Error().Msg("Missing resolving event name")
+		e.Logger.Error("Missing resolving event name")
 		return
 	}
 	prop.Name = resolveEmsName
@@ -127,7 +133,7 @@ func (e *Ems) ParseResolveEms(resolveEvent *node.Node, issueEmsProp emsProp) {
 		} else {
 			// If bookendKey is missing in IssueEms, the  default bookendKey is index of IssueEMs
 			prop.InstanceKeys = issueEmsProp.InstanceKeys[0:1]
-			e.Logger.Error().Str("Ems name", issueEmsProp.Name).Msg("Missing bookend keys")
+			e.Logger.Error("Missing bookend keys", slog.String("name", issueEmsProp.Name))
 		}
 	} else {
 		e.ParseExports(resolveKey, &prop)

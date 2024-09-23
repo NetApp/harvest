@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"strconv"
 	"time"
 )
@@ -32,37 +33,37 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Certificate{AbstractPlugin: p}
 }
 
-func (my *Certificate) Init() error {
+func (c *Certificate) Init() error {
 
 	var err error
 
-	if err := my.InitAbc(); err != nil {
+	if err := c.InitAbc(); err != nil {
 		return err
 	}
 
-	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
-		my.Logger.Error().Err(err).Msg("connecting")
+	if c.client, err = zapi.New(conf.ZapiPoller(c.ParentParams), c.Auth); err != nil {
+		c.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
-	if err := my.client.Init(5); err != nil {
+	if err := c.client.Init(5); err != nil {
 		return err
 	}
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	my.currentVal = my.SetPluginInterval()
+	c.currentVal = c.SetPluginInterval()
 
-	my.batchSize = BatchSize
-	if b := my.Params.GetChildContentS("batch_size"); b != "" {
+	c.batchSize = BatchSize
+	if b := c.Params.GetChildContentS("batch_size"); b != "" {
 		if _, err := strconv.Atoi(b); err == nil {
-			my.batchSize = b
+			c.batchSize = b
 		}
 	}
 
 	return nil
 }
 
-func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		adminVserver       string
@@ -72,28 +73,28 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 		err                error
 	)
 
-	data := dataMap[my.Object]
-	my.client.Metadata.Reset()
+	data := dataMap[c.Object]
+	c.client.Metadata.Reset()
 
-	if my.currentVal >= my.PluginInvocationRate {
-		my.currentVal = 0
+	if c.currentVal >= c.PluginInvocationRate {
+		c.currentVal = 0
 
 		// invoke vserver-get-iter zapi and get admin vserver name
-		if adminVserver, err = my.GetAdminVserver(); err != nil {
+		if adminVserver, err = c.GetAdminVserver(); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM")
+				c.SLogger.Debug("Failed to collect admin SVM", slog.Any("err", err))
 			} else {
-				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM")
+				c.SLogger.Error("Failed to collect admin SVM", slog.Any("err", err))
 			}
 			return nil, nil, nil
 		}
 
 		// invoke security-ssl-get-iter zapi and get admin vserver's serial number
-		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
+		if adminVserverSerial, err = c.GetSecuritySsl(adminVserver); err != nil {
 			if errors.Is(err, errs.ErrNoInstance) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM's serial number")
+				c.SLogger.Debug("Failed to collect admin SVM's serial number", slog.Any("err", err))
 			} else {
-				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM's serial number")
+				c.SLogger.Error("Failed to collect admin SVM's serial number", slog.Any("err", err))
 			}
 			return nil, nil, nil
 		}
@@ -110,7 +111,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			certificateInstance.SetLabel("uuid", name+serialNumber+svm)
 
 			if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
-				my.Logger.Error().Msg("missing expiry time metric")
+				c.SLogger.Error("missing expiry time metric")
 				continue
 			}
 			if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
@@ -123,17 +124,17 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			}
 
 			if serialNumber == adminVserverSerial && certType == "server" {
-				my.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
-				my.setCertificateValidity(unixTime, certificateInstance)
+				c.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
+				c.setCertificateValidity(unixTime, certificateInstance)
 			}
 		}
 	}
 
-	my.currentVal++
-	return nil, my.client.Metadata, nil
+	c.currentVal++
+	return nil, c.client.Metadata, nil
 }
 
-func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance, certificateInstanceKey string) {
+func (c *Certificate) setCertificateIssuerType(instance *matrix.Instance, certificateInstanceKey string) {
 	var (
 		cert *x509.Certificate
 		err  error
@@ -142,26 +143,26 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance, certi
 	certificatePEM := instance.GetLabel("certificatePEM")
 
 	if certificatePEM == "" {
-		my.Logger.Debug().Str("certificateInstanceKey", certificateInstanceKey).Msg("Certificate is not found")
+		c.SLogger.Debug("Certificate is not found", slog.String("certificateInstanceKey", certificateInstanceKey))
 		instance.SetLabel("certificateIssuerType", "unknown")
 	} else {
 		instance.SetLabel("certificateIssuerType", "self_signed")
 		certDecoded, _ := pem.Decode([]byte(certificatePEM))
 		if certDecoded == nil {
-			my.Logger.Warn().Msg("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			c.SLogger.Warn("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
 
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			my.Logger.Warn().Msg("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			c.SLogger.Warn("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed", slog.Any("err", err))
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
 
 		// Verifies if certificate is self-issued. This is true if the subject and issuer are equal.
 		if cert.Subject.String() == cert.Issuer.String() {
-			// Verifies if certificate is self-signed. This is true if the certificate is signed using its own public key.
+			// Verifies if the certificate is self-signed. This is true if the certificate is signed using its own public key.
 			if err = cert.CheckSignature(x509.SHA256WithRSA, cert.RawTBSCertificate, cert.Signature); err != nil {
 				// Any verification exception means it is not signed with the give key. i.e. not self-signed
 				instance.SetLabel("certificateIssuerType", "ca_signed")
@@ -172,7 +173,7 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance, certi
 	}
 }
 
-func (my *Certificate) setCertificateValidity(unixTime time.Time, instance *matrix.Instance) {
+func (c *Certificate) setCertificateValidity(unixTime time.Time, instance *matrix.Instance) {
 	instance.SetLabel("certificateExpiryStatus", "unknown")
 
 	// find difference from unix Time
@@ -191,7 +192,7 @@ func (my *Certificate) setCertificateValidity(unixTime time.Time, instance *matr
 	}
 }
 
-func (my *Certificate) GetAdminVserver() (string, error) {
+func (c *Certificate) GetAdminVserver() (string, error) {
 	var (
 		result       []*node.Node
 		request      *node.Node
@@ -200,14 +201,14 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	)
 
 	request = node.NewXMLS("vserver-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", c.batchSize)
 	// Fetching only admin vserver
 	query := request.NewChildS("query", "")
 	vserverInfo := query.NewChildS("vserver-info", "")
 	vserverInfo.NewChildS("vserver-type", "admin")
 
 	// Fetching only admin SVMs
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = c.client.InvokeZapiCall(request); err != nil {
 		return "", err
 	}
 
@@ -222,7 +223,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	return adminVserver, nil
 }
 
-func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
+func (c *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	var (
 		result            []*node.Node
 		request           *node.Node
@@ -231,14 +232,14 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	)
 
 	request = node.NewXMLS("security-ssl-get-iter")
-	request.NewChildS("max-records", my.batchSize)
+	request.NewChildS("max-records", c.batchSize)
 	// Fetching only admin vserver
 	query := request.NewChildS("query", "")
 	vserverInfo := query.NewChildS("vserver-ssl-info", "")
 	vserverInfo.NewChildS("vserver", adminSvm)
 
 	// fetching data of only admin vservers
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = c.client.InvokeZapiCall(request); err != nil {
 		return "", err
 	}
 

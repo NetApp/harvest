@@ -11,9 +11,9 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/third_party/mergo"
 	"gopkg.in/yaml.v3"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/exec"
@@ -31,7 +31,7 @@ const (
 	keyType         = "PRIVATE KEY"
 )
 
-func NewCredentials(p *conf.Poller, logger *logging.Logger) *Credentials {
+func NewCredentials(p *conf.Poller, logger *slog.Logger) *Credentials {
 	return &Credentials{
 		poller: p,
 		logger: logger,
@@ -42,7 +42,7 @@ func NewCredentials(p *conf.Poller, logger *logging.Logger) *Credentials {
 type Credentials struct {
 	poller         *conf.Poller
 	nextUpdate     time.Time
-	logger         *logging.Logger
+	logger         *slog.Logger
 	authMu         *sync.Mutex
 	cachedResponse ScriptResponse
 }
@@ -139,10 +139,11 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 	}
 	duration, err := time.ParseDuration(timeout)
 	if err != nil {
-		c.logger.Error().Err(err).
-			Str("timeout", timeout).
-			Str("default", defaultTimeout).
-			Msg("Failed to parse timeout. Using default")
+		c.logger.Error(
+			"Failed to parse timeout. Using default",
+			slog.String("timeout", timeout),
+			slog.String("default", defaultTimeout),
+		)
 		duration, _ = time.ParseDuration(defaultTimeout)
 	}
 	ctx, cancelFunc := context.WithTimeout(context.Background(), duration)
@@ -163,31 +164,37 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 		}
 	}()
 	if err != nil {
-		c.logger.Error().Err(err).
-			Str("script", lookPath).
-			Str("timeout", duration.String()).
-			Str("kind", kind).
-			Msg("Failed to start script")
+		c.logger.Error(
+			"Failed to start script",
+			slog.Any("err", err),
+			slog.String("script", lookPath),
+			slog.String("timeout", duration.String()),
+			slog.String("kind", kind),
+		)
 		return response, fmt.Errorf("script start failed script=%s kind=%s err=%w", lookPath, kind, err)
 	}
 	err = cmd.Wait()
 	if err != nil {
-		c.logger.Error().Err(err).
-			Str("script", lookPath).
-			Str("timeout", duration.String()).
-			Str("kind", kind).
-			Msg("Failed to execute script")
+		c.logger.Error(
+			"Failed to execute script",
+			slog.Any("err", err),
+			slog.String("script", lookPath),
+			slog.String("timeout", duration.String()),
+			slog.String("kind", kind),
+		)
 		return response, fmt.Errorf("script execute failed script=%s kind=%s err=%w", lookPath, kind, err)
 	}
 
 	err = yaml.Unmarshal(stdout.Bytes(), &response)
 	if err != nil {
 		// Log the error but do not return it, we will try to use the output as plain text next.
-		c.logger.Debug().Err(err).
-			Str("script", lookPath).
-			Str("timeout", duration.String()).
-			Str("kind", kind).
-			Msg("Failed to parse YAML output. Treating as plain text.")
+		c.logger.Debug(
+			"Failed to parse YAML output. Treating as plain text.",
+			slog.Any("err", err),
+			slog.String("script", lookPath),
+			slog.String("timeout", duration.String()),
+			slog.String("kind", kind),
+		)
 	}
 
 	if err == nil && (response.Data != "" || response.AuthToken != "") {
@@ -212,10 +219,12 @@ func (c *Credentials) setNextUpdate() {
 	}
 	duration, err := time.ParseDuration(schedule)
 	if err != nil {
-		c.logger.Error().Err(err).
-			Str("schedule", schedule).
-			Str("default", defaultSchedule).
-			Msg("Failed to parse schedule. Using default")
+		c.logger.Error(
+			"Failed to parse schedule. Using default",
+			slog.Any("err", err),
+			slog.String("schedule", schedule),
+			slog.String("default", defaultSchedule),
+		)
 		duration, _ = time.ParseDuration(defaultSchedule)
 	}
 	c.nextUpdate = time.Now().Add(duration)
@@ -252,24 +261,31 @@ func (a PollerAuth) Certificate() (tls.Certificate, error) {
 
 // If the CA certificate path is specified, create a CA certificate pool and add the certificate to it.
 // Otherwise, return nil so the host's root CA set is used.
-func (a PollerAuth) loadCertPool(logger *logging.Logger) *x509.CertPool {
+func (a PollerAuth) loadCertPool(logger *slog.Logger) *x509.CertPool {
 	if a.CaCertPath == "" {
 		return nil
 	}
 
 	caCert, err := os.ReadFile(a.CaCertPath)
 	if err != nil {
-		logger.Error().Err(err).Str("caCertPath", a.CaCertPath).Msg("Failed to read CA certificate. Use host's root CA set.")
+		logger.Error(
+			"Failed to read CA certificate. Use host's root CA set.",
+			slog.Any("err", err),
+			slog.String("caCertPath", a.CaCertPath),
+		)
 		return nil
 	}
 
 	caCertPool := x509.NewCertPool()
 	ok := caCertPool.AppendCertsFromPEM(caCert)
 	if !ok {
-		logger.Warn().Str("caCertPath", a.CaCertPath).Msg("Failed to append CA certificate to pool. Use host's root CA set.")
+		logger.Warn(
+			"Failed to append CA certificate to pool. Use host's root CA set.",
+			slog.String("caCertPath", a.CaCertPath),
+		)
 		return nil
 	}
-	logger.Debug().Str("caCertPath", a.CaCertPath).Msg("CA certificate loaded")
+	logger.Debug("CA certificate loaded", slog.String("caCertPath", a.CaCertPath))
 	return caCertPool
 }
 

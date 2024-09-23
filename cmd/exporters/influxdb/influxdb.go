@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"io"
+	"log/slog"
 	"net/http"
 	url2 "net/url"
 	"strconv"
@@ -85,7 +86,7 @@ func (e *InfluxDB) Init() error {
 			return errs.New(errs.ErrMissingParam, "url or addr")
 		}
 		if port = e.Params.Port; port == nil {
-			e.Logger.Debug().Msgf("using default port [%d]", defaultPort)
+			e.Logger.Debug("using default port", slog.Int("default", defaultPort))
 			defPort := defaultPort
 			port = &defPort
 		}
@@ -93,23 +94,23 @@ func (e *InfluxDB) Init() error {
 			v := defaultAPIVersion
 			version = &v
 		}
-		e.Logger.Debug().Msgf("using api version [%s]", *version)
+		e.Logger.Debug("using api version", slog.String("version", *version))
 
 		if bucket = e.Params.Bucket; bucket == nil {
 			return errs.New(errs.ErrMissingParam, "bucket")
 		}
-		e.Logger.Debug().Msgf("using bucket [%s]", *bucket)
+		e.Logger.Debug("using bucket", slog.String("bucket", *bucket))
 
 		if org = e.Params.Org; org == nil {
 			return errs.New(errs.ErrMissingParam, "org")
 		}
-		e.Logger.Debug().Msgf("using organization [%s]", *org)
+		e.Logger.Debug("using organization", slog.String("org", *org))
 
 		if precision = e.Params.Precision; precision == nil {
 			p := defaultAPIPrecision
 			precision = &p
 		}
-		e.Logger.Debug().Msgf("using api precision [%s]", *precision)
+		e.Logger.Debug("using api precision", slog.String("precision", *precision))
 
 		//goland:noinspection HttpUrlsUsage
 		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
@@ -122,7 +123,7 @@ func (e *InfluxDB) Init() error {
 		return errs.New(errs.ErrMissingParam, "token")
 	}
 	e.token = *token
-	e.Logger.Debug().Msg("will use authorization with api token")
+	e.Logger.Debug("will use authorization with api token")
 
 	// timeout parameter
 	timeout := time.Duration(defaultTimeout) * time.Second
@@ -130,13 +131,17 @@ func (e *InfluxDB) Init() error {
 		if t, err := strconv.Atoi(*ct); err == nil {
 			timeout = time.Duration(t) * time.Second
 		} else {
-			e.Logger.Warn().Msgf("invalid client_timeout [%s], using default: %d s", *ct, defaultTimeout)
+			e.Logger.Warn(
+				"invalid client_timeout, using default",
+				slog.String("client_timeout", *ct),
+				slog.Int("default", defaultTimeout),
+			)
 		}
 	} else {
-		e.Logger.Debug().Msgf("using default client_timeout: %d s", defaultTimeout)
+		e.Logger.Debug("using default client_timeout", slog.Int("default", defaultTimeout))
 	}
 
-	e.Logger.Debug().Str("dbEndpoint", dbEndpoint).Str("url", e.url).Send()
+	e.Logger.Debug("initializing exporter", slog.String("endpoint", dbEndpoint), slog.String("url", e.url))
 
 	// construct HTTP client
 	e.client = &http.Client{Timeout: timeout}
@@ -162,7 +167,7 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	if metrics, stats, err = e.Render(data); err == nil && len(metrics) != 0 {
 		// fix render time
 		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
-			e.Logger.Error().Err(err).Msg("metadata render time")
+			e.Logger.Error("metadata render time", slog.Any("err", err))
 		}
 		// in test mode, don't emit metrics
 		if e.Options.IsTest {
@@ -173,17 +178,22 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 		}
 	}
 
-	e.Logger.Debug().Str("object", data.Object).Str("uuid", data.UUID).Int("numMetric", len(metrics)).Msg("exported")
+	e.Logger.Debug(
+		"exported",
+		slog.String("object", data.Object),
+		slog.String("uuid", data.UUID),
+		slog.Int("numMetric", len(metrics)),
+	)
 
 	// update metadata
 	if err = e.Metadata.LazySetValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
-		e.Logger.Error().Err(err).Msg("metadata export time")
+		e.Logger.Error("metadata export time", slog.Any("err", err))
 	}
 
 	if metrics, stats, err = e.Render(e.Metadata); err != nil {
-		e.Logger.Error().Err(err).Msg("render metadata")
+		e.Logger.Error("render metadata", slog.Any("err", err))
 	} else if err = e.Emit(metrics); err != nil {
-		e.Logger.Error().Err(err).Msg("emit metadata")
+		e.Logger.Error("emit metadata", slog.Any("err", err))
 	}
 
 	return stats, nil
@@ -280,7 +290,11 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 
 		// skip instance without key tags
 		if len(m.tagSet) == 0 {
-			e.Logger.Debug().Msgf("skip instance (%s), no tag set parsed from labels (%v)", key, instance.GetLabels())
+			e.Logger.Debug(
+				"skip instance, no tag set parsed from labels",
+				slog.String("key", key),
+				slog.Any("labels", instance.GetLabels()),
+			)
 		}
 
 		// field set
@@ -329,21 +343,21 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 
 		// skip instance with no tag set (no metrics)
 		if len(m.fieldSet) == 0 {
-			e.Logger.Debug().Msgf("skip instance (%s), no field set parsed", key)
+			e.Logger.Debug("skip instance, no field set parsed", slog.Any("instance", instance))
 		} else if r, err := m.Render(); err == nil {
 			rendered = append(rendered, []byte(r))
 			count += countTmp
 		} else {
-			e.Logger.Debug().Msg(err.Error())
+			e.Logger.Debug(err.Error())
 		}
 	}
 
-	e.Logger.Debug().Msgf("rendered %d measurements with %d data points for (%s)", len(rendered), count, object)
+	e.Logger.Debug("rendered", slog.Int("instances", len(rendered)), slog.Uint64("metrics", count))
 
 	// update metadata
 	e.AddExportCount(count)
 	if err := e.Metadata.LazySetValueUint64("count", "export", count); err != nil {
-		e.Logger.Error().Err(err).Msg("metadata export count")
+		e.Logger.Error("metadata export count", slog.Any("err", err))
 	}
 	return rendered, exporter.Stats{InstancesExported: instancesExported, MetricsExported: count}, nil
 }

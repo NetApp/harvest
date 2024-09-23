@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 )
 
 const (
@@ -33,7 +34,7 @@ func (f *FlexCache) Init() error {
 	}
 
 	if f.client, err = zapi.New(conf.ZapiPoller(f.ParentParams), f.Auth); err != nil {
-		f.Logger.Error().Err(err).Msg("connecting")
+		f.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 

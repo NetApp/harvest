@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"time"
 )
 
@@ -28,31 +29,31 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Certificate{AbstractPlugin: p}
 }
 
-func (my *Certificate) Init() error {
+func (c *Certificate) Init() error {
 
 	var err error
 
-	if err := my.InitAbc(); err != nil {
+	if err := c.InitAbc(); err != nil {
 		return err
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if my.client, err = rest.New(conf.ZapiPoller(my.ParentParams), timeout, my.Auth); err != nil {
-		my.Logger.Error().Err(err).Msg("connecting")
+	if c.client, err = rest.New(conf.ZapiPoller(c.ParentParams), timeout, c.Auth); err != nil {
+		c.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
-	if err := my.client.Init(5); err != nil {
+	if err := c.client.Init(5); err != nil {
 		return err
 	}
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
-	my.currentVal = my.SetPluginInterval()
+	c.currentVal = c.SetPluginInterval()
 
 	return nil
 }
 
-func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 
 	var (
 		adminVserver       string
@@ -61,28 +62,28 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 		unixTime           time.Time
 		err                error
 	)
-	data := dataMap[my.Object]
-	my.client.Metadata.Reset()
+	data := dataMap[c.Object]
+	c.client.Metadata.Reset()
 
-	if my.currentVal >= my.PluginInvocationRate {
-		my.currentVal = 0
+	if c.currentVal >= c.PluginInvocationRate {
+		c.currentVal = 0
 
 		// invoke private vserver cli rest and get admin vserver name
-		if adminVserver, err = my.GetAdminVserver(); err != nil {
+		if adminVserver, err = c.GetAdminVserver(); err != nil {
 			if ontap.IsRestErr(err, ontap.APINotFound) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM")
+				c.SLogger.Debug("Failed to collect admin SVM", slog.Any("err", err))
 			} else {
-				my.Logger.Error().Err(err).Msg("Failed to collect admin SVM")
+				c.SLogger.Error("Failed to collect admin SVM", slog.Any("err", err))
 			}
 			return nil, nil, nil
 		}
 
 		// invoke private ssl cli rest and get the admin SVM's serial number
-		if adminVserverSerial, err = my.GetSecuritySsl(adminVserver); err != nil {
+		if adminVserverSerial, err = c.GetSecuritySsl(adminVserver); err != nil {
 			if ontap.IsRestErr(err, ontap.APINotFound) {
-				my.Logger.Debug().Err(err).Msg("Failed to collect admin SVM's serial number")
+				c.SLogger.Debug("Failed to collect admin SVM's serial number", slog.Any("err", err))
 			} else {
-				my.Logger.Error().Msg("Failed to collect admin SVM's serial number")
+				c.SLogger.Error("Failed to collect admin SVM's serial number", slog.Any("err", err))
 			}
 			return nil, nil, nil
 		}
@@ -96,7 +97,7 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			certType := certificateInstance.GetLabel("type")
 
 			if expiryTimeMetric = data.GetMetric("expiration"); expiryTimeMetric == nil {
-				my.Logger.Error().Msg("missing expiry time metric")
+				c.SLogger.Error("missing expiry time metric")
 				continue
 			}
 
@@ -110,17 +111,17 @@ func (my *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 			}
 
 			if serialNumber == adminVserverSerial && certType == "server" {
-				my.setCertificateIssuerType(certificateInstance)
-				my.setCertificateValidity(unixTime, certificateInstance)
+				c.setCertificateIssuerType(certificateInstance)
+				c.setCertificateValidity(unixTime, certificateInstance)
 			}
 		}
 	}
 
-	my.currentVal++
-	return nil, my.client.Metadata, nil
+	c.currentVal++
+	return nil, c.client.Metadata, nil
 }
 
-func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
+func (c *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	var (
 		cert *x509.Certificate
 		err  error
@@ -130,19 +131,22 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	certUUID := instance.GetLabel("uuid")
 
 	if certificatePEM == "" {
-		my.Logger.Debug().Str("uuid", certUUID).Msg("Certificate is not found")
+		c.SLogger.Debug("Certificate PEM is not found", slog.String("uuid", certUUID))
 		instance.SetLabel("certificateIssuerType", "unknown")
 	} else {
 		instance.SetLabel("certificateIssuerType", "self_signed")
 		certDecoded, _ := pem.Decode([]byte(certificatePEM))
 		if certDecoded == nil {
-			my.Logger.Warn().Msg("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			c.SLogger.Warn("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
 
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			my.Logger.Warn().Err(err).Msg("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
+			c.SLogger.Warn(
+				"PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed",
+				slog.Any("err", err),
+			)
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return
 		}
@@ -160,7 +164,7 @@ func (my *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 	}
 }
 
-func (my *Certificate) setCertificateValidity(unixTime time.Time, instance *matrix.Instance) {
+func (c *Certificate) setCertificateValidity(unixTime time.Time, instance *matrix.Instance) {
 	instance.SetLabel("certificateExpiryStatus", "unknown")
 
 	// find difference from unix Time
@@ -179,7 +183,7 @@ func (my *Certificate) setCertificateValidity(unixTime time.Time, instance *matr
 	}
 }
 
-func (my *Certificate) GetAdminVserver() (string, error) {
+func (c *Certificate) GetAdminVserver() (string, error) {
 
 	var (
 		result       []gjson.Result
@@ -194,7 +198,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 		Filter([]string{"type=admin"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(c.client, href, c.SLogger); err != nil {
 		return "", err
 	}
 
@@ -205,7 +209,7 @@ func (my *Certificate) GetAdminVserver() (string, error) {
 	return adminVserver, nil
 }
 
-func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
+func (c *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 
 	var (
 		result      []gjson.Result
@@ -220,7 +224,7 @@ func (my *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 		Filter([]string{"vserver=" + adminSvm}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(my.client, href, my.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(c.client, href, c.SLogger); err != nil {
 		return "", err
 	}
 

@@ -31,7 +31,7 @@ func (f *FabricPool) Init() error {
 }
 
 func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
-	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, "cloud_bin_operation", f.includeConstituents, f.Logger)
+	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, "cloud_bin_operation", f.includeConstituents, f.SLogger)
 	if err != nil {
 		return nil, nil, err
 	}

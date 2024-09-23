@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -87,10 +88,11 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 
 	kp.buildCounters()
 
-	kp.Logger.Debug().
-		Int("numMetrics", len(kp.Prop.Metrics)).
-		Str("timeout", kp.Client.Timeout.String()).
-		Msg("initialized cache")
+	kp.Logger.Debug(
+		"initialized cache",
+		slog.Int("numMetrics", len(kp.Prop.Metrics)),
+		slog.String("timeout", kp.Client.Timeout.String()),
+	)
 	return nil
 }
 
@@ -126,13 +128,13 @@ func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
 
 	if x = kp.Params.GetChildContentS(name); x != "" {
 		if n, e = strconv.Atoi(x); e == nil {
-			kp.Logger.Debug().Str("name", name).Int("n", n).Send()
+			kp.Logger.Debug("", slog.String("name", name), slog.Int("n", n))
 			return n
 		}
-		kp.Logger.Warn().Str("parameter", name).Str("x", x).Msg("invalid parameter")
+		kp.Logger.Warn("invalid parameter", slog.String("parameter", name), slog.String("x", x))
 	}
 
-	kp.Logger.Debug().Str("name", name).Str("defaultValue", strconv.Itoa(defaultValue)).Msg("using values")
+	kp.Logger.Debug("using values", slog.String("name", name), slog.Int("defaultValue", defaultValue))
 	return defaultValue
 }
 
@@ -186,7 +188,7 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	kp.Client.Metadata.Reset()
 
 	href := kp.Prop.Href
-	kp.Logger.Debug().Str("href", href).Send()
+	kp.Logger.Debug("fetching href", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -269,7 +271,7 @@ func (kp *KeyPerf) pollData(
 
 	// skip calculating from delta if no data from previous poll
 	if kp.perfProp.isCacheEmpty {
-		kp.Logger.Debug().Msg("skip postprocessing until next poll (previous cache empty)")
+		kp.Logger.Debug("skip postprocessing until next poll (previous cache empty)")
 		kp.Matrix[kp.Object] = curMat
 		kp.perfProp.isCacheEmpty = false
 		return nil, nil
@@ -301,7 +303,7 @@ func (kp *KeyPerf) pollData(
 				orderedDenominatorKeys = append(orderedDenominatorKeys, key)
 			}
 		} else {
-			kp.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse")
+			kp.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
 		}
 	}
 
@@ -327,7 +329,7 @@ func (kp *KeyPerf) pollData(
 		key := orderedKeys[i]
 		counter := counterMap[key]
 		if counter == nil {
-			kp.Logger.Error().Err(err).Str("counter", metric.GetName()).Msg("Missing counter:")
+			kp.Logger.Error("Missing counter", slog.Any("err", err), slog.String("counter", metric.GetName()))
 			continue
 		}
 		property := counter.counterType
@@ -343,7 +345,7 @@ func (kp *KeyPerf) pollData(
 
 		// all other properties - first calculate delta
 		if skips, err = curMat.Delta(key, prevMat, kp.Logger); err != nil {
-			kp.Logger.Error().Err(err).Str("key", key).Msg("Calculate delta")
+			kp.Logger.Error("Calculate delta", slog.Any("err", err), slog.String("key", key))
 			continue
 		}
 		totalSkips += skips
@@ -365,12 +367,13 @@ func (kp *KeyPerf) pollData(
 		// For the next two properties we need base counters
 		// We assume that delta of base counters is already calculated
 		if base = curMat.GetMetric(counter.denominator); base == nil {
-			kp.Logger.Warn().
-				Str("key", key).
-				Str("property", property).
-				Str("denominator", counter.denominator).
-				Int("instIndex", instIndex).
-				Msg("Base counter missing")
+			kp.Logger.Warn(
+				"Base counter missing",
+				slog.String("key", key),
+				slog.String("property", property),
+				slog.String("denominator", counter.denominator),
+				slog.Int("instIndex", instIndex),
+			)
 			continue
 		}
 
@@ -389,7 +392,7 @@ func (kp *KeyPerf) pollData(
 			}
 
 			if err != nil {
-				kp.Logger.Error().Err(err).Str("key", key).Msg("Division by base")
+				kp.Logger.Error("Division by base", slog.Any("err", err), slog.String("key", key))
 				continue
 			}
 			totalSkips += skips
@@ -401,18 +404,19 @@ func (kp *KeyPerf) pollData(
 
 		if property == "percent" {
 			if skips, err = curMat.MultiplyByScalar(key, 100); err != nil {
-				kp.Logger.Error().Err(err).Str("key", key).Msg("Multiply by scalar")
+				kp.Logger.Error("Multiply by scalar", slog.Any("err", err), slog.String("key", key))
 			} else {
 				totalSkips += skips
 			}
 			continue
 		}
-		// If we reach here then one of the earlier clauses should have executed `continue` statement
-		kp.Logger.Error().Err(err).
-			Str("key", key).
-			Str("property", property).
-			Int("instIndex", instIndex).
-			Msg("Unknown property")
+		// If we reach here, then one of the earlier clauses should have executed `continue` statement
+		kp.Logger.Error(
+			"Unknown property",
+			slog.String("key", key),
+			slog.String("property", property),
+			slog.Int("instIndex", instIndex),
+		)
 	}
 
 	// calculate rates (which we deferred to calculate averages/percents first)
@@ -420,18 +424,19 @@ func (kp *KeyPerf) pollData(
 		key := orderedKeys[i]
 		counter := counterMap[key]
 		if counter == nil {
-			kp.Logger.Warn().Str("counter", metric.GetName()).Msg("Counter is missing or unable to parse ")
+			kp.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
 			continue
 		}
 		property := counter.counterType
 		if property == "rate" {
 			if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
-				kp.Logger.Error().Err(err).
-					Int("i", i).
-					Str("metric", metric.GetName()).
-					Str("key", orderedKeys[i]).
-					Int("instIndex", instIndex).
-					Msg("Calculate rate")
+				kp.Logger.Error(
+					"Calculate rate",
+					slog.Any("err", err),
+					slog.Int("i", i),
+					slog.String("key", key),
+					slog.Int("instIndex", instIndex),
+				)
 				continue
 			}
 			totalSkips += skips

@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 )
 
 var metrics = []string{
@@ -31,7 +32,7 @@ func (q *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
-			q.Logger.Error().Err(err).Str("key", k).Msg("error while creating metric")
+			q.SLogger.Error("error while creating metric", slog.Any("err", err), slog.String("key", k))
 			return nil, nil, err
 		}
 	}
@@ -47,8 +48,8 @@ func (q *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 			instance.SetExportable(false)
 			continue
 		}
-		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", q.Logger)
-		collectors.SetThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps", q.Logger)
+		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", q.SLogger)
+		collectors.SetThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps", q.SLogger)
 	}
 
 	return nil, nil, nil

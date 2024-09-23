@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"maps"
 	"strconv"
 	"time"
@@ -88,7 +89,7 @@ func (c *ChangeLog) populateChangeLogConfig() error {
 		return err
 	}
 
-	c.changeLogConfig, err = getChangeLogConfig(c.ParentParams, changeLogYaml, c.Logger)
+	c.changeLogConfig, err = getChangeLogConfig(c.ParentParams, changeLogYaml, c.SLogger)
 	if err != nil {
 		return err
 	}
@@ -105,7 +106,7 @@ func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, changeLogMap[c.matrixName])
 		if err != nil {
-			c.Logger.Warn().Err(err).Str("key", k).Msg("error while creating metric")
+			c.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", k))
 			return nil, err
 		}
 	}
@@ -117,7 +118,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	data := dataMap[c.Object]
 	changeLogMap, err := c.initMatrix()
 	if err != nil {
-		c.Logger.Warn().Err(err).Msg("error while init matrix")
+		c.SLogger.Warn("error while init matrix", slog.Any("err", err))
 		return nil, nil, err
 	}
 
@@ -134,7 +135,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	changeMat.SetGlobalLabels(data.GetGlobalLabels())
 	object := data.Object
 	if c.changeLogConfig.Object == "" {
-		c.Logger.Warn().Str("object", object).Msg("ChangeLog is not supported. Missing correct configuration")
+		c.SLogger.Warn("ChangeLog is not supported. Missing correct configuration", slog.String("object", object))
 		return nil, nil, nil
 	}
 
@@ -144,7 +145,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	for key, prevInstance := range prevMat.GetInstances() {
 		uuid := prevInstance.GetLabel("uuid")
 		if uuid == "" {
-			c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing uuid")
+			c.SLogger.Warn("missing uuid", slog.String("object", object), slog.String("key", key))
 			continue
 		}
 		prevInstancesUUIDKey[uuid] = key
@@ -158,7 +159,11 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	for key, instance := range data.GetInstances() {
 		uuid := instance.GetLabel("uuid")
 		if uuid == "" {
-			c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing uuid. ChangeLog is not supported")
+			c.SLogger.Warn(
+				"missing uuid. ChangeLog is not supported",
+				slog.String("object", object),
+				slog.String("key", key),
+			)
 			continue
 		}
 
@@ -237,7 +242,11 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 		prevInstance := prevMat.GetInstance(key)
 		uuid := prevInstance.GetLabel("uuid")
 		if uuid == "" {
-			c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing uuid. ChangeLog is not supported")
+			c.SLogger.Warn(
+				"missing uuid. ChangeLog is not supported",
+				slog.String("object", object),
+				slog.String("key", key),
+			)
 			continue
 		}
 		if prevInstance != nil {
@@ -251,7 +260,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 			c.updateChangeLogLabels(object, prevInstance, change)
 			c.createChangeLogInstance(changeMat, change)
 		} else {
-			c.Logger.Warn().Str("object", object).Str("key", key).Msg("missing instance")
+			c.SLogger.Warn("missing instance", slog.String("object", object), slog.String("key", key))
 		}
 	}
 
@@ -263,10 +272,12 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 		// The `index` variable is used to differentiate between changes to the same label in a Grafana dashboard.
 		// It has a value between 0 and 100 and is used in the `change_log` query as `last_over_time`.
 		c.index = (c.index + 1) % 100
-		c.Logger.Info().Int("instances", len(changeMat.GetInstances())).
-			Int("metrics", c.metricsCount).
-			Int("index", c.index).
-			Msg("Collected")
+		c.SLogger.Info(
+			"Collected",
+			slog.Int("instances", len(changeMat.GetInstances())),
+			slog.Int("metrics", c.metricsCount),
+			slog.Int("index", c.index),
+		)
 	}
 
 	return matricesArray, nil, nil
@@ -323,7 +334,12 @@ func (c *ChangeLog) copyPreviousData(cur *matrix.Matrix) {
 func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) {
 	cInstance, err := mat.NewInstance(change.key)
 	if err != nil {
-		c.Logger.Warn().Str("object", change.object).Str("key", change.key).Msg("error while creating instance")
+		c.SLogger.Warn(
+			"error while creating instance",
+			slog.Any("err", err),
+			slog.String("object", change.object),
+			slog.String("key", change.key),
+		)
 		return
 	}
 	// copy keys
@@ -337,12 +353,12 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 	m := mat.GetMetric("log")
 	if m == nil {
 		if m, err = mat.NewMetricFloat64("log"); err != nil {
-			c.Logger.Warn().Err(err).Str("key", "log").Msg("error while creating metric")
+			c.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", "log"))
 			return
 		}
 	}
 	if err = m.SetValueInt64(cInstance, change.time); err != nil {
-		c.Logger.Error().Err(err).Int64("val", change.time).Msg("Unable to set value on metric")
+		c.SLogger.Error("error while setting value", slog.Any("err", err), slog.Int64("val", change.time))
 		return
 	}
 }
@@ -355,7 +371,7 @@ func (c *ChangeLog) updateChangeLogLabels(object string, instance *matrix.Instan
 		for _, l := range cl.PublishLabels {
 			labelValue := instance.GetLabel(l)
 			if labelValue == "" {
-				c.Logger.Warn().Str("object", object).Str("label", l).Msg("Missing label")
+				c.SLogger.Warn("missing label", slog.String("object", object), slog.String("label", l))
 			} else {
 				change.labels[l] = labelValue
 			}
@@ -363,6 +379,6 @@ func (c *ChangeLog) updateChangeLogLabels(object string, instance *matrix.Instan
 	case cl.includeAll:
 		maps.Copy(change.labels, instance.GetLabels())
 	default:
-		c.Logger.Warn().Str("object", object).Msg("missing publish labels")
+		c.SLogger.Warn("missing publish labels", slog.String("object", object))
 	}
 }

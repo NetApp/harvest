@@ -6,6 +6,7 @@ package metricagent
 
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"log/slog"
 	"strings"
 )
 
@@ -26,9 +27,11 @@ func (a *MetricAgent) parseRules() int {
 			case "compute_metric":
 				a.parseComputeMetricRule(rule)
 			default:
-				a.Logger.Warn().
-					Str("object", a.ParentParams.GetChildContentS("object")).
-					Str("name", name).Msg("Unknown rule name")
+				a.SLogger.Warn(
+					"Unknown rule name",
+					slog.String("object", a.ParentParams.GetChildContentS("object")),
+					slog.String("name", name),
+				)
 			}
 		}
 	}
@@ -45,9 +48,11 @@ func (a *MetricAgent) parseRules() int {
 				count += len(a.computeMetricRules)
 			}
 		default:
-			a.Logger.Warn().
-				Str("object", a.ParentParams.GetChildContentS("object")).
-				Str("name", name).Msg("Unknown rule name")
+			a.SLogger.Warn(
+				"Unknown rule name",
+				slog.String("object", a.ParentParams.GetChildContentS("object")),
+				slog.String("name", name),
+			)
 		}
 	}
 
@@ -69,11 +74,12 @@ func (a *MetricAgent) parseComputeMetricRule(rule string) {
 		}
 
 		a.computeMetricRules = append(a.computeMetricRules, r)
-		a.Logger.Debug().
-			Str("metric", r.metric).
-			Str("operation", r.operation).
-			Msg("(compute_metric) parsed rule")
+		a.SLogger.Debug(
+			"(compute_metric) parsed rule",
+			slog.String("metric", r.metric),
+			slog.String("operation", r.operation),
+		)
 		return
 	}
-	a.Logger.Warn().Str("rule", rule).Msg("(compute_metric) rule has invalid format")
+	a.SLogger.Warn("(compute_metric) rule has invalid format", slog.String("rule", rule))
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"strconv"
 )
 
@@ -25,17 +26,17 @@ func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		if parseBool, err := strconv.ParseBool(s); err == nil {
 			isPerScanner = parseBool
 		} else {
-			v.Logger.Error().Err(err).Msg("Failed to parse metricsPerScanner")
+			v.SLogger.Error("Failed to parse metricsPerScanner", slog.Any("err", err))
 		}
 	}
-	v.Logger.Debug().Bool("isPerScanner", isPerScanner).Msg("Vscan options")
+	v.SLogger.Debug("Vscan options", slog.Bool("isPerScanner", isPerScanner))
 
 	v.addSvmAndScannerLabels(data)
 	if !isPerScanner {
 		return nil, nil, nil
 	}
 
-	return collectors.AggregatePerScanner(v.Logger, data, "scan.latency", "scan.request_dispatched_rate")
+	return collectors.AggregatePerScanner(v.SLogger, data, "scan.latency", "scan.request_dispatched_rate")
 }
 
 func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
@@ -43,7 +44,7 @@ func (v *Vscan) addSvmAndScannerLabels(data *matrix.Matrix) {
 		ontapName := instance.GetLabel("id")
 		names, ok := collectors.SplitVscanName(ontapName, false)
 		if !ok {
-			v.Logger.Warn().Str("ontapName", ontapName).Msg("Failed to parse svm and scanner labels")
+			v.SLogger.Warn("Failed to parse svm and scanner labels", slog.String("ontapName", ontapName))
 			continue
 		}
 		instance.SetLabel("svm", names.Svm)

@@ -4,14 +4,14 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"log/slog"
 	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -50,19 +50,24 @@ func (c *cli) makeDraft() {
 		releaseName = fmt.Sprintf("releaseHighlights_%s.md", releaseName)
 	} else {
 		releaseName = "highlights.md"
-		log.Warn().
-			Str("environmentVariable", envName).
-			Str("highlightsName", releaseName).
-			Msg("environment variable does not exist. Using highlightsName")
+		slog.Warn(
+			"environment variable does not exist. Using highlightsName",
+			slog.String("environmentVariable", envName),
+			slog.String("highlightsName", releaseName),
+		)
 	}
 	_, err := os.Stat(releaseName)
 	if err == nil {
-		log.Error().Str("file", releaseName).Msg("Refuse to overwrite existing file")
+		slog.Error("Refuse to overwrite existing file", slog.String("file", releaseName))
 		return
 	}
 	out, err := os.Create(releaseName)
 	if err != nil {
-		log.Error().Err(err).Str("releaseName", releaseName).Msg("Failed to create releaseName file")
+		slog.Error(
+			"Failed to create releaseName file",
+			slog.Any("err", err),
+			slog.String("releaseName", releaseName),
+		)
 		return
 	}
 	_, _ = out.WriteString(`
@@ -99,11 +104,13 @@ this release:
 func (c *cli) makeChangelog() {
 	highlights, err := os.ReadFile(c.highlights)
 	if err != nil {
-		log.Fatal().Err(err).Str("file", c.highlights).Msg("Failed to read file")
+		slog.Error("Failed to read file", slog.Any("err", err), slog.String("file", c.highlights))
+		os.Exit(1)
 	}
 	releaseNotes, err := os.ReadFile(c.releaseHighlights)
 	if err != nil {
-		log.Fatal().Err(err).Str("file", c.highlights).Msg("Failed to read file")
+		slog.Error("Failed to read file", slog.Any("err", err), slog.String("file", c.releaseHighlights))
+		os.Exit(1)
 	}
 	highlights = formatContributors(highlights)
 	c.readPrs(releaseNotes)
@@ -114,15 +121,17 @@ func formatContributors(notes []byte) []byte {
 	header := "## Thanks to all the awesome contributors"
 	index := bytes.LastIndex(notes, []byte(header))
 	if index == -1 {
-		log.Fatal().
-			Str("header", header).
-			Msg("Release highlights does not contain the header. Please add so contributors can be sorted and included")
+		slog.Error(
+			"Release highlights does not contain the header. Please add so contributors can be sorted and included",
+			slog.String("header", header),
+		)
+		os.Exit(1)
 	}
 	thanks := notes[index:]
 	loc := regexp.MustCompile("(?m)^-").FindIndex(thanks)
 	if loc == nil {
-		log.Fatal().
-			Msg("Release highlights does not contain a markdown list of contributors. Please add")
+		slog.Error("Release highlights does not contain a markdown list of contributors. Please add")
+		os.Exit(1)
 	}
 	contributors := make([]string, 0)
 	scanner := bufio.NewScanner(bytes.NewReader(thanks[loc[0]:]))
@@ -169,7 +178,7 @@ func (c *cli) readPrs(notes []byte) {
 		}
 		matches := prRegex.FindStringSubmatch(line)
 		if len(matches) != 5 {
-			log.Warn().Str("line", line).Msg("expected 5 matches")
+			slog.Warn("expected 5 matches", slog.String("line", line))
 			continue
 		}
 		com := newPr(matches)
@@ -207,7 +216,7 @@ func newPr(matches []string) pr {
 	}
 	id, err := strconv.Atoi(splits[len(splits)-1])
 	if err != nil {
-		log.Error().Err(err).Str("s", splits[len(splits)-1]).Msg("failed to convert s to int")
+		slog.Error("failed to convert s to int", slog.Any("err", err), slog.String("s", splits[len(splits)-1]))
 		com.id = -1
 	}
 	com.id = id
@@ -229,7 +238,8 @@ func (c *cli) printChangelog(highlightBytes []byte) {
 	for _, kind := range c.prOrder {
 		ct, ok := c.prTypes[kind]
 		if !ok {
-			log.Fatal().Str("kind", kind).Msg("missing kind")
+			slog.Error("missing kind", slog.String("kind", kind))
+			os.Exit(1)
 		}
 		prs := c.prsByKind[kind]
 		if len(prs) == 0 {
@@ -255,7 +265,8 @@ func (c *cli) printPrSummary() {
 		}
 		pt, ok := c.prTypes[k]
 		if !ok {
-			log.Fatal().Str("kind", k).Msg("missing kind")
+			slog.Error("missing kind", slog.String("kind", k))
+			os.Exit(1)
 		}
 		if i == len(c.prOrder)-1 {
 			b.WriteString(fmt.Sprintf("and %d %s pull requests.", len(prs), pt.summary))
@@ -279,7 +290,7 @@ func (c *cli) openIssue(pr pr) {
 	}
 	err := exec.Command("open", pr.url).Run() //nolint:gosec
 	if err != nil {
-		log.Error().Err(err).Str("url", pr.url).Msg("failed top open url")
+		slog.Error("failed to open url", slog.Any("err", err), slog.String("url", pr.url))
 		return
 	}
 	secs, _ := time.ParseDuration(strconv.Itoa(rand.Intn(4)) + "s") //nolint:gosec
@@ -307,8 +318,17 @@ func (c *cli) initPrTypes() {
 }
 
 func setupLogging() {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, NoColor: true}).With().Caller().Timestamp().Logger()
+	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		AddSource: true,
+		ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.SourceKey {
+				source := a.Value.Any().(*slog.Source)
+				source.File = filepath.Base(source.File)
+			}
+			return a
+		},
+	})
+	slog.SetDefault(slog.New(handler))
 }
 
 func (c *cli) Root() *cobra.Command {

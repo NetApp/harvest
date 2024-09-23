@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"strings"
 )
 
@@ -51,7 +52,7 @@ func (a *LabelAgent) Init() error {
 	if count = a.parseRules(); count == 0 {
 		err = errs.New(errs.ErrMissingParam, "valid rules")
 	} else {
-		a.Logger.Debug().Msgf("parsed %d rules for %d actions", count, len(a.actions))
+		a.SLogger.Debug("parsed rules", slog.Int("count", count), slog.Int("actions", len(a.actions)))
 	}
 
 	return err
@@ -277,7 +278,7 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
-				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("valueToNumMapping")
+				a.SLogger.Error("valueToNumMapping", slog.Any("err", err), slog.String("metric", r.metric))
 				return err
 			}
 			metric.SetProperty("value_to_num mapping")
@@ -305,7 +306,7 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 	for _, r := range a.valueToNumRegexRules {
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
-				a.Logger.Error().Err(err).Str("metric", r.metric).Msg("valueToNumRegexMapping")
+				a.SLogger.Error("valueToNumRegexMapping", slog.Any("err", err), slog.String("metric", r.metric))
 				return err
 			}
 			metric.SetProperty("value_to_num_regex mapping")

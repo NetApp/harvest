@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"gopkg.in/yaml.v3"
+	"log/slog"
 	"strings"
 )
 
@@ -56,7 +57,7 @@ func (t *JoinRest) Init() error {
 	var tm translatePlugin
 	err = decoder.Decode(&tm)
 	if err != nil {
-		t.Logger.Error().Err(err).Msg("Failed to decode joinTemplate")
+		t.SLogger.Error("Failed to decode joinTemplate", slog.Any("err", err))
 		return err
 	}
 	for _, p := range tm.Plugins {
@@ -86,7 +87,11 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 		for _, model := range t.translateMap {
 			bytes, err := t.client.GetGridRest(model.Rest)
 			if err != nil {
-				t.Logger.Error().Err(err).Str("rest", model.Rest).Msg("Failed to collect records from REST")
+				t.SLogger.Error(
+					"Failed to collect records from REST",
+					slog.Any("err", err),
+					slog.String("rest", model.Rest),
+				)
 				continue
 			}
 			t.updateCache(model, &bytes)
@@ -100,30 +105,33 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 		}
 		cache, ok := t.resourcesMap[model.Rest]
 		if !ok {
-			t.Logger.Warn().
-				Str("metricName", metricName).
-				Str("rest", model.Rest).
-				Msg("Cache does not have resources for REST")
+			t.SLogger.Warn(
+				"Cache does not have resources for REST",
+				slog.String("metricName", metricName),
+				slog.String("rest", model.Rest),
+			)
 			continue
 		}
 		for _, instance := range m.GetInstances() {
 			label := instance.GetLabel(model.WithProm)
 			if label == "" {
-				t.Logger.Debug().
-					Str("metricName", metricName).
-					Str("withProm", model.WithProm).
-					Str("rest", model.Rest).
-					Msg("Instance label for withProm is empty. Ignoring")
+				t.SLogger.Debug(
+					"Instance label for withProm is empty. Ignoring",
+					slog.String("metricName", metricName),
+					slog.String("withProm", model.WithProm),
+					slog.String("rest", model.Rest),
+				)
 				continue
 			}
 			newLabel, ok := cache[label]
 			if !ok {
-				t.Logger.Debug().
-					Str("metricName", metricName).
-					Str("withProm", model.WithProm).
-					Str("label", label).
-					Str("rest", model.Rest).
-					Msg("Cache does not contain label. Ignoring")
+				t.SLogger.Debug(
+					"Cache does not contain label. Ignoring",
+					slog.String("metricName", metricName),
+					slog.String("withProm", model.WithProm),
+					slog.String("label", label),
+					slog.String("rest", model.Rest),
+				)
 				continue
 			}
 			instance.SetLabel(model.LabelProm, newLabel)
@@ -138,10 +146,11 @@ func (t *JoinRest) updateCache(model join, bytes *[]byte) {
 	keys := results.Get("data.#." + model.JoinRest).Array()
 	vals := results.Get("data.#." + model.LabelRest).Array()
 	if len(keys) != len(vals) {
-		t.Logger.Error().
-			Str("restKey", model.JoinRest).
-			Str("restVal", model.LabelRest).
-			Msg("Data sizes are different lengths")
+		t.SLogger.Error(
+			"Data sizes are different lengths",
+			slog.String("restKey", model.JoinRest),
+			slog.String("restVal", model.LabelRest),
+		)
 		return
 	}
 	for i, k := range keys {

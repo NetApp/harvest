@@ -1,9 +1,9 @@
 package changelog
 
 import (
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"gopkg.in/yaml.v3"
+	"log/slog"
 	"slices"
 	"strconv"
 )
@@ -48,7 +48,7 @@ ChangeLog:
 `
 
 // getChangeLogConfig returns a map of ChangeLog entries for the given object
-func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger *logging.Logger) (Entry, error) {
+func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger *slog.Logger) (Entry, error) {
 	var (
 		config Config
 		entry  Entry
@@ -61,7 +61,11 @@ func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger 
 	if len(overwriteConfig) > 0 {
 		entry, err = preprocessOverwrite(object, overwriteConfig)
 		if err != nil {
-			logger.Warn().Err(err).Str("template", string(overwriteConfig)).Msg("failed to parse changelog dsl. Trying default")
+			logger.Warn(
+				"failed to parse changelog dsl. Trying default",
+				slog.Any("err", err),
+				slog.String("template", string(overwriteConfig)),
+			)
 		} else {
 			useDefault = false
 		}
@@ -88,7 +92,7 @@ func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger 
 				entry.PublishLabels = append(entry.PublishLabels, exportedKeys.GetAllChildContentS()...)
 			} else if x := exportOption.GetChildContentS("include_all_labels"); x != "" {
 				if includeAllLabels, err := strconv.ParseBool(x); err != nil {
-					logger.Logger.Error().Err(err).Msg("parameter: include_all_labels")
+					logger.Error("parameter: include_all_labels", slog.Any("err", err))
 				} else if includeAllLabels {
 					entry.includeAll = true
 				}

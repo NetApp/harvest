@@ -3,7 +3,7 @@ package auth
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
+	"log/slog"
 	"os"
 	"testing"
 )
@@ -581,7 +581,7 @@ Pollers:
 				t.Errorf("expected no error got %+v", err)
 				return
 			}
-			c := NewCredentials(poller, logging.Get())
+			c := NewCredentials(poller, slog.Default())
 			got, err := c.GetPollerAuth()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetPollerAuth() error = %v, wantErr %v", err, tt.wantErr)

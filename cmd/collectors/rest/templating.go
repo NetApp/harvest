@@ -1,10 +1,12 @@
 package rest
 
 import (
+	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"maps"
 	"regexp"
 	"slices"
@@ -54,7 +56,7 @@ func (r *Rest) InitCache() error {
 	if returnTimeout := r.Params.GetChildContentS("return_timeout"); returnTimeout != "" {
 		iReturnTimeout, err := strconv.Atoi(returnTimeout)
 		if err != nil {
-			r.Logger.Warn().Str("returnTimeout", returnTimeout).Msg("Invalid value of returnTimeout")
+			r.Logger.Warn("Invalid value of returnTimeout", slog.String("returnTimeout", returnTimeout))
 		} else {
 			r.Prop.ReturnTimeOut = &iReturnTimeout
 		}
@@ -69,11 +71,14 @@ func (r *Rest) InitCache() error {
 
 	r.ParseRestCounters(counters, r.Prop)
 
-	r.Logger.Debug().
-		Strs("extracted Instance Keys", r.Prop.InstanceKeys).
-		Int("numMetrics", len(r.Prop.Metrics)).
-		Int("numLabels", len(r.Prop.InstanceLabels)).
-		Msg("Initialized metric cache")
+	if r.Logger.Enabled(context.Background(), slog.LevelDebug) {
+		r.Logger.Debug(
+			"Initialized metric cache",
+			slog.String("extracted Instance Keys", strings.Join(r.Prop.InstanceKeys, ",")),
+			slog.Int("numMetrics", len(r.Prop.Metrics)),
+			slog.Int("numLabels", len(r.Prop.InstanceLabels)),
+		)
+	}
 
 	return nil
 }

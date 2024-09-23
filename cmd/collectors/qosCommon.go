@@ -3,8 +3,8 @@ package collectors
 import (
 	"errors"
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"log/slog"
 	"regexp"
 	"strconv"
 	"strings"
@@ -27,21 +27,21 @@ type MaxXput struct {
 	Mbps string
 }
 
-func SetThroughput(data *matrix.Matrix, instance *matrix.Instance, labelName string, iopLabel string, mbpsLabel string, logger *logging.Logger) {
+func SetThroughput(data *matrix.Matrix, instance *matrix.Instance, labelName string, iopLabel string, mbpsLabel string, logger *slog.Logger) {
 	val := instance.GetLabel(labelName)
 	if val == "" {
 		return
 	}
 	xput, err := ZapiXputToRest(val)
 	if err != nil {
-		logger.Warn().Str(labelName, val).Msg("Unable to convert label, skipping")
+		logger.Warn("Unable to convert label, skipping", slog.String(labelName, val))
 		return
 	}
 	QosSetLabel(iopLabel, data, instance, xput.IOPS, logger)
 	QosSetLabel(mbpsLabel, data, instance, xput.Mbps, logger)
 }
 
-func QosSetLabel(labelName string, data *matrix.Matrix, instance *matrix.Instance, value string, logger *logging.Logger) {
+func QosSetLabel(labelName string, data *matrix.Matrix, instance *matrix.Instance, value string, logger *slog.Logger) {
 	if value == "" {
 		return
 	}
@@ -50,7 +50,7 @@ func QosSetLabel(labelName string, data *matrix.Matrix, instance *matrix.Instanc
 	if m != nil {
 		err := m.SetValueString(instance, value)
 		if err != nil {
-			logger.Error().Str(labelName, value).Err(err).Msg("Unable to set metric")
+			logger.Error("Unable to set metric", slog.String(labelName, value), slog.Any("err", err))
 		}
 	}
 }

@@ -30,10 +30,10 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"sync"
 	"time"
 )
@@ -104,7 +104,7 @@ type AbstractPlugin struct {
 	Parent               string           // name of the collector that owns this plugin
 	Name                 string           // name of the plugin
 	Object               string           // object of the collector, describes what that collector is collecting
-	Logger               *logging.Logger  // logger used for logging
+	SLogger              *slog.Logger     // logger used for logging
 	Options              *options.Options // poller options
 	Params               *node.Node       // plugin parameters
 	ParentParams         *node.Node       // parent collector parameters
@@ -143,8 +143,7 @@ func (p *AbstractPlugin) InitAbc() error {
 	if p.Name = p.Params.GetNameS(); p.Name == "" {
 		return errs.New(errs.ErrMissingParam, "plugin name")
 	}
-	p.Logger = logging.Get().SubLogger("plugin", p.Parent+":"+p.Name).SubLogger("object", p.Object)
-
+	p.SLogger = slog.Default().With(slog.String("plugin", p.Parent+":"+p.Name), slog.String("object", p.Object))
 	return nil
 }
 
@@ -158,7 +157,12 @@ func (p *AbstractPlugin) SetPluginInterval() int {
 	pollInterval := GetInterval(p.ParentParams, DefaultPollInterval)
 	pluginInterval := GetInterval(p.Params, DefaultPluginInterval)
 	p.PluginInvocationRate = int(pluginInterval / pollInterval)
-	p.Logger.Debug().Float64("PollInterval", pollInterval).Float64("PluginInterval", pluginInterval).Int("PluginInvocationRate", p.PluginInvocationRate).Send()
+	p.SLogger.Debug(
+		"SetPluginInterval",
+		slog.Float64("PollInterval", pollInterval),
+		slog.Float64("PluginInterval", pluginInterval),
+		slog.Int("PluginInvocationRate", p.PluginInvocationRate),
+	)
 	return p.PluginInvocationRate
 }
 

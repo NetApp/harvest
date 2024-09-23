@@ -23,6 +23,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"math"
 	"strconv"
 	"strings"
@@ -52,7 +53,7 @@ func (n *Nic) Init() error {
 	}
 
 	if n.client, err = zapi.New(conf.ZapiPoller(n.ParentParams), n.Auth); err != nil {
-		n.Logger.Error().Err(err).Msg("connecting")
+		n.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -73,7 +74,7 @@ func (n *Nic) Init() error {
 		metricName, display, _, _ := util.ParseMetric(obj)
 		_, err := n.data.NewMetricFloat64(metricName, display)
 		if err != nil {
-			n.Logger.Error().Err(err).Msg("add metric")
+			n.SLogger.Error("add metric", slog.Any("err", err))
 			return err
 		}
 	}
@@ -147,13 +148,14 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			if strings.HasSuffix(s, "M") {
 				base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
 				if err != nil {
-					n.Logger.Warn().Str("speed", s).Msg("convert")
+					n.SLogger.Warn("convert", slog.String("speed", s))
+					n.SLogger.Warn("convert", slog.String("speed", s))
 				} else {
 					// NIC speed value converted from Mbps to Bps(bytes per second)
 					speed = base * 125000
 				}
 			} else if speed, err = strconv.Atoi(s); err != nil {
-				n.Logger.Warn().Str("speed", s).Msg("convert")
+				n.SLogger.Warn("convert", slog.String("speed", s))
 			}
 
 			if speed != 0 {
@@ -165,7 +167,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					rxPercent = rxBytes / float64(speed)
 					err := rx.SetValueFloat64(instance, rxPercent)
 					if err != nil {
-						n.Logger.Error().Err(err).Msg("error")
+						n.SLogger.Error("error", slog.Any("err", err))
 					}
 				}
 
@@ -173,7 +175,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					txPercent = txBytes / float64(speed)
 					err := tx.SetValueFloat64(instance, txPercent)
 					if err != nil {
-						n.Logger.Error().Err(err).Msg("error")
+						n.SLogger.Error("error", slog.Any("err", err))
 					}
 				}
 
@@ -182,7 +184,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				if rxOk || txOk {
 					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 					if err != nil {
-						n.Logger.Error().Err(err).Msg("error")
+						n.SLogger.Error("error", slog.Any("err", err))
 					}
 				}
 			}
@@ -191,7 +193,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		if s = instance.GetLabel("speed"); strings.HasSuffix(s, "M") {
 			base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
 			if err != nil {
-				n.Logger.Warn().Str("speed", s).Msg("convert")
+				n.SLogger.Warn("convert", slog.String("speed", s))
 			} else {
 				// NIC speed value converted from Mbps to bps(bits per second)
 				speed = base * 1_000_000
@@ -208,7 +210,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 	// populate ifgrp metrics
 	portIfgroupMap := n.getIfgroupInfo()
-	if err := collectors.PopulateIfgroupMetrics(portIfgroupMap, portDataMap, n.data, n.Logger); err != nil {
+	if err := collectors.PopulateIfgroupMetrics(portIfgroupMap, portDataMap, n.data, n.SLogger); err != nil {
 		return nil, nil, err
 	}
 
@@ -241,7 +243,7 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 	for {
 		responseData, err := n.client.InvokeBatchRequest(request, tag, "")
 		if err != nil {
-			n.Logger.Error().Err(err).Msg("Failed to invoke batch zapi call")
+			n.SLogger.Error("Failed to invoke batch zapi call", slog.Any("err", err))
 			return portIfgroupMap
 		}
 		result = responseData.Result

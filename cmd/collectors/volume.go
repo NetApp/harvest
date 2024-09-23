@@ -1,10 +1,10 @@
 package collectors
 
 import (
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"maps"
 	"regexp"
 	"sort"
@@ -13,7 +13,7 @@ import (
 
 var flexgroupRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
-func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string) ([]*matrix.Matrix, *util.Metadata, error) {
+func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string) ([]*matrix.Matrix, *util.Metadata, error) {
 	var err error
 
 	fgAggrMap := make(map[string]*set.Set)
@@ -25,7 +25,7 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 
 	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
 	if err != nil {
-		logger.Error().Err(err).Msg("add metric")
+		logger.Error("add metric", slog.Any("err", err), slog.String("key", metricName))
 		return nil, nil, err
 	}
 
@@ -52,7 +52,7 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 				flexgroupInstance.SetLabel(style, "flexgroup")
 				flexgroupAggrsMap[key] = set.New()
 				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
-					logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+					logger.Error("set value", slog.Any("err", err), slog.String("metric", metricName))
 				}
 			}
 			fgAggrMap[key].Add(i.GetLabel("aggr"))
@@ -64,18 +64,18 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
 			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
 			if err != nil {
-				logger.Error().Err(err).Str("key", key).Msg("Failed to create new instance")
+				logger.Error("Failed to create new instance", slog.Any("err", err), slog.String("key", key))
 				continue
 			}
 			flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
 			flexvolInstance.SetLabel(style, "flexvol")
 			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
-				logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set value on metric")
+				logger.Error("Unable to set value on metric", slog.Any("err", err), slog.String("metric", metricName))
 			}
 		}
 	}
 
-	logger.Debug().Int("flexgroup volume count", len(cache.GetInstances())).Send()
+	logger.Debug("", slog.Int("flexgroup volume count", len(cache.GetInstances())))
 
 	recordFGFalse := make(map[string]*set.Set)
 	for _, i := range data.GetInstances() {
@@ -94,7 +94,7 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 
 		fg := cache.GetInstance(key)
 		if fg == nil {
-			logger.Error().Msgf("instance [%s] not in local cache", key)
+			logger.Error("instance not in local cache", slog.String("key", key))
 			continue
 		}
 
@@ -109,7 +109,7 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 
 			fgm := cache.GetMetric(mkey)
 			if fgm == nil {
-				logger.Error().Msgf("metric [%s] not in local cache", mkey)
+				logger.Error("metric not in local cache", slog.String("key", mkey))
 				continue
 			}
 
@@ -119,7 +119,7 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 				if !strings.HasSuffix(m.GetName(), "_latency") {
 					err := fgm.SetValueFloat64(fg, fgv+value)
 					if err != nil {
-						logger.Error().Err(err).Msg("error")
+						logger.Error("error setting value", slog.Any("err", err))
 					}
 					continue
 				}
@@ -148,12 +148,12 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 						if value != 0 {
 							err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 							if err != nil {
-								logger.Error().Err(err).Msg("error")
+								logger.Error("error setting value", slog.Any("err", err))
 							}
 						}
 						err = fgm.SetValueFloat64(fg, fgv+prod)
 						if err != nil {
-							logger.Error().Err(err).Msg("error")
+							logger.Error("error setting value", slog.Any("err", err))
 						}
 					} else {
 						s, ok := recordFGFalse[key]
@@ -197,7 +197,7 @@ func ProcessFlexGroupData(logger *logging.Logger, data *matrix.Matrix, style str
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
-								logger.Error().Err(err).Msgf("error")
+								logger.Error("error setting value", slog.Any("err", err))
 							}
 						} else {
 							m.SetValueNAN(i)

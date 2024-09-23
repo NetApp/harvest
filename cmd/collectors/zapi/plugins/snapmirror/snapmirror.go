@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"regexp"
 	"strings"
 )
@@ -34,36 +35,36 @@ var flexgroupConstituentName = regexp.MustCompile(`^(.*)__(\d{4})$`)
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapMirror{AbstractPlugin: p}
 }
-func (my *SnapMirror) Init() error {
+func (m *SnapMirror) Init() error {
 	var err error
-	if err := my.InitAbc(); err != nil {
+	if err := m.InitAbc(); err != nil {
 		return err
 	}
-	if my.client, err = zapi.New(conf.ZapiPoller(my.ParentParams), my.Auth); err != nil {
-		my.Logger.Error().Err(err).Msg("connecting")
+	if m.client, err = zapi.New(conf.ZapiPoller(m.ParentParams), m.Auth); err != nil {
+		m.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
-	if err := my.client.Init(5); err != nil {
+	if err := m.client.Init(5); err != nil {
 		return err
 	}
-	my.nodeUpdCounter = 0
-	my.svmPeerDataMap = make(map[string]Peer)
+	m.nodeUpdCounter = 0
+	m.svmPeerDataMap = make(map[string]Peer)
 
-	my.Logger.Debug().Msg("plugin initialized")
+	m.SLogger.Debug("plugin initialized")
 	return nil
 }
-func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
-	data := dataMap[my.Object]
-	my.client.Metadata.Reset()
+func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+	data := dataMap[m.Object]
+	m.client.Metadata.Reset()
 
 	destUpdCount := 0
 	srcUpdCount := 0
 
 	if cluster, ok := data.GetGlobalLabels()["cluster"]; ok {
-		if err := my.getSVMPeerData(cluster); err != nil {
+		if err := m.getSVMPeerData(cluster); err != nil {
 			return nil, nil, err
 		}
-		my.Logger.Debug().Msg("updated svm peer detail")
+		m.SLogger.Debug("updated svm peer detail")
 	}
 
 	lastTransferSizeMetric := data.GetMetric("snapmirror-info.last-transfer-size")
@@ -85,17 +86,17 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 			continue
 		}
 
-		if my.client.IsClustered() {
+		if m.client.IsClustered() {
 			vserverName := instance.GetLabel("source_vserver")
 			// Update source_vserver in snapmirror (In case of inter-cluster SM - vserver name may differ)
-			if peerDetail, ok := my.svmPeerDataMap[vserverName]; ok {
+			if peerDetail, ok := m.svmPeerDataMap[vserverName]; ok {
 				instance.SetLabel("source_vserver", peerDetail.svm)
 				instance.SetLabel("source_cluster", peerDetail.cluster)
 			}
 
 			// It's local relationship, so updating the source_cluster and local labels
 			if sourceCluster := instance.GetLabel("source_cluster"); sourceCluster == "" {
-				instance.SetLabel("source_cluster", my.client.Name())
+				instance.SetLabel("source_cluster", m.client.Name())
 				instance.SetLabel("local", "true")
 			}
 
@@ -103,7 +104,7 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 			collectors.UpdateProtectedFields(instance)
 
 			// Update lag time based on checks
-			collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, my.Logger)
+			collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, m.SLogger)
 		} else {
 			// 7 Mode
 			// source / destination nodes can be something like:
@@ -133,15 +134,16 @@ func (my *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 			}
 		}
 	}
-	my.Logger.Debug().
-		Int("destUpdCount", destUpdCount).
-		Int("srcUpdCount", srcUpdCount).
-		Msg("updated destination and source nodes")
+	m.SLogger.Debug(
+		"updated source and destination nodes",
+		slog.Int("destUpdCount", destUpdCount),
+		slog.Int("srcUpdCount", srcUpdCount),
+	)
 
-	return nil, my.client.Metadata, nil
+	return nil, m.client.Metadata, nil
 }
 
-func (my *SnapMirror) getSVMPeerData(cluster string) error {
+func (m *SnapMirror) getSVMPeerData(cluster string) error {
 	var (
 		result []*node.Node
 		err    error
@@ -155,22 +157,22 @@ func (my *SnapMirror) getSVMPeerData(cluster string) error {
 	vserverPeerInfo.NewChildS("peer-cluster", "!"+cluster)
 
 	// Clean svmPeerMap map
-	my.svmPeerDataMap = make(map[string]Peer)
+	m.svmPeerDataMap = make(map[string]Peer)
 
 	// fetching only remote vserver peer data
-	if result, err = my.client.InvokeZapiCall(request); err != nil {
+	if result, err = m.client.InvokeZapiCall(request); err != nil {
 		return err
 	}
 
 	if len(result) == 0 || result == nil {
-		my.Logger.Debug().Msg("No vserver peer found")
+		m.SLogger.Debug("No vserver peer found")
 	}
 
 	for _, peerData := range result {
 		localSvmName := peerData.GetChildContentS("peer-vserver")
 		actualSvmName := peerData.GetChildContentS("remote-vserver-name")
 		peerClusterName := peerData.GetChildContentS("peer-cluster")
-		my.svmPeerDataMap[localSvmName] = Peer{svm: actualSvmName, cluster: peerClusterName}
+		m.svmPeerDataMap[localSvmName] = Peer{svm: actualSvmName, cluster: peerClusterName}
 	}
 	return nil
 }

@@ -33,6 +33,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"os"
 	"regexp"
 	"sort"
@@ -170,10 +171,11 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	r.Logger.Debug().
-		Int("numMetrics", len(r.Prop.Metrics)).
-		Str("timeout", r.Client.Timeout.String()).
-		Msg("initialized cache")
+	r.Logger.Debug(
+		"initialized cache",
+		slog.Int("numMetrics", len(r.Prop.Metrics)),
+		slog.String("timeout", r.Client.Timeout.String()),
+	)
 
 	return nil
 }
@@ -191,7 +193,7 @@ func (r *Rest) InitVars(config *node.Node) {
 	if err == nil {
 		r.Client.Timeout = duration
 	} else {
-		r.Logger.Info().Str("timeout", rest.DefaultTimeout).Msg("Using default timeout")
+		r.Logger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
 	}
 }
 
@@ -239,11 +241,11 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 
 	opt := a.GetOptions()
 	if poller, err = conf.PollerNamed(opt.Poller); err != nil {
-		r.Logger.Error().Err(err).Str("poller", opt.Poller).Send()
+		r.Logger.Error("", slog.Any("err", err), slog.String("poller", opt.Poller))
 		return nil, err
 	}
 	if poller.Addr == "" {
-		r.Logger.Error().Str("poller", opt.Poller).Msg("Address is empty")
+		r.Logger.Error("Address is empty", slog.String("poller", opt.Poller))
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
@@ -251,7 +253,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 		return &rest.Client{Metadata: &util.Metadata{}}, nil
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
-		r.Logger.Error().Err(err).Str("poller", opt.Poller).Msg("error creating new client")
+		r.Logger.Error("error creating new client", slog.Any("err", err), slog.String("poller", opt.Poller))
 		os.Exit(1)
 	}
 
@@ -470,12 +472,12 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 		totalAPID += apiD
 
 		if err != nil {
-			r.Logger.Error().Err(err).Str("api", endpoint.prop.Query).Send()
+			r.Logger.Error("", slog.Any("err", err), slog.String("api", endpoint.prop.Query))
 			continue
 		}
 
 		if len(records) == 0 {
-			r.Logger.Debug().Str("APIPath", endpoint.prop.Query).Msg("no instances on cluster")
+			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.prop.Query))
 			continue
 		}
 		count, _ = r.HandleResults(mat, records, endpoint.prop, true)
@@ -525,7 +527,7 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	case "Workload":
 		return workload.New(abc)
 	default:
-		r.Logger.Warn().Str("kind", kind).Msg("no rest plugin found ")
+		r.Logger.Warn("no rest plugin found", slog.String("kind", kind))
 	}
 	return nil
 }
@@ -554,7 +556,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		)
 
 		if !instanceData.IsObject() {
-			r.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			r.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
 			continue
 		}
 
@@ -582,13 +584,13 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				r.Logger.Error().Err(err).Str("instKey", instanceKey).Msg("Failed to create new missing instance")
+				r.Logger.Error("Failed to create new instance", slog.Any("err", err), slog.String("instKey", instanceKey))
 				continue
 			}
 		}
 
 		if currentInstances.Has(instanceKey) {
-			r.Logger.Warn().Str("instKey", instanceKey).Msg("This instance is already processed. instKey is not unique")
+			r.Logger.Warn("This instance is already processed. instKey is not unique", slog.String("instKey", instanceKey))
 		} else {
 			currentInstances.Add(instanceKey)
 		}
@@ -631,9 +633,11 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			metr, ok := mat.GetMetrics()[metric.Name]
 			if !ok {
 				if metr, err = mat.NewMetricFloat64(metric.Name, metric.Label); err != nil {
-					r.Logger.Error().Err(err).
-						Str("name", metric.Name).
-						Msg("NewMetricFloat64")
+					r.Logger.Error(
+						"NewMetricFloat64",
+						slog.Any("err", err),
+						slog.String("name", metric.Name),
+					)
 				}
 			}
 			f := instanceData.Get(metric.Name)
@@ -647,12 +651,16 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 				case "":
 					floatValue = f.Float()
 				default:
-					r.Logger.Warn().Str("type", metric.MetricType).Str("metric", metric.Name).Msg("unknown metric type")
+					r.Logger.Warn("unknown metric type", slog.String("type", metric.MetricType), slog.String("metric", metric.Name))
 				}
 
 				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-					r.Logger.Error().Err(err).Str("key", metric.Name).Str("metric", metric.Label).
-						Msg("Unable to set float key on metric")
+					r.Logger.Error(
+						"Unable to set float key on metric",
+						slog.Any("err", err),
+						slog.String("key", metric.Name),
+						slog.String("metric", metric.Label),
+					)
 				}
 				count++
 			}
@@ -676,7 +684,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 }
 
 func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
-	r.Logger.Debug().Str("href", href).Send()
+	r.Logger.Debug("Fetching data", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -760,9 +768,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			nodeIDs, err = r.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
-				r.Logger.Error().
-					Err(err).
-					Msg("Unable to get nodes.")
+				r.Logger.Error("Unable to get nodes", slog.Any("err", err))
 			}
 			info.Ids = nodeIDs
 			p.Nodes = &info

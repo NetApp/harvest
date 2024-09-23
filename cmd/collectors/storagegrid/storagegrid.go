@@ -1,6 +1,7 @@
 package storagegrid
 
 import (
+	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/bucket"
@@ -13,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"sort"
 	"strconv"
 	"strings"
@@ -80,7 +82,7 @@ func (s *StorageGrid) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	s.Logger.Debug().Msg("initialized")
+	s.Logger.Debug("initialized")
 	return nil
 }
 
@@ -124,11 +126,14 @@ func (s *StorageGrid) InitCache() error {
 	}
 	s.ParseCounters(counters, s.Props)
 
-	s.Logger.Debug().
-		Strs("extracted Instance Keys", s.Props.InstanceKeys).
-		Int("numMetrics", len(s.Props.Metrics)).
-		Int("numLabels", len(s.Props.InstanceLabels)).
-		Msg("Initialized metric cache")
+	if s.Logger.Enabled(context.Background(), slog.LevelDebug) {
+		s.Logger.Debug(
+			"Initialized metric cache",
+			slog.String("extracted Instance Keys", strings.Join(s.Props.InstanceKeys, ",")),
+			slog.Int("numMetrics", len(s.Props.Metrics)),
+			slog.Int("numLabels", len(s.Props.InstanceLabels)),
+		)
+	}
 
 	return nil
 }
@@ -156,13 +161,13 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	for _, metric := range s.Props.Metrics {
 		mat, err := s.GetMetric(metric.Name, metric.Label, nil)
 		if err != nil {
-			s.Logger.Error().Err(err).Str("metric", metric.Name).Msg("failed to get metric")
+			s.Logger.Error("failed to get metric", slog.Any("err", err), slog.String("metric", metric.Name))
 			continue
 		}
 		metrics[metric.Name] = mat
 		numInstances := len(mat.GetInstances())
 		if numInstances == 0 {
-			s.Logger.Warn().Str("metric", metric.Name).Msg("no instances on storagegrid")
+			s.Logger.Warn("no instances on storagegrid", slog.String("metric", metric.Name))
 			continue
 		}
 		count += uint64(numInstances)
@@ -213,7 +218,12 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 	instances := r.Get("result").Array()
 	for i, rr := range instances {
 		if instance, err = mat.NewInstance(metricName + "-" + strconv.Itoa(i)); err != nil {
-			s.Logger.Error().Err(err).Str("instanceKey", metricName+"-"+strconv.Itoa(i)).Send()
+			s.Logger.Error(
+				"",
+				slog.Any("err", err),
+				slog.String("metricName", metricName),
+				slog.Int("i", i),
+			)
 			continue
 		}
 		rr.Get("metric").ForEach(func(kk, vv gjson.Result) bool {
@@ -241,7 +251,11 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 		if len(valueArray) > 0 {
 			err = metric.SetValueFloat64(instance, valueArray[1].Float())
 			if err != nil {
-				s.Logger.Error().Err(err).Str("metric", metricName).Msg("Unable to set float key on metric")
+				s.Logger.Error(
+					"Unable to set float key on metric",
+					slog.Any("err", err),
+					slog.String("metric", metricName),
+				)
 				continue
 			}
 		}
@@ -289,7 +303,7 @@ func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 }
 
 func (s *StorageGrid) getRest(href string, result *[]gjson.Result) error {
-	s.Logger.Debug().Str("href", href).Send()
+	s.Logger.Debug("", slog.String("href", href))
 	if href == "" {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
@@ -317,7 +331,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 		)
 
 		if !instanceData.IsObject() {
-			s.Logger.Warn().Str("type", instanceData.Type.String()).Msg("Instance data is not object, skipping")
+			s.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
 			continue
 		}
 
@@ -327,7 +341,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 			if value.Exists() {
 				instanceKey += value.String()
 			} else {
-				s.Logger.Warn().Str("key", k).Msg("skip instance, missing key")
+				s.Logger.Warn("skip instance, missing key", slog.String("key", k))
 				break
 			}
 		}
@@ -344,7 +358,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				s.Logger.Error().Err(err).Str("instanceKey", instanceKey).Send()
+				s.Logger.Error("", slog.Any("err", err), slog.String("instanceKey", instanceKey))
 				continue
 			}
 		}
@@ -372,9 +386,11 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 			metr, ok := mat.GetMetrics()[metric.Name]
 			if !ok {
 				if metr, err = mat.NewMetricFloat64(metric.Name, metric.Label); err != nil {
-					s.Logger.Error().Err(err).
-						Str("name", metric.Name).
-						Msg("NewMetricFloat64")
+					s.Logger.Error(
+						"NewMetricFloat64",
+						slog.Any("err", err),
+						slog.String("name", metric.Name),
+					)
 				}
 			}
 			f := instanceData.Get(metric.Name)
@@ -384,17 +400,20 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 				case "":
 					floatValue = f.Float()
 				default:
-					s.Logger.Warn().
-						Str("type", metric.MetricType).
-						Str("metric", metric.Name).
-						Msg("unknown metric type")
+					s.Logger.Warn(
+						"unknown metric type",
+						slog.String("type", metric.MetricType),
+						slog.String("metric", metric.Name),
+					)
 				}
 
 				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-					s.Logger.Error().Err(err).
-						Str("key", metric.Name).
-						Str("metric", metric.Label).
-						Msg("Unable to set float key on metric")
+					s.Logger.Error(
+						"Unable to set float key on metric",
+						slog.Any("err", err),
+						slog.String("key", metric.Name),
+						slog.String("metric", metric.Label),
+					)
 				}
 				count++
 			}
@@ -403,7 +422,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 	// Remove instances not present in the new set
 	for key := range oldInstances {
 		mat.RemoveInstance(key)
-		s.Logger.Debug().Str("key", key).Msg("removed instance")
+		s.Logger.Debug("removed instance", slog.String("key", key))
 	}
 	return count
 }
@@ -435,11 +454,12 @@ func (s *StorageGrid) ParseCounters(counter *node.Node, prop *prop) {
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
 			name, display, kind, metricType = util.ParseMetric(c)
-			s.Logger.Debug().
-				Str("kind", kind).
-				Str("name", name).
-				Str("display", display).
-				Msg("Collected")
+			s.Logger.Debug(
+				"Collected",
+				slog.String("kind", kind),
+				slog.String("name", name),
+				slog.String("display", display),
+			)
 
 			prop.Counters[name] = display
 			switch kind {
@@ -492,7 +512,7 @@ func (s *StorageGrid) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin
 	case "JoinRest":
 		return joinrest.New(abc)
 	default:
-		s.Logger.Warn().Str("kind", kind).Msg("plugin not found")
+		s.Logger.Warn("plugin not found", slog.String("kind", kind))
 	}
 	return nil
 }
@@ -504,10 +524,11 @@ func (s *StorageGrid) InitAPIPath() {
 	if !strings.HasSuffix(s.client.APIPath, apiVersion) {
 		cur := s.client.APIPath
 		s.client.APIPath = "/api/" + apiVersion
-		s.Logger.Debug().
-			Str("clientAPI", cur).
-			Str("templateAPI", apiVersion).
-			Msg("Use template apiVersion")
+		s.Logger.Debug(
+			"Use template apiVersion",
+			slog.String("clientAPI", cur),
+			slog.String("templateAPI", apiVersion),
+		)
 	}
 }
 
@@ -565,8 +586,8 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 	if p.Nodes == nil {
 		nodeIDs, err := s.getNodeUuids()
 		if err != nil {
-			// log the error, but don't exit method so subsequent info is collected
-			s.Logger.Error().Err(err).Msg("Unable to get nodes.")
+			// log the error, but don't exit method so later info is collected
+			s.Logger.Error("Unable to get nodes", slog.Any("err", err))
 			nodeIDs = make([]collector.ID, 0)
 		}
 		p.Nodes = &collector.InstanceInfo{
@@ -614,7 +635,7 @@ func (s *StorageGrid) GetMetric(metric string, display string, tenantNamesByID m
 		return nil, fmt.Errorf("failed to get metric=[%s] error: %w", metric, err)
 	}
 	if len(records) == 0 {
-		s.Logger.Debug().Str("metric", metric).Msg("no metrics on cluster")
+		s.Logger.Debug("no metrics on cluster", slog.String("metric", metric))
 		return nil, nil
 	}
 	nameOfMetric := metric

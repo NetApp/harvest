@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 )
 
 type Quota struct {
@@ -33,7 +34,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	if data.GetMetric("threshold") == nil {
 		_, err := data.NewMetricFloat64("threshold", "threshold")
 		if err != nil {
-			q.Logger.Error().Err(err).Msg("add metric")
+			q.SLogger.Error("add metric", slog.Any("err", err))
 		}
 	}
 
@@ -46,7 +47,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	for metricName, m := range metricsMap {
 		_, err := data.NewMetricFloat64(metricName, m.GetName())
 		if err != nil {
-			q.Logger.Error().Err(err).Msg("add metric")
+			q.SLogger.Error("add metric", slog.Any("err", err))
 		}
 	}
 
@@ -97,7 +98,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 			quotaInstanceKey := index + volumeUUID + metricName
 			quotaInstance, err := data.NewInstance(quotaInstanceKey)
 			if err != nil {
-				q.Logger.Debug().Msgf("add (%s) instance: %v", metricName, err)
+				q.SLogger.Debug("add instance", slog.String("metricName", metricName), slog.Any("err", err))
 				return err
 			}
 			// set labels
@@ -113,7 +114,12 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 					if metricName == "space.soft_limit" {
 						t := data.GetMetric("threshold")
 						if err := t.SetValueFloat64(quotaInstance, value); err != nil {
-							q.Logger.Error().Err(err).Str("metricName", metricName).Float64("value", value).Msg("Failed to parse value")
+							q.SLogger.Error(
+								"Failed to parse value",
+								slog.Any("err", err),
+								slog.String("metricName", metricName),
+								slog.Float64("value", value),
+							)
 						}
 					}
 				} else {
@@ -124,7 +130,12 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 			// populate numeric data
 			t := data.GetMetric(metricName)
 			if err = t.SetValueFloat64(quotaInstance, value); err != nil {
-				q.Logger.Error().Err(err).Str("metricName", metricName).Float64("value", value).Msg("Failed to parse value")
+				q.SLogger.Error(
+					"Failed to parse value",
+					slog.Any("err", err),
+					slog.String("metricName", metricName),
+					slog.Float64("value", value),
+				)
 			}
 		}
 	}

@@ -13,8 +13,8 @@ package matrix
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"log/slog"
 	"maps"
 	"slices"
 	"strings"
@@ -354,7 +354,7 @@ func CreateMetric(key string, data *Matrix) error {
 }
 
 // Delta vector arithmetics
-func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger) (int, error) {
+func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *slog.Logger) (int, error) {
 	var skips int
 	prevMetric := prevMat.GetMetric(metricKey)
 	curMetric := m.GetMetric(metricKey)
@@ -387,16 +387,16 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *logging.Logger
 				}
 
 				if ppaOk || cpaOk {
-					logger.Debug().
-						Str("metric", curMetric.GetName()).
-						Float64("currentRaw", curRaw).
-						Float64("previousRaw", prevRaw[prevIndex]).
-						Bool("prevPartial", ppaOk).
-						Bool("curPartial", cpaOk).
-						Interface("instanceLabels", currInstance.GetLabels()).
-						Str("instKey", key).
-						Msg("Partial Aggregation")
-
+					logger.Debug(
+						"Partial Aggregation",
+						slog.String("metric", curMetric.GetName()),
+						slog.Float64("currentRaw", curRaw),
+						slog.Float64("previousRaw", prevRaw[prevIndex]),
+						slog.Bool("prevPartial", ppaOk),
+						slog.Bool("curPartial", cpaOk),
+						slog.Any("instanceLabels", currInstance.GetLabels()),
+						slog.String("instKey", key),
+					)
 				}
 			} else {
 				curMetric.record[currIndex] = false
@@ -442,7 +442,7 @@ func (m *Matrix) Divide(metricKey string, baseKey string) (int, error) {
 }
 
 // DivideWithThreshold applicable for latency counters
-func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold int, curRawMat *Matrix, prevRawMat *Matrix, timestampMetricName string, logger *logging.Logger) (int, error) {
+func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold int, curRawMat *Matrix, prevRawMat *Matrix, timestampMetricName string, logger *slog.Logger) (int, error) {
 	var skips int
 	x := float64(threshold)
 	curRawMetric := curRawMat.GetMetric(metricKey)
@@ -483,18 +483,19 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 				if metric.values[i] > 5_000_000 {
 					if len(metric.values) == len(curRawMetric.values) && len(curRawMetric.values) == len(prevRawMetric.values) &&
 						len(prevRawMetric.values) == len(curBaseRawMetric.values) && len(curBaseRawMetric.values) == len(prevBaseRawMetric.values) {
-						logger.Debug().
-							Str("metric", metric.GetName()).
-							Str("key", metricKey).
-							Float64("numerator", v).
-							Float64("denominator", sValues[i]).
-							Float64("prev_raw_latency", prevRawMetric.values[i]).
-							Float64("current_raw_latency", curRawMetric.values[i]).
-							Float64("prev_raw_base", prevBaseRawMetric.values[i]).
-							Float64("current_raw_base", curBaseRawMetric.values[i]).
-							Interface("instanceLabels", instance.GetLabels()).
-							Str("instKey", key).
-							Msg("Detected high latency value in the metric")
+						logger.Debug(
+							"Detected high latency value in the metric",
+							slog.String("metric", metric.GetName()),
+							slog.String("key", metricKey),
+							slog.Float64("numerator", v),
+							slog.Float64("denominator", sValues[i]),
+							slog.Float64("prev_raw_latency", prevRawMetric.values[i]),
+							slog.Float64("current_raw_latency", curRawMetric.values[i]),
+							slog.Float64("prev_raw_base", prevBaseRawMetric.values[i]),
+							slog.Float64("current_raw_base", curBaseRawMetric.values[i]),
+							slog.Any("instanceLabels", instance.GetLabels()),
+							slog.String("instKey", key),
+						)
 					}
 				}
 			} else {

@@ -46,7 +46,6 @@ linters:
     - unused
     - usestdlibvars
     - wastedassign
-    - zerologlint
 
 run:
   timeout: 10m

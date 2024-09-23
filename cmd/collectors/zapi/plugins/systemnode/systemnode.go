@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 )
 
 type SystemNode struct {
@@ -28,7 +29,7 @@ func (s *SystemNode) Init() error {
 	}
 
 	if s.client, err = zapi.New(conf.ZapiPoller(s.ParentParams), s.Auth); err != nil {
-		s.Logger.Error().Err(err).Msg("connecting")
+		s.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 
@@ -47,13 +48,13 @@ func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	// invoke service-processor-get-iter zapi and populate the BMC firmware version
 	serviceProcessorMap, err := s.getServiceProcessor()
 	if err != nil {
-		s.Logger.Error().Err(err).Msg("Failed to collect service processor info")
+		s.SLogger.Error("Failed to collect service processor info", slog.Any("err", err))
 	}
 
 	// invoke system-get-node-info-iter zapi and populate node info
 	partnerNameMap, err := s.getPartnerNodeInfo()
 	if err != nil {
-		s.Logger.Error().Err(err).Msg("Failed to collect partner node detail")
+		s.SLogger.Error("Failed to collect partner node info", slog.Any("err", err))
 	}
 
 	for _, aNode := range data.GetInstanceKeys() {
@@ -98,7 +99,7 @@ func (s *SystemNode) getPartnerNodeInfo() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		s.Logger.Debug().Msg("no records found")
+		s.SLogger.Debug("no records found")
 		return nodePartnerNodeMap, nil
 	}
 
@@ -131,7 +132,7 @@ func (s *SystemNode) getServiceProcessor() (map[string]string, error) {
 	}
 
 	if len(result) == 0 || result == nil {
-		s.Logger.Debug().Msg("no records found")
+		s.SLogger.Debug("no records found")
 		return nodeFirmwareMap, nil
 	}
 

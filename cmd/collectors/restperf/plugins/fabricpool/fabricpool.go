@@ -44,7 +44,7 @@ func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		}
 	}
 
-	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, "cloud_bin_op", f.includeConstituents, f.Logger)
+	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, "cloud_bin_op", f.includeConstituents, f.SLogger)
 	if err != nil {
 		return nil, nil, err
 	}

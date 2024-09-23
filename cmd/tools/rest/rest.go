@@ -9,12 +9,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"log"
+	"log/slog"
 	"net/url"
 	"os"
 	"os/signal"
@@ -168,7 +168,7 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 		client *Client
 	)
 
-	if client, err = New(poller, timeout, auth.NewCredentials(poller, logging.Get())); err != nil {
+	if client, err = New(poller, timeout, auth.NewCredentials(poller, slog.Default())); err != nil {
 		return nil, fmt.Errorf("poller=%s %w", poller.Name, err)
 	}
 

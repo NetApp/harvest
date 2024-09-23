@@ -28,6 +28,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"log/slog"
 	"regexp"
 	"sort"
 	"strconv"
@@ -82,7 +83,7 @@ func (p *Prometheus) Init() error {
 	}
 
 	if x := p.Params.GlobalPrefix; x != nil {
-		p.Logger.Debug().Msgf("will use global prefix [%s]", *x)
+		p.Logger.Debug("use gloabl prefix", slog.String("prefix", *x))
 		p.globalPrefix = *x
 		if !strings.HasSuffix(p.globalPrefix, "_") {
 			p.globalPrefix += "_"
@@ -99,15 +100,15 @@ func (p *Prometheus) Init() error {
 	// all other parameters are only relevant to the HTTP daemon
 	if x := p.Params.CacheMaxKeep; x != nil {
 		if d, err := time.ParseDuration(*x); err == nil {
-			p.Logger.Debug().Msgf("using cache_max_keep [%s]", *x)
+			p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", *x))
 			p.cache = newCache(d)
 		} else {
-			p.Logger.Error().Err(err).Str("x", *x).Msg("cache_max_keep")
+			p.Logger.Error("cache_max_keep", slog.Any("err", err), slog.String("x", *x))
 		}
 	}
 
 	if p.cache == nil {
-		p.Logger.Debug().Msgf("using default cache_max_keep [%s]", cacheMaxKeep)
+		p.Logger.Debug("using default cache_max_keep", slog.String("cacheMaxKeep", cacheMaxKeep))
 		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
 			p.cache = newCache(d)
 		} else {
@@ -119,11 +120,11 @@ func (p *Prometheus) Init() error {
 	if x := p.Params.AllowedAddrs; x != nil {
 		p.allowAddrs = *x
 		if len(p.allowAddrs) == 0 {
-			p.Logger.Error().Err(nil).Msg("allow_addrs without any")
+			p.Logger.Error("allow_addrs without any")
 			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
-		p.Logger.Debug().Msgf("added %d plain allow rules", len(p.allowAddrs))
+		p.Logger.Debug("added plain allow rules", slog.Int("count", len(p.allowAddrs)))
 	}
 
 	// allow access only from addresses matching one of defined regular expressions
@@ -134,16 +135,16 @@ func (p *Prometheus) Init() error {
 			if reg, err := regexp.Compile(r); err == nil {
 				p.allowAddrsRegex = append(p.allowAddrsRegex, reg)
 			} else {
-				p.Logger.Error().Err(err).Msg("parse regex")
+				p.Logger.Error("parse regex", slog.Any("err", err))
 				return errs.New(errs.ErrInvalidParam, "allow_addrs_regex")
 			}
 		}
 		if len(p.allowAddrsRegex) == 0 {
-			p.Logger.Error().Err(nil).Msg("allow_addrs_regex without any")
+			p.Logger.Error("allow_addrs_regex without any")
 			return errs.New(errs.ErrInvalidParam, "allow_addrs")
 		}
 		p.checkAddrs = true
-		p.Logger.Debug().Msgf("added %d regex allow rules", len(p.allowAddrsRegex))
+		p.Logger.Debug("added regex allow rules", slog.Int("count", len(p.allowAddrsRegex)))
 	}
 
 	// cache addresses that have been allowed or denied already
@@ -156,7 +157,7 @@ func (p *Prometheus) Init() error {
 	port := p.Options.PromPort
 	if port == 0 {
 		if promPort := p.Params.Port; promPort == nil {
-			p.Logger.Error().Err(nil).Msg("Issue while reading prometheus port")
+			p.Logger.Error("missing Prometheus port")
 		} else {
 			port = *promPort
 		}
@@ -174,7 +175,7 @@ func (p *Prometheus) Init() error {
 	// - "" (default) or "0.0.0.0", allows access from network
 	addr := p.Params.LocalHTTPAddr
 	if addr != "" {
-		p.Logger.Debug().Str("addr", addr).Msg("Using custom local addr")
+		p.Logger.Debug("using custom local addr", slog.String("addr", addr))
 	}
 
 	if !p.Params.IsTest {
@@ -184,8 +185,7 @@ func (p *Prometheus) Init() error {
 	// @TODO: implement error checking to enter failed state if HTTPd failed
 	// (like we did in Alpha)
 
-	//goland:noinspection HttpUrlsUsage
-	p.Logger.Debug().Msgf("initialized, HTTP daemon started at [http://%s:%d]", addr, port)
+	p.Logger.Debug("initialized HTTP daemon started", slog.String("addr", addr), slog.Int("port", port))
 
 	return nil
 }
@@ -233,11 +233,11 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	p.AddExportCount(uint64(len(metrics)))
 	err = p.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("error")
+		p.Logger.Error("error", slog.Any("err", err))
 	}
 	err = p.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("error")
+		p.Logger.Error("error", slog.Any("err", err))
 	}
 
 	return stats, nil
@@ -295,13 +295,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 	if x := options.GetChildContentS("include_all_labels"); x != "" {
 		if includeAllLabels, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error().Err(err).Msg("parameter: include_all_labels")
+			p.Logger.Error("parameter: include_all_labels", slog.Any("err", err))
 		}
 	}
 
 	if x := options.GetChildContentS("require_instance_keys"); x != "" {
 		if requireInstanceKeys, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error().Err(err).Msg("parameter: require_instance_keys")
+			p.Logger.Error("parameter: require_instance_keys", slog.Any("err", err))
 		}
 	}
 
@@ -420,18 +420,20 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						// the flattened metrics and export them in order
 						bucketMetric := data.GetMetric(metric.GetLabel("bucket"))
 						if bucketMetric == nil {
-							p.Logger.Debug().
-								Str("metric", metric.GetName()).
-								Msg("Unable to find bucket for metric, skip")
+							p.Logger.Debug(
+								"Unable to find bucket for metric, skip",
+								slog.String("metric", metric.GetName()),
+							)
 							continue
 						}
 						metricIndex := metric.GetLabel("comment")
 						index, err := strconv.Atoi(metricIndex)
 						if err != nil {
-							p.Logger.Error().Err(err).
-								Str("metric", metric.GetName()).
-								Str("index", metricIndex).
-								Msg("Unable to find index of metric, skip")
+							p.Logger.Error(
+								"Unable to find index of metric, skip",
+								slog.String("metric", metric.GetName()),
+								slog.String("index", metricIndex),
+							)
 						}
 						histogram := histogramFromBucket(histograms, bucketMetric)
 						histogram.values[index] = value

@@ -8,8 +8,8 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"log/slog"
 	"os"
 	"runtime"
 	"strconv"
@@ -43,7 +43,7 @@ func (n *NodeMon) Init(a *collector.AbstractCollector) error {
 	// load list of counters from template
 	if counters := n.Params.GetChildS("counters"); counters != nil {
 		if err = n.loadMetrics(counters); err != nil {
-			n.Logger.Error().Err(err).Msg("load metrics")
+			n.Logger.Error("load metrics", slog.Any("err", err))
 			return err
 		}
 	} else {
@@ -57,7 +57,7 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 		err error
 	)
 
-	n.Logger.Debug().Msg("initializing metric cache")
+	n.Logger.Debug("initializing metric cache")
 	mat := n.Matrix[n.Object]
 	// fetch list of counters from template
 	for _, cnt := range counters.GetChildren() {
@@ -71,14 +71,14 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 		if _, err = mat.NewMetricType(name, dtype, display); err != nil {
 			return err
 		}
-		n.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
+		n.Logger.Debug("added metric", slog.String("name", name), slog.String("display", display))
 	}
 
 	if _, err = mat.NewMetricUint8("status"); err != nil {
 		return err
 	}
 
-	n.Logger.Debug().Msgf("initialized cache with %d metrics", len(mat.GetMetrics()))
+	n.Logger.Debug("initialized metric cache", slog.Int("numMetrics", len(mat.GetMetrics())))
 	return nil
 }
 
@@ -93,9 +93,6 @@ func parseMetricName(name string) (string, string) {
 func (n *NodeMon) PollInstance() (map[string]*matrix.Matrix, error) {
 	mat := n.Matrix[n.Object]
 
-	currInstances := set.NewFrom(mat.GetInstanceKeys())
-	currSize := currInstances.Size()
-
 	var err error
 	name := "simple"
 	if instance := mat.GetInstance(name); instance == nil {
@@ -105,12 +102,7 @@ func (n *NodeMon) PollInstance() (map[string]*matrix.Matrix, error) {
 		instance.SetLabel("poller", name)
 		instance.SetLabel("version", version.VERSION)
 		instance.SetLabel("pid", strconv.Itoa(os.Getpid()))
-		n.Logger.Debug().Msgf("add instance (%s)", name)
 	}
-	t := len(mat.GetInstances())
-	r := currInstances.Size()
-	a := t - (currSize - r)
-	n.Logger.Debug().Msgf("added %d, removed %d, total instances %d", a, r, t)
 
 	return nil, nil
 }
@@ -125,7 +117,11 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 	for key, instance := range mat.GetInstances() {
 		err := mat.LazySetValueUint64("status", key, 0)
 		if err != nil {
-			n.Logger.Error().Err(err).Str("key", key).Msg("error while parsing metric")
+			n.Logger.Error(
+				"initializing metric cache",
+				slog.Any("err", err),
+				slog.String("key", key),
+			)
 		}
 		for _, key2 := range toQuery {
 			if metric := mat.GetMetric(key2); metric != nil {
@@ -145,7 +141,7 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 
 	var count uint64
 	n.AddCollectCount(count)
-	n.Logger.Debug().Msgf("poll complete, added %d data points", count)
+	n.Logger.Debug("poll complete", slog.Uint64("count", count))
 	return n.Matrix, nil
 }
 

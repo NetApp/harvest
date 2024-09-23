@@ -17,6 +17,7 @@ import (
 	"github.com/shirou/gopsutil/v4/host"
 	"github.com/shirou/gopsutil/v4/mem"
 	"github.com/shirou/gopsutil/v4/process"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path"
@@ -170,9 +171,7 @@ func sendAsupVia(msg *Payload, asupExecPath string) error {
 	// Invoke autosupport binary
 	cont, cancel := context.WithTimeout(context.Background(), asupTimeOutLimit)
 	defer cancel()
-	logging.Get().Info().
-		Str("payloadPath", msg.path).
-		Msg("Fork autosupport binary.")
+	slog.Default().Info("Forking autosupport binary", slog.String("payloadPath", msg.path))
 
 	exitStatus := 0
 	err := exec.CommandContext(cont, asupExecPath, "--payload", msg.path, "--working-dir", workingDir).Run() //nolint:gosec
@@ -192,10 +191,11 @@ func sendAsupVia(msg *Payload, asupExecPath string) error {
 		return err
 	}
 
-	logging.Get().Info().
-		Str("payloadPath", msg.path).
-		Int("exitStatus", exitStatus).
-		Msg("Autosupport binary forked successfully.")
+	slog.Default().Info(
+		"Autosupport binary forked successfully",
+		slog.String("payloadPath", msg.path),
+		slog.Int("exitStatus", exitStatus),
+	)
 
 	return nil
 }
@@ -243,15 +243,15 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	pid := os.Getpid()
 	pid32, err := util.SafeConvertToInt32(pid)
 	if err != nil {
-		logging.Get().Err(err).Int("pid", pid).Send()
+		logging.Get().Error("", slog.Any("err", err), slog.Int("pid", pid))
 	} else {
 		newProcess, err := process.NewProcess(pid32)
 		if err != nil {
-			logging.Get().Err(err).Msg("failed to get process info")
+			slog.Default().Error("failed to get process info", slog.Any("err", err))
 		} else {
 			memInfo, err := newProcess.MemoryInfo()
 			if err != nil {
-				logging.Get().Err(err).Int("pid", pid).Msg("failed to get memory info")
+				slog.Default().Error("failed to get memory info", slog.Any("err", err), slog.Int("pid", pid))
 			} else {
 				rssBytes = memInfo.RSS
 			}
@@ -439,11 +439,11 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 	var perm os.FileMode = 0750
 	err := checkAndDeleteIfPermissionsMismatch(workingDir, perm)
 	if err != nil {
-		logging.Get().Warn().Err(err).Send()
+		logging.Get().Warn("", slog.Any("err", err))
 	}
 	err = checkAndDeleteIfPermissionsMismatch(payloadDir, perm)
 	if err != nil {
-		logging.Get().Warn().Err(err).Send()
+		logging.Get().Warn("", slog.Any("err", err))
 	}
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {

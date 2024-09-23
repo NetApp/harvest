@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"regexp"
 	"strconv"
 	"strings"
@@ -46,9 +47,9 @@ func (m *Max) Init() error {
 	}
 
 	if len(m.rules) == 1 {
-		m.Logger.Debug().Msg("parsed 1 max rule")
+		m.SLogger.Debug("parsed 1 max rule")
 	} else {
-		m.Logger.Debug().Msgf("parsed %d max rules", len(m.rules))
+		m.SLogger.Debug("parsed max rules", slog.Int("count", len(m.rules)))
 	}
 	return nil
 }
@@ -81,7 +82,11 @@ func (m *Max) parseRules() error {
 				if strings.HasPrefix(value, "`") {
 					value = strings.TrimPrefix(strings.TrimSuffix(value, "`"), "`")
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
-						m.Logger.Error().Err(err).Str("line", line).Msgf("rule compile regex")
+						m.SLogger.Error(
+							"rule compile regex",
+							slog.Any("err", err),
+							slog.String("line", line),
+						)
 						return err
 					}
 				} else if value != "" {
@@ -100,9 +105,9 @@ func (m *Max) parseRules() error {
 				}
 			}
 			m.rules = append(m.rules, &r)
-			m.Logger.Debug().Msgf("parsed rule [%v]", r)
+			m.SLogger.Debug("parsed rule", slog.Any("rule", r))
 		} else {
-			m.Logger.Warn().Msgf("invalid rule syntax [%s]", line)
+			m.SLogger.Warn("invalid rule syntax", slog.String("line", line))
 			return errs.New(errs.ErrInvalidParam, "invalid rule")
 		}
 	}
@@ -158,7 +163,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		for i, rule := range m.rules {
 
 			if objName = instance.GetLabel(rule.label); objName == "" {
-				m.Logger.Warn().Msgf("label name for [%s] missing, skipped", rule.label)
+				m.SLogger.Warn("label name missing, skipped", slog.String("label", rule.label))
 				continue
 			}
 
@@ -189,7 +194,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				}
 
 				if objMetric = matrices[matrixKey].GetMetric(key); objMetric == nil {
-					m.Logger.Warn().Msgf("metric [%s] not found in [%s] cache", key, rule.label)
+					m.SLogger.Warn("metric not found in cache", slog.String("key", key), slog.String("label", rule.label))
 					continue
 				}
 
@@ -197,7 +202,12 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 				if value > v {
 					if err = objMetric.SetValueFloat64(objInstance, value); err != nil {
-						m.Logger.Error().Err(err).Str("key", key).Str("objName", objName).Msg("add value")
+						m.SLogger.Error(
+							"add value",
+							slog.Any("err", err),
+							slog.String("key", key),
+							slog.String("objName", objName),
+						)
 					} else {
 						switch {
 						case rule.allLabels:

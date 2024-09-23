@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"maps"
 	"regexp"
 	"slices"
@@ -47,7 +48,7 @@ func (a *Aggregator) Init() error {
 		return err
 	}
 
-	a.Logger.Debug().Int("numRules", len(a.rules)).Msg("parsed aggregation rules")
+	a.SLogger.Debug("parsed aggregation rules", slog.Int("numRules", len(a.rules)))
 	return nil
 }
 
@@ -79,7 +80,7 @@ func (a *Aggregator) parseRules() error {
 				if strings.HasPrefix(value, "`") {
 					value = strings.TrimPrefix(strings.TrimSuffix(value, "`"), "`")
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
-						a.Logger.Error().Err(err).Msg("ignore rule")
+						a.SLogger.Error("ignore rule", slog.Any("err", err))
 						return err
 					}
 				} else if value != "" {
@@ -98,7 +99,7 @@ func (a *Aggregator) parseRules() error {
 				}
 			}
 			a.rules = append(a.rules, &r)
-			a.Logger.Debug().Str("label", r.label).Str("object", r.object).Msg("parsed rule")
+			a.SLogger.Debug("parsed rule", slog.String("label", r.label), slog.String("object", r.object))
 		} else {
 			return errs.New(errs.ErrInvalidParam, "invalid rule syntax "+line)
 		}
@@ -147,7 +148,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		for i, rule := range a.rules {
 
 			if objName = instance.GetLabel(rule.label); objName == "" {
-				a.Logger.Warn().Str("label", rule.label).Msg("label missing, skipped")
+				a.SLogger.Warn("label missing, skipped", slog.String("label", rule.label))
 				continue
 			}
 
@@ -199,7 +200,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				}
 
 				if objMetric = matrices[i].GetMetric(key); objMetric == nil {
-					a.Logger.Warn().Str("metric", key).Str("label", rule.label).Msg("metric not found in cache")
+					a.SLogger.Warn("metric not found in cache", slog.String("metric", key), slog.String("label", rule.label))
 					continue
 				}
 
@@ -208,21 +209,35 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 					opsKey := objMetric.GetComment()
 					if opsKey != "" {
 						if opsMetric = data.GetMetric(opsKey); opsMetric == nil {
-							a.Logger.Warn().Str("metric", opsKey).Str("label", rule.label).Msg("metric not found in response")
+							a.SLogger.Warn(
+								"metric not found in response",
+								slog.String("metric", opsKey),
+								slog.String("label", rule.label),
+							)
 							continue
 						}
 						if opsValue, ok = opsMetric.GetValueFloat64(instance); !ok {
 							continue
 						}
 						if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
-							a.Logger.Error().Err(err).Str("key", key).Str("objName", objName).Msg("add value")
+							a.SLogger.Error(
+								"add value",
+								slog.Any("err", err),
+								slog.String("key", key),
+								slog.String("objName", objName),
+							)
 							continue
 						}
 						rule.counts[objKey][key] += opsValue
 					}
 				} else {
 					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
-						a.Logger.Error().Err(err).Str("key", key).Str("objName", objName).Msg("add value")
+						a.SLogger.Error(
+							"add value",
+							slog.Any("err", err),
+							slog.String("key", key),
+							slog.String("objName", objName),
+						)
 						continue
 					}
 					rule.counts[objKey][key]++
@@ -274,7 +289,12 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 					err = metric.SetValueFloat64(instance, v/count)
 				}
 				if err != nil {
-					a.Logger.Error().Err(err).Str("mn", mn).Str("key", key).Msg("set value")
+					a.SLogger.Error(
+						"set value",
+						slog.Any("err", err),
+						slog.String("mn", mn),
+						slog.String("key", key),
+					)
 				}
 			}
 		}

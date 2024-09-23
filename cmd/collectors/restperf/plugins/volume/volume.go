@@ -39,5 +39,5 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	style := v.styleType
 	opsKeyPrefix := "temp_"
 
-	return collectors.ProcessFlexGroupData(v.Logger, data, style, v.includeConstituents, opsKeyPrefix)
+	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix)
 }

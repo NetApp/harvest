@@ -11,8 +11,8 @@ package exporter
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"log/slog"
 	"strconv"
 	"sync"
 )
@@ -49,7 +49,7 @@ type Stats struct {
 type AbstractExporter struct {
 	Class       string
 	Name        string
-	Logger      *logging.Logger // logger used for logging
+	Logger      *slog.Logger
 	Status      uint8
 	Message     string
 	Options     *options.Options
@@ -71,7 +71,7 @@ func New(c, n string, o *options.Options, p conf.Exporter, params *conf.Poller) 
 		Name:     n,
 		Options:  o,
 		Params:   p,
-		Logger:   logging.Get().SubLogger("exporter", n),
+		Logger:   slog.Default().With(slog.String("exporter", n)),
 		Mutex:    &sync.Mutex{},
 		countMux: &sync.Mutex{},
 		Metadata: matrix.New(n, "metadata_exporter", "metadata_exporter"),

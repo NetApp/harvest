@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 )
 
 var metrics = []string{
@@ -27,7 +28,7 @@ func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
-			p.Logger.Error().Err(err).Str("key", k).Msg("error while creating metric")
+			p.SLogger.Error("error while creating metric", "key", k, "err", err)
 			return nil, nil, err
 		}
 	}
@@ -48,7 +49,7 @@ func (p *QosPolicyAdaptive) setIOPs(data *matrix.Matrix, instance *matrix.Instan
 	val := instance.GetLabel(labelName)
 	xput, err := collectors.ZapiXputToRest(val)
 	if err != nil {
-		p.Logger.Warn().Str("label", labelName).Str("val", val).Msg("Unable to convert label, skipping")
+		p.SLogger.Warn("Unable to convert label, skipping", slog.String("label", labelName), slog.String("val", val))
 		return
 	}
 	instance.SetLabel(labelName, xput.IOPS)
@@ -57,7 +58,11 @@ func (p *QosPolicyAdaptive) setIOPs(data *matrix.Matrix, instance *matrix.Instan
 	if m != nil {
 		err = m.SetValueString(instance, xput.IOPS)
 		if err != nil {
-			p.Logger.Error().Str(labelName, xput.IOPS).Err(err).Msg("Unable to set metric")
+			p.SLogger.Error(
+				"Unable to set metric",
+				slog.Any("err", err),
+				slog.String(labelName, xput.IOPS),
+			)
 		}
 	}
 }

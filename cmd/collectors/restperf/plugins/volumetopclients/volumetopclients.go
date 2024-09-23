@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"log/slog"
 	"slices"
 	"strconv"
 	"strings"
@@ -89,7 +90,7 @@ func (t *TopClients) initMatrix(name string, object string, inputMat map[string]
 	}
 	err := matrix.CreateMetric(metric, inputMat[name])
 	if err != nil {
-		t.Logger.Warn().Err(err).Str("key", metric).Msg("error while creating metric")
+		t.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", metric))
 		return err
 	}
 	return nil
@@ -124,7 +125,7 @@ func (t *TopClients) Init() error {
 		}
 	}
 	t.schedule = t.SetPluginInterval()
-	t.Logger.Info().Int("maxVolumeCount", t.maxVolumeCount).Msg("Using maxVolumeCount")
+	t.SLogger.Info("Using", slog.Int("maxVolumeCount", t.maxVolumeCount))
 	return nil
 }
 
@@ -323,7 +324,7 @@ func (t *TopClients) processTopClientsByMetric(volumes, svms *set.Set, matrixNam
 		instanceKey := clientIP + keyToken + vol + keyToken + svm
 		instance, err := mat.NewInstance(instanceKey)
 		if err != nil {
-			t.Logger.Warn().Str("volume", vol).Msg("error while creating instance")
+			t.SLogger.Warn("error while creating instance", slog.Any("err", err), slog.String("volume", vol))
 			continue
 		}
 		instance.SetLabel("volume", vol)
@@ -339,12 +340,12 @@ func (t *TopClients) setMetric(mat *matrix.Matrix, instance *matrix.Instance, va
 	m := mat.GetMetric(metricType)
 	if m == nil {
 		if m, err = mat.NewMetricFloat64(metricType); err != nil {
-			t.Logger.Warn().Err(err).Str("key", metricType).Msg("error while creating metric")
+			t.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", metricType))
 			return
 		}
 	}
 	if err = m.SetValueFloat64(instance, value); err != nil {
-		t.Logger.Error().Err(err).Str("metric", metricType).Msg("Unable to set value on metric")
+		t.SLogger.Error("error while setting value", slog.Any("err", err), slog.String("metric", metricType))
 	}
 }
 
@@ -364,7 +365,7 @@ func (t *TopClients) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 		Filter([]string{"activity_tracking.state=on"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(t.client, href, t.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(t.client, href, t.SLogger); err != nil {
 		return va, err
 	}
 
@@ -391,7 +392,7 @@ func (t *TopClients) fetchTopClients(volumes *set.Set, svms *set.Set, metric str
 		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(t.client, href, t.Logger); err != nil {
+	if result, err = collectors.InvokeRestCall(t.client, href, t.SLogger); err != nil {
 		return result, err
 	}
 

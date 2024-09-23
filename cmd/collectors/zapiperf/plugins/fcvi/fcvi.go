@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 )
 
 const batchSize = "500"
@@ -28,7 +29,7 @@ func (f *FCVI) Init() error {
 	}
 
 	if f.client, err = zapi.New(conf.ZapiPoller(f.ParentParams), f.Auth); err != nil {
-		f.Logger.Error().Err(err).Msg("connecting")
+		f.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
 	return f.client.Init(5)
@@ -63,7 +64,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	if len(result) == 0 || result == nil {
 		return nil, nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
-	f.Logger.Info().Msgf("%d", len(result))
+	f.SLogger.Info("", slog.Int("result", len(result)))
 
 	for _, adapterData := range result {
 		adapter := adapterData.GetChildContentS("adapter-name")

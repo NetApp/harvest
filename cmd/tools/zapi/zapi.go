@@ -11,10 +11,10 @@ import (
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/spf13/cobra"
 	"log"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -139,7 +139,7 @@ func doCmd(cmd string) {
 	if poller, err = conf.PollerNamed(args.Poller); err != nil {
 		log.Fatal(err)
 	}
-	if connection, err = client.New(poller, auth.NewCredentials(poller, logging.Get())); err != nil {
+	if connection, err = client.New(poller, auth.NewCredentials(poller, slog.Default())); err != nil {
 		log.Fatal(err)
 	}
 

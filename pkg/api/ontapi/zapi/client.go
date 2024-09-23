@@ -12,12 +12,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"io"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -36,8 +36,8 @@ type Client struct {
 	system     *system
 	apiVersion string
 	vfiler     string
-	Logger     *logging.Logger // logger used for logging
-	logZapi    bool            // used to log ZAPI request/response
+	Logger     *slog.Logger
+	logZapi    bool // used to log ZAPI request/response
 	auth       *auth.Credentials
 	Metadata   *util.Metadata
 }
@@ -64,16 +64,16 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		auth:     c,
 		Metadata: &util.Metadata{},
 	}
-	client.Logger = logging.Get().SubLogger("Zapi", "Client")
+	client.Logger = slog.Default().With(slog.String("Zapi", "Client"))
 
 	// check required & optional parameters
 	if client.apiVersion = poller.APIVersion; client.apiVersion == "" {
 		client.apiVersion = DefaultAPIVersion
-		client.Logger.Debug().Str("version", DefaultAPIVersion).Msg("using default API version")
+		client.Logger.Debug("using default API version", slog.String("version", DefaultAPIVersion))
 	}
 
 	if client.vfiler = poller.APIVfiler; client.vfiler != "" {
-		client.Logger.Debug().Str("vfiler", client.vfiler).Msg("using vfiler tunneling")
+		client.Logger.Debug("using vfiler tunneling", slog.String("vfiler", client.vfiler))
 	}
 
 	if addr = poller.Addr; addr == "" {
@@ -111,7 +111,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	if poller.TLSMinVersion != "" {
 		tlsVersion := client.tlsVersion(poller.TLSMinVersion)
 		if tlsVersion != 0 {
-			client.Logger.Info().Uint16("tlsVersion", tlsVersion).Msg("Using TLS version")
+			client.Logger.Info("Using TLS version", slog.Int("tlsVersion", int(tlsVersion)))
 			transport.TLSClientConfig.MinVersion = tlsVersion
 		}
 	}
@@ -564,10 +564,7 @@ func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
 
 func (c *Client) printRequestAndResponse(req string, response []byte) {
 	if req != "" {
-		c.Logger.Info().
-			Str("Request", req).
-			Bytes("Response", response).
-			Send()
+		c.Logger.Info("", slog.String("Request", req), slog.String("Response", string(response)))
 	}
 }
 
@@ -577,9 +574,9 @@ func (c *Client) SetTimeout(timeout string) {
 	}
 	newTimeout, err := parseClientTimeout(timeout)
 	if err == nil {
-		c.Logger.Debug().Str("timeout", newTimeout.String()).Msg("Using timeout")
+		c.Logger.Debug("Using timeout", slog.String("timeout", newTimeout.String()))
 	} else {
-		c.Logger.Debug().Str("timeout", newTimeout.String()).Msg("Using default timeout")
+		c.Logger.Debug("Using default timeout", slog.String("timeout", newTimeout.String()))
 	}
 	c.client.Timeout = newTimeout
 }
@@ -596,7 +593,7 @@ func (c *Client) tlsVersion(version string) uint16 {
 	case "tls13":
 		return tls.VersionTLS13
 	default:
-		c.Logger.Warn().Str("version", version).Msg("Unknown TLS version, using default")
+		c.Logger.Warn("Unknown TLS version, using default", slog.String("version", version))
 	}
 	return 0
 }

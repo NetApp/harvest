@@ -11,9 +11,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/http/pprof"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -43,21 +45,23 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 		url = fmt.Sprintf("%s://%s/metrics", "http", net.JoinHostPort(addr, strconv.Itoa(port)))
 	}
 
-	p.Logger.Info().Str("url", url).Msg("server listen")
+	p.Logger.Info("server listen", slog.String("url", url))
 
 	if p.Params.TLS.KeyFile != "" {
 		if err := server.ListenAndServeTLS(p.Params.TLS.CertFile, p.Params.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			p.Logger.Fatal().Err(err).
-				Str("url", url).
-				Str("cert_file", p.Params.TLS.CertFile).
-				Str("key_file", p.Params.TLS.KeyFile).
-				Msg("Failed to start server")
+			p.Logger.Error(
+				"Failed to start server",
+				slog.Any("err", err),
+				slog.String("url", url),
+				slog.String("cert_file", p.Params.TLS.CertFile),
+				slog.String("key_file", p.Params.TLS.KeyFile),
+			)
+			os.Exit(1)
 		}
 	} else {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			p.Logger.Fatal().Err(err).
-				Str("url", url).
-				Msg("Failed to start server")
+			p.Logger.Error("Failed to start server", slog.Any("err", err), slog.String("url", url))
+			os.Exit(1)
 		}
 	}
 }
@@ -101,12 +105,12 @@ func (p *Prometheus) checkAddr(addr string) bool {
 // send a deny request response
 func (p *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 
-	p.Logger.Debug().Msgf("(httpd) denied request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	p.Logger.Debug("denied request", slog.String("url", r.RequestURI), slog.String("remote_addr", r.RemoteAddr))
 	w.WriteHeader(http.StatusForbidden)
 	w.Header().Set("Content-Type", "text/plain")
 	_, err := w.Write([]byte("403 Forbidden"))
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("error")
+		p.Logger.Error("error", slog.Any("err", err))
 	}
 }
 
@@ -145,11 +149,11 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	_, err := w.Write(bytes.Join(data, []byte("\n")))
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("write metrics")
+		p.Logger.Error("write metrics", slog.Any("err", err))
 	} else {
 		// make sure stream ends with newline
 		if _, err2 := w.Write([]byte("\n")); err2 != nil {
-			p.Logger.Error().Err(err2).Msg("write ending newline")
+			p.Logger.Error("write ending newline", slog.Any("err", err2))
 		}
 	}
 
@@ -157,11 +161,11 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	p.Metadata.Reset()
 	err = p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("error")
+		p.Logger.Error("metadata time", slog.Any("err", err))
 	}
 	err = p.Metadata.LazySetValueInt64("count", "http", int64(count))
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("error")
+		p.Logger.Error("metadata count", slog.Any("err", err))
 	}
 }
 
@@ -207,7 +211,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p.Logger.Debug().Msgf("(httpd) serving info request [%s] (%s)", r.RequestURI, r.RemoteAddr)
+	p.Logger.Debug("serving info request", slog.String("url", r.RequestURI), slog.String("remote_addr", r.RemoteAddr))
 
 	body := make([]string, 0)
 
@@ -226,7 +230,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	p.cache.Unlock()
 
-	p.Logger.Debug().Msgf("(httpd) fetching %d cached elements", len(cache))
+	p.Logger.Debug("fetching cached elements", slog.Int("count", len(cache)))
 
 	for key, data := range cache {
 		var collector, object string
@@ -282,11 +286,11 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	_, err := w.Write([]byte(bodyFlat))
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("error")
+		p.Logger.Error("write info", slog.Any("err", err))
 	}
 
 	err = p.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error().Err(err).Msg("error")
+		p.Logger.Error("metadata time", slog.Any("err", err))
 	}
 }

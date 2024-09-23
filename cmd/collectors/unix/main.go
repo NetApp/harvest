@@ -5,15 +5,16 @@
 package unix
 
 import (
+	"context"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 	"os"
 	"os/exec"
 	"runtime"
@@ -160,7 +161,7 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 	// load list of counters from template
 	if counters := u.Params.GetChildS("counters"); counters != nil {
 		if err = u.loadMetrics(counters); err != nil {
-			u.Logger.Error().Err(err).Msg("load metrics")
+			u.Logger.Error("load metrics", slog.Any("err", err))
 			return err
 		}
 	} else {
@@ -169,14 +170,14 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 
 	getClockTicks()
 	if u.system, err = NewSystem(); err != nil {
-		u.Logger.Error().Err(err).Msg("load system")
+		u.Logger.Error("load system", slog.Any("err", err))
 		return err
 	}
 
 	u.Matrix[u.Object].SetGlobalLabel("hostname", u.Options.Hostname)
 	u.Matrix[u.Object].SetGlobalLabel("datacenter", u.Params.GetChildContentS("datacenter"))
 
-	u.Logger.Debug().Msg("initialized")
+	u.Logger.Debug("initialized")
 	return nil
 }
 
@@ -188,7 +189,7 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 		err            error
 	)
 
-	u.Logger.Debug().Msg("initializing metric cache")
+	u.Logger.Debug("initializing metric cache")
 	mat := u.Matrix[u.Object]
 
 	u.processes = make(map[string]*Process)
@@ -216,7 +217,7 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 			if _, err = mat.NewMetricType(name, dtype, display); err != nil {
 				return err
 			}
-			u.Logger.Debug().Msgf("(%s) added metric (%s)", name, display)
+			u.Logger.Debug("added metric", slog.String("name", name), slog.String("display", display))
 
 			// counter is histogram
 		} else if _, has := _Histograms[name]; has {
@@ -240,7 +241,7 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 				label, ldisplay := parseMetricName(w)
 
 				if !labels.Has(label) {
-					u.Logger.Warn().Msgf("invalid histogram metric [%s]", label)
+					u.Logger.Warn("invalid histogram metric", slog.String("label", label))
 					wanted.Remove(w)
 					continue
 				}
@@ -252,15 +253,15 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 				u.histogramLabels[name] = append(u.histogramLabels[name], label)
 			}
 
-			u.Logger.Debug().Msgf("(%s) added histogram (%s) with %d submetrics", name, display, len(u.histogramLabels[name]))
+			u.Logger.Debug("added histogram", slog.String("name", name), slog.String("display", display), slog.Int("labels", len(u.histogramLabels[name])))
 
 			// invalid counter
 		} else {
-			u.Logger.Warn().Msgf("(%s) skipped unknown metric", name)
+			u.Logger.Warn("skipped unknown metric", slog.String("name", name))
 		}
 	}
 
-	u.Logger.Debug().Msgf("initialized cache with %d metrics", len(mat.GetMetrics()))
+	u.Logger.Debug("initialized metric cache", slog.Int("numMetrics", len(mat.GetMetrics())))
 	return nil
 }
 
@@ -298,17 +299,17 @@ func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 			}
 			instance.SetLabel("poller", name)
 			instance.SetLabel("pid", strconv.Itoa(pid))
-			u.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Add instance")
+			u.Logger.Debug("Add instance", slog.String("name", name), slog.Int("pid", pid))
 		} else {
 			currInstances.Remove(name)
 			instance.SetLabel("pid", strconv.Itoa(pid))
-			u.Logger.Debug().Str("name", name).Int("pid", pid).Msg("Update instance")
+			u.Logger.Debug("Update instance", slog.String("name", name), slog.Int("pid", pid))
 		}
 	}
 	rewriteIndexes := currInstances.Size() > 0
 	for name := range currInstances.Iter() {
 		mat.RemoveInstance(name)
-		u.Logger.Debug().Msgf("remove instance (%s)", name)
+		u.Logger.Debug("remove instance", slog.String("name", name))
 	}
 	// If there were removals, the indexes need to be rewritten since gaps were created
 	if rewriteIndexes {
@@ -321,7 +322,7 @@ func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 	t := len(mat.GetInstances())
 	r := currInstances.Size()
 	a := t - (currSize - r)
-	u.Logger.Debug().Msgf("added %d, removed %d, total instances %d", a, r, t)
+	u.Logger.Debug("added/removed/total instances", slog.Int("added", a), slog.Int("removed", r), slog.Int("total", t))
 
 	return nil, nil
 }
@@ -354,15 +355,15 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 
 		if proc == nil {
 			if instance.GetLabel("pid") == "" {
-				u.Logger.Debug().Msgf("skip instance [%s]: not running", key)
+				u.Logger.Debug("skip instance", slog.String("name", key), slog.String("reason", "no PID"))
 				continue
 			}
 			if pid, err = strconv.Atoi(instance.GetLabel("pid")); err != nil {
-				u.Logger.Warn().Msgf("skip instance [%s], invalid PID: %v", key, err)
+				u.Logger.Warn("skip instance", slog.String("name", key), slog.String("reason", "invalid PID"))
 				continue
 			}
 			if proc, err = NewProcess(pid); err != nil {
-				u.Logger.Warn().Msgf("skip instance [%s], process: %v", key, err)
+				u.Logger.Warn("skip instance", slog.String("name", key), slog.Any("reason", err))
 				continue
 			}
 			u.processes[key] = proc
@@ -372,7 +373,15 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 		cmd := proc.CmdlineSlice()
 
 		if !set.NewFrom(cmd).Has(poller) {
-			u.Logger.Debug().Msgf("skip instance [%s]: PID (%d) not matched with [%s]", key, pid, cmd)
+			if u.Logger.Enabled(context.Background(), slog.LevelDebug) {
+				u.Logger.Debug(
+					"skip instance",
+					slog.String("name", key),
+					slog.Int("pid", pid),
+					slog.String("cmd", strings.Join(cmd, " ")),
+					slog.String("reason", "PID not matched with poller"),
+				)
+			}
 			continue
 		}
 
@@ -398,28 +407,28 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	u.AddCollectCount(count)
-	u.Logger.Debug().Msgf("poll complete, added %d data points", count)
+	u.Logger.Debug("poll complete added", slog.Uint64("data points", count))
 	return u.Matrix, nil
 }
 
 func setStartTime(m *matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	err := m.SetValueFloat64(i, p.startTime+s.bootTime)
 	if err != nil {
-		logging.Get().Error().Err(err).Msg("error")
+		slog.Default().Error("error", slog.Any("err", err))
 	}
 }
 
 func setNumThreads(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numThreads)
 	if err != nil {
-		logging.Get().Error().Err(err).Msg("error")
+		slog.Default().Error("error", slog.Any("err", err))
 	}
 }
 
 func setNumFds(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numFds)
 	if err != nil {
-		logging.Get().Error().Err(err).Msg("error")
+		slog.Default().Error("error", slog.Any("err", err))
 	}
 }
 
@@ -427,12 +436,12 @@ func setCPUPercent(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) 
 	if p.elapsedTime != 0 {
 		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("error")
+			slog.Default().Error("error", slog.Any("err", err))
 		}
 	} else {
 		err := m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("error")
+			slog.Default().Error("error", slog.Any("err", err))
 		}
 	}
 }
@@ -441,7 +450,7 @@ func setCPU(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.cpu[l]; ok {
 		err := m.SetValueFloat64(i, value)
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("error")
+			slog.Default().Error("error", slog.Any("err", err))
 		}
 	}
 }
@@ -450,7 +459,7 @@ func setMemory(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.mem[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("error")
+			slog.Default().Error("error", slog.Any("err", err))
 		}
 	}
 }
@@ -459,7 +468,7 @@ func setIo(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.io[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("error")
+			slog.Default().Error("error", slog.Any("err", err))
 		}
 	}
 }
@@ -468,7 +477,7 @@ func setNet(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.net[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("error")
+			slog.Default().Error("error", slog.Any("err", err))
 		}
 	}
 }
@@ -477,7 +486,7 @@ func setCtx(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.ctx[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			logging.Get().Error().Err(err).Msg("error")
+			slog.Default().Error("error", slog.Any("err", err))
 		}
 	}
 }

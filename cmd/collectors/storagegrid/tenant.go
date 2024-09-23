@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"log/slog"
 )
 
 const (
@@ -63,7 +64,7 @@ func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 			}
 			err := usedPercent.SetValueFloat64(instance, percentage)
 			if err != nil {
-				t.Logger.Error().Err(err).Float64("percentage", percentage).Msg("failed to set percentage")
+				t.SLogger.Error("failed to set percentage", slog.Any("err", err), slog.Float64("percentage", percentage))
 			}
 		}
 
@@ -87,7 +88,7 @@ func (t *Tenant) collectPromMetrics(tenantNamesByID map[string]string) []*matrix
 	for _, metric := range promMetrics {
 		mat, err := t.sg.GetMetric(metric, metric[lenOfPrefix:], tenantNamesByID)
 		if err != nil {
-			t.Logger.Error().Err(err).Str("metric", metric).Msg("Unable to get metric")
+			t.SLogger.Error("Unable to get metric", slog.Any("err", err), slog.String("metric", metric))
 			continue
 		}
 		mat.Object = "storagegrid"
