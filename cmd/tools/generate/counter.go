@@ -1,11 +1,14 @@
 package generate
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -14,6 +17,9 @@ import (
 	"gopkg.in/yaml.v3"
 	"log"
 	"maps"
+	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -24,6 +30,8 @@ import (
 	"text/template"
 	"time"
 )
+
+const prometheusIP = "10.193.161.234"
 
 var (
 	replacer         = strings.NewReplacer("\n", "", ":", "")
@@ -115,6 +123,57 @@ var (
 		"security_audit_destination_port":                       {},
 		"wafl_reads_from_pmem":                                  {},
 	}
+
+	excludeDocumentedRestMetrics = []string{
+		"ontaps3_svm_",
+		"svm_ontaps3_svm_",
+		"nvme_lif_",
+		"fcvi_",
+		"smb2_",
+		"nvmf_",
+		"flashpool_",
+		"fcvi_",
+		"nfs_diag_",
+		"iw_",
+		"node_cifs_",
+		"svm_cifs_",
+		"vscan_",
+		"svm_vscan_",
+		"token_",
+		"metrocluster_",
+		"path_",
+		"ndmp_session",
+		"_labels",
+		"health_",
+		"aggr_hybrid_disk_count",
+		"nfs_clients_idle_duration",
+	}
+
+	excludeDocumentedZapiMetrics = []string{
+		"fabricpool_",
+		"external_service_",
+		"netstat_",
+		"flexcache_",
+		"quota_disk_used_pct_threshold",
+	}
+
+	// Exclude extra metrics for REST
+	excludeNotDocumentedRestMetrics = []string{
+		"flexcache_",
+		"hist_",
+		"_labels",
+		"volume_arw_status",
+		"ALERTS",
+	}
+
+	// Exclude extra metrics for ZAPI
+	excludeNotDocumentedZapiMetrics = []string{
+		"_labels",
+		"hist_",
+		"security_",
+		"svm_ldap",
+		"ALERTS",
+	}
 )
 
 type Counters struct {
@@ -157,6 +216,7 @@ func (m MetricDef) TableRow() string {
 }
 
 type Counter struct {
+	Object      string      `yaml:"-"`
 	Name        string      `yaml:"Name"`
 	Description string      `yaml:"Description"`
 	APIs        []MetricDef `yaml:"APIs"`
@@ -341,7 +401,8 @@ func processRestConfigCounters(path string) map[string]Counter {
 	// If the template has any PluginMetrics, add them
 	for _, metric := range model.PluginMetrics {
 		co := Counter{
-			Name: model.Object + "_" + metric.Name,
+			Object: model.Object,
+			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
 					API:          "REST",
@@ -351,7 +412,9 @@ func processRestConfigCounters(path string) map[string]Counter {
 				},
 			},
 		}
-		counters[co.Name] = co
+		if model.ExportData != "false" {
+			counters[co.Name] = co
+		}
 	}
 
 	return counters
@@ -370,6 +433,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 		harvestName := model.Object + "_" + display
 		if m == "float" {
 			co := Counter{
+				Object:      model.Object,
 				Name:        harvestName,
 				Description: description,
 				APIs: []MetricDef{
@@ -483,6 +547,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 				}
 				if zapiTypeMap[name] != "string" {
 					co := Counter{
+						Object:      model.Object,
 						Name:        harvestName,
 						Description: zapiDescMap[name],
 						APIs: []MetricDef{
@@ -497,12 +562,15 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 							},
 						},
 					}
-					counters[harvestName] = co
+					if model.ExportData != "false" {
+						counters[harvestName] = co
+					}
 
 					// handle deprecate counters
 					if rName, ok := zapiDeprecateCounterMap[name]; ok {
 						hName := model.Object + "_" + rName
 						ro := Counter{
+							Object:      model.Object,
 							Name:        hName,
 							Description: zapiDescMap[rName],
 							APIs: []MetricDef{
@@ -517,7 +585,9 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 								},
 							},
 						}
-						counters[hName] = ro
+						if model.ExportData != "false" {
+							counters[hName] = ro
+						}
 					}
 
 					// If the template has any MultiplierMetrics, add them
@@ -534,7 +604,8 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	// If the template has any PluginMetrics, add them
 	for _, metric := range model.PluginMetrics {
 		co := Counter{
-			Name: model.Object + "_" + metric.Name,
+			Object: model.Object,
+			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
 					API:          "ZAPI",
@@ -587,7 +658,8 @@ func processZapiConfigCounters(path string) map[string]Counter {
 			continue
 		}
 		co := Counter{
-			Name: k,
+			Object: model.Object,
+			Name:   k,
 			APIs: []MetricDef{
 				{
 					API:          "ZAPI",
@@ -597,7 +669,9 @@ func processZapiConfigCounters(path string) map[string]Counter {
 				},
 			},
 		}
-		counters[k] = co
+		if model.ExportData != "false" {
+			counters[k] = co
+		}
 
 		// If the template has any MultiplierMetrics, add them
 		for _, metric := range model.MultiplierMetrics {
@@ -610,7 +684,8 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	// If the template has any PluginMetrics, add them
 	for _, metric := range model.PluginMetrics {
 		co := Counter{
-			Name: model.Object + "_" + metric.Name,
+			Object: model.Object,
+			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
 					API:          "ZAPI",
@@ -838,6 +913,7 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 				continue
 			}
 			co := Counter{
+				Object:      v.Object,
 				Name:        v.Name,
 				Description: v.Description,
 				APIs:        []MetricDef{zapiDef},
@@ -921,6 +997,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 				return true
 			}
 			c := Counter{
+				Object:      model.Object,
 				Name:        v,
 				Description: description,
 				APIs: []MetricDef{
@@ -935,7 +1012,9 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 					},
 				},
 			}
-			counters[c.Name] = c
+			if model.ExportData != "false" {
+				counters[c.Name] = c
+			}
 
 			// If the template has any MultiplierMetrics, add them
 			for _, metric := range model.MultiplierMetrics {
@@ -950,7 +1029,8 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	// If the template has any PluginMetrics, add them
 	for _, metric := range model.PluginMetrics {
 		co := Counter{
-			Name: model.Object + "_" + metric.Name,
+			Object: model.Object,
+			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
 					API:          "REST",
@@ -1056,4 +1136,198 @@ func findAPI(apis []MetricDef, other MetricDef) []int {
 		}
 	}
 	return indices
+}
+
+func fetchAndCategorizePrometheusMetrics() (map[string]bool, map[string]bool, error) {
+	hostPort := net.JoinHostPort(prometheusIP, "9090")
+	baseURL := fmt.Sprintf("http://%s/api/v1/series", hostPort)
+
+	// Construct the URL with query parameters
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to parse base URL: %v", err)
+	}
+	q := u.Query()
+	q.Set("match[]", `{datacenter!=""}`)
+	u.RawQuery = q.Encode()
+
+	resp, err := http.Get(u.String())
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to fetch metrics from Prometheus: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, nil, fmt.Errorf("unexpected status code from Prometheus: %d", resp.StatusCode)
+	}
+
+	var result struct {
+		Status string              `json:"status"`
+		Data   []map[string]string `json:"data"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, nil, fmt.Errorf("failed to decode Prometheus response: %w", err)
+	}
+
+	if result.Status != "success" {
+		return nil, nil, fmt.Errorf("unexpected status from Prometheus: %s", result.Status)
+	}
+
+	restMetrics := make(map[string]bool)
+	zapiMetrics := make(map[string]bool)
+
+	for _, series := range result.Data {
+		metricName := series["__name__"]
+		datacenter := series["datacenter"]
+
+		if datacenter == "Rest" {
+			restMetrics[metricName] = true
+		} else if datacenter == "Zapi" {
+			zapiMetrics[metricName] = true
+		}
+	}
+
+	return restMetrics, zapiMetrics, nil
+}
+
+func validateMetrics(documentedRest, documentedZapi map[string]Counter, prometheusRest, prometheusZapi map[string]bool) error {
+	var documentedButMissingRestMetrics []string
+	var notDocumentedRestMetrics []string
+	var documentedButMissingZapiMetrics []string
+	var notDocumentedZapiMetrics []string
+
+	// Helper function to check if a REST metric should be excluded
+	shouldExcludeRest := func(metric string, apis []MetricDef) bool {
+		for _, c := range excludeDocumentedRestMetrics {
+			if strings.Contains(metric, c) {
+				return true
+			}
+		}
+
+		for _, api := range apis {
+			if api.API == "ZAPI" {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	// Helper function to check if a ZAPI metric should be excluded
+	shouldExcludeZapi := func(metric string, apis []MetricDef) bool {
+		for _, prefix := range excludeDocumentedZapiMetrics {
+			if strings.Contains(metric, prefix) {
+				return true
+			}
+		}
+
+		for _, api := range apis {
+			if api.API == "REST" {
+				return true
+			}
+		}
+		return false
+	}
+
+	// Helper function to check if an extra REST metric should be excluded
+	shouldExcludeExtraRest := func(metric string, set *set.Set) bool {
+
+		for _, c := range excludeNotDocumentedRestMetrics {
+			if strings.Contains(metric, c) {
+				return true
+			}
+		}
+
+		var isRestObject bool
+		for o := range set.Iter() {
+			if strings.HasPrefix(metric, o) {
+				isRestObject = true
+			}
+		}
+		return !isRestObject
+	}
+
+	// Helper function to check if an extra ZAPI metric should be excluded
+	shouldExcludeExtraZapi := func(metric string) bool {
+
+		for _, c := range excludeNotDocumentedZapiMetrics {
+			if strings.Contains(metric, c) {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	restObjects := set.New()
+
+	for metric, counter := range documentedRest {
+		if counter.Object != "" {
+			restObjects.Add(counter.Object)
+		}
+		if !prometheusRest[metric] && !shouldExcludeRest(metric, counter.APIs) {
+			documentedButMissingRestMetrics = append(documentedButMissingRestMetrics, metric)
+		}
+	}
+
+	for metric := range prometheusRest {
+		if _, ok := documentedRest[metric]; !ok && !shouldExcludeExtraRest(metric, restObjects) {
+			notDocumentedRestMetrics = append(notDocumentedRestMetrics, metric)
+		}
+	}
+
+	for metric, counter := range documentedZapi {
+		if !prometheusZapi[metric] && !shouldExcludeZapi(metric, counter.APIs) {
+			documentedButMissingZapiMetrics = append(documentedButMissingZapiMetrics, metric)
+		}
+	}
+
+	for metric := range prometheusZapi {
+		if _, ok := documentedZapi[metric]; !ok && !shouldExcludeExtraZapi(metric) {
+			notDocumentedZapiMetrics = append(notDocumentedZapiMetrics, metric)
+		}
+	}
+
+	// Sort the slices
+	sort.Strings(documentedButMissingRestMetrics)
+	sort.Strings(notDocumentedRestMetrics)
+	sort.Strings(documentedButMissingZapiMetrics)
+	sort.Strings(notDocumentedZapiMetrics)
+
+	if len(documentedButMissingRestMetrics) > 0 || len(notDocumentedRestMetrics) > 0 || len(documentedButMissingZapiMetrics) > 0 || len(notDocumentedZapiMetrics) > 0 {
+		errorMessage := "Validation failed:\n"
+		if len(documentedButMissingRestMetrics) > 0 {
+			errorMessage += fmt.Sprintf("Missing Rest metrics in Prometheus but documented: %v\n", documentedButMissingRestMetrics)
+		}
+		if len(notDocumentedRestMetrics) > 0 {
+			errorMessage += fmt.Sprintf("Extra Rest metrics in Prometheus but not documented: %v\n", notDocumentedRestMetrics)
+		}
+		if len(documentedButMissingZapiMetrics) > 0 {
+			errorMessage += fmt.Sprintf("Missing Zapi metrics in Prometheus but documented: %v\n", documentedButMissingZapiMetrics)
+		}
+		if len(notDocumentedZapiMetrics) > 0 {
+			errorMessage += fmt.Sprintf("Extra Zapi metrics in Prometheus but not documented: %v\n", notDocumentedZapiMetrics)
+		}
+		return errors.New(errorMessage)
+	}
+
+	return nil
+}
+
+func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[string]Counter) {
+	restCounters := make(map[string]Counter)
+	zapiCounters := make(map[string]Counter)
+
+	for _, counter := range counters {
+		for _, api := range counter.APIs {
+			if api.API == "REST" {
+				restCounters[counter.Name] = counter
+			} else if api.API == "ZAPI" {
+				zapiCounters[counter.Name] = counter
+			}
+		}
+	}
+
+	return restCounters, zapiCounters
 }

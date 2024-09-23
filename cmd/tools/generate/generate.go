@@ -72,6 +72,7 @@ type options struct {
 	mounts      []string
 	configPath  string
 	confPath    string
+	isCI        bool
 }
 
 var metricRe = regexp.MustCompile(`(\w+)\{`)
@@ -591,6 +592,20 @@ func generateMetrics() (map[string]Counter, rest.Cluster) {
 	zapiCounters := processZapiCounters(zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(counters)
+
+	if opts.isCI {
+		prometheusRest, prometheusZapi, err := fetchAndCategorizePrometheusMetrics()
+		if err != nil {
+			logErrAndExit(err)
+		}
+
+		documentedRest, documentedZapi := categorizeCounters(counters)
+
+		if err := validateMetrics(documentedRest, documentedZapi, prometheusRest, prometheusZapi); err != nil {
+			logErrAndExit(err)
+		}
+	}
+
 	return counters, restClient.Cluster()
 }
 
@@ -691,4 +706,7 @@ func init() {
 		"Prometheus file_sd target path. Written when the --output is set")
 	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
 	fFlags.IntVar(&opts.grafanaPort, "grafanaPort", 3000, "Grafana Port")
+
+	// Add the new flag for CI validation
+	Cmd.PersistentFlags().BoolVar(&opts.isCI, "ci", false, "Enable CI validation of documented counters against Prometheus")
 }
