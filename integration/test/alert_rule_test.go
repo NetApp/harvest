@@ -31,7 +31,7 @@ var exceptionMetrics = []string{
 
 func TestAlertRules(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
-	metrics, _ := generate.GeneratedMetrics("../..", "integration/test/harvest.yml", "dc1")
+	metrics, _ := generate.BuildMetrics("../..", "integration/test/harvest.yml", "dc1")
 	for pluginMetric, pluginLabels := range pluginGeneratedMetric {
 		metrics[pluginMetric] = generate.Counter{Name: pluginMetric, Labels: pluginLabels}
 	}
@@ -88,15 +88,14 @@ func GetAllAlertRules(dir string, fileName string, isEms bool) []AlertRule {
 	for _, v := range data.GetChildS("groups").GetChildren() {
 		if v.GetNameS() == "rules" {
 			for _, a := range v.GetChildren() {
-				if a.GetNameS() == "alert" {
+				switch a.GetNameS() {
+				case "alert":
 					alertname := a.GetContentS()
 					alertNames = append(alertNames, alertname)
-				}
-				if a.GetNameS() == "expr" {
+				case "expr":
 					alertexp := a.GetContentS()
 					exprList = append(exprList, alertexp)
-				}
-				if a.GetNameS() == "annotations" {
+				case "annotations":
 					alertSummary := a.GetChildS("summary")
 					summaryList = append(summaryList, alertSummary.GetContentS())
 				}
@@ -129,9 +128,14 @@ func getAllExpressions(expression string, isEms bool) []string {
 
 func FindEms(stringValue string, startChar string, endChar string) []string {
 	var emsSlice = make([]string, 0)
-	firstSet := strings.Split(stringValue, startChar)
+	var firstSet, counterArray []string
+	if firstSet = strings.Split(stringValue, startChar); len(firstSet) < 2 {
+		return emsSlice
+	}
 	actualString := strings.TrimSpace(firstSet[1])
-	counterArray := strings.Split(actualString, endChar)
+	if counterArray = strings.Split(actualString, endChar); len(counterArray) < 2 {
+		return emsSlice
+	}
 	ems := strings.TrimSpace(counterArray[0])
 	if ems != "" {
 		counterArray = strings.Split(ems, "=")

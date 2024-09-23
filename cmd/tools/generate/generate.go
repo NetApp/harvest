@@ -136,13 +136,13 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters, cluster := GeneratedMetrics("", "", opts.Poller)
+	counters, cluster := BuildMetrics("", "", opts.Poller)
 	generateCounterTemplate(counters, cluster.Version)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters, _ := GeneratedMetrics("", "", opts.Poller)
+	counters, _ := BuildMetrics("", "", opts.Poller)
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
@@ -553,7 +553,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func GeneratedMetrics(dir, configPath, pollerName string) (map[string]Counter, rest.Cluster) {
+func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, rest.Cluster) {
 	var (
 		poller         *conf.Poller
 		err            error
