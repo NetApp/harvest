@@ -138,18 +138,21 @@ events:
 
   - name: Nblade.vscanVirusDetected
     exports:
-      - parameters.SID           => sid
-      - parameters.clientIp      => client_ip
-      - parameters.filePath      => file_path
-      - parameters.object_type   => object_type
-      - parameters.object_uuid   => object_uuid
-      - parameters.vscanServerIp => vscan_server_ip
-      - parameters.vserverName   => svm
+      - parameters.SID                     => sid
+      - parameters.clientIp                => client_ip
+      - parameters.filePath                => file_path
+      - parameters.object_type             => object_type
+      - parameters.object_uuid             => object_uuid
+      - parameters.vscanServerIp           => vscan_server_ip
+      - parameters.vserverName             => svm
+      - parameters.vscanEngineStatus       => vscanEngineStatus
+      - parameters.vscanEngineResultString => vscanEngineResultString
 
   - name: arl.netra.ca.check.failed
     exports:
       - parameters.aggr_uuid => aggr_uuid
       - parameters.vol       => volume
+      - parameters.reason    => reason
 
   - name: arw.volume.state
     matches:
@@ -241,6 +244,7 @@ events:
       - parameters.volUuid     => volume_uuid
       - parameters.vserverName => svm
       - parameters.vserverUuid => svm_uuid
+      - parameters.subject     => subject
 
   - name: callhome.battery.low
     exports:
@@ -250,6 +254,9 @@ events:
         resolve_after: 672h
 
   - name: callhome.hainterconnect.down
+    exports:
+      - parameters.subject    => subject
+      - parameters.reason     => reason
 
   - name: callhome.sp.hbt.missed
 
@@ -265,6 +272,7 @@ events:
       - parameters.object_uuid           => object_uuid
       - parameters.operation             => operation
       - parameters.shareName             => share
+      - parameters.errMsg                => errMsg
 
   - name: cloud.aws.iamNotInitialized
     exports:
@@ -278,9 +286,12 @@ events:
 
   - name: disk.outOfService
     exports:
-      - parameters.diskName     => disk
-      - parameters.powerOnHours => power_on_hours
-      - parameters.serialno     => serial_no
+      - parameters.diskName         => disk
+      - parameters.powerOnHours     => power_on_hours
+      - parameters.serialno         => serial_no
+      - parameters.reason           => reason
+      - parameters.glistEntries     => glistEntries
+      - parameters.disk_information => disk_information
 
   - name: diskShelf.psu.added
     exports:
@@ -312,6 +323,7 @@ events:
     exports:
       - parameters.aggr_uuid => aggr_uuid
       - parameters.vol       => volume
+      - parameters.reason    => reason
 
   - name: hm.alert.raised
     matches:
@@ -328,6 +340,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -347,6 +360,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -366,6 +380,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -385,6 +400,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -404,6 +420,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -423,6 +440,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -442,6 +460,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -461,6 +480,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -480,6 +500,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -499,6 +520,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -518,6 +540,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -537,6 +560,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -556,6 +580,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -575,6 +600,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -594,6 +620,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -613,6 +640,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -632,6 +660,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -651,6 +680,7 @@ events:
       - parameters.possible_effect         => possible_effect
       - parameters.suppress                => suppress
       - parameters.suppressor              => suppressor
+      - parameters.detailed_info           => detailed_info
     resolve_when_ems:
       - name: hm.alert.cleared
         resolve_after: 672h
@@ -712,6 +742,7 @@ events:
     exports:
       - ^^parameters.node_uuid => node_uuid
       - parameters.configname  => config
+      - parameters.reason      => reason
     resolve_when_ems:
       - name: object.store.available
         resolve_after: 672h
@@ -769,11 +800,17 @@ events:
     exports:
       - ^^parameters.prodChannel => prod_channel
       - parameters.fanNumber     => fan_number
+      - parameters.typeText      => typeText
+      - parameters.errorMsg      => errorMsg
+      - parameters.errorText     => errorText
+      - parameters.locationText  => locationText
     resolve_when_ems:
       - name: ses.status.fanInfo
         resolve_after: 672h
 
   - name: sk.panic
+    exports:
+      - parameters.reason      => reason
 
   - name: sm.mediator.added
     exports:
@@ -861,6 +898,7 @@ events:
       - ^^parameters.relationship_id => relationship_id
       - parameters.dstpath           => dst_path
       - parameters.srcpath           => src_path
+      - parameters.error_msg         => error_msg
     resolve_when_ems:
       - name: sms.status.in.sync
         resolve_after: 672h
@@ -870,6 +908,7 @@ events:
       - parameters.cg_relationship_id => cg_relationship_id
       - parameters.dstcgpath          => dst_cg_path
       - parameters.srccgpath          => src_cg_path
+      - parameters.error_msg          => error_msg
 
   - name: sp.ipmi.lost.shutdown
     exports:
