@@ -129,21 +129,25 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.cache.Lock()
+	// Count the number of metrics so we can pre-allocate the slice to avoid reallocations
 	for _, metrics := range p.cache.Get() {
-		data = append(data, metrics...)
 		count += len(metrics)
+	}
+
+	data = make([][]byte, 0, count)
+	tagsSeen := make(map[string]bool)
+
+	for _, metrics := range p.cache.Get() {
+		data = addMetricsToSlice(data, metrics, tagsSeen, p.addMetaTags)
 	}
 	p.cache.Unlock()
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
 	md, _ := p.render(p.Metadata)
-	data = append(data, md...)
-	count += len(md)
+	data = addMetricsToSlice(data, md, tagsSeen, p.addMetaTags)
 
-	if p.addMetaTags {
-		data = filterMetaTags(data)
-	}
+	count += len(md)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/plain")
@@ -169,35 +173,37 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// filterMetaTags removes duplicate TYPE/HELP tags in the metrics
-// Note: this is a workaround, normally Render() will only add
-// one TYPE/HELP for each metric type, however since some metric
-// types (e.g. metadata_collector_metrics) are submitted from multiple
-// collectors, we end up with duplicates in the final batch delivered
-// over HTTP.
-func filterMetaTags(metrics [][]byte) [][]byte {
+// addMetricsToSlice adds metrics to a slice, skipping duplicates. Normally
+// Render() only adds one TYPE/HELP for each metric type. Some metric types
+// (e.g., metadata_collector_metrics) are submitted from multiple collectors.
+// That causes duplicates that are removed in this function. The seen map is
+// used to keep track of which metrics have been added. The metrics slice is
+// expected to be in the format: # HELP metric_name help text # TYPE metric_name
+// type metric_name{tag="value"} value
+func addMetricsToSlice(data [][]byte, metrics [][]byte, seen map[string]bool, addMetaTags bool) [][]byte {
 
-	filtered := make([][]byte, 0)
+	if !addMetaTags {
+		return append(data, metrics...)
+	}
 
-	metricsWithTags := make(map[string]bool)
-
-	for i, m := range metrics {
-		if bytes.HasPrefix(m, []byte("# ")) {
-			if fields := strings.Fields(string(m)); len(fields) > 3 {
-				name := fields[2]
-				if !metricsWithTags[name] {
-					metricsWithTags[name] = true
-					filtered = append(filtered, m)
+	for i, metric := range metrics {
+		if bytes.HasPrefix(metric, []byte("# ")) {
+			if fields := bytes.Fields(metric); len(fields) > 3 {
+				name := string(fields[2])
+				if !seen[name] {
+					seen[name] = true
+					data = append(data, metric)
 					if i+1 < len(metrics) {
-						filtered = append(filtered, metrics[i+1])
+						data = append(data, metrics[i+1])
 					}
 				}
 			}
 		} else {
-			filtered = append(filtered, m)
+			data = append(data, metric)
 		}
 	}
-	return filtered
+
+	return data
 }
 
 // ServeInfo provides a human-friendly overview of metric types and source collectors
