@@ -191,16 +191,7 @@ pipeline {
         stage('Test and Generate Harvest Metrics') {
             steps {
                 script {
-                    def promUrlParam = ""
-                    if (params.RUN_TEST == 'true') {
-                        withCredentials([string(credentialsId: 'PROMETHEUS_URL', variable: 'PROMETHEUS_URL')]) {
-                            promUrlParam = "--prom-url $PROMETHEUS_URL"
-                        }
-                    }
-                    def result = sh(script: """
-                        export VERSION=$VERSION
-                        bin/harvest generate metrics --poller dc1 --config /u/mpeg/harvest/harvest.yml ${promUrlParam}
-                    """, returnStatus: true)
+                    def result = sh(script: 'bin/harvest generate metrics --poller dc1 --config /u/mpeg/harvest/harvest.yml', returnStatus: true)
                     if (result != 0) {
                         error("Generate Harvest metrics command failed.")
                     }
