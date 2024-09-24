@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715582801657,
+  "iteration": 1727100822194,
   "links": [
     {
       "asDropdown": true,
@@ -717,7 +717,7 @@
         },
         {
           "exemplar": false,
-          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(datacenter,cluster,shelf) shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",isEmbedded=\"No\"}) or vector(0))",
           "hide": false,
           "interval": "",
           "legendFormat": "Total",
@@ -3514,5 +3514,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "cdot-power",
-  "version": 14
+  "version": 15
 }
