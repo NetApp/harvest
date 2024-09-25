@@ -40,6 +40,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
 				fg.SetLabel("node", "")
+				fg.SetLabel("uuid", "")
 				fg.SetLabel(style, "flexgroup")
 				fgAggrMap[key] = set.New()
 			}
@@ -49,6 +50,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				flexgroupInstance.SetLabels(maps.Clone(i.GetLabels()))
 				flexgroupInstance.SetLabel("volume", match[1])
 				flexgroupInstance.SetLabel("node", "")
+				flexgroupInstance.SetLabel("uuid", "")
 				flexgroupInstance.SetLabel(style, "flexgroup")
 				flexgroupAggrsMap[key] = set.New()
 				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
