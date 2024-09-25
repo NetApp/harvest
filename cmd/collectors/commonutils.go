@@ -44,6 +44,7 @@ type PortData struct {
 // 2. The shelf is listed in the link above
 var combinations = map[embedShelf]bool{
 	{"FS424-12", "IOM12F"}: true,
+	{"DS212-12", "IOM12G"}: true,
 }
 
 func IsEmbedShelf(model string, moduleType string) bool {
