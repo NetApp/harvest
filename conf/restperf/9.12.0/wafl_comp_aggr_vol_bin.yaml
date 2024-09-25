@@ -4,6 +4,7 @@ object:                   fabricpool
 
 counters:
   - ^^id
+  - ^aggregate.name              => comp_aggr_name
   - ^cloud_target.name           => cloud_target
   - ^svm.name                    => svm
   - ^volume.name                 => volume
@@ -11,6 +12,9 @@ counters:
   - cloud_bin_op_latency_average
 
 plugins:
+  - LabelAgent:
+    split:
+      - id `:` ,fabricpool
   - FabricPool:
       - include_constituents: false
 

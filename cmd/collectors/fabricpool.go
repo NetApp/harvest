@@ -4,8 +4,11 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"log/slog"
 	"maps"
+	"regexp"
 	"strings"
 )
+
+var fabricpoolRegex = regexp.MustCompile(`^(.*)__(\d{4})_bin.*$`)
 
 func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object string, opName string, includeConstituents bool, l *slog.Logger) (*matrix.Matrix, error) {
 	var (
@@ -31,8 +34,9 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		if !i.IsExportable() {
 			continue
 		}
-		if match := flexgroupRegex.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
-			key := i.GetLabel("svm") + "." + match[1] + i.GetLabel("cloud_target")
+
+		if match := fabricpoolRegex.FindStringSubmatch(fetchVolumeName(i)); len(match) == 3 {
+			key := i.GetLabel("svm") + "." + match[1] + "." + i.GetLabel("cloud_target")
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(maps.Clone(i.GetLabels()))
@@ -46,9 +50,9 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 	// create summary
 	for _, i := range data.GetInstances() {
-		if match := flexgroupRegex.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
+		if match := fabricpoolRegex.FindStringSubmatch(fetchVolumeName(i)); len(match) == 3 {
 			// instance key is svm.flexgroup-volume.cloud-target-name
-			key := i.GetLabel("svm") + "." + match[1] + i.GetLabel("cloud_target")
+			key := i.GetLabel("svm") + "." + match[1] + "." + i.GetLabel("cloud_target")
 
 			fg := cache.GetInstance(key)
 			if fg == nil {
@@ -142,4 +146,15 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		}
 	}
 	return cache, nil
+}
+
+func fetchVolumeName(i *matrix.Instance) string {
+	// zapiperf name: test1_fg2__0001_bin_0_cfg_id_0
+	// restperf name: test1_fg2__0002_bin_1_cfg_id_1
+	instanceName := i.GetLabel("fabricpool")
+	compAggrName := i.GetLabel("comp_aggr_name")
+	if names := strings.Split(instanceName, compAggrName+"_"); len(names) == 2 {
+		return names[1]
+	}
+	return ""
 }
