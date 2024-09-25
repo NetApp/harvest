@@ -5,7 +5,6 @@
 package prometheus
 
 import (
-	"bytes"
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
@@ -40,20 +39,13 @@ func TestFilterMetaTags(t *testing.T) {
 		[]byte(`some_other_metric{node="node_3"} 0.0`),
 	}
 
-	output := filterMetaTags(example)
+	seen := make(map[string]bool)
+	data := addMetricsToSlice(nil, example, seen, true)
 
-	if len(output) != len(expected) {
-		t.Fatalf("filtered data should have %d, but got %d lines", len(expected), len(output))
+	diff := cmp.Diff(data, expected)
+	if diff != "" {
+		t.Errorf("Mismatch (-got +want):\n%s", diff)
 	}
-
-	// output should have exact same lines in the same order
-	for i := range output {
-		if !bytes.Equal(output[i], expected[i]) {
-			t.Fatalf("line:%d - output = [%s], expected = [%s]", i, string(output[i]), string(expected[i]))
-		}
-	}
-
-	t.Log("OK - output is exactly what is expected")
 }
 
 func TestEscape(t *testing.T) {
