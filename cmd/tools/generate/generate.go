@@ -72,6 +72,7 @@ type options struct {
 	mounts      []string
 	configPath  string
 	confPath    string
+	promURL     string
 }
 
 var metricRe = regexp.MustCompile(`(\w+)\{`)
@@ -597,6 +598,20 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, rest.
 	zapiCounters := processZapiCounters(dir, zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(dir, counters)
+
+	if opts.promURL != "" {
+		prometheusRest, prometheusZapi, err := fetchAndCategorizePrometheusMetrics(opts.promURL)
+		if err != nil {
+			logErrAndExit(err)
+		}
+
+		documentedRest, documentedZapi := categorizeCounters(counters)
+
+		if err := validateMetrics(documentedRest, documentedZapi, prometheusRest, prometheusZapi); err != nil {
+			logErrAndExit(err)
+		}
+	}
+
 	return counters, restClient.Cluster()
 }
 
@@ -697,4 +712,6 @@ func init() {
 		"Prometheus file_sd target path. Written when the --output is set")
 	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
 	fFlags.IntVar(&opts.grafanaPort, "grafanaPort", 3000, "Grafana Port")
+
+	metricCmd.PersistentFlags().StringVar(&opts.promURL, "prom-url", "", "Prometheus URL for CI validation")
 }

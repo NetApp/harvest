@@ -87,6 +87,14 @@ pipeline {
                                          zip -r native_logs.zip /var/log/harvest
                                          '''
                                      archiveArtifacts artifacts: "native_logs.zip", fingerprint: true
+
+                                     withCredentials([string(credentialsId: 'PROMETHEUS_URL', variable: 'PROMETHEUS_URL')]) {
+                                         sh '''
+                                         cp -r /opt/harvest/bin $WORKSPACE/harvest
+                                         cd $WORKSPACE/harvest
+                                         bin/harvest generate metrics --poller dc1 --config /u/mpeg/harvest/harvest.yml --prom-url $PROMETHEUS_URL
+                                         '''
+                                         }
                                 }
                             }
                         }
