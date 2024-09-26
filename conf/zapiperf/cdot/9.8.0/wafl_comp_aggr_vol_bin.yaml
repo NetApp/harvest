@@ -7,6 +7,7 @@ instance_key:             uuid
 counters:
   - cloud_bin_op_latency_average
   - cloud_bin_operation
+  - comp_aggr_name
   - instance_name
   - object_store_name       => cloud_target
   - vol_name                => volume
