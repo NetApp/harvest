@@ -2535,7 +2535,7 @@
               "refId": "C"
             }
           ],
-          "title": "Data Instances per Poll",
+          "title": "Instances per Poll",
           "type": "timeseries"
         },
         {
