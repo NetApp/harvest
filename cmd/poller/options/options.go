@@ -27,6 +27,7 @@ type Options struct {
 	Config     string   // filepath of Harvest config (defaults to "harvest.yml") can be relative or absolute path
 	HomePath   string   // path to harvest home (usually "/opt/harvest")
 	LogPath    string   // log files location (usually "/var/log/harvest")
+	LogFormat  string   // log format to use (plain or json)
 	LogLevel   int      // logging level, 0 for trace, 5 for fatal
 	LogToFile  bool     // when running in the foreground, log to file instead of stdout
 	Version    string   // harvest version
