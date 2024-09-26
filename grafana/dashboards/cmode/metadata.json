@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1723188161723,
+  "iteration": 1727355926722,
   "links": [
     {
       "asDropdown": true,
@@ -2412,7 +2412,7 @@
           },
           "gridPos": {
             "h": 9,
-            "w": 12,
+            "w": 8,
             "x": 0,
             "y": 65
           },
@@ -2448,7 +2448,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "API wait time of each data poll.",
+          "description": "Number of instances collected per Poll.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2482,6 +2482,7 @@
                   "mode": "off"
                 }
               },
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2502,8 +2503,100 @@
           },
           "gridPos": {
             "h": 9,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 8,
+            "y": 65
+          },
+          "id": 186,
+          "interval": "",
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "ceil(avg by (collector, object) (metadata_collector_instances{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"}))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{collector}} - {{object}}",
+              "refId": "C"
+            }
+          ],
+          "title": "Data Instances per Poll",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of metrics collected per Poll.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 16,
             "y": 65
           },
           "id": 169,
@@ -2526,6 +2619,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "exemplar": false,
               "expr": "avg by (collector, object) (metadata_collector_metrics{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
               "hide": false,
               "interval": "",
@@ -3225,5 +3319,5 @@
   "timezone": "",
   "title": "Harvest Metadata",
   "uid": "cdot-metadata",
-  "version": 10
+  "version": 11
 }
