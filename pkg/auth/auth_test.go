@@ -556,6 +556,23 @@ Pollers:
       path: testdata/get_credentials_authToken
 `,
 		},
+
+		{
+			name:       "credentials_script returns authToken and password",
+			pollerName: "test",
+			want: PollerAuth{
+				AuthToken:           "abcd",
+				HasCredentialScript: true,
+				Password:            "script-password",
+			},
+			yaml: `
+Pollers:
+  test:
+    addr: a.b.c
+    credentials_script:
+      path: testdata/get_credentials_authToken_password
+`,
+		},
 	}
 
 	hostname, err := os.Hostname()
