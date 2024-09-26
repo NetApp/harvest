@@ -1112,6 +1112,43 @@
           "timeShift": null,
           "title": "Other Latency",
           "type": "timeseries"
+        }
+      ],
+      "title": "SMB Performance",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 99,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "id": 104,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "These panels require that the eight `_histogram` counters be uncommented in the respective SMB2 template.<br>\n`RestPerf` template in `conf/restperf/9.14.1/smb2.yaml`<br> \n`ZapiPerf` template in `conf/zapiperf/cdot/9.8.0/smb2.yaml`<br>\nEnabling the SMB2 histogram counters may cause the poller to use more memory if there are a large number of histogram metrics to export.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
         },
         {
           "cards": {
@@ -1132,7 +1169,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 40
+            "y": 7
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1201,7 +1238,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 40
+            "y": 7
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1270,7 +1307,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 48
+            "y": 15
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1339,7 +1376,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 48
+            "y": 15
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1408,7 +1445,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 56
+            "y": 23
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1477,7 +1514,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 56
+            "y": 23
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1546,7 +1583,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 64
+            "y": 31
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1615,7 +1652,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 64
+            "y": 31
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -1666,7 +1703,7 @@
           "yBucketSize": null
         }
       ],
-      "title": "SMB2/SMB3 Performance Data",
+      "title": "Heatmaps",
       "type": "row"
     }
   ],
@@ -1891,5 +1928,5 @@
   "timezone": "",
   "title": "ONTAP: SMB",
   "uid": "cdot-smb",
-  "version": 4
+  "version": 5
 }
