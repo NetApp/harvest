@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1727426369648,
+  "iteration": 1727437918841,
   "links": [
     {
       "asDropdown": true,
@@ -779,7 +779,7 @@
               }
             ]
           },
-          "unit": "watt"
+          "unit": "watth"
         },
         "overrides": [
           {
@@ -790,7 +790,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "watt"
+                "value": "watth"
               }
             ]
           },
@@ -802,7 +802,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "watt"
+                "value": "watth"
               }
             ]
           },
@@ -814,7 +814,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "watt"
+                "value": "watth"
               }
             ]
           }
