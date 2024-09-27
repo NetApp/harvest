@@ -912,10 +912,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 						}
 					}
 				} else if d.SLogger.Enabled(context.Background(), slog.LevelDebug) {
-					d.SLogger.Debug("instance without, skipping", slog.String(
-						"skipping",
-						strings.Join(d.instanceKeys[attribute], ",")),
-					)
+					d.SLogger.Debug("instance without, skipping", slog.Any("skipping", d.instanceKeys[attribute]))
 				}
 			}
 
@@ -926,7 +923,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 	if len(noSet) > 0 {
 		attributes := slices.Sorted(maps.Keys(noSet))
 		if d.SLogger.Enabled(context.Background(), slog.LevelDebug) {
-			d.SLogger.Warn("No instances", slog.String("attributes", strings.Join(attributes, ",")))
+			d.SLogger.Warn("No instances", slog.Any("attributes", attributes))
 		}
 	}
 

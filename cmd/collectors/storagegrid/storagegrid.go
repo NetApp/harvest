@@ -1,7 +1,6 @@
 package storagegrid
 
 import (
-	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/bucket"
@@ -126,14 +125,12 @@ func (s *StorageGrid) InitCache() error {
 	}
 	s.ParseCounters(counters, s.Props)
 
-	if s.Logger.Enabled(context.Background(), slog.LevelDebug) {
-		s.Logger.Debug(
-			"Initialized metric cache",
-			slog.String("extracted Instance Keys", strings.Join(s.Props.InstanceKeys, ",")),
-			slog.Int("numMetrics", len(s.Props.Metrics)),
-			slog.Int("numLabels", len(s.Props.InstanceLabels)),
-		)
-	}
+	s.Logger.Debug(
+		"Initialized metric cache",
+		slog.Any("extracted Instance Keys", s.Props.InstanceKeys),
+		slog.Int("numMetrics", len(s.Props.Metrics)),
+		slog.Int("numLabels", len(s.Props.InstanceLabels)),
+	)
 
 	return nil
 }

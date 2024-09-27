@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -71,14 +70,12 @@ func (r *Rest) InitCache() error {
 
 	r.ParseRestCounters(counters, r.Prop)
 
-	if r.Logger.Enabled(context.Background(), slog.LevelDebug) {
-		r.Logger.Debug(
-			"Initialized metric cache",
-			slog.String("extracted Instance Keys", strings.Join(r.Prop.InstanceKeys, ",")),
-			slog.Int("numMetrics", len(r.Prop.Metrics)),
-			slog.Int("numLabels", len(r.Prop.InstanceLabels)),
-		)
-	}
+	r.Logger.Debug(
+		"Initialized metric cache",
+		slog.Any("extracted Instance Keys", r.Prop.InstanceKeys),
+		slog.Int("numMetrics", len(r.Prop.Metrics)),
+		slog.Int("numLabels", len(r.Prop.InstanceLabels)),
+	)
 
 	return nil
 }

@@ -6,7 +6,6 @@ package labelagent
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
@@ -80,9 +79,7 @@ func TestSplitSimpleRule(t *testing.T) {
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "a/b/c/d")
 
-	t.Logf("before = [%s]\n", dict.String(instance.GetLabels()))
 	_ = p.splitSimple(m)
-	t.Logf("after  = [%s]\n", dict.String(instance.GetLabels()))
 
 	if instance.GetLabel("C") != "c" || instance.GetLabel("D") != "d" {
 		t.Error("Labels C and D don't have expected values")
@@ -125,9 +122,7 @@ func TestSplitRegexRule(t *testing.T) {
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "xxxA22_B333")
 
-	t.Logf("before = [%s]\n", dict.String(instance.GetLabels()))
 	_ = p.splitRegex(m)
-	t.Logf("after  = [%s]\n", dict.String(instance.GetLabels()))
 
 	if instance.GetLabel("A") != "A22" || instance.GetLabel("B") != "B333" {
 		t.Error("Labels A and B don't have expected values")
@@ -141,9 +136,7 @@ func TestSplitPairsRule(t *testing.T) {
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "owner:jack contact:some@email")
 
-	t.Logf("before = [%s]\n", dict.String(instance.GetLabels()))
 	_ = p.splitPairs(m)
-	t.Logf("after  = [%s]\n", dict.String(instance.GetLabels()))
 
 	if instance.GetLabel("owner") != "jack" || instance.GetLabel("contact") != "some@email" {
 		t.Error("Labels owner and contact don't have expected values")
@@ -158,9 +151,7 @@ func TestJoinSimpleRule(t *testing.T) {
 	instance.SetLabel("A", "aaa")
 	instance.SetLabel("B", "bbb")
 
-	t.Logf("before = [%s]\n", dict.String(instance.GetLabels()))
 	_ = p.joinSimple(m)
-	t.Logf("after  = [%s]\n", dict.String(instance.GetLabels()))
 
 	if instance.GetLabel("X") != "aaa_bbb" {
 		t.Error("Label A does have expected value")
@@ -174,9 +165,7 @@ func TestReplaceSimpleRule(t *testing.T) {
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa_X")
 
-	t.Logf("before = [%s]\n", dict.String(instance.GetLabels()))
 	_ = p.replaceSimple(m)
-	t.Logf("after  = [%s]\n", dict.String(instance.GetLabels()))
 
 	if instance.GetLabel("A") != "X" || instance.GetLabel("B") != "bbb_X" {
 		t.Error("Labels A and B don't have expected values")
@@ -190,9 +179,7 @@ func TestReplaceRegexRule(t *testing.T) {
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("A", "aaa_12345_abcDEF")
 
-	t.Logf("before = [%s]\n", dict.String(instance.GetLabels()))
 	_ = p.replaceRegex(m)
-	t.Logf("after  = [%s]\n", dict.String(instance.GetLabels()))
 
 	if instance.GetLabel("B") != "abcDEF-12345-bbb" {
 		t.Error("Label B does not have expected value")

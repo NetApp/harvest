@@ -1,7 +1,6 @@
 package ems
 
 import (
-	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
@@ -327,12 +326,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	// ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
 	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
 	_, missingNames := util.Intersection(filteredNames, names)
-	if e.Logger.Enabled(context.Background(), slog.LevelDebug) {
-		e.Logger.Debug(
-			"filtered ems events",
-			slog.String("skipped events", strings.Join(missingNames, ",")),
-		)
-	}
+	e.Logger.Debug("filtered ems events", slog.Any("skipped events", missingNames))
 	e.eventNames = filteredNames
 
 	// warning when total instance in cache > 1000 instance
