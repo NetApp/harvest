@@ -44,12 +44,18 @@ pipeline {
         stage("Initialization") {
             steps {
                 buildName "${BUILD_NUMBER}_$BRANCH"
+                script {
+                    currentStage = 'Initialization'
+                }
             }
         }
 
         stage('clean system') {
             steps {
                 stopAndRemoveDockers()
+                script {
+                    currentStage = 'clean system'
+                }
             }
         }
 
@@ -67,6 +73,9 @@ pipeline {
                pip install mkdocs-material==9.5.6
                pip install mkdocs-macros-plugin==0.7.0
                 '''
+                script {
+                    currentStage = 'Download Prerequisites'
+                }
             }
         }
 
@@ -79,6 +88,7 @@ pipeline {
 
                 script {
                     def file = readFile('.harvest.env')
+                    currentStage = 'Git Clone Harvest'
                     file.split('\n').each { envLine ->
                         def (key, value) = envLine.tokenize('=')
                         env."${key}" = "${value}"
@@ -89,11 +99,13 @@ pipeline {
 
         stage('Setup GO') {
             steps {
-
                 sh '''
                 wget -q -O go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
                 '''
+                script {
+                    currentStage = 'Setup GO'
+                }
             }
         }
 
@@ -111,6 +123,9 @@ pipeline {
                ./package.sh rpm x86_64 $VERSION $RELEASE $ASUP_MAKE_TARGET $GIT_TOKEN
                cp -RT ./dist/$VERSION-$RELEASE/x86_64/  $targetLocation
                 '''
+                script {
+                    currentStage = 'Build Harvest RPM/DEB'
+                }
             }
         }
 
@@ -125,6 +140,9 @@ pipeline {
                cp -RT ./dist/ $targetLocation
                cp ./autosupport/asup $targetLocation/asup_linux_amd64
                 '''
+                script {
+                    currentStage = 'Build Harvest Tar gz'
+                }
             }
         }
 
@@ -137,6 +155,9 @@ pipeline {
                docker run --rm -v "$PWD":/$harvestPath -w /$harvestPath golang:${GO_VERSION} sh -c "export PATH=$PATH:/usr/local/go/bin && make asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN"
                cp ./autosupport/asup $targetLocation/asup_linux_amd64
                 '''
+                script {
+                    currentStage = 'Build Autosupport Binary'
+                }
             }
         }
 
@@ -146,6 +167,7 @@ pipeline {
                     script {
                         // Write the GIT_TOKEN to a temporary file
                         def gitTokenFile = "${env.WORKSPACE}/git_token"
+                        currentStage = 'Build Docker Images'
                         writeFile file: gitTokenFile, text: env.GIT_TOKEN
 
                         withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
@@ -165,6 +187,9 @@ pipeline {
 
          stage('Publish builds locally'){
           steps {
+              script {
+                  currentStage = 'Publish builds locally'
+              }
               dir("$targetParentLocation$VERSION-$RELEASE-$BRANCH") {
                   archiveArtifacts artifacts: '**', fingerprint: true
               }
@@ -179,6 +204,7 @@ pipeline {
             }
             steps {
                 script {
+                    currentStage = 'Run Tests'
                     dockerBuild = "${BUILD_URL}/artifact/docker_harvest.tar"
                     dockerBuildFips = "${BUILD_URL}/artifact/docker_harvest_fips.tar"
                     nativeBuild = "${BUILD_URL}/artifact/harvest-${VERSION}-${RELEASE}_linux_amd64.tar.gz"
@@ -191,6 +217,7 @@ pipeline {
         stage('Test and Generate Harvest Metrics') {
             steps {
                 script {
+                    currentStage = 'Test and Generate Harvest Metrics'
                     def result = sh(script: 'bin/harvest generate metrics --poller dc1 --config /u/mpeg/harvest/harvest.yml', returnStatus: true)
                     if (result != 0) {
                         error("Generate Harvest metrics command failed.")
@@ -213,6 +240,7 @@ pipeline {
                     docker push ${imageName}:$VERSION-$RELEASE
                     '''
                     script {
+                        currentStage = 'Docker Image Publish'
                         if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
                             sh '''
                             docker push ${imageName}:latest-fips
@@ -227,6 +255,7 @@ pipeline {
                 docker push ${ghcrImage}:$VERSION-$RELEASE
                 '''
                 script {
+                    currentStage = 'Docker Image Publish'
                     if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
                         sh '''
                         docker push ${ghcrImage}:latest-fips
@@ -241,6 +270,7 @@ pipeline {
                     docker push ${jfrogImagePrefix}:$VERSION-$RELEASE
                     '''
                     script {
+                        currentStage = 'Docker Image Publish'
                         if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
                             sh '''
                             docker push ${jfrogImagePrefix}:latest-fips
@@ -263,6 +293,7 @@ pipeline {
                     script {
                         // Write the GIT_TOKEN to a temporary file
                         def gitTokenFile = "${env.WORKSPACE}/git_token"
+                        currentStage = 'Publish Nightly Build to GitHub'
                         writeFile file: gitTokenFile, text: env.GIT_TOKEN
 
                         sh '''
