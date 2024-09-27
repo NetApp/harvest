@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1727100822194,
+  "iteration": 1727426369648,
   "links": [
     {
       "asDropdown": true,
@@ -678,7 +678,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
+        "w": 13,
         "x": 0,
         "y": 16
       },
@@ -727,6 +727,150 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Total Power Consumed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel displays the average power consumption in kilowatt-hours (kWh) over the last hour for Nodes, Shelves, and the total combined.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Node"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Shelf"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 13,
+        "y": 16
+      },
+      "id": 102,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[1h]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Node",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[1h]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Shelf",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(\n  avg_over_time(\n    environment_sensor_power{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[1h]\n  )\n) + sum(\n  avg_over_time(\n    shelf_power{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[1h]\n  ) * on(datacenter, cluster, shelf) shelf_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", isEmbedded=\"No\"}\n)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Total",
+          "refId": "C"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Average Power Consumption (kWh) Over Last Hour",
       "type": "timeseries"
     },
     {
@@ -3514,5 +3658,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "cdot-power",
-  "version": 15
+  "version": 16
 }
