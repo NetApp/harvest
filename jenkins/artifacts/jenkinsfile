@@ -381,7 +381,7 @@ def void sendNotification(def status) {
                 "content": {
                     "\$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
-                    "version": "1.6",
+                    "version": "1.4",
                     "body": [
                         {
                             "type": "TextBlock",
@@ -397,6 +397,7 @@ def void sendNotification(def status) {
                                     "items": [
                                         {
                                             "type": "Image",
+                                            "style": "Person",
                                             "url": "${imageUrl}",
                                             "altText": "Jenkins Logo",
                                             "size": "Medium",
@@ -415,7 +416,6 @@ def void sendNotification(def status) {
                                             "text": "${bldStatus}",
                                             "color": "${bldStatusColor}",
                                             "wrap": true,
-                                            "style": "heading",
                                             "size": "ExtraLarge",
                                             "isSubtle": true
                                         },
@@ -427,14 +427,12 @@ def void sendNotification(def status) {
                                             "isSubtle": true
                                         }
                                     ],
-                                    "width": "auto",
-                                    "verticalContentAlignment": "Center"
+                                    "width": "stretch"
                                 }
                             ]
                         },
                         {
                             "type": "FactSet",
-                            "separator": true,
                             "facts": [
                                 {
                                     "title": "App Name:",
@@ -484,7 +482,8 @@ def void sendNotification(def status) {
                             "url": "${env.BUILD_URL}",
                             "iconUrl": "https://i.ibb.co/Ks2JKfG/cloudbees-logo-icon-168396.png"
                         }
-                    ]
+                    ],
+                    "rtl": false
                 }
             }
         ]
