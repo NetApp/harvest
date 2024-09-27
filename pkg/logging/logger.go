@@ -15,7 +15,7 @@ import (
 const (
 	defaultLogFileName           = "harvest.log"
 	defaultConsoleLoggingEnabled = true
-	defaultFileLoggingEnabled    = false // false to avoid opening many file descriptors for same log file
+	defaultFileLoggingEnabled    = false // false to avoid opening many file descriptors for the same log file
 	DefaultLogMaxMegaBytes       = 10    // 10 MB
 	DefaultLogMaxBackups         = 5
 	DefaultLogMaxAge             = 7
@@ -23,13 +23,11 @@ const (
 
 // LogConfig defines the configuration for logging
 type LogConfig struct {
-	// Enable console logging
 	ConsoleLoggingEnabled bool
-	// Log Level
-	LogLevel slog.Level
-	// Prefix
-	PrefixKey   string
-	PrefixValue string
+	LogLevel              slog.Level
+	LogFormat             string // one of "plain" or "json"
+	PrefixKey             string
+	PrefixValue           string
 	// FileLoggingEnabled makes the framework log to a file
 	FileLoggingEnabled bool
 	// Directory to log to when filelogging is enabled
@@ -54,13 +52,12 @@ var (
 func Get() *slog.Logger {
 	once.Do(func() {
 		if logger == nil {
-			defaultPrefixKey := "harvest"
-			defaultPrefixValue := "harvest"
 			logConfig := LogConfig{
 				ConsoleLoggingEnabled: defaultConsoleLoggingEnabled,
-				PrefixKey:             defaultPrefixKey,
-				PrefixValue:           defaultPrefixValue,
+				PrefixKey:             "harvest",
+				PrefixValue:           "harvest",
 				LogLevel:              slog.LevelInfo,
+				LogFormat:             "plain",
 				FileLoggingEnabled:    defaultFileLoggingEnabled,
 				Directory:             GetLogPath(),
 				Filename:              defaultLogFileName,
@@ -100,23 +97,23 @@ func Configure(config LogConfig) *slog.Logger {
 	}
 
 	var (
-		handlers []slog.Handler
-		aLogger  *slog.Logger
+		handler slog.Handler
+		aLogger *slog.Logger
+		writer  io.Writer
 	)
 
-	if config.ConsoleLoggingEnabled {
-		handlers = append(handlers, slog.NewTextHandler(os.Stderr, handlerOptions))
-	}
-
+	writer = os.Stderr
 	if config.FileLoggingEnabled {
-		handlers = append(handlers, slog.NewJSONHandler(newRollingFile(config), handlerOptions))
+		writer = newRollingFile(config)
 	}
 
-	if len(handlers) == 1 {
-		aLogger = slog.New(handlers[0])
+	if config.LogFormat == "plain" {
+		handler = slog.NewTextHandler(writer, handlerOptions)
 	} else {
-		aLogger = slog.New(MultiHandler(handlers...))
+		handler = slog.NewJSONHandler(writer, handlerOptions)
 	}
+
+	aLogger = slog.New(handler)
 
 	if config.PrefixKey != "" {
 		aLogger = aLogger.With(slog.String(config.PrefixKey, config.PrefixValue))

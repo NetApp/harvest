@@ -203,6 +203,7 @@ func (p *Poller) Init() error {
 		PrefixKey:             "Poller",
 		PrefixValue:           p.name,
 		LogLevel:              logLevel,
+		LogFormat:             p.options.LogFormat,
 		FileLoggingEnabled:    fileLoggingEnabled,
 		Directory:             p.options.LogPath,
 		Filename:              logFileName,
@@ -1503,10 +1504,11 @@ func init() {
 
 	var flags = pollerCmd.Flags()
 	flags.StringVarP(&opts.Poller, "poller", "p", "", "Poller name as defined in config")
-	flags.BoolVarP(&opts.Debug, "debug", "d", false, "Enable debug logging (same as -loglevel 1). If both debug and loglevel are specified, loglevel wins")
+	flags.BoolVarP(&opts.Debug, "debug", "d", false, "Enable debug logging (same as --loglevel 1). If both debug and loglevel are specified, loglevel wins")
 	flags.BoolVar(&opts.Daemon, "daemon", false, "Start as daemon")
 	flags.IntVarP(&opts.LogLevel, "loglevel", "l", 2, "Logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
-	flags.BoolVar(&opts.LogToFile, "logtofile", false, "When running in the foreground, log to file instead of stdout")
+	flags.StringVar(&opts.LogFormat, "logformat", "plain", "Log format (plain or json)")
+	flags.BoolVar(&opts.LogToFile, "logtofile", false, "Log to the poller_ name prefixed file in the "+logging.GetLogPath()+" directory, instead of stdout")
 	flags.IntVar(&opts.Profiling, "profiling", 0, "If profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
 	flags.IntVar(&opts.PromPort, "promPort", 0, "Prometheus Port")
 	flags.StringVar(&opts.Config, "config", conf.HarvestYML, "Harvest config file path")

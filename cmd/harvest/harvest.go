@@ -46,7 +46,10 @@ import (
 	"time"
 )
 
-const maxCol = 40
+const (
+	maxCol           = 40
+	defaultLogFormat = "plain"
+)
 
 type options struct {
 	command    string
@@ -57,7 +60,8 @@ type options struct {
 	debug      bool
 	foreground bool
 	loglevel   int
-	logToFile  bool // only used when running in foreground
+	logToFile  bool   // only used when running in the foreground
+	logFormat  string // one of plain or json
 	config     string
 	confPath   string
 	profiling  bool
@@ -358,6 +362,7 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	if promPort != 0 {
 		argv = append(argv, "--promPort", strconv.Itoa(promPort))
 	}
+
 	if opts.debug {
 		argv = append(argv, "--debug")
 	}
@@ -368,6 +373,10 @@ func startPoller(pollerName string, promPort int, opts *options) {
 
 	if opts.confPath != conf.DefaultConfPath {
 		argv = append(argv, "--confpath", opts.confPath)
+	}
+
+	if opts.logFormat != defaultLogFormat {
+		argv = append(argv, "--logformat", opts.logFormat)
 	}
 
 	if opts.profiling {
@@ -537,82 +546,23 @@ Feedback
   Open issues at https://github.com/NetApp/harvest
 `)
 
-	startCmd.PersistentFlags().BoolVarP(
-		&opts.debug,
-		"debug",
-		"d",
-		false,
-		"enable debug logging (same as -loglevel 1). If both debug and loglevel are specified, loglevel wins",
-	)
-	startCmd.PersistentFlags().BoolVarP(
-		&opts.verbose,
-		"verbose",
-		"v",
-		false,
-		"verbose logging (loglevel=1)",
-	)
-	startCmd.PersistentFlags().BoolVarP(
-		&opts.trace,
-		"trace",
-		"t",
-		false,
-		"trace logging (loglevel=0)",
-	)
-	startCmd.PersistentFlags().BoolVarP(
-		&opts.foreground,
-		"foreground",
-		"f",
-		false,
-		"start single poller in foreground",
-	)
-	startCmd.PersistentFlags().BoolVar(
-		&opts.daemon,
-		"daemon",
-		true,
-		"start poller in background",
-	)
-	startCmd.PersistentFlags().IntVarP(
-		&opts.loglevel,
-		"loglevel",
-		"l",
-		2,
-		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
-	)
-	startCmd.PersistentFlags().BoolVar(
-		&opts.logToFile,
-		"logtofile",
-		false,
-		"When running in the foreground, log to file instead of stdout",
-	)
-	startCmd.PersistentFlags().BoolVar(
-		&opts.profiling,
-		"profiling",
-		false,
-		"if profiling port > 0, enables profiling via localhost:PORT/debug/pprof/",
-	)
-	startCmd.PersistentFlags().IntVar(
-		&opts.promPort,
-		"promPort",
-		0,
-		"prometheus port to use for HTTP endpoint",
-	)
-	startCmd.PersistentFlags().StringSliceVarP(
-		&opts.collectors,
-		"collectors",
-		"c",
-		[]string{},
-		"only start these collectors (overrides harvest.yml)",
-	)
-	startCmd.PersistentFlags().StringSliceVarP(
-		&opts.objects,
-		"objects",
-		"o",
-		[]string{},
-		"only start these objects (overrides collector config)",
-	)
-	_ = startCmd.PersistentFlags().MarkHidden("logtofile")
-	_ = startCmd.PersistentFlags().MarkHidden("verbose")
-	_ = startCmd.PersistentFlags().MarkHidden("trace")
+	start := startCmd.PersistentFlags()
+	start.BoolVarP(&opts.debug, "debug", "d", false, "enable debug logging (same as -loglevel 1). If both debug and loglevel are specified, loglevel wins")
+	start.BoolVarP(&opts.verbose, "verbose", "v", false, "verbose logging (loglevel=1)")
+	start.BoolVarP(&opts.trace, "trace", "t", false, "trace logging (loglevel=0)")
+	start.BoolVarP(&opts.foreground, "foreground", "f", false, "start single poller in foreground")
+	start.BoolVar(&opts.daemon, "daemon", true, "start poller in background")
+	start.IntVarP(&opts.loglevel, "loglevel", "l", 2, "logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)")
+	start.BoolVar(&opts.logToFile, "logtofile", false, "when running in the foreground, log to file instead of stdout")
+	start.StringVar(&opts.logFormat, "logformat", defaultLogFormat, "log format (plain or json)")
+	start.BoolVar(&opts.profiling, "profiling", false, "if profiling port > 0, enables profiling via localhost:PORT/debug/pprof/")
+	start.IntVar(&opts.promPort, "promPort", 0, "prometheus port to use for HTTP endpoint")
+	start.StringSliceVarP(&opts.collectors, "collectors", "c", []string{}, "only start these collectors (overrides harvest.yml)")
+	start.StringSliceVarP(&opts.objects, "objects", "o", []string{}, "only start these objects (overrides collector config)")
+
+	_ = start.MarkHidden("logtofile")
+	_ = start.MarkHidden("verbose")
+	_ = start.MarkHidden("trace")
 }
 
 // The management commands: start|status|stop|restart|kill
