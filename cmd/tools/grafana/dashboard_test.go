@@ -274,7 +274,9 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"qos_total_data":                  {"Bps", "percent"},
 		"aggr_space_used":                 {"bytes", "percent"},
 		"volume_size_used":                {"bytes", "percent"},
-		"volume_num_compress_fail":        {"short", "percent"},
+		"shelf_power":                     {"watt", "watth"},
+		"environment_sensor_power":        {"watt", "watth"},
+		"volume_num_compress_fail":        {"percent", "short"},
 	}
 
 	// Normalize rates to their base unit
