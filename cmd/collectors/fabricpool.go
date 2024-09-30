@@ -54,7 +54,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 		}
 	}
 
-	l.Debug("extracted  flexgroup volumes", slog.Int("size", len(cache.GetInstances())))
+	l.Debug("extracted flexgroup volumes", slog.Int("size", len(cache.GetInstances())))
 
 	// create summary
 	for _, constituent := range flexgroupConstituentsMap {

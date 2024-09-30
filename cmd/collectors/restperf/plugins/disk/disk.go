@@ -331,7 +331,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 							} else if d.SLogger.Enabled(context.Background(), slog.LevelDebug) {
 								d.SLogger.Debug(
 									"instance without keys, skipping",
-									slog.String("attribute", strings.Join(d.instanceKeys[attribute], ",")),
+									slog.Any("attribute", d.instanceKeys[attribute]),
 								)
 							}
 						}
@@ -348,7 +348,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	if len(noSet) > 0 {
 		attributes := slices.Sorted(maps.Keys(noSet))
 		if d.SLogger.Enabled(context.Background(), slog.LevelDebug) {
-			d.SLogger.Warn("No instances", slog.String("attributes", strings.Join(attributes, ",")))
+			d.SLogger.Warn("No instances", slog.Any("attributes", attributes))
 		}
 	}
 

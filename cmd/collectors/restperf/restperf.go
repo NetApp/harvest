@@ -17,7 +17,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -1581,12 +1580,13 @@ func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, 
 				instance.SetLabel(display, strings.Clone(value.String()))
 			}
 		}
+
 		if r.Logger.Enabled(context.Background(), slog.LevelDebug) {
 			r.Logger.Debug(
 				"",
 				slog.String("query", r.Prop.Query),
 				slog.String("key", key),
-				slog.String("qos labels", dict.String(instance.GetLabels())),
+				slog.Any("qos labels", instance.GetLabels()),
 			)
 		}
 	}

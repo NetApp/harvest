@@ -2,7 +2,6 @@
 package shelf
 
 import (
-	"context"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
@@ -143,13 +142,11 @@ func (s *Shelf) Init() error {
 			}
 		}
 
-		if s.SLogger.Enabled(context.Background(), slog.LevelDebug) {
-			s.SLogger.Debug(
-				"added object",
-				slog.String("attribute", attribute),
-				slog.Int("metrics count", len(s.data[attribute].GetMetrics())),
-			)
-		}
+		s.SLogger.Debug(
+			"added object",
+			slog.String("attribute", attribute),
+			slog.Int("metrics count", len(s.data[attribute].GetMetrics())),
+		)
 
 		s.data[attribute].SetExportOptions(exportOptions)
 	}

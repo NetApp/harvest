@@ -29,7 +29,6 @@ import (
 	"reflect"
 	"runtime/debug"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -577,56 +576,74 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 	if inst == nil {
 		return
 	}
-	var attrs []any
 
-	// convert microseconds to milliseconds and names ending with _time into -> *Ms
-	microToMilli := func(value float64, field string) {
-		v := int64(math.Round(value / 1000))
-		attrs = append(attrs, slog.Int64(field[0:len(field)-5]+"Ms", v))
+	// lookup a time metric and convert it from microseconds to milliseconds
+	// rename the metric from name_time to nameMs
+	timeToMilli := func(field string) slog.Attr {
+		metric := metrics[field]
+		keyMs := field[0:len(field)-5] + "Ms"
+		if metric == nil {
+			return slog.Attr{}
+		}
+		metricValue, _ := metric.GetValueFloat64(inst)
+		v := int64(math.Round(metricValue / 1000))
+		return slog.Int64(keyMs, v)
 	}
 
-	if taskName == "data" {
-		for _, metric := range metrics {
-			mName := metric.GetName()
-			if mName == "task_time" {
-				// don't log since it is covered by other durations
-				continue
-			}
-			value, _ := metric.GetValueFloat64(inst)
-			if strings.HasSuffix(mName, "_time") {
-				microToMilli(value, mName)
-			} else {
-				attrs = append(attrs, slog.Int64(mName, int64(value)))
-			}
+	// lookup a metric and convert it to an int64
+	int64Field := func(field string) slog.Attr {
+		metric := metrics[field]
+		if metric == nil {
+			return slog.Attr{}
 		}
+		metricValue, _ := metric.GetValueInt64(inst)
+		return slog.Int64(field, metricValue)
+	}
 
-		attrs = append(attrs,
+	switch {
+	case taskName == "data":
+		c.Logger.Info(
+			"Collected",
+			timeToMilli("api_time"),
+			int64Field("bytesRx"),
+			timeToMilli("calc_time"),
+			timeToMilli("export_time"),
+			int64Field("instances"),
 			slog.Uint64("instancesExported", stats.InstancesExported),
+			int64Field("metrics"),
 			slog.Uint64("metricsExported", stats.MetricsExported),
+			int64Field("numCalls"),
+			int64Field("numPartials"),
+			timeToMilli("parse_time"),
+			int64Field("pluginInstances"),
+			timeToMilli("plugin_time"),
+			timeToMilli("poll_time"),
+			int64Field("skips"),
+			int64Field("zBegin"),
 		)
-
-	} else {
-		logFields := []string{"api_time", "poll_time"}
-		for _, field := range logFields {
-			value, _ := c.Metadata.GetMetric(field).GetValueFloat64(inst)
-			microToMilli(value, field)
-		}
-
-		epoch, _ := c.Metadata.GetMetric(begin).GetValueFloat64(inst)
-		attrs = append(attrs, slog.Int64(begin, int64(epoch)))
-
-		if taskName == "counter" {
-			v, _ := c.Metadata.GetMetric("metrics").GetValueInt64(inst)
-			attrs = append(attrs, slog.Int64("metrics", v))
-		} else if taskName == "instance" {
-			v, _ := c.Metadata.GetMetric("instances").GetValueInt64(inst)
-			attrs = append(attrs, slog.Int64("instances", v))
-		}
-
-		attrs = append(attrs, slog.String("task", taskName))
+	case taskName == "instance":
+		c.Logger.Info(
+			"Collected",
+			slog.String("task", "instance"),
+			timeToMilli("api_time"),
+			int64Field("bytesRx"),
+			int64Field("instances"),
+			int64Field("numCalls"),
+			timeToMilli("poll_time"),
+			int64Field("zBegin"),
+		)
+	case taskName == "counter":
+		c.Logger.Info(
+			"Collected",
+			slog.String("task", "counter"),
+			timeToMilli("api_time"),
+			int64Field("bytesRx"),
+			int64Field("metrics"),
+			int64Field("numCalls"),
+			timeToMilli("poll_time"),
+			int64Field("zBegin"),
+		)
 	}
-
-	c.Logger.Info("Collected", attrs...)
 }
 
 // GetName returns name of the collector

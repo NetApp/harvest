@@ -378,7 +378,7 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 					"skip instance",
 					slog.String("name", key),
 					slog.Int("pid", pid),
-					slog.String("cmd", strings.Join(cmd, " ")),
+					slog.Any("cmd", cmd),
 					slog.String("reason", "PID not matched with poller"),
 				)
 			}

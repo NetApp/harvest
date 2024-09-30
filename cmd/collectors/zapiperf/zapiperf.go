@@ -40,7 +40,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/vscan"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/dict"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -249,12 +248,7 @@ func (z *ZapiPerf) loadParamArray(name, defaultValue string) []string {
 	p := z.Params.GetChildS(name)
 	if p != nil {
 		if v := p.GetAllChildContentS(); v != nil {
-			if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
-				z.Logger.Debug("", slog.String("name", name), slog.String(
-					"values",
-					strings.Join(v, ","),
-				))
-			}
+			z.Logger.Debug("", slog.String("name", name), slog.Any("values", v))
 			return v
 		}
 	}
@@ -549,7 +543,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
 					z.Logger.Debug(
 						"Skip instance, key is empty",
-						slog.String("instanceKey", strings.Join(z.instanceKeys, ",")),
+						slog.Any("instanceKey", z.instanceKeys),
 						slog.String("name", i.GetChildContentS("name")),
 						slog.String("uuid", i.GetChildContentS("uuid")),
 					)
@@ -994,7 +988,7 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, keyAttr string) (ti
 				if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
 					z.Logger.Debug(
 						"skip instance",
-						slog.String("key", strings.Join(z.instanceKeys, ",")),
+						slog.Any("key", z.instanceKeys),
 						slog.String("name", i.GetChildContentS("name")),
 						slog.String("uuid", i.GetChildContentS("uuid")),
 					)
@@ -1659,7 +1653,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
 					z.Logger.Debug(
 						"skip instance",
-						slog.String("key", strings.Join(z.instanceKeys, ",")),
+						slog.Any("key", z.instanceKeys),
 						slog.String("name", name),
 						slog.String("uuid", uuid),
 					)
@@ -1711,7 +1705,7 @@ func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, ke
 				"",
 				slog.String("query", z.Query),
 				slog.String("key", key),
-				slog.String("qos labels", dict.String(instance.GetLabels())),
+				slog.Any("qos labels", instance.GetLabels()),
 			)
 		}
 	}
