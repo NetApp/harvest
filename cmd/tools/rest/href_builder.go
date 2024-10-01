@@ -1,10 +1,13 @@
 package rest
 
 import (
+	"fmt"
 	"slices"
 	"strconv"
 	"strings"
 )
+
+const URLMaxLimit = 8 * 1024
 
 type HrefBuilder struct {
 	apiPath                      string
@@ -76,6 +79,10 @@ func (b *HrefBuilder) Build() string {
 
 	href.WriteString("?return_records=true")
 
+	if len(strings.Join(b.fields, ",")) > URLMaxLimit {
+		fmt.Printf("converting to * due to URL max limit")
+		b.fields = []string{"*"}
+	}
 	// Sort fields so that the href is deterministic
 	slices.Sort(b.fields)
 
