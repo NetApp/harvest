@@ -389,7 +389,7 @@ def void sendNotification(def status) {
     def statusColor = "Good"
     def stage = "All Stages Passed"
 
-    if (buildState == 'FAILURE') {
+    if (buildState == 'FAILED') {
         jenkinsImageUrl = "https://www.jenkins.io/images/logos/fire/fire.png"
         statusMessage = "Jenkins Build FAIL"
         statusColor = "warning"
