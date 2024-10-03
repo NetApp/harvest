@@ -116,20 +116,6 @@ func (r *Rest) Fields(prop *prop) []string {
 			fields = []string{"*"}
 		}
 	}
-	if len(prop.HiddenFields) > 0 {
-		fieldsMap := make(map[string]bool)
-		for _, field := range fields {
-			fieldsMap[field] = true
-		}
-
-		// append hidden fields
-		for _, hiddenField := range prop.HiddenFields {
-			if _, exists := fieldsMap[hiddenField]; !exists {
-				fields = append(fields, hiddenField)
-				fieldsMap[hiddenField] = true
-			}
-		}
-	}
 	return fields
 }
 
@@ -368,6 +354,7 @@ func (r *Rest) updateHref() {
 	r.Prop.Href = rest.NewHrefBuilder().
 		APIPath(r.Prop.Query).
 		Fields(r.Fields(r.Prop)).
+		HiddenFields(r.Prop.HiddenFields).
 		Filter(r.Prop.Filter).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
@@ -377,6 +364,7 @@ func (r *Rest) updateHref() {
 		e.prop.Href = rest.NewHrefBuilder().
 			APIPath(r.query(e)).
 			Fields(r.Fields(e.prop)).
+			HiddenFields(e.prop.HiddenFields).
 			Filter(r.filter(e)).
 			ReturnTimeout(r.Prop.ReturnTimeOut).
 			IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).

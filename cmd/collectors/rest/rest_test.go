@@ -268,7 +268,7 @@ func TestFields(t *testing.T) {
 		expectedResult []string
 	}{
 		{
-			name: "Test with valid fields and no hidden fields",
+			name: "Test with valid fields",
 			r: &Rest{
 				isIgnoreUnknownFieldsEnabled: true,
 			},
@@ -287,7 +287,7 @@ func TestFields(t *testing.T) {
 			},
 		},
 		{
-			name: "Test with invalid fields and no hidden fields",
+			name: "Test with invalid fields",
 			r: &Rest{
 				isIgnoreUnknownFieldsEnabled: true,
 			},
@@ -302,32 +302,7 @@ func TestFields(t *testing.T) {
 			expectedResult: []string{"*"},
 		},
 		{
-			name: "Test with valid fields and hidden fields",
-			r: &Rest{
-				isIgnoreUnknownFieldsEnabled: true,
-			},
-			p: &prop{
-				Fields: []string{
-					"uuid",
-					"block_storage.primary.disk_type",
-					"block_storage.primary.raid_type",
-				},
-				HiddenFields: []string{
-					"hidden_field1",
-					"hidden_field2",
-				},
-				IsPublic: true,
-			},
-			expectedResult: []string{
-				"uuid",
-				"block_storage.primary.disk_type",
-				"block_storage.primary.raid_type",
-				"hidden_field1",
-				"hidden_field2",
-			},
-		},
-		{
-			name: "Test with valid fields and hidden fields and prior versions to 9.11.1",
+			name: "Test with valid fields and prior versions to 9.11.1",
 			r: &Rest{
 				isIgnoreUnknownFieldsEnabled: false,
 			},
@@ -336,21 +311,15 @@ func TestFields(t *testing.T) {
 					"uuid",
 					"block_storage.primary.disk_type",
 					"block_storage.primary.raid_type",
-				},
-				HiddenFields: []string{
-					"hidden_field1",
-					"hidden_field2",
 				},
 				IsPublic: true,
 			},
 			expectedResult: []string{
 				"*",
-				"hidden_field1",
-				"hidden_field2",
 			},
 		},
 		{
-			name: "Test with valid fields and no hidden fields for private API",
+			name: "Test with valid fields for private API",
 			r: &Rest{
 				isIgnoreUnknownFieldsEnabled: false,
 			},
@@ -366,65 +335,6 @@ func TestFields(t *testing.T) {
 				"uuid",
 				"block_storage.primary.disk_type",
 				"block_storage.primary.raid_type",
-			},
-		},
-		{
-			name: "Test with invalid fields and no hidden fields, ignore unknown fields disabled",
-			r: &Rest{
-				isIgnoreUnknownFieldsEnabled: false,
-			},
-			p: &prop{
-				Fields: []string{
-					"uuid",
-					"cloud_storage.stores.0.cloud_store.name",
-					"block_storage.primary.raid_type",
-				},
-				IsPublic: true,
-			},
-			expectedResult: []string{"*"},
-		},
-		{
-			name: "Test with invalid fields and no hidden fields for private API",
-			r: &Rest{
-				isIgnoreUnknownFieldsEnabled: true,
-			},
-			p: &prop{
-				Fields: []string{
-					"uuid",
-					"cloud_storage.stores.0.cloud_store.name",
-					"block_storage.primary.raid_type",
-				},
-				IsPublic: false,
-			},
-			expectedResult: []string{
-				"uuid",
-				"cloud_storage.stores.0.cloud_store.name",
-				"block_storage.primary.raid_type",
-			},
-		},
-		{
-			name: "Test with valid fields and hidden fields for private API",
-			r: &Rest{
-				isIgnoreUnknownFieldsEnabled: true,
-			},
-			p: &prop{
-				Fields: []string{
-					"uuid",
-					"block_storage.primary.disk_type",
-					"block_storage.primary.raid_type",
-				},
-				HiddenFields: []string{
-					"hidden_field1",
-					"hidden_field2",
-				},
-				IsPublic: true,
-			},
-			expectedResult: []string{
-				"uuid",
-				"block_storage.primary.disk_type",
-				"block_storage.primary.raid_type",
-				"hidden_field1",
-				"hidden_field2",
 			},
 		},
 	}
