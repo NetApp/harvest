@@ -8,7 +8,7 @@ require (
 	github.com/rivo/uniseg v0.4.7
 	github.com/shirou/gopsutil/v4 v4.24.9
 	github.com/spf13/cobra v1.8.1
-	github.com/tidwall/gjson v1.17.3
+	github.com/tidwall/gjson v1.18.0
 	github.com/zekroTJA/timedmap/v2 v2.0.0
 	golang.org/x/sys v0.25.0
 	golang.org/x/term v0.24.0
@@ -25,7 +25,7 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20240513124658-fba389f38bae // indirect
+	github.com/lufia/plan9stats v0.0.0-20240909124753-873cd0166683 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
