@@ -132,7 +132,9 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 	response := ScriptResponse{}
 	lookPath, err := exec.LookPath(cmdPath)
 	if err != nil {
-		return response, fmt.Errorf("script lookup failed kind=%s err=%w", kind, err)
+		c.logger.Debug("Failed to find script", slog.Any("err", err), slog.String("script", cmdPath), slog.String("kind", kind))
+		// Don't return the error, err, since it may contain credentials
+		return response, fmt.Errorf("script lookup failed kind=%s", kind)
 	}
 	if timeout == "" {
 		timeout = defaultTimeout
