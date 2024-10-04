@@ -101,8 +101,11 @@ func (b *HrefBuilder) Build() string {
 	}
 
 	if len(strings.Join(b.fields, ",")) > URLMaxLimit {
-		slog.Info("converting to * due to URL max limit")
-		b.fields = []string{"*"}
+		b.fields = append([]string{"*"}, b.hiddenFields...)
+		if len(strings.Join(b.fields, ",")) > URLMaxLimit {
+			slog.Info("converting to * due to URL max limit")
+			b.fields = []string{"*"}
+		}
 	}
 
 	// Sort fields so that the href is deterministic

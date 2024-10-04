@@ -31,7 +31,7 @@ func TestBuild(t *testing.T) {
 		testFields = append(testFields, "Test"+strconv.Itoa(i))
 	}
 
-	expectedHrefTest2 := "api/storage/volumes?return_records=true&fields=*&return_timeout=10&ignore_unknown_fields=true"
+	expectedHrefTest2 := "api/storage/volumes?return_records=true&fields=*,statistics&return_timeout=10&ignore_unknown_fields=true"
 	hrefTest2 := NewHrefBuilder().
 		APIPath(testQuery).
 		Fields(testFields).
