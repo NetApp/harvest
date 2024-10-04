@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Sep-24
+Creation Date : 2024-Oct-03
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -9911,16 +9911,6 @@ This refers to the average latency for workloads within the subsystems of Data O
 | ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/zapiperf/9.12.0/workload_detail.yaml | 
 
 
-### qos_detail_service_time_latency
-
-This refers to the average service time for workload within the subsystems of the Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. This latency is the processing time within the subsystem.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.12.0/workload_detail.yaml | 
-| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/zapiperf/9.12.0/workload_detail.yaml | 
-
-
 ### qos_latency
 
 This is the average response time for requests that were initiated by the workload.
@@ -10839,16 +10829,6 @@ Average latency for SMB2_COM_CLOSE operations
 | ZAPI | `perf-object-get-instances smb2` | `close_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
-### smb2_close_latency_histogram
-
-Latency histogram for SMB2_COM_CLOSE operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `close_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `close_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
 ### smb2_close_ops
 
 Number of SMB2_COM_CLOSE operations
@@ -10869,16 +10849,6 @@ Average latency for SMB2_COM_CREATE operations
 | ZAPI | `perf-object-get-instances smb2` | `create_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
-### smb2_create_latency_histogram
-
-Latency histogram for SMB2_COM_CREATE operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `create_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `create_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
 ### smb2_create_ops
 
 Number of SMB2_COM_CREATE operations
@@ -10897,16 +10867,6 @@ Average latency for SMB2_COM_LOCK operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `lock_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock_ops | conf/restperf/9.14.1/smb2.yaml | 
 | ZAPI | `perf-object-get-instances smb2` | `lock_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
-### smb2_lock_latency_histogram
-
-Latency histogram for SMB2_COM_LOCK operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `lock_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `lock_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
 ### smb2_lock_ops
@@ -10949,16 +10909,6 @@ Average latency for SMB2_COM_OPLOCK_BREAK operations
 | ZAPI | `perf-object-get-instances smb2` | `oplock_break_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> oplock_break_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
-### smb2_oplock_break_latency_histogram
-
-Latency histogram for SMB2_COM_OPLOCK_BREAK operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `oplock_break_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `oplock_break_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
 ### smb2_oplock_break_ops
 
 Number of SMB2_COM_OPLOCK_BREAK operations
@@ -10979,16 +10929,6 @@ Average latency for SMB2_COM_QUERY_DIRECTORY operations
 | ZAPI | `perf-object-get-instances smb2` | `query_directory_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_directory_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
-### smb2_query_directory_latency_histogram
-
-Latency histogram for SMB2_COM_QUERY_DIRECTORY operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `query_directory_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `query_directory_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
 ### smb2_query_directory_ops
 
 Number of SMB2_COM_QUERY_DIRECTORY operations
@@ -11007,16 +10947,6 @@ Average latency for SMB2_COM_QUERY_INFO operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `query_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_info_ops | conf/restperf/9.14.1/smb2.yaml | 
 | ZAPI | `perf-object-get-instances smb2` | `query_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_info_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
-### smb2_query_info_latency_histogram
-
-Latency histogram for SMB2_COM_QUERY_INFO operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `query_info_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `query_info_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
 ### smb2_query_info_ops
@@ -11059,16 +10989,6 @@ Average latency for SMB2_COM_SESSION_SETUP operations
 | ZAPI | `perf-object-get-instances smb2` | `session_setup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> session_setup_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
-### smb2_session_setup_latency_histogram
-
-Latency histogram for SMB2_COM_SESSION_SETUP operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `session_setup_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `session_setup_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
 ### smb2_session_setup_ops
 
 Number of SMB2_COM_SESSION_SETUP operations
@@ -11087,16 +11007,6 @@ Average latency for SMB2_COM_SET_INFO operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `set_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_info_ops | conf/restperf/9.14.1/smb2.yaml | 
 | ZAPI | `perf-object-get-instances smb2` | `set_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_info_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
-
-
-### smb2_set_info_latency_histogram
-
-Latency histogram for SMB2_COM_SET_INFO operations
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/smb2` | `set_info_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml | 
-| ZAPI | `perf-object-get-instances smb2` | `set_info_latency_histogram`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml | 
 
 
 ### smb2_set_info_ops
