@@ -1,14 +1,18 @@
 package rest
 
 import (
+	"log/slog"
 	"slices"
 	"strconv"
 	"strings"
 )
 
+const URLMaxLimit = 8 * 1024
+
 type HrefBuilder struct {
 	apiPath                      string
 	fields                       []string
+	hiddenFields                 []string
 	counterSchema                string
 	filter                       []string
 	queryFields                  string
@@ -29,6 +33,11 @@ func (b *HrefBuilder) APIPath(apiPath string) *HrefBuilder {
 
 func (b *HrefBuilder) Fields(fields []string) *HrefBuilder {
 	b.fields = fields
+	return b
+}
+
+func (b *HrefBuilder) HiddenFields(hiddenFields []string) *HrefBuilder {
+	b.hiddenFields = hiddenFields
 	return b
 }
 
@@ -75,6 +84,31 @@ func (b *HrefBuilder) Build() string {
 	href.WriteString(b.apiPath)
 
 	href.WriteString("?return_records=true")
+
+	if len(b.hiddenFields) > 0 {
+		fieldsMap := make(map[string]bool)
+		for _, field := range b.fields {
+			fieldsMap[field] = true
+		}
+
+		// append hidden fields
+		for _, hiddenField := range b.hiddenFields {
+			if _, exists := fieldsMap[hiddenField]; !exists {
+				b.fields = append(b.fields, hiddenField)
+				fieldsMap[hiddenField] = true
+			}
+		}
+	}
+
+	if len(strings.Join(b.fields, ",")) > URLMaxLimit {
+		b.fields = append([]string{"*"}, b.hiddenFields...)
+		if len(strings.Join(b.fields, ",")) > URLMaxLimit {
+			slog.Info("fields converting to * due to URL max limit")
+			b.fields = []string{"*"}
+		} else {
+			slog.Info("fields converting to *,hiddenFields due to URL max limit")
+		}
+	}
 
 	// Sort fields so that the href is deterministic
 	slices.Sort(b.fields)
