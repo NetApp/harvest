@@ -103,8 +103,10 @@ func (b *HrefBuilder) Build() string {
 	if len(strings.Join(b.fields, ",")) > URLMaxLimit {
 		b.fields = append([]string{"*"}, b.hiddenFields...)
 		if len(strings.Join(b.fields, ",")) > URLMaxLimit {
-			slog.Info("converting to * due to URL max limit")
+			slog.Info("fields converting to * due to URL max limit")
 			b.fields = []string{"*"}
+		} else {
+			slog.Info("fields converting to *,hiddenFields due to URL max limit")
 		}
 	}
 
