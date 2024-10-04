@@ -73,6 +73,7 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	href := rest.NewHrefBuilder().
 		APIPath(o.query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(o.client, href, o.SLogger); err != nil {

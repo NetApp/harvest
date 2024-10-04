@@ -2,6 +2,7 @@ package disk
 
 import (
 	"context"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -208,9 +209,10 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	href := rest.NewHrefBuilder().
 		APIPath(d.query).
 		Fields([]string{"*"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	records, err := rest.Fetch(d.client, href)
+	records, err := rest.FetchAll(d.client, href)
 	if err != nil {
 		d.SLogger.Error("Failed to fetch shelfData", slog.Any("err", err), slog.String("href", href))
 		return nil, nil, err
@@ -531,10 +533,11 @@ func (d *Disk) getDisks() error {
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
+		MaxRecords(collectors.DefaultBatchSize).
 		Fields([]string{"name", "uid", "shelf.uid", "type", "aggregates"}).
 		Build()
 
-	records, err := rest.Fetch(d.client, href)
+	records, err := rest.FetchAll(d.client, href)
 	if err != nil {
 		d.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err
@@ -589,10 +592,11 @@ func (d *Disk) getAggregates() error {
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
+		MaxRecords(collectors.DefaultBatchSize).
 		Fields([]string{"aggregate", "composite", "node", "uses_shared_disks", "storage_type"}).
 		Build()
 
-	records, err := rest.Fetch(d.client, href)
+	records, err := rest.FetchAll(d.client, href)
 	if err != nil {
 		d.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err

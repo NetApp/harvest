@@ -17,7 +17,7 @@ type HrefBuilder struct {
 	filter                       []string
 	queryFields                  string
 	queryValue                   string
-	maxRecords                   *int
+	maxRecords                   string
 	returnTimeout                *int
 	isIgnoreUnknownFieldsEnabled bool
 }
@@ -61,7 +61,7 @@ func (b *HrefBuilder) QueryValue(queryValue string) *HrefBuilder {
 	return b
 }
 
-func (b *HrefBuilder) MaxRecords(maxRecords *int) *HrefBuilder {
+func (b *HrefBuilder) MaxRecords(maxRecords string) *HrefBuilder {
 	b.maxRecords = maxRecords
 	return b
 }
@@ -119,13 +119,20 @@ func (b *HrefBuilder) Build() string {
 	// Sort filters so that the href is deterministic
 	slices.Sort(b.filter)
 
+	hasMaxRecords := false
+
 	for _, f := range b.filter {
+		if strings.Contains(f, "max_records") {
+			hasMaxRecords = true
+		}
 		addArg(&href, "&", f)
 	}
 	addArg(&href, "&query_fields=", b.queryFields)
 	addArg(&href, "&query=", b.queryValue)
-	if b.maxRecords != nil {
-		addArg(&href, "&max_records=", strconv.Itoa(*b.maxRecords))
+
+	// Only add max_records if a filter has not already added it
+	if !hasMaxRecords && b.maxRecords != "" {
+		addArg(&href, "&max_records=", b.maxRecords)
 	}
 	if b.returnTimeout != nil {
 		addArg(&href, "&return_timeout=", strconv.Itoa(*b.returnTimeout))

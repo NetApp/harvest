@@ -72,7 +72,7 @@ func InvokeRestCallWithTestFile(client *rest.Client, href string, logger *slog.L
 }
 
 func InvokeRestCall(client *rest.Client, href string, logger *slog.Logger) ([]gjson.Result, error) {
-	result, err := rest.Fetch(client, href)
+	result, err := rest.FetchAll(client, href)
 	if err != nil {
 		logger.Error(
 			"Failed to fetch data",
@@ -101,20 +101,17 @@ func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *slog.Logger
 	query := "private/cli/cluster/date"
 	fields := []string{"date"}
 
-	maxRecords := 1
-
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
-		MaxRecords(&maxRecords).
 		ReturnTimeout(returnTimeOut).
 		Build()
 
-	if records, err = rest.Fetch(client, href); err != nil {
+	if records, err = rest.FetchSome(client, href, 1, DefaultBatchSize); err != nil {
 		return clusterTime, err
 	}
 	if len(records) == 0 {
-		return clusterTime, errs.New(errs.ErrConfig, " date not found on cluster")
+		return clusterTime, errs.New(errs.ErrConfig, "date not found on cluster")
 	}
 
 	for _, instanceData := range records {
