@@ -12,7 +12,6 @@ func TestBuild(t *testing.T) {
 	testHiddenFields := []string{"statistics"}
 	testFilter := []string{""}
 	testReturnTimeout := 10
-	isIgnoreUnknownFieldsEnabled := true
 	expectedHrefTest1 := "api/storage/volumes?return_records=true&fields=name,statistics,svm&return_timeout=10&ignore_unknown_fields=true"
 	hrefTest1 := NewHrefBuilder().
 		APIPath(testQuery).
@@ -20,7 +19,7 @@ func TestBuild(t *testing.T) {
 		HiddenFields(testHiddenFields).
 		Filter(testFilter).
 		ReturnTimeout(&testReturnTimeout).
-		IsIgnoreUnknownFieldsEnabled(isIgnoreUnknownFieldsEnabled).
+		IsIgnoreUnknownFieldsEnabled(true).
 		Build()
 
 	if hrefTest1 != expectedHrefTest1 {
@@ -28,18 +27,18 @@ func TestBuild(t *testing.T) {
 	}
 
 	testFields = make([]string, 0)
-	for i := range 100000000 {
+	for i := range URLMaxLimit / len("Test") {
 		testFields = append(testFields, "Test"+strconv.Itoa(i))
 	}
 
-	expectedHrefTest2 := "api/storage/volumes?return_records=true&fields=*,statistics&return_timeout=10&ignore_unknown_fields=true"
+	expectedHrefTest2 := "api/storage/volumes?return_records=true&fields=*&return_timeout=10&ignore_unknown_fields=true"
 	hrefTest2 := NewHrefBuilder().
 		APIPath(testQuery).
 		Fields(testFields).
 		HiddenFields(testHiddenFields).
 		Filter(testFilter).
 		ReturnTimeout(&testReturnTimeout).
-		IsIgnoreUnknownFieldsEnabled(isIgnoreUnknownFieldsEnabled).
+		IsIgnoreUnknownFieldsEnabled(true).
 		Build()
 
 	if hrefTest2 != expectedHrefTest2 {

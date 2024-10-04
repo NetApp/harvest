@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"fmt"
+	"log/slog"
 	"slices"
 	"strconv"
 	"strings"
@@ -85,11 +85,6 @@ func (b *HrefBuilder) Build() string {
 
 	href.WriteString("?return_records=true")
 
-	if len(strings.Join(b.fields, ",")) > URLMaxLimit {
-		fmt.Printf("converting to * due to URL max limit")
-		b.fields = []string{"*"}
-	}
-
 	if len(b.hiddenFields) > 0 {
 		fieldsMap := make(map[string]bool)
 		for _, field := range b.fields {
@@ -103,6 +98,11 @@ func (b *HrefBuilder) Build() string {
 				fieldsMap[hiddenField] = true
 			}
 		}
+	}
+
+	if len(strings.Join(b.fields, ",")) > URLMaxLimit {
+		slog.Info("converting to * due to URL max limit")
+		b.fields = []string{"*"}
 	}
 
 	// Sort fields so that the href is deterministic
