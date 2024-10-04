@@ -1,0 +1,16 @@
+name:                     Node
+query:                    api/cluster/nodes
+object:                   node
+
+counters:
+  - ^^uuid                                                                                => uuid
+  - ^name                                                                                 => node
+  - ^statistics.status                                                                    => status
+  - statistics.processor_utilization_raw                                                  => avg_processor_busy
+  - statistics.timestamp(timestamp)                                                       => timestamp
+  - hidden_fields:
+      - statistics
+
+export_options:
+  instance_keys:
+    - node

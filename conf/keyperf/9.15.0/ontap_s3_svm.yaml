@@ -1,12 +1,11 @@
-name:                     Volume
-query:                    api/storage/volumes
-object:                   volume
+name:                     OntapS3SVM
+query:                    api/protocols/s3/services
+object:                   ontaps3_svm
 
 counters:
-  - ^^name                                => volume
   - ^^svm.name                            => svm
+  - ^name                                 => name
   - ^statistics.status                    => status
-  - ^style                                => style
   - statistics.iops_raw.other             => other_ops
   - statistics.iops_raw.read              => read_ops
   - statistics.iops_raw.total             => total_ops
@@ -15,7 +14,6 @@ counters:
   - statistics.latency_raw.read           => read_latency
   - statistics.latency_raw.total          => total_latency
   - statistics.latency_raw.write          => write_latency
-  - statistics.throughput_raw.other       => other_data
   - statistics.throughput_raw.read        => read_data
   - statistics.throughput_raw.total       => total_data
   - statistics.throughput_raw.write       => write_data
@@ -23,24 +21,7 @@ counters:
   - hidden_fields:
       - statistics
 
-endpoints:
-  - query: api/private/cli/volume
-    counters:
-      - ^^volume                          => volume
-      - ^^vserver                         => svm
-      - ^aggr_list                        => aggr
-      - ^nodes                            => node
-
-plugins:
-  - Aggregator:
-      # plugin will create summary/average for each object
-      # any names after the object names will be treated as label names that will be added to instances
-      - node
-
 export_options:
   instance_keys:
-    - aggr
-    - node
-    - style
+    - name
     - svm
-    - volume

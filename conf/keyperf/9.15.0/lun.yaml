@@ -1,0 +1,38 @@
+name:                     Lun
+query:                    api/storage/luns
+object:                   lun
+
+counters:
+  - ^^uuid                                => uuid
+  - ^location.volume.name                 => volume
+  - ^name                                 => path
+  - ^statistics.status                    => status
+  - ^svm.name                             => svm
+  - statistics.iops_raw.other             => other_ops
+  - statistics.iops_raw.read              => read_ops
+  - statistics.iops_raw.total             => total_ops
+  - statistics.iops_raw.write             => write_ops
+  - statistics.latency_raw.other          => other_latency
+  - statistics.latency_raw.read           => avg_read_latency
+  - statistics.latency_raw.total          => total_latency
+  - statistics.latency_raw.write          => avg_write_latency
+  - statistics.throughput_raw.other       => other_data
+  - statistics.throughput_raw.read        => read_data
+  - statistics.throughput_raw.total       => total_data
+  - statistics.throughput_raw.write       => write_data
+  - statistics.timestamp(timestamp)       => timestamp
+  - hidden_fields:
+      - statistics
+
+
+plugins:
+  LabelAgent:
+    split_regex:
+      - path `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` volume,lun
+      - path `^([^/]+)$` lun
+
+export_options:
+  instance_keys:
+    - lun
+    - svm
+    - volume

@@ -638,6 +638,8 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 						slog.Any("err", err),
 						slog.String("name", metric.Name),
 					)
+				} else {
+					metr.SetExportable(metric.Exportable)
 				}
 			}
 			f := instanceData.Get(metric.Name)

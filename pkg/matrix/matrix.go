@@ -528,3 +528,15 @@ func (m *Matrix) MultiplyByScalar(metricKey string, s uint) (int, error) {
 	}
 	return skips, nil
 }
+
+func (m *Matrix) Record(metricKey string, record bool) int {
+	var skips int
+	metric := m.GetMetric(metricKey)
+	for i := range len(metric.values) {
+		metric.record[i] = record
+		if !record {
+			skips++
+		}
+	}
+	return skips
+}
