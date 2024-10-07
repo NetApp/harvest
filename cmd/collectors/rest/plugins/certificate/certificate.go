@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	ontap "github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"log/slog"
@@ -39,7 +40,7 @@ func (c *Certificate) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if c.client, err = rest.New(conf.ZapiPoller(c.ParentParams), timeout, c.Auth); err != nil {
-		c.SLogger.Error("connecting", slog.Any("err", err))
+		c.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -71,9 +72,9 @@ func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		// invoke private vserver cli rest and get admin vserver name
 		if adminVserver, err = c.GetAdminVserver(); err != nil {
 			if ontap.IsRestErr(err, ontap.APINotFound) {
-				c.SLogger.Debug("Failed to collect admin SVM", slog.Any("err", err))
+				c.SLogger.Debug("Failed to collect admin SVM", slogx.Err(err))
 			} else {
-				c.SLogger.Error("Failed to collect admin SVM", slog.Any("err", err))
+				c.SLogger.Error("Failed to collect admin SVM", slogx.Err(err))
 			}
 			return nil, nil, nil
 		}
@@ -81,9 +82,9 @@ func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		// invoke private ssl cli rest and get the admin SVM's serial number
 		if adminVserverSerial, err = c.GetSecuritySsl(adminVserver); err != nil {
 			if ontap.IsRestErr(err, ontap.APINotFound) {
-				c.SLogger.Debug("Failed to collect admin SVM's serial number", slog.Any("err", err))
+				c.SLogger.Debug("Failed to collect admin SVM's serial number", slogx.Err(err))
 			} else {
-				c.SLogger.Error("Failed to collect admin SVM's serial number", slog.Any("err", err))
+				c.SLogger.Error("Failed to collect admin SVM's serial number", slogx.Err(err))
 			}
 			return nil, nil, nil
 		}
@@ -145,7 +146,7 @@ func (c *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
 		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
 			c.SLogger.Warn(
 				"PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed",
-				slog.Any("err", err),
+				slogx.Err(err),
 			)
 			instance.SetLabel("certificateIssuerType", "unknown")
 			return

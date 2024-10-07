@@ -5,6 +5,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"regexp"
 )
@@ -45,7 +46,7 @@ func (g *Mgr) Import() (bool, string) {
 		importOutput, err = utils.Exec(installer.HarvestHome, "bin/harvest", nil, importCmds...)
 	}
 	if err != nil {
-		slog.Error("error", slog.Any("err", err))
+		slog.Error("error", slogx.Err(err))
 		panic(err)
 	}
 	if re.MatchString(importOutput) {

@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -235,7 +236,7 @@ func (e *Ems) InitCache() error {
 			}
 			if line1.GetNameS() == "plugins" {
 				if err := e.LoadPlugins(line1, e, prop.Name); err != nil {
-					e.Logger.Error("Failed to load plugin", slog.Any("err", err))
+					e.Logger.Error("Failed to load plugin", slogx.Err(err))
 				}
 			}
 			if line1.GetNameS() == "resolve_when_ems" {
@@ -259,7 +260,7 @@ func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 		if err != nil {
 			e.Logger.Warn(
 				"Failed to parse duration. using default",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("defaultDataPollDuration", defaultDataPollDuration.String()),
 			)
 		}
@@ -528,7 +529,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							if err = metr.SetValueFloat64(instance, 0); err != nil {
 								e.Logger.Error(
 									"Unable to set float key on metric",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("key", "events"),
 								)
 								continue
@@ -576,7 +577,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 
 					if instance == nil {
 						if instance, err = mx.NewInstance(instanceKey); err != nil {
-							e.Logger.Error("", slog.Any("err", err), slog.String("instanceKey", instanceKey))
+							e.Logger.Error("", slogx.Err(err), slog.String("instanceKey", instanceKey))
 							continue
 						}
 					}
@@ -646,7 +647,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						if !ok {
 							if metr, err = mx.NewMetricFloat64(metric.Name); err != nil {
 								e.Logger.Error("failed to get metric",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("name", metric.Name),
 								)
 								continue
@@ -657,7 +658,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						case metric.Name == "events":
 							if err = metr.SetValueFloat64(instance, 1); err != nil {
 								e.Logger.Error("Unable to set float key on metric",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("key", metric.Name),
 									slog.String("metric", metric.Label),
 								)
@@ -665,7 +666,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						case metric.Name == "timestamp":
 							if err = metr.SetValueFloat64(instance, float64(time.Now().UnixMicro())); err != nil {
 								e.Logger.Error("Unable to set timestamp on metric",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("key", metric.Name),
 									slog.String("metric", metric.Label),
 								)
@@ -767,7 +768,7 @@ func (e *Ems) updateMatrix(begin time.Time) {
 					if err := eventMetric.SetValueFloat64(instance, 0); err != nil {
 						e.Logger.Error(
 							"Unable to set float key on metric",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("key", "events"),
 						)
 						continue

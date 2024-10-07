@@ -43,6 +43,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"strconv"
@@ -467,7 +468,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		startIndex = endIndex
 
 		if err = z.Client.BuildRequest(request); err != nil {
-			z.Logger.Error("Build request", slog.Any("err", err), slog.String("objectname", z.Query))
+			z.Logger.Error("Build request", slogx.Err(err), slog.String("objectname", z.Query))
 			return nil, err
 		}
 
@@ -478,7 +479,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if strings.Contains(errMsg, "resource limit exceeded") && z.batchSize > 100 {
 				z.Logger.Error(
 					"Changed batch_size",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.Int("oldBatchSize", z.batchSize),
 					slog.Int("newBatchSize", z.batchSize-100),
 				)
@@ -487,7 +488,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			} else if strings.Contains(errMsg, "timeout: operation") && z.batchSize > 100 {
 				z.Logger.Error(
 					"ONTAP timeout, reducing batch size",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.Int("oldBatchSize", z.batchSize),
 					slog.Int("newBatchSize", z.batchSize-100),
 				)
@@ -571,7 +572,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 			// add batch timestamp as custom counter
 			if err := timestamp.SetValueFloat64(instance, ts); err != nil {
-				z.Logger.Error("set timestamp value", slog.Any("err", err))
+				z.Logger.Error("set timestamp value", slogx.Err(err))
 			}
 
 			for _, cnt := range counters.GetChildren() {
@@ -615,7 +616,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 							if err = metric.SetValueString(instance, values[i]); err != nil {
 								z.Logger.Error(
 									"Set histogram value failed",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("name", name),
 									slog.String("label", label),
 									slog.String("value", values[i]),
@@ -647,7 +648,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 							if err := wMetric.AddValueString(instance, value); err != nil {
 								z.Logger.Error(
 									"Add resource_latency failed",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("name", name),
 									slog.String("value", value),
 									slog.Int("instIndex", instIndex),
@@ -660,7 +661,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 							if err = wMetric.SetValueString(instance, value); err != nil {
 								z.Logger.Error(
 									"Add service_time_latency failed",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("name", name),
 									slog.String("value", value),
 									slog.Int("instIndex", instIndex),
@@ -672,7 +673,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 							if err = wMetric.SetValueString(instance, value); err != nil {
 								z.Logger.Error(
 									"Add wait_time_latency failed",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("name", name),
 									slog.String("value", value),
 									slog.Int("instIndex", instIndex),
@@ -690,7 +691,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 					if err = metric.SetValueString(instance, value); err != nil {
 						z.Logger.Error(
 							"Set metric failed",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("name", name),
 							slog.String("value", value),
 							slog.Int("instIndex", instIndex),
@@ -765,7 +766,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
 	if _, err = curMat.Delta(timestampMetricName, prevMat, z.Logger); err != nil {
-		z.Logger.Error("(timestamp) calculate delta:", slog.Any("err", err))
+		z.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 		// @TODO terminate since other counters will be incorrect
 	}
 
@@ -784,7 +785,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		// all other properties - first calculate delta
 		if skips, err = curMat.Delta(key, prevMat, z.Logger); err != nil {
-			z.Logger.Error("Calculate delta", slog.Any("err", err), slog.String("key", key))
+			z.Logger.Error("Calculate delta", slogx.Err(err), slog.String("key", key))
 			continue
 		}
 		totalSkips += skips
@@ -838,7 +839,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			if err != nil {
-				z.Logger.Error("Division by base", slog.Any("err", err), slog.String("key", key))
+				z.Logger.Error("Division by base", slogx.Err(err), slog.String("key", key))
 			}
 			totalSkips += skips
 
@@ -849,7 +850,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		if property == "percent" {
 			if skips, err = curMat.MultiplyByScalar(key, 100); err != nil {
-				z.Logger.Error("Multiply by scalar", slog.Any("err", err), slog.String("key", key))
+				z.Logger.Error("Multiply by scalar", slogx.Err(err), slog.String("key", key))
 			} else {
 				totalSkips += skips
 			}
@@ -857,7 +858,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 		z.Logger.Error(
 			"Unknown property",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("key", key),
 			slog.String("property", property),
 		)
@@ -869,7 +870,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
 				z.Logger.Error(
 					"Calculate rate",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.Int("i", i),
 					slog.String("key", orderedKeys[i]),
 				)
@@ -1017,7 +1018,7 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, keyAttr string) (ti
 					if err = ops.SetValueString(instance, value); err != nil {
 						z.Logger.Error(
 							"set metric value",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("name", name),
 							slog.String("value", value),
 						)
@@ -1212,7 +1213,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	if !oldMetrics.Has(timestampMetricName) {
 		m, err := mat.NewMetricFloat64(timestampMetricName)
 		if err != nil {
-			z.Logger.Error("add timestamp metric", slog.Any("err", err))
+			z.Logger.Error("add timestamp metric", slogx.Err(err))
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
@@ -1422,7 +1423,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 				if err != nil {
 					z.Logger.Error(
 						"unable to create histogram metric",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("key", key),
 					)
 					return ""
@@ -1454,7 +1455,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 				if err != nil {
 					z.Logger.Error(
 						"unable to create array metric",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("key", key),
 					)
 					return ""
@@ -1490,7 +1491,7 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 			if err != nil {
 				z.Logger.Error(
 					"unable to create scalar metric",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("name", name),
 				)
 				return ""
@@ -1619,7 +1620,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 			} else {
 				z.Logger.Error(
 					"InvokeBatchRequest failed",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("request", request.GetNameS()),
 					slog.String("batchTag", batchTag),
 				)
@@ -1665,7 +1666,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				z.updateQosLabels(i, instance, key)
 				continue
 			} else if instance, err := mat.NewInstance(key); err != nil {
-				z.Logger.Error("add instance", slog.Any("err", err))
+				z.Logger.Error("add instance", slogx.Err(err))
 			} else {
 				z.updateQosLabels(i, instance, key)
 			}

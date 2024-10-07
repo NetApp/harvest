@@ -5,6 +5,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"os"
 	"sort"
@@ -28,7 +29,7 @@ func TestPollerMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
 	_, err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	if err != nil {
-		slog.Error("Unable to load harvest config", slog.Any("err", err))
+		slog.Error("Unable to load harvest config", slogx.Err(err))
 		os.Exit(1)
 	}
 	var duplicateMetrics []string

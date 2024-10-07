@@ -6,6 +6,7 @@ package zapi
 
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -116,7 +117,7 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 		if err != nil {
 			z.Logger.Error(
 				"Failed to add metric",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("key", key),
 				slog.String("display", display),
 			)

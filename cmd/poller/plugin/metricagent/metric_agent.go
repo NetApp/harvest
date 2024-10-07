@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strconv"
@@ -69,7 +70,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 	for _, r := range a.computeMetricRules {
 		if metric = a.getMetric(m, r.metric); metric == nil {
 			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
-				a.SLogger.Error("Failed to create metric", slog.Any("err", err), slog.String("metric", r.metric))
+				a.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", r.metric))
 				return err
 			}
 			metric.SetProperty("compute_metric mapping")
@@ -86,7 +87,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 					continue
 				}
 			} else {
-				a.SLogger.Warn("computeMetrics: metric not found", slog.Any("err", err), slog.String("metricName", r.metricNames[0]))
+				a.SLogger.Warn("computeMetrics: metric not found", slogx.Err(err), slog.String("metricName", r.metricNames[0]))
 			}
 
 			// Parse other operands and process them

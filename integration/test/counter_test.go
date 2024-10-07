@@ -8,6 +8,7 @@ import (
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -45,13 +46,13 @@ func TestCounters(t *testing.T) {
 	utils.SkipIfMissing(t, utils.Regression)
 	_, err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	if err != nil {
-		slog.Error("Unable to load harvest config", slog.Any("err", err))
+		slog.Error("Unable to load harvest config", slogx.Err(err))
 		os.Exit(1)
 	}
 
 	pollerName := "dc1"
 	if poller, err = conf.PollerNamed(pollerName); err != nil {
-		slog.Error("", slog.Any("err", err), slog.String("poller", pollerName))
+		slog.Error("", slogx.Err(err), slog.String("poller", pollerName))
 		os.Exit(1)
 	}
 	if poller.Addr == "" {
@@ -63,20 +64,20 @@ func TestCounters(t *testing.T) {
 	if client, err = rest2.New(poller, timeout, auth.NewCredentials(poller, slog.Default())); err != nil {
 		slog.Error(
 			"error creating new client",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("poller", pollerName),
 		)
 		os.Exit(1)
 	}
 
 	if err = client.Init(5); err != nil {
-		slog.Error("client init failed", slog.Any("err", err))
+		slog.Error("client init failed", slogx.Err(err))
 		os.Exit(1)
 	}
 
 	restCounters := processRestCounters(client)
 	if err = invokeRestCall(client, restCounters); err != nil {
-		slog.Error("rest call failed", slog.Any("err", err))
+		slog.Error("rest call failed", slogx.Err(err))
 		os.Exit(1)
 	}
 
@@ -118,7 +119,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 	result := make(map[string][]counterData)
 	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
-			slog.Error("failed to read directory:", slog.Any("err", err))
+			slog.Error("failed to read directory:", slogx.Err(err))
 			os.Exit(1)
 		}
 		ext := filepath.Ext(path)
@@ -141,7 +142,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 	})
 
 	if err != nil {
-		slog.Error("failed to walk directory", slog.Any("err", err), slog.String("dir", dir))
+		slog.Error("failed to walk directory", slogx.Err(err), slog.String("dir", dir))
 		os.Exit(1)
 	}
 

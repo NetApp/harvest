@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"net/http"
@@ -448,7 +449,7 @@ func (s *Sensor) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
-		s.SLogger.Error("connecting", slog.Any("err", err))
+		s.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -473,7 +474,7 @@ func (s *Sensor) Init() error {
 	for _, k := range eMetrics {
 		err := matrix.CreateMetric(k, s.data)
 		if err != nil {
-			s.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", k))
+			s.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
 		}
 	}
 	return nil

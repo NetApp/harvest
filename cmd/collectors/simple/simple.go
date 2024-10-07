@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"os"
@@ -43,7 +44,7 @@ func (n *NodeMon) Init(a *collector.AbstractCollector) error {
 	// load list of counters from template
 	if counters := n.Params.GetChildS("counters"); counters != nil {
 		if err = n.loadMetrics(counters); err != nil {
-			n.Logger.Error("load metrics", slog.Any("err", err))
+			n.Logger.Error("load metrics", slogx.Err(err))
 			return err
 		}
 	} else {
@@ -119,7 +120,7 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 		if err != nil {
 			n.Logger.Error(
 				"initializing metric cache",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("key", key),
 			)
 		}

@@ -11,9 +11,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
-	"log/slog"
 	"regexp"
 	"sort"
 	"strconv"
@@ -58,7 +58,7 @@ func (s *SVM) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
-		s.SLogger.Error("connecting", slog.Any("err", err))
+		s.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -85,45 +85,45 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 	// update nsswitch info
 	if s.nsswitchInfo, err = s.GetNSSwitchInfo(data); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			s.SLogger.Debug("Failed to collect nsswitch info", slog.Any("err", err))
+			s.SLogger.Debug("Failed to collect nsswitch info", slogx.Err(err))
 		} else {
-			s.SLogger.Warn("Failed to collect nsswitch info", slog.Any("err", err))
+			s.SLogger.Warn("Failed to collect nsswitch info", slogx.Err(err))
 		}
 	}
 
 	// invoke api/protocols/nfs/kerberos/interfaces rest and get nfs_kerberos_protocol_enabled
 	if s.kerberosInfo, err = s.GetKerberosConfig(); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			s.SLogger.Debug("Failed to collect kerberos config", slog.Any("err", err))
+			s.SLogger.Debug("Failed to collect kerberos config", slogx.Err(err))
 		} else {
-			s.SLogger.Error("Failed to collect kerberos config", slog.Any("err", err))
+			s.SLogger.Error("Failed to collect kerberos config", slogx.Err(err))
 		}
 	}
 
 	// invoke api/protocols/fpolicy rest and get fpolicy_enabled, fpolicy_name
 	if s.fpolicyInfo, err = s.GetFpolicy(); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			s.SLogger.Debug("Failed to collect fpolicy info", slog.Any("err", err))
+			s.SLogger.Debug("Failed to collect fpolicy info", slogx.Err(err))
 		} else {
-			s.SLogger.Error("Failed to collect fpolicy info", slog.Any("err", err))
+			s.SLogger.Error("Failed to collect fpolicy info", slogx.Err(err))
 		}
 	}
 
 	// invoke api/protocols/san/iscsi/services rest and get iscsi_service_enabled
 	if s.iscsiServiceInfo, err = s.GetIscsiServices(); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			s.SLogger.Debug("Failed to collect iscsi service info", slog.Any("err", err))
+			s.SLogger.Debug("Failed to collect iscsi service info", slogx.Err(err))
 		} else {
-			s.SLogger.Error("Failed to collect iscsi service info", slog.Any("err", err))
+			s.SLogger.Error("Failed to collect iscsi service info", slogx.Err(err))
 		}
 	}
 
 	// invoke api/protocols/san/iscsi/credentials rest and get iscsi_authentication_type
 	if s.iscsiCredentialInfo, err = s.GetIscsiCredentials(); err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			s.SLogger.Debug("Failed to collect iscsi credential info", slog.Any("err", err))
+			s.SLogger.Debug("Failed to collect iscsi credential info", slogx.Err(err))
 		} else {
-			s.SLogger.Error("Failed to collect iscsi credential info", slog.Any("err", err))
+			s.SLogger.Error("Failed to collect iscsi credential info", slogx.Err(err))
 		}
 	}
 

@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"log/slog"
@@ -29,7 +30,7 @@ func (b *Bucket) Init() error {
 
 	clientTimeout := b.ParentParams.GetChildContentS("client_timeout")
 	if b.client, err = rest.NewClient(b.Options.Poller, clientTimeout, b.Auth); err != nil {
-		b.SLogger.Error("connecting", slog.Any("err", err))
+		b.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -70,7 +71,7 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		tenantName := inst.GetLabel("tenant")
 		if err != nil {
 			b.SLogger.Error("Unable to fetch bucket details",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("id", instKey),
 				slog.String("tenantName", tenantName),
 			)
@@ -107,7 +108,7 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 						if err = m.SetValueString(bucketInstance, value.String()); err != nil {
 							b.SLogger.Error(
 								"Unable to set float key on metric",
-								slog.Any("err", err),
+								slogx.Err(err),
 								slog.String("key", metricKey),
 								slog.String("metric", m.GetName()),
 								slog.String("value", value.String()),

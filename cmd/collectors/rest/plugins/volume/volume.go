@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -64,7 +65,7 @@ func (v *Volume) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
-		v.SLogger.Error("connecting", slog.Any("err", err))
+		v.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -79,7 +80,7 @@ func (v *Volume) Init() error {
 	v.arw.SetExportOptions(exportOptions)
 	_, err = v.arw.NewMetricFloat64("status", "status")
 	if err != nil {
-		v.SLogger.Error("add metric", slog.Any("err", err))
+		v.SLogger.Error("add metric", slogx.Err(err))
 		return err
 	}
 
@@ -103,9 +104,9 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		// invoke disk rest and populate info in aggrsMap
 		if disks, err := v.getEncryptedDisks(); err != nil {
 			if errs.IsRestErr(err, errs.APINotFound) {
-				v.SLogger.Debug("Failed to collect disk data", slog.Any("err", err))
+				v.SLogger.Debug("Failed to collect disk data", slogx.Err(err))
 			} else {
-				v.SLogger.Error("Failed to collect disk data", slog.Any("err", err))
+				v.SLogger.Error("Failed to collect disk data", slogx.Err(err))
 			}
 		} else {
 			// update aggrsMap based on disk data
@@ -115,7 +116,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	volumeMap, err := v.getVolumeInfo()
 	if err != nil {
-		v.SLogger.Error("Failed to collect volume info data", slog.Any("err", err))
+		v.SLogger.Error("Failed to collect volume info data", slogx.Err(err))
 	}
 
 	// update volume instance labels
@@ -133,7 +134,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
 	if cloneSplitEstimateMetric == nil {
 		if cloneSplitEstimateMetric, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
-			v.SLogger.Error("error while creating clone split estimate metric", slog.Any("err", err))
+			v.SLogger.Error("error while creating clone split estimate metric", slogx.Err(err))
 			return
 		}
 	}
@@ -160,7 +161,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 				if err = cloneSplitEstimateMetric.SetValueFloat64(volume, vInfo.cloneSplitEstimateMetric); err != nil {
 					v.SLogger.Error(
 						"error while setting value on metric",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("metric", "clone_split_estimate"),
 					)
 				}
@@ -215,7 +216,7 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 			if arwStartTimeValue, err = time.Parse(time.RFC3339, arwStartTime); err != nil {
 				v.SLogger.Error(
 					"Failed to parse arw start time",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("arwStartTime", arwStartTime),
 				)
 				arwStartTimeValue = time.Now()
@@ -232,7 +233,7 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	if arwInstance, err = v.arw.NewInstance(arwInstanceKey); err != nil {
 		v.SLogger.Error(
 			"Failed to create arw instance",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("arwInstanceKey", arwInstanceKey),
 		)
 		return
@@ -243,7 +244,7 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	// populate numeric data
 	value := 1.0
 	if err = m.SetValueFloat64(arwInstance, value); err != nil {
-		v.SLogger.Error("Failed to parse value", slog.Any("err", err), slog.Float64("value", value))
+		v.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
 	} else {
 		v.SLogger.Debug("added value", slog.Float64("value", value))
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/tidwall/gjson"
 	"log/slog"
 	"strconv"
@@ -329,7 +330,7 @@ func (kp *KeyPerf) pollData(
 		key := orderedKeys[i]
 		counter := counterMap[key]
 		if counter == nil {
-			kp.Logger.Error("Missing counter", slog.Any("err", err), slog.String("counter", metric.GetName()))
+			kp.Logger.Error("Missing counter", slogx.Err(err), slog.String("counter", metric.GetName()))
 			continue
 		}
 		property := counter.counterType
@@ -345,7 +346,7 @@ func (kp *KeyPerf) pollData(
 
 		// all other properties - first calculate delta
 		if skips, err = curMat.Delta(key, prevMat, kp.Logger); err != nil {
-			kp.Logger.Error("Calculate delta", slog.Any("err", err), slog.String("key", key))
+			kp.Logger.Error("Calculate delta", slogx.Err(err), slog.String("key", key))
 			continue
 		}
 		totalSkips += skips
@@ -392,7 +393,7 @@ func (kp *KeyPerf) pollData(
 			}
 
 			if err != nil {
-				kp.Logger.Error("Division by base", slog.Any("err", err), slog.String("key", key))
+				kp.Logger.Error("Division by base", slogx.Err(err), slog.String("key", key))
 				continue
 			}
 			totalSkips += skips
@@ -404,7 +405,7 @@ func (kp *KeyPerf) pollData(
 
 		if property == "percent" {
 			if skips, err = curMat.MultiplyByScalar(key, 100); err != nil {
-				kp.Logger.Error("Multiply by scalar", slog.Any("err", err), slog.String("key", key))
+				kp.Logger.Error("Multiply by scalar", slogx.Err(err), slog.String("key", key))
 			} else {
 				totalSkips += skips
 			}
@@ -432,7 +433,7 @@ func (kp *KeyPerf) pollData(
 			if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
 				kp.Logger.Error(
 					"Calculate rate",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.Int("i", i),
 					slog.String("key", key),
 					slog.Int("instIndex", instIndex),

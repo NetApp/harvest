@@ -20,6 +20,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -391,7 +392,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	if mat.GetMetric(timestampMetricName) == nil {
 		m, err := mat.NewMetricFloat64(timestampMetricName)
 		if err != nil {
-			r.Logger.Error("add timestamp metric", slog.Any("err", err))
+			r.Logger.Error("add timestamp metric", slogx.Err(err))
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
@@ -613,7 +614,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 			metr, ok := mat.GetMetrics()[name]
 			if !ok {
 				if metr, err = mat.NewMetricFloat64(name, metric.Label); err != nil {
-					r.Logger.Error("NewMetricFloat64", slog.Any("err", err), slog.String("name", name))
+					r.Logger.Error("NewMetricFloat64", slogx.Err(err), slog.String("name", name))
 				}
 			}
 			metr.SetExportable(metric.Exportable)
@@ -927,7 +928,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 								if err := wMetric.AddValueString(instance, f.value); err != nil {
 									r.Logger.Error(
 										"Add resource_latency failed",
-										slog.Any("err", err),
+										slogx.Err(err),
 										slog.String("name", name),
 										slog.String("value", f.value),
 									)
@@ -939,7 +940,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
 									r.Logger.Error(
 										"Add service_time_latency failed",
-										slog.Any("err", err),
+										slogx.Err(err),
 										slog.String("name", name),
 										slog.String("value", f.value),
 									)
@@ -950,7 +951,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 								if err = wMetric.SetValueString(instance, f.value); err != nil {
 									r.Logger.Error(
 										"Add wait_time_latency failed",
-										slog.Any("err", err),
+										slogx.Err(err),
 										slog.String("name", name),
 										slog.String("value", f.value),
 									)
@@ -985,7 +986,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							if err != nil {
 								r.Logger.Error(
 									"unable to create histogram metric",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("key", key),
 								)
 								continue
@@ -1003,7 +1004,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 								if metr, err = r.getMetric(curMat, prevMat, k, metric.Label); err != nil {
 									r.Logger.Error(
 										"NewMetricFloat64",
-										slog.Any("err", err),
+										slogx.Err(err),
 										slog.String("name", k),
 									)
 									continue
@@ -1028,7 +1029,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							if err = metr.SetValueString(instance, values[i]); err != nil {
 								r.Logger.Error(
 									"Set value failed",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("name", name),
 									slog.String("label", label),
 									slog.String("value", values[i]),
@@ -1044,7 +1045,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							if metr, err = r.getMetric(curMat, prevMat, name, metric.Label); err != nil {
 								r.Logger.Error(
 									"NewMetricFloat64",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("name", name),
 									slog.Int("instIndex", instIndex),
 								)
@@ -1055,7 +1056,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 							if err = metr.SetValueFloat64(instance, c); err != nil {
 								r.Logger.Error(
 									"Unable to set float key on metric",
-									slog.Any("err", err),
+									slogx.Err(err),
 									slog.String("key", metric.Name),
 									slog.String("metric", metric.Label),
 									slog.Int("instIndex", instIndex),
@@ -1064,7 +1065,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 						} else {
 							r.Logger.Error(
 								"Unable to parse float value",
-								slog.Any("err", err),
+								slogx.Err(err),
 								slog.String("key", metric.Name),
 								slog.String("metric", metric.Label),
 								slog.Int("instIndex", instIndex),
@@ -1077,7 +1078,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				}
 			}
 			if err = curMat.GetMetric(timestampMetricName).SetValueFloat64(instance, ts); err != nil {
-				r.Logger.Error("Failed to set timestamp", slog.Any("err", err))
+				r.Logger.Error("Failed to set timestamp", slogx.Err(err))
 			}
 
 			return true
@@ -1149,7 +1150,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
 	if _, err = curMat.Delta("timestamp", prevMat, r.Logger); err != nil {
-		r.Logger.Error("(timestamp) calculate delta:", slog.Any("err", err))
+		r.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 	}
 
 	var base *matrix.Metric
@@ -1161,7 +1162,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		if counter == nil {
 			r.Logger.Error(
 				"Missing counter:",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("counter", metric.GetName()),
 			)
 			continue
@@ -1179,7 +1180,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 		// all other properties - first calculate delta
 		if skips, err = curMat.Delta(key, prevMat, r.Logger); err != nil {
-			r.Logger.Error("Calculate delta:", slog.Any("err", err), slog.String("key", key))
+			r.Logger.Error("Calculate delta:", slogx.Err(err), slog.String("key", key))
 			continue
 		}
 		totalSkips += skips
@@ -1233,7 +1234,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			}
 
 			if err != nil {
-				r.Logger.Error("Division by base", slog.Any("err", err), slog.String("key", key))
+				r.Logger.Error("Division by base", slogx.Err(err), slog.String("key", key))
 				continue
 			}
 			totalSkips += skips
@@ -1245,7 +1246,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 		if property == "percent" {
 			if skips, err = curMat.MultiplyByScalar(key, 100); err != nil {
-				r.Logger.Error("Multiply by scalar", slog.Any("err", err), slog.String("key", key))
+				r.Logger.Error("Multiply by scalar", slogx.Err(err), slog.String("key", key))
 			} else {
 				totalSkips += skips
 			}
@@ -1270,7 +1271,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
 					r.Logger.Error(
 						"Calculate rate",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.Int("i", i),
 						slog.String("metric", metric.GetName()),
 						slog.String("key", key),
@@ -1342,7 +1343,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 	records, err = rest.FetchAll(r.Client, href)
 	if err != nil {
-		r.Logger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
+		r.Logger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err
 	}
 
@@ -1379,7 +1380,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 			if err = ops.SetValueString(instance, f.value); err != nil {
 				r.Logger.Error(
 					"set metric",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("metric", counterName),
 					slog.String("value", value.String()),
 				)
@@ -1544,7 +1545,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 			instance := mat.GetInstance(instanceKey)
 			r.updateQosLabels(instanceData, instance, instanceKey)
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
-			r.Logger.Error("add instance", slog.Any("err", err), slog.String("instanceKey", instanceKey))
+			r.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
 		} else {
 			r.updateQosLabels(instanceData, instance, instanceKey)
 		}

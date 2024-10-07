@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -48,7 +49,7 @@ func (m *SnapMirror) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if m.client, err = rest.New(conf.ZapiPoller(m.ParentParams), timeout, m.Auth); err != nil {
-		m.SLogger.Error("connecting", slog.Any("err", err))
+		m.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -130,7 +131,7 @@ func (m *SnapMirror) getSVMPeerData(cluster string) error {
 
 	result, err := rest.FetchAll(m.client, href)
 	if err != nil {
-		m.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
+		m.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err
 	}
 
@@ -161,7 +162,7 @@ func (m *SnapMirror) getClusterPeerData() error {
 
 	result, err := rest.FetchAll(m.client, href)
 	if err != nil {
-		m.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
+		m.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err
 	}
 
@@ -256,7 +257,7 @@ func (m *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
 				cgVolumeInstanceKey := key + sourceVol + destinationVol
 
 				if cgVolumeInstance, err = m.data.NewInstance(cgVolumeInstanceKey); err != nil {
-					m.SLogger.Error("", slog.Any("err", err), slog.String("key", cgVolumeInstanceKey))
+					m.SLogger.Error("", slogx.Err(err), slog.String("key", cgVolumeInstanceKey))
 					continue
 				}
 

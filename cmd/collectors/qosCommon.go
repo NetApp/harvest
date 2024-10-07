@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"regexp"
 	"strconv"
@@ -50,7 +51,7 @@ func QosSetLabel(labelName string, data *matrix.Matrix, instance *matrix.Instanc
 	if m != nil {
 		err := m.SetValueString(instance, value)
 		if err != nil {
-			logger.Error("Unable to set metric", slog.String(labelName, value), slog.Any("err", err))
+			logger.Error("Unable to set metric", slog.String(labelName, value), slogx.Err(err))
 		}
 	}
 }

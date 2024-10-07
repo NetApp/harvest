@@ -2,6 +2,7 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"maps"
 	"regexp"
@@ -86,7 +87,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 				if !strings.HasPrefix(mkey, "cloud_bin_op_latency_average") {
 					err := fgm.SetValueFloat64(fg, fgv+value)
 					if err != nil {
-						l.Error("error", slog.Any("err", err))
+						l.Error("error", slogx.Err(err))
 					}
 					continue
 				}
@@ -113,12 +114,12 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 						if value != 0 {
 							err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 							if err != nil {
-								l.Error("error", slog.Any("err", err))
+								l.Error("error", slogx.Err(err))
 							}
 						}
 						err = fgm.SetValueFloat64(fg, fgv+prod)
 						if err != nil {
-							l.Error("error", slog.Any("err", err))
+							l.Error("error", slogx.Err(err))
 						}
 					}
 				}
@@ -142,7 +143,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
-								l.Error("error", slog.Any("err", err))
+								l.Error("error", slogx.Err(err))
 							}
 						} else {
 							m.SetValueNAN(i)
