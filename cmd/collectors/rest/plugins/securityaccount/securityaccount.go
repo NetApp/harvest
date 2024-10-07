@@ -66,6 +66,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	href := rest.NewHrefBuilder().
 		APIPath(s.query).
 		Fields([]string{"applications"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	s.client.Metadata.Reset()

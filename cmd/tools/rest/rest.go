@@ -197,11 +197,11 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 		QueryValue(args.QueryValue)
 
 	if args.MaxRecords != "" {
-		maxRecords, err := strconv.Atoi(args.MaxRecords)
+		_, err := strconv.Atoi(args.MaxRecords)
 		if err != nil {
 			return nil, fmt.Errorf("--max-records should be numeric %s", args.MaxRecords)
 		}
-		hrefBuilder.MaxRecords(&maxRecords)
+		hrefBuilder.MaxRecords(args.MaxRecords)
 	}
 
 	href := hrefBuilder.Build()
@@ -406,30 +406,16 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, 
 	return nil
 }
 
-// Fetch collects all records
-func Fetch(client *Client, href string) ([]gjson.Result, error) {
+// FetchAll collects all records.
+// If you want to limit the number of records returned, use FetchSome.
+func FetchAll(client *Client, href string) ([]gjson.Result, error) {
 	var (
 		records []gjson.Result
 		result  []gjson.Result
 		err     error
 	)
-	downloadAll := true
-	maxRecords := 0
-	if strings.Contains(href, "max_records") {
-		mr, err := util.GetQueryParam(href, "max_records")
-		if err != nil {
-			return nil, err
-		}
-		if mr != "" {
-			mri, err := strconv.Atoi(mr)
-			if err != nil {
-				return nil, err
-			}
-			maxRecords = mri
-			downloadAll = maxRecords == 0
-		}
-	}
-	err = fetch(client, href, &records, downloadAll, int64(maxRecords))
+
+	err = fetchAll(client, href, &records)
 	if err != nil {
 		return nil, err
 	}
@@ -477,7 +463,7 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 	return result, *analytics, nil
 }
 
-func fetch(client *Client, href string, records *[]gjson.Result, downloadAll bool, maxRecords int64) error {
+func fetchAll(client *Client, href string, records *[]gjson.Result) error {
 	getRest, err := client.GetRest(href)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
@@ -500,23 +486,103 @@ func fetch(client *Client, href string, records *[]gjson.Result, downloadAll boo
 		// extract returned records since paginated records need to be merged into a single lists
 		if numRecords.Exists() && numRecords.Int() > 0 {
 			*records = append(*records, data)
-			if !downloadAll {
-				maxRecords -= numRecords.Int()
-				if maxRecords <= 0 {
+		}
+
+		// If all results are desired and there is a next link, follow it
+		if next.Exists() {
+			nextLink := next.String()
+			if nextLink != "" {
+				if nextLink == href {
+					// nextLink is the same as the previous link, no progress is being made, exit
+					return nil
+				}
+				err := fetchAll(client, nextLink, records)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// FetchSome collects at most recordsWanted records, following pagination links as needed.
+// Use batchSize to limit the number of records returned in a single response.
+// If recordsWanted is -1, all records are collected.
+func FetchSome(client *Client, href string, recordsWanted int, batchSize string) ([]gjson.Result, error) {
+	var (
+		records []gjson.Result
+		result  []gjson.Result
+		err     error
+	)
+
+	// Set max_records to batchSize to limit the number of records returned in a single response.
+	// If recordsWanted is < batchSize, set batchSize to recordsWanted.
+	batch, _ := strconv.Atoi(batchSize)
+	if recordsWanted < batch {
+		batch = recordsWanted
+	}
+
+	u, err := url.Parse(href)
+	if err != nil {
+		return nil, err
+	}
+	q := u.Query()
+	q.Set("max_records", strconv.Itoa(batch))
+	encoded := q.Encode()
+	u.RawQuery = encoded
+	href = u.String()
+
+	err = fetchLimit(client, href, &records, recordsWanted)
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range records {
+		result = append(result, r.Array()...)
+	}
+	return result, nil
+}
+
+func fetchLimit(client *Client, href string, records *[]gjson.Result, recordsWanted int) error {
+	getRest, err := client.GetRest(href)
+	if err != nil {
+		return fmt.Errorf("error making request %w", err)
+	}
+
+	output := gjson.ParseBytes(getRest)
+	data := output.Get("records")
+	numRecords := output.Get("num_records")
+	next := output.Get("_links.next.href")
+
+	if !data.Exists() {
+		contentJSON := `{"records":[]}`
+		response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", getRest)
+		if err != nil {
+			return fmt.Errorf("error setting record %w", err)
+		}
+		value := gjson.GetBytes(response, "records")
+		*records = append(*records, value)
+	} else {
+		// extract returned records since paginated records need to be merged into a single lists
+		if numRecords.Exists() && numRecords.Int() > 0 {
+			*records = append(*records, data)
+			if recordsWanted != -1 {
+				recordsWanted -= int(numRecords.Int())
+				if recordsWanted <= 0 {
 					return nil
 				}
 			}
 		}
 
-		// If all results are desired and there is a next link, follow it
-		if next.Exists() && downloadAll {
+		// Follow the next link
+		if next.Exists() {
 			nextLink := next.String()
 			if nextLink != "" {
 				if nextLink == href {
-					// nextLink is same as previous link, no progress is being made, exit
+					// nextLink is the same as the previous link, no progress is being made, exit
 					return nil
 				}
-				err := fetch(client, nextLink, records, downloadAll, maxRecords)
+				err := fetchLimit(client, nextLink, records, recordsWanted)
 				if err != nil {
 					return err
 				}

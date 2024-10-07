@@ -1,6 +1,7 @@
 package fcvi
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -43,8 +44,9 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
-	records, err := rest.Fetch(f.client, href)
+	records, err := rest.FetchAll(f.client, href)
 	if err != nil {
 		f.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return nil, nil, err

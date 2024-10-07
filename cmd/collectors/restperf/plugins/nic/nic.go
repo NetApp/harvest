@@ -237,6 +237,7 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	if ifgroupsData, err = collectors.InvokeRestCallWithTestFile(n.client, href, n.SLogger, n.testFilePath); err != nil {

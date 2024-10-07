@@ -263,6 +263,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	href := rest.NewHrefBuilder().
 		APIPath(r.Prop.Query).
+		MaxRecords(r.BatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 	r.Logger.Debug("", slog.String("href", href))
@@ -273,7 +274,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	apiT := time.Now()
 	r.Client.Metadata.Reset()
 
-	records, err = rest.Fetch(r.Client, href)
+	records, err = rest.FetchAll(r.Client, href)
 	if err != nil {
 		return r.handleError(err, href)
 	}
@@ -710,6 +711,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		APIPath(dataQuery).
 		Fields([]string{"*"}).
 		Filter(filter).
+		MaxRecords(r.BatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
@@ -1338,7 +1340,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
 
-	records, err = rest.Fetch(r.Client, href)
+	records, err = rest.FetchAll(r.Client, href)
 	if err != nil {
 		r.Logger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err
@@ -1453,6 +1455,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		APIPath(dataQuery).
 		Fields([]string{fields}).
 		Filter(filter).
+		MaxRecords(r.BatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
@@ -1463,7 +1466,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	apiT := time.Now()
 	r.Client.Metadata.Reset()
-	records, err = rest.Fetch(r.Client, href)
+	records, err = rest.FetchAll(r.Client, href)
 	if err != nil {
 		return r.handleError(err, href)
 	}

@@ -1,6 +1,7 @@
 package volumetag
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -47,10 +48,11 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
+		MaxRecords(collectors.DefaultBatchSize).
 		Fields([]string{"comment"}).
 		Build()
 
-	records, err := rest.Fetch(v.client, href)
+	records, err := rest.FetchAll(v.client, href)
 	if err != nil {
 		v.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return nil, nil, err

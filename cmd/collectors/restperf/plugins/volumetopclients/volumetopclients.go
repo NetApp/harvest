@@ -362,6 +362,7 @@ func (t *TopClients) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"svm.name", "name"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"activity_tracking.state=on"}).
 		Build()
 
@@ -389,6 +390,7 @@ func (t *TopClients) fetchTopClients(volumes *set.Set, svms *set.Set, metric str
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"client_ip", "svm", "volume.name", metric}).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
 		Build()
 

@@ -259,6 +259,7 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"protection_mode=!data|full"}).
 		Build()
 
@@ -295,6 +296,7 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{field}).
 		Build()
 

@@ -54,6 +54,7 @@ type Rest struct {
 	Prop                         *prop
 	endpoints                    []*EndPoint
 	isIgnoreUnknownFieldsEnabled bool
+	BatchSize                    string
 }
 
 type EndPoint struct {
@@ -114,20 +115,6 @@ func (r *Rest) Fields(prop *prop) []string {
 		// applicable for public API only
 		if !r.isIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
 			fields = []string{"*"}
-		}
-	}
-	if len(prop.HiddenFields) > 0 {
-		fieldsMap := make(map[string]bool)
-		for _, field := range fields {
-			fieldsMap[field] = true
-		}
-
-		// append hidden fields
-		for _, hiddenField := range prop.HiddenFields {
-			if _, exists := fieldsMap[hiddenField]; !exists {
-				fields = append(fields, hiddenField)
-				fieldsMap[hiddenField] = true
-			}
 		}
 	}
 	return fields
@@ -337,7 +324,7 @@ func getFieldName(source string, parent string) []string {
 func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	startTime := time.Now()
-	// Update the cluster info to track if customer version is updated
+	// Update the cluster info to track if ONTAP version is updated
 	err := r.Client.UpdateClusterInfo(5)
 	if err != nil {
 		return nil, err
@@ -368,7 +355,9 @@ func (r *Rest) updateHref() {
 	r.Prop.Href = rest.NewHrefBuilder().
 		APIPath(r.Prop.Query).
 		Fields(r.Fields(r.Prop)).
+		HiddenFields(r.Prop.HiddenFields).
 		Filter(r.Prop.Filter).
+		MaxRecords(r.BatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
 		Build()
@@ -377,7 +366,9 @@ func (r *Rest) updateHref() {
 		e.prop.Href = rest.NewHrefBuilder().
 			APIPath(r.query(e)).
 			Fields(r.Fields(e.prop)).
+			HiddenFields(e.prop.HiddenFields).
 			Filter(r.filter(e)).
+			MaxRecords(r.BatchSize).
 			ReturnTimeout(r.Prop.ReturnTimeOut).
 			IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
 			Build()
@@ -691,7 +682,7 @@ func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	result, err := rest.Fetch(r.Client, href)
+	result, err := rest.FetchAll(r.Client, href)
 	if err != nil {
 		return r.handleError(err)
 	}
@@ -797,6 +788,7 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"serial_number", "system_id"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 

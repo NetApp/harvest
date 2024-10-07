@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -61,7 +62,16 @@ func (r *Rest) InitCache() error {
 		}
 	}
 
-	// private end point do not support * as fields. We need to pass fields in endpoint
+	if b := r.Params.GetChildContentS("batch_size"); b != "" {
+		if _, err := strconv.Atoi(b); err == nil {
+			r.BatchSize = b
+		}
+	}
+	if r.BatchSize == "" && r.Params.GetChildContentS("no_max_records") != "true" {
+		r.BatchSize = collectors.DefaultBatchSize
+	}
+
+	// Private end points do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
 	r.Prop.IsPublic = true
 	if query != nil {

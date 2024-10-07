@@ -216,6 +216,7 @@ func (s *SVM) GetKerberosConfig() (map[string]string, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
@@ -249,6 +250,7 @@ func (s *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
@@ -283,6 +285,7 @@ func (s *SVM) GetIscsiServices() (map[string]string, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
@@ -316,6 +319,7 @@ func (s *SVM) GetIscsiCredentials() (map[string]string, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
