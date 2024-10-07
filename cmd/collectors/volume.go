@@ -13,7 +13,7 @@ import (
 
 var flexgroupRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
-func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string) ([]*matrix.Matrix, *util.Metadata, error) {
+func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string) ([]*matrix.Matrix, *util.Metadata, error) {
 	var err error
 
 	fgAggrMap := make(map[string]*set.Set)
@@ -33,7 +33,10 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	cache.UUID += ".Volume"
 
 	for _, i := range data.GetInstances() {
-		if match := flexgroupRegex.FindStringSubmatch(i.GetLabel("volume")); len(match) == 3 {
+		volName := i.GetLabel("volume")
+		switch volumesMap[volName] {
+		case "flexgroup_constituent":
+			match := flexgroupRegex.FindStringSubmatch(volName)
 			key := i.GetLabel("svm") + "." + match[1]
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
@@ -61,9 +64,9 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel(style, "flexgroup_constituent")
 			i.SetExportable(includeConstituents)
-		} else {
+		case "flexvol":
 			i.SetLabel(style, "flexvol")
-			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
+			key := i.GetLabel("svm") + "." + volName
 			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
 			if err != nil {
 				logger.Error("Failed to create new instance", slog.Any("err", err), slog.String("key", key))
@@ -81,10 +84,11 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 
 	recordFGFalse := make(map[string]*set.Set)
 	for _, i := range data.GetInstances() {
-		match := flexgroupRegex.FindStringSubmatch(i.GetLabel("volume"))
-		if len(match) != 3 {
+		volName := i.GetLabel("volume")
+		if volumesMap[volName] != "flexgroup_constituent" {
 			continue
 		}
+		match := flexgroupRegex.FindStringSubmatch(volName)
 		key := i.GetLabel("svm") + "." + match[1]
 
 		flexgroupInstance := volumeAggrmetric.GetInstance(key)
