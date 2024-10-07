@@ -294,6 +294,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		ReturnTimeout(e.ReturnTimeOut).
 		Build()
 
@@ -436,6 +437,7 @@ func (e *Ems) getHref(names []string, filter []string) string {
 		APIPath(e.Query).
 		Fields(e.Fields).
 		Filter(filter).
+		MaxRecords(collectors.DefaultBatchSize).
 		ReturnTimeout(e.ReturnTimeOut).
 		Build()
 	return href

@@ -33,9 +33,10 @@ func collectChassisFRU(client *rest.Client, logger *slog.Logger) (map[string]int
 		APIPath(query).
 		Fields(fields).
 		Filter(filter).
+		MaxRecords(DefaultBatchSize).
 		Build()
 
-	result, err := rest.Fetch(client, href)
+	result, err := rest.FetchAll(client, href)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data href=%s err=%w", href, err)
 	}

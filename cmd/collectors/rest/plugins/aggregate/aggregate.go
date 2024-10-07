@@ -172,6 +172,7 @@ func (a *Aggregate) getObjectStoreData() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(apiQuery).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{`tier_name=!" "|""`}).
 		Build()
 

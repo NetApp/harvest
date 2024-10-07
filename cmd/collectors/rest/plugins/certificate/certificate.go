@@ -195,6 +195,7 @@ func (c *Certificate) GetAdminVserver() (string, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"type"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"type=admin"}).
 		Build()
 
@@ -221,6 +222,7 @@ func (c *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"serial"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"vserver=" + adminSvm}).
 		Build()
 

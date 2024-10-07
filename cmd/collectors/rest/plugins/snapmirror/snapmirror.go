@@ -124,10 +124,11 @@ func (m *SnapMirror) getSVMPeerData(cluster string) error {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"peer.cluster.name=!" + cluster}).
 		Build()
 
-	result, err := rest.Fetch(m.client, href)
+	result, err := rest.FetchAll(m.client, href)
 	if err != nil {
 		m.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err
@@ -155,9 +156,10 @@ func (m *SnapMirror) getClusterPeerData() error {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	result, err := rest.Fetch(m.client, href)
+	result, err := rest.FetchAll(m.client, href)
 	if err != nil {
 		m.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
 		return err

@@ -640,6 +640,7 @@ func (h *Health) getDisks() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"container_type=broken|unassigned"}).
 		Build()
 
@@ -652,6 +653,7 @@ func (h *Health) getShelves() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
 	return collectors.InvokeRestCall(h.client, href, h.SLogger)
@@ -663,6 +665,7 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"health=false"}).
 		Build()
 
@@ -675,6 +678,7 @@ func (h *Health) getHADown() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"possible=!true"}).
 		Build()
 
@@ -685,6 +689,7 @@ func (h *Health) getRansomwareVolumes() ([]gjson.Result, error) {
 	query := "api/storage/volumes"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low|moderate|high"}).
 		Build()
 
@@ -697,6 +702,7 @@ func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"state=noncompliant"}).
 		Build()
 
@@ -709,6 +715,7 @@ func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"movement.state=cutover_wait|failed|cutover_pending"}).
 		Build()
 
@@ -720,6 +727,7 @@ func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"svm", "location"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"location.is_home=false"}).
 		Build()
 
@@ -732,6 +740,7 @@ func (h *Health) getFCPorts() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"enabled=true", "state=offlined_by_system"}).
 		Build()
 
@@ -744,6 +753,7 @@ func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"enabled=true", "state=down"}).
 		Build()
 
@@ -754,6 +764,7 @@ func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 	query := "api/private/support/alerts"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
+		MaxRecords(collectors.DefaultBatchSize).
 		Filter(filter).
 		Build()
 

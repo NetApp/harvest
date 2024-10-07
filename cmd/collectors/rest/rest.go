@@ -54,6 +54,7 @@ type Rest struct {
 	Prop                         *prop
 	endpoints                    []*EndPoint
 	isIgnoreUnknownFieldsEnabled bool
+	BatchSize                    string
 }
 
 type EndPoint struct {
@@ -323,7 +324,7 @@ func getFieldName(source string, parent string) []string {
 func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	startTime := time.Now()
-	// Update the cluster info to track if customer version is updated
+	// Update the cluster info to track if ONTAP version is updated
 	err := r.Client.UpdateClusterInfo(5)
 	if err != nil {
 		return nil, err
@@ -356,6 +357,7 @@ func (r *Rest) updateHref() {
 		Fields(r.Fields(r.Prop)).
 		HiddenFields(r.Prop.HiddenFields).
 		Filter(r.Prop.Filter).
+		MaxRecords(r.BatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
 		Build()
@@ -366,6 +368,7 @@ func (r *Rest) updateHref() {
 			Fields(r.Fields(e.prop)).
 			HiddenFields(e.prop.HiddenFields).
 			Filter(r.filter(e)).
+			MaxRecords(r.BatchSize).
 			ReturnTimeout(r.Prop.ReturnTimeOut).
 			IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
 			Build()
@@ -677,7 +680,7 @@ func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	result, err := rest.Fetch(r.Client, href)
+	result, err := rest.FetchAll(r.Client, href)
 	if err != nil {
 		return r.handleError(err)
 	}
@@ -783,6 +786,7 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"serial_number", "system_id"}).
+		MaxRecords(collectors.DefaultBatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
