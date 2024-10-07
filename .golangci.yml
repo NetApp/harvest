@@ -81,3 +81,5 @@ linters-settings:
       - whyNoLint
   dogsled:
     max-blank-identifiers: 3
+  sloglint:
+    attr-only: true

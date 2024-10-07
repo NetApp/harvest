@@ -190,7 +190,7 @@ func (d *Disk) Init() error {
 		d.shelfData[attribute].SetExportOptions(exportOptions)
 	}
 
-	d.SLogger.Debug("initialized with shelfData", "objects", len(d.shelfData))
+	d.SLogger.Debug("initialized with shelfData", slog.Int("objects", len(d.shelfData)))
 
 	// setup batchSize for request
 	d.batchSize = batchSize
