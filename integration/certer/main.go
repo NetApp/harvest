@@ -9,6 +9,7 @@ import (
 	"github.com/Netapp/harvest-automation/certer/models"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/carlmjohnson/requests"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"net/http"
 	"os"
