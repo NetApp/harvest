@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"log/slog"
@@ -90,7 +91,7 @@ func (t *TopClients) initMatrix(name string, object string, inputMat map[string]
 	}
 	err := matrix.CreateMetric(metric, inputMat[name])
 	if err != nil {
-		t.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", metric))
+		t.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", metric))
 		return err
 	}
 	return nil
@@ -324,7 +325,7 @@ func (t *TopClients) processTopClientsByMetric(volumes, svms *set.Set, matrixNam
 		instanceKey := clientIP + keyToken + vol + keyToken + svm
 		instance, err := mat.NewInstance(instanceKey)
 		if err != nil {
-			t.SLogger.Warn("error while creating instance", slog.Any("err", err), slog.String("volume", vol))
+			t.SLogger.Warn("error while creating instance", slogx.Err(err), slog.String("volume", vol))
 			continue
 		}
 		instance.SetLabel("volume", vol)
@@ -340,12 +341,12 @@ func (t *TopClients) setMetric(mat *matrix.Matrix, instance *matrix.Instance, va
 	m := mat.GetMetric(metricType)
 	if m == nil {
 		if m, err = mat.NewMetricFloat64(metricType); err != nil {
-			t.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", metricType))
+			t.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", metricType))
 			return
 		}
 	}
 	if err = m.SetValueFloat64(instance, value); err != nil {
-		t.SLogger.Error("error while setting value", slog.Any("err", err), slog.String("metric", metricType))
+		t.SLogger.Error("error while setting value", slogx.Err(err), slog.String("metric", metricType))
 	}
 }
 

@@ -19,6 +19,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -64,7 +65,7 @@ func (n *Nic) Init() error {
 		metricName, display, _, _ := util.ParseMetric(obj)
 		_, err := n.data.NewMetricFloat64(metricName, display)
 		if err != nil {
-			n.SLogger.Error("add metric", slog.Any("err", err))
+			n.SLogger.Error("add metric", slogx.Err(err))
 			return err
 		}
 	}
@@ -75,7 +76,7 @@ func (n *Nic) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if n.client, err = rest.New(conf.ZapiPoller(n.ParentParams), timeout, n.Auth); err != nil {
-		n.SLogger.Error("connecting", slog.Any("err", err))
+		n.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -174,7 +175,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					rxPercent = rxBytes / float64(speed)
 					err := rx.SetValueFloat64(instance, rxPercent)
 					if err != nil {
-						n.SLogger.Error("error", slog.Any("err", err))
+						n.SLogger.Error("error", slogx.Err(err))
 					}
 				}
 
@@ -182,7 +183,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					txPercent = txBytes / float64(speed)
 					err := tx.SetValueFloat64(instance, txPercent)
 					if err != nil {
-						n.SLogger.Error("error", slog.Any("err", err))
+						n.SLogger.Error("error", slogx.Err(err))
 					}
 				}
 
@@ -191,7 +192,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				if rxOk || txOk {
 					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 					if err != nil {
-						n.SLogger.Error("error", slog.Any("err", err))
+						n.SLogger.Error("error", slogx.Err(err))
 					}
 				}
 			}

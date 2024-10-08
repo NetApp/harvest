@@ -3,6 +3,7 @@ package installer
 import (
 	"errors"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"strings"
 )
@@ -29,7 +30,7 @@ func (r *RPM) Install() bool {
 	slog.Info("Installing " + rpmFileName)
 	installOutput, err := utils.Run("yum", "install", "-y", rpmFileName)
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		panic(err)
 	}
 	slog.Info(installOutput)
@@ -56,7 +57,7 @@ func (r *RPM) Upgrade() bool {
 	versionCmd := []string{"-qa", "harvest"}
 	out, err := utils.Run("rpm", versionCmd...)
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		panic(err)
 	}
 	previousVersion := strings.TrimSpace(out)

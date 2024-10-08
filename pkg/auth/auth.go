@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/mergo"
 	"gopkg.in/yaml.v3"
 	"log/slog"
@@ -132,7 +133,7 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 	response := ScriptResponse{}
 	lookPath, err := exec.LookPath(cmdPath)
 	if err != nil {
-		c.logger.Debug("Failed to find script", slog.Any("err", err), slog.String("script", cmdPath), slog.String("kind", kind))
+		c.logger.Debug("Failed to find script", slogx.Err(err), slog.String("script", cmdPath), slog.String("kind", kind))
 		// Don't return the error, err, since it may contain credentials
 		return response, fmt.Errorf("script lookup failed kind=%s", kind)
 	}
@@ -168,7 +169,7 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 	if err != nil {
 		c.logger.Error(
 			"Failed to start script",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("script", lookPath),
 			slog.String("timeout", duration.String()),
 			slog.String("kind", kind),
@@ -179,7 +180,7 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 	if err != nil {
 		c.logger.Error(
 			"Failed to execute script",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("script", lookPath),
 			slog.String("timeout", duration.String()),
 			slog.String("kind", kind),
@@ -192,7 +193,7 @@ func (c *Credentials) execScript(cmdPath string, kind string, timeout string, e 
 		// Log the error but do not return it, we will try to use the output as plain text next.
 		c.logger.Debug(
 			"Failed to parse YAML output. Treating as plain text.",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("script", lookPath),
 			slog.String("timeout", duration.String()),
 			slog.String("kind", kind),
@@ -223,7 +224,7 @@ func (c *Credentials) setNextUpdate() {
 	if err != nil {
 		c.logger.Error(
 			"Failed to parse schedule. Using default",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("schedule", schedule),
 			slog.String("default", defaultSchedule),
 		)
@@ -272,7 +273,7 @@ func (a PollerAuth) loadCertPool(logger *slog.Logger) *x509.CertPool {
 	if err != nil {
 		logger.Error(
 			"Failed to read CA certificate. Use host's root CA set.",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("caCertPath", a.CaCertPath),
 		)
 		return nil

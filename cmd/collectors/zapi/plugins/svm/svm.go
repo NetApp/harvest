@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -78,7 +79,7 @@ func (s *SVM) Init() error {
 	}
 
 	if s.client, err = zapi.New(conf.ZapiPoller(s.ParentParams), s.Auth); err != nil {
-		s.SLogger.Error("connecting", slog.Any("err", err))
+		s.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -127,84 +128,84 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		// invoke fileservice-audit-config-get-iter zapi and get audit protocols
 		if s.auditProtocols, err = s.GetAuditProtocols(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect audit protocols", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect audit protocols", slogx.Err(err))
 			}
 		}
 
 		// invoke cifs-security-get-iter zapi and get cifs protocols
 		if s.cifsProtocols, err = s.GetCifsProtocols(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect cifs protocols", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect cifs protocols", slogx.Err(err))
 			}
 		}
 
 		// invoke nameservice-nsswitch-get-iter zapi and get nsswitch info
 		if s.nsswitchInfo, err = s.GetNSSwitchInfo(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect nsswitch info", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect nsswitch info", slogx.Err(err))
 			}
 		}
 
 		// invoke nis-get-iter zapi and get nisdomain info
 		if s.nisInfo, err = s.GetNisInfo(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect nisdomain info", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect nisdomain info", slogx.Err(err))
 			}
 		}
 
 		// invoke cifs-server-get-iter zapi and get cifsenabled info
 		if s.cifsEnabled, err = s.GetCifsEnabled(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect cifsenabled info", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect cifsenabled info", slogx.Err(err))
 			}
 		}
 
 		// invoke nfs-service-get-iter zapi and get cifsenabled info
 		if s.nfsEnabled, err = s.GetNfsEnabled(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect nfsenabled info", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect nfsenabled info", slogx.Err(err))
 			}
 		}
 
 		// invoke security-ssh-get-iter zapi and get ssh data
 		if s.sshData, err = s.GetSSHData(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect ssh data", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect ssh data", slogx.Err(err))
 			}
 		}
 
 		// invoke iscsi-initiator-auth-get-iter zapi and get iscsi_authentication_type
 		if s.iscsiAuth, err = s.GetIscsiInitiatorAuth(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect iscsi authentication type", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect iscsi authentication type", slogx.Err(err))
 			}
 		}
 
 		// invoke iscsi-service-get-iter zapi and get iscsi_service_enabled
 		if s.iscsiService, err = s.GetIscsiService(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect iscsi service", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect iscsi service", slogx.Err(err))
 			}
 		}
 
 		// invoke fpolicy-policy-status-get-iter zapi and get fpolicy_enabled, fpolicy_name
 		if s.fpolicyData, err = s.GetFpolicy(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect fpolicy detail", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect fpolicy detail", slogx.Err(err))
 			}
 		}
 
 		// invoke ldap-client-get-iter zapi and get ldap_session_security
 		if s.ldapData, err = s.GetLdapData(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect ldap session", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect ldap session", slogx.Err(err))
 			}
 		}
 
 		// invoke kerberos-config-get-iter zapi and get nfs_kerberos_protocol_enabled
 		if s.kerberosConfig, err = s.GetKerberosConfig(); err != nil {
 			if !errors.Is(err, errs.ErrNoInstance) {
-				s.SLogger.Error("Failed to collect kerberos config", slog.Any("err", err))
+				s.SLogger.Error("Failed to collect kerberos config", slogx.Err(err))
 			}
 		}
 	}

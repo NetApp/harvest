@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/requests"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
 	"net/http"
@@ -167,7 +168,7 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	if metrics, stats, err = e.Render(data); err == nil && len(metrics) != 0 {
 		// fix render time
 		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
-			e.Logger.Error("metadata render time", slog.Any("err", err))
+			e.Logger.Error("metadata render time", slogx.Err(err))
 		}
 		// in test mode, don't emit metrics
 		if e.Options.IsTest {
@@ -187,13 +188,13 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	// update metadata
 	if err = e.Metadata.LazySetValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
-		e.Logger.Error("metadata export time", slog.Any("err", err))
+		e.Logger.Error("metadata export time", slogx.Err(err))
 	}
 
 	if metrics, stats, err = e.Render(e.Metadata); err != nil {
-		e.Logger.Error("render metadata", slog.Any("err", err))
+		e.Logger.Error("render metadata", slogx.Err(err))
 	} else if err = e.Emit(metrics); err != nil {
-		e.Logger.Error("emit metadata", slog.Any("err", err))
+		e.Logger.Error("emit metadata", slogx.Err(err))
 	}
 
 	return stats, nil
@@ -357,7 +358,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 	// update metadata
 	e.AddExportCount(count)
 	if err := e.Metadata.LazySetValueUint64("count", "export", count); err != nil {
-		e.Logger.Error("metadata export count", slog.Any("err", err))
+		e.Logger.Error("metadata export count", slogx.Err(err))
 	}
 	return rendered, exporter.Stats{InstancesExported: instancesExported, MetricsExported: count}, nil
 }

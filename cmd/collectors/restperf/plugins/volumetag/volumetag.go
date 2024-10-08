@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"time"
@@ -28,7 +29,7 @@ func (v *VolumeTag) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if v.client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
-		v.SLogger.Error("connecting", slog.Any("err", err))
+		v.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -54,7 +55,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 
 	records, err := rest.FetchAll(v.client, href)
 	if err != nil {
-		v.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
+		v.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return nil, nil, err
 	}
 

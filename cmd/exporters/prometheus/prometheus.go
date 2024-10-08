@@ -27,6 +27,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"regexp"
 	"sort"
@@ -102,7 +103,7 @@ func (p *Prometheus) Init() error {
 			p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", *x))
 			p.cache = newCache(d)
 		} else {
-			p.Logger.Error("cache_max_keep", slog.Any("err", err), slog.String("x", *x))
+			p.Logger.Error("cache_max_keep", slogx.Err(err), slog.String("x", *x))
 		}
 	}
 
@@ -134,7 +135,7 @@ func (p *Prometheus) Init() error {
 			if reg, err := regexp.Compile(r); err == nil {
 				p.allowAddrsRegex = append(p.allowAddrsRegex, reg)
 			} else {
-				p.Logger.Error("parse regex", slog.Any("err", err))
+				p.Logger.Error("parse regex", slogx.Err(err))
 				return errs.New(errs.ErrInvalidParam, "allow_addrs_regex")
 			}
 		}
@@ -232,11 +233,11 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	p.AddExportCount(uint64(len(metrics)))
 	err = p.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
 	if err != nil {
-		p.Logger.Error("error", slog.Any("err", err))
+		p.Logger.Error("error", slogx.Err(err))
 	}
 	err = p.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error("error", slog.Any("err", err))
+		p.Logger.Error("error", slogx.Err(err))
 	}
 
 	return stats, nil
@@ -295,13 +296,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 	if x := options.GetChildContentS("include_all_labels"); x != "" {
 		if includeAllLabels, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error("parameter: include_all_labels", slog.Any("err", err))
+			p.Logger.Error("parameter: include_all_labels", slogx.Err(err))
 		}
 	}
 
 	if x := options.GetChildContentS("require_instance_keys"); x != "" {
 		if requireInstanceKeys, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error("parameter: require_instance_keys", slog.Any("err", err))
+			p.Logger.Error("parameter: require_instance_keys", slogx.Err(err))
 		}
 	}
 

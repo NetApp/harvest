@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/host"
@@ -243,15 +244,15 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	pid := os.Getpid()
 	pid32, err := util.SafeConvertToInt32(pid)
 	if err != nil {
-		logging.Get().Error("", slog.Any("err", err), slog.Int("pid", pid))
+		logging.Get().Error("", slogx.Err(err), slog.Int("pid", pid))
 	} else {
 		newProcess, err := process.NewProcess(pid32)
 		if err != nil {
-			slog.Default().Error("failed to get process info", slog.Any("err", err))
+			slog.Default().Error("failed to get process info", slogx.Err(err))
 		} else {
 			memInfo, err := newProcess.MemoryInfo()
 			if err != nil {
-				slog.Default().Error("failed to get memory info", slog.Any("err", err), slog.Int("pid", pid))
+				slog.Default().Error("failed to get memory info", slogx.Err(err), slog.Int("pid", pid))
 			} else {
 				rssBytes = memInfo.RSS
 			}
@@ -439,11 +440,11 @@ func getPayloadPath(asupDir string, pollerName string) (string, error) {
 	var perm os.FileMode = 0750
 	err := checkAndDeleteIfPermissionsMismatch(workingDir, perm)
 	if err != nil {
-		logging.Get().Warn("", slog.Any("err", err))
+		logging.Get().Warn("", slogx.Err(err))
 	}
 	err = checkAndDeleteIfPermissionsMismatch(payloadDir, perm)
 	if err != nil {
-		logging.Get().Warn("", slog.Any("err", err))
+		logging.Get().Warn("", slogx.Err(err))
 	}
 	// Create the asup payload directory if needed
 	if _, err := os.Stat(payloadDir); os.IsNotExist(err) {

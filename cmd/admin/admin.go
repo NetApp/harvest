@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/zekroTJA/timedmap/v2"
@@ -55,7 +56,7 @@ func (a *Admin) startServer() {
 		defer cancel()
 
 		if err := server.Shutdown(ctx); err != nil {
-			a.logger.Error("Could not gracefully shutdown the admin node", slog.Any("err", err))
+			a.logger.Error("Could not gracefully shutdown the admin node", slogx.Err(err))
 			os.Exit(1)
 		}
 		close(done)
@@ -72,7 +73,7 @@ func (a *Admin) startServer() {
 		if err := server.ListenAndServeTLS(a.httpSD.TLS.CertFile, a.httpSD.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			a.logger.Error(
 				"Admin node could not listen",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("listen", a.listen),
 				slog.String("ssl_cert", a.httpSD.TLS.CertFile),
 				slog.String("ssl_key", a.httpSD.TLS.KeyFile),
@@ -84,7 +85,7 @@ func (a *Admin) startServer() {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			a.logger.Error(
 				"Admin node could not listen",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("listen", a.listen),
 			)
 			os.Exit(1)
@@ -144,7 +145,7 @@ func (a *Admin) apiPublish(w http.ResponseWriter, r *http.Request) {
 	var publish pollerDetails
 	err := decoder.Decode(&publish)
 	if err != nil {
-		a.logger.Error("Unable to parse publish json", slog.Any("err", err))
+		a.logger.Error("Unable to parse publish json", slogx.Err(err))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -174,7 +175,7 @@ func (a *Admin) makeTargets() []byte {
 	a.logger.Debug("makeTargets", slog.Int("size", len(targets)))
 	j, err := json.Marshal(targets)
 	if err != nil {
-		a.logger.Error("Failed to marshal targets", slog.Any("err", err))
+		a.logger.Error("Failed to marshal targets", slogx.Err(err))
 		return []byte{}
 	}
 	return j
@@ -282,7 +283,7 @@ func (a *Admin) setDuration(every string, defaultDur time.Duration, name string)
 	if err != nil {
 		a.logger.Warn(
 			"Failed to parse name",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String(name, every),
 			slog.String("defaultDur", defaultDur.String()),
 		)

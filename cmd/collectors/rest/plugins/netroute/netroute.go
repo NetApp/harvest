@@ -7,6 +7,7 @@ package netroute
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -81,7 +82,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 				index := cluster + "_" + strconv.Itoa(count)
 				interfaceInstance, err := n.data.NewInstance(index)
 				if err != nil {
-					n.SLogger.Error("add instance failed", slog.Any("err", err), slog.String("key", key))
+					n.SLogger.Error("add instance failed", slogx.Err(err), slog.String("key", key))
 					return nil, nil, err
 				}
 

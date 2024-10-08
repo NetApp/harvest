@@ -2,6 +2,7 @@ package aggregate
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"time"
 
@@ -101,9 +102,9 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 	records, err := a.getObjectStoreData()
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
-			a.SLogger.Debug("API not found", slog.Any("err", err))
+			a.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			a.SLogger.Error("Failed to collect object store data", slog.Any("err", err))
+			a.SLogger.Error("Failed to collect object store data", slogx.Err(err))
 		}
 		return
 	}
@@ -149,7 +150,7 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 			if err := aggrSpaceMat.GetMetric("logical_used").SetValueString(instance, logicalUsed); err != nil {
 				a.SLogger.Error(
 					"Unable to set value on metric",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("metric", "logical_used"),
 				)
 			}
@@ -159,7 +160,7 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 			if err := aggrSpaceMat.GetMetric("physical_used").SetValueString(instance, physicalUsed); err != nil {
 				a.SLogger.Error(
 					"Unable to set value on metric",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("metric", "physical_used"),
 				)
 			}

@@ -7,6 +7,7 @@ package util
 import (
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/shirou/gopsutil/v4/process"
 	"golang.org/x/sys/unix"
@@ -154,7 +155,7 @@ func CheckCert(certPath string, name string, configPath string, logger *slog.Log
 	absPath := certPath
 	if _, err := os.Stat(absPath); err != nil {
 		logger.Error("TLS is enabled but cert path is invalid",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("config", configPath),
 			slog.String(name, certPath),
 		)

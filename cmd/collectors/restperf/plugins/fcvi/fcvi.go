@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"time"
@@ -28,7 +29,7 @@ func (f *FCVI) Init() error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if f.client, err = rest.New(conf.ZapiPoller(f.ParentParams), timeout, f.Auth); err != nil {
-		f.SLogger.Error("connecting", slog.Any("err", err))
+		f.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -48,7 +49,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		Build()
 	records, err := rest.FetchAll(f.client, href)
 	if err != nil {
-		f.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
+		f.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return nil, nil, err
 	}
 
