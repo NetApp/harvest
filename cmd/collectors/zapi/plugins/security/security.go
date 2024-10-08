@@ -10,9 +10,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"log/slog"
 )
 
 type Security struct {
@@ -37,7 +37,7 @@ func (s *Security) Init() error {
 	}
 
 	if s.client, err = zapi.New(conf.ZapiPoller(s.ParentParams), s.Auth); err != nil {
-		s.SLogger.Error("connecting", slog.Any("err", err))
+		s.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -65,12 +65,12 @@ func (s *Security) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 
 		// invoke security-config-get zapi with 'ssl' interface and get fips status
 		if s.fipsEnabled, err = s.getSecurityConfig(); err != nil {
-			s.SLogger.Warn("Failed to collect fips enable status", slog.Any("err", err))
+			s.SLogger.Warn("Failed to collect fips enable status", slogx.Err(err))
 		}
 
 		// invoke security-protocol-get zapi with 'telnet' and 'rsh' and get
 		if s.telnetEnabled, s.rshEnabled, err = s.getSecurityProtocols(); err != nil {
-			s.SLogger.Warn("Failed to collect telnet and rsh enable status", slog.Any("err", err))
+			s.SLogger.Warn("Failed to collect telnet and rsh enable status", slogx.Err(err))
 		}
 
 		// update instance based on the above zapi response

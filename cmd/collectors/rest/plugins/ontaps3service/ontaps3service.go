@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"log/slog"
@@ -44,7 +45,7 @@ func (o *OntapS3Service) Init() error {
 		o.SLogger.Debug("Using default timeout", slog.String("timeout", timeout.String()))
 	}
 	if o.client, err = rest.New(conf.ZapiPoller(o.ParentParams), timeout, o.Auth); err != nil {
-		o.SLogger.Error("connecting", slog.Any("err", err))
+		o.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 

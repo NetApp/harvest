@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/requests"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
 	"net/http"
@@ -27,12 +28,12 @@ func GetResponse(url string) (string, error) {
 func GetResponseBody(url string) ([]byte, error) {
 	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		os.Exit(1)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		os.Exit(1)
 	}
 	resp.Body.Close()

@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -44,7 +45,7 @@ func (v *Volume) Init() error {
 	}
 
 	if v.client, err = zapi.New(conf.ZapiPoller(v.ParentParams), v.Auth); err != nil {
-		v.SLogger.Error("connecting", slog.Any("err", err))
+		v.SLogger.Error("connecting", slogx.Err(err))
 
 		return err
 	}
@@ -96,12 +97,12 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	volumeCloneMap, err := v.getVolumeCloneInfo()
 	if err != nil {
-		v.SLogger.Error("Failed to update clone data", slog.Any("err", err))
+		v.SLogger.Error("Failed to update clone data", slogx.Err(err))
 	}
 
 	volumeFootprintMap, err := v.getVolumeFootprint()
 	if err != nil {
-		v.SLogger.Error("Failed to update footprint data", slog.Any("err", err))
+		v.SLogger.Error("Failed to update footprint data", slogx.Err(err))
 		// clean the map in case of the error
 		clear(volumeFootprintMap)
 	}
@@ -145,7 +146,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 				if splitEstimate, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
 					v.SLogger.Error(
 						"Failed to add metric",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("metric", "clone_split_estimate"),
 					)
 					continue
@@ -160,7 +161,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			if splitEstimateBytes, err = strconv.ParseFloat(vc.splitEstimate, 64); err != nil {
 				v.SLogger.Error(
 					"Failed to parse clone_split_estimate",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("clone_split_estimate", vc.splitEstimate),
 				)
 				continue
@@ -169,7 +170,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			if err = splitEstimate.SetValueFloat64(volume, splitEstimateBytes); err != nil {
 				v.SLogger.Error(
 					"Failed to set clone_split_estimate",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("clone_split_estimate", vc.splitEstimate),
 				)
 				continue
@@ -182,7 +183,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 				vfMetric := data.GetMetric(vfKey)
 				if vfMetric == nil {
 					if vfMetric, err = data.NewMetricFloat64(vfKey); err != nil {
-						v.SLogger.Error("add metric", slog.Any("err", err), slog.String("metric", vfKey))
+						v.SLogger.Error("add metric", slogx.Err(err), slog.String("metric", vfKey))
 						continue
 					}
 				}
@@ -190,11 +191,11 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 				if vfVal != "" {
 					vfMetricVal, err := strconv.ParseFloat(vfVal, 64)
 					if err != nil {
-						v.SLogger.Error("parse", slog.Any("err", err), slog.String(vfKey, vfVal))
+						v.SLogger.Error("parse", slogx.Err(err), slog.String(vfKey, vfVal))
 						continue
 					}
 					if err = vfMetric.SetValueFloat64(volume, vfMetricVal); err != nil {
-						v.SLogger.Error("set", slog.Any("err", err), slog.String(vfKey, vfVal))
+						v.SLogger.Error("set", slogx.Err(err), slog.String(vfKey, vfVal))
 						continue
 					}
 				}

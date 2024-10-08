@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"gopkg.in/yaml.v3"
@@ -57,7 +58,7 @@ func (t *JoinRest) Init() error {
 	var tm translatePlugin
 	err = decoder.Decode(&tm)
 	if err != nil {
-		t.SLogger.Error("Failed to decode joinTemplate", slog.Any("err", err))
+		t.SLogger.Error("Failed to decode joinTemplate", slogx.Err(err))
 		return err
 	}
 	for _, p := range tm.Plugins {
@@ -89,7 +90,7 @@ func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 			if err != nil {
 				t.SLogger.Error(
 					"Failed to collect records from REST",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("rest", model.Rest),
 				)
 				continue

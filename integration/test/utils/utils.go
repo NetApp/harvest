@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
 	"net"
@@ -14,7 +15,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -268,7 +268,7 @@ func WriteToken(token string) {
 	}
 	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0600)
 	if err != nil {
-		slog.Error("Failed to open file", slog.Any("err", err))
+		slog.Error("Failed to open file", slogx.Err(err))
 		os.Exit(1)
 	}
 	defer func(f *os.File) { _ = f.Close() }(f)
@@ -331,25 +331,6 @@ func SetupLogging() {
 		},
 	}))
 	slog.SetDefault(logger)
-}
-
-func MarshalStack(err error) interface{} {
-	if err == nil {
-		return nil
-	}
-	// We don't know how big the stack trace will be, so start with 10K and double a few times if needed
-	n := 10_000
-	var trace []byte
-	for range 5 {
-		trace = make([]byte, n)
-		bytesWritten := runtime.Stack(trace, false)
-		if bytesWritten < len(trace) {
-			trace = trace[:bytesWritten]
-			break
-		}
-		n *= 2
-	}
-	return string(trace)
 }
 
 func SkipIfMissing(t *testing.T, vars ...string) {

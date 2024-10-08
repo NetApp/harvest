@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
@@ -191,7 +192,7 @@ func NewZapiPerf(object, path string) *ZapiPerf {
 	ac := collector.New("Zapiperf", object, opts, params(object, path), nil)
 	z := &ZapiPerf{}
 	if err := z.Init(ac); err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		os.Exit(1)
 	}
 

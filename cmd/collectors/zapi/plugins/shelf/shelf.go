@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -48,7 +49,7 @@ func (s *Shelf) Init() error {
 	}
 
 	if s.client, err = zapi.New(conf.ZapiPoller(s.ParentParams), s.Auth); err != nil {
-		s.SLogger.Error("connecting", slog.Any("err", err))
+		s.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -129,7 +130,7 @@ func (s *Shelf) Init() error {
 				case "float":
 					_, err := s.data[attribute].NewMetricFloat64(metricName, display)
 					if err != nil {
-						s.SLogger.Error("add metric", slog.Any("err", err))
+						s.SLogger.Error("add metric", slogx.Err(err))
 						return err
 					}
 					s.SLogger.Debug(
@@ -255,7 +256,7 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 	for metricName, m := range s.shelfMetrics.GetMetrics() {
 		_, err := data.NewMetricFloat64(metricName, m.GetName())
 		if err != nil {
-			s.SLogger.Error("add metric", slog.Any("err", err))
+			s.SLogger.Error("add metric", slogx.Err(err))
 		}
 		s.SLogger.Debug("added", slog.String("metric", m.GetName()))
 	}
@@ -278,7 +279,7 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 			// generating new instances from plugin and adding into data
 			newShelfInstance, err := data.NewInstance(shelfInstanceKey)
 			if err != nil {
-				s.SLogger.Error("add shelf instance", slog.Any("err", err))
+				s.SLogger.Error("add shelf instance", slogx.Err(err))
 				return nil, err
 			}
 
@@ -301,7 +302,7 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 			for metricKey, m := range data.GetMetrics() {
 				if value := strings.Split(shelf.GetChildContentS(metricKey), " ")[0]; value != "" {
 					if err := m.SetValueString(newShelfInstance, value); err != nil {
-						s.SLogger.Debug("failed to parse", slog.String("metricKey", metricKey), slog.String("value", value), slog.Any("err", err))
+						s.SLogger.Debug("failed to parse", slog.String("metricKey", metricKey), slog.String("value", value), slogx.Err(err))
 					} else {
 						s.SLogger.Debug("added", slog.String("metricKey", metricKey), slog.String("value", value))
 					}
@@ -338,7 +339,7 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 						instance, err := data1.NewInstance(instanceKey)
 
 						if err != nil {
-							s.SLogger.Error("add instance", slog.String("attribute", attribute), slog.Any("err", err))
+							s.SLogger.Error("add instance", slog.String("attribute", attribute), slogx.Err(err))
 							return nil, err
 						}
 						s.SLogger.Debug(
@@ -374,7 +375,7 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 										"failed to parse",
 										slog.String("metricKey", metricKey),
 										slog.String("value", value),
-										slog.Any("err", err),
+										slogx.Err(err),
 									)
 								} else {
 									s.SLogger.Debug("added", slog.String("metricKey", metricKey), slog.String("value", value))
@@ -434,7 +435,7 @@ func (s *Shelf) parse7ModeTemplate(shelfInfo *node.Node, shelfInstanceKeys, shel
 			case "float":
 				_, err := s.shelfMetrics.NewMetricFloat64(metricName, display)
 				if err != nil {
-					s.SLogger.Error("add metric", slog.Any("err", err))
+					s.SLogger.Error("add metric", slogx.Err(err))
 				}
 				s.SLogger.Debug("added", slog.String("metric", display))
 			}

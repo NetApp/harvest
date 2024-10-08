@@ -30,6 +30,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -228,7 +229,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 
 	opt := a.GetOptions()
 	if poller, err = conf.PollerNamed(opt.Poller); err != nil {
-		r.Logger.Error("", slog.Any("err", err), slog.String("poller", opt.Poller))
+		r.Logger.Error("", slogx.Err(err), slog.String("poller", opt.Poller))
 		return nil, err
 	}
 	if poller.Addr == "" {
@@ -240,7 +241,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 		return &rest.Client{Metadata: &util.Metadata{}}, nil
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
-		r.Logger.Error("error creating new client", slog.Any("err", err), slog.String("poller", opt.Poller))
+		r.Logger.Error("error creating new client", slogx.Err(err), slog.String("poller", opt.Poller))
 		os.Exit(1)
 	}
 
@@ -463,7 +464,7 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 		totalAPID += apiD
 
 		if err != nil {
-			r.Logger.Error("", slog.Any("err", err), slog.String("api", endpoint.prop.Query))
+			r.Logger.Error("", slogx.Err(err), slog.String("api", endpoint.prop.Query))
 			continue
 		}
 
@@ -575,7 +576,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				r.Logger.Error("Failed to create new instance", slog.Any("err", err), slog.String("instKey", instanceKey))
+				r.Logger.Error("Failed to create new instance", slogx.Err(err), slog.String("instKey", instanceKey))
 				continue
 			}
 		}
@@ -626,7 +627,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 				if metr, err = mat.NewMetricFloat64(metric.Name, metric.Label); err != nil {
 					r.Logger.Error(
 						"NewMetricFloat64",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("name", metric.Name),
 					)
 				} else {
@@ -650,7 +651,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
 					r.Logger.Error(
 						"Unable to set float key on metric",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("key", metric.Name),
 						slog.String("metric", metric.Label),
 					)
@@ -761,7 +762,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			nodeIDs, err = r.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
-				r.Logger.Error("Unable to get nodes", slog.Any("err", err))
+				r.Logger.Error("Unable to get nodes", slogx.Err(err))
 			}
 			info.Ids = nodeIDs
 			p.Nodes = &info

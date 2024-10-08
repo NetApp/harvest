@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 )
@@ -32,7 +33,7 @@ func (w *Workload) createMetrics(data *matrix.Matrix) error {
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
-			w.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", k))
+			w.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
 			return err
 		}
 	}

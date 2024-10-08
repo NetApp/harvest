@@ -1,6 +1,7 @@
 package changelog
 
 import (
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"gopkg.in/yaml.v3"
 	"log/slog"
@@ -63,7 +64,7 @@ func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger 
 		if err != nil {
 			logger.Warn(
 				"failed to parse changelog dsl. Trying default",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("template", string(overwriteConfig)),
 			)
 		} else {
@@ -92,7 +93,7 @@ func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger 
 				entry.PublishLabels = append(entry.PublishLabels, exportedKeys.GetAllChildContentS()...)
 			} else if x := exportOption.GetChildContentS("include_all_labels"); x != "" {
 				if includeAllLabels, err := strconv.ParseBool(x); err != nil {
-					logger.Error("parameter: include_all_labels", slog.Any("err", err))
+					logger.Error("parameter: include_all_labels", slogx.Err(err))
 				} else if includeAllLabels {
 					entry.includeAll = true
 				}

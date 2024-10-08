@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"net"
 	"net/http"
@@ -51,7 +52,7 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 		if err := server.ListenAndServeTLS(p.Params.TLS.CertFile, p.Params.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			p.Logger.Error(
 				"Failed to start server",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("url", url),
 				slog.String("cert_file", p.Params.TLS.CertFile),
 				slog.String("key_file", p.Params.TLS.KeyFile),
@@ -60,7 +61,7 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 		}
 	} else {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			p.Logger.Error("Failed to start server", slog.Any("err", err), slog.String("url", url))
+			p.Logger.Error("Failed to start server", slogx.Err(err), slog.String("url", url))
 			os.Exit(1)
 		}
 	}
@@ -110,7 +111,7 @@ func (p *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	_, err := w.Write([]byte("403 Forbidden"))
 	if err != nil {
-		p.Logger.Error("error", slog.Any("err", err))
+		p.Logger.Error("error", slogx.Err(err))
 	}
 }
 
@@ -153,7 +154,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	_, err := w.Write(bytes.Join(data, []byte("\n")))
 	if err != nil {
-		p.Logger.Error("write metrics", slog.Any("err", err))
+		p.Logger.Error("write metrics", slogx.Err(err))
 	} else {
 		// make sure stream ends with newline
 		if _, err2 := w.Write([]byte("\n")); err2 != nil {
@@ -165,11 +166,11 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	p.Metadata.Reset()
 	err = p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error("metadata time", slog.Any("err", err))
+		p.Logger.Error("metadata time", slogx.Err(err))
 	}
 	err = p.Metadata.LazySetValueInt64("count", "http", int64(count))
 	if err != nil {
-		p.Logger.Error("metadata count", slog.Any("err", err))
+		p.Logger.Error("metadata count", slogx.Err(err))
 	}
 }
 
@@ -292,11 +293,11 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	_, err := w.Write([]byte(bodyFlat))
 	if err != nil {
-		p.Logger.Error("write info", slog.Any("err", err))
+		p.Logger.Error("write info", slogx.Err(err))
 	}
 
 	err = p.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
 	if err != nil {
-		p.Logger.Error("metadata time", slog.Any("err", err))
+		p.Logger.Error("metadata time", slogx.Err(err))
 	}
 }

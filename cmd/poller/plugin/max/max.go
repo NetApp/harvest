@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"regexp"
@@ -84,7 +85,7 @@ func (m *Max) parseRules() error {
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
 						m.SLogger.Error(
 							"rule compile regex",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("line", line),
 						)
 						return err
@@ -204,7 +205,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					if err = objMetric.SetValueFloat64(objInstance, value); err != nil {
 						m.SLogger.Error(
 							"add value",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("key", key),
 							slog.String("objName", objName),
 						)

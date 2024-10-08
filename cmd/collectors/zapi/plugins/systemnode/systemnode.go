@@ -6,9 +6,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"log/slog"
 )
 
 type SystemNode struct {
@@ -29,7 +29,7 @@ func (s *SystemNode) Init() error {
 	}
 
 	if s.client, err = zapi.New(conf.ZapiPoller(s.ParentParams), s.Auth); err != nil {
-		s.SLogger.Error("connecting", slog.Any("err", err))
+		s.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -48,13 +48,13 @@ func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	// invoke service-processor-get-iter zapi and populate the BMC firmware version
 	serviceProcessorMap, err := s.getServiceProcessor()
 	if err != nil {
-		s.SLogger.Error("Failed to collect service processor info", slog.Any("err", err))
+		s.SLogger.Error("Failed to collect service processor info", slogx.Err(err))
 	}
 
 	// invoke system-get-node-info-iter zapi and populate node info
 	partnerNameMap, err := s.getPartnerNodeInfo()
 	if err != nil {
-		s.SLogger.Error("Failed to collect partner node info", slog.Any("err", err))
+		s.SLogger.Error("Failed to collect partner node info", slogx.Err(err))
 	}
 
 	for _, aNode := range data.GetInstanceKeys() {

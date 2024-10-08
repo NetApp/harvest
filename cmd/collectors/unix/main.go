@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -161,7 +162,7 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 	// load list of counters from template
 	if counters := u.Params.GetChildS("counters"); counters != nil {
 		if err = u.loadMetrics(counters); err != nil {
-			u.Logger.Error("load metrics", slog.Any("err", err))
+			u.Logger.Error("load metrics", slogx.Err(err))
 			return err
 		}
 	} else {
@@ -170,7 +171,7 @@ func (u *Unix) Init(a *collector.AbstractCollector) error {
 
 	getClockTicks()
 	if u.system, err = NewSystem(); err != nil {
-		u.Logger.Error("load system", slog.Any("err", err))
+		u.Logger.Error("load system", slogx.Err(err))
 		return err
 	}
 
@@ -414,21 +415,21 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 func setStartTime(m *matrix.Metric, i *matrix.Instance, p *Process, s *System) {
 	err := m.SetValueFloat64(i, p.startTime+s.bootTime)
 	if err != nil {
-		slog.Default().Error("error", slog.Any("err", err))
+		slog.Default().Error("error", slogx.Err(err))
 	}
 }
 
 func setNumThreads(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numThreads)
 	if err != nil {
-		slog.Default().Error("error", slog.Any("err", err))
+		slog.Default().Error("error", slogx.Err(err))
 	}
 }
 
 func setNumFds(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	err := m.SetValueUint64(i, p.numFds)
 	if err != nil {
-		slog.Default().Error("error", slog.Any("err", err))
+		slog.Default().Error("error", slogx.Err(err))
 	}
 }
 
@@ -436,12 +437,12 @@ func setCPUPercent(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) 
 	if p.elapsedTime != 0 {
 		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 		if err != nil {
-			slog.Default().Error("error", slog.Any("err", err))
+			slog.Default().Error("error", slogx.Err(err))
 		}
 	} else {
 		err := m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
 		if err != nil {
-			slog.Default().Error("error", slog.Any("err", err))
+			slog.Default().Error("error", slogx.Err(err))
 		}
 	}
 }
@@ -450,7 +451,7 @@ func setCPU(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.cpu[l]; ok {
 		err := m.SetValueFloat64(i, value)
 		if err != nil {
-			slog.Default().Error("error", slog.Any("err", err))
+			slog.Default().Error("error", slogx.Err(err))
 		}
 	}
 }
@@ -459,7 +460,7 @@ func setMemory(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.mem[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			slog.Default().Error("error", slog.Any("err", err))
+			slog.Default().Error("error", slogx.Err(err))
 		}
 	}
 }
@@ -468,7 +469,7 @@ func setIo(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.io[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			slog.Default().Error("error", slog.Any("err", err))
+			slog.Default().Error("error", slogx.Err(err))
 		}
 	}
 }
@@ -477,7 +478,7 @@ func setNet(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.net[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			slog.Default().Error("error", slog.Any("err", err))
+			slog.Default().Error("error", slogx.Err(err))
 		}
 	}
 }
@@ -486,7 +487,7 @@ func setCtx(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.ctx[l]; ok {
 		err := m.SetValueUint64(i, value)
 		if err != nil {
-			slog.Default().Error("error", slog.Any("err", err))
+			slog.Default().Error("error", slogx.Err(err))
 		}
 	}
 }

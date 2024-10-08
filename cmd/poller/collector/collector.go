@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"log/slog"
@@ -365,7 +366,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				if !c.Schedule.IsStandBy() {
 					c.Logger.Debug(
 						"handling error during poll",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("task", task.Name),
 					)
 				}
@@ -384,7 +385,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					}
 					c.Logger.Debug(
 						"target unreachable, entering standby mode and retry",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("task", task.Name),
 						slog.Int("retryDelaySecs", retryDelay),
 					)
@@ -425,7 +426,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 						c.Logger.Error(
 							"Entering standby mode",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("task", task.Name),
 						)
 					case errors.Is(err, errs.ErrAPIRequestRejected):
@@ -434,12 +435,12 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 							// Log as info since these are not errors.
 							c.Logger.Info(
 								"Entering standby mode",
-								slog.Any("err", err),
+								slogx.Err(err),
 								slog.String("task", task.Name),
 							)
 						}
 					default:
-						c.Logger.Error("", slog.Any("err", err), slog.String("task", task.Name))
+						c.Logger.Error("", slogx.Err(err), slog.String("task", task.Name))
 					}
 
 					var herr errs.HarvestError
@@ -477,7 +478,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						for _, plg := range v {
 							pluginData, pluginMetadata, err := plg.Run(data)
 							if err != nil {
-								c.Logger.Error("", slog.Any("err", err), slog.String("plugin", plg.GetName()))
+								c.Logger.Error("", slogx.Err(err), slog.String("plugin", plg.GetName()))
 								continue
 							}
 							if pluginData != nil {
@@ -528,7 +529,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			if _, err := e.Export(c.Metadata); err != nil {
 				c.Logger.Warn(
 					"Unable to export metadata",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("exporter", e.GetName()),
 				)
 			}
@@ -540,7 +541,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 					if err != nil {
 						c.Logger.Error(
 							"export data",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("exporter", e.GetName()),
 						)
 						break
@@ -766,7 +767,7 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, 
 		}
 
 		if err := p.Init(); err != nil {
-			slog.Error("init plugin", slog.Any("err", err), slog.String("name", name))
+			slog.Error("init plugin", slogx.Err(err), slog.String("name", name))
 			return err
 		}
 		plugins = append(plugins, p)
