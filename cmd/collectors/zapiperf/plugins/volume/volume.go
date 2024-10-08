@@ -19,9 +19,11 @@ const batchSize = "500"
 
 type Volume struct {
 	*plugin.AbstractPlugin
+	currentVal          int
 	styleType           string
 	includeConstituents bool
 	client              *zapi.Client
+	volumesMap          map[string]string // volume-name -> volume-extended-style map
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -44,6 +46,11 @@ func (v *Volume) Init() error {
 		return nil
 	}
 
+	v.volumesMap = make(map[string]string)
+
+	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
+	v.currentVal = v.SetPluginInterval()
+
 	// Read template to decide inclusion of flexgroup constituents
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 
@@ -58,9 +65,15 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	data := dataMap[v.Object]
 	style := v.styleType
 	opsKeyPrefix := "temp_"
-	volumesMap := v.fetchVolumes()
+	if v.currentVal >= v.PluginInvocationRate {
+		v.currentVal = 0
+		// Clean volumesMap map
+		clear(v.volumesMap)
+		v.volumesMap = v.fetchVolumes()
+	}
 
-	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, volumesMap)
+	v.currentVal++
+	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap)
 }
 
 func (v *Volume) fetchVolumes() map[string]string {

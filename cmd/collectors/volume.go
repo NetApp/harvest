@@ -16,6 +16,11 @@ var flexgroupRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string) ([]*matrix.Matrix, *util.Metadata, error) {
 	var err error
 
+	if volumesMap == nil {
+		logger.Info("volumes config data not found")
+		return nil, nil, nil
+	}
+
 	fgAggrMap := make(map[string]*set.Set)
 	flexgroupAggrsMap := make(map[string]*set.Set)
 
