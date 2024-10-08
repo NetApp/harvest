@@ -144,7 +144,7 @@ func (kp *KeyPerf) buildCounters() {
 	if err != nil {
 		// It's acceptable to continue even if there are errors, as the remaining counters will still be processed.
 		// Any counters that require counter metadata will be skipped.
-		kp.Logger.Error("Failed to load static counter definitions", slog.Any("error", err))
+		kp.Logger.Error("Failed to load static counter definitions", slogx.Err(err))
 	}
 
 	for k, v := range kp.Prop.Metrics {
