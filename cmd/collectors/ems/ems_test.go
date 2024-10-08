@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
@@ -56,7 +57,7 @@ func NewEms() *Ems {
 	ac := collector.New("Ems", "Ems", opts, emsParams(emsConfigPath), nil)
 	e := &Ems{}
 	if err := e.Init(ac); err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		os.Exit(1)
 	}
 	// Changed the resolve_after for 2 issuing ems for auto resolve testing

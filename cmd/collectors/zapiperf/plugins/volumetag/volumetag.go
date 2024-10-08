@@ -5,9 +5,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"log/slog"
 )
 
 const batchSize = "500"
@@ -28,7 +28,7 @@ func (v *VolumeTag) Init() error {
 	}
 
 	if v.client, err = zapi.New(conf.ZapiPoller(v.ParentParams), v.Auth); err != nil {
-		v.SLogger.Error("connecting", slog.Any("err", err))
+		v.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 	return v.client.Init(5)

@@ -22,6 +22,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"sort"
@@ -298,7 +299,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				if err := metric.SetValueString(instance, value); err != nil {
 					z.Logger.Error(
 						"failed to set value",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("key", key),
 						slog.String("value", value),
 					)
@@ -387,7 +388,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 				if instance, err = mat.NewInstance(key); err != nil {
 					z.Logger.Error(
 						"Failed to create new missing instance",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("instKey", key),
 					)
 					continue
@@ -495,7 +496,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 			nodeIDs, err = z.getNodeUuids()
 			if err != nil {
 				// log but don't return so the other info below is collected
-				z.Logger.Error("Unable to get nodes", slog.Any("err", err))
+				z.Logger.Error("Unable to get nodes", slogx.Err(err))
 			}
 			info.Ids = nodeIDs
 			p.Nodes = &info

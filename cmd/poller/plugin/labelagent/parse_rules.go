@@ -6,6 +6,7 @@ package labelagent
 
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"regexp"
 	"strconv"
@@ -241,7 +242,7 @@ func (a *LabelAgent) parseSplitRegexRule(rule string) {
 		if fields = strings.SplitN(fields[1], "` ", 2); len(fields) == 2 {
 			var err error
 			if r.reg, err = regexp.Compile(fields[0]); err != nil {
-				a.SLogger.Error("(split_regex) invalid regex", slog.Any("err", err))
+				a.SLogger.Error("(split_regex) invalid regex", slogx.Err(err))
 				return
 			}
 			if r.targets = strings.Split(fields[1], ","); len(r.targets) != 0 {
@@ -334,7 +335,7 @@ func (a *LabelAgent) parseReplaceRegexRule(rule string) {
 			a.newLabelNames = append(a.newLabelNames, r.target)
 			var err error
 			if r.reg, err = regexp.Compile(strings.TrimSuffix(fields[1], "`")); err != nil {
-				a.SLogger.Error("(replace_regex) invalid regex", slog.Any("err", err))
+				a.SLogger.Error("(replace_regex) invalid regex", slogx.Err(err))
 				return
 			}
 
@@ -441,7 +442,7 @@ func (a *LabelAgent) parseExcludeRegexRule(rule string) {
 			a.excludeRegexRules = append(a.excludeRegexRules, r)
 			a.SLogger.Debug("parsed exclude_regex", slog.String("pattern", pattern), slog.String("rule", r.label))
 		} else {
-			a.SLogger.Error("ignore exclude_regex", slog.Any("err", err))
+			a.SLogger.Error("ignore exclude_regex", slogx.Err(err))
 		}
 	} else {
 		a.SLogger.Error("exclude_regex rule definition should have two fields", slog.String("rule", rule))
@@ -501,7 +502,7 @@ func (a *LabelAgent) parseIncludeRegexRule(rule string) {
 				slog.String("label", r.label),
 			)
 		} else {
-			a.SLogger.Error("(include_regex) compile regex", slog.Any("err", err))
+			a.SLogger.Error("(include_regex) compile regex", slogx.Err(err))
 		}
 	} else {
 		a.SLogger.Error("(include_regex) rule definition should have two fields", slog.String("rule", rule))
@@ -542,7 +543,7 @@ func (a *LabelAgent) parseValueToNumRule(rule string) {
 
 			v, err := strconv.ParseUint(fields[4], 10, 8)
 			if err != nil {
-				a.SLogger.Error("(value_to_num) parse", slog.Any("err", err), slog.String("default", fields[4]))
+				a.SLogger.Error("(value_to_num) parse", slogx.Err(err), slog.String("default", fields[4]))
 				return
 			}
 			r.hasDefault = true
@@ -579,7 +580,7 @@ func (a *LabelAgent) parseValueToNumRegexRule(rule string) {
 		if r.reg[0], err = regexp.Compile(fields[2]); err != nil {
 			a.SLogger.Error(
 				"(value_to_num_regex) compile regex",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("regex", r.reg[0].String()),
 				slog.String("value", fields[2]),
 			)
@@ -588,7 +589,7 @@ func (a *LabelAgent) parseValueToNumRegexRule(rule string) {
 		if r.reg[1], err = regexp.Compile(fields[3]); err != nil {
 			a.SLogger.Error(
 				"(value_to_num_regex) compile regex",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("regex", r.reg[1].String()),
 				slog.String("value", fields[3]),
 			)
@@ -598,7 +599,7 @@ func (a *LabelAgent) parseValueToNumRegexRule(rule string) {
 			fields[4] = strings.TrimPrefix(strings.TrimSuffix(fields[4], "`"), "`")
 			v, err := strconv.ParseUint(fields[4], 10, 8)
 			if err != nil {
-				a.SLogger.Error("(value_to_num_regex) parse default value", slog.Any("err", err), slog.String("regex", fields[4]))
+				a.SLogger.Error("(value_to_num_regex) parse default value", slogx.Err(err), slog.String("regex", fields[4]))
 				return
 			}
 			r.hasDefault = true

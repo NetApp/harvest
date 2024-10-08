@@ -3,6 +3,7 @@ package installer
 import (
 	"errors"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 )
 
@@ -28,7 +29,7 @@ func (n *Native) Install() bool {
 	slog.Info("Installing " + tarFileName)
 	unTarOutput, err := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		panic(err)
 	}
 	slog.Info("Untar output: " + unTarOutput)

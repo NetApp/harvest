@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 )
@@ -28,7 +29,7 @@ func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
-			p.SLogger.Error("error while creating metric", "key", k, "err", err)
+			p.SLogger.Error("error while creating metric", slog.Any("err", err), slog.String("key", k))
 			return nil, nil, err
 		}
 	}
@@ -60,7 +61,7 @@ func (p *QosPolicyAdaptive) setIOPs(data *matrix.Matrix, instance *matrix.Instan
 		if err != nil {
 			p.SLogger.Error(
 				"Unable to set metric",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String(labelName, xput.IOPS),
 			)
 		}

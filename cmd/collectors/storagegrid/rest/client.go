@@ -71,7 +71,7 @@ func NewClient(pollerName string, clientTimeout string, c *auth.Credentials) (*C
 		timeout, _ = time.ParseDuration(DefaultTimeout)
 	}
 	if client, err = New(poller, timeout, c); err != nil {
-		return nil, fmt.Errorf("uanble to create poller [%s]. err: %w", pollerName, err)
+		return nil, fmt.Errorf("unable to create poller [%s]. err: %w", pollerName, err)
 	}
 
 	return client, err

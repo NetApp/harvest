@@ -6,6 +6,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"os/exec"
 	"testing"
@@ -28,7 +29,7 @@ func TestCopyLogs(t *testing.T) {
 		if err != nil {
 			slog.Error(
 				"Unable to copy logs",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("id", containerShortID),
 				slog.String("dest", dest),
 			)

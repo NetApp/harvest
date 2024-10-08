@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strings"
@@ -31,7 +32,7 @@ func (q *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	for _, k := range metrics {
 		err := matrix.CreateMetric(k, data)
 		if err != nil {
-			q.SLogger.Error("error while creating metric", slog.Any("err", err), slog.String("key", k))
+			q.SLogger.Error("error while creating metric", slogx.Err(err), slog.String("key", k))
 			return nil, nil, err
 		}
 	}
@@ -55,12 +56,12 @@ func (q *QosPolicyFixed) setFixed(data *matrix.Matrix, instance *matrix.Instance
 	}
 	minV, err := collectors.ZapiXputToRest(before)
 	if err != nil {
-		q.SLogger.Error("Failed to parse fixed xput label", slog.Any("err", err), slog.String("label", before))
+		q.SLogger.Error("Failed to parse fixed xput label", slogx.Err(err), slog.String("label", before))
 		return
 	}
 	maxV, err := collectors.ZapiXputToRest(after)
 	if err != nil {
-		q.SLogger.Error("Failed to parse fixed xput label", slog.Any("err", err), slog.String("label", after))
+		q.SLogger.Error("Failed to parse fixed xput label", slogx.Err(err), slog.String("label", after))
 		return
 	}
 	collectors.QosSetLabel("min_throughput_iops", data, instance, minV.IOPS, q.SLogger)

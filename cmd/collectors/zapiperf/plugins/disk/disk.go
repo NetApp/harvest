@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -117,7 +118,7 @@ func (d *Disk) Init() error {
 	}
 
 	if d.client, err = zapi.New(conf.ZapiPoller(d.ParentParams), d.Auth); err != nil {
-		d.SLogger.Error("connecting", slog.Any("err", err))
+		d.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -180,7 +181,7 @@ func (d *Disk) Init() error {
 				case "float":
 					_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
 					if err != nil {
-						d.SLogger.Error("add metric", slog.Any("err", err))
+						d.SLogger.Error("add metric", slogx.Err(err))
 						return err
 					}
 				}
@@ -190,7 +191,7 @@ func (d *Disk) Init() error {
 		d.shelfData[attribute].SetExportOptions(exportOptions)
 	}
 
-	d.SLogger.Debug("initialized with shelfData", "objects", len(d.shelfData))
+	d.SLogger.Debug("initialized with shelfData", slog.Int("objects", len(d.shelfData)))
 
 	// setup batchSize for request
 	d.batchSize = batchSize
@@ -214,7 +215,7 @@ func (d *Disk) initShelfPowerMatrix() {
 	for _, k := range shelfMetrics {
 		err := matrix.CreateMetric(k, d.powerData["shelf"])
 		if err != nil {
-			d.SLogger.Warn("create metric", slog.Any("err", err), slog.String("key", k))
+			d.SLogger.Warn("create metric", slogx.Err(err), slog.String("key", k))
 		}
 	}
 }
@@ -225,7 +226,7 @@ func (d *Disk) initAggrPowerMatrix() {
 	for _, k := range aggrMetrics {
 		err := matrix.CreateMetric(k, d.powerData["aggr"])
 		if err != nil {
-			d.SLogger.Warn("create metric", slog.Any("err", err), slog.String("key", k))
+			d.SLogger.Warn("create metric", slogx.Err(err), slog.String("key", k))
 		}
 	}
 }
@@ -381,7 +382,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 	for instanceKey, v := range d.aggrMap {
 		instance, err := aggrData.NewInstance(instanceKey)
 		if err != nil {
-			d.SLogger.Error("Failed to add instance", slog.Any("err", err), slog.String("key", instanceKey))
+			d.SLogger.Error("Failed to add instance", slogx.Err(err), slog.String("key", instanceKey))
 			continue
 		}
 		instance.SetLabel("aggr", instanceKey)
@@ -391,7 +392,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 		m := aggrData.GetMetric("power")
 		err = m.SetValueFloat64(instance, v.power)
 		if err != nil {
-			d.SLogger.Error("Failed to set value", slog.Any("err", err), slog.String("key", instanceKey))
+			d.SLogger.Error("Failed to set value", slogx.Err(err), slog.String("key", instanceKey))
 			continue
 		}
 	}
@@ -641,7 +642,7 @@ func (d *Disk) handleShelfPower(shelves []*node.Node, output []*matrix.Matrix) (
 		instanceKey := shelfUID
 		instance, err := data.NewInstance(instanceKey)
 		if err != nil {
-			d.SLogger.Error("add instance", slog.Any("err", err), slog.String("key", instanceKey))
+			d.SLogger.Error("add instance", slogx.Err(err), slog.String("key", instanceKey))
 			return output, err
 		}
 		instance.SetLabel("shelf", shelfName)
@@ -734,7 +735,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 
 				err = m.SetValueFloat64(instance, sumPower)
 				if err != nil {
-					d.SLogger.Error("set power", slog.Any("err", err), slog.Float64("power", sumPower))
+					d.SLogger.Error("set power", slogx.Err(err), slog.Float64("power", sumPower))
 				} else {
 					d.ShelfMap[instance.GetLabel("shelfID")] = &shelf{power: sumPower}
 				}
@@ -746,7 +747,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if err != nil {
 						d.SLogger.Error(
 							"set average_ambient_temperature",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.Float64("average_ambient_temperature", aaT),
 						)
 					}
@@ -757,7 +758,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				if err != nil {
 					d.SLogger.Error(
 						"set min_ambient_temperature",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.Float64("min_ambient_temperature", maT),
 					)
 				}
@@ -767,7 +768,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				if err != nil {
 					d.SLogger.Error(
 						"set max_temperature",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.Float64("max_temperature", mT),
 					)
 				}
@@ -778,7 +779,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if err != nil {
 						d.SLogger.Error(
 							"set average_temperature",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.Float64("average_temperature", nat),
 						)
 					}
@@ -789,7 +790,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				if err != nil {
 					d.SLogger.Error(
 						"set min_temperature",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.Float64("min_temperature", mT),
 					)
 				}
@@ -800,7 +801,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if err != nil {
 						d.SLogger.Error(
 							"set average_fan_speed",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.Float64("average_fan_speed", afs),
 						)
 					}
@@ -811,7 +812,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				if err != nil {
 					d.SLogger.Error(
 						"set max_fan_speed",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.Float64("max_fan_speed", mfs),
 					)
 				}
@@ -821,7 +822,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				if err != nil {
 					d.SLogger.Error(
 						"set min_fan_speed",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.Float64("min_fan_speed", mfs),
 					)
 				}
@@ -875,7 +876,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 					instance, err := data1.NewInstance(instanceKey)
 
 					if err != nil {
-						d.SLogger.Error("add instance", slog.Any("err", err), slog.String("attribute", attribute))
+						d.SLogger.Error("add instance", slogx.Err(err), slog.String("attribute", attribute))
 						return nil, err
 					}
 
@@ -905,7 +906,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 										"failed to parse value",
 										slog.String("metricKey", metricKey),
 										slog.String("value", value),
-										slog.Any("err", err),
+										slogx.Err(err),
 									)
 								}
 							}

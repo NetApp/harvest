@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
@@ -35,7 +36,7 @@ func (a *Aggregate) Init() error {
 	}
 
 	if a.client, err = zapi.New(conf.ZapiPoller(a.ParentParams), a.Auth); err != nil {
-		a.SLogger.Error("connecting", slog.Any("err", err))
+		a.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -54,13 +55,13 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	// invoke aggr-object-store-get-iter zapi and populate cloud stores info
 	if err := a.getCloudStores(); err != nil {
 		if !errors.Is(err, errs.ErrNoInstance) {
-			a.SLogger.Error("Failed to update get cloud stores", slog.Any("err", err))
+			a.SLogger.Error("Failed to update get cloud stores", slogx.Err(err))
 		}
 	}
 
 	aggrFootprintMap, err := a.getAggrFootprint()
 	if err != nil {
-		a.SLogger.Error("Failed to update footprint data", slog.Any("err", err))
+		a.SLogger.Error("Failed to update footprint data", slogx.Err(err))
 		// clean the map in case of the error
 		clear(aggrFootprintMap)
 	}
@@ -79,7 +80,7 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 				vfMetric := data.GetMetric(afKey)
 				if vfMetric == nil {
 					if vfMetric, err = data.NewMetricFloat64(afKey); err != nil {
-						a.SLogger.Error("add metric", slog.Any("err", err), slog.String("metric", afKey))
+						a.SLogger.Error("add metric", slogx.Err(err), slog.String("metric", afKey))
 						continue
 					}
 				}
@@ -87,11 +88,11 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 				if afVal != "" {
 					vfMetricVal, err := strconv.ParseFloat(afVal, 64)
 					if err != nil {
-						a.SLogger.Error("parse", slog.Any("err", err), slog.String(afKey, afVal))
+						a.SLogger.Error("parse", slogx.Err(err), slog.String(afKey, afVal))
 						continue
 					}
 					if err = vfMetric.SetValueFloat64(aggr, vfMetricVal); err != nil {
-						a.SLogger.Error("set", slog.Any("err", err), slog.String(afKey, afVal))
+						a.SLogger.Error("set", slogx.Err(err), slog.String(afKey, afVal))
 						continue
 					}
 				}
@@ -114,7 +115,7 @@ func (a *Aggregate) getCloudStores() error {
 	if err != nil {
 		a.SLogger.Error(
 			"Failed to parse version",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("version", clusterVersion),
 		)
 		return err

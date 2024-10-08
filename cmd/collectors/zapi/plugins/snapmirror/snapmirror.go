@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -41,7 +42,7 @@ func (m *SnapMirror) Init() error {
 		return err
 	}
 	if m.client, err = zapi.New(conf.ZapiPoller(m.ParentParams), m.Auth); err != nil {
-		m.SLogger.Error("connecting", slog.Any("err", err))
+		m.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 	if err := m.client.Init(5); err != nil {

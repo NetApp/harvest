@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strings"
@@ -278,7 +279,7 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
-				a.SLogger.Error("valueToNumMapping", slog.Any("err", err), slog.String("metric", r.metric))
+				a.SLogger.Error("valueToNumMapping", slogx.Err(err), slog.String("metric", r.metric))
 				return err
 			}
 			metric.SetProperty("value_to_num mapping")
@@ -306,7 +307,7 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 	for _, r := range a.valueToNumRegexRules {
 		if metric = m.GetMetric(r.metric); metric == nil {
 			if metric, err = m.NewMetricUint8(r.metric); err != nil {
-				a.SLogger.Error("valueToNumRegexMapping", slog.Any("err", err), slog.String("metric", r.metric))
+				a.SLogger.Error("valueToNumRegexMapping", slogx.Err(err), slog.String("metric", r.metric))
 				return err
 			}
 			metric.SetProperty("value_to_num_regex mapping")

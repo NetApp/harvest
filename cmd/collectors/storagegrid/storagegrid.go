@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -158,7 +159,7 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	for _, metric := range s.Props.Metrics {
 		mat, err := s.GetMetric(metric.Name, metric.Label, nil)
 		if err != nil {
-			s.Logger.Error("failed to get metric", slog.Any("err", err), slog.String("metric", metric.Name))
+			s.Logger.Error("failed to get metric", slogx.Err(err), slog.String("metric", metric.Name))
 			continue
 		}
 		metrics[metric.Name] = mat
@@ -217,7 +218,7 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 		if instance, err = mat.NewInstance(metricName + "-" + strconv.Itoa(i)); err != nil {
 			s.Logger.Error(
 				"",
-				slog.Any("err", err),
+				slogx.Err(err),
 				slog.String("metricName", metricName),
 				slog.Int("i", i),
 			)
@@ -250,7 +251,7 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 			if err != nil {
 				s.Logger.Error(
 					"Unable to set float key on metric",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("metric", metricName),
 				)
 				continue
@@ -355,7 +356,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				s.Logger.Error("", slog.Any("err", err), slog.String("instanceKey", instanceKey))
+				s.Logger.Error("", slogx.Err(err), slog.String("instanceKey", instanceKey))
 				continue
 			}
 		}
@@ -385,7 +386,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 				if metr, err = mat.NewMetricFloat64(metric.Name, metric.Label); err != nil {
 					s.Logger.Error(
 						"NewMetricFloat64",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("name", metric.Name),
 					)
 				}
@@ -407,7 +408,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
 					s.Logger.Error(
 						"Unable to set float key on metric",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("key", metric.Name),
 						slog.String("metric", metric.Label),
 					)
@@ -584,7 +585,7 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 		nodeIDs, err := s.getNodeUuids()
 		if err != nil {
 			// log the error, but don't exit method so later info is collected
-			s.Logger.Error("Unable to get nodes", slog.Any("err", err))
+			s.Logger.Error("Unable to get nodes", slogx.Err(err))
 			nodeIDs = make([]collector.ID, 0)
 		}
 		p.Nodes = &collector.InstanceInfo{

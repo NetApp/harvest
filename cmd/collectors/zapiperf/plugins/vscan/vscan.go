@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strconv"
@@ -26,7 +27,7 @@ func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		if parseBool, err := strconv.ParseBool(s); err == nil {
 			isPerScanner = parseBool
 		} else {
-			v.SLogger.Error("Failed to parse metricsPerScanner", slog.Any("err", err))
+			v.SLogger.Error("Failed to parse metricsPerScanner", slogx.Err(err))
 		}
 	}
 	v.SLogger.Debug("Vscan options", slog.Bool("isPerScanner", isPerScanner))

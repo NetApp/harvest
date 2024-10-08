@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
@@ -80,7 +81,7 @@ func (a *Aggregator) parseRules() error {
 				if strings.HasPrefix(value, "`") {
 					value = strings.TrimPrefix(strings.TrimSuffix(value, "`"), "`")
 					if r.checkRegex, err = regexp.Compile(value); err != nil {
-						a.SLogger.Error("ignore rule", slog.Any("err", err))
+						a.SLogger.Error("ignore rule", slogx.Err(err))
 						return err
 					}
 				} else if value != "" {
@@ -222,7 +223,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 						if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
 							a.SLogger.Error(
 								"add value",
-								slog.Any("err", err),
+								slogx.Err(err),
 								slog.String("key", key),
 								slog.String("objName", objName),
 							)
@@ -234,7 +235,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
 						a.SLogger.Error(
 							"add value",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("key", key),
 							slog.String("objName", objName),
 						)
@@ -291,7 +292,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				if err != nil {
 					a.SLogger.Error(
 						"set value",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("mn", mn),
 						slog.String("key", key),
 					)

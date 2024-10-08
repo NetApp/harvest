@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -29,7 +30,7 @@ func (f *FCVI) Init() error {
 	}
 
 	if f.client, err = zapi.New(conf.ZapiPoller(f.ParentParams), f.Auth); err != nil {
-		f.SLogger.Error("connecting", slog.Any("err", err))
+		f.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 	return f.client.Init(5)

@@ -9,6 +9,7 @@ import (
 	"github.com/Netapp/harvest-automation/certer/models"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/carlmjohnson/requests"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"net/http"
 	"os"
@@ -72,7 +73,7 @@ func begin() {
 	// Query for existing CA
 	certificates, err := fetchCA()
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		return
 	}
 
@@ -84,7 +85,7 @@ func begin() {
 	// Create private key and certificate signing request (CSR)
 	csr, err := ensureOpenSSLInstalled()
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 		return
 	}
 
@@ -96,7 +97,7 @@ func begin() {
 
 		err := deleteCertificates(certificates)
 		if err != nil {
-			slog.Error("failed to delete certificates", slog.Any("err", err))
+			slog.Error("failed to delete certificates", slogx.Err(err))
 			return
 		}
 	}
@@ -104,21 +105,21 @@ func begin() {
 	// Create a root CA certificate that will be used to sign certificate requests for the user account(s)
 	err = createRootCA()
 	if err != nil {
-		slog.Error("failed", slog.Any("err", err))
+		slog.Error("failed", slogx.Err(err))
 		return
 	}
 
 	// Sign the locally created certificate with the root CA generated above
 	err = signCSR(csr)
 	if err != nil {
-		slog.Error("failed", slog.Any("err", err))
+		slog.Error("failed", slogx.Err(err))
 		return
 	}
 
 	// Add certificate auth to this ONTAP user
 	err = addCertificateAuthToHarvestUser()
 	if err != nil {
-		slog.Error("", slog.Any("err", err))
+		slog.Error("", slogx.Err(err))
 
 	}
 
@@ -131,7 +132,7 @@ func begin() {
 func sleep(s string) {
 	duration, err := time.ParseDuration(s)
 	if err != nil {
-		slog.Error("failed to sleep", slog.Any("err", err))
+		slog.Error("failed to sleep", slogx.Err(err))
 	}
 	slog.Info("sleep", slog.String("sleep", s))
 	time.Sleep(duration)
@@ -149,7 +150,7 @@ func curlServer() {
 			fmt.Sprintf("https://%s/api/cluster?fields=version", ip))
 		output, err := command.CombinedOutput()
 		if err != nil {
-			slog.Error("failed to exec curl", slog.Any("err", err), slog.String("output", string(output)))
+			slog.Error("failed to exec curl", slogx.Err(err), slog.String("output", string(output)))
 		} else {
 			fmt.Println(string(output))
 			return
@@ -323,7 +324,7 @@ func fetchAdminSVM() {
 		ToJSON(&svmResp).
 		Fetch(context.Background())
 	if err != nil {
-		slog.Error("failed to fetch admin SVM", slog.Any("err", err))
+		slog.Error("failed to fetch admin SVM", slogx.Err(err))
 		return
 	}
 	adminSVM = svmResp.Records[0].Vserver

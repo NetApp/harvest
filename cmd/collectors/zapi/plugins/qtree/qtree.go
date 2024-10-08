@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
@@ -50,7 +51,7 @@ func (q *Qtree) Init() error {
 	}
 
 	if q.client, err = zapi.New(conf.ZapiPoller(q.ParentParams), q.Auth); err != nil {
-		q.SLogger.Error("connecting", slog.Any("err", err))
+		q.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
 
@@ -122,7 +123,7 @@ func (q *Qtree) Init() error {
 
 		_, err := q.data.NewMetricFloat64(metricName, display)
 		if err != nil {
-			q.SLogger.Error("add metric", slog.Any("err", err))
+			q.SLogger.Error("add metric", slogx.Err(err))
 			return err
 		}
 	}
@@ -313,7 +314,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				}
 				quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 				if err != nil {
-					q.SLogger.Debug("add instance", slog.Any("err", err), slog.String("attribute", attribute))
+					q.SLogger.Debug("add instance", slogx.Err(err), slog.String("attribute", attribute))
 					return err
 				}
 
@@ -368,7 +369,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 					if err := m.SetValueString(quotaInstance, value); err != nil {
 						q.SLogger.Debug(
 							"failed to parse value",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("attribute", attribute),
 							slog.String("value", value),
 						)

@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
@@ -76,7 +77,7 @@ func InvokeRestCall(client *rest.Client, href string, logger *slog.Logger) ([]gj
 	if err != nil {
 		logger.Error(
 			"Failed to fetch data",
-			slog.Any("err", err),
+			slogx.Err(err),
 			slog.String("href", href),
 			slog.Int("hrefLength", len(href)),
 		)
@@ -121,7 +122,7 @@ func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *slog.Logger
 			if err != nil {
 				logger.Error(
 					"Failed to load cluster date",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("date", currentClusterDate.String()),
 				)
 				continue
@@ -259,7 +260,7 @@ func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, l
 	if lastBytes, ok := lastTransferSize.GetValueFloat64(instance); ok {
 		if healthy == "true" && schedule != "" && lastError == "" && lastBytes == 0 {
 			if err := lagTime.SetValueFloat64(instance, 0); err != nil {
-				logger.Error("Unable to set value on metric", slog.Any("err", err), slog.String("metric", lagTime.GetName()))
+				logger.Error("Unable to set value on metric", slogx.Err(err), slog.String("metric", lagTime.GetName()))
 			}
 		}
 	}
@@ -402,12 +403,12 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 							if value != 0 {
 								err = tempOps.SetValueFloat64(ps, tempOpsV+opsValue)
 								if err != nil {
-									logger.Error("error", slog.Any("err", err))
+									logger.Error("error", slogx.Err(err))
 								}
 							}
 							err = psm.SetValueFloat64(ps, fv+prod)
 							if err != nil {
-								logger.Error("error", slog.Any("err", err))
+								logger.Error("error", slogx.Err(err))
 							}
 						}
 					}
@@ -421,7 +422,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 					if err != nil {
 						logger.Error(
 							"Error setting metric value",
-							slog.Any("err", err),
+							slogx.Err(err),
 							slog.String("metric", "scan_request_dispatched_rate"),
 						)
 					}
@@ -434,7 +435,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 					value, _ := m.GetValueFloat64(ps)
 					err := psm.SetValueFloat64(ps, runningTotal+value)
 					if err != nil {
-						logger.Error("Failed to set value", slog.Any("err", err), slog.String("mKey", mKey))
+						logger.Error("Failed to set value", slogx.Err(err), slog.String("mKey", mKey))
 					}
 				}
 			}
@@ -456,7 +457,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 				if err := m.SetValueFloat64(i, value/float64(count)); err != nil {
 					logger.Error(
 						"Unable to set average",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("mKey", mKey),
 						slog.String("name", m.GetName()),
 					)
@@ -469,7 +470,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
-								logger.Error("error", slog.Any("err", err))
+								logger.Error("error", slogx.Err(err))
 							}
 						} else {
 							m.SetValueNAN(i)
@@ -503,7 +504,7 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 			if err != nil {
 				logger.Debug(
 					"Failed to add instance",
-					slog.Any("err", err),
+					slogx.Err(err),
 					slog.String("ifgrpupInstanceKey", ifgrpupInstanceKey),
 				)
 				return err
@@ -525,13 +526,13 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 		rx := nData.GetMetric("rx_bytes")
 		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
 		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
-			logger.Debug("Failed to parse value", slog.Any("value", readBytes), slog.Any("err", err))
+			logger.Debug("Failed to parse value", slog.Any("value", readBytes), slogx.Err(err))
 		}
 
 		tx := nData.GetMetric("tx_bytes")
 		txv, _ := tx.GetValueFloat64(ifgroupInstance)
 		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
-			logger.Debug("Failed to parse value", slog.Any("value", writeBytes), slog.Any("err", err))
+			logger.Debug("Failed to parse value", slog.Any("value", writeBytes), slogx.Err(err))
 		}
 	}
 	return nil

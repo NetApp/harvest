@@ -18,6 +18,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/go-version"
@@ -110,7 +111,7 @@ nextFile:
 				customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
 				if customTemplateErr != nil {
 					c.Logger.Warn("Unable to import template file. File is invalid or empty",
-						slog.Any("err", err),
+						slogx.Err(err),
 						slog.String("path", templatePath),
 					)
 					continue

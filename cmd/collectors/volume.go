@@ -3,6 +3,7 @@ package collectors
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
@@ -25,7 +26,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 
 	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
 	if err != nil {
-		logger.Error("add metric", slog.Any("err", err), slog.String("key", metricName))
+		logger.Error("add metric", slogx.Err(err), slog.String("key", metricName))
 		return nil, nil, err
 	}
 
@@ -54,7 +55,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				flexgroupInstance.SetLabel(style, "flexgroup")
 				flexgroupAggrsMap[key] = set.New()
 				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
-					logger.Error("set value", slog.Any("err", err), slog.String("metric", metricName))
+					logger.Error("set value", slogx.Err(err), slog.String("metric", metricName))
 				}
 			}
 			fgAggrMap[key].Add(i.GetLabel("aggr"))
@@ -66,13 +67,13 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			key := i.GetLabel("svm") + "." + i.GetLabel("volume")
 			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
 			if err != nil {
-				logger.Error("Failed to create new instance", slog.Any("err", err), slog.String("key", key))
+				logger.Error("Failed to create new instance", slogx.Err(err), slog.String("key", key))
 				continue
 			}
 			flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
 			flexvolInstance.SetLabel(style, "flexvol")
 			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
-				logger.Error("Unable to set value on metric", slog.Any("err", err), slog.String("metric", metricName))
+				logger.Error("Unable to set value on metric", slogx.Err(err), slog.String("metric", metricName))
 			}
 		}
 	}
@@ -121,7 +122,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				if !strings.HasSuffix(m.GetName(), "_latency") {
 					err := fgm.SetValueFloat64(fg, fgv+value)
 					if err != nil {
-						logger.Error("error setting value", slog.Any("err", err))
+						logger.Error("error setting value", slogx.Err(err))
 					}
 					continue
 				}
@@ -150,12 +151,12 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 						if value != 0 {
 							err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 							if err != nil {
-								logger.Error("error setting value", slog.Any("err", err))
+								logger.Error("error setting value", slogx.Err(err))
 							}
 						}
 						err = fgm.SetValueFloat64(fg, fgv+prod)
 						if err != nil {
-							logger.Error("error setting value", slog.Any("err", err))
+							logger.Error("error setting value", slogx.Err(err))
 						}
 					} else {
 						s, ok := recordFGFalse[key]
@@ -199,7 +200,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							err := m.SetValueFloat64(i, value/opsValue)
 							if err != nil {
-								logger.Error("error setting value", slog.Any("err", err))
+								logger.Error("error setting value", slogx.Err(err))
 							}
 						} else {
 							m.SetValueNAN(i)
