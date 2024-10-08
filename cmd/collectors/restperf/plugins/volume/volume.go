@@ -75,7 +75,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 func (v *Volume) fetchVolumes() map[string]string {
 	volumesMap := make(map[string]string)
-	query := "api/storage/volumes"
+	query := "api/private/cli/volume"
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
