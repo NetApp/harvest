@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1726741676505,
+  "iteration": 1728381774629,
   "links": [
     {
       "asDropdown": true,
@@ -963,12 +963,205 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 16
+      },
+      "id": 607,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays the top $TopResources SVMs based on the space used across their volumes.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Used",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 17
+          },
+          "id": 631,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (datacenter, cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})\nand on(datacenter, cluster, svm)\ntopk(\n    $TopResources,\n    sum by (datacenter, cluster, svm) (\n        avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h])\n    )\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources SVMs by Volume Space Usage",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays the top $TopResources SVMs based on the logical space used across their volumes.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "Used",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 17
+          },
+          "id": 630,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (datacenter, cluster, svm) (volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})\nand on(datacenter, cluster, svm)\ntopk(\n    $TopResources,\n    sum by (datacenter, cluster, svm) (\n        avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h])\n    )\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - {{svm}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources SVMs by Logical Space Usage Across Volumes",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Capacity",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
       },
       "id": 79,
       "panels": [
@@ -1525,7 +1718,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 18
       },
       "id": 138,
       "panels": [
@@ -1584,7 +1777,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 18
+            "y": 4
           },
           "id": 310,
           "options": {
@@ -1673,7 +1866,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 18
+            "y": 4
           },
           "id": 311,
           "options": {
@@ -1766,7 +1959,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 30
+            "y": 16
           },
           "id": 238,
           "options": {
@@ -1857,7 +2050,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 30
+            "y": 16
           },
           "id": 239,
           "options": {
@@ -1948,7 +2141,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 38
+            "y": 24
           },
           "id": 240,
           "options": {
@@ -2034,7 +2227,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 48
+            "y": 34
           },
           "id": 312,
           "options": {
@@ -2123,7 +2316,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 48
+            "y": 34
           },
           "id": 313,
           "options": {
@@ -2216,7 +2409,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 60
+            "y": 46
           },
           "id": 314,
           "options": {
@@ -2309,7 +2502,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 60
+            "y": 46
           },
           "id": 315,
           "options": {
@@ -2402,7 +2595,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 72
+            "y": 58
           },
           "id": 316,
           "options": {
@@ -2495,7 +2688,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 72
+            "y": 58
           },
           "id": 317,
           "options": {
@@ -2540,7 +2733,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 139,
       "panels": [
@@ -2605,7 +2798,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 17
           },
           "id": 236,
           "options": {
@@ -2697,7 +2890,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 17
           },
           "id": 237,
           "options": {
@@ -2789,7 +2982,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 25
           },
           "id": 318,
           "options": {
@@ -2884,7 +3077,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 25
           },
           "id": 319,
           "options": {
@@ -2979,7 +3172,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 39
+            "y": 37
           },
           "id": 320,
           "options": {
@@ -3074,7 +3267,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 37
           },
           "id": 321,
           "options": {
@@ -3168,7 +3361,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 51
+            "y": 49
           },
           "id": 322,
           "options": {
@@ -3213,7 +3406,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 20
       },
       "id": 88,
       "panels": [
@@ -4022,7 +4215,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 98,
       "panels": [
@@ -5095,7 +5288,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "id": 110,
       "panels": [
@@ -6160,7 +6353,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 124,
       "panels": [
@@ -7109,7 +7302,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 37,
       "panels": [
@@ -8406,7 +8599,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 126,
       "panels": [
@@ -9720,7 +9913,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 26
       },
       "id": 130,
       "panels": [
@@ -11042,7 +11235,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 27
       },
       "id": 486,
       "panels": [
@@ -12364,7 +12557,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 28
       },
       "id": 56,
       "panels": [
@@ -13430,7 +13623,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 132,
       "panels": [
@@ -13685,7 +13878,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 30
       },
       "id": 134,
       "panels": [
@@ -14723,7 +14916,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 31
       },
       "id": 136,
       "panels": [
@@ -15557,7 +15750,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 32
       },
       "id": 266,
       "panels": [
@@ -16419,5 +16612,5 @@
   "timezone": "",
   "title": "ONTAP: SVM",
   "uid": "cdot-svm",
-  "version": 28
+  "version": 29
 }
