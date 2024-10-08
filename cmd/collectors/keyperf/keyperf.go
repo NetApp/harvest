@@ -140,7 +140,14 @@ func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
 }
 
 func (kp *KeyPerf) buildCounters() {
-	for k := range kp.Prop.Metrics {
+	staticCounterDef, err := loadStaticCounterDefinitions(kp.Prop.Object, "cmd/collectors/keyperf/static_counter_definitions.yaml", kp.Logger)
+	if err != nil {
+		// It's acceptable to continue even if there are errors, as the remaining counters will still be processed.
+		// Any counters that require counter metadata will be skipped.
+		kp.Logger.Error("Failed to load static counter definitions", slogx.Err(err))
+	}
+
+	for k, v := range kp.Prop.Metrics {
 		if _, exists := kp.perfProp.counterInfo[k]; !exists {
 			var ctr *counter
 
@@ -169,6 +176,36 @@ func (kp *KeyPerf) buildCounters() {
 					name:        k,
 					counterType: "delta",
 					unit:        "sec",
+				}
+			default:
+				// look up metric in staticCounterDef
+				if counterDef, exists := staticCounterDef.CounterDefinitions[v.Name]; exists {
+					ctr = &counter{
+						name:        k,
+						counterType: counterDef.Type,
+						denominator: counterDef.BaseCounter,
+					}
+					if counterDef.BaseCounter != "" {
+						// Ensure denominator exists in counterInfo
+						if _, denomExists := kp.perfProp.counterInfo[counterDef.BaseCounter]; !denomExists {
+							var baseCounterType string
+							if baseCounterDef, baseCounterExists := staticCounterDef.CounterDefinitions[counterDef.BaseCounter]; baseCounterExists {
+								baseCounterType = baseCounterDef.Type
+							}
+							if baseCounterType != "" {
+								kp.perfProp.counterInfo[counterDef.BaseCounter] = &counter{
+									name:        counterDef.BaseCounter,
+									counterType: staticCounterDef.CounterDefinitions[counterDef.BaseCounter].Type,
+								}
+								if _, dExists := kp.Prop.Metrics[counterDef.BaseCounter]; !dExists {
+									m := &rest.Metric{Label: "", Name: counterDef.BaseCounter, MetricType: "", Exportable: false}
+									kp.Prop.Metrics[counterDef.BaseCounter] = m
+								}
+							}
+						}
+					}
+				} else {
+					slog.Warn("Skipping metric due to unknown metricType", slog.String("name", k), slog.String("metricType", v.MetricType))
 				}
 			}
 
@@ -304,7 +341,8 @@ func (kp *KeyPerf) pollData(
 				orderedDenominatorKeys = append(orderedDenominatorKeys, key)
 			}
 		} else {
-			kp.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
+			kp.Logger.Error("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
+			metric.SetExportable(false)
 		}
 	}
 
@@ -375,6 +413,8 @@ func (kp *KeyPerf) pollData(
 				slog.String("denominator", counter.denominator),
 				slog.Int("instIndex", instIndex),
 			)
+			skips = curMat.Skip(key)
+			totalSkips += skips
 			continue
 		}
 

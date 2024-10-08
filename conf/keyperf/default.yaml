@@ -6,4 +6,15 @@ schedule:
   - data:      1m
 
 objects:
-  Volume:          volume.yaml
+  Aggregate:                   aggr.yaml
+  CIFSvserver:                 cifs_vserver.yaml
+  Cluster:                     cluster.yaml
+  ISCSISvm:                    iscsi_svm.yaml
+  LIF:                         lif.yaml
+  Lun:                         lun.yaml
+  Namespace:                   namespace.yaml
+  Node:                        node.yaml
+  NvmeServices:                nvme_services.yaml
+  Volume:                      volume.yaml
+  Qtree:                       qtree.yaml
+  OntapS3SVM:                  ontap_s3_svm.yaml
