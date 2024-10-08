@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1728381774629,
+  "iteration": 1728382764067,
   "links": [
     {
       "asDropdown": true,
@@ -1048,7 +1048,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (datacenter, cluster, svm) (volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})\nand on(datacenter, cluster, svm)\ntopk(\n    $TopResources,\n    sum by (datacenter, cluster, svm) (\n        avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h])\n    )\n)",
+              "expr": "sum by (datacenter, cluster, svm) (\n    volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", style=~\"flexvol|flexgroup\"}\n)\nand on(datacenter, cluster, svm)\ntopk(\n    $TopResources,\n    sum by (datacenter, cluster, svm) (\n        avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", style=~\"flexvol|flexgroup\"}[3h])\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
@@ -1137,7 +1137,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (datacenter, cluster, svm) (volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"})\nand on(datacenter, cluster, svm)\ntopk(\n    $TopResources,\n    sum by (datacenter, cluster, svm) (\n        avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h])\n    )\n)",
+              "expr": "sum by (datacenter, cluster, svm) (volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", style=~\"flexvol|flexgroup\"})\nand on(datacenter, cluster, svm)\ntopk(\n    $TopResources,\n    sum by (datacenter, cluster, svm) (\n        avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", style=~\"flexvol|flexgroup\"}[3h])\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
