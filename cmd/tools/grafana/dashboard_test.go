@@ -3,6 +3,7 @@ package grafana
 import (
 	"fmt"
 	"github.com/tidwall/gjson"
+	"maps"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -1777,5 +1778,36 @@ func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map
 			}
 			return true
 		})
+	}
+}
+
+func TestTags(t *testing.T) {
+	VisitDashboards(dashboards,
+		func(path string, data []byte) {
+			checkTags(t, path, data)
+		})
+}
+
+func checkTags(t *testing.T, path string, data []byte) {
+	allowedTagsMap := map[string]bool{
+		"cdot":        true,
+		"fsx":         true,
+		"harvest":     true,
+		"ontap":       true,
+		"storagegrid": true,
+	}
+
+	path = ShortPath(path)
+	tags := gjson.GetBytes(data, "tags").Array()
+	if len(tags) == 0 {
+		t.Errorf(`dashboard=%s got tags are empty, but should have tags`, path)
+		return
+	}
+
+	for _, tag := range tags {
+		if !allowedTagsMap[tag.String()] {
+			allowedTags := slices.Sorted(maps.Keys(allowedTagsMap))
+			t.Errorf(`dashboard=%s got tag=%s, which is not in the allowed set=%v`, path, tag.String(), allowedTags)
+		}
 	}
 }
