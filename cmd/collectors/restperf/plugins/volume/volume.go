@@ -80,6 +80,7 @@ func (v *Volume) fetchVolumes() map[string]string {
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"volume", "volume_style_extended"}).
+		Filter([]string{"is_constituent=*"}).
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
