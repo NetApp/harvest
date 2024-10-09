@@ -1,9 +1,12 @@
 package volume_test
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	volume2 "github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"log/slog"
+	"strconv"
 	"testing"
 
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -11,11 +14,16 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
+const OpsKeyPrefix = "temp_"
+const StyleType = "style"
+const PollerName = "test"
+
 // Common test logic for RestPerf/ZapiPerf Volume plugin
 func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plugin, includeConstituents string, expectedCount int, setMetricNaN bool) {
 	params := node.NewS("Volume")
 	params.NewChildS("include_constituents", includeConstituents)
 	v := createVolume(params)
+	volumesMap := make(map[string]string)
 
 	// Initialize the plugin
 	if err := v.Init(); err != nil {
@@ -28,22 +36,26 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	instance1.SetLabel("volume", "RahulTest__0001")
 	instance1.SetLabel("svm", "svm1")
 	instance1.SetLabel("aggr", "aggr1")
+	volumesMap["RahulTest__0001"] = "flexgroup_constituent"
 
 	instance2, _ := data.NewInstance("RahulTest__0002")
 	instance2.SetLabel("volume", "RahulTest__0002")
 	instance2.SetLabel("svm", "svm1")
 	instance2.SetLabel("aggr", "aggr2")
+	volumesMap["RahulTest__0002"] = "flexgroup_constituent"
 
 	instance3, _ := data.NewInstance("RahulTest__0003")
 	instance3.SetLabel("volume", "RahulTest__0003")
 	instance3.SetLabel("svm", "svm1")
 	instance3.SetLabel("aggr", "aggr3")
+	volumesMap["RahulTest__0003"] = "flexgroup_constituent"
 
 	// Create a simple volume instance
 	simpleInstance, _ := data.NewInstance("SimpleVolume")
 	simpleInstance.SetLabel("volume", "SimpleVolume")
 	simpleInstance.SetLabel("svm", "svm1")
 	simpleInstance.SetLabel("aggr", "aggr4")
+	volumesMap["SimpleVolume"] = "flexvol"
 
 	// Create latency and ops metrics
 	latencyMetric, _ := data.NewMetricFloat64("read_latency")
@@ -73,12 +85,9 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	_ = latencyMetric.SetValueFloat64(simpleInstance, 50)
 	_ = opsMetric.SetValueFloat64(simpleInstance, 5)
 
-	dataMap := map[string]*matrix.Matrix{
-		"volume": data,
-	}
-
 	// Run the plugin
-	output, _, err := v.Run(dataMap)
+	boolValue, _ := strconv.ParseBool(includeConstituents)
+	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, boolValue, OpsKeyPrefix, volumesMap)
 	if err != nil {
 		t.Fatalf("Run method failed: %v", err)
 	}
@@ -230,13 +239,17 @@ func TestRunForAllImplementations(t *testing.T) {
 }
 
 func createRestVolume(params *node.Node) plugin.Plugin {
-	v := &volume2.Volume{AbstractPlugin: plugin.New("volume", nil, params, nil, "volume", nil)}
+	opts := options.New(options.WithConfPath("testdata/conf"))
+	opts.IsTest = true
+	v := &volume2.Volume{AbstractPlugin: plugin.New("volume", opts, params, nil, "volume", nil)}
 	v.SLogger = slog.Default()
 	return v
 }
 
 func createZapiVolume(params *node.Node) plugin.Plugin {
-	v := &volume.Volume{AbstractPlugin: plugin.New("volume", nil, params, nil, "volume", nil)}
+	opts := options.New(options.WithConfPath("testdata/conf"))
+	opts.IsTest = true
+	v := &volume.Volume{AbstractPlugin: plugin.New("volume", opts, params, nil, "volume", nil)}
 	v.SLogger = slog.Default()
 	return v
 }

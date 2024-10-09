@@ -167,15 +167,18 @@ func (p *AbstractPlugin) SetPluginInterval() int {
 }
 
 func GetInterval(param *node.Node, defaultInterval time.Duration) float64 {
-	schedule := param.GetChildS("schedule")
-	if schedule != nil {
-		dataInterval := schedule.GetChildContentS("data")
-		if dataInterval != "" {
-			if durationVal, err := time.ParseDuration(dataInterval); err == nil {
-				return durationVal.Seconds()
+	if param != nil {
+		schedule := param.GetChildS("schedule")
+		if schedule != nil {
+			dataInterval := schedule.GetChildContentS("data")
+			if dataInterval != "" {
+				if durationVal, err := time.ParseDuration(dataInterval); err == nil {
+					return durationVal.Seconds()
+				}
 			}
 		}
 	}
+
 	return defaultInterval.Seconds()
 }
 
