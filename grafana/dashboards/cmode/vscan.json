@@ -1093,7 +1093,11 @@
   "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "cdot",
+    "harvest",
+    "ontap"
+  ],
   "templating": {
     "list": [
       {
