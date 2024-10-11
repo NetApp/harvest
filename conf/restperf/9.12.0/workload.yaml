@@ -8,6 +8,7 @@ object:                   qos
 client_timeout:           1m30s
 
 schedule:
+  - instance: 10m
   - data:      3m
 
 counters:

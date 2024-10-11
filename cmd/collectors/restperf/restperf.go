@@ -687,11 +687,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		startTime   time.Time
 	)
 
-	mat := r.Matrix[r.Object]
-	if len(mat.GetInstances()) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances fetched in PollInstance")
-	}
-
 	timestamp := r.Matrix[r.Object].GetMetric(timestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
@@ -703,7 +698,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
 	var filter []string
-	// Sort filters so that the href is deterministic
+	// Sort metrics so that the href is deterministic
 	metrics := slices.Sorted(maps.Keys(r.Prop.Metrics))
 
 	filter = append(filter, "counters.name="+strings.Join(metrics, "|"))
@@ -870,10 +865,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 			instance = curMat.GetInstance(instanceKey)
 			if instance == nil {
-				if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
-					r.Logger.Warn("Skip instanceKey, not found in cache", slog.String("instanceKey", instanceKey))
+				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+					return true
 				}
-				return true
+				instance, err = curMat.NewInstance(instanceKey)
+				if err != nil {
+					r.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
+					return true
+				}
 			}
 
 			// check for partial aggregation
@@ -1252,7 +1251,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			}
 			continue
 		}
-		// If we reach here then one of the earlier clauses should have executed `continue` statement
+		// If we reach here, then one of the earlier clauses should have executed `continue` statement
 		r.Logger.Error(
 			"Unknown property",
 			slog.String("key", key),
