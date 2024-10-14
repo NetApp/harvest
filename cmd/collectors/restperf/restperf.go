@@ -24,6 +24,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"iter"
 	"log/slog"
 	"maps"
 	"path"
@@ -65,9 +66,10 @@ var qosDetailQueries = map[string]string{
 }
 
 type RestPerf struct {
-	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	perfProp        *perfProp
-	archivedMetrics map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
+	*rest2.Rest         // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	perfProp            *perfProp
+	archivedMetrics     map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
+	hasInstanceSchedule bool
 }
 
 type counter struct {
@@ -141,6 +143,8 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	if err := r.InitQOS(); err != nil {
 		return err
 	}
+
+	r.InitSchedule()
 
 	r.Logger.Debug(
 		"initialized cache",
@@ -789,6 +793,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
+	// Call pollInstance to handle instance creation/deletion for objects without an instance schedule
+	if !r.hasInstanceSchedule {
+		_, err = r.pollInstance(curMat, perfToJSON(perfRecords), apiD)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	for _, perfRecord := range perfRecords {
 		pr := perfRecord.Records
 		t := perfRecord.Timestamp
@@ -1299,6 +1311,18 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	return newDataMap, nil
 }
 
+func perfToJSON(records []rest.PerfRecord) iter.Seq[gjson.Result] {
+	return func(yield func(gjson.Result) bool) {
+		for _, record := range records {
+			if record.Records.IsArray() {
+				record.Records.ForEach(func(_, r gjson.Result) bool {
+					return yield(r)
+				})
+			}
+		}
+	}
+}
+
 // Poll counter "ops" of the related/parent object, required for objects
 // workload_detail and workload_detail_volume. This counter is already
 // collected by the other collectors, so this poll is redundant
@@ -1471,17 +1495,17 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return r.handleError(err, href)
 	}
 
-	return r.pollInstance(records, time.Since(apiT))
+	return r.pollInstance(r.Matrix[r.Object], slices.Values(records), time.Since(apiT))
 }
 
-func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map[string]*matrix.Matrix, error) {
+func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Result], apiD time.Duration) (map[string]*matrix.Matrix, error) {
 	var (
 		err                              error
 		oldInstances                     *set.Set
 		oldSize, newSize, removed, added int
+		count                            int
 	)
 
-	mat := r.Matrix[r.Object]
 	oldInstances = set.New()
 	parseT := time.Now()
 	for key := range mat.GetInstances() {
@@ -1497,14 +1521,12 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 		instanceKeys = []string{"name"}
 	}
 
-	if len(records) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
-	}
-
-	for _, instanceData := range records {
+	for instanceData := range records {
 		var (
 			instanceKey string
 		)
+
+		count++
 
 		if !instanceData.IsObject() {
 			r.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
@@ -1550,6 +1572,10 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 		}
 	}
 
+	if count == 0 {
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+	}
+
 	for key := range oldInstances.Iter() {
 		mat.RemoveInstance(key)
 		r.Logger.Debug("removed instance", slog.String("key", key))
@@ -1569,7 +1595,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 	_ = r.Metadata.LazySetValueUint64("numCalls", "instance", r.Client.Metadata.NumCalls)
 
 	if newSize == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "")
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	return nil, err
@@ -1601,6 +1627,19 @@ func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matri
 		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrAPIRequestRejected, err.Error()))
 	}
 	return nil, fmt.Errorf("failed to fetch data. href=[%s] err: %w", href, err)
+}
+
+func (r *RestPerf) InitSchedule() {
+	if r.Schedule == nil {
+		return
+	}
+	tasks := r.Schedule.GetTasks()
+	for _, task := range tasks {
+		if task.Name == "instance" {
+			r.hasInstanceSchedule = true
+			return
+		}
+	}
 }
 
 func isWorkloadObject(query string) bool {

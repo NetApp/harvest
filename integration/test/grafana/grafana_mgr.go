@@ -36,7 +36,7 @@ func (g *Mgr) Import() (bool, string) {
 	if docker.IsDockerBasedPoller() {
 		grafanaURL = "grafana:3000"
 	}
-	importCmds := []string{"grafana", "import", "--overwrite", "--addr", grafanaURL}
+	importCmds := []string{"grafana", "import", "--addr", grafanaURL}
 	if docker.IsDockerBasedPoller() {
 		params := []string{"exec", containerIDs[0].ID, "bin/harvest"}
 		params = append(params, importCmds...)
