@@ -13,6 +13,7 @@ pipeline {
 
     environment {
         GIT_TOKEN = credentials('GIT_TOKEN')
+        GOPROXY = credentials('GOPROXY_CREDENTIAL')
         VERSION =sh (returnStdout: true, script: """
         [ -n \"${params.VERSION}\" ] && echo \"${params.VERSION}\" || date +%Y.%m.%d | cut -c 3-
         """).trim()
@@ -102,6 +103,7 @@ pipeline {
                 sh '''
                 wget -q -O go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
                 rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
+                export GOPROXY=$GOPROXY
                 '''
                 script {
                     currentStage = 'Setup GO'
@@ -152,7 +154,7 @@ pipeline {
                #cd $harvestPath
                rm -rf ./autosupport/asup
                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-               docker run --rm -v "$PWD":/$harvestPath -w /$harvestPath golang:${GO_VERSION} sh -c "export PATH=$PATH:/usr/local/go/bin && make asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN"
+               docker run --rm -v "$PWD":/$harvestPath -w /$harvestPath -e GOPROXY=$GOPROXY golang:${GO_VERSION} sh -c "export PATH=$PATH:/usr/local/go/bin && make asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN"
                cp ./autosupport/asup $targetLocation/asup_linux_amd64
                 '''
                 script {
@@ -174,8 +176,8 @@ pipeline {
                             sh '''
                             targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                             docker login
-                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg FIPS=0 -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
-                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg FIPS=1 -t ${imageName}:latest-fips -t ${imageName}:$VERSION-$RELEASE-fips -t ${jfrogImagePrefix}:latest-fips -t ${jfrogImagePrefix}:$VERSION-$RELEASE-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:$VERSION-$RELEASE-fips . --no-cache
+                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg FIPS=0 --build-arg GOPROXY=$GOPROXY  -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
+                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg FIPS=1 --build-arg GOPROXY=$GOPROXY  -t ${imageName}:latest-fips -t ${imageName}:$VERSION-$RELEASE-fips -t ${jfrogImagePrefix}:latest-fips -t ${jfrogImagePrefix}:$VERSION-$RELEASE-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:$VERSION-$RELEASE-fips . --no-cache
                             docker save -o ${targetLocation}/docker_harvest.tar ${ghcrImage}:latest
                             docker save -o ${targetLocation}/docker_harvest_fips.tar ${ghcrImage}:latest-fips
                             '''

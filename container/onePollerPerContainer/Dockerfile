@@ -10,6 +10,9 @@ ARG VERSION=2.0
 ARG RELEASE=nightly
 ARG ASUP_MAKE_TARGET=build
 ARG FIPS=0
+ARG GOPROXY
+
+ENV GOPROXY=${GOPROXY}
 
 # Set the Current Working Directory inside the container
 WORKDIR $BUILD_DIR
