@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"io"
 	"log/slog"
 	"net"
 	"net/http"
@@ -118,7 +119,6 @@ func (p *Prometheus) denyAccess(w http.ResponseWriter, r *http.Request) {
 func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	var (
-		data  [][]byte
 		count int
 	)
 
@@ -130,41 +130,25 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.cache.Lock()
-	// Count the number of metrics so we can pre-allocate the slice to avoid reallocations
-	for _, metrics := range p.cache.Get() {
-		count += len(metrics)
-	}
+	tagsSeen := make(map[string]struct{})
 
-	data = make([][]byte, 0, count)
-	tagsSeen := make(map[string]bool)
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 
 	for _, metrics := range p.cache.Get() {
-		data = addMetricsToSlice(data, metrics, tagsSeen, p.addMetaTags)
+		count += p.writeMetrics(w, metrics, tagsSeen)
 	}
-	p.cache.Unlock()
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
 	md, _ := p.render(p.Metadata)
-	data = addMetricsToSlice(data, md, tagsSeen, p.addMetaTags)
+	count += p.writeMetrics(w, md, tagsSeen)
 
-	count += len(md)
-
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "text/plain")
-	_, err := w.Write(bytes.Join(data, []byte("\n")))
-	if err != nil {
-		p.Logger.Error("write metrics", slogx.Err(err))
-	} else {
-		// make sure stream ends with newline
-		if _, err2 := w.Write([]byte("\n")); err2 != nil {
-			p.Logger.Error("write ending newline", slog.Any("err", err2))
-		}
-	}
+	p.cache.Unlock()
 
 	// update metadata
 	p.Metadata.Reset()
-	err = p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
+	err := p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
 	if err != nil {
 		p.Logger.Error("metadata time", slogx.Err(err))
 	}
@@ -174,37 +158,66 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// addMetricsToSlice adds metrics to a slice, skipping duplicates. Normally
-// Render() only adds one TYPE/HELP for each metric type. Some metric types
-// (e.g., metadata_collector_metrics) are submitted from multiple collectors.
-// That causes duplicates that are removed in this function. The seen map is
-// used to keep track of which metrics have been added. The metrics slice is
-// expected to be in the format: # HELP metric_name help text # TYPE metric_name
-// type metric_name{tag="value"} value
-func addMetricsToSlice(data [][]byte, metrics [][]byte, seen map[string]bool, addMetaTags bool) [][]byte {
+// writeMetrics writes metrics to the writer, skipping duplicates.
+// Normally Render() only adds one TYPE/HELP for each metric type.
+// Some metric types (e.g., metadata_collector_metrics) are submitted from multiple collectors.
+// That causes duplicates that are suppressed in this function.
+// The seen map is used to keep track of which metrics have been added.
+func (p *Prometheus) writeMetrics(w io.Writer, metrics [][]byte, tagsSeen map[string]struct{}) int {
 
-	if !addMetaTags {
-		return append(data, metrics...)
-	}
+	var count int
 
-	for i, metric := range metrics {
+	for i := 0; i < len(metrics); i++ {
+		metric := metrics[i]
 		if bytes.HasPrefix(metric, []byte("# ")) {
-			if fields := bytes.Fields(metric); len(fields) > 3 {
-				name := string(fields[2])
-				if !seen[name] {
-					seen[name] = true
-					data = append(data, metric)
-					if i+1 < len(metrics) {
-						data = append(data, metrics[i+1])
+
+			// Find the metric name and check if it has been seen before
+			var (
+				spacesSeen  int
+				space2Index int
+			)
+
+			for j := range metric {
+				if metric[j] == ' ' {
+					spacesSeen++
+					if spacesSeen == 2 {
+						space2Index = j
+					} else if spacesSeen == 3 {
+						name := string(metric[space2Index+1 : j])
+						if _, ok := tagsSeen[name]; !ok {
+							tagsSeen[name] = struct{}{}
+							p.writeMetric(w, metric)
+							count++
+							if i+1 < len(metrics) {
+								p.writeMetric(w, metrics[i+1])
+								count++
+								i++
+							}
+						}
+						break
 					}
 				}
 			}
 		} else {
-			data = append(data, metric)
+			p.writeMetric(w, metric)
+			count++
 		}
 	}
 
-	return data
+	return count
+}
+
+func (p *Prometheus) writeMetric(w io.Writer, data []byte) {
+	_, err := w.Write(data)
+	if err != nil {
+		p.Logger.Error("write metrics", slogx.Err(err))
+		return
+	}
+	_, err = w.Write([]byte("\n"))
+	if err != nil {
+		p.Logger.Error("write newline", slogx.Err(err))
+		return
+	}
 }
 
 // ServeInfo provides a human-friendly overview of metric types and source collectors

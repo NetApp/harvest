@@ -29,20 +29,20 @@ func TestFilterMetaTags(t *testing.T) {
 		[]byte(`some_other_metric{node="node_3"} 0.0`),
 	}
 
-	expected := [][]byte{
-		[]byte(`# HELP some_metric help text`),
-		[]byte(`# TYPE some_metric type`),
-		[]byte(`some_metric{node="node_1"} 0.0`),
-		[]byte(`# HELP some_other_metric help text`),
-		[]byte(`# TYPE some_other_metric type`),
-		[]byte(`some_other_metric{node="node_2"} 0.0`),
-		[]byte(`some_other_metric{node="node_3"} 0.0`),
-	}
+	expected := `# HELP some_metric help text
+# TYPE some_metric type
+some_metric{node="node_1"} 0.0
+# HELP some_other_metric help text
+# TYPE some_other_metric type
+some_other_metric{node="node_2"} 0.0
+some_other_metric{node="node_3"} 0.0
+`
+	p := Prometheus{}
+	seen := make(map[string]struct{})
+	var w strings.Builder
+	_ = p.writeMetrics(&w, example, seen)
 
-	seen := make(map[string]bool)
-	data := addMetricsToSlice(nil, example, seen, true)
-
-	diff := cmp.Diff(data, expected)
+	diff := cmp.Diff(w.String(), expected)
 	if diff != "" {
 		t.Errorf("Mismatch (-got +want):\n%s", diff)
 	}
