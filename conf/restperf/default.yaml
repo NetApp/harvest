@@ -4,7 +4,6 @@ collector:          RestPerf
 # Order here matters!
 schedule:
   - counter:  24h
-  - instance: 10m
   - data:      1m
 
 objects:

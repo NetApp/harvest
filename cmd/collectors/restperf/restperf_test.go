@@ -84,7 +84,8 @@ func TestMain(m *testing.M) {
 	propertiesData = jsonToPerfRecords("testdata/volume-poll-properties.json.gz")
 	fullPollData = jsonToPerfRecords("testdata/volume-poll-full.json.gz")
 	fullPollData[0].Timestamp = now.UnixNano()
-	_, _ = benchPerf.pollInstance(propertiesData[0].Records.Array(), 0)
+	mat := matrix.New("Volume", "Volume", "Volume")
+	_, _ = benchPerf.pollInstance(mat, perfToJSON(propertiesData), 0)
 	_, _ = benchPerf.pollData(now, fullPollData)
 
 	os.Exit(m.Run())
@@ -98,7 +99,8 @@ func BenchmarkRestPerf_PollData(b *testing.B) {
 	for range b.N {
 		now = now.Add(time.Minute * 15)
 		fullPollData[0].Timestamp = now.UnixNano()
-		mi, _ := benchPerf.pollInstance(propertiesData[0].Records.Array(), 0)
+		mat := matrix.New("Volume", "Volume", "Volume")
+		mi, _ := benchPerf.pollInstance(mat, perfToJSON(propertiesData), 0)
 		for _, mm := range mi {
 			ms = append(ms, mm)
 		}
@@ -166,7 +168,7 @@ func TestRestPerf_pollData(t *testing.T) {
 			}
 			pollInstance := jsonToPerfRecords(tt.pollInstance)
 			pollData := jsonToPerfRecords(tt.pollDataPath1)
-			_, err = r.pollInstance(pollInstance[0].Records.Array(), 0)
+			_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInstance), 0)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -295,7 +297,7 @@ func TestPartialAggregationSequence(t *testing.T) {
 		t.Fatalf("Failed to fetch poll counter %v", err)
 	}
 	pollInstance := jsonToPerfRecords("testdata/partialAggregation/qos-poll-instance.json")
-	_, err = r.pollInstance(pollInstance[0].Records.Array(), 0)
+	_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInstance), 0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -424,7 +426,7 @@ func TestQosVolume(t *testing.T) {
 			}
 
 			pollInst := jsonToPerfRecords(tt.pollInstance)
-			_, err = r.pollInstance(pollInst[0].Records.Array(), 0)
+			_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInst), 0)
 			if err != nil {
 				t.Fatal(err)
 			}
