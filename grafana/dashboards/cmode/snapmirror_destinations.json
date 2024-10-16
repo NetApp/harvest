@@ -117,7 +117,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel displays volume relationship count based on the protection method.",
+      "description": "This panel displays volume relationship count based on the relationship health.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -132,23 +132,54 @@
           },
           "decimals": 0,
           "mappings": [],
+          "min": 0,
           "unitScale": true
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Healthy"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unhealthy"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 12,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 1
       },
-      "id": 137,
+      "id": 112,
       "options": {
-        "displayLabels": [],
         "legend": {
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true,
+          "showLegend": false,
           "values": [
             "value"
           ]
@@ -162,7 +193,7 @@
           "values": false
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "none",
           "sort": "none"
         }
       },
@@ -172,49 +203,96 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"none\",relationship_id!=\"\"})) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"true\",relationship_id!=\"\"}) or vector (0)",
+          "format": "time_series",
           "instant": true,
           "interval": "",
-          "legendFormat": "Volume Protection",
+          "legendFormat": "Healthy",
           "refId": "A"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"vserver\",relationship_id!=\"\"})) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"false\",relationship_id!=\"\"}) or vector (0)",
+          "format": "time_series",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "SVM Protection (DR)",
+          "legendFormat": "Unhealthy",
           "refId": "B"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id!=\"\"})) or vector(0)",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Consistency Group",
-          "refId": "C"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count (count by (relationship_id) (snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"flexgroup\",relationship_id!=\"\"})) or vector(0)",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "FlexGroups",
-          "refId": "D"
         }
       ],
-      "title": "Volume relationships by protection method ",
-      "transformations": [],
+      "title": "Relationships by relationship health",
       "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Total number of volumes that are protected.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 6,
+        "y": 1
+      },
+      "id": 137,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.1",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"false\",relationship_id!=\"\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Unhealthy",
+      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -239,8 +317,8 @@
       },
       "gridPos": {
         "h": 12,
-        "w": 8,
-        "x": 8,
+        "w": 13,
+        "x": 11,
         "y": 1
       },
       "id": 111,
@@ -346,92 +424,60 @@
           "refId": "G"
         }
       ],
-      "title": "Volume relationships by relationship type",
+      "title": "Relationships by Protection Policy",
       "transformations": [],
       "type": "piechart"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel displays volume relationship count based on the relationship health.",
+      "description": "Total number of volumes that are protected.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "decimals": 0,
           "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
           "unitScale": true
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Healthy"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Unhealthy"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 12,
-        "w": 8,
-        "x": 16,
-        "y": 1
+        "h": 6,
+        "w": 5,
+        "x": 6,
+        "y": 7
       },
-      "id": 112,
+      "id": 138,
+      "links": [],
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "donut",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -439,32 +485,25 @@
           "exemplar": false,
           "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"true\",relationship_id!=\"\"}) or vector (0)",
           "format": "time_series",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Healthy",
-          "refId": "A"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"false\",relationship_id!=\"\"}) or vector (0)",
-          "format": "time_series",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Unhealthy",
-          "refId": "B"
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
         }
       ],
-      "title": "Volume relationships by relationship health",
-      "type": "piechart"
+      "title": "Healthy",
+      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of all the snapmirror relationships from destination side of view.",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "custom": {
             "align": "left",
             "cellOptions": {
@@ -643,7 +682,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Type"
+              "options": "Group Type"
             },
             "properties": [
               {
@@ -681,7 +720,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Relationship Type"
+              "options": "Protection Policy"
             },
             "properties": [
               {
@@ -727,7 +766,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Health"
+              "options": "Relationship Health"
             },
             "properties": [
               {
@@ -740,10 +779,12 @@
                   {
                     "options": {
                       "false": {
+                        "color": "red",
                         "index": 1,
                         "text": "Unhealthy"
                       },
                       "true": {
+                        "color": "green",
                         "index": 0,
                         "text": "Healthy"
                       }
@@ -751,6 +792,13 @@
                     "type": "value"
                   }
                 ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               }
             ]
           }
@@ -778,8 +826,8 @@
         "showHeader": true,
         "sortBy": [
           {
-            "desc": true,
-            "displayName": "Size"
+            "desc": false,
+            "displayName": "Relationship Health"
           }
         ]
       },
@@ -849,7 +897,10 @@
                 "Value #B",
                 "group_type",
                 "healthy",
-                "policy_type"
+                "policy_type",
+                "derived_relationship_type",
+                "relationship_status",
+                "schedule"
               ]
             }
           }
@@ -871,8 +922,8 @@
               "destination_vserver": false,
               "instance": true,
               "job": true,
-              "relationship_type": true,
-              "schedule": true,
+              "relationship_type": false,
+              "schedule": false,
               "source_node": true,
               "source_volume": false,
               "source_vserver": false
@@ -897,10 +948,13 @@
               "Value #B": "Lag",
               "Value #C": "Duration",
               "cluster": "Destination Cluster",
+              "derived_relationship_type": "Relationship Type",
               "destination_location": "Destination Path",
-              "group_type": "Type",
-              "healthy": "Health",
-              "policy_type": "Relationship Type",
+              "group_type": "Group Type",
+              "healthy": "Relationship Health",
+              "policy_type": "Protection Policy",
+              "relationship_status": "Relationship Status",
+              "schedule": "Schedule",
               "source_cluster": "Source Cluster",
               "source_location": "Source Path"
             }
@@ -1239,6 +1293,184 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays consistency group relationship count based on the relationship health.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unhealthy"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 6,
+            "x": 0,
+            "y": 33
+          },
+          "id": 114,
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": false,
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"true\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
+              "format": "time_series",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Healthy",
+              "refId": "A"
+            },
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
+              "format": "time_series",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Unhealthy",
+              "refId": "B"
+            }
+          ],
+          "title": "Consistency Group relationships by relationship health",
+          "type": "piechart"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total number of volumes that are protected.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 5,
+            "x": 6,
+            "y": 33
+          },
+          "id": 139,
+          "links": [],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "text": {},
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
+              "format": "time_series",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Unhealthy",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays consistency group relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
@@ -1261,8 +1493,8 @@
           "gridPos": {
             "h": 12,
             "w": 13,
-            "x": 0,
-            "y": 2
+            "x": 11,
+            "y": 33
           },
           "id": 113,
           "options": {
@@ -1366,111 +1598,71 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays consistency group relationship count based on the relationship health.",
+          "description": "Total number of volumes that are protected.",
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
+                "mode": "thresholds"
               },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "decimals": 0,
               "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short",
               "unitScale": true
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Healthy"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "green",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Unhealthy"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "dark-yellow",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
-            "h": 12,
-            "w": 11,
-            "x": 13,
-            "y": 2
+            "h": 6,
+            "w": 5,
+            "x": 6,
+            "y": 39
           },
-          "id": 114,
+          "id": 140,
+          "links": [],
           "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value"
-              ]
-            },
-            "pieType": "donut",
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
-                "last"
+                "lastNotNull"
               ],
               "fields": "",
               "values": false
             },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
+            "showPercentChange": false,
+            "text": {},
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "8.1.2",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
               "exemplar": false,
               "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"true\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
-              "format": "time_series",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "Healthy",
-              "refId": "A"
-            },
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
               "interval": "",
-              "legendFormat": "Unhealthy",
-              "refId": "B"
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
             }
           ],
-          "title": "Consistency Group relationships by relationship health",
-          "type": "piechart"
+          "title": "Unhealthy",
+          "type": "stat"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -1704,7 +1896,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 14
+            "y": 45
           },
           "id": 132,
           "options": {
@@ -1938,7 +2130,7 @@
       {
         "allValue": "1000000000000",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "5",
           "value": "5"
         },
@@ -2061,6 +2253,6 @@
   "timezone": "",
   "title": "ONTAP: SnapMirror Destinations",
   "uid": "cdot-snapmirror-destinations",
-  "version": 1,
+  "version": 25,
   "weekStart": ""
 }
