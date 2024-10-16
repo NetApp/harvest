@@ -280,7 +280,14 @@ func (m *Metric) GetValueFloat64(i *Instance) (float64, bool) {
 
 func (m *Metric) GetValueString(i *Instance) (string, bool) {
 	v := m.values[i.index]
-	return strconv.FormatFloat(v, 'f', -1, 64), m.record[i.index]
+	isValid := m.record[i.index]
+	switch v {
+	case 0:
+		return "0", isValid
+	case 1:
+		return "1", isValid
+	}
+	return strconv.FormatFloat(v, 'f', -1, 64), isValid
 }
 
 func (m *Metric) GetValueBytes(i *Instance) ([]byte, bool) {
