@@ -22,6 +22,7 @@ Package Description:
 package prometheus
 
 import (
+	"bytes"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -271,9 +272,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		histograms        map[string]*histogram
 		normalizedLabels  map[string][]string // cache of histogram normalized labels
 		instancesExported uint64
+		instanceKeysOk    bool
+		buf               bytes.Buffer // shared buffer for rendering
 	)
 
-	rendered = make([][]byte, 0)
+	buf.Grow(4096)
 	globalLabels := make([]string, 0, len(data.GetGlobalLabels()))
 	normalizedLabels = make(map[string][]string)
 
@@ -312,6 +315,33 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		globalLabels = append(globalLabels, escape(p.replacer, key, value))
 	}
 
+	// Count the number of metrics so the rendered slice can be sized without reallocation
+	numMetrics := 0
+
+	exportableInstances := 0
+	exportableMetrics := 0
+
+	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
+		exportableInstances++
+	}
+
+	for _, metric := range data.GetMetrics() {
+		if !metric.IsExportable() {
+			continue
+		}
+		exportableMetrics++
+	}
+
+	numMetrics += exportableInstances * exportableMetrics
+	if p.addMetaTags {
+		numMetrics += exportableMetrics * 2 // for help and type
+	}
+
+	rendered = make([][]byte, 0, numMetrics)
+
 	for _, instance := range data.GetInstances() {
 
 		if !instance.IsExportable() {
@@ -319,10 +349,15 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		}
 		instancesExported++
 
-		instanceKeys := make([]string, len(globalLabels))
-		copy(instanceKeys, globalLabels)
-		instanceKeysOk := false
-		instanceLabels := make([]string, 0)
+		moreKeys := 0
+		if includeAllLabels {
+			moreKeys = len(instance.GetLabels())
+		}
+
+		instanceKeys := make([]string, 0, len(globalLabels)+len(keysToInclude)+moreKeys)
+		instanceKeys = append(instanceKeys, globalLabels...)
+
+		instanceLabels := make([]string, 0, len(labelsToInclude))
 		instanceLabelsSet := make(map[string]struct{})
 
 		// The ChangeLog plugin tracks metric values and publishes the names of metrics that have changed.
@@ -346,13 +381,15 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				// instance label (even though it's already a global label for 7modes)
 				_, ok := data.GetGlobalLabels()[label]
 				if !ok {
-					instanceKeys = append(instanceKeys, escape(p.replacer, label, value)) //nolint:makezero
+					escaped := escape(p.replacer, label, value)
+					instanceKeys = append(instanceKeys, escaped)
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				instanceKeys = append(instanceKeys, escape(p.replacer, key, value)) //nolint:makezero
+				escaped := escape(p.replacer, key, value)
+				instanceKeys = append(instanceKeys, escaped)
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
 				}
@@ -376,8 +413,8 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 			// @TODO, check at least one label is found?
 			if len(instanceLabels) != 0 {
-				allLabels := make([]string, len(instanceLabels))
-				copy(allLabels, instanceLabels)
+				allLabels := make([]string, 0, len(instanceLabels)+len(instanceKeys))
+				allLabels = append(allLabels, instanceLabels...)
 				// include each instanceKey not already included in the list of labels
 				for _, instanceKey := range instanceKeys {
 					_, ok := instanceLabelsSet[instanceKey]
@@ -385,28 +422,41 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						continue
 					}
 					instanceLabelsSet[instanceKey] = struct{}{}
-					allLabels = append(allLabels, instanceKey) //nolint:makezero
+					allLabels = append(allLabels, instanceKey)
 				}
 				if p.Params.SortLabels {
 					sort.Strings(allLabels)
 				}
-				labelData := prefix + "_labels{" + strings.Join(allLabels, ",") + "} 1.0"
 
-				if tagged != nil && !tagged.Has(prefix+"_labels") {
-					tagged.Add(prefix + "_labels")
+				buf.Reset()
+
+				buf.WriteString(prefix)
+				buf.WriteString("_labels{")
+				buf.WriteString(strings.Join(allLabels, ","))
+				buf.WriteString("} 1.0")
+
+				xbr := buf.Bytes()
+				labelData := make([]byte, len(xbr))
+				copy(labelData, xbr)
+
+				prefixed := prefix + "_labels"
+				if tagged != nil && !tagged.Has(prefixed) {
+					tagged.Add(prefixed)
 					rendered = append(rendered,
-						[]byte("# HELP "+prefix+"_labels Pseudo-metric for "+data.Object+" labels"),
-						[]byte("# TYPE "+prefix+"_labels gauge"))
+						[]byte("# HELP "+prefixed+" Pseudo-metric for "+data.Object+" labels"),
+						[]byte("# TYPE "+prefixed+" gauge"))
 				}
-				rendered = append(rendered, []byte(labelData))
+				rendered = append(rendered, labelData)
 			}
 		}
 
 		if p.Params.SortLabels {
 			sort.Strings(instanceKeys)
 		}
+
 		joinedKeys = strings.Join(instanceKeys, ",")
 		histograms = make(map[string]*histogram)
+
 		for _, metric := range data.GetMetrics() {
 
 			if !metric.IsExportable() {
@@ -445,36 +495,78 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					for k, v := range metric.GetLabels() {
 						metricLabels = append(metricLabels, escape(p.replacer, k, v))
 					}
+					if p.Params.SortLabels {
+						sort.Strings(metricLabels)
+					}
 					x := prefix + "_" + metric.GetName() + "{" + joinedKeys + "," + strings.Join(metricLabels, ",") + "} " + value
 
-					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
-						tagged.Add(prefix + "_" + metric.GetName())
+					prefixedName := prefix + "_" + metric.GetName()
+					if tagged != nil && !tagged.Has(prefixedName) {
+						tagged.Add(prefixedName)
 						rendered = append(rendered,
-							[]byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object),
-							[]byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
+							[]byte("# HELP "+prefixedName+" Metric for "+data.Object),
+							[]byte("# TYPE "+prefixedName+" histogram"))
 					}
 
 					rendered = append(rendered, []byte(x))
 					// scalar metric
 				} else {
-					x := metric.GetName() + "{" + joinedKeys + "} " + value
-					if prefix != "" {
-						x = prefix + "_" + x
+					buf.Reset()
+
+					if prefix == "" {
+						buf.WriteString(metric.GetName())
+						buf.WriteString("{")
+						buf.WriteString(joinedKeys)
+						buf.WriteString("} ")
+						buf.WriteString(value)
+					} else {
+						buf.WriteString(prefix)
+						buf.WriteString("_")
+						buf.WriteString(metric.GetName())
+						buf.WriteString("{")
+						buf.WriteString(joinedKeys)
+						buf.WriteString("} ")
+						buf.WriteString(value)
+					}
+					xbr := buf.Bytes()
+					scalarMetric := make([]byte, len(xbr))
+					copy(scalarMetric, xbr)
+
+					prefixedName := prefix + "_" + metric.GetName()
+					if tagged != nil && !tagged.Has(prefixedName) {
+						tagged.Add(prefixedName)
+
+						buf.Reset()
+						buf.WriteString("# HELP ")
+						buf.WriteString(prefixedName)
+						buf.WriteString(" Metric for ")
+						buf.WriteString(data.Object)
+
+						xbr := buf.Bytes()
+						helpB := make([]byte, len(xbr))
+						copy(helpB, xbr)
+
+						rendered = append(rendered, helpB)
+
+						buf.Reset()
+						buf.WriteString("# TYPE ")
+						buf.WriteString(prefixedName)
+						buf.WriteString(" gauge")
+
+						tbr := buf.Bytes()
+						typeB := make([]byte, len(tbr))
+						copy(typeB, tbr)
+
+						rendered = append(rendered, typeB)
 					}
 
-					if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
-						tagged.Add(prefix + "_" + metric.GetName())
-						rendered = append(rendered,
-							[]byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object),
-							[]byte("# TYPE "+prefix+"_"+metric.GetName()+" gauge"))
-					}
-
-					rendered = append(rendered, []byte(x))
+					rendered = append(rendered, scalarMetric)
 				}
 			}
 		}
+
 		// All metrics have been processed and flattened metrics accumulated. Determine which histograms can be
-		// normalized and export
+		// normalized and exported.
 		for _, h := range histograms {
 			metric := h.metric
 			bucketNames := metric.Buckets()
@@ -497,11 +589,12 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				}
 			}
 
-			if tagged != nil && !tagged.Has(prefix+"_"+metric.GetName()) {
+			prefixedName := prefix + "_" + metric.GetName()
+			if tagged != nil && !tagged.Has(prefixedName) {
 				tagged.Add(prefix + "_" + metric.GetName())
 				rendered = append(rendered,
-					[]byte("# HELP "+prefix+"_"+metric.GetName()+" Metric for "+data.Object),
-					[]byte("# TYPE "+prefix+"_"+metric.GetName()+" histogram"))
+					[]byte("# HELP "+prefixedName+" Metric for "+data.Object),
+					[]byte("# TYPE "+prefixedName+" histogram"))
 			}
 
 			normalizedNames, canNormalize := normalizedLabels[objectMetric]
