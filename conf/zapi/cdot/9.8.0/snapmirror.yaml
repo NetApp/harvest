@@ -11,6 +11,7 @@ counters:
     - ^is-healthy                    => healthy
     - ^last-transfer-error
     - ^last-transfer-type
+    - ^mirror-state                  => relationship_state
     - ^policy-type
     - ^relationship-group-type       => group_type
     - ^relationship-status
@@ -25,7 +26,6 @@ counters:
     - last-transfer-duration
     - last-transfer-end-timestamp
     - last-transfer-size
-    - mirror-state                   => relationship_state
     - newest-snapshot-timestamp
     - resync-failed-count
     - resync-successful-count
