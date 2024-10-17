@@ -96,13 +96,41 @@
   "liveNow": false,
   "panels": [
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 141,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "SnapMirror Destinations dashboard would show the Destination View of all the SnapMirror Relationships.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.3.1",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "refId": "A"
+        }
+      ],
+      "title": "Important Information about SnapMirror Destinations dashboard",
+      "type": "text"
+    },
+    {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 15,
       "panels": [],
@@ -170,16 +198,16 @@
       },
       "gridPos": {
         "h": 12,
-        "w": 6,
+        "w": 11,
         "x": 0,
-        "y": 1
+        "y": 3
       },
       "id": 112,
       "options": {
         "legend": {
           "displayMode": "table",
           "placement": "right",
-          "showLegend": false,
+          "showLegend": true,
           "values": [
             "value"
           ]
@@ -223,76 +251,8 @@
           "refId": "B"
         }
       ],
-      "title": "Relationships by relationship health",
+      "title": "Relationship Health Overview",
       "type": "piechart"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of volumes that are protected.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short",
-          "unitScale": true
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 5,
-        "x": 6,
-        "y": 1
-      },
-      "id": 137,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.3.1",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"false\",relationship_id!=\"\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Unhealthy",
-      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -319,7 +279,7 @@
         "h": 12,
         "w": 13,
         "x": 11,
-        "y": 1
+        "y": 3
       },
       "id": 111,
       "options": {
@@ -427,74 +387,6 @@
       "title": "Relationships by Protection Policy",
       "transformations": [],
       "type": "piechart"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of volumes that are protected.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short",
-          "unitScale": true
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 5,
-        "x": 6,
-        "y": 7
-      },
-      "id": 138,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.3.1",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"true\",relationship_id!=\"\"}) or vector (0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Healthy",
-      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -771,7 +663,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 100
+                "value": 172
               },
               {
                 "id": "mappings",
@@ -808,7 +700,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 15
       },
       "id": 28,
       "links": [],
@@ -880,7 +772,7 @@
           "refId": "D"
         }
       ],
-      "title": "Relationships Detail",
+      "title": "Relationships",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -895,12 +787,13 @@
                 "Value #C",
                 "Value #A",
                 "Value #B",
+                "derived_relationship_type",
                 "group_type",
                 "healthy",
                 "policy_type",
-                "derived_relationship_type",
                 "relationship_status",
-                "schedule"
+                "schedule",
+                "relationship_state"
               ]
             }
           }
@@ -953,6 +846,7 @@
               "group_type": "Group Type",
               "healthy": "Relationship Health",
               "policy_type": "Protection Policy",
+              "relationship_state": "Relationship State",
               "relationship_status": "Relationship Status",
               "schedule": "Schedule",
               "source_cluster": "Source Cluster",
@@ -1028,7 +922,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 23
+        "y": 25
       },
       "id": 136,
       "links": [],
@@ -1135,7 +1029,7 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 23
+        "y": 25
       },
       "id": 134,
       "links": [],
@@ -1241,7 +1135,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 23
+        "y": 25
       },
       "id": 135,
       "links": [],
@@ -1287,7 +1181,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 34
       },
       "id": 43,
       "panels": [
@@ -1345,16 +1239,16 @@
           },
           "gridPos": {
             "h": 12,
-            "w": 6,
+            "w": 11,
             "x": 0,
-            "y": 33
+            "y": 35
           },
           "id": 114,
           "options": {
             "legend": {
               "displayMode": "table",
               "placement": "right",
-              "showLegend": false,
+              "showLegend": true,
               "values": [
                 "value"
               ]
@@ -1398,76 +1292,8 @@
               "refId": "B"
             }
           ],
-          "title": "Consistency Group relationships by relationship health",
+          "title": "Consistency Group Relationship Health Overview",
           "type": "piechart"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of volumes that are protected.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "noValue": "0",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "short",
-              "unitScale": true
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 5,
-            "x": 6,
-            "y": 33
-          },
-          "id": 139,
-          "links": [],
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "text": {},
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "10.3.1",
-          "targets": [
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
-              "format": "time_series",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Unhealthy",
-          "type": "stat"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -1494,7 +1320,7 @@
             "h": 12,
             "w": 13,
             "x": 11,
-            "y": 33
+            "y": 35
           },
           "id": 113,
           "options": {
@@ -1598,74 +1424,6 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of volumes that are protected.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "noValue": "0",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "short",
-              "unitScale": true
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 5,
-            "x": 6,
-            "y": 39
-          },
-          "id": 140,
-          "links": [],
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "text": {},
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "10.3.1",
-          "targets": [
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"true\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
-              "format": "time_series",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Unhealthy",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays detail of all Consistency Group relationships from destination side of view.",
           "fieldConfig": {
             "defaults": {
@@ -1702,17 +1460,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 220
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "",
-                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
-                      }
-                    ]
+                    "value": 185
                   }
                 ]
               },
@@ -1728,7 +1476,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 290
+                    "value": 227
                   },
                   {
                     "id": "mappings",
@@ -1778,7 +1526,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 210
+                    "value": 201
                   },
                   {
                     "id": "links",
@@ -1819,7 +1567,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Healthy Status"
+                  "options": "Relationship Health"
                 },
                 "properties": [
                   {
@@ -1828,10 +1576,12 @@
                       {
                         "options": {
                           "false": {
+                            "color": "red",
                             "index": 1,
                             "text": "Unhealthy"
                           },
                           "true": {
+                            "color": "green",
                             "index": 0,
                             "text": "Healthy"
                           }
@@ -1843,6 +1593,12 @@
                   {
                     "id": "custom.width",
                     "value": 140
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
                   }
                 ]
               },
@@ -1854,7 +1610,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 240
+                    "value": 147
                   },
                   {
                     "id": "links",
@@ -1876,7 +1632,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 240
+                    "value": 191
                   },
                   {
                     "id": "links",
@@ -1896,7 +1652,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 45
+            "y": 47
           },
           "id": 132,
           "options": {
@@ -1926,21 +1682,24 @@
               "refId": "A"
             }
           ],
-          "title": "Consistency Group relationships by Relationship type & Health",
+          "title": "Consistency Group Relationships",
           "transformations": [
             {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
                   "names": [
-                    "destination_cg_name",
+                    "cluster",
                     "derived_relationship_type",
+                    "destination_location",
                     "destination_volume",
                     "healthy",
-                    "source_volume",
-                    "cluster",
-                    "cluster",
-                    "source_cg_name"
+                    "relationship_state",
+                    "relationship_status",
+                    "relationship_type",
+                    "source_cluster",
+                    "source_location",
+                    "source_volume"
                   ]
                 }
               }
@@ -1951,21 +1710,31 @@
                 "excludeByName": {},
                 "includeByName": {},
                 "indexByName": {
-                  "cluster": 4,
+                  "cluster": 3,
                   "derived_relationship_type": 6,
-                  "destination_cg_name": 1,
-                  "destination_volume": 3,
+                  "destination_location": 4,
+                  "destination_volume": 5,
                   "healthy": 7,
-                  "source_cg_name": 0,
+                  "relationship_state": 9,
+                  "relationship_status": 10,
+                  "relationship_type": 8,
+                  "source_cluster": 0,
+                  "source_location": 1,
                   "source_volume": 2
                 },
                 "renameByName": {
-                  "cluster": "Cluster",
+                  "cluster": "Destination Cluster",
                   "derived_relationship_type": "Protection Policy",
-                  "destination_cg_name": "Destination CG",
+                  "destination_cg_name": "",
+                  "destination_location": "Destination Path",
                   "destination_volume": "Destination Volume",
-                  "healthy": "Healthy Status",
-                  "source_cg_name": "Source CG",
+                  "healthy": "Relationship Health",
+                  "relationship_state": "Relationship State",
+                  "relationship_status": "Relationship Status",
+                  "relationship_type": "Relationship Type",
+                  "source_cg_name": "",
+                  "source_cluster": "Source Cluster",
+                  "source_location": "Source Path",
                   "source_volume": "Source Volume"
                 }
               }
@@ -1980,7 +1749,7 @@
           "refId": "A"
         }
       ],
-      "title": "Consistency Group Data Protection Analysis per Cluster",
+      "title": "Consistency Group Data Protection",
       "type": "row"
     }
   ],
@@ -2253,6 +2022,6 @@
   "timezone": "",
   "title": "ONTAP: SnapMirror Destinations",
   "uid": "cdot-snapmirror-destinations",
-  "version": 25,
+  "version": 1,
   "weekStart": ""
 }
