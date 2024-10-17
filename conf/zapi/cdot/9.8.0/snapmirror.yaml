@@ -11,6 +11,7 @@ counters:
     - ^is-healthy                    => healthy
     - ^last-transfer-error
     - ^last-transfer-type
+    - ^mirror-state                  => relationship_state
     - ^policy-type
     - ^relationship-group-type       => group_type
     - ^relationship-status
@@ -55,6 +56,7 @@ export_options:
     - policy_type
     - protectedBy
     - protectionSourceType
+    - relationship_state
     - relationship_status
     - relationship_type
     - schedule
