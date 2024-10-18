@@ -16,8 +16,7 @@ import (
 )
 
 const (
-	latencyIoReqd       = 10
-	timestampMetricName = "statistics.timestamp"
+	latencyIoReqd = 10
 )
 
 type KeyPerf struct {
@@ -33,9 +32,10 @@ type counter struct {
 }
 
 type perfProp struct {
-	isCacheEmpty  bool
-	counterInfo   map[string]*counter
-	latencyIoReqd int
+	isCacheEmpty        bool
+	counterInfo         map[string]*counter
+	latencyIoReqd       int
+	timestampMetricName string
 }
 
 func init() {
@@ -171,7 +171,8 @@ func (kp *KeyPerf) buildCounters() {
 					counterType: "rate",
 					unit:        "b_per_sec",
 				}
-			case strings.Contains(k, timestampMetricName):
+			case strings.Contains(k, "timestamp"):
+				kp.perfProp.timestampMetricName = k
 				ctr = &counter{
 					name:        k,
 					counterType: "delta",
@@ -295,6 +296,7 @@ func (kp *KeyPerf) pollData(
 	// process endpoints
 	eCount, endpointAPID := kp.ProcessEndPoints(curMat, endpointFunc)
 	count += eCount
+	count += eCount
 
 	parseD = time.Since(startTime)
 	_ = kp.Metadata.LazySetValueInt64("api_time", "data", (apiD + endpointAPID).Microseconds())
@@ -346,9 +348,11 @@ func (kp *KeyPerf) pollData(
 		}
 	}
 
-	timestamp := curMat.GetMetric(timestampMetricName)
+	timestamp := curMat.GetMetric(kp.perfProp.timestampMetricName)
 	if timestamp != nil {
 		timestamp.SetExportable(false)
+	} else {
+		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
 	err = kp.validateMatrix(prevMat, curMat)
 	if err != nil {
@@ -427,7 +431,7 @@ func (kp *KeyPerf) pollData(
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, kp.perfProp.latencyIoReqd, cachedData, prevMat, timestampMetricName, kp.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, kp.perfProp.latencyIoReqd, cachedData, prevMat, kp.perfProp.timestampMetricName, kp.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator)
 			}
@@ -470,7 +474,7 @@ func (kp *KeyPerf) pollData(
 		}
 		property := counter.counterType
 		if property == "rate" {
-			if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
+			if skips, err = curMat.Divide(orderedKeys[i], kp.perfProp.timestampMetricName); err != nil {
 				kp.Logger.Error(
 					"Calculate rate",
 					slogx.Err(err),

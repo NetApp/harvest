@@ -1,0 +1,29 @@
+name:                     NFSv41
+query:                    api/protocols/nfs/services
+object:                   svm_nfs
+
+global_labels:
+  - nfsv: v4.1
+
+counters:
+  - ^^svm.uuid                                => uuid
+  - ^statistics.v41.status                    => status
+  - ^svm.name                                 => svm
+  - statistics.v41.iops_raw.other             => other_ops
+  - statistics.v41.iops_raw.read              => read_ops
+  - statistics.v41.iops_raw.total             => ops
+  - statistics.v41.iops_raw.write             => write_ops
+  - statistics.v41.latency_raw.other          => other_latency
+  - statistics.v41.latency_raw.read           => read_avg_latency
+  - statistics.v41.latency_raw.total          => latency
+  - statistics.v41.latency_raw.write          => write_avg_latency
+  - statistics.v41.throughput_raw.read        => read_throughput
+  - statistics.v41.throughput_raw.total       => total_throughput
+  - statistics.v41.throughput_raw.write       => write_throughput
+  - statistics.v41.timestamp(timestamp)       => timestamp
+  - hidden_fields:
+      - statistics.v41
+
+export_options:
+  instance_keys:
+    - svm
