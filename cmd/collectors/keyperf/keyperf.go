@@ -296,7 +296,6 @@ func (kp *KeyPerf) pollData(
 	// process endpoints
 	eCount, endpointAPID := kp.ProcessEndPoints(curMat, endpointFunc)
 	count += eCount
-	count += eCount
 
 	parseD = time.Since(startTime)
 	_ = kp.Metadata.LazySetValueInt64("api_time", "data", (apiD + endpointAPID).Microseconds())
