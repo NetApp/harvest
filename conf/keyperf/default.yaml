@@ -13,6 +13,10 @@ objects:
   LIF:                         lif.yaml
   Lun:                         lun.yaml
   Namespace:                   namespace.yaml
+  NFSv3:                       nfsv3.yaml
+  NFSv41:                      nfsv4_1.yaml
+  NFSv42:                      nfsv4_2.yaml
+  NFSv4:                       nfsv4.yaml
   Node:                        node.yaml
   NvmeServices:                nvme_services.yaml
   Volume:                      volume.yaml
