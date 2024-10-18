@@ -110,7 +110,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "SnapMirror Destinations dashboard would show the Destination View of all the SnapMirror Relationships.",
+        "content": "The SnapMirror Destinations dashboard displays the destination view of all SnapMirror relationships. The filters provided above are applied from the destination side of SnapMirror.",
         "mode": "markdown"
       },
       "pluginVersion": "10.3.1",
