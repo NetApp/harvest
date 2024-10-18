@@ -24,6 +24,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
+	"iter"
 	"log/slog"
 	"maps"
 	"path"
@@ -65,9 +66,10 @@ var qosDetailQueries = map[string]string{
 }
 
 type RestPerf struct {
-	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	perfProp        *perfProp
-	archivedMetrics map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
+	*rest2.Rest         // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	perfProp            *perfProp
+	archivedMetrics     map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
+	hasInstanceSchedule bool
 }
 
 type counter struct {
@@ -141,6 +143,8 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	if err := r.InitQOS(); err != nil {
 		return err
 	}
+
+	r.InitSchedule()
 
 	r.Logger.Debug(
 		"initialized cache",
@@ -687,11 +691,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		startTime   time.Time
 	)
 
-	mat := r.Matrix[r.Object]
-	if len(mat.GetInstances()) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances fetched in PollInstance")
-	}
-
 	timestamp := r.Matrix[r.Object].GetMetric(timestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
@@ -703,7 +702,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
 	var filter []string
-	// Sort filters so that the href is deterministic
+	// Sort metrics so that the href is deterministic
 	metrics := slices.Sorted(maps.Keys(r.Prop.Metrics))
 
 	filter = append(filter, "counters.name="+strings.Join(metrics, "|"))
@@ -794,6 +793,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
+	// Call pollInstance to handle instance creation/deletion for objects without an instance schedule
+	if !r.hasInstanceSchedule {
+		_, err = r.pollInstance(curMat, perfToJSON(perfRecords), apiD)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	for _, perfRecord := range perfRecords {
 		pr := perfRecord.Records
 		t := perfRecord.Timestamp
@@ -870,10 +877,14 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 
 			instance = curMat.GetInstance(instanceKey)
 			if instance == nil {
-				if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
-					r.Logger.Warn("Skip instanceKey, not found in cache", slog.String("instanceKey", instanceKey))
+				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+					return true
 				}
-				return true
+				instance, err = curMat.NewInstance(instanceKey)
+				if err != nil {
+					r.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
+					return true
+				}
 			}
 
 			// check for partial aggregation
@@ -1252,7 +1263,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			}
 			continue
 		}
-		// If we reach here then one of the earlier clauses should have executed `continue` statement
+		// If we reach here, then one of the earlier clauses should have executed `continue` statement
 		r.Logger.Error(
 			"Unknown property",
 			slog.String("key", key),
@@ -1298,6 +1309,18 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 	newDataMap := make(map[string]*matrix.Matrix)
 	newDataMap[r.Object] = curMat
 	return newDataMap, nil
+}
+
+func perfToJSON(records []rest.PerfRecord) iter.Seq[gjson.Result] {
+	return func(yield func(gjson.Result) bool) {
+		for _, record := range records {
+			if record.Records.IsArray() {
+				record.Records.ForEach(func(_, r gjson.Result) bool {
+					return yield(r)
+				})
+			}
+		}
+	}
 }
 
 // Poll counter "ops" of the related/parent object, required for objects
@@ -1472,17 +1495,17 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return r.handleError(err, href)
 	}
 
-	return r.pollInstance(records, time.Since(apiT))
+	return r.pollInstance(r.Matrix[r.Object], slices.Values(records), time.Since(apiT))
 }
 
-func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map[string]*matrix.Matrix, error) {
+func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Result], apiD time.Duration) (map[string]*matrix.Matrix, error) {
 	var (
 		err                              error
 		oldInstances                     *set.Set
 		oldSize, newSize, removed, added int
+		count                            int
 	)
 
-	mat := r.Matrix[r.Object]
 	oldInstances = set.New()
 	parseT := time.Now()
 	for key := range mat.GetInstances() {
@@ -1498,14 +1521,12 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 		instanceKeys = []string{"name"}
 	}
 
-	if len(records) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
-	}
-
-	for _, instanceData := range records {
+	for instanceData := range records {
 		var (
 			instanceKey string
 		)
+
+		count++
 
 		if !instanceData.IsObject() {
 			r.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
@@ -1551,6 +1572,10 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 		}
 	}
 
+	if count == 0 {
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+	}
+
 	for key := range oldInstances.Iter() {
 		mat.RemoveInstance(key)
 		r.Logger.Debug("removed instance", slog.String("key", key))
@@ -1570,7 +1595,7 @@ func (r *RestPerf) pollInstance(records []gjson.Result, apiD time.Duration) (map
 	_ = r.Metadata.LazySetValueUint64("numCalls", "instance", r.Client.Metadata.NumCalls)
 
 	if newSize == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "")
+		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
 	}
 
 	return nil, err
@@ -1602,6 +1627,19 @@ func (r *RestPerf) handleError(err error, href string) (map[string]*matrix.Matri
 		return nil, fmt.Errorf("polling href=[%s] err: %w", href, errs.New(errs.ErrAPIRequestRejected, err.Error()))
 	}
 	return nil, fmt.Errorf("failed to fetch data. href=[%s] err: %w", href, err)
+}
+
+func (r *RestPerf) InitSchedule() {
+	if r.Schedule == nil {
+		return
+	}
+	tasks := r.Schedule.GetTasks()
+	for _, task := range tasks {
+		if task.Name == "instance" {
+			r.hasInstanceSchedule = true
+			return
+		}
+	}
 }
 
 func isWorkloadObject(query string) bool {
