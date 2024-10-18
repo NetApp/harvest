@@ -185,6 +185,20 @@ pipeline {
             }
         }
 
+        stage('Trivy Image Scan') {
+            steps {
+                script {
+                    currentStage = 'Trivy Image Scan'
+                }
+                sh '''
+                curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+                export PATH=/usr/local/bin:$PATH
+                trivy image --exit-code 1 ${ghcrImage}:latest
+                trivy image --exit-code 1 ${ghcrImage}:latest-fips
+                '''
+            }
+        }
+
          stage('Publish builds locally'){
           steps {
               script {
