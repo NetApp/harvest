@@ -75,7 +75,7 @@ func TestCModeDashboardCount(t *testing.T) {
 		"ONTAP: NFS Clients",
 		"ONTAP: Node",
 		"ONTAP: Shelf",
-		"ONTAP: SnapMirror",
+		"ONTAP: SnapMirror Sources",
 		"ONTAP: SVM",
 		"ONTAP: Volume",
 		"ONTAP: MetroCluster",
