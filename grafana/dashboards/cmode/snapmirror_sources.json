@@ -1,0 +1,987 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "8.1.8"
+    },
+    {
+      "id": "piechart",
+      "name": "Pie chart",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "stat",
+      "name": "Stat",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 29,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "To monitor both sides of a snapmirror relationship, both source and destination clusters must be monitored by Harvest. Both clusters need to export their metrics to the same Prometheus instance.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.3.1",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "refId": "A"
+        }
+      ],
+      "title": "Important Information about SnapMirror Sources dashboard",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 15,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "refId": "A"
+        }
+      ],
+      "title": "Highlights",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Volumes Protected With Snapmirror (Local And Remote).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "fieldMinMax": false,
+          "mappings": [],
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Not Protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 0,
+        "y": 3
+      },
+      "id": 101,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",type=\"rw\",snapshot_policy!=\"none\"}) or vector(0)",
+          "format": "time_series",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Protected",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(volume_labels{cluster=~\"$Cluster\",type=\"rw\",snapshot_policy!=\"\",state!=\"\",snapshot_policy=\"none\"}) or vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Not Protected",
+          "refId": "B"
+        }
+      ],
+      "title": "Snapshot copies (local)",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Volumes Protected With Snapmirror (Local And Remote).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unprotected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 8,
+        "y": 3
+      },
+      "id": 135,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\",isProtected=\"false\"})",
+          "format": "time_series",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Unprotected",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Protected",
+          "refId": "B"
+        }
+      ],
+      "title": "SnapMirror (local or remote)",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Volumes Protected With Snapmirror (Local And Remote).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unprotected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 16,
+        "y": 3
+      },
+      "id": 136,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "format": "time_series",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Unprotected",
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",state!=\"\",isProtected=\"true\",isDestinationCloud=\"true\"}) or vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Protected",
+          "refId": "B"
+        }
+      ],
+      "title": "Back up to cloud",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel displays detail of all the snapmirror relationships from destination side of view.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "decimals": 2,
+          "fieldMinMax": true,
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-purple",
+                "value": null
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 278
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source Cluster"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Group Type"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "consistencygroup": {
+                        "index": 2,
+                        "text": "Consistency Group"
+                      },
+                      "flexgroup": {
+                        "index": 3,
+                        "text": "FlexGroup"
+                      },
+                      "none": {
+                        "index": 0,
+                        "text": "Volume"
+                      },
+                      "vserver": {
+                        "index": 1,
+                        "text": "SVM DR"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 168
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Protection Policy"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 266
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "async_mirror": {
+                        "index": 1,
+                        "text": "Async Mirror"
+                      },
+                      "automated_failover": {
+                        "index": 4,
+                        "text": "Automated Failover"
+                      },
+                      "automated_failover_duplex": {
+                        "index": 0,
+                        "text": "Automated Failover Duplex"
+                      },
+                      "mirror_vault": {
+                        "index": 2,
+                        "text": "Mirror Vault"
+                      },
+                      "sync_mirror": {
+                        "index": 5,
+                        "text": "Sync"
+                      },
+                      "vault": {
+                        "index": 3,
+                        "text": "Vault"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Relationship Health"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 203
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Unhealthy"
+                      },
+                      "true": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "Healthy"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source Path"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 315
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination Path"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 363
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 134,
+      "links": [],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Relationship Health"
+          }
+        ]
+      },
+      "pluginVersion": "10.3.1",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "snapmirror_labels{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\",derived_relationship_type!=\"load_sharing\",relationship_id!=\"\"} ",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
+        }
+      ],
+      "title": "Relationships",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cluster",
+                "destination_location",
+                "group_type",
+                "healthy",
+                "policy_type",
+                "source_cluster",
+                "source_location"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Value": 15,
+              "cluster": 2,
+              "derived_relationship_type": 4,
+              "destination_location": 3,
+              "group_type": 5,
+              "healthy": 6,
+              "last_transfer_type": 7,
+              "policy_type": 8,
+              "protectedBy": 9,
+              "protectionSourceType": 10,
+              "relationship_id": 11,
+              "relationship_status": 12,
+              "relationship_type": 13,
+              "schedule": 14,
+              "source_cluster": 0,
+              "source_location": 1
+            },
+            "renameByName": {
+              "cluster": "Destination Cluster",
+              "derived_relationship_type": "",
+              "destination_location": "Destination Path",
+              "group_type": "Group Type",
+              "healthy": "Relationship Health",
+              "policy_type": "Protection Policy",
+              "relationship_status": "",
+              "source_cluster": "Source Cluster",
+              "source_location": "Source Path"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "harvest",
+    "ontap",
+    "cdot"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "c6938c7d-3e1c-4ff1-9741-ef4164e5259a"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+        "description": "Select all the datacenters that contain the ONTAP clusters acting as source for SnapMirror relationships.",
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+          "refId": "Prometheus-Datacenter-Variable-Query"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(snapmirror_labels{system_type!=\"7mode\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\"))",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "query_result(snapmirror_labels{system_type!=\"7mode\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\"))",
+          "refId": "Prometheus-Cluster-Variable-Query"
+        },
+        "refresh": 2,
+        "regex": ".*source_cluster=\\\"(.*?)\\\".*",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_vserver)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "SVM",
+        "options": [],
+        "query": {
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\"}, source_vserver)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\"}, source_volume)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Volume",
+        "options": [],
+        "query": {
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\"}, source_volume)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\", destination_vserver=~\"$DestinationSVM\"}, source_cg_name)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "ConsistencyGroup",
+        "options": [],
+        "query": {
+          "query": "label_values(snapmirror_labels{source_cluster=~\"$SourceCluster\",source_vserver=~\"$SourceSVM\", destination_vserver=~\"$DestinationSVM\"}, source_cg_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "ONTAP: SnapMirror Sources",
+  "uid": "cdot-snapmirror-sources",
+  "version": 1,
+  "weekStart": ""
+}
