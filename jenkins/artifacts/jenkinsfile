@@ -193,8 +193,8 @@ pipeline {
                 sh '''
                 curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
                 export PATH=/usr/local/bin:$PATH
-                trivy image --exit-code 1 ${ghcrImage}:latest
-                trivy image --exit-code 1 ${ghcrImage}:latest-fips
+                trivy image --db-repository public.ecr.aws/aquasecurity/trivy-db --exit-code 1 ${ghcrImage}:latest
+                trivy image --db-repository public.ecr.aws/aquasecurity/trivy-db --exit-code 1 ${ghcrImage}:latest-fips
                 '''
             }
         }
