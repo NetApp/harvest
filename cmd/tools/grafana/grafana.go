@@ -195,11 +195,8 @@ func exportFiles(dir string, folder *Folder) error {
 	return nil
 }
 
-func addSvmRegex(content []byte, fileName string, val string) []byte {
+func addSvmRegex(content []byte, val string) []byte {
 	svmExpression := []string{"templating.list.#(name=\"SVM\")"}
-	if fileName == "snapmirror.json" {
-		svmExpression = []string{"templating.list.#(name=\"DestinationSVM\")", "templating.list.#(name=\"SourceSVM\")"}
-	}
 	for _, s := range svmExpression {
 		var err error
 		svm := gjson.GetBytes(content, s)
@@ -514,7 +511,7 @@ func importFiles(dir string, folder *Folder) {
 
 		// add svm regex
 		if opts.svmRegex != "" {
-			data = addSvmRegex(data, file.Name(), opts.svmRegex)
+			data = addSvmRegex(data, opts.svmRegex)
 		}
 
 		// change cluster label if needed
