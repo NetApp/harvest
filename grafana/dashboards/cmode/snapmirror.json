@@ -227,17 +227,45 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(volume_labels{cluster=~\"$Cluster\",type=\"rw\",snapshot_policy!=\"\",state!=\"\",snapshot_policy=\"none\"}) or vector(0)",
+          "expr": "count(volume_labels{cluster=~\"$Cluster\",type=\"rw\",snapshot_policy!=\"\",state!=\"\"}) or vector(0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Not Protected",
+          "legendFormat": "Total",
           "refId": "B"
         }
       ],
       "title": "Snapshot copies (local)",
-      "transformations": [],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Not Protected",
+            "binary": {
+              "left": "Total",
+              "operator": "-",
+              "right": "Protected"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Total": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "piechart"
     },
     {
@@ -328,18 +356,18 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\",isProtected=\"false\"})",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\"}) or vector(0)",
           "format": "time_series",
           "instant": true,
           "interval": "",
-          "legendFormat": "Unprotected",
+          "legendFormat": "Total",
           "refId": "A"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\"})",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\", svm_root=\"false\"}) or vector(0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -349,7 +377,38 @@
         }
       ],
       "title": "SnapMirror (local or remote)",
-      "transformations": [],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Not Protected",
+            "binary": {
+              "left": "Total",
+              "operator": "-",
+              "right": "Protected"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Protected"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Total": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "piechart"
     },
     {
@@ -375,7 +434,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Protected"
+              "options": "Backed Up"
             },
             "properties": [
               {
@@ -390,7 +449,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Unprotected"
+              "options": "Not Backed Up"
             },
             "properties": [
               {
@@ -440,11 +499,11 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)",
           "format": "time_series",
           "instant": true,
           "interval": "",
-          "legendFormat": "Unprotected",
+          "legendFormat": "Total",
           "refId": "A"
         },
         {
@@ -456,12 +515,40 @@
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Protected",
+          "legendFormat": "Backed Up",
           "refId": "B"
         }
       ],
       "title": "Back up to cloud",
-      "transformations": [],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Not Backed Up",
+            "binary": {
+              "left": "Total",
+              "operator": "-",
+              "right": "Backed Up"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Total": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "piechart"
     },
     {
@@ -818,7 +905,6 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
@@ -964,7 +1050,7 @@
     ]
   },
   "timezone": "",
-  "title": "ONTAP: SnapMirror",
+  "title": "ONTAP: SnapMirror Sources",
   "uid": "cdot-snapmirror",
-  "version": 1
+  "version": 7
 }
