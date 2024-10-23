@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 )
@@ -231,6 +232,7 @@ func (m *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 
 func (m *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
 	for _, key := range keys {
+		var cgSourceVolumes, cgDestinationVolumes []string
 		cgInstance := data.GetInstance(key)
 		// find cgName from the destination_location, source_location
 		cgInstance.SetLabel("destination_cg_name", filepath.Base(cgInstance.GetLabel("destination_location")))
@@ -267,8 +269,15 @@ func (m *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
 				cgVolumeInstance.SetLabel("relationship_id", "")
 				cgVolumeInstance.SetLabel("source_volume", sourceVol)
 				cgVolumeInstance.SetLabel("destination_volume", destinationVol)
+				cgSourceVolumes = append(cgSourceVolumes, sourceVol)
+				cgDestinationVolumes = append(cgDestinationVolumes, destinationVol)
 			}
 		}
+		// Update parent CG source and destination volumes
+		slices.Sort(cgSourceVolumes)
+		slices.Sort(cgDestinationVolumes)
+		cgInstance.SetLabel("source_volume", strings.Join(cgSourceVolumes, ","))
+		cgInstance.SetLabel("destination_volume", strings.Join(cgDestinationVolumes, ","))
 	}
 }
 
