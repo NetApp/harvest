@@ -23,6 +23,8 @@ counters:
   - statistics.v3.timestamp(timestamp)       => timestamp
   - hidden_fields:
       - statistics.v3
+  - filter:
+      - statistics.v3.timestamp=!"-"
 
 export_options:
   instance_keys:
