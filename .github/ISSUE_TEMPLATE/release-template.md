@@ -27,6 +27,7 @@ git push origin release/$RELEASE
 | DOCKER_PUBLISH              | false           |
 | RUN_TEST                    | true            |
 | OVERWRITE_DOCKER_LATEST_TAG | false           |
+| RUN_TRIVY_SCAN              | true            |
 
 - [ ] Create a release branch for the harvest-metrics repo like so:
 ```bash
@@ -76,6 +77,7 @@ bin/harvest generate metrics --poller POLLERNAME
 | DOCKER_PUBLISH              | true            |
 | RUN_TEST                    | true            |
 | OVERWRITE_DOCKER_LATEST_TAG | true            |
+| RUN_TRIVY_SCAN              | true            |
 
 - [ ] [Draft a new release](https://github.com/NetApp/harvest/releases). Use `v$RELEASE` for the tag and pick the release/$RELEASE branch.
 - [ ] Type `$RELEASE` in the `Release title` text input 
