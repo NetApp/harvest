@@ -22,6 +22,8 @@ counters:
   - statistics.timestamp(timestamp)       => timestamp
   - hidden_fields:
       - statistics
+  - filter:
+      - statistics.timestamp=!"-"
 
 endpoints:
   - query: api/private/cli/volume

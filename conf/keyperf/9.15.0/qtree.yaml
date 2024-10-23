@@ -20,6 +20,7 @@ counters:
   - statistics.timestamp(timestamp)       => timestamp
   - filter:
       - name=!""
+      - statistics.timestamp=!"-"
   - hidden_fields:
       - statistics
 
