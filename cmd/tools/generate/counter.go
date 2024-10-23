@@ -146,7 +146,6 @@ var (
 		"nfs_clients_idle_duration",
 		"ems_events",
 		"volume_top_clients",
-		"net_port_status",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
@@ -155,7 +154,6 @@ var (
 		"netstat_",
 		"flexcache_",
 		"quota_disk_used_pct_threshold",
-		"net_port_status",
 	}
 
 	// Exclude extra metrics for REST
@@ -165,6 +163,7 @@ var (
 		"_labels",
 		"volume_arw_status",
 		"ALERTS",
+		"net_port_status",
 	}
 
 	// Exclude extra metrics for ZAPI
@@ -174,6 +173,7 @@ var (
 		"security_",
 		"svm_ldap",
 		"ALERTS",
+		"net_port_status",
 	}
 )
 
