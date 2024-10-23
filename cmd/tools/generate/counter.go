@@ -785,6 +785,9 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 
 	keys := make([]string, 0, len(counters))
 	for k := range counters {
+		if strings.Contains(k, "_labels") {
+			continue
+		}
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
