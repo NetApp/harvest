@@ -145,7 +145,8 @@ var (
 		"aggr_hybrid_disk_count",
 		"nfs_clients_idle_duration",
 		"ems_events",
-		"olume_top_clients",
+		"volume_top_clients",
+		"net_port_status",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
@@ -154,6 +155,7 @@ var (
 		"netstat_",
 		"flexcache_",
 		"quota_disk_used_pct_threshold",
+		"net_port_status",
 	}
 
 	// Exclude extra metrics for REST
