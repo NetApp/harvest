@@ -848,16 +848,16 @@
                 "includeByName": {},
                 "indexByName": {
                   "Value #B": 4,
-                  "admin_speed": 6,
+                  "admin_speed": 7,
                   "cluster": 1,
                   "datacenter": 0,
-                  "ipspace": 7,
+                  "ipspace": 8,
                   "node": 2,
                   "op_speed": 5,
                   "port": 3,
-                  "port_type": 8,
-                  "role": 9,
-                  "status": 10
+                  "port_type": 9,
+                  "role": 10,
+                  "status": 6
                 },
                 "renameByName": {
                   "Value #B": "MTU",
@@ -886,8 +886,11 @@
             "defaults": {
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
-                "filterable": true
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
               },
               "decimals": 2,
               "mappings": [],
@@ -912,13 +915,14 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "Bps",
+              "unitScale": true
             },
             "overrides": [
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "speed"
+                  "options": "Speed"
                 },
                 "properties": [
                   {
@@ -942,12 +946,15 @@
                     "value": "percentunit"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   },
                   {
                     "id": "displayName",
-                    "value": "used %"
+                    "value": "Used %"
                   },
                   {
                     "id": "noValue",
@@ -1037,8 +1044,11 @@
                     }
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
                   }
                 ]
               },
@@ -1083,7 +1093,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "type"
+                  "options": "Type"
                 },
                 "properties": [
                   {
@@ -1100,11 +1110,14 @@
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "send"
+                    "value": "Send"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -1116,11 +1129,14 @@
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "receive"
+                    "value": "Receive"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -1179,17 +1195,27 @@
           "id": 58,
           "interval": "",
           "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
             "showHeader": true,
             "sortBy": [
               {
-                "desc": true,
-                "displayName": "send"
+                "desc": false,
+                "displayName": "status"
               }
             ]
           },
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
@@ -1199,6 +1225,7 @@
               "refId": "A"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -1208,6 +1235,7 @@
               "refId": "B"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -1217,6 +1245,7 @@
               "refId": "C"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -1226,6 +1255,7 @@
               "refId": "D"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -1235,8 +1265,6 @@
               "refId": "E"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "NIC ports",
           "transformations": [
             {
@@ -1276,6 +1304,7 @@
                   "speed": false,
                   "state": true
                 },
+                "includeByName": {},
                 "indexByName": {
                   "Value #B": 6,
                   "Value #C": 7,
@@ -1283,13 +1312,16 @@
                   "Value #E": 9,
                   "cluster": 1,
                   "datacenter": 0,
-                  "nic": 2,
-                  "node": 3,
+                  "nic": 3,
+                  "node": 2,
                   "speed": 4,
                   "type": 5
                 },
                 "renameByName": {
-                  "datacenter": ""
+                  "datacenter": "",
+                  "nic": "Port",
+                  "speed": "Speed",
+                  "type": "Type"
                 }
               }
             }
