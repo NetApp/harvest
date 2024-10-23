@@ -29,7 +29,7 @@ objects:
   Namespace:                   namespace.yaml
 #  NDMPSession:                ndmp_session.yaml
 #  NetConnections:              netconnections.yaml
-#  NetPort:                     netport.yaml
+  NetPort:                     netport.yaml
   NetRoute:                    netroute.yaml
 #  NFSClients:                  nfs_clients.yaml
   Node:                        node.yaml
