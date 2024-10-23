@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Oct-03
+Creation Date : 2024-Oct-23
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -513,10 +513,6 @@ The percentage of disk space currently in use based on user-visible file count o
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.percent-inode-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
-### aggr_labels
-
-
-
 ### aggr_logical_used_wo_snapshots
 
 Logical used
@@ -962,18 +958,6 @@ A counter used to track requests that are sent to the volumes to the node.
 | ZAPI | `cifs-session-get-iter` | `cifs-session.connection-count` | conf/zapi/cdot/9.8.0/cifs_session.yaml |
 
 
-### cifs_session_labels
-
-
-
-### cifs_share_labels
-
-
-
-### cloud_target_labels
-
-
-
 ### cloud_target_used
 
 The amount of cloud space used by all the aggregates attached to the target, in bytes. This field is only populated for FabricPool targets. The value is recalculated once every 5 minutes.
@@ -982,10 +966,6 @@ The amount of cloud space used by all the aggregates attached to the target, in 
 |--------|----------|--------|---------|
 | REST | `api/cloud/targets` | `used` | conf/rest/9.12.0/cloud_target.yaml |
 | ZAPI | `aggr-object-store-config-get-iter` | `aggr-object-store-config-info.used-space` | conf/zapi/cdot/9.10.0/aggr_object_store_config.yaml |
-
-
-### cluster_labels
-
 
 
 ### cluster_new_status
@@ -998,10 +978,6 @@ It is an indicator of the overall health status of the cluster, with a value of 
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/status.yaml |
 
 
-### cluster_peer_labels
-
-
-
 ### cluster_peer_non_encrypted
 
 This metric indicates a value of 1 if the cluster peer encryption state is none (indicating the connection is not encrypted) and a value of 0 for any other state.
@@ -1010,10 +986,6 @@ This metric indicates a value of 1 if the cluster peer encryption state is none 
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/clusterpeer.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/clusterpeer.yaml |
-
-
-### cluster_subsystem_labels
-
 
 
 ### cluster_subsystem_new_status
@@ -1174,10 +1146,6 @@ Number of I/Os queued to the disk but not yet issued
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml | 
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml | 
-
-
-### disk_labels
-
 
 
 ### disk_new_status
@@ -1368,10 +1336,6 @@ Number of disk write operations initiated each second for storing data or metada
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
-### ems_destination_labels
-
-
-
 ### ems_events
 
 Indicates EMS events that have occurred in the ONTAP as configured in the ems.yaml.
@@ -1409,10 +1373,6 @@ Average temperature of all non-ambient sensors for node in Celsius.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
-
-
-### environment_sensor_labels
-
 
 
 ### environment_sensor_max_fan_speed
@@ -1493,10 +1453,6 @@ Provides the sensor reading.
 |--------|----------|--------|---------|
 | REST | `api/cluster/sensors` | `value` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `environment-sensors-get-iter` | `environment-sensors-info.threshold-sensor-value` | conf/zapi/cdot/9.8.0/sensor.yaml |
-
-
-### export_rule_labels
-
 
 
 ### external_service_op_num_not_found_responses
@@ -1723,10 +1679,6 @@ Number of interrupt responses
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `isr.count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml | 
 | ZAPI | `perf-object-get-instances fcp_port` | `isr_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml | 
-
-
-### fcp_labels
-
 
 
 ### fcp_lif_avg_latency
@@ -2809,10 +2761,6 @@ Total number of invalidate operation is skipped because cache volume is offline.
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
 
 
-### flexcache_labels
-
-
-
 ### flexcache_miss_percent
 
 This metric represents the percentage of block requests from a client that resulted in a "miss" in the FlexCache. A "miss" occurs when the requested data is not found in the cache and has to be retrieved from the origin volume.
@@ -3133,10 +3081,6 @@ Provides any issues related to HA health check. Value of 1 means issue is happen
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
-### health_labels
-
-
-
 ### health_license_alerts
 
 Provides any issues related to License health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -3388,10 +3332,6 @@ Number of RDMA write I/Os issued.
 | ZAPI | `perf-object-get-instances iwarp` | `iw_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml | 
 
 
-### lif_labels
-
-
-
 ### lif_recv_data
 
 Number of bytes received per second
@@ -3452,10 +3392,6 @@ Number of packets sent per second
 | ZAPI | `perf-object-get-instances lif` | `sent_packet`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml | 
 
 
-### lock_labels
-
-
-
 ### lun_avg_read_latency
 
 Average read latency in microseconds for all operations on the LUN
@@ -3504,10 +3440,6 @@ Number of operations receiving ENOSPC errors
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `enospc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `enospc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml | 
-
-
-### lun_labels
-
 
 
 ### lun_new_status
@@ -3698,10 +3630,6 @@ Total number of xcopy operations on the LUN
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `xcopy_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `xcopy_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml | 
-
-
-### mediator_labels
-
 
 
 ### metadata_collector_api_time
@@ -3922,10 +3850,6 @@ Detail of the type of diagnostic operation run for the Cluster with diagnostic o
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
 
 
-### metrocluster_check_labels
-
-
-
 ### metrocluster_check_node_status
 
 Detail of the type of diagnostic operation run for the Node with diagnostic operation result.
@@ -3982,10 +3906,6 @@ The size of blocks in the namespace in bytes.<br/>Valid in POST when creating an
 |--------|----------|--------|---------|
 | REST | `api/storage/namespaces` | `space.block_size` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.block-size` | conf/zapi/cdot/9.8.0/namespace.yaml |
-
-
-### namespace_labels
-
 
 
 ### namespace_other_ops
@@ -4107,10 +4027,6 @@ Indicates the NDMP data bytes processed.
 | REST | `api/protocols/ndmp/sessions` | `data.bytes_processed` | conf/rest/9.7.0/ndmp_session.yaml |
 
 
-### ndmp_session_labels
-
-
-
 ### ndmp_session_mover_bytes_moved
 
 Indicates the NDMP mover bytes moved.
@@ -4118,14 +4034,6 @@ Indicates the NDMP mover bytes moved.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/ndmp/sessions` | `mover.bytes_moved` | conf/rest/9.7.0/ndmp_session.yaml |
-
-
-### net_connection_labels
-
-
-
-### net_port_labels
-
 
 
 ### net_port_mtu
@@ -4136,10 +4044,6 @@ Maximum transmission unit, largest packet size on this network
 |--------|----------|--------|---------|
 | REST | `api/network/ethernet/ports` | `mtu` | conf/rest/9.12.0/netport.yaml |
 | ZAPI | `net-port-get-iter` | `net-port-info.mtu` | conf/zapi/cdot/9.8.0/netport.yaml |
-
-
-### net_route_labels
-
 
 
 ### netstat_bytes_recvd
@@ -4221,10 +4125,6 @@ Specifies an ISO-8601 format of date and time to retrieve the idle time duration
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/nfs/connected-clients` | `idle_duration` | conf/rest/9.7.0/nfs_clients.yaml |
-
-
-### nfs_clients_labels
-
 
 
 ### nfs_diag_storePool_ByteLockAlloc
@@ -5335,10 +5235,6 @@ Number of iSCSI operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
 | ZAPI | `perf-object-get-instances system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
-
-
-### node_labels
-
 
 
 ### node_memory
@@ -7940,10 +7836,6 @@ Number of write operations per second to the volume. node_volume_write_ops is [v
 | ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 
-### ntpserver_labels
-
-
-
 ### nvme_lif_avg_latency
 
 Average latency for NVMF operations
@@ -8264,10 +8156,6 @@ Number of write operations
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml | 
 
 
-### ontaps3_labels
-
-
-
 ### ontaps3_logical_used_size
 
 Specifies the bucket logical used size up to this point. This field cannot be specified using a POST or PATCH method.
@@ -8284,10 +8172,6 @@ Specifies the bucket logical used size up to this point. This field cannot be sp
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/private/cli/vserver/object-store-server/bucket` | `object_count` | conf/rest/9.7.0/ontap_s3.yaml |
-
-
-### ontaps3_policy_labels
-
 
 
 ### ontaps3_size
@@ -9961,10 +9845,6 @@ Specifies the size to be used to calculate expected IOPS per TB.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
 
 
-### qos_policy_adaptive_labels
-
-
-
 ### qos_policy_adaptive_peak_iops
 
 Specifies the maximum possible IOPS per TB allocated based on the storage object allocated size or the storage object used size.
@@ -9973,10 +9853,6 @@ Specifies the maximum possible IOPS per TB allocated based on the storage object
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
-
-
-### qos_policy_fixed_labels
-
 
 
 ### qos_policy_fixed_max_throughput_iops
@@ -10089,10 +9965,6 @@ This is the total amount of data read/written per second from/to the filer by th
 | ZAPI | `perf-object-get-instances workload_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
 
 
-### qos_workload_labels
-
-
-
 ### qos_workload_max_throughput_iops
 
 Maximum throughput IOPs allowed for the workload.
@@ -10170,10 +10042,6 @@ Number of internal operations generated by activites such as snapmirror and back
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qtree` | `internal_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/qtree.yaml | 
 | ZAPI | `perf-object-get-instances qtree` | `internal_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml | 
-
-
-### qtree_labels
-
 
 
 ### qtree_nfs_ops
@@ -10283,10 +10151,6 @@ Current number of files used expressed as a percentage of soft file limit.
 |--------|----------|--------|---------|
 | REST | `api/storage/quota/reports` | `files.used.soft_limit_percent` | conf/rest/9.12.0/qtree.yaml |
 | ZAPI | `quota-report-iter` | `files-used-pct-soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
-
-
-### quota_labels
-
 
 
 ### quota_soft_disk_limit
@@ -10543,14 +10407,6 @@ The number of restarts after a rewind because of QoS limiting.
 | ZAPI | `perf-object-get-instances rw_ctx` | `qos_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
-### security_account_labels
-
-
-
-### security_audit_destination_labels
-
-
-
 ### security_audit_destination_port
 
 The destination port used to forward the message.
@@ -10568,22 +10424,6 @@ The destination port used to forward the message.
 |--------|----------|--------|---------|
 | REST | `api/private/cli/security/certificate` | `expiration` | conf/rest/9.12.0/security_certificate.yaml |
 | ZAPI | `security-certificate-get-iter` | `certificate-info.expiration-date` | conf/zapi/cdot/9.8.0/security_certificate.yaml |
-
-
-### security_certificate_labels
-
-
-
-### security_labels
-
-
-
-### security_login_labels
-
-
-
-### security_ssh_labels
-
 
 
 ### security_ssh_max_instances
@@ -10653,10 +10493,6 @@ Fan Operational Status.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
-
-
-### shelf_labels
-
 
 
 ### shelf_max_fan_speed
@@ -11079,10 +10915,6 @@ The number of successful SnapMirror break operations for the relationship
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.break-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
-### snapmirror_labels
-
-
-
 ### snapmirror_lag_time
 
 Amount of time since the last snapmirror transfer in seconds
@@ -11193,10 +11025,6 @@ Number of Successful Updates
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.update-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
-### snapshot_policy_labels
-
-
-
 ### snapshot_policy_total_schedules
 
 Total Number of Schedules in this Policy
@@ -11205,14 +11033,6 @@ Total Number of Schedules in this Policy
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapshot/policy` | `total_schedules` | conf/rest/9.12.0/snapshotpolicy.yaml |
 | ZAPI | `snapshot-policy-get-iter` | `snapshot-policy-info.total-schedules` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
-
-
-### support_auto_update_labels
-
-
-
-### support_labels
-
 
 
 ### svm_cifs_connections
@@ -11323,10 +11143,6 @@ Total number of CIFS write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml | 
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml | 
-
-
-### svm_labels
-
 
 
 ### svm_new_status
@@ -14832,10 +14648,6 @@ volume_inode_files_used / volume_inode_total
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `inode_files_used, inode_files_total` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `inode_files_used, inode_files_total` | conf/zapi/cdot/9.8.0/volume.yaml |
-
-
-### volume_labels
-
 
 
 ### volume_new_status
