@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -113,22 +112,10 @@ func TestAddSvmRegex(t *testing.T) {
 	VisitDashboards(
 		[]string{"../../../grafana/dashboards/cmode/svm.json", "../../../grafana/dashboards/cmode/snapmirror.json"},
 		func(path string, data []byte) {
-			file := filepath.Base(path)
-			out := addSvmRegex(data, file, regex)
-			if file == "svm.json" {
-				r := gjson.GetBytes(out, "templating.list.#(name=\"SVM\").regex")
-				if r.String() != regex {
-					t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, regex, r.String())
-				}
-			} else if file == "snapmirror.json" {
-				r := gjson.GetBytes(out, "templating.list.#(name=\"DestinationSVM\").regex")
-				if r.String() != regex {
-					t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, regex, r.String())
-				}
-				r = gjson.GetBytes(out, "templating.list.#(name=\"SourceSVM\").regex")
-				if r.String() != regex {
-					t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, regex, r.String())
-				}
+			out := addSvmRegex(data, regex)
+			r := gjson.GetBytes(out, "templating.list.#(name=\"SVM\").regex")
+			if r.String() != regex {
+				t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, regex, r.String())
 			}
 		})
 }

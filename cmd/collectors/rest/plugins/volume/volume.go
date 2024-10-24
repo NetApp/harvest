@@ -40,6 +40,9 @@ type volumeInfo struct {
 	cloneSnapshotName        string
 	cloneSplitEstimateMetric float64
 	isObjectStoreVolume      bool
+	isProtected              string
+	isDestinationOntap       string
+	isDestinationCloud       string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -156,6 +159,10 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			}
 			volume.SetLabel("anti_ransomware_start_time", vInfo.arwStartTime)
 			volume.SetLabel("antiRansomwareState", vInfo.arwState)
+			volume.SetLabel("isProtected", vInfo.isProtected)
+			volume.SetLabel("isDestinationOntap", vInfo.isDestinationOntap)
+			volume.SetLabel("isDestinationCloud", vInfo.isDestinationCloud)
+
 			if volume.GetLabel("is_flexclone") == "true" {
 				volume.SetLabel("clone_parent_snapshot", vInfo.cloneSnapshotName)
 				if err = cloneSplitEstimateMetric.SetValueFloat64(volume, vInfo.cloneSplitEstimateMetric); err != nil {
@@ -272,7 +279,7 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 
 func (v *Volume) getVolumeInfo() (map[string]volumeInfo, error) {
 	volumeMap := make(map[string]volumeInfo)
-	fields := []string{"name", "svm.name", "clone.parent_snapshot.name", "clone.split_estimate", "is_object_store"}
+	fields := []string{"name", "svm.name", "clone.parent_snapshot.name", "clone.split_estimate", "is_object_store", "snapmirror.is_protected", "snapmirror.destinations.is_ontap", "snapmirror.destinations.is_cloud"}
 	if !v.isArwSupportedVersion {
 		return v.getVolume("", fields, volumeMap)
 	}
@@ -313,7 +320,10 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 		cloneSnapshotName := volume.Get("clone.parent_snapshot.name").String()
 		cloneSplitEstimate := volume.Get("clone.split_estimate").Float()
 		isObjectStoreVolume := volume.Get("is_object_store").Bool()
-		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, arwState: arwState, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate, isObjectStoreVolume: isObjectStoreVolume}
+		isProtected := volume.Get("snapmirror.is_protected").String()
+		isDestinationOntap := volume.Get("snapmirror.destinations.is_ontap").String()
+		isDestinationCloud := volume.Get("snapmirror.destinations.is_cloud").String()
+		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, arwState: arwState, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate, isObjectStoreVolume: isObjectStoreVolume, isProtected: isProtected, isDestinationOntap: isDestinationOntap, isDestinationCloud: isDestinationCloud}
 	}
 	return volumeMap, nil
 }

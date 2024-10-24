@@ -131,8 +131,11 @@ export_options:
     - clone_parent_snapshot
     - clone_parent_svm
     - clone_parent_volume
+    - isDestinationCloud
+    - isDestinationOntap
     - isEncrypted
     - isHardwareEncrypted
+    - isProtected
     - is_sis_volume
     - junction_path
     - root_volume
