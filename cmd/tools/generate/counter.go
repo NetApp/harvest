@@ -163,7 +163,6 @@ var (
 		"_labels",
 		"volume_arw_status",
 		"ALERTS",
-		"net_port_status",
 	}
 
 	// Exclude extra metrics for ZAPI
@@ -173,7 +172,6 @@ var (
 		"security_",
 		"svm_ldap",
 		"ALERTS",
-		"net_port_status",
 	}
 )
 
