@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Oct-23
+Creation Date : 2024-Oct-24
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -4044,6 +4044,16 @@ Maximum transmission unit, largest packet size on this network
 |--------|----------|--------|---------|
 | REST | `api/network/ethernet/ports` | `mtu` | conf/rest/9.12.0/netport.yaml |
 | ZAPI | `net-port-get-iter` | `net-port-info.mtu` | conf/zapi/cdot/9.8.0/netport.yaml |
+
+
+### net_port_status
+
+This metric indicates a value of 1 if the port state is up and a value of 0 for any other state.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/netport.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/netport.yaml |
 
 
 ### netstat_bytes_recvd

@@ -145,7 +145,7 @@ var (
 		"aggr_hybrid_disk_count",
 		"nfs_clients_idle_duration",
 		"ems_events",
-		"olume_top_clients",
+		"volume_top_clients",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
